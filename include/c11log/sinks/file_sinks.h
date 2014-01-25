@@ -4,11 +4,6 @@
 #include  <iomanip>
 #include <mutex>
 
-
-#include "../logger.h"
-#include "../log_exception.h"
-#include "../details/os.h"
-
 #include "base_sink.h"
 
 namespace c11log {
