@@ -76,7 +76,7 @@ inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enu
     {
         std::lock_guard<std::mutex> lock(mutex_);
         return details::line_logger(this, msg_level);
-    } 
+    }
     else
     {
         return details::line_logger(nullptr);

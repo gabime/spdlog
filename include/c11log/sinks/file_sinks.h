@@ -2,6 +2,8 @@
 
 #include <fstream>
 #include  <iomanip>
+#include <mutex>
+
 
 #include "../logger.h"
 #include "../log_exception.h"
@@ -14,7 +16,7 @@ namespace sinks {
 /*
 * Trivial file sink with single file as target
 */
-class simple_file_sink:base_sink {
+class simple_file_sink : public base_sink {
 public:
     simple_file_sink(const std::string &filename, const std::string& extension = "txt")
     {
@@ -25,38 +27,21 @@ public:
 protected:
     void sink_it_(const std::string& msg) override
     {
+        std::lock_guard<std::mutex> lock(mutex_);
         _ofstream << msg;
         _ofstream.flush();
     }
-
+private:
+    std::mutex mutex_;
     std::ofstream _ofstream;
 };
+
 
 
 /*
- * Rotating file sinks. Close and open new file at some point
- */
-namespace details {
-class rotating_file_sink_base:public base_sink {
-public:
-    rotating_file_sink_base()
-    {}
-    virtual ~rotating_file_sink_base()
-    {}
-protected:
-    virtual void sink_it_(const std::string& msg) override
-    {
-        if (_should_rotate())
-            _rotate();
-        _ofstream << msg;
-        _ofstream.flush();
-    }
-    virtual bool _should_rotate() const = 0;
-    virtual void _rotate() = 0;
-    std::ofstream _ofstream;
-};
-}
-class rotating_file_sink:public details::rotating_file_sink_base {
+ * Thread safe, size limited file sink
+*/
+class rotating_file_sink : public base_sink {
 public:
     rotating_file_sink(const std::string &base_filename, const std::string &extension, size_t max_size, size_t max_files):
         _base_filename(base_filename),
@@ -70,37 +55,20 @@ public:
     }
 
 protected:
-    virtual void sink_it_(const std::string& msg) override
+    void sink_it_(const std::string& msg) override
     {
+        std::lock_guard<std::mutex> lock(mutex_);
         _current_size += msg.length();
-        rotating_file_sink_base::sink_it_(msg);
-    }
-
-    bool _should_rotate() const override
-    {
-        return _current_size >= _max_size;
-    }
-
-    // Rotate old files:
-    // log.n-1.txt -> log.n.txt
-    // log n-2.txt -> log.n-1.txt
-    // ...
-    // log.txt -> log.1.txt
-    void _rotate() override
-    {
-        _ofstream.close();
-        _current_size = 0;
-        //Remove oldest file
-        for (auto i = _max_files; i > 0; --i) {
-            auto src = _calc_filename(_base_filename, i - 1, _extension);
-            auto target = _calc_filename(_base_filename, i, _extension);
-            if (i == _max_files)
-                std::remove(target.c_str());
-            std::rename(src.c_str(), target.c_str());
+        if (_current_size  > _max_size)
+        {
+            _rotate();
+            _current_size = msg.length();
         }
-
-        _ofstream.open(_calc_filename(_base_filename, 0, _extension));
+        _ofstream << msg;
+        _ofstream.flush();
     }
+
+
 private:
     static std::string _calc_filename(const std::string& filename, std::size_t index, const std::string& extension)
     {
@@ -111,19 +79,42 @@ private:
             oss << filename << "." << extension;
         return oss.str();
     }
+
+
+    // Rotate old files:
+    // log.n-1.txt -> log.n.txt
+    // log n-2.txt -> log.n-1.txt
+    // ...
+    // log.txt -> log.1.txt
+    void _rotate()
+    {
+        _ofstream.close();
+        //Remove oldest file
+        for (auto i = _max_files; i > 0; --i) {
+            auto src = _calc_filename(_base_filename, i - 1, _extension);
+            auto target = _calc_filename(_base_filename, i, _extension);
+            if (i == _max_files)
+                std::remove(target.c_str());
+            std::rename(src.c_str(), target.c_str());
+        }
+        _ofstream.open(_calc_filename(_base_filename, 0, _extension));
+    }
+
     std::string _base_filename;
     std::string _extension;
     std::size_t _max_size;
     std::size_t _max_files;
     std::size_t _current_size;
     std::size_t _index;
+    std::ofstream _ofstream;
+    std::mutex mutex_;
 
 };
 
 /*
- * File sink that closes the log file at midnight and opens new one
+ * Thread safe file sink that closes the log file at midnight and opens new one
  */
-class midnight_file_sink:public details::rotating_file_sink_base {
+class midnight_file_sink:public base_sink {
 public:
     midnight_file_sink(const std::string& base_filename, const std::string& extension = "txt"):
         _base_filename(base_filename),
@@ -135,16 +126,17 @@ public:
     }
 
 protected:
-    bool _should_rotate() const override
+    void sink_it_(const std::string& msg) override
     {
-        return std::chrono::system_clock::now() >= _midnight_tp;
-    }
-    void _rotate() override
-    {
-        _midnight_tp = _calc_midnight_tp();
-        _ofstream.close();
-        _ofstream.open(_calc_filename(_base_filename, _extension));
-
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (std::chrono::system_clock::now() >= _midnight_tp)
+        {
+            _ofstream.close();
+            _ofstream.open(_calc_filename(_base_filename, _extension));
+            _midnight_tp = _calc_midnight_tp();
+        }
+        _ofstream << msg;
+        _ofstream.flush();
     }
 
 private:
@@ -167,9 +159,12 @@ private:
         oss << basename << std::put_time(&now_tm, ".%Y-%m-%d.") << extension;
         return oss.str();
     }
+
     std::string _base_filename;
     std::string _extension;
     std::chrono::system_clock::time_point _midnight_tp;
+    std::ofstream _ofstream;
+    std::mutex mutex_;
 };
 }
 }
