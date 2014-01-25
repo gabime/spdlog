@@ -35,7 +35,7 @@ public:
     }
 
     // Push copy of item into the back of the queue. 
-    // If queue is full, block the calling thread util there is room or timeout have passed.
+    // If the queue is full, block the calling thread util there is room or timeout have passed.
     // Return: false on timeout, true on successful push.
     template<class Duration_Rep, class Duration_Period>
     bool push(const T& item, const std::chrono::duration<Duration_Rep, Duration_Period>& timeout)
@@ -47,24 +47,24 @@ public:
                 return false;
         }
         _q.push(item);
-        if (_q.size() == 1)
+        if (_q.size() <= 1)
         {
-            ul.unlock();
+            ul.unlock(); //So the notified thread will have better chance to accuire the lock immediatly..
             _item_pushed_cond.notify_one();
         }
         return true;
     }
 
     // Push copy of item into the back of the queue. 
-    // If queue is full, block the calling thread until there is room
+    // If the queue is full, block the calling thread until there is room.
     void push(const T& item)
     {
         while (!push(item, std::chrono::hours::max()));
     }
 
-    // Pop a copy of the front item in the queue into the given item ref
-    // If queue is empty, block the calling thread util there is item to pop or timeout have passed.
-    // Return: false on timeout , true on successful pop
+    // Pop a copy of the front item in the queue into the given item ref.
+    // If the queue is empty, block the calling thread util there is item to pop or timeout have passed.
+    // Return: false on timeout , true on successful pop/
     template<class Duration_Rep, class Duration_Period>
     bool pop(T& item, const std::chrono::duration<Duration_Rep, Duration_Period>& timeout)
     {
@@ -78,14 +78,14 @@ public:
         _q.pop();
         if (_q.size() >= _max_size - 1)
         {
-            ul.unlock();
+            ul.unlock(); //So the notified thread will have better chance to accuire the lock immediatly..
             _item_popped_cond.notify_one();
         }
         return true;
     }
 
-    // Pop a copy of the front item in the queue into the given item ref
-    // If queue is empty, block the calling thread util there is item to pop.
+    // Pop a copy of the front item in the queue into the given item ref.
+    // If the queue is empty, block the calling thread util there is item to pop.
     void pop(T& item)
     {
         while (!pop(item, std::chrono::hours::max()));
