@@ -1,4 +1,5 @@
 #pragma once
+
 #include<string>
 #include<memory>
 #include<mutex>
@@ -10,40 +11,38 @@ namespace c11log {
 namespace sinks {
 class base_sink {
 public:
-    base_sink()
-    {}
+    base_sink() = default;    
     base_sink(level::level_enum l):_level(l)
     {};
-    virtual ~base_sink()
-    {};
-
+    virtual ~base_sink() = default;
+    
     base_sink(const base_sink&) = delete;
     base_sink& operator=(const base_sink&) = delete;
 
     void log(const std::string &msg, level::level_enum level)
     {
         if (level >= _level) {
-            std::lock_guard<std::mutex> lock(_mutex);
+            std::lock_guard<std::mutex> lock(mutex_);
             if (level >= _level)
-                _sink_it(msg);
+                sink_it_(msg);
         }
     };
 
     void set_level(level::level_enum level)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<std::mutex> lock(mutex_);
         _level = level;
     }
 
 protected:
-    virtual void _sink_it(const std::string& msg) = 0;
+    virtual void sink_it_(const std::string& msg) = 0;
     level::level_enum _level = level::INFO;
-    std::mutex _mutex;
+    std::mutex mutex_;
 };
 
 class null_sink:public base_sink {
 protected:
-    void _sink_it(const std::string& msg) override
+    void sink_it_(const std::string& msg) override
     {}
 };
 }

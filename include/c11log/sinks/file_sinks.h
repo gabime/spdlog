@@ -1,4 +1,5 @@
 #pragma once
+
 #include <fstream>
 #include  <iomanip>
 
@@ -22,7 +23,7 @@ public:
         _ofstream.open(oss.str(), std::ofstream::app);
     }
 protected:
-    void _sink_it(const std::string& msg) override
+    void sink_it_(const std::string& msg) override
     {
         _ofstream << msg;
         _ofstream.flush();
@@ -43,7 +44,7 @@ public:
     virtual ~rotating_file_sink_base()
     {}
 protected:
-    virtual void _sink_it(const std::string& msg) override
+    virtual void sink_it_(const std::string& msg) override
     {
         if (_should_rotate())
             _rotate();
@@ -69,10 +70,10 @@ public:
     }
 
 protected:
-    virtual void _sink_it(const std::string& msg) override
+    virtual void sink_it_(const std::string& msg) override
     {
         _current_size += msg.length();
-        rotating_file_sink_base::_sink_it(msg);
+        rotating_file_sink_base::sink_it_(msg);
     }
 
     bool _should_rotate() const override
