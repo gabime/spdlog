@@ -4,21 +4,32 @@
 #include "stdafx.h"
 
 
-void fn();
+
 int main(int argc, char* argv[])
 {
 
     c11log::logger logger("test");
 
-    auto sink = std::make_shared<c11log::sinks::stdout_sink>();
-    auto async = std::make_shared<c11log::sinks::async_sink>(100);
-    async->add_sink(sink);
+    auto screen_sink = std::make_shared<c11log::sinks::stdout_sink>();
+    auto file_sink = std::make_shared<c11log::sinks::midnight_file_sink>("logtest");
+    auto async = std::make_shared<c11log::sinks::async_sink>(1000);
+    async->add_sink(file_sink);
     logger.add_sink(async);
-    logger.info() << "Hello logger!";
-    utils::run(std::chrono::seconds(10), fn);
+    //logger.add_sink(file_sink);
+
+
+    auto fn = [&logger]()
+    {
+        logger.info() << "Hello logger!";
+    };
+    utils::bench("test log", std::chrono::seconds(3), fn);
+    logger.info() << "bye";
+    utils::bench("shutdown", [&async]() {
+        async->shutdown(std::chrono::seconds(10));
+    });
+
+
     return 0;
 }
 
-static void fn()
-{}
 

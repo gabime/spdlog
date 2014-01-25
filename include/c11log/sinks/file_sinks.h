@@ -125,7 +125,7 @@ private:
  */
 class midnight_file_sink:public details::rotating_file_sink_base {
 public:
-    midnight_file_sink(const std::string& base_filename, const std::string& extension):
+    midnight_file_sink(const std::string& base_filename, const std::string& extension = "txt"):
         _base_filename(base_filename),
         _extension(extension),
         _midnight_tp { _calc_midnight_tp() }

@@ -20,7 +20,7 @@ std::string format(const T& value)
     return ss.str();
 }
 
-inline void run(const std::chrono::milliseconds &duration, const std::function<void() >& fn)
+inline void bench(const std::string& fn_name, const std::chrono::milliseconds &duration, const std::function<void() >& fn)
 {
     using namespace std::chrono;
     typedef steady_clock the_clock;
@@ -38,10 +38,21 @@ inline void run(const std::chrono::milliseconds &duration, const std::function<v
         auto p = now - lastPrintTime;
         if (now - lastPrintTime >= print_interval)
         {
-            std::cout << format(counter) << " per sec" << std::endl;
+            std::cout << fn_name << ": " << format(counter) << " per sec" << std::endl;
             counter = 0;
             lastPrintTime = the_clock::now();
         }
     }
+}
+
+inline void bench(const std::string& fn_name,  const std::function<void() >& fn)
+{
+
+    using namespace std::chrono;
+    auto start = steady_clock::now();
+    fn();
+    auto delta = steady_clock::now() - start;
+
+    std::cout << fn_name << ": " << duration_cast<milliseconds>(delta).count() << " ms" << std::endl;
 }
 }
