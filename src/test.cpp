@@ -2,30 +2,38 @@
 //
 
 #include "stdafx.h"
+#include "c11log/logger.h"
+#include "c11log/sinks/async_sink.h"
+#include "c11log/sinks/file_sinks.h"
+#include "c11log/sinks/stdout_sinks.h"
+
+#include "utils.h"
 
 
 
 int main(int argc, char* argv[])
 {
-
-
+	int nthreads = argc > 1 ? atoi(argv[1]) : 1;
     auto null_sink = std::make_shared<c11log::sinks::null_sink>();
+    auto stdout_sink = std::make_shared<c11log::sinks::stdout_sink>();
     auto async = std::make_shared<c11log::sinks::async_sink>(100);
     auto fsink = std::make_shared<c11log::sinks::rotating_file_sink>("newlog", "txt", 1024*1024*10 , 2);
 
-    async->add_sink(fsink);
+    async->add_sink(null_sink);
 
     c11log::logger logger("test");
     logger.add_sink(async);
 
+	
     std::atomic<uint32_t> counter { 0 };
     auto counter_ptr = &counter;
-    for (int i = 0; i < 4; i++)
+    std::cout << "Starting " << nthreads << " threads.." << std::endl;
+    for (int i = 0; i < nthreads; i++)
     {
         new std::thread([&logger, counter_ptr]() {
             while (true)
             {
-                logger.info() << "Hello from thread" << std::this_thread::get_id();
+                logger.info() << "Hello from thread " << std::this_thread::get_id() << "\tcounter: " << counter_ptr->load();
                 (*counter_ptr)++;
             }
 
