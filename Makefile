@@ -27,4 +27,4 @@ os.o: src/os.cpp
 	
 .PHONY: clean
 clean:
-	rm -f *.o testlog
+	rm -f *.o libc11log.a testlog
