@@ -1,10 +1,10 @@
 CC	= g++
 CCFLAGS	= -std=c++11 -pthread -Iinclude -O3 -flto
 
-all: lib testlog
+all: testlog
 
 testlog: test.o lib
-	$(CC) -o $testlog test.o libc11log.a $(CCFLAGS) 
+	$(CC) -o testlog test.o libc11log.a $(CCFLAGS) 
 	
 lib: factory.o  formatters.o  line_logger.o os.o
 	ar rvs libc11log.a $^;
@@ -27,4 +27,4 @@ os.o: src/os.cpp
 	
 .PHONY: clean
 clean:
-	rm *.o
+	rm -f *.o testlog
