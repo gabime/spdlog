@@ -10,10 +10,10 @@ void c11log::formatters::format_time(const c11log::formatters::timepoint& tp, st
     int millis = static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000);
     //std::put_time(&tm, "[ %Y-%m-%d %H:%M:%S ]") - seems too slow
     char buf[64];
-    sprintf(buf, "[%d-%02d-%02d %02d:%02d:%02d.%03d]",
+    auto size = sprintf(buf, "[%d-%02d-%02d %02d:%02d:%02d.%03d]",
             tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
             tm.tm_hour, tm.tm_min, tm.tm_sec, millis);
-    dest << buf;
+    dest.write(buf, size);
 }
 
 void c11log::formatters::format_time(std::ostream& dest)

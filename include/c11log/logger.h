@@ -14,6 +14,8 @@
 #include "details/factory.h"
 
 
+
+
 namespace c11log {
 
 class logger {

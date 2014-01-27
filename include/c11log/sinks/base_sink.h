@@ -32,7 +32,7 @@ public:
 
 protected:
     virtual void sink_it_(const std::string& msg) = 0;
-    std::atomic<int> _level = level::INFO;
+    std::atomic<int> _level{level::INFO};
 };
 
 class null_sink:public base_sink {

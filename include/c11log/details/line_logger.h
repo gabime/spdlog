@@ -9,8 +9,9 @@ namespace details {
 
 class line_logger {
 public:
-    c11log::details::line_logger::line_logger(logger* callback_logger, level::level_enum msg_level);
-    c11log::details::line_logger::line_logger(logger* callback_logger):_callback_logger(nullptr) {};
+    line_logger(logger* callback_logger, level::level_enum msg_level);
+    line_logger(logger* callback_logger):_callback_logger(nullptr) {};
+    line_logger(const line_logger&){};
     ~line_logger();
 
     template<typename T>

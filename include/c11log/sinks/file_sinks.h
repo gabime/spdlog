@@ -150,9 +150,10 @@ private:
     static std::string _calc_filename(const std::string& basename, const std::string& extension)
     {
         std::ostringstream oss;
-        std::tm now_tm = c11log::details::os::localtime();
-        oss << basename << std::put_time(&now_tm, ".%Y-%m-%d.") << extension;
-        return oss.str();
+        std::tm tm = c11log::details::os::localtime();
+        char buf[32];
+	    sprintf(buf, ".%Y-%m-%d.", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+        return buf;
     }
 
     std::string _base_filename;
