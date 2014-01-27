@@ -152,7 +152,7 @@ private:
         std::tm tm = c11log::details::os::localtime();
         char buf[32];
 	    sprintf(buf, ".%d-%02d-%02d.", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
-        return basename+buf;
+        return basename+buf+extension;
     }
 
     std::string _base_filename;
