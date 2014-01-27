@@ -26,27 +26,37 @@ int main(int argc, char* argv[])
     logger.add_sink(async);
 	
     std::atomic<uint32_t> counter { 0 };
-    auto counter_ptr = &counter;
-    std::cout << "Starting " << nthreads << " threads.." << std::endl;
+    auto counter_ptr = &counter;    
+    std::atomic<bool> active{true};
+    auto active_ptr = &active;
+    
+    std::vector<std::thread*> threads;
+    std::cout << "Starting " << nthreads << " threads for 3 seconds.." << std::endl;
     for (int i = 0; i < nthreads; i++)
     {
-        new std::thread([&logger, counter_ptr]() {
-            while (true)
+        auto t = new std::thread([&logger, counter_ptr, active_ptr]() {
+            while (*active_ptr)
             {
                 logger.info() << "Hello from thread " << std::this_thread::get_id() << "\tcounter: " << counter_ptr->load();
                 (*counter_ptr)++;
-            }
+            }           
 
         });
+        threads.push_back(t);
     }
+    
     int seconds = 0;
-    while (seconds++ < 5)
+    while (seconds++ < 3)
     {
         counter = 0;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         std::cout << "Counter = " << utils::format(counter.load()) << std::endl;
     }
-    async->shutdown(std::chrono::seconds(10));
+	active = false;
+	for(auto t:threads)
+		t->join();
+    async->shutdown(std::chrono::seconds(1));
+
     return 0;
 }
 

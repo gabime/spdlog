@@ -7,9 +7,9 @@ OBJS_DEBUG = $(patsubst %.cpp,debug/%.o,$(_SOURCES))
 
 
 CXX	= g++
-CXXFLAGS	= -Wall -std=c++11 -pthread -I../../include 
-CXX_RELEASE_FLAGS = -O3 -flto
-CXX_DEBUG_FLAGS= -g
+CXXFLAGS	= -march=native -Wall -std=c++11 -pthread -I../../include 
+CXX_RELEASE_FLAGS = -O2 -flto
+CXX_DEBUG_FLAGS= -g -ggdb
 
 OUTLIB_RELEASE = libc11log.a
 OUTLIB_DEBUG = libc11log-debug.a
