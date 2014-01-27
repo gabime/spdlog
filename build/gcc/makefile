@@ -17,7 +17,7 @@ OUTLIB_DEBUG = libc11log-debug.a
 TEST_RELEASE = testme
 TEST_DEBUG = testme-debug
 
-.PHONY: all mkdirs release debug build clean
+.PHONY: all mkdirs release debug build clean rebuild
 
 all: release
 
@@ -48,5 +48,7 @@ debug/%.o: $(SRC_DIR)/%.cpp
 
 clean:
 	rm -rf release debug daily.* $(TEST_RELEASE) $(TEST_DEBUG) $(OUTLIB_RELEASE) $(OUTLIB_DEBUG)
+	
+rebuild: clean all
 	
 
