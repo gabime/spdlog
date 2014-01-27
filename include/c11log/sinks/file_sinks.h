@@ -109,15 +109,15 @@ private:
 /*
  * Thread safe file sink that closes the log file at midnight and opens new one
  */
-class midnight_file_sink:public base_sink {
+class daily_file_sink:public base_sink {
 public:
-    midnight_file_sink(const std::string& base_filename, const std::string& extension = "txt"):
+    daily_file_sink(const std::string& base_filename, const std::string& extension = "txt"):
         _base_filename(base_filename),
         _extension(extension),
         _midnight_tp { _calc_midnight_tp() }
 
     {
-        _ofstream.open(_calc_filename(_base_filename, _extension));
+        _ofstream.open(_calc_filename(_base_filename, _extension), std::ofstream::app);
     }
 
 protected:

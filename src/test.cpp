@@ -16,9 +16,9 @@ int main(int argc, char* argv[])
 	int nthreads = argc > 1 ? atoi(argv[1]) : 1;
     auto null_sink = std::make_shared<c11log::sinks::null_sink>();
     auto stdout_sink = std::make_shared<c11log::sinks::stdout_sink>();
-    auto async = std::make_shared<c11log::sinks::async_sink>(100);
+    auto async = std::make_shared<c11log::sinks::async_sink>(1000);
     //auto fsink = std::make_shared<c11log::sinks::rotating_file_sink>("newlog", "txt", 1024*1024*10 , 2);
-    auto fsink = std::make_shared<c11log::sinks::midnight_file_sink>("midnight", "txt");
+    auto fsink = std::make_shared<c11log::sinks::daily_file_sink>("daily", "txt");
 
     async->add_sink(fsink);
 
@@ -39,7 +39,8 @@ int main(int argc, char* argv[])
 
         });
     }
-    while (true)
+    int seconds = 0;
+    while (seconds++ < 5)
     {
         counter = 0;
         std::this_thread::sleep_for(std::chrono::seconds(1));
