@@ -10,7 +10,7 @@ namespace c11log
 		namespace os
 		{			
 			std::tm localtime(const std::time_t &time_t);			
-			std::tm localtime();
+			std::tm localtime(); 
 			
 		}		
 	}

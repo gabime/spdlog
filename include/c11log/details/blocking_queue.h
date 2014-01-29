@@ -14,6 +14,7 @@
 namespace c11log {
 namespace details
 {
+   
 template<typename T>
 class blocking_queue {
 public:
@@ -58,7 +59,7 @@ public:
     // If the queue is full, block the calling thread until there is room.
     void push(const T& item)
     {
-        while (!push(item, std::chrono::hours::max()));
+        while (!push(item, one_hour));
     }
 
     // Pop a copy of the front item in the queue into the given item ref.
@@ -87,7 +88,7 @@ public:
     // If the queue is empty, block the calling thread util there is item to pop.
     void pop(T& item)
     {
-        while (!pop(item, std::chrono::hours::max()));
+        while (!pop(item, one_hour));
     }
 
     // Clear the queue
@@ -102,7 +103,10 @@ private:
     std::queue<T> q_;
     std::mutex mutex_;
     std::condition_variable item_pushed_cond_;
-    std::condition_variable item_popped_cond_;
+    std::condition_variable item_popped_cond_;         
+    static constexpr auto one_hour = std::chrono::seconds(3);
+   
 };
+
 }
 }

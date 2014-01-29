@@ -1,4 +1,5 @@
 SRC_DIR=../../src
+
 _SOURCES = factory.cpp formatters.cpp line_logger.cpp os.cpp
 
 SOURCES = $(patsubst %,$(SRC_DIR)/%,$(_SOURCES))
@@ -8,8 +9,8 @@ OBJS_DEBUG = $(patsubst %.cpp,debug/%.o,$(_SOURCES))
 
 CXX	= g++
 CXXFLAGS	= -march=native -Wall -std=c++11 -pthread -I../../include 
-CXX_RELEASE_FLAGS = -O2 -flto
-CXX_DEBUG_FLAGS= -g -ggdb
+CXX_RELEASE_FLAGS = -O2 -flto 
+CXX_DEBUG_FLAGS= -g 
 
 OUTLIB_RELEASE = libc11log.a
 OUTLIB_DEBUG = libc11log-debug.a
@@ -31,7 +32,6 @@ debug: mkdirs build-debug
 mkdirs:
 	@mkdir -p release debug
 
-
 build-release: $(OBJS_RELEASE)	
 	ar rs $(OUTLIB_RELEASE) $^
 	$(CXX) $(SRC_DIR)/test.cpp $(OUTLIB_RELEASE) -o $(TEST_RELEASE) $(CXXFLAGS)
@@ -40,15 +40,17 @@ build-debug: $(OBJS_DEBUG)
 	ar rs $(OUTLIB_DEBUG) $^
 	$(CXX) $(SRC_DIR)/test.cpp $(OUTLIB_DEBUG) -o $(TEST_DEBUG) $(CXXFLAGS)
 
+
 release/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) -c $< -o $@ $(CXXFLAGS)
+			
 	
-debug/%.o: $(SRC_DIR)/%.cpp
+	
+debug/%.o: $(SRC_DIR)/%.cpp 
 	$(CXX) -c $< -o $@ $(CXXFLAGS)		
 
 clean:
 	rm -rf release debug daily.* $(TEST_RELEASE) $(TEST_DEBUG) $(OUTLIB_RELEASE) $(OUTLIB_DEBUG)
 	
 rebuild: clean all
-	
 
