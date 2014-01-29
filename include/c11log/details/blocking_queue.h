@@ -104,8 +104,7 @@ private:
     std::mutex mutex_;
     std::condition_variable item_pushed_cond_;
     std::condition_variable item_popped_cond_;         
-    static constexpr auto one_hour = std::chrono::seconds(3);
-   
+    static constexpr auto one_hour = std::chrono::hours(1);   
 };
 
 }
