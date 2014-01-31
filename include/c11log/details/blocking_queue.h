@@ -37,8 +37,8 @@ public:
     // Push copy of item into the back of the queue. 
     // If the queue is full, block the calling thread util there is room or timeout have passed.
     // Return: false on timeout, true on successful push.
-    template<class Duration_Rep, class Duration_Period>
-    bool push(const T& item, const std::chrono::duration<Duration_Rep, Duration_Period>& timeout)
+    template<typename Duration_Rep, typename Duration_Period, typename TT>
+    bool push(TT&& item, const std::chrono::duration<Duration_Rep, Duration_Period>& timeout)
     {
         std::unique_lock<std::mutex> ul(mutex_);
         if (q_.size() >= max_size_)
@@ -46,7 +46,7 @@ public:
             if (!item_popped_cond_.wait_until(ul, clock::now() + timeout, [this]() { return this->q_.size() < this->max_size_; }))
                 return false;
         }
-        q_.push(item);
+        q_.push(std::forward<TT>(item));
         if (q_.size() <= 1)
         {
             ul.unlock(); //So the notified thread will have better chance to accuire the lock immediatly..
@@ -57,9 +57,10 @@ public:
 
     // Push copy of item into the back of the queue. 
     // If the queue is full, block the calling thread until there is room.
-    void push(const T& item)
+    template<typename TT>
+    void push(TT&& item)
     {
-        while (!push(item, one_hour));
+        while (!push(std::forward<TT>(item), one_hour));
     }
 
     // Pop a copy of the front item in the queue into the given item ref.
@@ -104,7 +105,7 @@ private:
     std::mutex mutex_;
     std::condition_variable item_pushed_cond_;
     std::condition_variable item_popped_cond_;         
-    static constexpr auto one_hour = std::chrono::hours(1);   
+    const std::chrono::hours one_hour{1};
 };
 
 }
