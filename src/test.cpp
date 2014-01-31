@@ -15,26 +15,62 @@
 std::atomic<uint64_t> push_count, pop_count;
 std::atomic<bool> active;
 
-using Q = c11log::details::blocking_queue<std::string>;
+
+
+class A
+{
+public:
+	A()
+	{
+		std::cout << "Regular ctor\n";
+	}
+	A(const A&) 
+	{
+		std::cout << "Copy ctor\n";
+	}
+	A& operator=(const A&)
+	{
+		std::cout << "operator=\n";
+		return *this;
+	}
+	
+	A& operator=(A&&)
+	{
+		std::cout << "operator=&&\n";
+		return *this;
+	}
+	
+	A(A&& a)
+	{
+		std::cout << "Move ctor\n";
+	}
+	~A()
+	{
+		//std::cout << "Dtor\n";
+	}
+			
+};
+
+using std::string;
 using std::chrono::seconds;
+using Q = c11log::details::blocking_queue<string>;
 
 void pusher(Q* q)
 {
+	string a = "Hello";
 	while(active)
 	{
-		//if(q->push("Hello", seconds(10)))
-		q->push("hello");
+		q->push(a);
 		++push_count;
 	}
 
 }
 void popper(Q* q) 
 {
-	std::string output;
+	string output;
 	while(active)
-	{
-		//if(q->pop(output, seconds(10)))
-		q->pop(output);
+	{		
+		q->pop(output);		
 		++pop_count;
 	}
 }
@@ -44,7 +80,14 @@ void testq(int size, int pushers, int poppers)
 
 	active = true;			
 	Q q{static_cast<Q::size_type>(size)};		
-
+	/*
+	A a;	
+	q.push(a);
+	std::cout << "Befor pop..\n";
+	q.pop(a);
+	return;
+	*/
+	
 	for(int i = 0; i < poppers; i++)
 		new std::thread(std::bind(popper, &q));
 		
@@ -69,10 +112,12 @@ void testq(int size, int pushers, int poppers)
 		cout << "---------------------------------------------------------------------" << endl;		
 	}
 		
-
 }
+
+
 int main(int argc, char* argv[])
 {
+
 	if(argc !=4)
 	{
 		std::cerr << "Usage: " << argv[0] << " qsize, pushers, poppers" << std::endl;

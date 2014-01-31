@@ -75,7 +75,7 @@ public:
             if (!item_pushed_cond_.wait_until(ul, clock::now() + timeout, [this]() { return !this->q_.empty(); }))
                 return false;
         }
-        item = q_.front();
+        item = std::move(q_.front());        
         q_.pop();
         if (q_.size() >= max_size_ - 1)
         {
