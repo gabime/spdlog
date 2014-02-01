@@ -70,7 +70,8 @@ void popper(Q* q)
 	string output;
 	while(active)
 	{		
-		q->pop(output);			
+		//q->pop(output);			
+		q->clear();
 		++pop_count;
 	}
 }
