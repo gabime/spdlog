@@ -4,7 +4,6 @@
 // A blocking multi-consumer/multi-producer thread safe queue.
 // Has max capacity and supports timeout on push or pop operations.
 
-#include <cstddef>
 #include <chrono>
 #include <memory>
 #include <queue>
