@@ -70,7 +70,7 @@ void popper(Q* q)
 	string output;
 	while(active)
 	{		
-		q->pop(output);		
+		q->pop(output);			
 		++pop_count;
 	}
 }
@@ -80,13 +80,6 @@ void testq(int size, int pushers, int poppers)
 
 	active = true;			
 	Q q{static_cast<Q::size_type>(size)};		
-	/*
-	A a;	
-	q.push(a);
-	std::cout << "Befor pop..\n";
-	q.pop(a);
-	return;
-	*/
 	
 	for(int i = 0; i < poppers; i++)
 		new std::thread(std::bind(popper, &q));

@@ -95,8 +95,11 @@ public:
     // Clear the queue
     void clear()
     {
-        T item;
-        while (pop(item, std::chrono::milliseconds(0)));        
+    	{
+			std::unique_lock<std::mutex> ul(mutex_);
+			q_ = queue_t{};
+		}
+		item_popped_cond_.notify_all();	    
     }
 
 private:
