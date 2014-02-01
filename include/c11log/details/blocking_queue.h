@@ -97,7 +97,7 @@ public:
     {
     	{
 			std::unique_lock<std::mutex> ul(mutex_);
-			q_ = queue_t{};
+			q_.swap(queue_t());
 		}
 		item_popped_cond_.notify_all();	    
     }

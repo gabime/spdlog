@@ -86,9 +86,7 @@ void testq(int size, int pushers, int poppers)
 		
 	for(int i = 0; i < pushers; i++)
 		new std::thread(std::bind(pusher, &q));
-	
-	
-
+		
 	while(active)
 	{
 		using std::endl;
