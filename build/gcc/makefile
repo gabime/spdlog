@@ -9,7 +9,7 @@ OBJS_DEBUG = $(patsubst %.cpp,debug/%.o,$(_SOURCES))
 
 CXX	= g++
 CXXFLAGS	= -march=native -Wall -std=c++11 -pthread -I../../include 
-CXX_RELEASE_FLAGS = -O2 -flto 
+CXX_RELEASE_FLAGS = -O2 -flto -g
 CXX_DEBUG_FLAGS= -g 
 
 OUTLIB_RELEASE = libc11log.a

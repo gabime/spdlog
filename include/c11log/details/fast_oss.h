@@ -7,12 +7,12 @@ namespace details {
 
 class str_devicebuf:public std::streambuf {
 public:
-    str_devicebuf()
-    {
-        _str.reserve(128);
-    }
+    str_devicebuf() = default;
+    ~str_devicebuf() = default;
+    str_devicebuf(const str_devicebuf&) = delete;	
+    str_devicebuf& operator=(const str_devicebuf&) = delete;
 
-    const std::string& str_ref()
+    const std::string& str_ref() const
     {
         return _str;
     }
@@ -46,31 +46,28 @@ private:
 
 class fast_oss:public std::ostream {
 public:
-    fast_oss():std::ostream(&_dev)
-    {}
-    ~fast_oss()
-    {}
+    fast_oss():std::ostream(&_dev){}
+    ~fast_oss() = default;
+    fast_oss(const fast_oss&) = delete;
+    fast_oss operator=(const fast_oss&) = delete;
+   
 
     const std::string& str_ref() const
-    {
-        auto mydevice = static_cast<str_devicebuf*>(rdbuf());
-        return mydevice->str_ref();
+    {        
+        return _dev.str_ref();
     }
 
     const std::string str() const
-    {
-        auto mydevice = static_cast<str_devicebuf*>(rdbuf());
-        return mydevice->str_ref();
+    {     
+        return _dev.str_ref();
     }
 
     void clear()
     {
-        auto mydevice = static_cast<str_devicebuf*>(rdbuf());
-        mydevice->clear();
+        _dev.clear();
     }
 private:
     str_devicebuf _dev;
-
 };
 }
 }
