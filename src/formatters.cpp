@@ -1,23 +1,31 @@
 #include "stdafx.h"
+#include <memory.h>
+
 #include "c11log/formatters/formatters.h"
 #include "c11log/level.h"
+
+
+
+static thread_local std::tm last_tm;
+static thread_local char timestamp_cache[64];
 
 void c11log::formatters::format_time(const c11log::formatters::timepoint& tp, std::ostream &dest)
 {
 
-    std::tm tm = details::os::localtime(std::chrono::system_clock::to_time_t(tp));
-    //get ms
-    //auto duration = tp.time_since_epoch();
-    //int millis = static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000);
-    
-    
-    char buf[64];
-    auto size = sprintf(buf, "[%d-%02d-%02d %02d:%02d:%02d]",
-            tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
-            tm.tm_hour, tm.tm_min, tm.tm_sec);
-    
-	dest.write(buf, size);
-   
+    auto tm = details::os::localtime(std::chrono::system_clock::to_time_t(tp));
+    // Cache timestamp string of last second
+    if(memcmp(&tm, &last_tm, sizeof(tm)))
+    {
+		sprintf(timestamp_cache, "[%d-%02d-%02d %02d:%02d:%02d]", tm.tm_year + 1900,
+			tm.tm_mon + 1,
+			tm.tm_mday,
+			tm.tm_hour,
+			tm.tm_min,
+			tm.tm_sec);
+		last_tm = tm;
+    }
+           
+	dest << timestamp_cache;		
 }
 
 void c11log::formatters::format_time(std::ostream& dest)
