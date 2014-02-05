@@ -13,12 +13,11 @@ static thread_local char timestamp_cache[64];
 void c11log::formatters::format_time(const time_point& tp, std::ostream &dest)
 {
 
-	using namespace std::chrono;
-
     // Cache timestamp string of last second
+    using namespace std::chrono;
 	if(duration_cast<seconds>(tp-last_tp).count() >= 1)
     {
-    	auto tm = details::os::localtime(std::chrono::system_clock::to_time_t(tp));
+    	auto tm = details::os::localtime(clock::to_time_t(tp));
 		sprintf(timestamp_cache, "[%d-%02d-%02d %02d:%02d:%02d]", tm.tm_year + 1900,
 			tm.tm_mon + 1,
 			tm.tm_mday,
