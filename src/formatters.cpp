@@ -6,31 +6,34 @@
 
 
 
-static thread_local std::tm last_tm;
+
+static thread_local c11log::formatters::time_point last_tp;
 static thread_local char timestamp_cache[64];
 
-void c11log::formatters::format_time(const c11log::formatters::timepoint& tp, std::ostream &dest)
+void c11log::formatters::format_time(const time_point& tp, std::ostream &dest)
 {
 
-    auto tm = details::os::localtime(std::chrono::system_clock::to_time_t(tp));
+	using namespace std::chrono;
+
     // Cache timestamp string of last second
-    if(memcmp(&tm, &last_tm, sizeof(tm)))
+	if(duration_cast<seconds>(tp-last_tp).count() >= 1)
     {
+    	auto tm = details::os::localtime(std::chrono::system_clock::to_time_t(tp));
 		sprintf(timestamp_cache, "[%d-%02d-%02d %02d:%02d:%02d]", tm.tm_year + 1900,
 			tm.tm_mon + 1,
 			tm.tm_mday,
 			tm.tm_hour,
 			tm.tm_min,
 			tm.tm_sec);
-		last_tm = tm;
+		last_tp = tp;
     }
-           
+
 	dest << timestamp_cache;		
 }
 
 void c11log::formatters::format_time(std::ostream& dest)
 {
-    return format_time(std::chrono::system_clock::now(), dest);
+    return format_time(c11log::formatters::clock::now(), dest);
 }
 
 

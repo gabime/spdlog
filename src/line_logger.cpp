@@ -7,7 +7,7 @@ c11log::details::line_logger::line_logger(logger* callback_logger, level::level_
     if (callback_logger) {
         callback_logger->formatter_->format_header(callback_logger->logger_name_,
                 msg_level,
-                c11log::formatters::timepoint::clock::now(),
+                c11log::formatters::clock::now(),
                 _oss);
     }
 }

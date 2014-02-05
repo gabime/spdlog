@@ -1,6 +1,5 @@
 // test.cpp : Defines the entry point for the console application.
 //
-
 #include "stdafx.h"
 #include <functional>
 
@@ -27,31 +26,12 @@ void pusher(Q* q)
 	while(active)
 	{
 		logger.info()<<"Hello logger!";
-		++push_count;
-
+		++push_count;		
 	}
+
 		
-
-	/*
-	string a = "Hello";
-	while(active)
-	{
-		q->push(a);
-		++push_count;
-	}
-	*/
-
 }
-void popper(Q* q) 
-{
-	string output;
-	while(active)
-	{				
-		q->pop(output);
-		++pop_count;
-	}
-	
-}
+
 
 void testq(int size, int pushers, int poppers)
 {
@@ -107,11 +87,8 @@ int main(int argc, char* argv[])
     auto async = std::make_shared<c11log::sinks::async_sink>(1000);
     auto fsink = std::make_shared<c11log::sinks::rotating_file_sink>("newlog", "txt", 1024*1024*10 , 2);
     //auto fsink = std::make_shared<c11log::sinks::daily_file_sink>("daily", "txt");
-
-	
-       
-	//Async logger
-	async->add_sink(null_sink);	
+	       
+	async->add_sink(fsink);	
 	auto &logger = c11log::get_logger("async");
 	logger.add_sink(async);
 	    
