@@ -26,10 +26,13 @@ public:
 	typedef std::shared_ptr<sinks::base_sink>  sink_ptr_t;
 	typedef std::vector<sink_ptr_t> sinks_vector_t;
 
-	explicit logger(const std::string& name) : logger_name_(name),
-		formatter_(std::make_unique<formatters::default_formatter>()) {
-		atomic_level_.store(level::INFO);
-	}
+	explicit logger(const std::string& name) :
+		logger_name_(name),
+		formatter_(std::make_unique<formatters::default_formatter>()),
+		sinks_(),
+		mutex_(),
+		atomic_level_(level::INFO)
+		{}
 
 	~logger() = default;
 
@@ -54,7 +57,6 @@ public:
 
 private:
 	friend details::line_logger;
-
 
 	std::string logger_name_ = "";
 	std::unique_ptr<c11log::formatters::formatter> formatter_;

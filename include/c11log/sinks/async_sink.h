@@ -31,7 +31,7 @@ protected:
 
 private:
     c11log::logger::sinks_vector_t sinks_;
-    std::atomic<bool> active_ { true };
+    std::atomic<bool> active_;
     c11log::details::blocking_queue<std::string> q_;
     std::thread back_thread_;
     //Clear all remaining messages(if any), stop the back_thread_ and join it
@@ -45,7 +45,9 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 
 inline c11log::sinks::async_sink::async_sink(const std::size_t max_queue_size)
-    :q_(max_queue_size),
+	:sinks_(),
+	active_(true),
+    q_(max_queue_size),
      back_thread_(&async_sink::thread_loop_, this)
 {}
 

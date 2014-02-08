@@ -13,7 +13,10 @@ namespace details
 class line_logger
 {
 public:
-	line_logger(logger* callback_logger, level::level_enum msg_level) {
+	line_logger(logger* callback_logger, level::level_enum msg_level):
+		_callback_logger(callback_logger),
+		_oss(),
+		_level(msg_level) {
 		callback_logger->formatter_->format_header(callback_logger->logger_name_,
 		        msg_level,
 		        c11log::formatters::clock::now(),
@@ -24,7 +27,9 @@ public:
 		_callback_logger(other._callback_logger),
 		_oss(other._oss),
 		_level(other._level) {};
+
 	line_logger& operator=(const line_logger&) = delete;
+
 	~line_logger() {
 		if (_callback_logger) {
 			_oss << '\n';

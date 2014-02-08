@@ -53,7 +53,7 @@ public:
 	fast_oss():std::ostream(&_dev) {}
 	~fast_oss() = default;
 	fast_oss(const fast_oss& other):std::basic_ios<char>(), std::ostream(),_dev(other._dev) {}
-	fast_oss operator=(const fast_oss& other)
+	fast_oss& operator=(const fast_oss& other)
 	{
 		if(&other != this)
 			_dev = other._dev;
