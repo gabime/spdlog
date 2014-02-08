@@ -19,5 +19,6 @@ c11log::details::factory::logger_ptr c11log::details::factory::get_logger(const 
 c11log::details::factory & c11log::details::factory::instance()
 {
 	static c11log::details::factory instance;
+
 	return instance;
 }

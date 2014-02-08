@@ -37,7 +37,7 @@ protected:
 
 class null_sink:public base_sink {
 protected:
-    void sink_it_(const std::string& msg) override
+    void sink_it_(const std::string& ) override
     {}
 };
 }

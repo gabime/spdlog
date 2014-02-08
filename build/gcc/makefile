@@ -1,6 +1,6 @@
 SRC_DIR=../../src
 
-_SOURCES = factory.cpp formatters.cpp line_logger.cpp os.cpp
+_SOURCES = factory.cpp formatters.cpp os.cpp
 
 SOURCES = $(patsubst %,$(SRC_DIR)/%,$(_SOURCES))
 OBJS_RELEASE = $(patsubst %.cpp,release/%.o,$(_SOURCES))
@@ -8,7 +8,7 @@ OBJS_DEBUG = $(patsubst %.cpp,debug/%.o,$(_SOURCES))
 
 
 CXX	= g++
-CXXFLAGS	= -march=native -Wall -std=c++11 -pthread -I../../include 
+CXXFLAGS	= -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -I../../include 
 CXX_RELEASE_FLAGS = -O2 -flto -g
 CXX_DEBUG_FLAGS= -g 
 

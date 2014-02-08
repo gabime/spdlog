@@ -1,30 +1,48 @@
 #pragma once
 
 #include "../level.h"
+#include "../logger.h"
 #include "fast_oss.h"
 
-namespace c11log {
+namespace c11log
+{
 class logger;
-namespace details {
+namespace details
+{
 
-class line_logger {
+class line_logger
+{
 public:
-    line_logger(logger* callback_logger, level::level_enum msg_level);
-    line_logger(logger* callback_logger):_callback_logger(nullptr) {};
-    line_logger(const line_logger&){};
-    ~line_logger();
+	line_logger(logger* callback_logger, level::level_enum msg_level) {
+		callback_logger->formatter_->format_header(callback_logger->logger_name_,
+		        msg_level,
+		        c11log::formatters::clock::now(),
+		        _oss);
+	}
+	line_logger(logger*):_callback_logger(nullptr) {};
+	line_logger(const line_logger& other):
+		_callback_logger(other._callback_logger),
+		_oss(other._oss),
+		_level(other._level) {};
+	line_logger& operator=(const line_logger&) = delete;
+	~line_logger() {
+		if (_callback_logger) {
+			_oss << '\n';
+			_callback_logger->log_it_(_oss.str_ref());
+		}
+	}
 
-    template<typename T>
-    line_logger& operator<<(const T& msg)
-    {
-        if (_callback_logger)
-            _oss << msg;
-        return *this;
-    }
+	template<typename T>
+	line_logger& operator<<(const T& msg) {
+		if (_callback_logger)
+			_oss << msg;
+		return *this;
+	}
 
 private:
-    logger* _callback_logger;
-    details::fast_oss _oss;
+	logger* _callback_logger;
+	details::fast_oss _oss;
+	level::level_enum _level;
 
 };
 } //Namespace details
