@@ -84,10 +84,10 @@ int main(int argc, char* argv[])
     auto null_sink = std::make_shared<c11log::sinks::null_sink>();
     auto stdout_sink = std::make_shared<c11log::sinks::stdout_sink>();
     auto async = std::make_shared<c11log::sinks::async_sink>(1000);
-    auto fsink = std::make_shared<c11log::sinks::rotating_file_sink>("newlog", "txt", 1024*1024*10 , 2);
+    auto fsink = std::make_shared<c11log::sinks::rotating_file_sink>("newlog", "txt", 1024*1024*50 , 5);
     //auto fsink = std::make_shared<c11log::sinks::daily_file_sink>("daily", "txt");
 
-	async->add_sink(null_sink);
+	async->add_sink(fsink);
 	auto &logger = c11log::get_logger("async");
 	logger.add_sink(async);
 

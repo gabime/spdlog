@@ -4,18 +4,15 @@
 #include "c11log/formatters/formatters.h"
 #include "c11log/level.h"
 
+thread_local c11log::formatters::time_point last_tp;
+thread_local char timestamp_cache[64];
 
-
-
-static thread_local c11log::formatters::time_point last_tp;
-static thread_local char timestamp_cache[64];
-
-void c11log::formatters::format_time(const time_point& tp, std::ostream &dest)
+void c11log::formatters::default_formatter::_format_time(const time_point& tp, std::ostream &dest)
 {
 
     // Cache timestamp string of last second
     using namespace std::chrono;
-	if(duration_cast<seconds>(tp-last_tp).count() >= 1)
+	if(duration_cast<milliseconds>(tp-last_tp).count() >= 950)
     {
     	auto tm = details::os::localtime(clock::to_time_t(tp));
 		sprintf(timestamp_cache, "[%d-%02d-%02d %02d:%02d:%02d]", tm.tm_year + 1900,
@@ -26,13 +23,7 @@ void c11log::formatters::format_time(const time_point& tp, std::ostream &dest)
 			tm.tm_sec);
 		last_tp = tp;
     }
-
 	dest << timestamp_cache;		
-}
-
-void c11log::formatters::format_time(std::ostream& dest)
-{
-    return format_time(c11log::formatters::clock::now(), dest);
 }
 
 
