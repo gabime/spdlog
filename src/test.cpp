@@ -32,7 +32,7 @@ void pusher(Q* )
 }
 
 
-void testq(int size, int pushers, int poppers)
+void testq(int size, int pushers /*int poppers*/)
 {
 
 	active = true;
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 	}
 	int qsize = atoi(argv[1]);
 	int pushers = atoi(argv[2]);
-	int poppers = atoi(argv[3]);
+	//int poppers = atoi(argv[3]);
 
 	//testq(qsize, pushers, poppers);
 
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 	auto &logger = c11log::get_logger("async");
 	logger.add_sink(async);
 
-    testq(qsize, pushers, poppers);
+    testq(qsize, pushers);
 
 }
 

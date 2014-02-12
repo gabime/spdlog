@@ -45,7 +45,6 @@ public:
 		_max_size(max_size),
 		_max_files(max_files),
 		_current_size(0),
-		_index(0),
 		mutex_(),
 		_ofstream(_calc_filename(_base_filename, 0, _extension))
 	{}
@@ -97,7 +96,6 @@ private:
 	std::size_t _max_size;
 	std::size_t _max_files;
 	std::size_t _current_size;
-	std::size_t _index;
 	std::mutex mutex_;
 	std::ofstream _ofstream;
 
