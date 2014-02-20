@@ -90,7 +90,6 @@ private:
 		}
 		_ofstream.open(_calc_filename(_base_filename, 0, _extension));
 	}
-
 	std::string _base_filename;
 	std::string _extension;
 	std::size_t _max_size;
@@ -98,7 +97,6 @@ private:
 	std::size_t _current_size;
 	std::mutex mutex_;
 	std::ofstream _ofstream;
-
 };
 
 /*

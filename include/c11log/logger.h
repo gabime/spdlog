@@ -164,3 +164,4 @@ inline c11log::logger& c11log::get_logger(const std::string& name)
 {
 	return *(c11log::details::factory::instance().get_logger(name));
 }
+

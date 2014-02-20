@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
     auto fsink = std::make_shared<c11log::sinks::rotating_file_sink>("newlog", "txt", 1024*1024*50 , 5);
     //auto fsink = std::make_shared<c11log::sinks::daily_file_sink>("daily", "txt");
 
-	async->add_sink(fsink);
+	async->add_sink(null_sink);
 	auto &logger = c11log::get_logger("async");
 	logger.add_sink(async);
 
