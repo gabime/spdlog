@@ -73,10 +73,7 @@ int main(int argc, char* argv[])
 	}
 	int qsize = atoi(argv[1]);
 	int pushers = atoi(argv[2]);
-	//int poppers = atoi(argv[3]);
-
-	//testq(qsize, pushers, poppers);
-
+	
 
 	using namespace std::chrono;
 
@@ -84,14 +81,13 @@ int main(int argc, char* argv[])
     auto null_sink = std::make_shared<c11log::sinks::null_sink>();
     auto stdout_sink = std::make_shared<c11log::sinks::stdout_sink>();
     auto async = std::make_shared<c11log::sinks::async_sink>(1000);
-    auto fsink = std::make_shared<c11log::sinks::rotating_file_sink>("newlog", "txt", 1024*1024*50 , 5);
-    //auto fsink = std::make_shared<c11log::sinks::daily_file_sink>("daily", "txt");
+    auto fsink = std::make_shared<c11log::sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5);
+    
 
-	async->add_sink(null_sink);
+	async->add_sink(fsink);
 	auto &logger = c11log::get_logger("async");
 	logger.add_sink(async);
 
     testq(qsize, pushers);
-
 }
 
