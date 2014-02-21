@@ -11,8 +11,7 @@
 namespace c11log {
 namespace sinks {
 
-class async_sink : public base_sink
-{
+class async_sink : public base_sink {
 public:
     using size_type = c11log::details::blocking_queue<std::string>::size_type;
 
@@ -45,9 +44,9 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 
 inline c11log::sinks::async_sink::async_sink(const std::size_t max_queue_size)
-	:sinks_(),
-	active_(true),
-    q_(max_queue_size),
+    :sinks_(),
+     active_(true),
+     q_(max_queue_size),
      back_thread_(&async_sink::thread_loop_, this)
 {}
 
@@ -62,15 +61,12 @@ inline void c11log::sinks::async_sink::sink_it_(const std::string& msg)
 
 inline void c11log::sinks::async_sink::thread_loop_()
 {
-	constexpr auto pop_timeout = std::chrono::seconds(1);
+    constexpr auto pop_timeout = std::chrono::seconds(1);
     std::string msg;
-    
-    while (active_)
-    {
-        if (q_.pop(msg, pop_timeout))
-        {
-            for (auto &sink : sinks_)
-            {
+
+    while (active_) {
+        if (q_.pop(msg, pop_timeout)) {
+            for (auto &sink : sinks_) {
                 sink->log(msg, static_cast<level::level_enum>(_level.load()));
                 if (!active_)
                     return;
@@ -93,8 +89,7 @@ inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr_t sink_ptr)
 inline void c11log::sinks::async_sink::shutdown(const std::chrono::seconds &timeout)
 {
     auto until = std::chrono::system_clock::now() + timeout;
-    while (q_.size() > 0 && std::chrono::system_clock::now() < until)
-    {
+    while (q_.size() > 0 && std::chrono::system_clock::now() < until) {
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
     shutdown_();
@@ -102,8 +97,7 @@ inline void c11log::sinks::async_sink::shutdown(const std::chrono::seconds &time
 
 inline void c11log::sinks::async_sink::shutdown_()
 {
-    if(active_)
-    {
+    if(active_) {
         active_ = false;
         if (back_thread_.joinable())
             back_thread_.join();

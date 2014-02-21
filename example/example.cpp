@@ -1,6 +1,6 @@
-// test.cpp : Defines the entry point for the console application.
+// example.cpp : Simple logger example
 //
-#include "stdafx.h"
+#include <string>
 #include <functional>
 
 #include "c11log/logger.h"
@@ -10,84 +10,63 @@
 
 #include "utils.h"
 
-
-std::atomic<uint64_t> push_count, pop_count;
+std::atomic<uint64_t> log_count;
 std::atomic<bool> active;
 
-
-
-using std::string;
 using std::chrono::seconds;
-using Q = c11log::details::blocking_queue<string>;
 
-void pusher(Q* )
+void logging_thread()
 {
-	auto &logger = c11log::get_logger("async");
-	while(active)
-	{
-		logger.info()<<"Hello logger!";
-		++push_count;
-	}
-
+    auto &logger = c11log::get_logger("async");
+    while(active) {
+        logger.info()<<"Hello logger!";
+        ++log_count;
+    }
 }
 
 
-void testq(int size, int pushers /*int poppers*/)
+void testlog(int threads)
 {
 
-	active = true;
-	Q q{static_cast<Q::size_type>(size)};
+    active = true;
 
-	/*
-	for(int i = 0; i < poppers; i++)
-		testq(qsize, pushers, poppers);
-	*/
-	for(int i = 0; i < pushers; i++)
-		new std::thread(std::bind(pusher, &q));
+    for(int i = 0; i < threads; i++)
+        new std::thread(std::bind(logging_thread));
 
-	while(active)
-	{
-		using std::endl;
-		using std::cout;
-		using utils::format;
+    while(active) {
+        using std::endl;
+        using std::cout;
+        using utils::format;
 
-		push_count = 0;
-		pop_count = 0;
-		std::this_thread::sleep_for(seconds(1));
-		cout << "Pushes/sec =\t" << format(push_count.load()) << endl;
-		//cout << "Pops/sec =\t" << format(pop_count.load()) << endl << endl;
-		//cout << "Total/sec =\t" << format(push_count+pop_count) << endl;
-		cout << "Queue size =\t" << format(q.size()) << endl;
-		cout << "---------------------------------------------------------------------" << endl;
-	}
+        log_count = 0;
+        std::this_thread::sleep_for(seconds(1));
+        cout << "Logs/sec =\t" << format(log_count.load()) << endl;
+    }
 }
 
 
 int main(int argc, char* argv[])
 {
+    using namespace std::chrono;
 
-	if(argc !=4)
-	{
-		std::cerr << "Usage: " << argv[0] << " qsize, pushers, poppers" << std::endl;
-		return 0;
-	}
-	int qsize = atoi(argv[1]);
-	int pushers = atoi(argv[2]);
-	
+    if(argc !=3) {
+        std::cerr << "Usage: " << argv[0] << " qsize, threads" << std::endl;
+        return 0;
+    }
+    int qsize = atoi(argv[1]);
+    int threads = atoi(argv[2]);
 
-	using namespace std::chrono;
+    using namespace c11log::sinks;
+    auto null_sink = std::make_shared<null_sink>();
+    auto stdout_sink = std::make_shared<stdout_sink>();
+    auto async = std::make_shared<async_sink>(qsize);
+    auto fsink = std::make_shared<rotating_file_sink>("example_log", "txt", 1024*1024*50 , 5);
 
+    async->add_sink(fsink);
 
-    auto null_sink = std::make_shared<c11log::sinks::null_sink>();
-    auto stdout_sink = std::make_shared<c11log::sinks::stdout_sink>();
-    auto async = std::make_shared<c11log::sinks::async_sink>(1000);
-    auto fsink = std::make_shared<c11log::sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5);
-    
+    auto &logger = c11log::get_logger("async");
+    logger.add_sink(async);
 
-	async->add_sink(fsink);
-	auto &logger = c11log::get_logger("async");
-	logger.add_sink(async);
-
-    testq(qsize, pushers);
+    testlog(threads);
 }
 

@@ -2,80 +2,71 @@
 
 #include<streambuf>
 #include<string>
-namespace c11log
-{
-namespace details
-{
+namespace c11log {
+namespace details {
 
-class str_devicebuf:public std::streambuf
-{
+class str_devicebuf:public std::streambuf {
 public:
-	str_devicebuf() = default;
-	~str_devicebuf() = default;
-	str_devicebuf(const str_devicebuf& other):std::streambuf(),_str(other._str) {}
-	str_devicebuf& operator=(const str_devicebuf other)
-	{
-		if(this != &other)
-			_str = other._str;
-		return *this;
-	}
+    str_devicebuf() = default;
+    ~str_devicebuf() = default;
+    str_devicebuf(const str_devicebuf& other):std::streambuf(),_str(other._str) {}
+    str_devicebuf& operator=(const str_devicebuf other) {
+        if(this != &other)
+            _str = other._str;
+        return *this;
+    }
 
-	const std::string& str_ref() const {
-		return _str;
-	}
+    const std::string& str_ref() const {
+        return _str;
+    }
 
-	void clear() {
-		_str.clear();
-	}
+    void clear() {
+        _str.clear();
+    }
 
 protected:
-	virtual int sync() override {
-		return 0;
-	}
+    virtual int sync() override {
+        return 0;
+    }
 
-	virtual std::streamsize xsputn(const char_type* s, std::streamsize count) override {
-		_str.append(s, static_cast<unsigned int>(count));
-		return count;
-	}
+    virtual std::streamsize xsputn(const char_type* s, std::streamsize count) override {
+        _str.append(s, static_cast<unsigned int>(count));
+        return count;
+    }
 
-	virtual int_type overflow(int_type ch) override {
-		if (ch != traits_type::eof())
-			_str.append((char*)&ch, 1);
-		return 1;
-	}
+    virtual int_type overflow(int_type ch) override {
+        if (ch != traits_type::eof())
+            _str.append((char*)&ch, 1);
+        return 1;
+    }
 private:
-	std::string _str;
+    std::string _str;
 };
 
-class fast_oss:public std::ostream
-{
+class fast_oss:public std::ostream {
 public:
-	fast_oss():std::ostream(&_dev) {}
-	~fast_oss() = default;
-	fast_oss(const fast_oss& other):std::basic_ios<char>(), std::ostream(),_dev(other._dev) {}
-	fast_oss& operator=(const fast_oss& other)
-	{
-		if(&other != this)
-			_dev = other._dev;
-		return *this;
-	}
+    fast_oss():std::ostream(&_dev) {}
+    ~fast_oss() = default;
+    fast_oss(const fast_oss& other):std::basic_ios<char>(), std::ostream(),_dev(other._dev) {}
+    fast_oss& operator=(const fast_oss& other) {
+        if(&other != this)
+            _dev = other._dev;
+        return *this;
+    }
 
-	const std::string& str_ref() const
-	{
-		return _dev.str_ref();
-	}
+    const std::string& str_ref() const {
+        return _dev.str_ref();
+    }
 
-	const std::string str() const
-	{
-		return _dev.str_ref();
-	}
+    const std::string str() const {
+        return _dev.str_ref();
+    }
 
-	void clear()
-	{
-		_dev.clear();
-	}
+    void clear() {
+        _dev.clear();
+    }
 private:
-	str_devicebuf _dev;
+    str_devicebuf _dev;
 };
 }
 }
