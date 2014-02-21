@@ -5,8 +5,8 @@
 #include<functional>
 #include <sstream>
 
-#include "../level.h"
-#include "../details/os.h"
+#include "level.h"
+#include "details/os.h"
 
 namespace c11log {
 namespace formatters {

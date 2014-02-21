@@ -103,9 +103,7 @@ private:
     std::mutex mutex_;
     std::condition_variable item_pushed_cond_;
     std::condition_variable item_popped_cond_;
-    const std::chrono::hours one_hour {
-        1
-    };
+    const std::chrono::hours one_hour (1);
 };
 
 }

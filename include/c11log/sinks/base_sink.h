@@ -3,7 +3,7 @@
 #include<string>
 #include<atomic>
 
-#include "../formatters/formatters.h"
+#include "../formatter.h"
 #include "../level.h"
 
 namespace c11log {
