@@ -60,12 +60,12 @@ int main(int argc, char* argv[])
     auto null_sink = std::make_shared<sinks::null_sink>();
     auto stdout_sink = std::make_shared<sinks::stdout_sink>();
     auto async = std::make_shared<sinks::async_sink>(qsize);
-    auto fsink = std::make_shared<sinks::rotating_file_sink>("example_log", "txt", 1024*1024*50 , 5);
+    auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 1000);
 
     async->add_sink(fsink);
 
     auto &logger = c11log::get_logger("async");
-    logger.add_sink(async);
+    logger.add_sink(fsink);
 
     testlog(threads);
 }
