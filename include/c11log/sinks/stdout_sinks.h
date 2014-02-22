@@ -11,7 +11,7 @@ public:
     virtual ~ostream_sink() = default;
 
 protected:
-    virtual void sink_it_(const std::string& msg) override {
+    virtual void _sink_it(const std::string& msg) override {
         _ostream << msg;
     }
 

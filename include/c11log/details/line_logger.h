@@ -14,7 +14,7 @@ public:
         _callback_logger(callback_logger),
         _oss(),
         _level(msg_level) {
-        callback_logger->formatter_->format_header(callback_logger->logger_name_,
+        callback_logger->_formatter->format_header(callback_logger->_logger_name,
                 msg_level,
                 c11log::formatters::clock::now(),
                 _oss);
@@ -30,7 +30,7 @@ public:
     ~line_logger() {
         if (_callback_logger) {
             _oss << '\n';
-            _callback_logger->log_it_(_oss.str_ref());
+            _callback_logger->_log_it(_oss.str_ref());
         }
     }
 

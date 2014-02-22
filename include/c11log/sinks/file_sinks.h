@@ -14,17 +14,17 @@ namespace sinks {
 class simple_file_sink : public base_sink {
 public:
     explicit simple_file_sink(const std::string &filename, const std::string& extension = "txt")
-        : mutex_(),
+        : _mutex(),
           _ofstream(filename + "." + extension, std::ofstream::app) {
     }
 protected:
-    void sink_it_(const std::string& msg) override {
-        std::lock_guard<std::mutex> lock(mutex_);
+    void _sink_it(const std::string& msg) override {
+        std::lock_guard<std::mutex> lock(_mutex);
         _ofstream << msg;
         _ofstream.flush();
     }
 private:
-    std::mutex mutex_;
+    std::mutex _mutex;
     std::ofstream _ofstream;
 };
 
@@ -41,13 +41,13 @@ public:
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
-        mutex_(),
+        _mutex(),
         _ofstream(_calc_filename(_base_filename, 0, _extension)) {
     }
 
 protected:
-    void sink_it_(const std::string& msg) override {
-        std::lock_guard<std::mutex> lock(mutex_);
+    void _sink_it(const std::string& msg) override {
+        std::lock_guard<std::mutex> lock(_mutex);
         _current_size += msg.length();
         if (_current_size  > _max_size) {
             _rotate();
@@ -91,7 +91,7 @@ private:
     std::size_t _max_size;
     std::size_t _max_files;
     std::size_t _current_size;
-    std::mutex mutex_;
+    std::mutex _mutex;
     std::ofstream _ofstream;
 };
 
@@ -104,13 +104,13 @@ public:
         _base_filename(base_filename),
         _extension(extension),
         _midnight_tp (_calc_midnight_tp() ),
-        mutex_(),
+        _mutex(),
         _ofstream(_calc_filename(_base_filename, _extension), std::ofstream::app) {
     }
 
 protected:
-    void sink_it_(const std::string& msg) override {
-        std::lock_guard<std::mutex> lock(mutex_);
+    void _sink_it(const std::string& msg) override {
+        std::lock_guard<std::mutex> lock(_mutex);
         if (std::chrono::system_clock::now() >= _midnight_tp) {
             _ofstream.close();
             _ofstream.open(_calc_filename(_base_filename, _extension));
@@ -142,7 +142,7 @@ private:
     std::string _base_filename;
     std::string _extension;
     std::chrono::system_clock::time_point _midnight_tp;
-    std::mutex mutex_;
+    std::mutex _mutex;
     std::ofstream _ofstream;
 
 };

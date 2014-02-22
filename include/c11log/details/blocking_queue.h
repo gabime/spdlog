@@ -21,17 +21,17 @@ public:
     using clock = std::chrono::system_clock;
 
     explicit blocking_queue(size_type max_size) :
-        max_size_(max_size),
-        q_(),
-        mutex_() {
+        _max_size(max_size),
+        _q(),
+        _mutex() {
     }
     blocking_queue(const blocking_queue&) = delete;
     blocking_queue& operator=(const blocking_queue&) = delete;
     ~blocking_queue() = default;
 
     size_type size() {
-        std::lock_guard<std::mutex> lock(mutex_);
-        return q_.size();
+        std::lock_guard<std::mutex> lock(_mutex);
+        return _q.size();
     }
 
     // Push copy of item into the back of the queue.
@@ -39,17 +39,17 @@ public:
     // Return: false on timeout, true on successful push.
     template<typename Duration_Rep, typename Duration_Period, typename TT>
     bool push(TT&& item, const std::chrono::duration<Duration_Rep, Duration_Period>& timeout) {
-        std::unique_lock<std::mutex> ul(mutex_);
-        if (q_.size() >= max_size_) {
-            if (!item_popped_cond_.wait_until(ul, clock::now() + timeout, [this]() {
-            return this->q_.size() < this->max_size_;
+        std::unique_lock<std::mutex> ul(_mutex);
+        if (_q.size() >= _max_size) {
+            if (!_item_popped_cond.wait_until(ul, clock::now() + timeout, [this]() {
+            return this->_q.size() < this->_max_size;
             }))
             return false;
         }
-        q_.push(std::forward<TT>(item));
-        if (q_.size() <= 1) {
+        _q.push(std::forward<TT>(item));
+        if (_q.size() <= 1) {
             ul.unlock(); //So the notified thread will have better chance to accuire the lock immediatly..
-            item_pushed_cond_.notify_one();
+            _item_pushed_cond.notify_one();
         }
         return true;
     }
@@ -66,18 +66,18 @@ public:
     // Return: false on timeout , true on successful pop/
     template<class Duration_Rep, class Duration_Period>
     bool pop(T& item, const std::chrono::duration<Duration_Rep, Duration_Period>& timeout) {
-        std::unique_lock<std::mutex> ul(mutex_);
-        if (q_.empty()) {
-            if (!item_pushed_cond_.wait_until(ul, clock::now() + timeout, [this]() {
-            return !this->q_.empty();
+        std::unique_lock<std::mutex> ul(_mutex);
+        if (_q.empty()) {
+            if (!_item_pushed_cond.wait_until(ul, clock::now() + timeout, [this]() {
+            return !this->_q.empty();
             }))
             return false;
         }
-        item = std::move(q_.front());
-        q_.pop();
-        if (q_.size() >= max_size_ - 1) {
+        item = std::move(_q.front());
+        _q.pop();
+        if (_q.size() >= _max_size - 1) {
             ul.unlock(); //So the notified thread will have better chance to accuire the lock immediatly..
-            item_popped_cond_.notify_one();
+            _item_popped_cond.notify_one();
         }
         return true;
     }
@@ -91,18 +91,18 @@ public:
     // Clear the queue
     void clear() {
         {
-            std::unique_lock<std::mutex> ul(mutex_);
-            queue_t().swap(q_);
+            std::unique_lock<std::mutex> ul(_mutex);
+            queue_t().swap(_q);
         }
-        item_popped_cond_.notify_all();
+        _item_popped_cond.notify_all();
     }
 
 private:
-    size_type max_size_;
-    std::queue<T> q_;
-    std::mutex mutex_;
-    std::condition_variable item_pushed_cond_;
-    std::condition_variable item_popped_cond_;
+    size_type _max_size;
+    std::queue<T> _q;
+    std::mutex _mutex;
+    std::condition_variable _item_pushed_cond;
+    std::condition_variable _item_popped_cond;
     static constexpr auto one_hour = std::chrono::hours(1);
 };
 

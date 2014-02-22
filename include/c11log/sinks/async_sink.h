@@ -25,16 +25,16 @@ public:
 
 
 protected:
-    void sink_it_(const std::string& msg) override;
-    void thread_loop_();
+    void _sink_it(const std::string& msg) override;
+    void _thread_loop();
 
 private:
-    c11log::logger::sinks_vector_t sinks_;
-    std::atomic<bool> active_;
-    c11log::details::blocking_queue<std::string> q_;
-    std::thread back_thread_;
-    //Clear all remaining messages(if any), stop the back_thread_ and join it
-    void shutdown_();
+    c11log::logger::sinks_vector_t _sinks;
+    std::atomic<bool> _active;
+    c11log::details::blocking_queue<std::string> _q;
+    std::thread _back_thread;
+    //Clear all remaining messages(if any), stop the _back_thread and join it
+    void _shutdown();
 };
 }
 }
@@ -44,31 +44,31 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 
 inline c11log::sinks::async_sink::async_sink(const std::size_t max_queue_size)
-    :sinks_(),
-     active_(true),
-     q_(max_queue_size),
-     back_thread_(&async_sink::thread_loop_, this)
+    :_sinks(),
+     _active(true),
+     _q(max_queue_size),
+     _back_thread(&async_sink::_thread_loop, this)
 {}
 
 inline c11log::sinks::async_sink::~async_sink()
 {
-    shutdown_();
+    _shutdown();
 }
-inline void c11log::sinks::async_sink::sink_it_(const std::string& msg)
+inline void c11log::sinks::async_sink::_sink_it(const std::string& msg)
 {
-    q_.push(msg);
+    _q.push(msg);
 }
 
-inline void c11log::sinks::async_sink::thread_loop_()
+inline void c11log::sinks::async_sink::_thread_loop()
 {
     constexpr auto pop_timeout = std::chrono::seconds(1);
     std::string msg;
 
-    while (active_) {
-        if (q_.pop(msg, pop_timeout)) {
-            for (auto &sink : sinks_) {
+    while (_active) {
+        if (_q.pop(msg, pop_timeout)) {
+            for (auto &sink : _sinks) {
                 sink->log(msg, static_cast<level::level_enum>(_level.load()));
-                if (!active_)
+                if (!_active)
                     return;
             }
         }
@@ -77,30 +77,30 @@ inline void c11log::sinks::async_sink::thread_loop_()
 
 inline void c11log::sinks::async_sink::add_sink(logger::sink_ptr_t sink)
 {
-    sinks_.push_back(sink);
+    _sinks.push_back(sink);
 }
 
 inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr_t sink_ptr)
 {
-    sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink_ptr), sinks_.end());
+    _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink_ptr), _sinks.end());
 }
 
 
 inline void c11log::sinks::async_sink::shutdown(const std::chrono::seconds &timeout)
 {
     auto until = std::chrono::system_clock::now() + timeout;
-    while (q_.size() > 0 && std::chrono::system_clock::now() < until) {
+    while (_q.size() > 0 && std::chrono::system_clock::now() < until) {
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
-    shutdown_();
+    _shutdown();
 }
 
-inline void c11log::sinks::async_sink::shutdown_()
+inline void c11log::sinks::async_sink::_shutdown()
 {
-    if(active_) {
-        active_ = false;
-        if (back_thread_.joinable())
-            back_thread_.join();
+    if(_active) {
+        _active = false;
+        if (_back_thread.joinable())
+            _back_thread.join();
     }
 }
 

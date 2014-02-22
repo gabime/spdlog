@@ -20,7 +20,7 @@ public:
 
     void log(const std::string &msg, level::level_enum level) {
         if (level >= _level) {
-            sink_it_(msg);
+            _sink_it(msg);
         }
     };
 
@@ -29,13 +29,13 @@ public:
     }
 
 protected:
-    virtual void sink_it_(const std::string& msg) = 0;
+    virtual void _sink_it(const std::string& msg) = 0;
     std::atomic<int> _level {level::INFO};
 };
 
 class null_sink:public base_sink {
 protected:
-    void sink_it_(const std::string& ) override {
+    void _sink_it(const std::string& ) override {
     }
 };
 }

@@ -24,11 +24,11 @@ public:
     typedef std::vector<sink_ptr_t> sinks_vector_t;
 
     explicit logger(const std::string& name) :
-        logger_name_(name),
-        formatter_(new formatters::default_formatter()),
-        sinks_(),
-        mutex_(),
-        atomic_level_(level::INFO) {
+        _logger_name(name),
+        _formatter(new formatters::default_formatter()),
+        _sinks(),
+        _mutex(),
+        _atomic_level(level::INFO) {
     }
 
     ~logger() = default;
@@ -55,13 +55,13 @@ public:
 private:
     friend details::line_logger;
 
-    std::string logger_name_ = "";
-    std::unique_ptr<c11log::formatters::formatter> formatter_;
-    sinks_vector_t sinks_;
-    std::mutex mutex_;
-    std::atomic_int atomic_level_;
+    std::string _logger_name = "";
+    std::unique_ptr<c11log::formatters::formatter> _formatter;
+    sinks_vector_t _sinks;
+    std::mutex _mutex;
+    std::atomic_int _atomic_level;
 
-    void log_it_(const std::string& msg);
+    void _log_it(const std::string& msg);
 
 };
 
@@ -75,7 +75,7 @@ logger& get_logger(const std::string& name);
 inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
 {
 
-    if (msg_level >= atomic_level_)
+    if (msg_level >= _atomic_level)
         return details::line_logger(this, msg_level);
     else
         return details::line_logger(nullptr);
@@ -104,53 +104,53 @@ inline c11log::details::line_logger c11log::logger::fatal()
 
 inline void c11log::logger::set_name(const std::string& name)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    logger_name_ = name;
+    std::lock_guard<std::mutex> lock(_mutex);
+    _logger_name = name;
 }
 
 inline const std::string& c11log::logger::get_name()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    return logger_name_;
+    std::lock_guard<std::mutex> lock(_mutex);
+    return _logger_name;
 }
 
 inline void c11log::logger::add_sink(sink_ptr_t sink_ptr)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    sinks_.push_back(sink_ptr);
+    std::lock_guard<std::mutex> lock(_mutex);
+    _sinks.push_back(sink_ptr);
 }
 
 inline void c11log::logger::remove_sink(sink_ptr_t sink_ptr)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink_ptr), sinks_.end());
+    std::lock_guard<std::mutex> lock(_mutex);
+    _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink_ptr), _sinks.end());
 }
 
 inline void c11log::logger::set_formatter(std::unique_ptr<formatters::formatter> formatter)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
-    formatter_ = std::move(formatter);
+    std::lock_guard<std::mutex> lock(_mutex);
+    _formatter = std::move(formatter);
 }
 
 inline void c11log::logger::set_level(c11log::level::level_enum level)
 {
-    atomic_level_.store(level);
+    _atomic_level.store(level);
 }
 
 inline c11log::level::level_enum c11log::logger::get_level() const
 {
-    return static_cast<c11log::level::level_enum>(atomic_level_.load());
+    return static_cast<c11log::level::level_enum>(_atomic_level.load());
 }
 
 inline bool c11log::logger::should_log(c11log::level::level_enum level) const
 {
-    return level >= atomic_level_.load();
+    return level >= _atomic_level.load();
 }
-inline void c11log::logger::log_it_(const std::string& msg)
+inline void c11log::logger::_log_it(const std::string& msg)
 {
-    level::level_enum level = static_cast<level::level_enum>(atomic_level_.load());
-    std::lock_guard<std::mutex> lock(mutex_);
-    for (auto &sink : sinks_)
+    level::level_enum level = static_cast<level::level_enum>(_atomic_level.load());
+    std::lock_guard<std::mutex> lock(_mutex);
+    for (auto &sink : _sinks)
         sink->log(msg, level);
 }
 
