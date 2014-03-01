@@ -42,9 +42,7 @@ private:
 
 
 inline void c11log::formatters::default_formatter::_format_time(const log_clock::time_point& tp, std::ostream &dest)
-{
-    using namespace std::chrono;
-
+{    
     auto tm = details::os::localtime(log_clock::to_time_t(tp));
     char buff[64];
     int size = snprintf(buff, sizeof(buff), "[%d-%02d-%02d %02d:%02d:%02d]",

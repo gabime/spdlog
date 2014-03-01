@@ -54,10 +54,10 @@ int main(int argc, char* argv[])
     using std::cout;
     using std::endl;
 
-    auto fsink2 = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, seconds(1));
+    //auto fsink2 = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, seconds(1));
     auto &logger2 = c11log::get_logger("logger2");
-    logger2.add_sink(fsink2);
-    //logger2.add_sink(std::make_shared<sinks::null_sink>());
+    //logger2.add_sink(fsink2);
+    logger2.add_sink(std::make_shared<sinks::null_sink>());
 
     auto start = system_clock::now();
     const unsigned int howmany = 10000000;
