@@ -1,24 +1,33 @@
 #pragma once
-
+#include <chrono>
+#include <iostream>
 // Flush to file every X writes..
 
 namespace c11log {
 namespace details {
 class file_flush_helper {
 public:
-    explicit file_flush_helper(std::size_t flush_every): _flush_every(flush_every), _write_counter(0) {};
+    explicit file_flush_helper(const std::chrono::milliseconds &flush_every): _flush_every(flush_every), _last_flush() {};
 
     void write(std::ofstream& ofs, const std::string& msg) {
+
+
         ofs << msg;
-        if(++_write_counter >= _flush_every) {
+        //If zero - flush every time
+        if(_flush_every == std::chrono::milliseconds::min()) {
             ofs.flush();
-            _write_counter = 0;
+        } else {
+            auto now = std::chrono::system_clock::now();
+            if(now - _last_flush >= _flush_every) {
+                ofs.flush();
+                _last_flush = now;
+            }
         }
     }
 
 private:
-    std::size_t _flush_every;
-    std::size_t _write_counter;
+    std::chrono::milliseconds _flush_every;
+    std::chrono::system_clock::time_point _last_flush;
 };
 }
 }

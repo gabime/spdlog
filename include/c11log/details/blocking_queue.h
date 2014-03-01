@@ -58,7 +58,7 @@ public:
     // If the queue is full, block the calling thread until there is room.
     template<typename TT>
     void push(TT&& item) {
-        while (!push(std::forward<TT>(item), one_hour));
+        while (!push(std::forward<TT>(item), _one_hour));
     }
 
     // Pop a copy of the front item in the queue into the given item ref.
@@ -85,7 +85,7 @@ public:
     // Pop a copy of the front item in the queue into the given item ref.
     // If the queue is empty, block the calling thread util there is item to pop.
     void pop(T& item) {
-        while (!pop(item, one_hour));
+        while (!pop(item, _one_hour));
     }
 
     // Clear the queue
@@ -103,7 +103,7 @@ private:
     std::mutex _mutex;
     std::condition_variable _item_pushed_cond;
     std::condition_variable _item_popped_cond;
-    static constexpr auto one_hour = std::chrono::hours(1);
+    static constexpr auto _one_hour = std::chrono::hours(1);
 };
 
 }

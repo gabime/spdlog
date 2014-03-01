@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../level.h"
+#include "../common_types.h"
 #include "../logger.h"
 #include "fast_oss.h"
 
@@ -16,7 +16,7 @@ public:
         _level(msg_level) {
         callback_logger->_formatter->format_header(callback_logger->_logger_name,
                 msg_level,
-                c11log::formatters::clock::now(),
+                log_clock::now(),
                 _oss);
     }
     line_logger(logger*):_callback_logger(nullptr) {};

@@ -14,10 +14,12 @@ namespace sinks {
 */
 class simple_file_sink : public base_sink {
 public:
-    explicit simple_file_sink(const std::string &filename, const std::string& extension, size_t flush_after=1)
+    explicit simple_file_sink(const std::string &filename,
+                              const std::string& extension,
+                              const std::chrono::milliseconds &flush_every=std::chrono::milliseconds::zero())
         : _mutex(),
-          _ofstream(filename + "." + extension, std::ofstream::app),
-          _flush_helper(flush_after) {
+          _ofstream(filename + "." + extension, std::ofstream::binary|std::ofstream::app),
+          _flush_helper(flush_every) {
     }
 protected:
     void _sink_it(const std::string& msg) override {
@@ -36,15 +38,17 @@ private:
 */
 class rotating_file_sink : public base_sink {
 public:
-    rotating_file_sink(const std::string &base_filename, const std::string &extension, size_t max_size, size_t max_files, size_t flush_after=1):
+    rotating_file_sink(const std::string &base_filename, const std::string &extension,
+                       size_t max_size, size_t max_files,
+                       const std::chrono::milliseconds &flush_every = std::chrono::milliseconds::zero()):
         _base_filename(base_filename),
         _extension(extension),
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
         _mutex(),
-        _ofstream(_calc_filename(_base_filename, 0, _extension)),
-        _flush_helper(flush_after) {
+        _ofstream(_calc_filename(_base_filename, 0, _extension), std::ofstream::binary),
+        _flush_helper(flush_every) {
     }
 
 protected:
@@ -102,14 +106,15 @@ private:
  */
 class daily_file_sink:public base_sink {
 public:
-    explicit daily_file_sink(const std::string& base_filename, const std::string& extension, size_t flush_after=1):
+    explicit daily_file_sink(const std::string& base_filename,
+                             const std::string& extension,
+                             const std::chrono::milliseconds &flush_every = std::chrono::milliseconds::zero()):
         _base_filename(base_filename),
         _extension(extension),
         _midnight_tp (_calc_midnight_tp() ),
         _mutex(),
-        _ofstream(_calc_filename(_base_filename, _extension), std::ofstream::app),
-		_flush_helper(flush_after)
-	{
+        _ofstream(_calc_filename(_base_filename, _extension), std::ofstream::binary|std::ofstream::app),
+        _flush_helper(flush_every) {
     }
 
 protected:
@@ -147,7 +152,7 @@ private:
     std::chrono::system_clock::time_point _midnight_tp;
     std::mutex _mutex;
     std::ofstream _ofstream;
-	details::file_flush_helper _flush_helper;
+    details::file_flush_helper _flush_helper;
 
 };
 }

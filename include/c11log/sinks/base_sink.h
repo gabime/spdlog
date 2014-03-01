@@ -4,7 +4,7 @@
 #include<atomic>
 
 #include "../formatter.h"
-#include "../level.h"
+#include "../common_types.h"
 
 namespace c11log {
 namespace sinks {

@@ -2,7 +2,7 @@
 //
 #include <string>
 #include <functional>
-
+#include <iomanip>
 #include "c11log/logger.h"
 #include "c11log/sinks/async_sink.h"
 #include "c11log/sinks/file_sinks.h"
@@ -47,7 +47,32 @@ void testlog(int threads)
 
 int main(int argc, char* argv[])
 {
+
     using namespace std::chrono;
+    using namespace c11log;
+    using namespace utils;
+    using std::cout;
+    using std::endl;
+
+    auto fsink2 = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, seconds(1));
+    auto &logger2 = c11log::get_logger("logger2");
+    logger2.add_sink(fsink2);
+    //logger2.add_sink(std::make_shared<sinks::null_sink>());
+
+    auto start = system_clock::now();
+    const unsigned int howmany = 10000000;
+    for(unsigned int i = 0; i < howmany ; i++)
+        logger2.info() << "Hello logger " << i;
+
+    auto delta = system_clock::now() - start;
+    auto delta_d = duration_cast<duration<double>> (delta);
+    cout << "Total " << format(howmany) << endl;
+    cout << "Delta " << format(delta_d.count()) << endl;
+    cout << "Rate: " << format(howmany/delta_d.count()) << "/sec" << endl;
+
+
+    return 0;
+
 
     if(argc !=3) {
         std::cerr << "Usage: " << argv[0] << " qsize, threads" << std::endl;
@@ -56,16 +81,18 @@ int main(int argc, char* argv[])
     int qsize = atoi(argv[1]);
     int threads = atoi(argv[2]);
 
-    using namespace c11log;
+
     auto null_sink = std::make_shared<sinks::null_sink>();
     auto stdout_sink = std::make_shared<sinks::stdout_sink>();
     auto async = std::make_shared<sinks::async_sink>(qsize);
-    auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 1000);
+    auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5,  std::chrono::milliseconds(1000));
 
     async->add_sink(fsink);
 
-    auto &logger = c11log::get_logger("async");
-    logger.add_sink(fsink);
+    //auto &logger = c11log::get_logger("async");
+    //logger.add_sink(fsink);
+
+
 
     testlog(threads);
 }

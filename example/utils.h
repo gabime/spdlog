@@ -19,6 +19,16 @@ std::string format(const T& value)
     return ss.str();
 }
 
+template<>
+std::string format(const double & value)
+{
+    static std::locale loc("");
+    std::stringstream ss;
+    ss.imbue(loc);
+    ss << std::fixed << std::setprecision(1) << value;
+    return ss.str();
+}
+
 inline void bench(const std::string& fn_name, const std::chrono::milliseconds &duration, const std::function<void() >& fn)
 {
     using namespace std::chrono;

@@ -8,14 +8,17 @@
 #include<atomic>
 #include <algorithm>
 
-#include "level.h"
+#include "common_types.h"
 #include "sinks/base_sink.h"
 #include "details/factory.h"
 
 namespace c11log {
+
+
 namespace details {
 class line_logger;
 }
+
 
 class logger {
 public:
