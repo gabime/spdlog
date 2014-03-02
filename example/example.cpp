@@ -55,18 +55,12 @@ int main(int argc, char* argv[])
     using std::endl;
 
     //auto fsink2 = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, seconds(1));
-    auto &logger2 = c11log::get_logger("logger2");
-    //logger2.add_sink(fsink2);
-    logger2.add_sink(std::make_shared<sinks::null_sink>());
-    logger2.add_sink(std::make_shared<sinks::stdout_sink>());
-
-    info_logger info(&logger2);
-    info << "Hello info logger" << "!!";
-    return 0;
+    auto &my_logger  = get_logger("example");
     auto start = system_clock::now();
+
     const unsigned int howmany = 10000000;
     for(unsigned int i = 0; i < howmany ; i++)
-        logger2.info() << "Hello logger " << i;
+        my_logger.info() << "Hello logger " << i;
 
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta);

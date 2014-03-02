@@ -169,17 +169,3 @@ inline c11log::logger& c11log::get_logger(const std::string& name)
     return *(c11log::details::factory::instance().get_logger(name));
 }
 
-
-namespace c11log {
-class info_logger {
-public:
-    info_logger (c11log::logger* logger):_logger(logger) {}
-    template<class T>
-    details::line_logger& operator<<(const T& msg) {
-        return _logger->info() << msg;
-    }
-
-private:
-    c11log::logger* _logger;
-};
-}
