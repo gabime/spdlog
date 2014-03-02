@@ -31,3 +31,8 @@ inline std::tm c11log::details::os::localtime()
     std::time_t now_t = time(0);
     return localtime(now_t);
 }
+
+// Take care of snprintf in visual studio
+#ifdef _MSC_VER
+#define snprintf _snprintf
+#endif

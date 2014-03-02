@@ -58,11 +58,11 @@ int main(int argc, char* argv[])
     auto &logger2 = c11log::get_logger("logger2");
     //logger2.add_sink(fsink2);
     logger2.add_sink(std::make_shared<sinks::null_sink>());
-	logger2.add_sink(std::make_shared<sinks::stdout_sink>());
+    logger2.add_sink(std::make_shared<sinks::stdout_sink>());
 
-	info_logger info(&logger2);
-	info << "Hello info logger" << "!!";
-	return 0;
+    info_logger info(&logger2);
+    info << "Hello info logger" << "!!";
+    return 0;
     auto start = system_clock::now();
     const unsigned int howmany = 10000000;
     for(unsigned int i = 0; i < howmany ; i++)
