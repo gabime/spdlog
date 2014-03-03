@@ -48,7 +48,7 @@ void testlog(int threads)
 int main(int argc, char* argv[])
 {
 
-	if(argc || argv){};
+    if(argc || argv) {};
     using namespace std::chrono;
     using namespace c11log;
     using namespace utils;
@@ -60,14 +60,14 @@ int main(int argc, char* argv[])
     auto null_sink = std::make_shared<sinks::null_sink>();
     //auto async = std::make_shared<sinks::async_sink>(1000);
     //async->add_sink(fsink);
-    my_logger.add_sink(null_sink);    
+    my_logger.add_sink(null_sink);
     auto start = system_clock::now();
 
     const unsigned int howmany = 10000000;
     for(unsigned int i = 0; i < howmany ; i++)
         my_logger.info() << "Hello logger " << i;
-	
-	//async->shutdown(seconds(3));
+
+    //async->shutdown(seconds(3));
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta);
     cout << "Total " << format(howmany) << endl;
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 
     return 0;
 
-	/*
+    /*
     if(argc !=3) {
         std::cerr << "Usage: " << argv[0] << " qsize, threads" << std::endl;
         return 0;

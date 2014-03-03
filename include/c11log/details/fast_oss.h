@@ -15,9 +15,10 @@ public:
             _str = other._str;
         return *this;
     }
-    
+
     const std::string& str_ref() const {
         return _str;
+        std::ostringstream oss;
     }
 
     void clear() {
@@ -47,13 +48,15 @@ class fast_oss:public std::ostream {
 public:
     fast_oss():std::ostream(&_dev) {}
     ~fast_oss() = default;
-    fast_oss(const fast_oss& other):std::basic_ios<char>(), std::ostream(),_dev(other._dev) {}
+
+    fast_oss(const fast_oss& other) :std::ostream(&_dev), _dev(other._dev) {
+    }
     fast_oss& operator=(const fast_oss& other) {
         if(&other != this)
             _dev = other._dev;
         return *this;
     }
-        
+
     const std::string& str_ref() const {
         return _dev.str_ref();
     }
