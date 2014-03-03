@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     auto null_sink = std::make_shared<sinks::null_sink>();
     //auto async = std::make_shared<sinks::async_sink>(1000);
     //async->add_sink(fsink);
-    my_logger.add_sink(null_sink);
+    my_logger.add_sink(fsink);    
     auto start = system_clock::now();
 
     const unsigned int howmany = 10000000;
