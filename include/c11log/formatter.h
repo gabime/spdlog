@@ -43,15 +43,20 @@ private:
 
 inline void c11log::formatters::default_formatter::_format_time(const log_clock::time_point& tp, std::ostream &dest)
 {
-    auto tm = details::os::localtime(log_clock::to_time_t(tp));
-    char buff[64];
-    int size = snprintf(buff, sizeof(buff), "[%d-%02d-%02d %02d:%02d:%02d]",
-                        tm.tm_year + 1900,
-                        tm.tm_mon + 1,
-                        tm.tm_mday,
-                        tm.tm_hour,
-                        tm.tm_min,
-                        tm.tm_sec);
-
-    dest.write(buff, size);
+	static thread_local std::tm last_tm = {0,0,0,0,0,0,0,0,0,0,0};
+	static thread_local char last_time_str[64];
+    auto tm_now = details::os::localtime(log_clock::to_time_t(tp));
+    
+    if(last_tm != tm_now)
+    {				
+		sprintf(last_time_str, "[%d-%02d-%02d %02d:%02d:%02d]",
+                tm_now.tm_year + 1900,
+                tm_now.tm_mon + 1,
+                tm_now.tm_mday,
+                tm_now.tm_hour,
+                tm_now.tm_min,
+                tm_now.tm_sec);
+       	 last_tm = tm_now;			
+	}			
+	dest << last_time_str;	
 }

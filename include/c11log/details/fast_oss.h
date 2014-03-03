@@ -15,7 +15,7 @@ public:
             _str = other._str;
         return *this;
     }
-
+    
     const std::string& str_ref() const {
         return _str;
     }
@@ -53,7 +53,7 @@ public:
             _dev = other._dev;
         return *this;
     }
-
+        
     const std::string& str_ref() const {
         return _dev.str_ref();
     }
