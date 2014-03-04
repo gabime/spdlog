@@ -140,11 +140,14 @@ private:
         return system_clock::time_point(midnight + hours(24));
     }
 
+	//Create filename for the form basename.YYYY-MM-DD.extension
     static std::string _calc_filename(const std::string& basename, const std::string& extension) {
-        std::tm tm = c11log::details::os::localtime();
-        char buf[32];
-        sprintf(buf, ".%d-%02d-%02d.", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
-        return basename+buf+extension;
+        std::tm tm = c11log::details::os::localtime();		
+		std::ostringstream oss;
+		oss << basename << '.';
+		oss << tm.tm_year + 1900 << '-' << std::setw(2) << std::setfill('0') << tm.tm_mon + 1 << '-' << tm.tm_mday;
+		oss << '.' << extension;
+		return oss.str();
     }
 
     std::string _base_filename;
