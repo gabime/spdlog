@@ -25,15 +25,6 @@ protected:
 	std::mutex _mutex;
 };
 
-inline std::shared_ptr<ostream_sink> cout_sink() {
-	static const ostream_sink& instance{std::cout};
-	return std::shared_ptr<ostream_sink>(&instance, [=](ostream_sink*) {});
-}
-
-inline std::shared_ptr<ostream_sink> cerr_sink() {
-	static const ostream_sink& instance = ostream_sink(std::cerr);
-	return std::shared_ptr<ostream_sink>(&instance, [=](ostream_sink*) {});
-}
 
 
 }
