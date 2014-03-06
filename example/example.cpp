@@ -5,7 +5,7 @@
 #include "c11log/logger.h"
 #include "c11log/sinks/async_sink.h"
 #include "c11log/sinks/file_sinks.h"
-#include "c11log/sinks/stdout_sinks.h"
+#include "c11log/sinks/console_sinks.h"
 
 #include "utils.h"
 
@@ -58,10 +58,13 @@ int main(int argc, char* argv[])
     auto &my_logger  = get_logger("example");
     auto null_sink = std::make_shared<sinks::null_sink>();
     //auto async = std::make_shared<sinks::async_sink>(1000);
-    my_logger.add_sink(fsink);
-    //my_logger.add_sink(null_sink);
+    //my_logger.add_sink(fsink);
+    my_logger.add_sink(null_sink);
 
-
+	auto &cout_logger  = get_logger("cout");
+	cout_logger.add_sink(sinks::stdout_sink());
+	cout_logger.info() << "Hello cout logger!";
+	
     auto start = system_clock::now();
 
     const unsigned int howmany = 5000000;
