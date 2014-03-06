@@ -2,13 +2,17 @@
 
 #include "../common_types.h"
 #include "../logger.h"
+#include "fast_oss.h"
 #include <iostream>
 
-namespace c11log {
+namespace c11log
+{
 class logger;
-namespace details {
+namespace details
+{
 
-class line_logger {
+class line_logger
+{
 public:
     line_logger(logger* callback_logger, level::level_enum msg_level, bool enabled):
         _callback_logger(callback_logger),
@@ -25,7 +29,7 @@ public:
 
     line_logger(line_logger&& other) :
         _callback_logger(other._callback_logger),
-        _oss(std::move(other._oss)),
+        _oss(),
         _level(other._level) {
     };
 
@@ -36,7 +40,7 @@ public:
     ~line_logger() {
         if (_enabled) {
             _oss << '\n';
-            _callback_logger->_log_it(_oss.str(), _level);
+            _callback_logger->_log_it(_oss.str_ref(), _level);
         }
     }
 
@@ -50,7 +54,8 @@ public:
 
 private:
     logger* _callback_logger;
-    std::ostringstream _oss;
+    //std::ostringstream _oss;
+    details::fast_oss _oss;
     level::level_enum _level;
     bool _enabled;
 

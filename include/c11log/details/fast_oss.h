@@ -1,27 +1,29 @@
 #pragma once
 
+// Fast ostringstream like supprt which return its string by ref and nothing more
+
 #include<streambuf>
 #include<string>
-namespace c11log {
-namespace details {
 
-class str_devicebuf:public std::streambuf {
+namespace c11log
+{
+namespace details
+{
+
+class str_devicebuf:public std::streambuf
+{
 public:
     str_devicebuf() = default;
     ~str_devicebuf() = default;
-    str_devicebuf(const str_devicebuf& other):std::streambuf(),_str(other._str) {}
 
-    str_devicebuf(str_devicebuf&& other) :std::streambuf(), _str(std::move(other._str)) {
-        other._str.clear();
-    }
-
+    str_devicebuf(const str_devicebuf& other) = delete;
+    str_devicebuf(str_devicebuf&& other) = delete;
     str_devicebuf& operator=(const str_devicebuf&) = delete;
     str_devicebuf& operator=(str_devicebuf&&) = delete;
 
 
     const std::string& str_ref() const {
         return _str;
-        std::ostringstream oss;
     }
 
     void clear() {
@@ -47,29 +49,22 @@ private:
     std::string _str;
 };
 
-class fast_oss:public std::ostream {
+class fast_oss:public std::ostream
+{
 public:
     fast_oss():std::ostream(&_dev) {}
     ~fast_oss() = default;
 
-    fast_oss(const fast_oss& other) :std::basic_ios<char>(), std::ostream(&_dev), _dev(other._dev) {}
-
-    fast_oss(fast_oss&& other) :std::basic_ios<char>(), std::ostream(&_dev), _dev(std::move(other._dev)) {}
-
+    fast_oss(const fast_oss& other) = delete;
+    fast_oss(fast_oss&& other) = delete;
     fast_oss& operator=(const fast_oss& other) = delete;
-
 
     const std::string& str_ref() const {
         return _dev.str_ref();
     }
 
-    const std::string str() const {
-        return _dev.str_ref();
-    }
 
-    void clear() {
-        _dev.clear();
-    }
+
 private:
     str_devicebuf _dev;
 };

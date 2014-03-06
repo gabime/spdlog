@@ -8,10 +8,13 @@
 #include "../logger.h"
 #include "../details/blocking_queue.h"
 
-namespace c11log {
-namespace sinks {
+namespace c11log
+{
+namespace sinks
+{
 
-class async_sink : public base_sink {
+class async_sink : public base_sink
+{
 public:
     using size_type = c11log::details::blocking_queue<std::string>::size_type;
 

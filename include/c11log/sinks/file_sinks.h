@@ -6,13 +6,16 @@
 #include "base_sink.h"
 #include "../details/flush_helper.h"
 
-namespace c11log {
-namespace sinks {
+namespace c11log
+{
+namespace sinks
+{
 
 /*
 * Trivial file sink with single file as target
 */
-class simple_file_sink : public base_sink {
+class simple_file_sink : public base_sink
+{
 public:
     explicit simple_file_sink(const std::string &filename,
                               const std::string& extension,
@@ -36,7 +39,8 @@ private:
 /*
  * Thread safe, size limited file sink
 */
-class rotating_file_sink : public base_sink {
+class rotating_file_sink : public base_sink
+{
 public:
     rotating_file_sink(const std::string &base_filename, const std::string &extension,
                        size_t max_size, size_t max_files,
@@ -104,7 +108,8 @@ private:
 /*
  * Thread safe file sink that closes the log file at midnight and opens new one
  */
-class daily_file_sink:public base_sink {
+class daily_file_sink:public base_sink
+{
 public:
     explicit daily_file_sink(const std::string& base_filename,
                              const std::string& extension,
@@ -140,14 +145,14 @@ private:
         return system_clock::time_point(midnight + hours(24));
     }
 
-	//Create filename for the form basename.YYYY-MM-DD.extension
+    //Create filename for the form basename.YYYY-MM-DD.extension
     static std::string _calc_filename(const std::string& basename, const std::string& extension) {
-        std::tm tm = c11log::details::os::localtime();		
-		std::ostringstream oss;
-		oss << basename << '.';
-		oss << tm.tm_year + 1900 << '-' << std::setw(2) << std::setfill('0') << tm.tm_mon + 1 << '-' << tm.tm_mday;
-		oss << '.' << extension;
-		return oss.str();
+        std::tm tm = c11log::details::os::localtime();
+        std::ostringstream oss;
+        oss << basename << '.';
+        oss << tm.tm_year + 1900 << '-' << std::setw(2) << std::setfill('0') << tm.tm_mon + 1 << '-' << tm.tm_mday;
+        oss << '.' << extension;
+        return oss.str();
     }
 
     std::string _base_filename;

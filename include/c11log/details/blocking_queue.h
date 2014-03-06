@@ -10,11 +10,14 @@
 #include <mutex>
 #include <condition_variable>
 
-namespace c11log {
-namespace details {
+namespace c11log
+{
+namespace details
+{
 
 template<typename T>
-class blocking_queue {
+class blocking_queue
+{
 public:
     using queue_t = std::queue<T>;
     using size_type = typename queue_t::size_type;

@@ -6,9 +6,12 @@
 #include "../formatter.h"
 #include "../common_types.h"
 
-namespace c11log {
-namespace sinks {
-class base_sink {
+namespace c11log
+{
+namespace sinks
+{
+class base_sink
+{
 public:
     base_sink() = default;
     base_sink(level::level_enum l):_level(l) {
@@ -33,7 +36,8 @@ protected:
     std::atomic<int> _level {level::INFO};
 };
 
-class null_sink:public base_sink {
+class null_sink:public base_sink
+{
 protected:
     void _sink_it(const std::string& ) override {
     }

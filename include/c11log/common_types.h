@@ -2,11 +2,13 @@
 
 #include <chrono>
 
-namespace c11log {
+namespace c11log
+{
 
 typedef std::chrono::system_clock log_clock;
 
-namespace level {
+namespace level
+{
 typedef enum {
     DEBUG,
     INFO,

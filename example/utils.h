@@ -7,7 +7,8 @@
 #include <iomanip>
 #include <locale>
 
-namespace utils {
+namespace utils
+{
 
 template<typename T>
 std::string format(const T& value)

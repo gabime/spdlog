@@ -3,9 +3,12 @@
 #include <iostream>
 // Flush to file every X writes..
 
-namespace c11log {
-namespace details {
-class file_flush_helper {
+namespace c11log
+{
+namespace details
+{
+class file_flush_helper
+{
 public:
     explicit file_flush_helper(const std::chrono::milliseconds &flush_every): _flush_every(flush_every), _last_flush() {};
 

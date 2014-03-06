@@ -10,15 +10,18 @@
 #include "common_types.h"
 #include "details/os.h"
 
-namespace c11log {
-namespace formatters {
+namespace c11log
+{
+namespace formatters
+{
 
 typedef std::function<std::string(const std::string& logger_name, const std::string&, level::level_enum, const c11log::log_clock::time_point&)> format_fn;
 
 
 std::string to_hex(const unsigned char* buf, std::size_t size);
 
-class formatter {
+class formatter
+{
 public:
     formatter() {}
     virtual ~formatter() {}
@@ -26,7 +29,8 @@ public:
 };
 
 
-class default_formatter: public formatter {
+class default_formatter: public formatter
+{
 public:
     // Format: [2013-12-29 01:04:42.900] [logger_name:Info] Message body
     void format_header(const std::string& logger_name, level::level_enum level, const log_clock::time_point& tp, std::ostream& dest) override {
@@ -55,8 +59,7 @@ inline void c11log::formatters::default_formatter::_format_time(const log_clock:
 
     auto tm_now = details::os::localtime(log_clock::to_time_t(tp));
     using namespace c11log::details::os;
-    if(last_tm != tm_now)
-    {
+    if(last_tm != tm_now) {
 #ifdef _MSC_VER
         ::sprintf_s
 #else

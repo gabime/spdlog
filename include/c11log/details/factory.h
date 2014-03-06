@@ -5,10 +5,13 @@
 #include <memory>
 #include <mutex>
 
-namespace c11log {
+namespace c11log
+{
 class logger;
-namespace details {
-class factory {
+namespace details
+{
+class factory
+{
 public:
     typedef std::shared_ptr<c11log::logger>  logger_ptr;
     typedef std::unordered_map<std::string, logger_ptr> logger_map;

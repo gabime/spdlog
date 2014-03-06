@@ -3,9 +3,12 @@
 #include<cstdio>
 #include<ctime>
 
-namespace c11log {
-namespace details {
-namespace os {
+namespace c11log
+{
+namespace details
+{
+namespace os
+{
 
 inline std::tm localtime(const std::time_t &time_tt)
 {

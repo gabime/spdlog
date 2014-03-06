@@ -12,15 +12,18 @@
 #include "sinks/base_sink.h"
 #include "details/factory.h"
 
-namespace c11log {
+namespace c11log
+{
 
 
-namespace details {
+namespace details
+{
 class line_logger;
 }
 
 
-class logger {
+class logger
+{
 public:
 
     typedef std::shared_ptr<sinks::base_sink>  sink_ptr_t;
@@ -30,8 +33,7 @@ public:
         _logger_name(name),
         _formatter(new formatters::default_formatter()),
         _sinks(),
-        _mutex()
-    {
+        _mutex() {
         //Seems that vs2013 doesnt support atomic member initialization in ctor, so its done here
         _atomic_level = level::INFO;
     }
@@ -72,11 +74,7 @@ private:
 
 logger& get_logger(const std::string& name);
 
-
-
-
 }
-
 
 
 //
