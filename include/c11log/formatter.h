@@ -70,8 +70,6 @@ inline void c11log::formatters::default_formatter::_format_time(const log_clock:
          tm_now.tm_min,
          tm_now.tm_sec);
         last_tm = tm_now;
-
-
     }
     dest << last_time_str;
 }
