@@ -18,8 +18,6 @@ namespace formatters
 typedef std::function<std::string(const std::string& logger_name, const std::string&, level::level_enum, const c11log::log_clock::time_point&)> format_fn;
 
 
-std::string to_hex(const unsigned char* buf, std::size_t size);
-
 class formatter
 {
 public:
