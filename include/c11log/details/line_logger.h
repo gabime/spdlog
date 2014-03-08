@@ -3,11 +3,15 @@
 #include "../common_types.h"
 #include "../logger.h"
 #include "fast_oss.h"
-#include <iostream>
+
+
+// line logger class. should be used by the logger as an rvalue only.
+// aggregates logging string until the end of the line and then calls the logger upon destruction
+
 
 namespace c11log
 {
-class logger;
+//class logger;
 namespace details
 {
 
@@ -19,23 +23,26 @@ public:
         _oss(),
         _level(msg_level),
         _enabled(enabled) {
-        callback_logger->_formatter->format_header(callback_logger->_logger_name,
-                msg_level,
-                log_clock::now(),
-                _oss);
+        if(enabled) {
+            callback_logger->_formatter->format_header(callback_logger->_logger_name,
+                    msg_level,
+                    log_clock::now(),
+                    _oss);
+        }
     }
     // No copy intended. Only move
     line_logger(const line_logger& other) = delete;
+    line_logger& operator=(const line_logger&) = delete;
+    line_logger& operator=(line_logger&&) = delete;
 
     line_logger(line_logger&& other) :
         _callback_logger(other._callback_logger),
+        // The move ctor should only be called on start of logging line,
+        // where no logging happened yet for this line so no need to copy the string from the other
         _oss(),
         _level(other._level) {
     };
 
-
-    line_logger& operator=(const line_logger&) = delete;
-    line_logger& operator=(line_logger&&) = delete;
 
     ~line_logger() {
         if (_enabled) {
@@ -46,15 +53,14 @@ public:
 
 
     template<typename T>
-    line_logger& operator<<(const T& msg) {
+    line_logger&& operator<<(const T& msg) && {
         if (_enabled)
             _oss << msg;
-        return *this;
+        return std::move(*this);
     }
 
 private:
     logger* _callback_logger;
-    //std::ostringstream _oss;
     details::fast_oss _oss;
     level::level_enum _level;
     bool _enabled;

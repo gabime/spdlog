@@ -9,62 +9,37 @@
 
 #include "utils.h"
 
-std::atomic<uint64_t> log_count;
-std::atomic<bool> active;
-
-using std::chrono::seconds;
-
-void logging_thread()
-{
-    auto &logger = c11log::get_logger("async");
-    while(active) {
-        logger.info()<<"Hello logger!";
-        ++log_count;
-    }
-}
-
-
-void testlog(int threads)
-{
-
-    active = true;
-
-    for(int i = 0; i < threads; i++)
-        new std::thread(std::bind(logging_thread));
-
-    while(active) {
-        using std::endl;
-        using std::cout;
-        using utils::format;
-
-        log_count = 0;
-        std::this_thread::sleep_for(seconds(1));
-        cout << "Logs/sec =\t" << format(log_count.load()) << endl;
-    }
-}
+using std::cout;
+using std::endl;
+using namespace std::chrono;
+using namespace c11log;
+using namespace utils;
 
 
 int main(int argc, char* argv[])
 {
-
     if(argc || argv) {};
-    using namespace std::chrono;
-    using namespace c11log;
-    using namespace utils;
-    using std::cout;
-    using std::endl;
+
 
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, seconds(1));
-    auto &my_logger  = get_logger("example");
+    //auto &my_logger  = get_logger("example");
     auto null_sink = std::make_shared<sinks::null_sink>();
     //auto async = std::make_shared<sinks::async_sink>(1000);
     //my_logger.add_sink(fsink);
-    my_logger.add_sink(null_sink);
+    //my_logger.add_sink(null_sink);
 
-	auto &cout_logger  = get_logger("cout");
-	cout_logger.add_sink(sinks::stdout_sink());
-	cout_logger.info() << "Hello cout logger!";
-	
+
+
+    logger cout_logger (
+				"cout",                
+				{null_sink, sinks::stdout_sink(), fsink});
+
+    cout_logger.info() << "Hello cout logger!";
+
+	logger log2 {sinks::stdout_sink()};
+	log2.error() << "Cool shit" << "!!!";
+    return 0;
+    /*
     auto start = system_clock::now();
 
     const unsigned int howmany = 5000000;
@@ -80,7 +55,7 @@ int main(int argc, char* argv[])
 
 
     return 0;
-
+    */
     /*
     if(argc !=3) {
         std::cerr << "Usage: " << argv[0] << " qsize, threads" << std::endl;

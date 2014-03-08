@@ -20,8 +20,8 @@ public:
 
     explicit async_sink(const size_type max_queue_size);
     ~async_sink();
-    void add_sink(logger::sink_ptr_t sink);
-    void remove_sink(logger::sink_ptr_t sink_ptr);
+    void add_sink(logger::sink_ptr sink);
+    void remove_sink(logger::sink_ptr sink_ptr);
 
     //Wait to remaining items (if any) in the queue to be written and shutdown
     void shutdown(const std::chrono::seconds& timeout);
@@ -78,12 +78,12 @@ inline void c11log::sinks::async_sink::_thread_loop()
     }
 }
 
-inline void c11log::sinks::async_sink::add_sink(logger::sink_ptr_t sink)
+inline void c11log::sinks::async_sink::add_sink(logger::sink_ptr sink)
 {
     _sinks.push_back(sink);
 }
 
-inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr_t sink_ptr)
+inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr sink_ptr)
 {
     _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink_ptr), _sinks.end());
 }

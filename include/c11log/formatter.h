@@ -33,7 +33,11 @@ public:
     // Format: [2013-12-29 01:04:42.900] [logger_name:Info] Message body
     void format_header(const std::string& logger_name, level::level_enum level, const log_clock::time_point& tp, std::ostream& dest) override {
         _format_time(tp, dest);
-        dest << " [" <<  logger_name << ":" << c11log::level::to_str(level) << "] ";
+		if(!logger_name.empty())
+			dest << " [" <<  logger_name << ":" << c11log::level::to_str(level) << "] ";
+		else
+			dest << " [" << c11log::level::to_str(level) << "] ";
+
     }
 private:
     void _format_time(const log_clock::time_point& tp, std::ostream &dest);

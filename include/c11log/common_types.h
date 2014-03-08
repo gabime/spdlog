@@ -21,7 +21,7 @@ const char* to_str(level_enum l);
 }
 }
 
-static const char* level_names[] { "Debug", "Info", "Warning", "Error", "Fatal" };
+static const char* level_names[] { "debug", "info", "warning", "error", "fatal" };
 inline const char* c11log::level::to_str(c11log::level::level_enum l)
 {
     return level_names[l];
