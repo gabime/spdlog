@@ -20,29 +20,20 @@ int main(int argc, char* argv[])
 {
     if(argc || argv) {};
 
-
-    auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, seconds(1));
-    //auto &my_logger  = get_logger("example");
+    //auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, seconds(1));
     auto null_sink = std::make_shared<sinks::null_sink>();
-    //auto async = std::make_shared<sinks::async_sink>(1000);
-    //my_logger.add_sink(fsink);
-    //my_logger.add_sink(null_sink);
+    
 
-
-
-    logger cout_logger (
-				"cout",                
-				{null_sink, sinks::stdout_sink(), fsink});
+    logger cout_logger ("cout", {null_sink, sinks::stdout_sink()});
 
     cout_logger.info() << "Hello cout logger!";
 
-	logger log2 {sinks::stdout_sink()};
-	log2.error() << "Cool shit" << "!!!";
-    return 0;
-    /*
+    
+    logger my_logger ("my_logger", {null_sink});
+
     auto start = system_clock::now();
 
-    const unsigned int howmany = 5000000;
+    const unsigned int howmany = 10000000;
     for(unsigned int i = 0; i < howmany ; i++)
         my_logger.info() << "Hello logger " << i;
 
@@ -55,7 +46,7 @@ int main(int argc, char* argv[])
 
 
     return 0;
-    */
+
     /*
     if(argc !=3) {
         std::cerr << "Usage: " << argv[0] << " qsize, threads" << std::endl;

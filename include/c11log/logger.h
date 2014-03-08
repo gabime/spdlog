@@ -29,34 +29,22 @@ class logger
 public:
 
     using sink_ptr = std::shared_ptr<sinks::base_sink>;
-	using formatter_ptr = std::shared_ptr<c11log::formatters::formatter>;
+    using formatter_ptr = std::shared_ptr<c11log::formatters::formatter>;
     using sinks_vector_t = std::vector<sink_ptr>;
     using sinks_init_list = std::initializer_list<sink_ptr>;
 
+    logger(const std::string& name, formatter_ptr f, sinks_init_list sinks_list);
+    logger(const std::string& name, sinks_init_list sinks_list);
+    logger(sinks_init_list sinks_list);
 
-    logger(const std::string& name, formatter_ptr f, sinks_init_list sinks_list) :
-        _logger_name(name),
-        _formatter(f),
-        _sinks(sinks_list) {
-        //Seems that vs2013 doesnt support atomic member initialization in ctor, so its done here
-        _atomic_level = level::INFO;
-    }
-
-	logger(const std::string& name, sinks_init_list sinks_list) :
-		logger(name, std::make_shared<formatters::default_formatter>(), sinks_list) {}
-        
-
-	logger(sinks_init_list sinks_list) :
-		logger("", std::make_shared<formatters::default_formatter>(), sinks_list) {}
-    
 
     ~logger() = default;
 
-	//Non copybale in anyway
+    //Non copybale in anyway
     logger(const logger&) = delete;
-	logger(logger&&) = delete;
+    logger(logger&&) = delete;
     logger& operator=(const logger&) = delete;
-	logger& operator=(logger&&) = delete;
+    logger& operator=(logger&&) = delete;
 
     void set_level(c11log::level::level_enum);
     c11log::level::level_enum get_level() const;
@@ -89,9 +77,27 @@ logger& get_logger(const std::string& name);
 
 
 //
-// Logger inline impl
+// Logger inline implementation
 //
 #include "details/line_logger.h"
+
+
+inline c11log::logger::logger(const std::string& name, formatter_ptr f, sinks_init_list sinks_list) :
+    _logger_name(name),
+    _formatter(f),
+    _sinks(sinks_list)
+{
+    //Seems that vs2013 doesnt support atomic member initialization in ctor, so its done here
+    _atomic_level = level::INFO;
+}
+
+inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_list) :
+    logger(name, std::make_shared<formatters::default_formatter>(), sinks_list) {}
+
+inline c11log::logger::logger(sinks_init_list sinks_list) :
+    logger("", std::make_shared<formatters::default_formatter>(), sinks_list) {}
+
+
 inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
 {
     return details::line_logger(this, msg_level, msg_level >= _atomic_level);
@@ -131,7 +137,7 @@ inline void c11log::logger::set_level(c11log::level::level_enum level)
 }
 
 inline c11log::level::level_enum c11log::logger::get_level() const
-{	
+{
     return static_cast<c11log::level::level_enum>(_atomic_level.load());
 }
 
@@ -140,7 +146,7 @@ inline bool c11log::logger::should_log(c11log::level::level_enum level) const
     return level >= _atomic_level.load();
 }
 inline void c11log::logger::_log_it(const std::string& msg, const level::level_enum level)
-{
+{	
     for (auto &sink : _sinks)
         sink->log(msg, level);
 }
