@@ -22,8 +22,10 @@ public:
         _callback_logger(callback_logger),
         _oss(),
         _level(msg_level),
-        _enabled(enabled) {
-        if(enabled) {
+        _enabled(enabled)
+    {
+        if(enabled)
+        {
             callback_logger->_formatter->format_header(callback_logger->_logger_name,
                     msg_level,
                     log_clock::now(),
@@ -40,12 +42,15 @@ public:
         // The move ctor should only be called on start of logging line,
         // where no logging happened yet for this line so no need to copy the string from the other
         _oss(),
-        _level(other._level) {
+        _level(other._level)
+    {
     };
 
 
-    ~line_logger() {
-        if (_enabled) {
+    ~line_logger()
+    {
+        if (_enabled)
+        {
             _oss << '\n';
             _callback_logger->_log_it(_oss.str_ref(), _level);
         }
@@ -53,7 +58,8 @@ public:
 
 
     template<typename T>
-    line_logger&& operator<<(const T& msg) && {
+    line_logger&& operator<<(const T& msg) &&
+    {
         if (_enabled)
             _oss << msg;
         return std::move(*this);

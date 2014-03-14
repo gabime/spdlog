@@ -38,13 +38,15 @@ inline void bench(const std::string& fn_name, const std::chrono::milliseconds &d
     seconds print_interval(1);
     auto start_time = the_clock::now();
     auto lastPrintTime = start_time;
-    while (true) {
+    while (true)
+    {
         fn();
         ++counter;
         auto now = the_clock::now();
         if (now - start_time >= duration)
             break;
-        if (now - lastPrintTime >= print_interval) {
+        if (now - lastPrintTime >= print_interval)
+        {
             std::cout << fn_name << ": " << format(counter) << " per sec" << std::endl;
             counter = 0;
             lastPrintTime = the_clock::now();

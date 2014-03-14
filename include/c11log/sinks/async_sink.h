@@ -67,9 +67,12 @@ inline void c11log::sinks::async_sink::_thread_loop()
     static std::chrono::seconds  pop_timeout { 1 };
     std::string msg;
 
-    while (_active) {
-        if (_q.pop(msg, pop_timeout)) {
-            for (auto &sink : _sinks) {
+    while (_active)
+    {
+        if (_q.pop(msg, pop_timeout))
+        {
+            for (auto &sink : _sinks)
+            {
                 sink->log(msg, static_cast<level::level_enum>(_level.load()));
                 if (!_active)
                     return;
@@ -92,7 +95,8 @@ inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr sink_ptr)
 inline void c11log::sinks::async_sink::shutdown(const std::chrono::seconds &timeout)
 {
     auto until = std::chrono::system_clock::now() + timeout;
-    while (_q.size() > 0 && std::chrono::system_clock::now() < until) {
+    while (_q.size() > 0 && std::chrono::system_clock::now() < until)
+    {
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
     _shutdown();
@@ -100,7 +104,8 @@ inline void c11log::sinks::async_sink::shutdown(const std::chrono::seconds &time
 
 inline void c11log::sinks::async_sink::_shutdown()
 {
-    if(_active) {
+    if(_active)
+    {
         _active = false;
         if (_back_thread.joinable())
             _back_thread.join();

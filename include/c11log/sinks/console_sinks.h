@@ -19,7 +19,8 @@ public:
     virtual ~console_sink() = default;
 
 protected:
-    virtual void _sink_it(const std::string& msg) override {
+    virtual void _sink_it(const std::string& msg) override
+    {
         std::lock_guard<std::mutex> lock(_mutex);
         _ostream << msg;
     }

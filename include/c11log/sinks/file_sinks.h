@@ -12,20 +12,22 @@ namespace sinks
 {
 
 /*
-* Trivial file sink with single file as target
+* Thread safe, trivial file sink with single file as target
 */
 class simple_file_sink : public base_sink
 {
 public:
     explicit simple_file_sink(const std::string &filename,
                               const std::string& extension,
-                              const std::chrono::milliseconds &flush_every=std::chrono::milliseconds::zero())
+                              const std::size_t flush_every=0)
         : _mutex(),
           _ofstream(filename + "." + extension, std::ofstream::binary|std::ofstream::app),
-          _flush_helper(flush_every) {
+          _flush_helper(flush_every)
+    {
     }
 protected:
-    void _sink_it(const std::string& msg) override {
+    void _sink_it(const std::string& msg) override
+    {
         std::lock_guard<std::mutex> lock(_mutex);
         _flush_helper.write(_ofstream, msg);
     }
@@ -37,14 +39,14 @@ private:
 
 
 /*
- * Thread safe, size limited file sink
+ * Thread safe, rotating file sink based on size
 */
 class rotating_file_sink : public base_sink
 {
 public:
     rotating_file_sink(const std::string &base_filename, const std::string &extension,
-                       size_t max_size, size_t max_files,
-                       const std::chrono::milliseconds &flush_every = std::chrono::milliseconds::zero()):
+                       const std::size_t max_size, const std::size_t max_files,
+                       const std::size_t flush_every=0):
         _base_filename(base_filename),
         _extension(extension),
         _max_size(max_size),
@@ -52,14 +54,17 @@ public:
         _current_size(0),
         _mutex(),
         _ofstream(_calc_filename(_base_filename, 0, _extension), std::ofstream::binary),
-        _flush_helper(flush_every) {
+        _flush_helper(flush_every)
+    {
     }
 
 protected:
-    void _sink_it(const std::string& msg) override {
+    void _sink_it(const std::string& msg) override
+    {
         std::lock_guard<std::mutex> lock(_mutex);
         _current_size += msg.length();
-        if (_current_size  > _max_size) {
+        if (_current_size  > _max_size)
+        {
             _rotate();
             _current_size = msg.length();
         }
@@ -68,7 +73,8 @@ protected:
 
 
 private:
-    static std::string _calc_filename(const std::string& filename, std::size_t index, const std::string& extension) {
+    static std::string _calc_filename(const std::string& filename, std::size_t index, const std::string& extension)
+    {
         std::ostringstream oss;
         if (index)
             oss << filename << "." << index << "." << extension;
@@ -83,10 +89,12 @@ private:
     // log n-2.txt -> log.n-1.txt
     // ...
     // log.txt -> log.1.txt
-    void _rotate() {
+    void _rotate()
+    {
         _ofstream.close();
         //Remove oldest file
-        for (auto i = _max_files; i > 0; --i) {
+        for (auto i = _max_files; i > 0; --i)
+        {
             auto src = _calc_filename(_base_filename, i - 1, _extension);
             auto target = _calc_filename(_base_filename, i, _extension);
             if (i == _max_files)
@@ -106,26 +114,29 @@ private:
 };
 
 /*
- * Thread safe file sink that closes the log file at midnight and opens new one
+ * Thread safe, rotating file sink based on date. rotates at midnight
  */
 class daily_file_sink:public base_sink
 {
 public:
     explicit daily_file_sink(const std::string& base_filename,
                              const std::string& extension,
-                             const std::chrono::milliseconds &flush_every = std::chrono::milliseconds::zero()):
+                             const std::size_t flush_every=0):
         _base_filename(base_filename),
         _extension(extension),
         _midnight_tp (_calc_midnight_tp() ),
         _mutex(),
         _ofstream(_calc_filename(_base_filename, _extension), std::ofstream::binary|std::ofstream::app),
-        _flush_helper(flush_every) {
+        _flush_helper(flush_every)
+    {
     }
 
 protected:
-    void _sink_it(const std::string& msg) override {
+    void _sink_it(const std::string& msg) override
+    {
         std::lock_guard<std::mutex> lock(_mutex);
-        if (std::chrono::system_clock::now() >= _midnight_tp) {
+        if (std::chrono::system_clock::now() >= _midnight_tp)
+        {
             _ofstream.close();
             _ofstream.open(_calc_filename(_base_filename, _extension));
             _midnight_tp = _calc_midnight_tp();
@@ -135,7 +146,8 @@ protected:
 
 private:
     // Return next midnight's time_point
-    static std::chrono::system_clock::time_point _calc_midnight_tp() {
+    static std::chrono::system_clock::time_point _calc_midnight_tp()
+    {
         using namespace std::chrono;
         auto now = system_clock::now();
         time_t tnow = std::chrono::system_clock::to_time_t(now);
@@ -146,7 +158,8 @@ private:
     }
 
     //Create filename for the form basename.YYYY-MM-DD.extension
-    static std::string _calc_filename(const std::string& basename, const std::string& extension) {
+    static std::string _calc_filename(const std::string& basename, const std::string& extension)
+    {
         std::tm tm = c11log::details::os::localtime();
         std::ostringstream oss;
         oss << basename << '.';

@@ -33,8 +33,8 @@ public:
     using sinks_vector_t = std::vector<sink_ptr>;
     using sinks_init_list = std::initializer_list<sink_ptr>;
 
-    logger(const std::string& name, formatter_ptr f, sinks_init_list sinks_list);
-    logger(const std::string& name, sinks_init_list sinks_list);
+    logger(const std::string& name, formatter_ptr, sinks_init_list);
+    logger(const std::string& name, sinks_init_list);
     logger(sinks_init_list sinks_list);
 
 
@@ -146,7 +146,7 @@ inline bool c11log::logger::should_log(c11log::level::level_enum level) const
     return level >= _atomic_level.load();
 }
 inline void c11log::logger::_log_it(const std::string& msg, const level::level_enum level)
-{	
+{
     for (auto &sink : _sinks)
         sink->log(msg, level);
 }

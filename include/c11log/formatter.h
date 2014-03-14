@@ -31,7 +31,8 @@ class default_formatter: public formatter
 {
 public:
     // Format: [2013-12-29 01:04:42.900] [logger_name:Info] Message body
-    void format_header(const std::string& logger_name, level::level_enum level, const log_clock::time_point& tp, std::ostream& dest) override {
+    void format_header(const std::string& logger_name, level::level_enum level, const log_clock::time_point& tp, std::ostream& dest) override
+    {
         _format_time(tp, dest);
         if(!logger_name.empty())
             dest << " [" <<  logger_name << ":" << c11log::level::to_str(level) << "] ";
@@ -61,7 +62,8 @@ inline void c11log::formatters::default_formatter::_format_time(const log_clock:
 
     auto tm_now = details::os::localtime(log_clock::to_time_t(tp));
     using namespace c11log::details::os;
-    if(last_tm != tm_now) {
+    if(last_tm != tm_now)
+    {
 #ifdef _MSC_VER
         ::sprintf_s
 #else

@@ -22,25 +22,30 @@ public:
     str_devicebuf& operator=(str_devicebuf&&) = delete;
 
 
-    const std::string& str_ref() const {
+    const std::string& str_ref() const
+    {
         return _str;
     }
 
-    void clear() {
+    void clear()
+    {
         _str.clear();
     }
 
 protected:
-    virtual int sync() override {
+    virtual int sync() override
+    {
         return 0;
     }
 
-    virtual std::streamsize xsputn(const char_type* s, std::streamsize count) override {
+    virtual std::streamsize xsputn(const char_type* s, std::streamsize count) override
+    {
         _str.append(s, static_cast<unsigned int>(count));
         return count;
     }
 
-    virtual int_type overflow(int_type ch) override {
+    virtual int_type overflow(int_type ch) override
+    {
         if (ch != traits_type::eof())
             _str.append((char*)&ch, 1);
         return 1;
@@ -59,11 +64,10 @@ public:
     fast_oss(fast_oss&& other) = delete;
     fast_oss& operator=(const fast_oss& other) = delete;
 
-    const std::string& str_ref() const {
+    const std::string& str_ref() const
+    {
         return _dev.str_ref();
     }
-
-
 
 private:
     str_devicebuf _dev;

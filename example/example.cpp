@@ -20,20 +20,20 @@ int main(int argc, char* argv[])
 {
     if(argc || argv) {};
 
-    //auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, seconds(1));
+    auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
     auto null_sink = std::make_shared<sinks::null_sink>();
-    
+
 
     logger cout_logger ("cout", {null_sink, sinks::stdout_sink()});
 
     cout_logger.info() << "Hello cout logger!";
 
-    
-    logger my_logger ("my_logger", {null_sink});
+
+    logger my_logger ("my_logger", {fsink});
 
     auto start = system_clock::now();
 
-    const unsigned int howmany = 10000000;
+    const unsigned int howmany = 5000000;
     for(unsigned int i = 0; i < howmany ; i++)
         my_logger.info() << "Hello logger " << i;
 
