@@ -42,9 +42,7 @@ public:
         // The move ctor should only be called on start of logging line,
         // where no logging happened yet for this line so no need to copy the string from the other
         _oss(),
-        _level(other._level)
-    {
-    };
+        _level(other._level) {};
 
 
     ~line_logger()

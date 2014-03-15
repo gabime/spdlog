@@ -27,7 +27,7 @@ public:
         return _str;
     }
 
-    void clear()
+    void reset_str()
     {
         _str.clear();
     }
@@ -68,6 +68,10 @@ public:
     {
         return _dev.str_ref();
     }
+	void reset_str()
+	{
+		_dev.reset_str();
+	}
 
 private:
     str_devicebuf _dev;

@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 
     auto start = system_clock::now();
 
-    const unsigned int howmany = 5000000;
+    const unsigned int howmany = 15000000;
     for(unsigned int i = 0; i < howmany ; i++)
         my_logger.info() << "Hello logger " << i;
 

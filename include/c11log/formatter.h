@@ -6,9 +6,11 @@
 #include <sstream>
 #include <iomanip>
 #include <thread>
+#include <cstdlib>
 
 #include "common_types.h"
 #include "details/os.h"
+#include "details/fast_oss.h"
 
 namespace c11log
 {
@@ -35,7 +37,7 @@ public:
     {
         _format_time(tp, dest);
         if(!logger_name.empty())
-            dest << " [" <<  logger_name << ":" << c11log::level::to_str(level) << "] ";
+            dest << " [" <<  logger_name << ':' << c11log::level::to_str(level) << "] ";
         else
             dest << " [" << c11log::level::to_str(level) << "] ";
 
@@ -48,35 +50,44 @@ private:
 } //namespace c11log
 
 
-
+// Format datetime like this: [2014-03-14 17:15:22]
 inline void c11log::formatters::default_formatter::_format_time(const log_clock::time_point& tp, std::ostream &dest)
 {
+	using namespace c11log::details::os;
+	using namespace std::chrono;
 
 #ifdef _MSC_VER
-    __declspec(thread) static std::tm last_tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    __declspec(thread) static char last_time_str[64];
+    __declspec(thread) static std::tm s_last_tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    __declspec(thread) static details::fast_oss s_time_oss;
 #else
-    thread_local static std::tm last_tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    thread_local static char last_time_str[64];
+
+	thread_local static details::fast_oss s_time_oss;
+	thread_local static std::time_t s_cache_time_t = 0;
 #endif
 
-    auto tm_now = details::os::localtime(log_clock::to_time_t(tp));
-    using namespace c11log::details::os;
-    if(last_tm != tm_now)
-    {
-#ifdef _MSC_VER
-        ::sprintf_s
-#else
-        ::snprintf
-#endif
-        (last_time_str, sizeof(last_time_str), "[%d-%02d-%02d %02d:%02d:%02d]",
-         tm_now.tm_year + 1900,
-         tm_now.tm_mon + 1,
-         tm_now.tm_mday,
-         tm_now.tm_hour,
-         tm_now.tm_min,
-         tm_now.tm_sec);
-        last_tm = tm_now;
+
+	std::time_t tp_time_t = log_clock::to_time_t(tp);
+
+
+	//Cache every second
+	if(tp_time_t != s_cache_time_t)
+    {		
+		auto tm_now = details::os::localtime(tp_time_t);
+		s_time_oss.reset_str();
+		s_time_oss.fill('0');
+		s_time_oss << '[' << tm_now.tm_year + 1900 << '-';
+		s_time_oss.width(2);
+		s_time_oss << tm_now.tm_mon + 1 << '-';
+		s_time_oss.width(2);
+		s_time_oss << tm_now.tm_mday << ' ';
+		s_time_oss.width(2);
+		s_time_oss << tm_now.tm_hour << ':';
+		s_time_oss.width(2);
+		s_time_oss << tm_now.tm_min << ':';
+		s_time_oss.width(2);
+		s_time_oss << tm_now.tm_sec << ']';		
+		s_cache_time_t = tp_time_t;
     }
-    dest << last_time_str;
+	const std::string &s = s_time_oss.str_ref();
+	dest.write(s.c_str(), s.size());
 }
