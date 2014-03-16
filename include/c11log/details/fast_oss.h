@@ -40,6 +40,12 @@ protected:
 
     virtual std::streamsize xsputn(const char_type* s, std::streamsize count) override
     {
+
+		auto ssize = _str.size();
+		auto cap_left = _str.capacity() - ssize;
+		if(cap_left < static_cast<std::size_t>(count))
+			_str.reserve(ssize + count + 128);
+
         _str.append(s, static_cast<unsigned int>(count));
         return count;
     }
