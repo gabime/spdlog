@@ -49,14 +49,14 @@ public:
     {
         if (_enabled)
         {
-            _oss << '\n';
+            _oss << os::eol();
             _callback_logger->_log_it(_oss.str_ref(), _level);
         }
     }
 
 
     template<typename T>
-    line_logger&& operator<<(const T& msg) &&
+    line_logger&& operator<<(const T& msg)
     {
         if (_enabled)
             _oss << msg;

@@ -14,7 +14,7 @@ inline std::tm localtime(const std::time_t &time_tt)
 {
 
     std::tm tm;
-#ifdef _MSC_VER
+#ifdef _WIN32
     localtime_s(&tm, &time_tt);
 #else
     localtime_r(&time_tt, &tm);
@@ -47,9 +47,17 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
     return !(tm1==tm2);
 }
 
+inline const char* eol()
+{
+#ifdef _WIN32
+	return "\r\n";
+#else
+	return "\n";
+#endif
 }
-}
-}
+} //os
+} //details
+} //c11log
 
 
 
