@@ -12,7 +12,7 @@ namespace details
 
 class str_devicebuf:public std::streambuf
 {
-public:
+public:	
     str_devicebuf() = default;
     ~str_devicebuf() = default;
 
@@ -33,31 +33,32 @@ public:
     }
 
 protected:
-    virtual int sync() override
+    int sync() override
     {
         return 0;
-
     }
 
-    virtual std::streamsize xsputn(const char_type* s, std::streamsize count) override
-    {
-		auto ssize = _str.size();
-		auto cap_left = _str.capacity() - ssize;
-		if(cap_left < static_cast<std::size_t>(count))
-			_str.reserve(ssize + count + 128);
-
-        _str.append(s, static_cast<unsigned int>(count));
+	// copy the give buffer into the accumulated string.
+	// reserve initially 128 bytes which should be enough for common log lines
+	std::streamsize xsputn(const char_type* s, std::streamsize count) override
+    {		
+		if(_str.capacity() < k_initial_reserve)
+		{
+			_str.reserve(k_initial_reserve);
+		}
+		_str.append(s, static_cast<unsigned int>(count));
         return count;
     }
 
-    virtual int_type overflow(int_type ch) override
+    int_type overflow(int_type ch) override
     {
         if (ch != traits_type::eof())
-            _str.append((char*)&ch, 1);
+            xsputn((char*)&ch, 1);
         return 1;
     }
 private:
     std::string _str;
+	static constexpr std::streamsize k_initial_reserve = 128;
 };
 
 class fast_oss:public std::ostream

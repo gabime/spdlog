@@ -20,8 +20,6 @@ int main(int argc, char* argv[])
 {
 
 	if(argc || argv) {};
-	std::string s;
-	cout << "STRING cap: " << format(s.capacity()) << endl;
 
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
 	//auto fsink = std::make_shared<sinks::simple_file_sink>("simplelog", "txt");
