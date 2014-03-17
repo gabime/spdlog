@@ -47,7 +47,7 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
     return !(tm1==tm2);
 }
 
-inline const char* eol()
+constexpr inline const char* eol()
 {
 #ifdef _WIN32
 	return "\r\n";
