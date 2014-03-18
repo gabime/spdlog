@@ -1,6 +1,6 @@
 #pragma once
 
-// Fast ostringstream like supprt which return its string by ref and nothing more
+// Faster than ostringstream--returns its string by ref
 
 #include<streambuf>
 #include<string>
@@ -52,9 +52,14 @@ protected:
 
     int_type overflow(int_type ch) override
     {
-        if (ch != traits_type::eof())
-            xsputn((char*)&ch, 1);
-        return 1;
+
+		bool not_eofile =  traits_type::not_eof(ch);
+        if (not_eofile)
+		{
+			char c = traits_type::to_char_type(ch);
+            xsputn(&c, 1);
+		}
+		return not_eofile;
     }
 private:
     std::string _str;

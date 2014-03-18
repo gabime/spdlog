@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <thread>
 #include <cstdlib>
+#include <cstring>
 
 #include "common_types.h"
 #include "details/os.h"
@@ -46,48 +47,50 @@ private:
     void _format_time(const log_clock::time_point& tp, std::ostream &dest);
 
 };
+
+
 } //namespace formatter
 } //namespace c11log
-
 
 // Format datetime like this: [2014-03-14 17:15:22]
 inline void c11log::formatters::default_formatter::_format_time(const log_clock::time_point& tp, std::ostream &dest)
 {
-	using namespace c11log::details::os;
-	using namespace std::chrono;
+    using namespace c11log::details::os;
+    using namespace std::chrono;
 
-#ifdef _MSC_VER
-    __declspec(thread) static std::tm s_last_tm = { 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    __declspec(thread) static details::fast_oss s_time_oss;
+#ifdef _WIN32 //VS2013 doesn't support yet thread_local keyword
+    __declspec(thread) static char s_cache_str[64];
+    __declspec(thread) static size_t s_cache_size;
+    __declspec(thread) static std::time_t s_cache_time_t = 0;
 #else
-
-	thread_local static details::fast_oss s_time_oss;
-	thread_local static std::time_t s_cache_time_t = 0;
+    thread_local static char s_cache_str[64];
+    thread_local static size_t s_cache_size;
+    thread_local static std::time_t s_cache_time_t = 0;
 #endif
 
-
-	std::time_t tp_time_t = log_clock::to_time_t(tp);
-
-
-	//Cache every second
-	if(tp_time_t != s_cache_time_t)
-    {		
-		auto tm_now = details::os::localtime(tp_time_t);
-		s_time_oss.reset_str();
-		s_time_oss.fill('0');
-		s_time_oss << '[' << tm_now.tm_year + 1900 << '-';
-		s_time_oss.width(2);
-		s_time_oss << tm_now.tm_mon + 1 << '-';
-		s_time_oss.width(2);
-		s_time_oss << tm_now.tm_mday << ' ';
-		s_time_oss.width(2);
-		s_time_oss << tm_now.tm_hour << ':';
-		s_time_oss.width(2);
-		s_time_oss << tm_now.tm_min << ':';
-		s_time_oss.width(2);
-		s_time_oss << tm_now.tm_sec << ']';		
-		s_cache_time_t = tp_time_t;
+    //Cache every second
+    std::time_t tp_time_t = log_clock::to_time_t(tp);
+    if(tp_time_t != s_cache_time_t)
+    {
+        auto tm_now = details::os::localtime(tp_time_t);
+        details::fast_oss time_oss;
+        time_oss.fill('0');
+        time_oss << '[' << tm_now.tm_year + 1900 << '-';
+        time_oss.width(2);
+        time_oss << tm_now.tm_mon + 1 << '-';
+        time_oss.width(2);
+        time_oss << tm_now.tm_mday << ' ';
+        time_oss.width(2);
+        time_oss << tm_now.tm_hour << ':';
+        time_oss.width(2);
+        time_oss << tm_now.tm_min << ':';
+        time_oss.width(2);
+        time_oss << tm_now.tm_sec << ']';
+        //Cache the resulted string and its size
+        s_cache_time_t = tp_time_t;
+        const std::string &s = time_oss.str_ref();
+        std::memcpy(s_cache_str, s.c_str(), s.size());
+        s_cache_size = s.size();
     }
-	const std::string &s = s_time_oss.str_ref();
-	dest.write(s.c_str(), s.size());
+    dest.write(s_cache_str, s_cache_size);
 }
