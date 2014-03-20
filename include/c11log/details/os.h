@@ -50,9 +50,9 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
 constexpr inline const char* eol()
 {
 #ifdef _WIN32
-	return "\r\n";
+    return "\r\n";
 #else
-	return "\n";
+    return "\n";
 #endif
 }
 } //os

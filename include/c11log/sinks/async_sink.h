@@ -28,7 +28,7 @@ public:
 
 
 protected:
-    void _sink_it(const std::string& msg) override;
+    void _sink_it(const bufpair_t& msg) override;
     void _thread_loop();
 
 private:
@@ -57,9 +57,10 @@ inline c11log::sinks::async_sink::~async_sink()
 {
     _shutdown();
 }
-inline void c11log::sinks::async_sink::_sink_it(const std::string& msg)
+inline void c11log::sinks::async_sink::_sink_it(const bufpair_t& msg)
 {
-    _q.push(msg);
+    std::string s {msg.first, msg.first+msg.second};
+    _q.push(s);
 }
 
 inline void c11log::sinks::async_sink::_thread_loop()
@@ -71,9 +72,10 @@ inline void c11log::sinks::async_sink::_thread_loop()
     {
         if (_q.pop(msg, pop_timeout))
         {
+            bufpair_t buf(msg.data(), msg.size());
             for (auto &sink : _sinks)
             {
-                sink->log(msg, static_cast<level::level_enum>(_level.load()));
+                sink->log(buf, static_cast<level::level_enum>(_level.load()));
                 if (!_active)
                     return;
             }

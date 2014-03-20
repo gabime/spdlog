@@ -15,14 +15,13 @@ using namespace std::chrono;
 using namespace c11log;
 using namespace utils;
 
-
 int main(int argc, char* argv[])
 {
 
-	if(argc || argv) {};
+    if(argc || argv) {};
 
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
-	//auto fsink = std::make_shared<sinks::simple_file_sink>("simplelog", "txt");
+    //auto fsink = std::make_shared<sinks::simple_file_sink>("simplelog", "txt");
     auto null_sink = std::make_shared<sinks::null_sink>();
 
 
@@ -35,7 +34,7 @@ int main(int argc, char* argv[])
 
     auto start = system_clock::now();
 
-    const unsigned int howmany = 3000000;
+    const unsigned int howmany = 5000000;
     for(unsigned int i = 0; i < howmany ; i++)
         my_logger.info() << "Hello logger " << i;
 

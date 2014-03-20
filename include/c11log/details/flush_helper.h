@@ -13,9 +13,9 @@ public:
         _flush_every(flush_every),
         _write_counter(0) {};
 
-    void write(std::ofstream& ofs, const std::string& msg)
+    void write(std::ofstream& ofs, const bufpair_t& msg)
     {
-        ofs.write(msg.c_str(), msg.size());
+        ofs.write(msg.first, msg.second);
         if(++_write_counter == _flush_every)
         {
             ofs.flush();

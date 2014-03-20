@@ -50,7 +50,7 @@ public:
         if (_enabled)
         {
             _oss << os::eol();
-            _callback_logger->_log_it(_oss.str_ref(), _level);
+            _callback_logger->_log_it(_oss.buf(), _level);
         }
     }
 

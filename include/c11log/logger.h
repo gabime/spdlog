@@ -21,6 +21,7 @@ namespace c11log
 namespace details
 {
 class line_logger;
+template<std::size_t> class fast_buf;
 }
 
 
@@ -67,7 +68,7 @@ private:
     sinks_vector_t _sinks;
     std::atomic_int _atomic_level;
 
-    void _log_it(const std::string& msg, const level::level_enum level);
+    void _log_it(const bufpair_t& buf, const level::level_enum level);
 
 };
 
@@ -80,6 +81,7 @@ logger& get_logger(const std::string& name);
 // Logger inline implementation
 //
 #include "details/line_logger.h"
+#include "details/fast_buf.h"
 
 
 inline c11log::logger::logger(const std::string& name, formatter_ptr f, sinks_init_list sinks_list) :
@@ -145,10 +147,11 @@ inline bool c11log::logger::should_log(c11log::level::level_enum level) const
 {
     return level >= _atomic_level.load();
 }
-inline void c11log::logger::_log_it(const std::string& msg, const level::level_enum level)
+
+inline void c11log::logger::_log_it(const bufpair_t& buf, const level::level_enum level)
 {
     for (auto &sink : _sinks)
-        sink->log(msg, level);
+        sink->log(buf, level);
 }
 
 // Static factory function

@@ -19,10 +19,10 @@ public:
     virtual ~console_sink() = default;
 
 protected:
-    virtual void _sink_it(const std::string& msg) override
+    virtual void _sink_it(const bufpair_t& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        _ostream << msg;
+        _ostream.write(msg.first, msg.second);
     }
 
     std::ostream& _ostream;

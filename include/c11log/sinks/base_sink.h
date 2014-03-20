@@ -22,7 +22,7 @@ public:
     base_sink(const base_sink&) = delete;
     base_sink& operator=(const base_sink&) = delete;
 
-    void log(const std::string &msg, level::level_enum level)
+    void log(const bufpair_t &msg, level::level_enum level)
     {
         if (level >= _level)
         {
@@ -36,14 +36,14 @@ public:
     }
 
 protected:
-    virtual void _sink_it(const std::string& msg) = 0;
+    virtual void _sink_it(const bufpair_t& msg) = 0;
     std::atomic<int> _level {level::INFO};
 };
 
 class null_sink:public base_sink
 {
 protected:
-    void _sink_it(const std::string& ) override
+    void _sink_it(const bufpair_t& ) override
     {
     }
 };

@@ -88,9 +88,10 @@ inline void c11log::formatters::default_formatter::_format_time(const log_clock:
         time_oss << tm_now.tm_sec << ']';
         //Cache the resulted string and its size
         s_cache_time_t = tp_time_t;
-        const std::string &s = time_oss.str_ref();
-        std::memcpy(s_cache_str, s.c_str(), s.size());
-        s_cache_size = s.size();
+        //const std::string &s = time_oss.str_ref();
+        bufpair_t buf = time_oss.buf();
+        std::memcpy(s_cache_str, buf.first, buf.second);
+        s_cache_size = buf.second;
     }
     dest.write(s_cache_str, s_cache_size);
 }
