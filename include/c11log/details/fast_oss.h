@@ -71,7 +71,7 @@ protected:
     }
 private:
     //std::string _str;
-    fast_buf<128> _fastbuf;
+    fast_buf<192> _fastbuf;
 };
 
 class fast_oss:public std::ostream
