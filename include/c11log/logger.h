@@ -11,6 +11,7 @@
 #include "common_types.h"
 #include "sinks/base_sink.h"
 #include "details/factory.h"
+#include "c11log/details/log_msg.h"
 
 
 //Thread safe, fast logger.
@@ -101,8 +102,8 @@ inline c11log::logger::logger(sinks_init_list sinks_list) :
 
 
 inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
-{
-    return details::line_logger(this, msg_level, msg_level >= _atomic_level);
+{		
+    return details::line_logger(this, new_log_msg, msg_level >= msg_level);
 }
 
 inline c11log::details::line_logger c11log::logger::debug()

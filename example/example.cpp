@@ -6,6 +6,7 @@
 #include "c11log/sinks/async_sink.h"
 #include "c11log/sinks/file_sinks.h"
 #include "c11log/sinks/console_sinks.h"
+#include "c11log/details/log_msg.h"
 
 #include "utils.h"
 
