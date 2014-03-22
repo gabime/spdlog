@@ -10,7 +10,7 @@ all: example.cpp
 	
 
 debug: example.cpp
-	$(CXX) example.cpp -o $(OUTBIN)-debug $(CXXFLAGS) $(CXX_DEBUG_FLAFS)
+	$(CXX) example.cpp -o $(OUTBIN)-debug $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
 
 
 
