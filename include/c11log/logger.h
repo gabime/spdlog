@@ -67,7 +67,7 @@ private:
     std::string _logger_name = "";
     formatter_ptr _formatter;
     sinks_vector_t _sinks;
-    std::atomic_int _atomic_level;
+    std::atomic_int _logger_level;
 
     void _log_it(const bufpair_t& buf, const level::level_enum level);
 
@@ -91,7 +91,7 @@ inline c11log::logger::logger(const std::string& name, formatter_ptr f, sinks_in
     _sinks(sinks_list)
 {
     //Seems that vs2013 doesnt support atomic member initialization in ctor, so its done here
-    _atomic_level = level::INFO;
+    _logger_level = level::INFO;
 }
 
 inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_list) :
@@ -103,7 +103,7 @@ inline c11log::logger::logger(sinks_init_list sinks_list) :
 
 inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
 {
-    return details::line_logger(this, msg_level, msg_level >= _atomic_level);
+    return details::line_logger(this, msg_level, msg_level >= _logger_level);
 }
 
 inline c11log::details::line_logger c11log::logger::debug()
@@ -136,17 +136,17 @@ inline const std::string& c11log::logger::get_name() const
 
 inline void c11log::logger::set_level(c11log::level::level_enum level)
 {
-    _atomic_level.store(level);
+    _logger_level.store(level);
 }
 
 inline c11log::level::level_enum c11log::logger::get_level() const
 {
-    return static_cast<c11log::level::level_enum>(_atomic_level.load());
+    return static_cast<c11log::level::level_enum>(_logger_level.load());
 }
 
 inline bool c11log::logger::should_log(c11log::level::level_enum level) const
 {
-    return level >= _atomic_level.load();
+    return level >= _logger_level.load();
 }
 
 inline void c11log::logger::_log_it(const bufpair_t& buf, const level::level_enum level)

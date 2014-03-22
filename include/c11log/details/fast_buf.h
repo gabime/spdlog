@@ -5,14 +5,11 @@
 #include <cstring>
 #include <vector>
 
-// Fast buffer
+// Fast memory storage
 // stores its contents on the stack when possible, in vector<char> otherwise
 // NOTE: User should be remember that returned buffer might be on the stack!!
 
-namespace c11log
-{
-namespace details
-{
+namespace c11log { namespace details {
 
 template<std::size_t STACK_SIZE=128>
 class fast_buf
