@@ -12,6 +12,7 @@ namespace details
 class str_devicebuf:public std::streambuf
 {
 public:
+	using Base = std::streambuf;
     str_devicebuf() = default;
     ~str_devicebuf() = default;
 
@@ -31,13 +32,7 @@ public:
     }
 
 protected:
-    int sync() override
-    {
-        return 0;
-    }
-
-    // copy the give buffer into the accumulated string.
-    // reserve initially 128 bytes which should be enough for common log lines
+    // copy the give buffer into the accumulated fast buffer
     std::streamsize xsputn(const char_type* s, std::streamsize count) override
     {
         _fastbuf.append(s, static_cast<unsigned int>(count));
@@ -45,14 +40,13 @@ protected:
     }
 
     int_type overflow(int_type ch) override
-    {
-        bool not_eofile =  traits_type::not_eof(ch);
-        if (not_eofile)
+    {        
+        if (traits_type::not_eof(ch))
         {
             char c = traits_type::to_char_type(ch);
             xsputn(&c, 1);
         }
-        return not_eofile;
+        return ch;
     }
 private:
     fast_buf<192> _fastbuf;

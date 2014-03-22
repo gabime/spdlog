@@ -62,6 +62,7 @@ public:
     {
         if (_enabled)
             _oss << msg;
+
         return std::move(*this);
     }
 
