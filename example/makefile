@@ -16,7 +16,8 @@ debug: example.cpp
 
 clean:
 	rm -f *.txt $(OUTBIN) $(OUTBIN)-debug
-	
+
+
 rebuild: clean all
 rebuild-debug: clean debug
 
