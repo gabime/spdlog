@@ -102,7 +102,7 @@ inline c11log::logger::logger(sinks_init_list sinks_list) :
 
 
 inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
-{		
+{
     return details::line_logger(this, msg_level, msg_level >= _atomic_level);
 }
 

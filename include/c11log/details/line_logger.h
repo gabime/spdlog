@@ -66,7 +66,7 @@ public:
 
 private:
     logger* _callback_logger;
-    details::fast_oss _oss;	
+    details::fast_oss _oss;
     level::level_enum _level;
     bool _enabled;
 

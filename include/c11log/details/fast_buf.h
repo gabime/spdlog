@@ -21,10 +21,10 @@ public:
     fast_buf():_stack_size(0) {}
     ~fast_buf() {};
 
-	fast_buf(const bufpair_t& buf_to_copy):fast_buf()
-	{
-		append(buf_to_copy);
-	}
+    fast_buf(const bufpair_t& buf_to_copy):fast_buf()
+    {
+        append(buf_to_copy);
+    }
 
     fast_buf(const fast_buf& other)
     {
@@ -46,7 +46,7 @@ public:
     }
 
     fast_buf& operator=(const fast_buf& other) = delete;
-	fast_buf& operator=(fast_buf&& other) = delete;
+    fast_buf& operator=(fast_buf&& other) = delete;
 
     void append(const char* buf, std::size_t size)
     {
@@ -66,7 +66,7 @@ public:
             //Not enough stack space. Copy all to _v
             else
             {
-				_v.reserve(_stack_size+size);
+                _v.reserve(_stack_size+size);
                 if(_stack_size)
                     _v.insert(_v.end(), _stack_buf.begin(), _stack_buf.begin() +_stack_size);
                 _v.insert(_v.end(), buf, buf+size);
@@ -74,10 +74,10 @@ public:
         }
     }
 
-	void append(const bufpair_t &buf)
-	{
-		append(buf.first, buf.second);
-	}
+    void append(const bufpair_t &buf)
+    {
+        append(buf.first, buf.second);
+    }
 
     void clear()
     {
@@ -96,7 +96,7 @@ public:
 private:
     std::vector<char> _v;
     std::array<char, STACK_SIZE> _stack_buf;
-    std::size_t _stack_size;	
+    std::size_t _stack_size;
 };
 
 }

@@ -32,12 +32,12 @@ int main(int argc, char* argv[])
 
     logger my_logger ("my_logger", {null_sink});
 
-	std::string s(100, '0');
-	const unsigned int howmany = 5000000;
+    std::string s(100, '0');
+    const unsigned int howmany = 5000000;
     auto start = system_clock::now();
     for(unsigned int i = 0; i < howmany ; i++)
-		my_logger.info() << s;
-        //my_logger.info() << "Hello logger " << i;;
+        my_logger.info() << s;
+    //my_logger.info() << "Hello logger " << i;;
 
     //async->shutdown(seconds(3));
     auto delta = system_clock::now() - start;

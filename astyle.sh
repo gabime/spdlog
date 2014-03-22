@@ -1,4 +1,5 @@
 #!/bin/bash
-find . -name "*\.h" -o -name "*\.cpp"|xargs astyle -A1
+find . -name "*\.h" -o -name "*\.cpp"|xargs dos2unix
+find . -name "*\.h" -o -name "*\.cpp"|xargs astyle -n -A1
 
 
