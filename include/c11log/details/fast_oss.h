@@ -19,14 +19,14 @@ public:
     str_devicebuf(str_devicebuf&& other) = delete;
     str_devicebuf& operator=(const str_devicebuf&) = delete;
     str_devicebuf& operator=(str_devicebuf&&) = delete;
-   
+
     bufpair_t buf()
     {
         return _fastbuf.get();
     }
 
-    void reset_str()
-    {        
+    void clear()
+    {
         _fastbuf.clear();
     }
 
@@ -39,7 +39,7 @@ protected:
     // copy the give buffer into the accumulated string.
     // reserve initially 128 bytes which should be enough for common log lines
     std::streamsize xsputn(const char_type* s, std::streamsize count) override
-    {       
+    {
         _fastbuf.append(s, static_cast<unsigned int>(count));
         return count;
     }
@@ -73,9 +73,9 @@ public:
         return _dev.buf();
     }
 
-    void reset_str()
+    void clear()
     {
-        _dev.reset_str();
+        _dev.clear();
     }
 
 private:

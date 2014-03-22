@@ -38,13 +38,13 @@ public:
     line_logger& operator=(const line_logger&) = delete;
     line_logger& operator=(line_logger&&) = delete;
 
-	// The move ctor should only be called on start of logging line,
-	// where no logging happened yet for this line so no need to copy the string from the other
+    // The move ctor should only be called on start of logging line,
+    // where no logging happened yet for this line so no need to copy the string from the other
     line_logger(line_logger&& other) :
-        _callback_logger(other._callback_logger),        
+        _callback_logger(other._callback_logger),
         _oss(),
         _level(other._level),
-		_enabled(other._enabled) {}
+        _enabled(other._enabled) {}
 
 
     ~line_logger()

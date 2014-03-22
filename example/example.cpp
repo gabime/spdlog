@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 {
 
     if(argc || argv) {};
-	const unsigned int howmany = 1000000;
+    const unsigned int howmany = 1000000;
 
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
     //auto fsink = std::make_shared<sinks::simple_file_sink>("simplelog", "txt");
@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
 
     logger cout_logger ("cout", {null_sink, sinks::stdout_sink()});
 
-    cout_logger.info() << "Hello cout logger!";	
+    cout_logger.info() << "Hello cout logger!";
 
     logger my_logger ("my_logger", {null_sink});
 
