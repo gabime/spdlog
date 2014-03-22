@@ -1,9 +1,9 @@
 #pragma once
 
-#include <cstddef>
-#include <utility>
-#include <cstring>
+#include <array>
 #include <vector>
+#include <algorithm>
+
 
 // Fast memory storage
 // stores its contents on the stack when possible, in vector<char> otherwise
