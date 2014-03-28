@@ -26,4 +26,13 @@ inline const char* to_str(c11log::level::level_enum l)
     return level_names[l];
 }
 }
+
+struct log_msg
+{
+    log_clock::time_point when;
+    bufpair_t msg_buf;
+    std::size_t header_size;
+    level::level_enum msg_level;
+};
+
 }

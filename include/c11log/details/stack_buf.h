@@ -15,18 +15,18 @@ namespace details
 {
 
 template<std::size_t STACK_SIZE=128>
-class fast_buf
+class stack_buf
 {
 public:
-    fast_buf():_stack_size(0) {}
-    ~fast_buf() {};
+    stack_buf():_stack_size(0) {}
+    ~stack_buf() {};
 
-    fast_buf(const bufpair_t& buf_to_copy):fast_buf()
+    stack_buf(const bufpair_t& buf_to_copy):stack_buf()
     {
         append(buf_to_copy);
     }
 
-    fast_buf(const fast_buf& other)
+    stack_buf(const stack_buf& other)
     {
         _stack_size = other._stack_size;
         if(!other._v.empty())
@@ -35,7 +35,7 @@ public:
             std::copy(other._stack_buf.begin(), other._stack_buf.begin()+_stack_size, _stack_buf.begin());
     }
 
-    fast_buf(fast_buf&& other)
+    stack_buf(stack_buf&& other)
     {
         _stack_size = other._stack_size;
         if(!other._v.empty())
@@ -45,31 +45,31 @@ public:
         other.clear();
     }
 
-    fast_buf& operator=(const fast_buf& other) = delete;
-    fast_buf& operator=(fast_buf&& other) = delete;
+    stack_buf& operator=(const stack_buf& other) = delete;
+    stack_buf& operator=(stack_buf&& other) = delete;
 
-    void append(const char* buf, std::size_t size)
+    void append(const char* buf, std::size_t buf_size)
     {
         //If we are aleady using _v, forget about the stack
         if(!_v.empty())
         {
-            _v.insert(_v.end(), buf, buf+ size);
+            _v.insert(_v.end(), buf, buf+ buf_size);
         }
         //Try use the stack
         else
         {
-            if(_stack_size+size <= STACK_SIZE)
+            if(_stack_size+buf_size <= STACK_SIZE)
             {
-                std::memcpy(&_stack_buf[_stack_size], buf, size);
-                _stack_size+=size;
+                std::memcpy(&_stack_buf[_stack_size], buf, buf_size);
+                _stack_size+=buf_size;
             }
             //Not enough stack space. Copy all to _v
             else
             {
-                _v.reserve(_stack_size+size);
+                _v.reserve(_stack_size+buf_size);
                 if(_stack_size)
                     _v.insert(_v.end(), _stack_buf.begin(), _stack_buf.begin() +_stack_size);
-                _v.insert(_v.end(), buf, buf+size);
+                _v.insert(_v.end(), buf, buf+buf_size);
             }
         }
     }
@@ -91,6 +91,14 @@ public:
             return bufpair_t(_v.data(), _v.size());
         else
             return bufpair_t(_stack_buf.data(), _stack_size);
+    }
+
+    std::size_t size()
+    {
+        if(!_v.empty())
+            return _v.size();
+        else
+            return _stack_size;
     }
 
 private:

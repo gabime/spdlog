@@ -75,7 +75,7 @@ inline void c11log::sinks::async_sink::_thread_loop()
             bufpair_t buf(msg.data(), msg.size());
             for (auto &sink : _sinks)
             {
-                sink->log(buf, static_cast<level::level_enum>(_level.load()));
+                sink->log(buf, level::INFO);
                 if (!_active)
                     return;
             }

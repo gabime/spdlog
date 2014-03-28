@@ -11,7 +11,6 @@
 #include "common_types.h"
 #include "sinks/base_sink.h"
 #include "details/factory.h"
-#include "c11log/details/log_msg.h"
 
 
 //Thread safe, fast logger.
@@ -69,7 +68,7 @@ private:
     sinks_vector_t _sinks;
     std::atomic_int _logger_level;
 
-    void _log_it(const bufpair_t& buf, const level::level_enum level);
+    void _log_it(const log_msg& msg);
 
 };
 
@@ -77,12 +76,10 @@ logger& get_logger(const std::string& name);
 
 }
 
-
 //
 // Logger inline implementation
 //
 #include "details/line_logger.h"
-#include "details/fast_buf.h"
 
 
 inline c11log::logger::logger(const std::string& name, formatter_ptr f, sinks_init_list sinks_list) :
@@ -90,7 +87,7 @@ inline c11log::logger::logger(const std::string& name, formatter_ptr f, sinks_in
     _formatter(f),
     _sinks(sinks_list)
 {
-    //Seems that vs2013 doesnt support atomic member initialization in ctor, so its done here
+    //Seems that vs2013 doesnt support std::atomic member initialization, so its done here
     _logger_level = level::INFO;
 }
 
@@ -149,10 +146,10 @@ inline bool c11log::logger::should_log(c11log::level::level_enum level) const
     return level >= _logger_level.load();
 }
 
-inline void c11log::logger::_log_it(const bufpair_t& buf, const level::level_enum level)
+inline void c11log::logger::_log_it(const log_msg& msg)
 {
     for (auto &sink : _sinks)
-        sink->log(buf, level);
+        sink->log(msg);
 }
 
 // Static factory function

@@ -13,37 +13,39 @@ namespace sinks
 class base_sink
 {
 public:
-    base_sink() = default;
-    base_sink(level::level_enum l):_level(l)
-    {
-    };
+    base_sink(): _enabled(true) {}
     virtual ~base_sink() = default;
 
     base_sink(const base_sink&) = delete;
     base_sink& operator=(const base_sink&) = delete;
 
-    void log(const bufpair_t &msg, level::level_enum level)
+    void log(const log_msg& msg)
     {
-        if (level >= _level)
+        if (_enabled)
         {
             _sink_it(msg);
         }
     };
 
-    void set_level(level::level_enum level)
+    void enable(bool enabled)
     {
-        _level = level;
+        _enabled = enabled;
+    }
+
+    bool is_enabled()
+    {
+        return _enabled.load();
     }
 
 protected:
-    virtual void _sink_it(const bufpair_t& msg) = 0;
-    std::atomic<int> _level {level::INFO};
+    virtual void _sink_it(const log_msg& msg) = 0;
+    std::atomic<bool> _enabled;
 };
 
 class null_sink:public base_sink
 {
 protected:
-    void _sink_it(const bufpair_t& ) override
+    void _sink_it(const log_msg&) override
     {
     }
 };

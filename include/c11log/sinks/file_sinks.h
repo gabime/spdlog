@@ -27,10 +27,10 @@ public:
     {
     }
 protected:
-    void _sink_it(const bufpair_t& msg) override
+    void _sink_it(const log_msg& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        _flush_helper.write(_ofstream, msg);
+        _flush_helper.write(_ofstream, msg.msg_buf);
     }
 private:
     std::mutex _mutex;
@@ -60,16 +60,17 @@ public:
     }
 
 protected:
-    void _sink_it(const bufpair_t& msg) override
+    void _sink_it(const log_msg& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        _current_size += msg.second;
+
+        _current_size += msg.msg_buf.second;
         if (_current_size  > _max_size)
         {
             _rotate();
-            _current_size = msg.second;
+            _current_size = msg.msg_buf.second;
         }
-        _flush_helper.write(_ofstream, msg);
+        _flush_helper.write(_ofstream, msg.msg_buf);
     }
 
 
@@ -133,7 +134,7 @@ public:
     }
 
 protected:
-    void _sink_it(const bufpair_t& msg) override
+    void _sink_it(const log_msg& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
         if (std::chrono::system_clock::now() >= _midnight_tp)
@@ -142,7 +143,7 @@ protected:
             _ofstream.open(_calc_filename(_base_filename, _extension));
             _midnight_tp = _calc_midnight_tp();
         }
-        _flush_helper.write(_ofstream, msg);
+        _flush_helper.write(_ofstream, msg.msg_buf);
     }
 
 private:

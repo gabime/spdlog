@@ -2,7 +2,7 @@
 //
 
 #include "c11log/logger.h"
-#include "c11log/sinks/async_sink.h"
+//#include "c11log/sinks/async_sink.h"
 #include "c11log/sinks/file_sinks.h"
 #include "c11log/sinks/console_sinks.h"
 
@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 {
 
     if(argc || argv) {};
-    const unsigned int howmany = 1000000;
+    const unsigned int howmany = 5000000;
 
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
     //auto fsink = std::make_shared<sinks::simple_file_sink>("simplelog", "txt");
@@ -40,10 +40,10 @@ int main(int argc, char* argv[])
 
     //async->shutdown(seconds(3));
     auto delta = system_clock::now() - start;
-    auto delta_d = duration_cast<duration<double>> (delta);
-    cout << "Total " << format(howmany) << endl;
-    cout << "Delta " << format(delta_d.count()) << endl;
-    cout << "Rate: " << format(howmany/delta_d.count()) << "/sec" << endl;
+    auto delta_d = duration_cast<duration<double>> (delta).count();
+    cout_logger.info() << "Total " << format(howmany);
+    cout_logger.info() << "Delta " << format(delta_d);
+    cout_logger.info() << "Rate: " << format(howmany/delta_d) << "/sec";
 
 
     return 0;
