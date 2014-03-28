@@ -34,10 +34,8 @@ public:
     using sinks_vector_t = std::vector<sink_ptr>;
     using sinks_init_list = std::initializer_list<sink_ptr>;
 
-    logger(const std::string& name, formatter_ptr, sinks_init_list);
-    logger(const std::string& name, sinks_init_list);
-    logger(sinks_init_list sinks_list);
-
+    logger(const std::string& name, sinks_init_list, formatter_ptr = nullptr);
+	logger(const std::string& name, sink_ptr, formatter_ptr = nullptr);
 
     ~logger() = default;
 
@@ -65,7 +63,7 @@ public:
 private:
     friend details::line_logger;
 
-    std::string _logger_name = "";
+    std::string _logger_name;
     formatter_ptr _formatter;
     sinks_vector_t _sinks;
     std::atomic_int _logger_level;
@@ -84,21 +82,20 @@ logger& get_logger(const std::string& name);
 #include "details/line_logger.h"
 
 
-inline c11log::logger::logger(const std::string& name, formatter_ptr f, sinks_init_list sinks_list) :
+inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_list, formatter_ptr f) :
     _logger_name(name),
     _formatter(f),
     _sinks(sinks_list)
 {
     //Seems that vs2013 doesnt support std::atomic member initialization, so its done here
     _logger_level = level::INFO;
+	if(!_formatter)
+		_formatter = std::make_shared<formatters::default_formatter>();
 }
 
-inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_list) :
-    logger(name, std::make_shared<formatters::default_formatter>(), sinks_list) {}
 
-inline c11log::logger::logger(sinks_init_list sinks_list) :
-    logger("", std::make_shared<formatters::default_formatter>(), sinks_list) {}
-
+inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_ptr f) :
+	logger(name, {sink}, f) {}
 
 inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
 {
