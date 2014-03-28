@@ -20,11 +20,7 @@ namespace formatters
 
 class formatter
 {
-public:
-    formatter() = default;
-    virtual ~formatter() = default;
-	formatter(const formatter&) = delete;
-	formatter& operator=(const formatter&) = delete;
+public:    
     virtual void format_header(const std::string& logger_name, level::level_enum level, const log_clock::time_point& tp, std::ostream& dest) = 0;
 };
 
