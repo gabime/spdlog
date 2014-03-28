@@ -30,7 +30,7 @@ protected:
     void _sink_it(const log_msg& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        _flush_helper.write(_ofstream, msg.msg_buf);
+        _flush_helper.write(msg.msg_buf, _ofstream);
     }
 private:
     std::mutex _mutex;
@@ -70,7 +70,7 @@ protected:
             _rotate();
             _current_size = msg.msg_buf.second;
         }
-        _flush_helper.write(_ofstream, msg.msg_buf);
+        _flush_helper.write(msg.msg_buf, _ofstream);
     }
 
 
@@ -143,7 +143,7 @@ protected:
             _ofstream.open(_calc_filename(_base_filename, _extension));
             _midnight_tp = _calc_midnight_tp();
         }
-        _flush_helper.write(_ofstream, msg.msg_buf);
+        _flush_helper.write(msg.msg_buf, _ofstream);
     }
 
 private:

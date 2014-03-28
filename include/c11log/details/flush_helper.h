@@ -13,7 +13,7 @@ public:
         _flush_every(flush_every),
         _write_counter(0) {};
 
-    void write(std::ofstream& ofs, const bufpair_t& msg)
+    void write(const bufpair_t& msg, std::ofstream& ofs)
     {
         ofs.write(msg.first, msg.second);
         if(++_write_counter == _flush_every)
