@@ -55,6 +55,15 @@ constexpr inline const char* eol()
     return "\n";
 #endif
 }
+
+constexpr inline unsigned short eol_size()
+{
+#ifdef _WIN32
+    return 2;
+#else
+    return 1;
+#endif
+}
 } //os
 } //details
 } //c11log
