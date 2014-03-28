@@ -3,7 +3,7 @@
 #include <array>
 #include <vector>
 #include <algorithm>
-
+#include <cstring>
 
 // Fast memory storage
 // stores its contents on the stack when possible, in vector<char> otherwise

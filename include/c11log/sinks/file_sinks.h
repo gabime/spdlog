@@ -6,6 +6,7 @@
 #include <mutex>
 #include "base_sink.h"
 #include "../details/flush_helper.h"
+#include "../details/blocking_queue.h"
 
 namespace c11log
 {
@@ -27,7 +28,7 @@ public:
     {
     }
 protected:
-    void _sink_it(const log_msg& msg) override
+    void _sink_it(const details::log_msg& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _flush_helper.write(msg.msg_buf, _ofstream);
@@ -60,7 +61,7 @@ public:
     }
 
 protected:
-    void _sink_it(const log_msg& msg) override
+    void _sink_it(const details::log_msg& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
 
@@ -134,7 +135,7 @@ public:
     }
 
 protected:
-    void _sink_it(const log_msg& msg) override
+    void _sink_it(const details::log_msg& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
         if (std::chrono::system_clock::now() >= _midnight_tp)

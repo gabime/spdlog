@@ -5,6 +5,7 @@
 
 #include "../formatter.h"
 #include "../common_types.h"
+#include "../details/log_msg.h"
 
 namespace c11log
 {
@@ -19,7 +20,7 @@ public:
     base_sink(const base_sink&) = delete;
     base_sink& operator=(const base_sink&) = delete;
 
-    void log(const log_msg& msg)
+    void log(const details::log_msg& msg)
     {
         if (_enabled)
         {
@@ -38,14 +39,14 @@ public:
     }
 
 protected:
-    virtual void _sink_it(const log_msg& msg) = 0;
+    virtual void _sink_it(const details::log_msg& msg) = 0;
     std::atomic<bool> _enabled;
 };
 
 class null_sink:public base_sink
 {
 protected:
-    void _sink_it(const log_msg&) override
+    void _sink_it(const details::log_msg&) override
     {
     }
 };

@@ -28,9 +28,6 @@ inline std::tm localtime()
     return localtime(now_t);
 }
 
-
-
-
 inline bool operator==(const std::tm& tm1, const std::tm& tm2)
 {
     return (tm1.tm_sec == tm2.tm_sec &&

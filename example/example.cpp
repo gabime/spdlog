@@ -2,7 +2,7 @@
 //
 
 #include "c11log/logger.h"
-//#include "c11log/sinks/async_sink.h"
+#include "c11log/sinks/async_sink.h"
 #include "c11log/sinks/file_sinks.h"
 #include "c11log/sinks/console_sinks.h"
 
@@ -19,14 +19,12 @@ int main(int argc, char* argv[])
 {
 
     if(argc || argv) {};
-    const unsigned int howmany = 5000000;
+    const unsigned int howmany = argc <= 1 ? 1500000 :atoi(argv[1]);
 
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
-    //auto fsink = std::make_shared<sinks::simple_file_sink>("simplelog", "txt");
     auto null_sink = std::make_shared<sinks::null_sink>();
 
-    logger cout_logger ("cout", {null_sink, sinks::stdout_sink()});
-
+    logger cout_logger ("cout", {sinks::stdout_sink()});
     cout_logger.info() << "Hello cout logger!";
 
     logger my_logger ("my_logger", {null_sink});
@@ -36,9 +34,8 @@ int main(int argc, char* argv[])
     auto start = system_clock::now();
     for(unsigned int i = 0; i < howmany ; i++)
         my_logger.info() << s;
-    //my_logger.info() << "Hello logger " << i;;
 
-    //async->shutdown(seconds(3));
+
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
     cout_logger.info() << "Total " << format(howmany);

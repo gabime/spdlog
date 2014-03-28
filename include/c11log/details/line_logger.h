@@ -72,7 +72,7 @@ public:
 
 private:
     logger* _callback_logger;
-    c11log::log_msg _log_msg;
+    log_msg _log_msg;
     details::stack_oss _oss;
     bool _enabled;
 

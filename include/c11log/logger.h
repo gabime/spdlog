@@ -68,7 +68,7 @@ private:
     sinks_vector_t _sinks;
     std::atomic_int _logger_level;
 
-    void _log_it(const log_msg& msg);
+    void _log_it(const details::log_msg& msg);
 
 };
 
@@ -146,14 +146,13 @@ inline bool c11log::logger::should_log(c11log::level::level_enum level) const
     return level >= _logger_level.load();
 }
 
-inline void c11log::logger::_log_it(const log_msg& msg)
+inline void c11log::logger::_log_it(const details::log_msg& msg)
 {
     for (auto &sink : _sinks)
         sink->log(msg);
 }
 
 // Static factory function
-
 inline c11log::logger& c11log::get_logger(const std::string& name)
 {
     return *(c11log::details::factory::instance().get_logger(name));
