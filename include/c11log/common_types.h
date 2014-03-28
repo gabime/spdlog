@@ -29,9 +29,9 @@ inline const char* to_str(c11log::level::level_enum l)
 
 struct log_msg
 {
-    log_clock::time_point when;
-    bufpair_t msg_buf;
-    std::size_t header_size;
+	bufpair_t msg_buf;
+    log_clock::time_point msg_time;
+    std::size_t msg_header_size;
     level::level_enum msg_level;
 };
 

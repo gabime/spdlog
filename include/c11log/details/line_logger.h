@@ -26,13 +26,13 @@ public:
     {
         if(enabled)
         {
-            _log_msg.when = log_clock::now();
+            _log_msg.msg_time = log_clock::now();
             _log_msg.msg_level = msg_level;
             callback_logger->_formatter->format_header(callback_logger->_logger_name,
                     _log_msg.msg_level,
-                    _log_msg.when,
+                    _log_msg.msg_time,
                     _oss);
-            _log_msg.header_size = _oss.size();
+            _log_msg.msg_header_size = _oss.size();
         }
     }
 
