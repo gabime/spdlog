@@ -51,12 +51,12 @@ public:
     const std::string& get_name() const;
     bool should_log(c11log::level::level_enum) const;
 
-   details::line_logger log(level::level_enum);
+    details::line_logger log(level::level_enum);
     details::line_logger debug();
     details::line_logger info();
     details::line_logger warn();
     details::line_logger error();
-	details::line_logger critical();
+    details::line_logger critical();
     details::line_logger fatal();
 
 
