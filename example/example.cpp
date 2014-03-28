@@ -20,8 +20,8 @@ int main(int argc, char* argv[])
 
     const unsigned int howmany = argc <= 1 ? 1000:atoi(argv[1]);
 
-	logger cout_logger ("", sinks::stdout_sink());
-	cout_logger.info("Hello ") << "man";
+    logger cout_logger ("", sinks::stdout_sink());
+    cout_logger.info("Hello ") << "man";
 
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
 

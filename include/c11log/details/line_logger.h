@@ -25,7 +25,7 @@ public:
     {
         if(enabled)
         {
-            _log_msg.msg_time = log_clock::now();            
+            _log_msg.msg_time = log_clock::now();
             callback_logger->_formatter->format_header(callback_logger->_logger_name,
                     _log_msg.msg_level,
                     _log_msg.msg_time,
@@ -56,7 +56,7 @@ public:
             _callback_logger->_log_it(_log_msg);
         }
     }
-	
+
     template<typename T>
     line_logger& operator<<(const T& what)
     {

@@ -35,7 +35,7 @@ public:
     using sinks_init_list = std::initializer_list<sink_ptr>;
 
     logger(const std::string& name, sinks_init_list, formatter_ptr = nullptr);
-	logger(const std::string& name, sink_ptr, formatter_ptr = nullptr);
+    logger(const std::string& name, sink_ptr, formatter_ptr = nullptr);
 
     ~logger() = default;
 
@@ -56,7 +56,7 @@ public:
     template<typename T> details::line_logger info(const T&);
     template<typename T> details::line_logger warn(const T&);
     template<typename T> details::line_logger error(const T&);
-	template<typename T> details::line_logger critical(const T&);
+    template<typename T> details::line_logger critical(const T&);
     template<typename T> details::line_logger fatal(const T&);
 
 
@@ -89,13 +89,13 @@ inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_lis
 {
     //Seems that vs2013 doesnt support std::atomic member initialization, so its done here
     _logger_level = level::INFO;
-	if(!_formatter)
-		_formatter = std::make_shared<formatters::default_formatter>();
+    if(!_formatter)
+        _formatter = std::make_shared<formatters::default_formatter>();
 }
 
 
 inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_ptr f) :
-	logger(name, {sink}, f) {}
+    logger(name, {sink}, f) {}
 
 inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
 {
@@ -108,8 +108,8 @@ inline c11log::details::line_logger c11log::logger::debug(const T& what)
 {
     bool really_log = should_log(level::DEBUG);
     details::line_logger l(this, level::DEBUG, really_log);
-	if(really_log)
-		l << what;
+    if(really_log)
+        l << what;
     return l;
 }
 
@@ -118,8 +118,8 @@ inline c11log::details::line_logger c11log::logger::info(const T& what)
 {
     bool really_log = should_log(level::INFO);
     details::line_logger l(this, level::INFO, really_log);
-	if(really_log)
-		l << what;
+    if(really_log)
+        l << what;
     return l;
 }
 
@@ -129,8 +129,8 @@ inline c11log::details::line_logger c11log::logger::warn(const T& what)
 {
     bool really_log = should_log(level::WARNING);
     details::line_logger l(this, level::WARNING, really_log);
-	if(really_log)
-		l << what;
+    if(really_log)
+        l << what;
     return l;
 }
 
@@ -140,8 +140,8 @@ inline c11log::details::line_logger c11log::logger::error(const T& what)
 {
     bool really_log = should_log(level::ERROR);
     details::line_logger l(this, level::ERROR, really_log);
-	if(really_log)
-		l << what;
+    if(really_log)
+        l << what;
     return l;
 }
 
@@ -151,18 +151,18 @@ inline c11log::details::line_logger c11log::logger::critical(const T& what)
 {
     bool really_log = should_log(level::CRITICAL);
     details::line_logger l(this, level::CRITICAL, really_log);
-	if(really_log)
-		l << what;
+    if(really_log)
+        l << what;
     return l;
 }
 
 template<typename T>
 inline c11log::details::line_logger c11log::logger::fatal(const T& what)
 {
-	bool really_log = should_log(level::FATAL);
+    bool really_log = should_log(level::FATAL);
     details::line_logger l(this, level::FATAL, really_log);
-	if(really_log)
-		l << what;
+    if(really_log)
+        l << what;
     return l;
 }
 

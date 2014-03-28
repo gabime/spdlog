@@ -46,11 +46,11 @@ protected:
 class null_sink:public base_sink
 {
 public:
-	static std::shared_ptr<null_sink>& get()
-	{
-		static auto inst = std::make_shared<null_sink>();
-		return inst;
-	}
+    static std::shared_ptr<null_sink>& get()
+    {
+        static auto inst = std::make_shared<null_sink>();
+        return inst;
+    }
 protected:
     void _sink_it(const details::log_msg&) override
     {}
