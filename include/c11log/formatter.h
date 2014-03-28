@@ -3,10 +3,9 @@
 #include <string>
 #include <chrono>
 #include <functional>
-#include <sstream>
+
 #include <iomanip>
 #include <thread>
-#include <cstdlib>
 #include <cstring>
 
 #include "common_types.h"
@@ -18,14 +17,14 @@ namespace c11log
 namespace formatters
 {
 
-typedef std::function<std::string(const std::string& logger_name, const std::string&, level::level_enum, const c11log::log_clock::time_point&)> format_fn;
-
 
 class formatter
 {
 public:
-    formatter() {}
-    virtual ~formatter() {}
+    formatter() = default;
+    virtual ~formatter() = default;
+	formatter(const formatter&) = delete;
+	formatter& operator=(const formatter&) = delete;
     virtual void format_header(const std::string& logger_name, level::level_enum level, const log_clock::time_point& tp, std::ostream& dest) = 0;
 };
 
