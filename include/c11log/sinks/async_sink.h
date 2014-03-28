@@ -74,6 +74,7 @@ inline void c11log::sinks::async_sink::_sink_it(const details::log_msg& msg)
     auto new_shared = std::shared_ptr<details::log_msg>(new_msg, [](details::log_msg* msg_to_delete)
     {
         delete []msg_to_delete->msg_buf.first;
+        delete msg_to_delete;
     });
     _q.push(new_shared);
 }

@@ -8,7 +8,6 @@
 // line logger class. should be used by the logger as an rvalue only.
 // aggregates logging string until the end of the line and then calls the logger upon destruction
 
-
 namespace c11log
 {
 //class logger;
@@ -49,7 +48,6 @@ public:
         _oss(),
         _enabled(other._enabled) {}
 
-
     ~line_logger()
     {
         if (_enabled)
@@ -59,15 +57,13 @@ public:
             _callback_logger->_log_it(_log_msg);
         }
     }
-
-
+	
     template<typename T>
-    line_logger&& operator<<(const T& what)
+    line_logger& operator<<(const T& what)
     {
         if (_enabled)
             _oss << what;
-
-        return std::move(*this);
+        return *this;
     }
 
 private:
@@ -75,8 +71,6 @@ private:
     log_msg _log_msg;
     details::stack_oss _oss;
     bool _enabled;
-
-
 };
 } //Namespace details
 } // Namespace c11log

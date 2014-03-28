@@ -16,11 +16,12 @@ typedef enum
     INFO,
     WARNING,
     ERROR,
+    CRITICAL,
     FATAL,
     NONE = 99
 } level_enum;
 
-static const char* level_names[] { "debug", "info", "warning", "error", "fatal" };
+static const char* level_names[] { "debug", "info", "warning", "error", "critical", "fatal" };
 inline const char* to_str(c11log::level::level_enum l)
 {
     return level_names[l];
