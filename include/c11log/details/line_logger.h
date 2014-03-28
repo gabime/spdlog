@@ -19,14 +19,13 @@ class line_logger
 public:
     line_logger(logger* callback_logger, level::level_enum msg_level, bool enabled):
         _callback_logger(callback_logger),
-        _log_msg(),
+        _log_msg(msg_level),
         _oss(),
         _enabled(enabled)
     {
         if(enabled)
         {
-            _log_msg.msg_time = log_clock::now();
-            _log_msg.msg_level = msg_level;
+            _log_msg.msg_time = log_clock::now();            
             callback_logger->_formatter->format_header(callback_logger->_logger_name,
                     _log_msg.msg_level,
                     _log_msg.msg_time,

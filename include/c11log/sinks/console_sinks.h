@@ -18,6 +18,7 @@ public:
     console_sink& operator=(const console_sink&) = delete;
     virtual ~console_sink() = default;
 
+
 protected:
     virtual void _sink_it(const details::log_msg& msg) override
     {
@@ -41,7 +42,6 @@ inline std::shared_ptr<console_sink>& stderr_sink ()
     static auto inst = std::make_shared<console_sink>(std::cerr);
     return inst;
 }
-
 
 }
 }
