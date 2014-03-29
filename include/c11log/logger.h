@@ -6,7 +6,6 @@
 #include<memory>
 #include<mutex>
 #include<atomic>
-#include <algorithm>
 
 #include "common_types.h"
 #include "sinks/base_sink.h"
@@ -60,7 +59,6 @@ public:
     details::line_logger fatal();
 
 
-
 private:
     friend details::line_logger;
 
@@ -99,7 +97,6 @@ inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_
     logger(name, {sink}, f) {}
 
 
-
 inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
 {
     return details::line_logger(this, msg_level, msg_level >= _logger_level);
@@ -131,7 +128,6 @@ inline c11log::details::line_logger c11log::logger::fatal()
 {
     return details::line_logger(this, level::FATAL, should_log(level::FATAL));
 }
-
 
 
 inline const std::string& c11log::logger::get_name() const

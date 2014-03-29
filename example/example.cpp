@@ -23,9 +23,11 @@ int main(int argc, char* argv[])
     logger cout_logger ("", sinks::stdout_sink());
     cout_logger.info() << "Hello " << "man";
 
-    auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
+    //auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
 
-    logger my_logger ("my_logger", sinks::null_sink::get());
+    auto as = std::make_shared<sinks::async_sink>(howmany);
+	as->add_sink(sinks::null_sink::get());
+	logger my_logger ("my_logger", as);
 
     auto start = system_clock::now();
     for(unsigned int i = 0; i < howmany ; i++)

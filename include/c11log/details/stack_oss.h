@@ -9,17 +9,17 @@ namespace c11log
 namespace details
 {
 
-class str_devicebuf:public std::streambuf
+class stack_devicebuf:public std::streambuf
 {
 public:
     using Base = std::streambuf;
-    str_devicebuf() = default;
-    ~str_devicebuf() = default;
+    stack_devicebuf() = default;
+    ~stack_devicebuf() = default;
 
-    str_devicebuf(const str_devicebuf& other) = delete;
-    str_devicebuf(str_devicebuf&& other) = delete;
-    str_devicebuf& operator=(const str_devicebuf&) = delete;
-    str_devicebuf& operator=(str_devicebuf&&) = delete;
+    stack_devicebuf(const stack_devicebuf& other) = delete;
+    stack_devicebuf(stack_devicebuf&& other) = delete;
+    stack_devicebuf& operator=(const stack_devicebuf&) = delete;
+    stack_devicebuf& operator=(stack_devicebuf&&) = delete;
 
     bufpair_t buf()
     {
@@ -83,7 +83,7 @@ public:
     }
 
 private:
-    str_devicebuf _dev;
+    stack_devicebuf _dev;
 };
 }
 }
