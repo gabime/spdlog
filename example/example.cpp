@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 
     //auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
 
-    auto as = std::make_shared<sinks::async_sink>(howmany);
+    auto as = std::make_shared<sinks::async_sink>(1000);
 	as->add_sink(sinks::null_sink::get());
 	logger my_logger ("my_logger", as);
 
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     for(unsigned int i = 0; i < howmany ; i++)
         my_logger.info() << "Hello logger";
 
-
+	as->shutdown(milliseconds(5000));
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
 

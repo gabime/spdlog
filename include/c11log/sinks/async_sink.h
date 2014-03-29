@@ -68,8 +68,8 @@ inline c11log::sinks::async_sink::~async_sink()
 }
 inline void c11log::sinks::async_sink::_sink_it(const details::log_msg& msg)
 {
-	auto msg_size = msg.msg_buf.second;
-	if(!msg_size)
+	auto msg_size = msg.msg_buf.second;	
+	if(!_active || !msg_size)
 		return;
     //re allocate on the heap the (stack based) message
     auto new_msg = new details::log_msg();
