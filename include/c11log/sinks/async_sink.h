@@ -74,7 +74,6 @@ inline void c11log::sinks::async_sink::_sink_it(const details::log_msg& msg)
     //re allocate on the heap the (stack based) message
     auto new_msg = new details::log_msg();
     *new_msg = msg;
-    auto msg_size = msg.msg_buf.second;
 
 	char *buf = new char[msg_size];
 	std::memcpy(buf, msg.msg_buf.first, msg_size);
