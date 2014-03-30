@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
 
     auto start = system_clock::now();
     for(unsigned int i = 1; i <= howmany ; ++i)
-        my_logger.debug() << "Hello logger: ";
+        my_logger.info() << "Hello logger: ";
 
 	//auto s = howmany - as->q().size();
 	auto s = howmany;

@@ -44,7 +44,7 @@ public:
     logger& operator=(const logger&) = delete;
     logger& operator=(logger&&) = delete;
 
-    void set_level(c11log::level::level_enum);
+    void set_min_level(c11log::level::level_enum);
     c11log::level::level_enum get_level() const;
 
     const std::string& get_name() const;
@@ -65,7 +65,7 @@ private:
     std::string _logger_name;
     formatter_ptr _formatter;
     sinks_vector_t _sinks;
-    std::atomic_int _level_threshold;
+    std::atomic_int _min_level;
 
     void _log_it(const details::log_msg& msg);
 
@@ -87,7 +87,7 @@ inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_lis
     _sinks(sinks_list)
 {
     //Seems that vs2013 doesnt support std::atomic member initialization, so its done here
-    _level_threshold = level::INFO;
+    _min_level = level::INFO;
     if(!_formatter)
         _formatter = std::make_shared<formatters::default_formatter>();
 }
@@ -99,7 +99,7 @@ inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_
 
 inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
 {
-    return details::line_logger(this, msg_level, msg_level >= _level_threshold);
+    return details::line_logger(this, msg_level, msg_level >= _min_level);
 }
 
 inline c11log::details::line_logger c11log::logger::debug()
@@ -135,19 +135,19 @@ inline const std::string& c11log::logger::get_name() const
     return _logger_name;
 }
 
-inline void c11log::logger::set_level(c11log::level::level_enum level)
+inline void c11log::logger::set_min_level(c11log::level::level_enum level)
 {
-    _level_threshold.store(level);
+    _min_level.store(level);
 }
 
 inline c11log::level::level_enum c11log::logger::get_level() const
 {
-    return static_cast<c11log::level::level_enum>(_level_threshold.load());
+    return static_cast<c11log::level::level_enum>(_min_level.load());
 }
 
 inline bool c11log::logger::should_log(c11log::level::level_enum level) const
 {
-    return level >= _level_threshold.load();
+    return level >= _min_level.load();
 }
 
 inline void c11log::logger::_log_it(const details::log_msg& msg)
