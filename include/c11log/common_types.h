@@ -12,7 +12,7 @@ namespace level
 {
 typedef enum
 {
-	TRACE,
+    TRACE,
     DEBUG,
     INFO,
     WARNING,

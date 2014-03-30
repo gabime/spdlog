@@ -20,7 +20,7 @@ class blocking_queue
 {
 public:
     using queue_type = std::queue<T>;
-	using item_type = T;
+    using item_type = T;
     using size_type = typename queue_type::size_type;
     using clock = std::chrono::system_clock;
 

@@ -21,7 +21,7 @@ public:
         _log_msg(msg_level),
         _oss(),
         _enabled(enabled),
-		_empty(true)
+        _empty(true)
     {
         if(enabled)
         {
@@ -49,7 +49,7 @@ public:
 
     ~line_logger()
     {
-		//only if enabled and not empty
+        //only if enabled and not empty
         if (!_empty)
         {
             _oss << os::eol();
@@ -58,14 +58,14 @@ public:
         }
     }
 
-	template<typename T>
+    template<typename T>
     void write(const T& what)
     {
         if (_enabled)
-		{
+        {
             _oss << what;
-			_empty = false;
-		}
+            _empty = false;
+        }
     }
 
     template<typename T>
@@ -82,7 +82,7 @@ private:
     log_msg _log_msg;
     details::stack_oss _oss;
     bool _enabled;
-	bool _empty;
+    bool _empty;
 };
 } //Namespace details
 } // Namespace c11log
