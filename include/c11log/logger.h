@@ -57,6 +57,13 @@ public:
 	template<typename T> details::line_logger critical(const T&);
 	template<typename T> details::line_logger fatal(const T&);
 
+	details::line_logger debug();
+	details::line_logger info();
+	details::line_logger warn();
+	details::line_logger error();
+	details::line_logger critical();
+	details::line_logger fatal();
+
 
 private:
     friend details::line_logger;
@@ -138,6 +145,32 @@ inline c11log::details::line_logger c11log::logger::fatal(const T& msg)
 	l.write(msg);
 	return l;
 }
+
+inline c11log::details::line_logger c11log::logger::debug()
+{
+	return details::line_logger(this, level::DEBUG, should_log(level::DEBUG));
+}
+
+inline c11log::details::line_logger c11log::logger::info()
+{
+	return details::line_logger(this, level::INFO, should_log(level::INFO));
+}
+
+inline c11log::details::line_logger c11log::logger::warn()
+{
+	return details::line_logger(this, level::WARNING, should_log(level::WARNING));
+}
+
+inline c11log::details::line_logger c11log::logger::critical()
+{
+	return details::line_logger(this, level::CRITICAL, should_log(level::CRITICAL));
+}
+
+inline c11log::details::line_logger c11log::logger::fatal()
+{
+	return details::line_logger(this, level::FATAL, should_log(level::FATAL));
+}
+
 
 inline const std::string& c11log::logger::get_name() const
 {
