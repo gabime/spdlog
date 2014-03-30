@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
 
 	logger my_logger ("my_logger", nullsink);
 
+
     auto start = system_clock::now();
     for(unsigned int i = 1; i <= howmany ; ++i)
         my_logger.info("Hello logger: ");

@@ -56,7 +56,7 @@ public:
 	template<typename T> details::line_logger error(const T&);
 	template<typename T> details::line_logger critical(const T&);
 	template<typename T> details::line_logger fatal(const T&);
-	
+
 
 private:
     friend details::line_logger;
