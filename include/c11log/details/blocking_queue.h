@@ -19,8 +19,9 @@ template<typename T>
 class blocking_queue
 {
 public:
-    using queue_t = std::queue<T>;
-    using size_type = typename queue_t::size_type;
+    using queue_type = std::queue<T>;
+	using item_type = T;
+    using size_type = typename queue_type::size_type;
     using clock = std::chrono::system_clock;
 
     explicit blocking_queue(size_type max_size) :
@@ -108,7 +109,7 @@ public:
     {
         {
             std::unique_lock<std::mutex> ul(_mutex);
-            queue_t().swap(_q);
+            queue_type().swap(_q);
         }
         _item_popped_cond.notify_all();
     }
