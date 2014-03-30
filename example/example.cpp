@@ -21,7 +21,8 @@ int main(int argc, char* argv[])
     const unsigned int howmany = argc <= 1 ? 1000000:atoi(argv[1]);
 
     logger cout_logger ("", sinks::stdout_sink());
-    cout_logger.info() << "Hello " << "man";
+    cout_logger.info("Hello ") << "man" << 123 << " : " << 0.45f;
+	cout_logger.info("This is very nice! ") << "Yes gabi.." << ":)";
 
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);	
 	auto nullsink = sinks::null_sink::get();
@@ -32,16 +33,16 @@ int main(int argc, char* argv[])
 
     auto start = system_clock::now();
     for(unsigned int i = 1; i <= howmany ; ++i)
-        my_logger.info() << "Hello logger: ";
+        my_logger.info("Hello logger: ");
 
 	//auto s = howmany - as->q().size();
 	auto s = howmany;
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
 
-    cout_logger.info() << "Total:" << format(s);
-    cout_logger.info() << "Delta:" << format(delta_d);
-    cout_logger.info() << "Rate:" << format(s/delta_d) << "/sec";
+    cout_logger.info("Total:") << format(s);
+    cout_logger.info("Delta:") << format(delta_d);
+    cout_logger.info("Rate:") << format(s/delta_d) << "/sec";
     return 0;
 }
 

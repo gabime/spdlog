@@ -49,15 +49,14 @@ public:
 
     const std::string& get_name() const;
     bool should_log(c11log::level::level_enum) const;
-
-    details::line_logger log(level::level_enum);
-    details::line_logger debug();
-    details::line_logger info();
-    details::line_logger warn();
-    details::line_logger error();
-    details::line_logger critical();
-    details::line_logger fatal();
-
+    
+	template<typename T> details::line_logger debug(const T&);
+	template<typename T> details::line_logger info(const T&);
+	template<typename T> details::line_logger warn(const T&);
+	template<typename T> details::line_logger error(const T&);
+	template<typename T> details::line_logger critical(const T&);
+	template<typename T> details::line_logger fatal(const T&);
+	
 
 private:
     friend details::line_logger;
@@ -71,6 +70,8 @@ private:
 
 };
 
+
+//Get from loggers pool if exists with such name
 logger& get_logger(const std::string& name);
 
 }
@@ -97,38 +98,46 @@ inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_
     logger(name, {sink}, f) {}
 
 
-inline c11log::details::line_logger c11log::logger::log(c11log::level::level_enum msg_level)
+
+template<typename T>
+inline c11log::details::line_logger c11log::logger::debug(const T& msg)
 {
-    return details::line_logger(this, msg_level, msg_level >= _min_level);
+	details::line_logger l(this, level::DEBUG, should_log(level::DEBUG));
+	l.write(msg);
+	return l;
 }
 
-inline c11log::details::line_logger c11log::logger::debug()
+template<typename T>
+inline c11log::details::line_logger c11log::logger::info(const T& msg)
 {
-    return details::line_logger(this, level::DEBUG, should_log(level::DEBUG));
-}
-inline c11log::details::line_logger c11log::logger::info()
-{
-    return details::line_logger(this, level::INFO, should_log(level::INFO));
-}
-inline c11log::details::line_logger c11log::logger::warn()
-{
-    return details::line_logger(this, level::WARNING, should_log(level::WARNING));
-}
-inline c11log::details::line_logger c11log::logger::error()
-{
-    return details::line_logger(this, level::ERROR, should_log(level::ERROR));
+	details::line_logger l(this, level::INFO, should_log(level::INFO));
+	l.write(msg);
+	return l;
 }
 
-inline c11log::details::line_logger c11log::logger::critical()
+template<typename T>
+inline c11log::details::line_logger c11log::logger::warn(const T& msg)
 {
-    return details::line_logger(this, level::CRITICAL, should_log(level::CRITICAL));
+	details::line_logger l(this, level::WARNING, should_log(level::WARNING));
+	l.write(msg);
+	return l;
 }
 
-inline c11log::details::line_logger c11log::logger::fatal()
+template<typename T>
+inline c11log::details::line_logger c11log::logger::critical(const T& msg)
 {
-    return details::line_logger(this, level::FATAL, should_log(level::FATAL));
+	details::line_logger l(this, level::CRITICAL, should_log(level::CRITICAL));
+	l.write(msg);
+	return l;
 }
 
+template<typename T>
+inline c11log::details::line_logger c11log::logger::fatal(const T& msg)
+{
+	details::line_logger l(this, level::FATAL, should_log(level::FATAL));
+	l.write(msg);
+	return l;
+}
 
 inline const std::string& c11log::logger::get_name() const
 {

@@ -58,16 +58,24 @@ public:
         }
     }
 
-    template<typename T>
-    line_logger& operator<<(const T& what)
+	template<typename T>
+    void write(const T& what)
     {
         if (_enabled)
 		{
             _oss << what;
 			_empty = false;
 		}
+    }
+
+    template<typename T>
+    line_logger& operator<<(const T& what)
+    {
+        write(what);
         return *this;
     }
+
+
 
 private:
     logger* _callback_logger;
