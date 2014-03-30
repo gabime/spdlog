@@ -38,7 +38,7 @@ public:
     ~async_sink();
     void add_sink(logger::sink_ptr sink);
     void remove_sink(logger::sink_ptr sink_ptr);
-
+	queue_type& q();
     //Wait to remaining items (if any) in the queue to be written and shutdown
     void shutdown(const std::chrono::milliseconds& timeout);
 
@@ -82,20 +82,13 @@ inline void c11log::sinks::async_sink::_sink_it(const details::log_msg& msg)
 	if(!_active || !msg_size)
 		return;
     //re allocate on the heap the (stack based) message
-    auto new_msg = new details::log_msg();
-    *new_msg = msg;
+    auto new_msg = new details::log_msg(msg);
 
 	char *buf = new char[msg_size];
 	std::memcpy(buf, msg.msg_buf.first, msg_size);
 	new_msg->msg_buf = bufpair_t(buf, msg_size);
-/*
-    auto new_shared_msg = queue_type::item_type(new_msg, [](const details::log_msg* msg_to_delete)
-    {
-        delete []msg_to_delete->msg_buf.first;
-        delete msg_to_delete;
-    });
-	 * */
-	 queue_type::item_type new_shared_msg(new_msg, msg_deleter);
+	// Create unique_ptr with custom deleter and push it
+	queue_type::item_type new_shared_msg(new_msg, msg_deleter);
     _q.push(std::move(new_shared_msg));
 }
 
@@ -125,6 +118,11 @@ inline void c11log::sinks::async_sink::add_sink(logger::sink_ptr sink)
 inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr sink_ptr)
 {
     _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink_ptr), _sinks.end());
+}
+
+inline c11log::sinks::async_sink::queue_type& c11log::sinks::async_sink::q()
+{
+	return _q;
 }
 
 

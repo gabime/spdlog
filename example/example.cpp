@@ -35,13 +35,14 @@ int main(int argc, char* argv[])
     for(unsigned int i = 1; i <= howmany ; ++i)
         my_logger.info() << "Hello logger: " << i;
 
-	as->shutdown(milliseconds(500));
+	//as->shutdown(milliseconds(500));
+	auto s = howmany - as->q().size();
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
 
-    cout_logger.info() << "Total:" << format(howmany);
+    cout_logger.info() << "Total:" << format(s);
     cout_logger.info() << "Delta:" << format(delta_d);
-    cout_logger.info() << "Rate:" << format(howmany/delta_d) << "/sec";
+    cout_logger.info() << "Rate:" << format(s/delta_d) << "/sec";
 
     return 0;
 }
