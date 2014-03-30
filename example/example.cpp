@@ -21,8 +21,9 @@ int main(int argc, char* argv[])
     const unsigned int howmany = argc <= 1 ? 1000000:atoi(argv[1]);
 
     logger cout_logger ("", sinks::stdout_sink());
+	cout_logger.set_min_level(c11log::level::TRACE);
     cout_logger.info() << "Hello " << "man" << 123;
-	cout_logger.info("This is very nice! ") << "Yes gabi.." << ":)";
+	cout_logger.trace("This is very nice! ") << "Yes gabi.." << ":)";
 
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);	
 	auto nullsink = sinks::null_sink::get();

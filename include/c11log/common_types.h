@@ -12,6 +12,7 @@ namespace level
 {
 typedef enum
 {
+	TRACE,
     DEBUG,
     INFO,
     WARNING,
@@ -21,7 +22,7 @@ typedef enum
     NONE = 99
 } level_enum;
 
-static const char* level_names[] { "debug", "info", "warning", "error", "critical", "fatal" };
+static const char* level_names[] { "trace", "debug", "info", "warning", "error", "critical", "fatal" };
 inline const char* to_str(c11log::level::level_enum l)
 {
     return level_names[l];

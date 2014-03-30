@@ -49,7 +49,8 @@ public:
 
     const std::string& get_name() const;
     bool should_log(c11log::level::level_enum) const;
-    
+
+	template<typename T> details::line_logger trace(const T&);
 	template<typename T> details::line_logger debug(const T&);
 	template<typename T> details::line_logger info(const T&);
 	template<typename T> details::line_logger warn(const T&);
@@ -57,6 +58,8 @@ public:
 	template<typename T> details::line_logger critical(const T&);
 	template<typename T> details::line_logger fatal(const T&);
 
+
+	details::line_logger trace();
 	details::line_logger debug();
 	details::line_logger info();
 	details::line_logger warn();
@@ -107,6 +110,14 @@ inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_
 
 
 template<typename T>
+inline c11log::details::line_logger c11log::logger::trace(const T& msg)
+{
+	details::line_logger l(this, level::TRACE, should_log(level::TRACE));
+	l.write(msg);
+	return l;
+}
+
+template<typename T>
 inline c11log::details::line_logger c11log::logger::debug(const T& msg)
 {
 	details::line_logger l(this, level::DEBUG, should_log(level::DEBUG));
@@ -144,6 +155,12 @@ inline c11log::details::line_logger c11log::logger::fatal(const T& msg)
 	details::line_logger l(this, level::FATAL, should_log(level::FATAL));
 	l.write(msg);
 	return l;
+}
+
+
+inline c11log::details::line_logger c11log::logger::trace()
+{
+	return details::line_logger(this, level::TRACE, should_log(level::TRACE));
 }
 
 inline c11log::details::line_logger c11log::logger::debug()
