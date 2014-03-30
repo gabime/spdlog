@@ -48,7 +48,8 @@ public:
         _enabled(other._enabled) {}
 
     ~line_logger()
-    {		
+    {
+		//only if enabled and not empty
         if (!_empty)
         {
             _oss << os::eol();
