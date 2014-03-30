@@ -23,19 +23,19 @@ int main(int argc, char* argv[])
     logger cout_logger ("", sinks::stdout_sink());
     cout_logger.info() << "Hello " << "man";
 
-    auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
-	auto fsink2 = std::make_shared<sinks::rotating_file_sink>("lllog", "txt", 1024*1024*50 , 5, 0);
+    auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);	
+	auto nullsink = sinks::null_sink::get();
+    //auto as = std::make_shared<sinks::async_sink>(1000);
+	//as->add_sink(sinks::null_sink::get());
 
-    auto as = std::make_shared<sinks::async_sink>(1000);
-	as->add_sink(sinks::null_sink::get());	
-
-	logger my_logger ("my_logger", as);
+	logger my_logger ("my_logger", nullsink);
 
     auto start = system_clock::now();
     for(unsigned int i = 1; i <= howmany ; ++i)
-        my_logger.info() << "Hello logger: " << i;
+        my_logger.debug() << "Hello logger: ";
 
-	auto s = howmany - as->q().size();
+	//auto s = howmany - as->q().size();
+	auto s = howmany;
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
 

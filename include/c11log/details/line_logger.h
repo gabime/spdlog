@@ -4,9 +4,8 @@
 #include "../logger.h"
 #include "stack_oss.h"
 
-
-// line logger class. should be used by the logger as an rvalue only.
-// aggregates logging string until the end of the line and then calls the logger upon destruction
+// line_logger class.
+// aggregates single log line (on the stack if possibe) and calls the logger upon destruction
 
 namespace c11log
 {
@@ -21,7 +20,8 @@ public:
         _callback_logger(callback_logger),
         _log_msg(msg_level),
         _oss(),
-        _enabled(enabled)
+        _enabled(enabled),
+		_empty(true)
     {
         if(enabled)
         {
@@ -48,8 +48,8 @@ public:
         _enabled(other._enabled) {}
 
     ~line_logger()
-    {
-        if (_enabled)
+    {		
+        if (!_empty)
         {
             _oss << os::eol();
             _log_msg.msg_buf = _oss.buf();
@@ -61,7 +61,10 @@ public:
     line_logger& operator<<(const T& what)
     {
         if (_enabled)
+		{
             _oss << what;
+			_empty = false;
+		}
         return *this;
     }
 
@@ -70,6 +73,7 @@ private:
     log_msg _log_msg;
     details::stack_oss _oss;
     bool _enabled;
+	bool _empty;
 };
 } //Namespace details
 } // Namespace c11log

@@ -85,7 +85,7 @@ public:
         _v.clear();
     }
 
-    bufpair_t get()
+    bufpair_t get() const
     {
         if(!_v.empty())
             return bufpair_t(_v.data(), _v.size());
@@ -93,7 +93,7 @@ public:
             return bufpair_t(_stack_buf.data(), _stack_size);
     }
 
-    std::size_t size()
+    std::size_t size() const
     {
         if(!_v.empty())
             return _v.size();

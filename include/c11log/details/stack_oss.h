@@ -21,12 +21,12 @@ public:
     stack_devicebuf& operator=(const stack_devicebuf&) = delete;
     stack_devicebuf& operator=(stack_devicebuf&&) = delete;
 
-    bufpair_t buf()
+    bufpair_t buf() const
     {
         return _stackbuf.get();
     }
 
-    std::size_t size()
+    std::size_t size() const
     {
         return _stackbuf.size();
     }
@@ -67,12 +67,12 @@ public:
     stack_oss(stack_oss&& other) = delete;
     stack_oss& operator=(const stack_oss& other) = delete;
 
-    bufpair_t buf()
+    bufpair_t buf() const
     {
         return _dev.buf();
     }
 
-    std::size_t size()
+    std::size_t size() const
     {
         return _dev.size();
     }
