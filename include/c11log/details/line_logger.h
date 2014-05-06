@@ -39,18 +39,23 @@ public:
     line_logger& operator=(const line_logger&) = delete;
     line_logger& operator=(line_logger&&) = delete;
 
+
     line_logger(line_logger&& other) :
         _callback_logger(other._callback_logger),
-        _log_msg(other._log_msg),
-        // The move ctor should only be called on start of logging line,
-        // where no logging happened yet for this line so no need to copy the oss from the other
-        _oss(),
-        _enabled(other._enabled) {}
+        _log_msg(std::move(other._log_msg)),
+        _oss(std::move(other._oss)),
+        _enabled(other._enabled),
+		_empty(other._empty)
+		{
+			other.disable();
+		}
+
+
 
     ~line_logger()
     {
         //only if enabled and not empty
-        if (!_empty)
+        if (_enabled && !_empty)
         {
             _oss << os::eol();
             _log_msg.msg_buf = _oss.buf();
@@ -74,6 +79,11 @@ public:
         write(what);
         return *this;
     }
+
+	void disable()
+	{
+		_enabled = false;
+	}
 
 
 

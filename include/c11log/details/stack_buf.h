@@ -8,7 +8,6 @@
 // Fast memory storage
 // stores its contents on the stack when possible, in vector<char> otherwise
 // NOTE: User should be remember that returned buffer might be on the stack!!
-
 namespace c11log
 {
 namespace details
@@ -18,8 +17,11 @@ template<std::size_t STACK_SIZE=128>
 class stack_buf
 {
 public:
-    stack_buf():_stack_size(0) {}
+    stack_buf():_v(),_stack_buf(), _stack_size(0) {}
     ~stack_buf() {};
+
+	stack_buf& operator=(const stack_buf other) = delete;
+    stack_buf& operator=(stack_buf&& other) = delete;
 
     stack_buf(const bufpair_t& buf_to_copy):stack_buf()
     {
@@ -36,18 +38,15 @@ public:
     }
 
     stack_buf(stack_buf&& other)
-    {
+    {	
         _stack_size = other._stack_size;
         if(!other._v.empty())
-            _v = other._v;
+            _v = std::move(other._v);
         else if(_stack_size)
             std::copy(other._stack_buf.begin(), other._stack_buf.begin()+_stack_size, _stack_buf.begin());
-        other.clear();
+		other.clear();
     }
-
-    stack_buf& operator=(const stack_buf& other) = delete;
-    stack_buf& operator=(stack_buf&& other) = delete;
-
+    
     void append(const char* buf, std::size_t buf_size)
     {
         //If we are aleady using _v, forget about the stack

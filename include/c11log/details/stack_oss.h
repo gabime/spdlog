@@ -16,10 +16,15 @@ public:
     stack_devicebuf() = default;
     ~stack_devicebuf() = default;
 
-    stack_devicebuf(const stack_devicebuf& other) = delete;
-    stack_devicebuf(stack_devicebuf&& other) = delete;
-    stack_devicebuf& operator=(const stack_devicebuf&) = delete;
-    stack_devicebuf& operator=(stack_devicebuf&&) = delete;
+	stack_devicebuf& operator=(const stack_devicebuf&) = delete;
+
+    stack_devicebuf(const stack_devicebuf& other):std::basic_streambuf<char>(),_stackbuf(other._stackbuf)
+	{}
+
+	stack_devicebuf(stack_devicebuf&& other):std::basic_streambuf<char>(),_stackbuf(std::move(other._stackbuf))
+	{
+		other.clear();
+	}
 
     bufpair_t buf() const
     {
@@ -63,9 +68,16 @@ public:
     stack_oss():std::ostream(&_dev) {}
     ~stack_oss() = default;
 
-    stack_oss(const stack_oss& other) = delete;
-    stack_oss(stack_oss&& other) = delete;
-    stack_oss& operator=(const stack_oss& other) = delete;
+	stack_oss& operator=(const stack_oss& other) = delete;
+	stack_oss& operator=(const stack_oss&& other) = delete;
+
+    stack_oss(const stack_oss& other):std::basic_ios<char>(), std::ostream(&_dev), _dev(other._dev)
+	{}
+
+    stack_oss(stack_oss&& other):std::basic_ios<char>(), std::ostream(&_dev), _dev(std::move(other._dev))
+	{
+		other.clear();
+	}
 
     bufpair_t buf() const
     {

@@ -29,7 +29,7 @@ class async_sink : public base_sink
 public:
 
 
-    using queue_type = c11log::details::blocking_queue<std::unique_ptr<details::log_msg, std::function<void(details::log_msg*)>>>;
+    using queue_type = details::blocking_queue<std::unique_ptr<details::log_msg, std::function<void(details::log_msg*)>>>;
 
     explicit async_sink(const queue_type::size_type max_queue_size);
 
@@ -82,7 +82,7 @@ inline void c11log::sinks::async_sink::_sink_it(const details::log_msg& msg)
     if(!_active || !msg_size)
         return;
     //re allocate on the heap the (stack based) message
-    auto new_msg = new details::log_msg(msg);
+    details::log_msg* new_msg = new details::log_msg(msg);
 
     char *buf = new char[msg_size];
     std::memcpy(buf, msg.msg_buf.first, msg_size);
