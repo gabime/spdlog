@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 
     auto start = system_clock::now();
     for(unsigned int i = 1; i <= howmany ; ++i)
-        my_logger.info("Hello logger: ");
+        my_logger.info("Hello logger: ") << 4.5 << 123 << "asdasd" << 123 << 'f';
 
     //auto s = howmany - as->q().size();
     auto s = howmany;
