@@ -6,7 +6,6 @@ namespace c11log
 {
 
 typedef std::chrono::system_clock log_clock;
-typedef std::pair<const char*, std::size_t> bufpair_t;
 
 namespace level
 {

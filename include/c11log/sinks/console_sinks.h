@@ -23,7 +23,7 @@ protected:
     virtual void _sink_it(const details::log_msg& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        _ostream.write(msg.msg_buf.first, msg.msg_buf.second);
+        _ostream << msg.str;
     }
 
     std::ostream& _ostream;

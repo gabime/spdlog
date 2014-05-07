@@ -1,8 +1,9 @@
 #pragma once
 
+#include <sstream>
 #include "../common_types.h"
 #include "../logger.h"
-#include "stack_oss.h"
+
 
 // line_logger class.
 // aggregates single log line (on the stack if possibe) and calls the logger upon destruction
@@ -30,7 +31,7 @@ public:
                     _log_msg.msg_level,
                     _log_msg.msg_time,
                     _oss);
-            _log_msg.msg_header_size = _oss.size();
+            _log_msg.msg_header_size = _oss.str().size();
         }
     }
 
@@ -43,7 +44,7 @@ public:
     line_logger(line_logger&& other) :
         _callback_logger(other._callback_logger),
         _log_msg(std::move(other._log_msg)),
-        _oss(std::move(other._oss)),
+        _oss(std::move(other._oss.str())),
         _enabled(other._enabled),
 		_empty(other._empty)
 		{
@@ -58,7 +59,7 @@ public:
         if (_enabled && !_empty)
         {
             _oss << os::eol();
-            _log_msg.msg_buf = _oss.buf();
+            _log_msg.str = _oss.str();
             _callback_logger->_log_it(_log_msg);
         }
     }
@@ -90,7 +91,8 @@ public:
 private:
     logger* _callback_logger;
     log_msg _log_msg;
-    details::stack_oss _oss;
+    //details::stack_oss _oss;
+	std::ostringstream _oss;
     bool _enabled;
     bool _empty;
 };

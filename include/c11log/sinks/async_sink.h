@@ -3,7 +3,7 @@
 #include <thread>
 #include <chrono>
 #include <atomic>
-#include <functional>
+#include <algorithm>
 
 #include "base_sink.h"
 #include "../logger.h"
@@ -18,27 +18,19 @@ namespace sinks
 {
 
 
-static void msg_deleter(details::log_msg* msg_to_delete)
-{
-    delete []msg_to_delete->msg_buf.first;
-    delete msg_to_delete;
-}
-
 class async_sink : public base_sink
 {
 public:
+    using q_type = details::blocking_queue<details::log_msg>;
 
-
-    using queue_type = details::blocking_queue<std::unique_ptr<details::log_msg, std::function<void(details::log_msg*)>>>;
-
-    explicit async_sink(const queue_type::size_type max_queue_size);
+    explicit async_sink(const q_type::size_type max_queue_size);
 
     //Stop logging and join the back thread
     // TODO: limit with timeout of the join and kill it afterwards?
     ~async_sink();
     void add_sink(logger::sink_ptr sink);
     void remove_sink(logger::sink_ptr sink_ptr);
-    queue_type& q();
+    q_type& q();
     //Wait to remaining items (if any) in the queue to be written and shutdown
     void shutdown(const std::chrono::milliseconds& timeout);
 
@@ -50,7 +42,7 @@ protected:
 private:
     c11log::logger::sinks_vector_t _sinks;
     std::atomic<bool> _active;
-    queue_type _q;
+    q_type _q;
     std::thread _back_thread;
     //Clear all remaining messages(if any), stop the _back_thread and join it
     void _shutdown();
@@ -63,7 +55,7 @@ private:
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
 
-inline c11log::sinks::async_sink::async_sink(const queue_type::size_type max_queue_size)
+inline c11log::sinks::async_sink::async_sink(const q_type::size_type max_queue_size)
     :_sinks(),
      _active(true),
      _q(max_queue_size),
@@ -77,19 +69,10 @@ inline c11log::sinks::async_sink::~async_sink()
 
 
 inline void c11log::sinks::async_sink::_sink_it(const details::log_msg& msg)
-{
-    auto msg_size = msg.msg_buf.second;
-    if(!_active || !msg_size)
+{    
+    if(!_active || msg.str.empty())
         return;
-    //re allocate on the heap the (stack based) message
-    details::log_msg* new_msg = new details::log_msg(msg);
-
-    char *buf = new char[msg_size];
-    std::memcpy(buf, msg.msg_buf.first, msg_size);
-    new_msg->msg_buf = bufpair_t(buf, msg_size);
-    // Create unique_ptr with custom deleter and push it
-    queue_type::item_type new_shared_msg(new_msg, msg_deleter);
-    _q.push(std::move(new_shared_msg));
+    _q.push(msg);
 }
 
 inline void c11log::sinks::async_sink::_thread_loop()
@@ -97,12 +80,12 @@ inline void c11log::sinks::async_sink::_thread_loop()
     static std::chrono::seconds  pop_timeout { 1 };
     while (_active)
     {
-        queue_type::item_type msg;
+        q_type::item_type msg;
         if (_q.pop(msg, pop_timeout))
         {
             for (auto &sink : _sinks)
             {
-                sink->log(*msg);
+                sink->log(msg);
                 if(!_active)
                     break;
             }
@@ -115,12 +98,12 @@ inline void c11log::sinks::async_sink::add_sink(logger::sink_ptr sink)
     _sinks.push_back(sink);
 }
 
-inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr sink_ptr)
+inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr sink)
 {
-    _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink_ptr), _sinks.end());
+    _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
 }
 
-inline c11log::sinks::async_sink::queue_type& c11log::sinks::async_sink::q()
+inline c11log::sinks::async_sink::q_type& c11log::sinks::async_sink::q()
 {
     return _q;
 }

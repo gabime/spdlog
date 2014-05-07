@@ -6,7 +6,7 @@
 #include<memory>
 #include<mutex>
 #include<atomic>
-
+#include <sstream>
 #include "common_types.h"
 #include "sinks/base_sink.h"
 #include "details/factory.h"
@@ -27,10 +27,11 @@ class logger
 {
 public:
 
-    using sink_ptr = std::shared_ptr<sinks::base_sink>;
-    using formatter_ptr = std::shared_ptr<c11log::formatters::formatter>;
+    using sink_ptr = std::shared_ptr<sinks::base_sink>;    
     using sinks_vector_t = std::vector<sink_ptr>;
-    using sinks_init_list = std::initializer_list<sink_ptr>;
+	using sinks_init_list = std::initializer_list<sink_ptr>;
+
+	using formatter_ptr = std::shared_ptr<c11log::formatters::formatter>;
 
     logger(const std::string& name, sinks_init_list, formatter_ptr = nullptr);
     logger(const std::string& name, sink_ptr, formatter_ptr = nullptr);

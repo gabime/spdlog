@@ -18,7 +18,7 @@ using namespace utils;
 int main(int argc, char* argv[])
 {
 	
-    const unsigned int howmany = argc <= 1 ? 1000000:atoi(argv[1]);
+    const unsigned int howmany = argc <= 1 ? 4000000:atoi(argv[1]);
 
     logger cout_logger ("", sinks::stdout_sink());
     cout_logger.set_min_level(c11log::level::TRACE);
@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
     auto nullsink = sinks::null_sink::get();
     //auto as = std::make_shared<sinks::async_sink>(1000);
-    //as->add_sink(sinks::null_sink::get());
+    //as->add_sink(fsink);
 
     logger my_logger ("my_logger", nullsink);
 
@@ -37,6 +37,7 @@ int main(int argc, char* argv[])
     for(unsigned int i = 1; i <= howmany ; ++i)
         my_logger.info("Hello logger: ") << 4.5 <<'\t' << i << "\tasdasd:" << 123 << 'f';
 
+	//as->shutdown(std::chrono::milliseconds(15000));
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
 
