@@ -61,7 +61,7 @@ protected:
         return ch;
     }
 private:
-    stack_buf<256> _stackbuf;
+    stack_buf<128> _stackbuf;
 };
 
 class fast_oss :public std::ostream
