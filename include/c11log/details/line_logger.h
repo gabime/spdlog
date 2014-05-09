@@ -24,12 +24,7 @@ public:
         _log_msg(msg_level),
         _oss(),
         _enabled(enabled)
-    {
-        if(enabled)
-        {
-            _log_msg.time = log_clock::now();
-        }
-    }
+    {}
 
     // No copy intended. Only move
     line_logger(const line_logger& other) = delete;
@@ -51,6 +46,7 @@ public:
     {
         if (_enabled)
         {
+			_log_msg.time = log_clock::now();
             _log_msg.raw = _oss.str();
             _callback_logger->_log_it(_log_msg);
         }
