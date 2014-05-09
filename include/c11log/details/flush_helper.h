@@ -11,21 +11,21 @@ class file_flush_helper
 public:
     explicit file_flush_helper(const std::size_t flush_every):
         _flush_every(flush_every),
-        _write_counter(0) {};
+        _flush_countdown(flush_every) {};
   	
 	void write(const std::string& msg, std::ofstream& ofs)
     {
         ofs.write(msg.data(), msg.size());
-        if(++_write_counter == _flush_every)
+        if(--_flush_countdown == 0)
         {
             ofs.flush();
-            _write_counter = 0;
+            _flush_countdown = _flush_every;
         }
     }
 
 private:
     const std::size_t _flush_every;
-    std::size_t _write_counter;
+    std::size_t _flush_countdown;
 };
 }
 }
