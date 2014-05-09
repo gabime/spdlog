@@ -11,6 +11,7 @@
 #include "common_types.h"
 #include "details/os.h"
 #include "details/log_msg.h"
+#include "details/fast_oss.h"
 
 
 namespace c11log
@@ -31,8 +32,7 @@ public:
     // Format: [2013-12-29 01:04:42.900] [logger_name:Info] Message body
     void format(const std::string& logger_name, details::log_msg& msg) override
     {
-        std::ostringstream oss;
-        //Format datetime like this:[2014 - 03 - 14 17:15 : 22]
+        details::fast_oss oss;
         _format_time(msg.time, oss);
         if(!logger_name.empty())
             oss << " [" <<  logger_name << ':' << c11log::level::to_str(msg.level) << "] ";

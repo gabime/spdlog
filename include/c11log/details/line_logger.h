@@ -3,6 +3,8 @@
 #include <sstream>
 #include "../common_types.h"
 #include "../logger.h"
+#include "fast_oss.h"
+
 
 
 // line_logger class.
@@ -21,8 +23,7 @@ public:
         _callback_logger(callback_logger),
         _log_msg(msg_level),
         _oss(),
-        _enabled(enabled),
-        _empty(true)
+        _enabled(enabled)
     {
         if(enabled)
         {
@@ -39,19 +40,16 @@ public:
     line_logger(line_logger&& other) :
         _callback_logger(other._callback_logger),
         _log_msg(std::move(other._log_msg)),
-        _oss(std::move(other._oss.str())),
-        _enabled(other._enabled),
-        _empty(other._empty)
+        _oss(std::move(other._oss)),
+        _enabled(other._enabled)
     {
         other.disable();
     }
 
-
-
+    //Log the log message using the callback logger
     ~line_logger()
     {
-        //only if enabled and not empty
-        if (_enabled && !_empty)
+        if (_enabled)
         {
             _log_msg.raw = _oss.str();
             _callback_logger->_log_it(_log_msg);
@@ -64,7 +62,6 @@ public:
         if (_enabled)
         {
             _oss << what;
-            _empty = false;
         }
     }
 
@@ -85,10 +82,8 @@ public:
 private:
     logger* _callback_logger;
     log_msg _log_msg;
-    //details::stack_oss _oss;
-    std::ostringstream _oss;
+    details::fast_oss _oss;
     bool _enabled;
-    bool _empty;
 };
 } //Namespace details
 } // Namespace c11log

@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 
     auto start = system_clock::now();
     for (unsigned int i = 1; i <= howmany; ++i)
-        my_logger.info("Hello logger: msg #") <<  i << " дан жд йтбег??";
+        my_logger.info("Hello logger: msg #") << i;
 
     //as->shutdown(std::chrono::milliseconds(15000));
     auto delta = system_clock::now() - start;
