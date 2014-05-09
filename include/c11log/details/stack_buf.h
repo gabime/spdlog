@@ -5,9 +5,7 @@
 #include <algorithm>
 #include <cstring>
 
-// Fast memory storage
-// stores its contents on the stack when possible, in vector<char> otherwise
-// NOTE: User should be remember that returned buffer might be on the stack!!
+// Fast memory storage on the stack when possible or in std::vector
 namespace c11log
 {
 namespace details
@@ -23,11 +21,6 @@ public:
     ~stack_buf() {};
 
     stack_buf& operator=(const stack_buf& other) = delete;
-
-    stack_buf(const bufpair_t& buf_to_copy) :stack_buf()
-    {
-        append(buf_to_copy);
-    }
 
     stack_buf(const stack_buf& other)
     {

@@ -12,8 +12,8 @@ public:
     explicit file_flush_helper(const std::size_t flush_every):
         _flush_every(flush_every),
         _flush_countdown(flush_every) {};
-  	
-	void write(const std::string& msg, std::ofstream& ofs)
+
+    void write(const std::string& msg, std::ofstream& ofs)
     {
         ofs.write(msg.data(), msg.size());
         if(--_flush_countdown == 0)

@@ -209,7 +209,7 @@ inline bool c11log::logger::should_log(c11log::level::level_enum level) const
 
 inline void c11log::logger::_log_it(details::log_msg& msg)
 {
-    _formatter->format(_logger_name, msg);
+    _formatter->format(msg);
     for (auto &sink : _sinks)
         sink->log(msg);
 }

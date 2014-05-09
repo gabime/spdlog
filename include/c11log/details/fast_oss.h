@@ -21,7 +21,9 @@ public:
     stack_devicebuf(const stack_devicebuf& other) :std::basic_streambuf<char>(), _stackbuf(other._stackbuf)
     {}
 
-    stack_devicebuf(stack_devicebuf&& other) :std::basic_streambuf<char>(), _stackbuf(std::move(other._stackbuf))
+    stack_devicebuf(stack_devicebuf&& other):
+        std::basic_streambuf<char>(),
+        _stackbuf(std::move(other._stackbuf))
     {
         other.clear();
     }

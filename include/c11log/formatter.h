@@ -22,7 +22,7 @@ namespace formatters
 class formatter
 {
 public:
-    virtual void format(const std::string& logger_name, details::log_msg& msg) = 0;
+    virtual void format(details::log_msg& msg) = 0;
 };
 
 
@@ -30,12 +30,12 @@ class default_formatter: public formatter
 {
 public:
     // Format: [2013-12-29 01:04:42.900] [logger_name:Info] Message body
-    void format(const std::string& logger_name, details::log_msg& msg) override
+    void format(details::log_msg& msg) override
     {
         details::fast_oss oss;
         _format_time(msg.time, oss);
-        if(!logger_name.empty())
-            oss << " [" <<  logger_name << ':' << c11log::level::to_str(msg.level) << "] ";
+        if(!msg.logger_name.empty())
+            oss << " [" <<  msg.logger_name << ':' << c11log::level::to_str(msg.level) << "] ";
         else
             oss << " [" << c11log::level::to_str(msg.level) << "] ";
         oss << msg.raw << details::os::eol();

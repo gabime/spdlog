@@ -8,6 +8,7 @@ struct log_msg
 {
     log_msg() = default;
     log_msg(level::level_enum l):
+        logger_name(),
         level(l),
         time(),
         raw(),
@@ -15,6 +16,7 @@ struct log_msg
 
 
     log_msg(const log_msg& other):
+        logger_name(other.logger_name),
         level(other.level),
         time(other.time),
         raw(other.raw),
@@ -28,6 +30,7 @@ struct log_msg
     friend void swap(log_msg& l, log_msg& r)
     {
         using std::swap;
+        swap(l.logger_name, r.logger_name);
         swap(l.level, r.level);
         swap(l.time, r.time);
         swap(l.raw, r.raw);
@@ -48,6 +51,7 @@ struct log_msg
         formatted.clear();
     }
 
+    std::string logger_name;
     level::level_enum level;
     log_clock::time_point time;
     std::string raw;
