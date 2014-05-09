@@ -17,16 +17,14 @@ using namespace utils;
 
 int main(int argc, char* argv[])
 {
-	
-    const unsigned int howmany = argc <= 1 ? 4000000:atoi(argv[1]);
 
-    logger cout_logger ("", sinks::stdout_sink());
-    cout_logger.set_min_level(c11log::level::TRACE);
-    cout_logger.info() << "Hello " << "man" << 123;
+    const unsigned int howmany = argc <= 1 ? 1000000:atoi(argv[1]);
 
+    logger cout_logger ("example", sinks::stdout_sink());
+    cout_logger.info() << "Hello logger";
 
-    auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
     auto nullsink = sinks::null_sink::get();
+    //auto fsink = std::make_shared<sinks::rotating_file_sink>("log", "txt", 1024*1024*50 , 5, 0);
     //auto as = std::make_shared<sinks::async_sink>(1000);
     //as->add_sink(fsink);
 
@@ -34,10 +32,10 @@ int main(int argc, char* argv[])
 
 
     auto start = system_clock::now();
-    for(unsigned int i = 1; i <= howmany ; ++i)
-        my_logger.info("Hello logger: ") << 4.5 <<'\t' << i << "\tasdasd:" << 123 << 'f';
+    for (unsigned int i = 1; i <= howmany; ++i)
+        my_logger.info("Hello logger: msg #") <<  i << " дан жд йтбег??";
 
-	//as->shutdown(std::chrono::milliseconds(15000));
+    //as->shutdown(std::chrono::milliseconds(15000));
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
 

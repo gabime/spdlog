@@ -27,11 +27,11 @@ class logger
 {
 public:
 
-    using sink_ptr = std::shared_ptr<sinks::base_sink>;    
+    using sink_ptr = std::shared_ptr<sinks::base_sink>;
     using sinks_vector_t = std::vector<sink_ptr>;
-	using sinks_init_list = std::initializer_list<sink_ptr>;
+    using sinks_init_list = std::initializer_list<sink_ptr>;
 
-	using formatter_ptr = std::shared_ptr<c11log::formatters::formatter>;
+    using formatter_ptr = std::shared_ptr<c11log::formatters::formatter>;
 
     logger(const std::string& name, sinks_init_list, formatter_ptr = nullptr);
     logger(const std::string& name, sink_ptr, formatter_ptr = nullptr);
@@ -75,8 +75,7 @@ private:
     sinks_vector_t _sinks;
     std::atomic_int _min_level;
 
-    void _log_it(const details::log_msg& msg);
-
+    void _log_it(details::log_msg& msg);
 };
 
 
@@ -208,8 +207,9 @@ inline bool c11log::logger::should_log(c11log::level::level_enum level) const
     return level >= _min_level.load();
 }
 
-inline void c11log::logger::_log_it(const details::log_msg& msg)
+inline void c11log::logger::_log_it(details::log_msg& msg)
 {
+    _formatter->format(_logger_name, msg);
     for (auto &sink : _sinks)
         sink->log(msg);
 }

@@ -26,12 +26,7 @@ public:
     {
         if(enabled)
         {
-            _log_msg.msg_time = log_clock::now();
-            callback_logger->_formatter->format_header(callback_logger->_logger_name,
-                    _log_msg.msg_level,
-                    _log_msg.msg_time,
-                    _oss);
-            _log_msg.msg_header_size = _oss.str().size();
+            _log_msg.time = log_clock::now();
         }
     }
 
@@ -46,10 +41,10 @@ public:
         _log_msg(std::move(other._log_msg)),
         _oss(std::move(other._oss.str())),
         _enabled(other._enabled),
-		_empty(other._empty)
-		{
-			other.disable();
-		}
+        _empty(other._empty)
+    {
+        other.disable();
+    }
 
 
 
@@ -58,8 +53,7 @@ public:
         //only if enabled and not empty
         if (_enabled && !_empty)
         {
-            _oss << os::eol();
-            _log_msg.str = _oss.str();
+            _log_msg.raw = _oss.str();
             _callback_logger->_log_it(_log_msg);
         }
     }
@@ -81,10 +75,10 @@ public:
         return *this;
     }
 
-	void disable()
-	{
-		_enabled = false;
-	}
+    void disable()
+    {
+        _enabled = false;
+    }
 
 
 
@@ -92,7 +86,7 @@ private:
     logger* _callback_logger;
     log_msg _log_msg;
     //details::stack_oss _oss;
-	std::ostringstream _oss;
+    std::ostringstream _oss;
     bool _enabled;
     bool _empty;
 };

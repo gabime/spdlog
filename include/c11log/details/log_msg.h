@@ -8,51 +8,50 @@ struct log_msg
 {
     log_msg() = default;
     log_msg(level::level_enum l):
-		msg_level(l),
-		msg_time(),
-		msg_header_size(0),
-		str() {}
+        level(l),
+        time(),
+        raw(),
+        formatted() {}
 
 
-	log_msg(const log_msg& other):
-		msg_level(other.msg_level),
-		msg_time(other.msg_time),
-		msg_header_size(other.msg_header_size),
-		str(other.str) {}
+    log_msg(const log_msg& other):
+        level(other.level),
+        time(other.time),
+        raw(other.raw),
+        formatted(other.formatted) {}
 
-	log_msg(log_msg&& other):log_msg()
-	{
-		swap(*this, other);
-	}
+    log_msg(log_msg&& other)
+    {
+        swap(*this, other);
+    }
 
-	friend void swap(log_msg& l, log_msg& r)
-	{
-		using std::swap;
-		swap(l.msg_level, r.msg_level);
-		swap(l.msg_time, r.msg_time);
-		swap(l.msg_header_size, r.msg_header_size);
-		swap(l.str, r.str);
-	}
-
-
-
-	log_msg& operator=(log_msg other)
-	{
-		swap(*this, other);
-		return *this;
-	}
+    friend void swap(log_msg& l, log_msg& r)
+    {
+        using std::swap;
+        swap(l.level, r.level);
+        swap(l.time, r.time);
+        swap(l.raw, r.raw);
+        swap(l.formatted, r.formatted);
+    }
 
 
-	void clear()
-	{
-		msg_header_size = 0;
-		str.clear();		
-	}
+    log_msg& operator=(log_msg other)
+    {
+        swap(*this, other);
+        return *this;
+    }
 
-    level::level_enum msg_level;	
-	log_clock::time_point msg_time;
-    std::size_t msg_header_size;
-	std::string str;
+
+    void clear()
+    {
+        raw.clear();
+        formatted.clear();
+    }
+
+    level::level_enum level;
+    log_clock::time_point time;
+    std::string raw;
+    std::string formatted;
 
 };
 }

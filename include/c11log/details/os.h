@@ -44,23 +44,31 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
     return !(tm1==tm2);
 }
 
+#ifdef _WIN32
+inline const char* eol()
+{
+    return "\r\n";
+}
+#else
 constexpr inline const char* eol()
 {
-#ifdef _WIN32
-    return "\r\n";
-#else
     return "\n";
-#endif
 }
+#endif
 
+#ifdef _WIN32
+inline unsigned short eol_size()
+{
+    return 2;
+}
+#else
 constexpr inline unsigned short eol_size()
 {
-#ifdef _WIN32
-    return 2;
-#else
+
     return 1;
-#endif
 }
+#endif
+
 } //os
 } //details
 } //c11log

@@ -69,8 +69,8 @@ inline c11log::sinks::async_sink::~async_sink()
 
 
 inline void c11log::sinks::async_sink::_sink_it(const details::log_msg& msg)
-{    
-    if(!_active || msg.str.empty())
+{
+    if(!_active || msg.formatted.empty())
         return;
     _q.push(msg);
 }

@@ -8,6 +8,7 @@
 #include "../details/flush_helper.h"
 #include "../details/blocking_queue.h"
 
+
 namespace c11log
 {
 namespace sinks
@@ -31,7 +32,7 @@ protected:
     void _sink_it(const details::log_msg& msg) override
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        _flush_helper.write(msg.str, _ofstream);
+        _flush_helper.write(msg.formatted, _ofstream);
     }
 private:
     std::mutex _mutex;
@@ -65,13 +66,13 @@ protected:
     {
         std::lock_guard<std::mutex> lock(_mutex);
 
-        _current_size += msg.str.size();
+        _current_size += msg.formatted.size();
         if (_current_size  > _max_size)
         {
             _rotate();
-            _current_size = msg.str.size();
+            _current_size = msg.formatted.size();
         }
-        _flush_helper.write(msg.str, _ofstream);
+        _flush_helper.write(msg.formatted, _ofstream);
     }
 
 
@@ -104,7 +105,7 @@ private:
                 std::remove(target.c_str());
             std::rename(src.c_str(), target.c_str());
         }
-        _ofstream.open(_calc_filename(_base_filename, 0, _extension));
+        _ofstream.open(_calc_filename(_base_filename, 0, _extension), std::ofstream::binary);
     }
     std::string _base_filename;
     std::string _extension;
@@ -144,7 +145,7 @@ protected:
             _ofstream.open(_calc_filename(_base_filename, _extension));
             _midnight_tp = _calc_midnight_tp();
         }
-        _flush_helper.write(msg.str, _ofstream);
+        _flush_helper.write(msg.formatted, _ofstream);
     }
 
 private:
