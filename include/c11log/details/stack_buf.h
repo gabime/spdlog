@@ -24,10 +24,10 @@ public:
 
     stack_buf& operator=(const stack_buf& other) = delete;
 
-    stack_buf(const stack_buf& other):stack_buf(other, false)
+    stack_buf(const stack_buf& other):stack_buf(other, delegate_copy_move{})
     {}
 
-    stack_buf(stack_buf&& other):stack_buf(other, true)
+    stack_buf(stack_buf&& other):stack_buf(other, delegate_copy_move{})
     {        
         other.clear();
     }
@@ -44,7 +44,7 @@ public:
         {
             if (_stack_size + buf_size <= STACK_SIZE)
             {
-                std::memcpy(&_stack_array[_stack_size], buf, buf_size);				
+                std::memcpy(&_stack_array[_stack_size], buf, buf_size);
                 _stack_size += buf_size;
             }
             //Not enough stack space. Copy all to _v
@@ -89,15 +89,13 @@ public:
     }
 
 private:
+	struct delegate_copy_move {};
 	template<class T1>
-	stack_buf(T1&& other, bool is_rval)
+	stack_buf(T1&& other, delegate_copy_move)
 	{
 		_stack_size = other._stack_size;
         if (other.vector_used())
-		{
-			_v = is_rval? std::move(other._v) : other._v;
-            //_v = std::forward<T1>(other)._v;
-		}	
+            _v = std::forward<T1>(other)._v;
         else
             std::copy_n(other._stack_array.begin(), other._stack_size, _stack_array.begin());        
     }
