@@ -14,10 +14,10 @@ using namespace std::chrono;
 using namespace c11log;
 using namespace utils;
 
-
 int main(int argc, char* argv[])
 {
-
+	details::stack_buf<12> a;	
+	
     const unsigned int howmany = argc <= 1 ? 1000000:atoi(argv[1]);
 
     logger cout_logger ("example", sinks::stdout_sink());
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 
     auto start = system_clock::now();
     for (unsigned int i = 1; i <= howmany; ++i)
-        my_logger.info("Hello logger: msg #") << i;
+        my_logger.info() << "Hello logger: msg #" << i;
 
     //as->shutdown(std::chrono::milliseconds(15000));
     auto delta = system_clock::now() - start;

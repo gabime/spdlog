@@ -3,7 +3,6 @@
 #include <array>
 #include <vector>
 #include <algorithm>
-#include <cstring>
 
 // Fast memory storage on the stack when possible or in std::vector
 namespace c11log
@@ -11,40 +10,32 @@ namespace c11log
 namespace details
 {
 
-using bufpair_t = std::pair<const char*, std::size_t>;
 
-template<std::size_t STACK_SIZE = 128>
+
+template<unsigned short STACK_SIZE = 128>
 class stack_buf
 {
 public:
-    stack_buf() :_v(), _stack_array(), _stack_size(0) {}
-    ~stack_buf() {};
+	using bufpair_t = std::pair<const char*, std::size_t>;
+	using iterator = char const*;
+	static constexpr unsigned short stack_size = STACK_SIZE;
+    stack_buf() :_v(), _stack_size(0) {}
+    ~stack_buf() = default;
 
     stack_buf& operator=(const stack_buf& other) = delete;
 
-    stack_buf(const stack_buf& other)
-    {
-        _stack_size = other._stack_size;
-        if (!other._v.empty())
-            _v = other._v;
-        else if (_stack_size)
-            std::copy(other._stack_array.begin(), other._stack_array.begin() + _stack_size, _stack_array.begin());
-    }
+    stack_buf(const stack_buf& other):stack_buf(other, false)
+    {}
 
-    stack_buf(stack_buf&& other)
-    {
-        _stack_size = other._stack_size;
-        if (!other._v.empty())
-            _v = std::move(other._v);
-        else if (_stack_size)
-            std::copy(other._stack_array.begin(), other._stack_array.begin() + _stack_size, _stack_array.begin());
+    stack_buf(stack_buf&& other):stack_buf(other, true)
+    {        
         other.clear();
     }
 
     void append(const char* buf, std::size_t buf_size)
     {
         //If we are aleady using _v, forget about the stack
-        if (!_v.empty())
+        if (vector_used())
         {
             _v.insert(_v.end(), buf, buf + buf_size);
         }
@@ -53,25 +44,20 @@ public:
         {
             if (_stack_size + buf_size <= STACK_SIZE)
             {
-                std::memcpy(&_stack_array[_stack_size], buf, buf_size);
+                std::memcpy(&_stack_array[_stack_size], buf, buf_size);				
                 _stack_size += buf_size;
             }
             //Not enough stack space. Copy all to _v
             else
             {
-                _v.reserve(_stack_size + buf_size);
-                if (_stack_size)
-                    _v.insert(_v.end(), _stack_array.begin(), _stack_array.begin() + _stack_size);
+                _v.reserve(_stack_size + buf_size);                
+				_v.insert(_v.end(), _stack_array.begin(), _stack_array.begin() + _stack_size);
                 _v.insert(_v.end(), buf, buf + buf_size);
             }
         }
     }
 
-    void append(const bufpair_t &buf)
-    {
-        append(buf.first, buf.second);
-    }
-
+	
     void clear()
     {
         _stack_size = 0;
@@ -80,21 +66,47 @@ public:
 
     bufpair_t get() const
     {
-        if (!_v.empty())
+        if (vector_used())
             return bufpair_t(_v.data(), _v.size());
         else
             return bufpair_t(_stack_array.data(), _stack_size);
     }
 
+	iterator begin() const
+	{
+		return get().first;
+	}
+
+	iterator end() const
+	{
+		bufpair_t bpair = get();
+		return bpair.first + bpair.second;
+	}
+
     std::size_t size() const
     {
-        if (!_v.empty())
-            return _v.size();
-        else
-            return _stack_size;
+       return get().second;
     }
 
 private:
+	template<class T1>
+	stack_buf(T1&& other, bool is_rval)
+	{
+		_stack_size = other._stack_size;
+        if (other.vector_used())
+		{
+			_v = is_rval? std::move(other._v) : other._v;
+            //_v = std::forward<T1>(other)._v;
+		}	
+        else
+            std::copy_n(other._stack_array.begin(), other._stack_size, _stack_array.begin());        
+    }
+
+	bool vector_used() const
+	{
+		return !(_v.empty());
+	}
+	
     std::vector<char> _v;
     std::array<char, STACK_SIZE> _stack_array;
     std::size_t _stack_size;

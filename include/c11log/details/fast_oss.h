@@ -14,6 +14,7 @@ class stack_devicebuf :public std::streambuf
 {
 public:
     using Base = std::streambuf;
+	using stackbuf = stack_buf<192>;
     stack_devicebuf() = default;
     ~stack_devicebuf() = default;
     stack_devicebuf& operator=(const stack_devicebuf&) = delete;
@@ -28,7 +29,7 @@ public:
         other.clear();
     }
 
-    bufpair_t buf() const
+    stackbuf::bufpair_t buf() const
     {
         return _stackbuf.get();
     }
@@ -61,7 +62,7 @@ protected:
         return ch;
     }
 private:
-    stack_buf<128> _stackbuf;
+    stackbuf _stackbuf;
 };
 
 class fast_oss :public std::ostream
