@@ -1,8 +1,9 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
 #include <vector>
-#include <algorithm>
+
 
 // Fast memory storage on the stack when possible or in std::vector
 namespace c11log
