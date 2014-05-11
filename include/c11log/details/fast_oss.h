@@ -1,6 +1,8 @@
 #pragma once
 
-// Faster than ostringstream--returns its string by ref
+// A faster-than-ostringstream class
+// uses stack_buf as the underlying buffer (upto 192 bytes before using the heap)
+
 #include <ostream>
 #include "stack_buf.h"
 
@@ -9,12 +11,12 @@ namespace c11log
 namespace details
 {
 
-
 class stack_devicebuf :public std::streambuf
 {
-public:
-    using Base = std::streambuf;
-    using stackbuf = stack_buf<192>;
+public:    
+	static constexpr unsigned short stack_size = 192;
+    using stackbuf_t = stack_buf<stack_size>;
+
     stack_devicebuf() = default;
     ~stack_devicebuf() = default;
     stack_devicebuf& operator=(const stack_devicebuf&) = delete;
@@ -29,7 +31,7 @@ public:
         other.clear();
     }
 
-    stackbuf::bufpair_t buf() const
+    stackbuf_t::bufpair_t buf() const
     {
         return _stackbuf.get();
     }
@@ -62,8 +64,9 @@ protected:
         return ch;
     }
 private:
-    stackbuf _stackbuf;
+    stackbuf_t _stackbuf;
 };
+
 
 class fast_oss :public std::ostream
 {
@@ -82,13 +85,11 @@ public:
         other.clear();
     }
 
-
     std::string str()
     {
         auto buf = _dev.buf();
         return std::string(buf.first, buf.second);
     }
-
 
 
     std::size_t size() const
