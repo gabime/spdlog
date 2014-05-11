@@ -15,9 +15,7 @@ using namespace c11log;
 using namespace utils;
 
 int main(int argc, char* argv[])
-{
-    details::stack_buf<12> a;
-
+{    
     const unsigned int howmany = argc <= 1 ? 1000000:atoi(argv[1]);
 
     logger cout_logger ("example", sinks::stdout_sink());
