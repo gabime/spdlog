@@ -98,7 +98,7 @@ private:
             std::copy_n(other._stack_array.begin(), other._stack_size, _stack_array.begin());        
     }
 
-	bool vector_used() const
+	inline bool vector_used() const
 	{
 		return !(_v.empty());
 	}
