@@ -14,7 +14,7 @@ class stack_devicebuf :public std::streambuf
 {
 public:
     using Base = std::streambuf;
-	using stackbuf = stack_buf<192>;
+    using stackbuf = stack_buf<192>;
     stack_devicebuf() = default;
     ~stack_devicebuf() = default;
     stack_devicebuf& operator=(const stack_devicebuf&) = delete;
