@@ -10,9 +10,7 @@ namespace c11log
 namespace details
 {
 
-
-
-template<unsigned short STACK_SIZE = 128>
+template<unsigned short STACK_SIZE>
 class stack_buf
 {
 public:
