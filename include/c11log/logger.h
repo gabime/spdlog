@@ -31,7 +31,7 @@ public:
     using sinks_vector_t = std::vector<sink_ptr>;
     using sinks_init_list = std::initializer_list<sink_ptr>;
 
-    using formatter_ptr = std::shared_ptr<c11log::formatters::formatter>;
+    using formatter_ptr = std::unique_ptr<c11log::formatters::formatter>;
 
     logger(const std::string& name, sinks_init_list, formatter_ptr = nullptr);
     logger(const std::string& name, sink_ptr, formatter_ptr = nullptr);
@@ -92,18 +92,19 @@ logger& get_logger(const std::string& name);
 
 inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_list, formatter_ptr f) :
     _logger_name(name),
-    _formatter(f),
+    _formatter(std::move(f)),
     _sinks(sinks_list)
 {
     //Seems that vs2013 doesnt support std::atomic member initialization, so its done here
     _min_level = level::INFO;
     if(!_formatter)
-        _formatter = std::make_shared<formatters::default_formatter>();
+        _formatter = std::make_unique<formatters::default_formatter>();
+
 }
 
 
 inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_ptr f) :
-    logger(name, {sink}, f) {}
+    logger(name, {sink}, std::move(f)) {}
 
 
 

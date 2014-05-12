@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\c11log">
+      <UniqueIdentifier>{bad4e9e3-82bd-4b02-9b4a-43198cc65844}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\c11log\details">
+      <UniqueIdentifier>{a4cc3c0e-8713-4146-98c7-1e7ab4ed95f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\c11log\sinks">
+      <UniqueIdentifier>{87170f3b-5292-49b8-8581-7db7cb9abd29}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\common_types.h">
+      <Filter>Header Files\c11log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\formatter.h">
+      <Filter>Header Files\c11log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\logger.h">
+      <Filter>Header Files\c11log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\blocking_queue.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\factory.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\fast_oss.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\flush_helper.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\line_logger.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\log_msg.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\os.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\stack_buf.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\sinks\async_sink.h">
+      <Filter>Header Files\c11log\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\sinks\base_sink.h">
+      <Filter>Header Files\c11log\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\sinks\console_sinks.h">
+      <Filter>Header Files\c11log\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\sinks\file_sinks.h">
+      <Filter>Header Files\c11log\sinks</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\example\example.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

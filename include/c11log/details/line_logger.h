@@ -6,7 +6,6 @@
 #include "fast_oss.h"
 
 
-
 // line_logger class.
 // aggregates single log line (on the stack if possibe) and calls the logger upon destruction
 

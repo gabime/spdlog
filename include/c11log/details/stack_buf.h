@@ -17,7 +17,7 @@ class stack_buf
 public:
     using bufpair_t = std::pair<const char*, std::size_t>;
     using iterator = char const*;
-    static constexpr unsigned short stack_size = STACK_SIZE;
+    static const unsigned short stack_size = STACK_SIZE;
     stack_buf() :_v(), _stack_size(0) {}
     ~stack_buf() = default;
 

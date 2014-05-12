@@ -15,8 +15,8 @@ using namespace c11log;
 using namespace utils;
 
 int main(int argc, char* argv[])
-{    
-    const unsigned int howmany = argc <= 1 ? 1000000:atoi(argv[1]);
+{
+    const unsigned int howmany = argc <= 1 ? 5000000:atoi(argv[1]);
 
     logger cout_logger ("example", sinks::stdout_sink());
     cout_logger.info() << "Hello logger";
@@ -37,9 +37,9 @@ int main(int argc, char* argv[])
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
 
-    cout_logger.info("Total:") << format(howmany);
-    cout_logger.info("Delta:") << format(delta_d);
-    cout_logger.info("Rate:") << format(howmany/delta_d) << "/sec";
+    cout << "Total:" << format(howmany) << endl;
+    cout<< "Delta:" << format(delta_d) << endl;
+    cout << "Rate:" << format(howmany/delta_d) << "/sec" << endl;
     return 0;
 }
 

@@ -34,10 +34,12 @@ public:
     {
         details::fast_oss oss;
         _format_time(msg.time, oss);
+
         if(!msg.logger_name.empty())
             oss << " [" <<  msg.logger_name << ':' << c11log::level::to_str(msg.level) << "] ";
         else
             oss << " [" << c11log::level::to_str(msg.level) << "] ";
+
         oss << msg.raw << details::os::eol();
         msg.formatted = oss.str();
     }

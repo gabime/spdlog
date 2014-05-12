@@ -4,6 +4,7 @@
 // uses stack_buf as the underlying buffer (upto 192 bytes before using the heap)
 
 #include <ostream>
+#include <iomanip>
 #include "stack_buf.h"
 
 namespace c11log
@@ -13,8 +14,8 @@ namespace details
 
 class stack_devicebuf :public std::streambuf
 {
-public:    
-	static constexpr unsigned short stack_size = 192;
+public:
+    static const unsigned short stack_size = 192;
     using stackbuf_t = stack_buf<stack_size>;
 
     stack_devicebuf() = default;
