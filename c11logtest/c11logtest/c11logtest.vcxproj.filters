@@ -78,6 +78,9 @@
     <ClInclude Include="..\..\include\c11log\sinks\file_sinks.h">
       <Filter>Header Files\c11log\sinks</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\c11log\sinks\null_sink.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
