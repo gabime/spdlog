@@ -43,7 +43,5 @@ inline std::shared_ptr<console_sink>& stderr_sink ()
     return inst;
 }
 
-
-
 }
 }

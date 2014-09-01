@@ -7,9 +7,11 @@
 #include<mutex>
 #include<atomic>
 #include <sstream>
-#include "common_types.h"
+
 #include "sinks/base_sink.h"
-#include "details/factory.h"
+#include "common_types.h"
+
+
 
 
 //Thread safe, fast logger.
@@ -22,6 +24,9 @@ namespace details
 class line_logger;
 template<std::size_t> class fast_buf;
 }
+
+
+
 
 class logger
 {
@@ -79,15 +84,28 @@ private:
 };
 
 
-//Get from loggers pool if exists with such name
-logger& get_logger(const std::string& name);
+std::shared_ptr<c11log::logger> create_logger(const std::string& name, logger::sinks_init_list sinks, logger::formatter_ptr formatter = nullptr);
+std::shared_ptr<logger> get_logger(const std::string& name);
 
 }
+
 
 //
 // Logger inline implementation
 //
+
 #include "details/line_logger.h"
+#include "details/factory.h"
+
+
+inline std::shared_ptr<c11log::logger> c11log::create_logger(const std::string& name, logger::sinks_init_list sinks, logger::formatter_ptr formatter)
+{
+    return details::factory::instance().create_logger(name, sinks, std::move(formatter));
+}
+inline std::shared_ptr<c11log::logger> c11log::get_logger(const std::string& name)
+{
+    return details::factory::instance().get_logger(name);
+}
 
 
 inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_list, formatter_ptr f) :
@@ -215,8 +233,4 @@ inline void c11log::logger::_log_it(details::log_msg& msg)
         sink->log(msg);
 }
 
-// Static factory function
-inline c11log::logger& c11log::get_logger(const std::string& name)
-{
-    return *(c11log::details::factory::instance().get_logger(name));
-}
+
