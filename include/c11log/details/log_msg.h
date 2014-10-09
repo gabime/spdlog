@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../common_types.h"
+
 namespace c11log
 {
 namespace details

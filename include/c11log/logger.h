@@ -4,7 +4,6 @@
 // Has log level and vector sinks which do the actual logging
 #include<vector>
 #include<memory>
-#include<mutex>
 #include<atomic>
 #include <sstream>
 
@@ -25,14 +24,11 @@ class line_logger;
 template<std::size_t> class fast_buf;
 }
 
-
-
-
 class logger
 {
 public:
 
-    using sink_ptr = std::shared_ptr<sinks::base_sink>;
+    using sink_ptr = std::shared_ptr<sinks::isink>;
     using sinks_vector_t = std::vector<sink_ptr>;
     using sinks_init_list = std::initializer_list<sink_ptr>;
 
@@ -84,20 +80,20 @@ private:
 };
 
 
-std::shared_ptr<c11log::logger> create_logger(const std::string& name, logger::sinks_init_list sinks, logger::formatter_ptr formatter = nullptr);
-std::shared_ptr<logger> get_logger(const std::string& name);
+//std::shared_ptr<c11log::logger> create_logger(const std::string& name, logger::sinks_init_list sinks, logger::formatter_ptr formatter = nullptr);
+//std::shared_ptr<logger> get_logger(const std::string& name);
 
 }
 
 
 //
-// Logger inline implementation
+// Logger implementation
 //
 
 #include "details/line_logger.h"
 #include "details/factory.h"
 
-
+/*
 inline std::shared_ptr<c11log::logger> c11log::create_logger(const std::string& name, logger::sinks_init_list sinks, logger::formatter_ptr formatter)
 {
     return details::factory::instance().create_logger(name, sinks, std::move(formatter));
@@ -105,7 +101,7 @@ inline std::shared_ptr<c11log::logger> c11log::create_logger(const std::string& 
 inline std::shared_ptr<c11log::logger> c11log::get_logger(const std::string& name)
 {
     return details::factory::instance().get_logger(name);
-}
+}*/
 
 
 inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_list, formatter_ptr f) :
@@ -113,7 +109,7 @@ inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_lis
     _formatter(std::move(f)),
     _sinks(sinks_list)
 {
-    //Seems that vs2013 doesnt support std::atomic member initialization, so its done here
+    //Seems that vs2013 doesn't support std::atomic member initialization yet
     _min_level = level::INFO;
     if(!_formatter)
         _formatter = std::make_unique<formatters::default_formatter>();

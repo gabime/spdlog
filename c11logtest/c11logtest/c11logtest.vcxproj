@@ -91,15 +91,18 @@
     <ClInclude Include="..\..\include\c11log\details\flush_helper.h" />
     <ClInclude Include="..\..\include\c11log\details\line_logger.h" />
     <ClInclude Include="..\..\include\c11log\details\log_msg.h" />
+    <ClInclude Include="..\..\include\c11log\details\null_mutex.h" />
     <ClInclude Include="..\..\include\c11log\details\os.h" />
     <ClInclude Include="..\..\include\c11log\details\stack_buf.h" />
     <ClInclude Include="..\..\include\c11log\formatter.h" />
     <ClInclude Include="..\..\include\c11log\logger.h" />
     <ClInclude Include="..\..\include\c11log\sinks\async_sink.h" />
     <ClInclude Include="..\..\include\c11log\sinks\base_sink.h" />
-    <ClInclude Include="..\..\include\c11log\sinks\console_sinks.h" />
+    <ClInclude Include="..\..\include\c11log\sinks\ostream_sink.h" />
     <ClInclude Include="..\..\include\c11log\sinks\file_sinks.h" />
+    <ClInclude Include="..\..\include\c11log\sinks\isink.h" />
     <ClInclude Include="..\..\include\c11log\sinks\null_sink.h" />
+    <ClInclude Include="..\..\include\c11log\sinks\stdout_sinks.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
