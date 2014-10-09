@@ -3,10 +3,12 @@
 #include <fstream>
 #include <sstream>
 #include  <iomanip>
-#include <mutex>
 #include "base_sink.h"
+#include <mutex>
+#include "../details/null_mutex.h"
 #include "../details/flush_helper.h"
 #include "../details/blocking_queue.h"
+
 
 
 namespace c11log
@@ -15,36 +17,36 @@ namespace sinks
 {
 
 /*
-* Thread safe, trivial file sink with single file as target
+* Trivial file sink with single file as target
 */
-class simple_file_sink : public base_sink
+template<class Mutex>
+class simple_file_sink : public base_sink<Mutex>
 {
 public:
     explicit simple_file_sink(const std::string &filename,
-                              const std::string& extension,
-                              const std::size_t flush_every=0)
-        : _mutex(),
-          _ofstream(filename + "." + extension, std::ofstream::binary|std::ofstream::app),
-          _flush_helper(flush_every)
+                              const std::size_t flush_every=0):
+        _ofstream(filename, std::ofstream::binary|std::ofstream::app),
+        _flush_helper(flush_every)
     {
     }
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        std::lock_guard<std::mutex> lock(_mutex);
         _flush_helper.write(msg.formatted, _ofstream);
     }
 private:
-    std::mutex _mutex;
     std::ofstream _ofstream;
     details::file_flush_helper _flush_helper;
 };
 
+typedef simple_file_sink<std::mutex> simple_file_sink_mt;
+typedef simple_file_sink<details::null_mutex> simple_file_sink_st;
 
 /*
- * Thread safe, rotating file sink based on size
+ * Rotating file sink based on size
 */
-class rotating_file_sink : public base_sink
+template<class Mutex>
+class rotating_file_sink : public base_sink<Mutex>
 {
 public:
     rotating_file_sink(const std::string &base_filename, const std::string &extension,
@@ -55,7 +57,6 @@ public:
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
-        _mutex(),
         _ofstream(_calc_filename(_base_filename, 0, _extension), std::ofstream::binary),
         _flush_helper(flush_every)
     {
@@ -64,8 +65,6 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        std::lock_guard<std::mutex> lock(_mutex);
-
         _current_size += msg.formatted.size();
         if (_current_size  > _max_size)
         {
@@ -89,10 +88,13 @@ private:
 
 
     // Rotate old files:
-    // log.n-1.txt -> log.n.txt
-    // log n-2.txt -> log.n-1.txt
-    // ...
     // log.txt -> log.1.txt
+    // log.n-1.txt -> log.n.txt
+    // log.n-2.txt -> log.n-1.txt
+    // log.n-3.txt ->..
+    // log.n.txt -> log.txt
+
+
     void _rotate()
     {
         _ofstream.close();
@@ -112,15 +114,18 @@ private:
     std::size_t _max_size;
     std::size_t _max_files;
     std::size_t _current_size;
-    std::mutex _mutex;
     std::ofstream _ofstream;
     details::file_flush_helper _flush_helper;
 };
 
+typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
+typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
+
 /*
- * Thread safe, rotating file sink based on date. rotates at midnight
+ * Rotating file sink based on date. rotates at midnight
  */
-class daily_file_sink:public base_sink
+template<class Mutex>
+class daily_file_sink:public base_sink<Mutex>
 {
 public:
     explicit daily_file_sink(const std::string& base_filename,
@@ -129,7 +134,6 @@ public:
         _base_filename(base_filename),
         _extension(extension),
         _midnight_tp (_calc_midnight_tp() ),
-        _mutex(),
         _ofstream(_calc_filename(_base_filename, _extension), std::ofstream::binary|std::ofstream::app),
         _flush_helper(flush_every)
     {
@@ -138,7 +142,6 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        std::lock_guard<std::mutex> lock(_mutex);
         if (std::chrono::system_clock::now() >= _midnight_tp)
         {
             _ofstream.close();
@@ -175,10 +178,12 @@ private:
     std::string _base_filename;
     std::string _extension;
     std::chrono::system_clock::time_point _midnight_tp;
-    std::mutex _mutex;
     std::ofstream _ofstream;
     details::file_flush_helper _flush_helper;
 
 };
+
+typedef daily_file_sink<std::mutex> daily_file_sink_mt;
+typedef daily_file_sink<details::null_mutex> daily_file_sink_st;
 }
 }

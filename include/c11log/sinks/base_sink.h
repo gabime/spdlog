@@ -1,20 +1,23 @@
 #pragma once
 
 #include<string>
+#include<mutex>
 #include<atomic>
-
+#include "isink.h"
 #include "../formatter.h"
 #include "../common_types.h"
 #include "../details/log_msg.h"
+
 
 namespace c11log
 {
 namespace sinks
 {
-class base_sink
+template<class Mutex>
+class base_sink:public isink
 {
 public:
-    base_sink(): _enabled(true) {}
+    base_sink():_mutex(), _enabled(true) {}
     virtual ~base_sink() = default;
 
     base_sink(const base_sink&) = delete;
@@ -24,6 +27,7 @@ public:
     {
         if (_enabled)
         {
+            std::lock_guard<Mutex> lock(_mutex);
             _sink_it(msg);
         }
     };
@@ -40,7 +44,9 @@ public:
 
 protected:
     virtual void _sink_it(const details::log_msg& msg) = 0;
+    Mutex _mutex;
     std::atomic<bool> _enabled;
+
 };
 
 
