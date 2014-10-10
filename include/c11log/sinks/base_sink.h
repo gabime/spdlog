@@ -17,7 +17,7 @@ template<class Mutex>
 class base_sink:public isink
 {
 public:
-    base_sink():_mutex(), _enabled(true) {}
+    base_sink():_mutex() {}
     virtual ~base_sink() = default;
 
     base_sink(const base_sink&) = delete;
@@ -25,28 +25,14 @@ public:
 
     void log(const details::log_msg& msg) override
     {
-        if (_enabled)
-        {
-            std::lock_guard<Mutex> lock(_mutex);
-            _sink_it(msg);
-        }
+        std::lock_guard<Mutex> lock(_mutex);
+        _sink_it(msg);
     };
 
-    void enable(bool enabled) override
-    {
-        _enabled = enabled;
-    }
-
-    bool is_enabled() override
-    {
-        return _enabled.load();
-    }
 
 protected:
     virtual void _sink_it(const details::log_msg& msg) = 0;
     Mutex _mutex;
-    std::atomic<bool> _enabled;
-
 };
 }
 }

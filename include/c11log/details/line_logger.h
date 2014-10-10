@@ -11,10 +11,9 @@
 
 namespace c11log
 {
-//class logger;
+
 namespace details
 {
-
 class line_logger
 {
 public:
@@ -45,7 +44,7 @@ public:
     {
         if (_enabled)
         {
-            _log_msg.logger_name = _callback_logger->get_name();
+            _log_msg.logger_name = _callback_logger->name();
             _log_msg.time = log_clock::now();
             _log_msg.raw = _oss.str();
             _callback_logger->_log_it(_log_msg);

@@ -1,5 +1,6 @@
 #pragma once
 // Flush to file every X writes..
+// If X is zero than never flush..
 
 namespace c11log
 {
@@ -12,6 +13,8 @@ public:
     explicit file_flush_helper(const std::size_t flush_every):
         _flush_every(flush_every),
         _flush_countdown(flush_every) {};
+
+    file_flush_helper(const file_flush_helper&) = delete;
 
     void write(const std::string& msg, std::ofstream& ofs)
     {

@@ -1,7 +1,12 @@
 #pragma once
 
 // Thread safe logger
-// Has log level and vector sinks which do the actual logging
+// Has name, log level, vector of std::shared sink pointers and formatter
+// Upon each log write the logger:
+// 1. Checks if its log level is enough to log the message
+// 2. Format the message using the formatter function
+// 3. Pass the formatted message to it sinks to performa the actual logging
+
 #include<vector>
 #include<memory>
 #include<atomic>
@@ -10,44 +15,33 @@
 #include "sinks/base_sink.h"
 #include "common.h"
 
-
-
-//Thread safe, fast logger.
-//All initialization is done in ctor only, so we get away lot of locking
 namespace c11log
 {
 
 namespace details
 {
 class line_logger;
-template<std::size_t> class fast_buf;
 }
 
 class logger
 {
 public:
-
     using sink_ptr = std::shared_ptr<sinks::isink>;
     using sinks_vector_t = std::vector<sink_ptr>;
     using sinks_init_list = std::initializer_list<sink_ptr>;
-
     using formatter_ptr = std::unique_ptr<c11log::formatters::formatter>;
 
     logger(const std::string& name, sinks_init_list, formatter_ptr = nullptr);
     logger(const std::string& name, sink_ptr, formatter_ptr = nullptr);
-
+    logger(const logger&) = delete;
+    logger& operator=(const logger&) = delete;
     ~logger() = default;
 
-    //Non copybale in anyway
-    logger(const logger&) = delete;
-    logger(logger&&) = delete;
-    logger& operator=(const logger&) = delete;
-    logger& operator=(logger&&) = delete;
 
-    void set_min_level(c11log::level::level_enum);
-    c11log::level::level_enum get_level() const;
+    void level(c11log::level::level_enum);
+    c11log::level::level_enum level() const;
 
-    const std::string& get_name() const;
+    const std::string& name() const;
     bool should_log(c11log::level::level_enum) const;
 
     template<typename T> details::line_logger trace(const T&);
@@ -73,7 +67,7 @@ private:
     std::string _logger_name;
     formatter_ptr _formatter;
     sinks_vector_t _sinks;
-    std::atomic_int _min_level;
+    std::atomic_int _level;
 
     void _log_it(details::log_msg& msg);
 };
@@ -83,7 +77,6 @@ private:
 //std::shared_ptr<logger> get_logger(const std::string& name);
 
 }
-
 
 //
 // Logger implementation
@@ -109,7 +102,7 @@ inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_lis
     _sinks(sinks_list)
 {
     //Seems that vs2013 doesn't support std::atomic member initialization yet
-    _min_level = level::INFO;
+    _level = level::INFO;
     if(!_formatter)
         _formatter = std::make_unique<formatters::default_formatter>();
 
@@ -118,7 +111,6 @@ inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_lis
 
 inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_ptr f) :
     logger(name, {sink}, std::move(f)) {}
-
 
 
 template<typename T>
@@ -201,24 +193,24 @@ inline c11log::details::line_logger c11log::logger::fatal()
 }
 
 
-inline const std::string& c11log::logger::get_name() const
+inline const std::string& c11log::logger::name() const
 {
     return _logger_name;
 }
 
-inline void c11log::logger::set_min_level(c11log::level::level_enum level)
+inline void c11log::logger::level(c11log::level::level_enum level)
 {
-    _min_level.store(level);
+    _level.store(level);
 }
 
-inline c11log::level::level_enum c11log::logger::get_level() const
+inline c11log::level::level_enum c11log::logger::level() const
 {
-    return static_cast<c11log::level::level_enum>(_min_level.load());
+    return static_cast<c11log::level::level_enum>(_level.load());
 }
 
 inline bool c11log::logger::should_log(c11log::level::level_enum level) const
 {
-    return level >= _min_level.load();
+    return level >= _level.load();
 }
 
 inline void c11log::logger::_log_it(details::log_msg& msg)
