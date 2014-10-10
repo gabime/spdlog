@@ -6,12 +6,11 @@
 #include "fast_oss.h"
 
 
-// line_logger class.
-// aggregates single log line (on the stack if possibe) and calls the logger upon destruction
+// Line logger class - aggregates operator<< calls to fast ostream
+// and logs upon destruction
 
 namespace c11log
 {
-
 namespace details
 {
 class line_logger
