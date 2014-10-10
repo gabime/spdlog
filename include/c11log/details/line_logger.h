@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sstream>
-#include "../common_types.h"
+#include "../common.h"
 #include "../logger.h"
 #include "fast_oss.h"
 

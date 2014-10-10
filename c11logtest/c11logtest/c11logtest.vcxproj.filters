@@ -33,9 +33,6 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\common_types.h">
-      <Filter>Header Files\c11log</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\c11log\formatter.h">
       <Filter>Header Files\c11log</Filter>
     </ClInclude>
@@ -89,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\c11log\sinks\stdout_sinks.h">
       <Filter>Header Files\c11log\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\common.h">
+      <Filter>Header Files\c11log</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

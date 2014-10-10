@@ -87,12 +87,10 @@ private:
     }
 
 
-    // Rotate old files:
+    // Rotate files:
     // log.txt -> log.1.txt
-    // log.n-1.txt -> log.n.txt
-    // log.n-2.txt -> log.n-1.txt
-    // log.n-3.txt ->..
-    // log.n.txt -> log.txt
+    // ..
+    // log.n.txt -> log.n+1.txt
 
 
     void _rotate()

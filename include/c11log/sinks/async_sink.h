@@ -8,6 +8,7 @@
 #include "base_sink.h"
 #include "../logger.h"
 #include "../details/blocking_queue.h"
+#include "../details/null_mutex.h"
 #include "../details/log_msg.h"
 
 #include<iostream>
@@ -17,8 +18,7 @@ namespace c11log
 namespace sinks
 {
 
-template<class Mutex>
-class async_sink : public base_sink<Mutex>
+class async_sink : public base_sink<details::null_mutex>
 {
 public:
     using q_type = details::blocking_queue<details::log_msg>;
@@ -26,7 +26,6 @@ public:
     explicit async_sink(const q_type::size_type max_queue_size);
 
     //Stop logging and join the back thread
-    // TODO: limit with timeout of the join and kill it afterwards?
     ~async_sink();
     void add_sink(logger::sink_ptr sink);
     void remove_sink(logger::sink_ptr sink_ptr);
@@ -46,7 +45,7 @@ private:
     std::thread _back_thread;
     //Clear all remaining messages(if any), stop the _back_thread and join it
     void _shutdown();
-    std::mutex _shutdown_mutex;
+    std::mutex _mutex;
 };
 }
 }
@@ -54,30 +53,26 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-template<class Mutex>
-inline c11log::sinks::async_sink<Mutex>::async_sink(const q_type::size_type max_queue_size)
+inline c11log::sinks::async_sink::async_sink(const q_type::size_type max_queue_size)
     :_sinks(),
      _active(true),
      _q(max_queue_size),
      _back_thread(&async_sink::_thread_loop, this)
 {}
 
-template<class Mutex>
-inline c11log::sinks::async_sink<Mutex>::~async_sink()
+inline c11log::sinks::async_sink::~async_sink()
 {
     _shutdown();
 }
 
-template<class Mutex>
-inline void c11log::sinks::async_sink<Mutex>::_sink_it(const details::log_msg& msg)
+inline void c11log::sinks::async_sink::_sink_it(const details::log_msg& msg)
 {
     if(!_active || msg.formatted.empty())
         return;
     _q.push(msg);
 }
 
-template<class Mutex>
-inline void c11log::sinks::async_sink<Mutex>::_thread_loop()
+inline void c11log::sinks::async_sink::_thread_loop()
 {
     static std::chrono::seconds  pop_timeout { 1 };
     while (_active)
@@ -95,27 +90,27 @@ inline void c11log::sinks::async_sink<Mutex>::_thread_loop()
     }
 }
 
-template<class Mutex>
-inline void c11log::sinks::async_sink<Mutex>::add_sink(logger::sink_ptr sink)
+inline void c11log::sinks::async_sink::add_sink(logger::sink_ptr sink)
 {
+    std::lock_guard<std::mutex> guard(_mutex);
     _sinks.push_back(sink);
 }
 
-template<class Mutex>
-inline void c11log::sinks::async_sink<Mutex>::remove_sink(logger::sink_ptr sink)
+
+inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr sink)
 {
+    std::lock_guard<std::mutex> guard(_mutex);
     _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
 }
-/*
-template<class Mutex>
-inline c11log::sinks::async_sink::q_type& c11log::sinks::async_sink<Mutex>::q()
+
+
+inline c11log::sinks::async_sink::q_type& c11log::sinks::async_sink::q()
 {
     return _q;
-}*/
+}
 
 
-template<class Mutex>
-inline void c11log::sinks::async_sink<Mutex>::shutdown(const std::chrono::milliseconds& timeout)
+inline void c11log::sinks::async_sink::shutdown(const std::chrono::milliseconds& timeout)
 {
     if(timeout > std::chrono::milliseconds::zero())
     {
@@ -129,10 +124,9 @@ inline void c11log::sinks::async_sink<Mutex>::shutdown(const std::chrono::millis
 }
 
 
-template<class Mutex>
-inline void c11log::sinks::async_sink<Mutex>::_shutdown()
+inline void c11log::sinks::async_sink::_shutdown()
 {
-    std::lock_guard<std::mutex> guard(_shutdown_mutex);
+    std::lock_guard<std::mutex> guard(_mutex);
     if(_active)
     {
         _active = false;

@@ -8,7 +8,7 @@
 #include <cstring>
 #include <sstream>
 
-#include "common_types.h"
+#include "common.h"
 #include "details/os.h"
 #include "details/log_msg.h"
 #include "details/fast_oss.h"

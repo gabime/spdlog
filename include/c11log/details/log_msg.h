@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../common_types.h"
+#include <chrono>
+#include "../common.h"
 
 namespace c11log
 {
@@ -15,7 +16,6 @@ struct log_msg
         time(),
         raw(),
         formatted() {}
-
 
     log_msg(const log_msg& other):
         logger_name(other.logger_name),

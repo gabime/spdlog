@@ -8,8 +8,7 @@
 #include <sstream>
 
 #include "sinks/base_sink.h"
-#include "common_types.h"
-
+#include "common.h"
 
 
 

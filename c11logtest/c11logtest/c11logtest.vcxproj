@@ -84,7 +84,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\c11log\common_types.h" />
+    <ClInclude Include="..\..\include\c11log\common.h" />
     <ClInclude Include="..\..\include\c11log\details\blocking_queue.h" />
     <ClInclude Include="..\..\include\c11log\details\factory.h" />
     <ClInclude Include="..\..\include\c11log\details\fast_oss.h" />

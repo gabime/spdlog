@@ -26,7 +26,6 @@ protected:
     {
         _ostream << msg.formatted;
     }
-
     std::ostream& _ostream;
 };
 

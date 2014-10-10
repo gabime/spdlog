@@ -5,7 +5,7 @@
 #include<atomic>
 #include "isink.h"
 #include "../formatter.h"
-#include "../common_types.h"
+#include "../common.h"
 #include "../details/log_msg.h"
 
 
@@ -23,7 +23,7 @@ public:
     base_sink(const base_sink&) = delete;
     base_sink& operator=(const base_sink&) = delete;
 
-    void log(const details::log_msg& msg)
+    void log(const details::log_msg& msg) override
     {
         if (_enabled)
         {
@@ -32,12 +32,12 @@ public:
         }
     };
 
-    void enable(bool enabled)
+    void enable(bool enabled) override
     {
         _enabled = enabled;
     }
 
-    bool is_enabled()
+    bool is_enabled() override
     {
         return _enabled.load();
     }
@@ -48,8 +48,5 @@ protected:
     std::atomic<bool> _enabled;
 
 };
-
-
-
 }
 }
