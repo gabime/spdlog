@@ -1,49 +1,35 @@
 // example.cpp : Simple logger example
 //
-#include <mutex>
+#define FFLOG_ENABLE_TRACE
+
+#include <iostream>
 #include "c11log/logger.h"
-#include "c11log/sinks/async_sink.h"
-#include "c11log/sinks/file_sinks.h"
+#include "c11log/factory.h"
 #include "c11log/sinks/stdout_sinks.h"
-#include "c11log/sinks/null_sink.h"
-#include "utils.h"
-
-using std::cout;
-using std::endl;
-using namespace std::chrono;
-using namespace c11log;
-using namespace utils;
-
+#include "c11log/sinks/file_sinks.h"
+using namespace std;
 
 int main(int argc, char* argv[])
 {
 
-    const unsigned int howmany = argc <= 1 ? 10000 : atoi(argv[1]);
-
-    logger cout_logger("example", std::make_shared<sinks::stderr_sink_mt>());
-    cout_logger.info() << "Hello logger";
-
-    //auto nullsink = std::make_shared<sinks::null_sink<std::mutex>>();
-    auto nullsink = std::make_shared<sinks::null_sink<details::null_mutex>>();
-    auto fsink = std::make_shared<sinks::rotating_file_sink_st>("log", "txt", 1024*1024*50 , 5, 10);
-    auto as = std::make_shared<sinks::async_sink>(1000);
+    auto console = c11log::factory::stdout_logger();
+    auto file = c11log::factory::simple_file_logger("log.txt");
+    auto rotating= c11log::factory::rotating_file_logger("myrotating", "txt", 1024*1024*5, 5, 1);
+    auto daily = c11log::factory::daily_file_logger("dailylog", "txt", 1, "daily_logger");
 
 
-    logger my_logger("my_logger", fsink);
+    //console->info() << "This is variadic ", " func, ", 123 << " YES";
+    FFLOG_TRACE(console, "This is ", 1);
 
 
-    auto start = system_clock::now();
-    for (unsigned int i = 1; i <= howmany; ++i)
-        my_logger.info() << "Hello logger: msg #" << i;
+    file->info("Hello file log");
+    rotating->info("Hello rotating log");
+    daily->info("Hello daily log");
 
+    //multi sink logger: file + console
+    auto sink1= std::make_shared<c11log::sinks::stdout_sink_mt>();
+    auto sink2 = std::make_shared<c11log::sinks::daily_file_sink_mt>("rotating", "txt");
+    c11log::logger combined("combined", { sink1, sink2 });
 
-    auto delta = system_clock::now() - start;
-    auto delta_d = duration_cast<duration<double>> (delta).count();
-
-    cout << "Total:" << format(howmany) << endl;
-    cout << "Delta:" << format(delta_d) << endl;
-    cout << "Rate:" << format(howmany / delta_d) << "/sec" << endl;
-
-    return 0;
 }
 

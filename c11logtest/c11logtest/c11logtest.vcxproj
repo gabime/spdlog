@@ -86,7 +86,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\c11log\common.h" />
     <ClInclude Include="..\..\include\c11log\details\blocking_queue.h" />
-    <ClInclude Include="..\..\include\c11log\details\factory.h" />
     <ClInclude Include="..\..\include\c11log\details\fast_oss.h" />
     <ClInclude Include="..\..\include\c11log\details\flush_helper.h" />
     <ClInclude Include="..\..\include\c11log\details\line_logger.h" />
@@ -94,6 +93,7 @@
     <ClInclude Include="..\..\include\c11log\details\null_mutex.h" />
     <ClInclude Include="..\..\include\c11log\details\os.h" />
     <ClInclude Include="..\..\include\c11log\details\stack_buf.h" />
+    <ClInclude Include="..\..\include\c11log\factory.h" />
     <ClInclude Include="..\..\include\c11log\formatter.h" />
     <ClInclude Include="..\..\include\c11log\logger.h" />
     <ClInclude Include="..\..\include\c11log\sinks\async_sink.h" />
@@ -107,6 +107,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\example\bench.cpp" />
     <ClCompile Include="..\..\example\example.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>

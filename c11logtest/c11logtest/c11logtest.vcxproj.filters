@@ -69,12 +69,6 @@
     <ClInclude Include="..\..\include\c11log\sinks\file_sinks.h">
       <Filter>Header Files\c11log\sinks</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\factory.h">
-      <Filter>Header Files\c11log\details</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\c11log\sinks\isink.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\c11log\details\null_mutex.h">
       <Filter>Header Files\c11log\details</Filter>
     </ClInclude>
@@ -90,12 +84,21 @@
     <ClInclude Include="..\..\include\c11log\common.h">
       <Filter>Header Files\c11log</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\c11log\sinks\isink.h">
+      <Filter>Header Files\c11log\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\factory.h">
+      <Filter>Header Files\c11log</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\example\example.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\example\bench.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -15,26 +15,26 @@ using namespace c11log;
 using namespace utils;
 
 
-int main(int argc, char* argv[])
+int main2(int argc, char* argv[])
 {
 
-    const unsigned int howmany = argc <= 1 ? 10000 : atoi(argv[1]);
+    const unsigned int howmany = argc <= 1 ? 1000000 : atoi(argv[1]);
 
     logger cout_logger("example", std::make_shared<sinks::stderr_sink_mt>());
     cout_logger.info() << "Hello logger";
 
-    //auto nullsink = std::make_shared<sinks::null_sink<std::mutex>>();
     auto nullsink = std::make_shared<sinks::null_sink<details::null_mutex>>();
-    auto fsink = std::make_shared<sinks::rotating_file_sink_st>("log", "txt", 1024 * 1024 * 50, 5, 10);
-    auto as = std::make_shared<sinks::async_sink>(1000);
 
 
-    logger my_logger("my_logger", fsink);
+
+
+    logger my_logger("my_logger", nullsink);
 
 
     auto start = system_clock::now();
     for (unsigned int i = 1; i <= howmany; ++i)
-        my_logger.info() << "Hello logger: msg #" << i;
+        my_logger.info() << "Hello logger: msg #" << i << 1<<2<<3<<4<<5<<6<<7<<8<<9<<10<<11<<12<<13<<14<<15<<16<<17<<18<<19;
+    //my_logger.info("Hello logger: msg #",i,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19);
 
 
     auto delta = system_clock::now() - start;
