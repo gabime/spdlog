@@ -32,10 +32,13 @@ public:
     using formatter_ptr = std::unique_ptr<formatters::formatter>;
 
     logger(const std::string& name, sinks_init_list, formatter_ptr = nullptr);
+    template<class It>
+    logger(const std::string& name, It begin, It end, formatter_ptr = nullptr);
     logger(const std::string& name, sink_ptr, formatter_ptr = nullptr);
+    ~logger() = default;
+
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
-    ~logger() = default;
 
     void level(level::level_enum);
     level::level_enum level() const;
@@ -43,21 +46,25 @@ public:
     const std::string& name() const;
     bool should_log(level::level_enum) const;
 
+    template <typename... Args> details::line_logger log(level::level_enum lvl, const Args&... args);
+
     template<typename T> details::line_logger trace(const T&);
     template<typename T> details::line_logger debug(const T&);
-    template<typename T> details::line_logger info(const T&);
+    template <typename... Args> details::line_logger info(const Args&... args);
+
     template<typename T> details::line_logger warn(const T&);
     template<typename T> details::line_logger error(const T&);
     template<typename T> details::line_logger critical(const T&);
-    template<typename T> details::line_logger fatal(const T&);
 
     details::line_logger trace();
     details::line_logger debug();
-    details::line_logger info();
     details::line_logger warn();
-    details::line_logger error();
+    details::line_logger& error();
     details::line_logger critical();
-    details::line_logger fatal();
+
+
+
+
 
 private:
     friend details::line_logger;
@@ -66,31 +73,35 @@ private:
     sinks_vector_t _sinks;
     std::atomic_int _level;
 
-    void _log_it(details::log_msg& msg);
+    void _variadic_log(details::line_logger& l);
+    template <typename First, typename... Rest>
+    void _variadic_log(details::line_logger&l, const First& first, const Rest&... rest);
+    void _log_msg(details::log_msg& msg);
+
+
 };
-
-
-//std::shared_ptr<c11log::logger> create_logger(const std::string& name, logger::sinks_init_list sinks, logger::formatter_ptr formatter = nullptr);
-//std::shared_ptr<logger> get_logger(const std::string& name);
-
 }
+
+//
+// trace & debug macros
+//
+#ifdef FFLOG_ENABLE_TRACE
+#define FFLOG_TRACE(logger, ...) logger->log(c11log::level::TRACE, __FILE__, " #", __LINE__,": " __VA_ARGS__)
+#else
+#define FFLOG_TRACE(logger, ...) {}
+#endif
+
+#ifdef FFLOG_ENABLE_DEBUG
+#define FFLOG_DEBUG(logger, ...) logger->log(c11log::level::DEBUG, __VA_ARGS__)
+#else
+#define FFLOG_DEBUG(logger, ...) {}
+#endif
 
 //
 // Logger implementation
 //
 
 #include "details/line_logger.h"
-#include "details/factory.h"
-
-/*
-inline std::shared_ptr<c11log::logger> c11log::create_logger(const std::string& name, logger::sinks_init_list sinks, logger::formatter_ptr formatter)
-{
-    return details::factory::instance().create_logger(name, sinks, std::move(formatter));
-}
-inline std::shared_ptr<c11log::logger> c11log::get_logger(const std::string& name)
-{
-    return details::factory::instance().get_logger(name);
-}*/
 
 
 inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_list, formatter_ptr f) :
@@ -102,6 +113,15 @@ inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_lis
     _level = level::INFO;
     if(!_formatter)
         _formatter = std::make_unique<formatters::default_formatter>();
+
+}
+
+template<class It>
+inline c11log::logger::logger(const std::string& name, It begin, It end, formatter_ptr f):
+    _name(name),
+    _formatter(std::move(f)),
+    _sinks(begin, end)
+{
 
 }
 
@@ -121,18 +141,25 @@ inline c11log::details::line_logger c11log::logger::trace(const T& msg)
 template<typename T>
 inline c11log::details::line_logger c11log::logger::debug(const T& msg)
 {
-    details::line_logger l(this, level::DEBUG, should_log(level::DEBUG));
+    c11log::details::line_logger l(this, level::DEBUG, should_log(level::DEBUG));
     l.write(msg);
     return l;
 }
 
-template<typename T>
-inline c11log::details::line_logger c11log::logger::info(const T& msg)
-{
-    details::line_logger l(this, level::INFO, should_log(level::INFO));
-    l.write(msg);
+template <typename... Args>
+inline c11log::details::line_logger c11log::logger::log(level::level_enum lvl, const Args&... args) {
+    details::line_logger l(this, lvl, true);
+    _variadic_log(l, args...);
     return l;
 }
+
+template <typename... Args>
+inline c11log::details::line_logger c11log::logger::info(const Args&... args) {
+    details::line_logger l(this, level::INFO, should_log(level::INFO));
+    _variadic_log(l, args...);
+    return l;
+}
+
 
 template<typename T>
 inline c11log::details::line_logger c11log::logger::warn(const T& msg)
@@ -150,13 +177,7 @@ inline c11log::details::line_logger c11log::logger::critical(const T& msg)
     return l;
 }
 
-template<typename T>
-inline c11log::details::line_logger c11log::logger::fatal(const T& msg)
-{
-    details::line_logger l(this, level::FATAL, should_log(level::FATAL));
-    l.write(msg);
-    return l;
-}
+
 
 
 inline c11log::details::line_logger c11log::logger::trace()
@@ -169,10 +190,6 @@ inline c11log::details::line_logger c11log::logger::debug()
     return details::line_logger(this, level::DEBUG, should_log(level::DEBUG));
 }
 
-inline c11log::details::line_logger c11log::logger::info()
-{
-    return details::line_logger(this, level::INFO, should_log(level::INFO));
-}
 
 inline c11log::details::line_logger c11log::logger::warn()
 {
@@ -182,11 +199,6 @@ inline c11log::details::line_logger c11log::logger::warn()
 inline c11log::details::line_logger c11log::logger::critical()
 {
     return details::line_logger(this, level::CRITICAL, should_log(level::CRITICAL));
-}
-
-inline c11log::details::line_logger c11log::logger::fatal()
-{
-    return details::line_logger(this, level::FATAL, should_log(level::FATAL));
 }
 
 
@@ -210,7 +222,17 @@ inline bool c11log::logger::should_log(c11log::level::level_enum level) const
     return level >= _level.load();
 }
 
-inline void c11log::logger::_log_it(details::log_msg& msg)
+
+inline void c11log::logger::_variadic_log(c11log::details::line_logger& l) {}
+
+template <typename First, typename... Rest>
+void c11log::logger::_variadic_log(c11log::details::line_logger& l, const First& first, const Rest&... rest)
+{
+    l.write(first);
+    _variadic_log(l, rest...);
+}
+
+inline void c11log::logger::_log_msg(details::log_msg& msg)
 {
     _formatter->format(msg);
     for (auto &sink : _sinks)

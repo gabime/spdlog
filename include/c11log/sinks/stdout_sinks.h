@@ -17,8 +17,9 @@ public:
     stdout_sink() : ostream_sink<Mutex>(std::cout) {}
 };
 
-typedef stdout_sink<std::mutex> stdout_sink_mt;
 typedef stdout_sink<details::null_mutex> stdout_sink_st;
+typedef stdout_sink<std::mutex> stdout_sink_mt;
+
 
 template <class Mutex>
 class stderr_sink : public ostream_sink<Mutex>

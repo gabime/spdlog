@@ -46,7 +46,7 @@ public:
             _log_msg.logger_name = _callback_logger->name();
             _log_msg.time = log_clock::now();
             _log_msg.raw = _oss.str();
-            _callback_logger->_log_it(_log_msg);
+            _callback_logger->_log_msg(_log_msg);
         }
     }
 

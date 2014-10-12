@@ -1,60 +1,95 @@
 #pragma once
-
-#include <unordered_map>
-#include <string>
 #include <memory>
-#include <mutex>
+#include "logger.h"
+#include "sinks/file_sinks.h"
+#include "sinks/stdout_sinks.h"
 
-
+//
+// logger creation shotcuts
+//
 namespace c11log
 {
-namespace details
+namespace factory
 {
-class factory
+
+//
+// console loggers single/multi threaded
+//
+std::unique_ptr<logger> stdout_logger(const std::string& name = "")
 {
-public:
-    using logger_ptr = std::shared_ptr<c11log::logger>;
-    using logger_map = std::unordered_map<std::string, logger_ptr>;
-    std::shared_ptr<logger> create_logger(const std::string& name, logger::sinks_init_list, logger::formatter_ptr = nullptr);
-    logger_ptr get_logger(const std::string &name);
-    static factory& instance();
-
-private:
-    std::mutex _factory_mutex;
-    logger_map _factory;
-
-
-
-};
-}
+    auto sink = std::make_shared<sinks::stderr_sink_st>();
+    return std::unique_ptr<logger>(new logger(name, sink));
 }
 
-
-inline std::shared_ptr<c11log::logger> c11log::details::factory::create_logger(const std::string& name, logger::sinks_init_list sinks, logger::formatter_ptr formatter)
+std::unique_ptr<logger> stdout_logger_mt(const std::string& name = "")
 {
-    std::lock_guard<std::mutex> lock(_factory_mutex);
-    logger_ptr logger_p = std::make_shared<logger>(name, sinks, std::move(formatter));
-
-    _factory.insert(logger_map::value_type(name, logger_p));
-    return logger_p;
+    auto sink = std::make_shared<sinks::stderr_sink_mt>();
+    return std::unique_ptr<logger>(new logger(name, sink));
 }
 
-
-
-inline c11log::details::factory::logger_ptr c11log::details::factory::get_logger(const std::string &name)
+//
+// simple file logger single/multi threaded
+//
+std::unique_ptr<logger> simple_file_logger(const std::string& filename, const std::string& logger_name = "" )
 {
-    std::lock_guard<std::mutex> lock(_factory_mutex);
+    auto fsink = std::make_shared<sinks::simple_file_sink_st>(filename);
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
 
-    auto found = _factory.find(name);
-    if (found != _factory.end())
-        return found->second;
-    else
-        return logger_ptr(nullptr);
+}
+std::unique_ptr<logger> simple_file_logger_mt(const std::string& filename, const std::string& logger_name = "")
+{
+    auto fsink = std::make_shared<sinks::simple_file_sink_mt>(filename);
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
 }
 
-
-inline c11log::details::factory & c11log::details::factory::instance()
+//
+// daily file logger single/multi threaded
+//
+std::unique_ptr<logger> daily_file_logger(
+    const std::string &filename,
+    const std::string &extension,
+    const std::size_t flush_every,
+    const std::string& logger_name = "")
 {
-    static factory instance;
-    return instance;
+    auto fsink = std::make_shared<sinks::daily_file_sink_st>(filename, extension, flush_every);
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
 }
+
+std::unique_ptr<logger> daily_file_logger_mt(
+    const std::string &filename,
+    const std::string &extension,
+    const std::size_t flush_every,
+    const std::string& logger_name = "")
+{
+    auto fsink = std::make_shared<sinks::daily_file_sink_mt>(filename, extension, flush_every);
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
+}
+
+//
+// rotating file logger single/multi threaded
+//
+std::unique_ptr<logger> rotating_file_logger(
+    const std::string &filename,
+    const std::string &extension,
+    const std::size_t max_size,
+    const std::size_t max_files,
+    const std::size_t flush_every,
+    const std::string& logger_name = "")
+{
+    auto fsink = std::make_shared<sinks::rotating_file_sink_st>(filename, extension, max_size, max_files, flush_every);
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
+}
+
+std::unique_ptr<logger> rotating_file_logger_mt(
+    const std::string &filename,
+    const std::string &extension,
+    const std::size_t max_size,
+    const std::size_t max_files,
+    const std::size_t flush_every,
+    const std::string& logger_name = "")
+{
+    auto fsink = std::make_shared<sinks::rotating_file_sink_mt>(filename, extension, max_size, max_files, flush_every);
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
+}
+} // ns factory
+} // ns c11log

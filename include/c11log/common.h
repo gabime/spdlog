@@ -14,7 +14,6 @@ typedef enum
     WARNING,
     ERROR,
     CRITICAL,
-    FATAL,
     NONE = 99
 } level_enum;
 
