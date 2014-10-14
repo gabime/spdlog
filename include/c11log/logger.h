@@ -47,22 +47,14 @@ public:
     const std::string& name() const;
     bool should_log(level::level_enum) const;
 
+
     template <typename... Args> details::line_logger log(level::level_enum lvl, const Args&... args);
-
-    template<typename T> details::line_logger trace(const T&);
-    template<typename T> details::line_logger debug(const T&);
+    template <typename... Args> details::line_logger trace(const Args&... args);
+    template <typename... Args> details::line_logger debug(const Args&... args);
     template <typename... Args> details::line_logger info(const Args&... args);
-
-    template<typename T> details::line_logger warn(const T&);
-    template<typename T> details::line_logger error(const T&);
-    template<typename T> details::line_logger critical(const T&);
-
-    details::line_logger trace();
-    details::line_logger debug();
-    details::line_logger warn();
-    details::line_logger& error();
-    details::line_logger critical();
-
+    template <typename... Args> details::line_logger warn(const Args&... args);
+    template <typename... Args> details::line_logger error(const Args&... args);
+    template <typename... Args> details::line_logger critical(const Args&... args);
 
 
 
@@ -126,26 +118,9 @@ inline c11log::logger::logger(const std::string& name, It begin, It end, formatt
 
 }
 
-
 inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_ptr f) :
     logger(name, {sink}, std::move(f)) {}
 
-
-template<typename T>
-inline c11log::details::line_logger c11log::logger::trace(const T& msg)
-{
-    details::line_logger l(this, level::TRACE, should_log(level::TRACE));
-    l.write(msg);
-    return l;
-}
-
-template<typename T>
-inline c11log::details::line_logger c11log::logger::debug(const T& msg)
-{
-    c11log::details::line_logger l(this, level::DEBUG, should_log(level::DEBUG));
-    l.write(msg);
-    return l;
-}
 
 template <typename... Args>
 inline c11log::details::line_logger c11log::logger::log(level::level_enum lvl, const Args&... args) {
@@ -154,53 +129,33 @@ inline c11log::details::line_logger c11log::logger::log(level::level_enum lvl, c
     return l;
 }
 
+
+template <typename... Args>
+inline c11log::details::line_logger c11log::logger::trace(const Args&... args) {
+    return log(level::TRACE, args...);
+}
+
+template <typename... Args>
+inline c11log::details::line_logger c11log::logger::debug(const Args&... args) {
+    return log(level::DEBUG, args...);
+}
+
 template <typename... Args>
 inline c11log::details::line_logger c11log::logger::info(const Args&... args) {
-    details::line_logger l(this, level::INFO, should_log(level::INFO));
-    _variadic_log(l, args...);
-    return l;
+    return log(level::INFO, args...);
 }
 
 
-template<typename T>
-inline c11log::details::line_logger c11log::logger::warn(const T& msg)
-{
-    details::line_logger l(this, level::WARNING, should_log(level::WARNING));
-    l.write(msg);
-    return l;
+template <typename... Args>
+inline c11log::details::line_logger c11log::logger::warn(const Args&... args) {
+    return log(level::WARNING, args...);
 }
 
-template<typename T>
-inline c11log::details::line_logger c11log::logger::critical(const T& msg)
-{
-    details::line_logger l(this, level::CRITICAL, should_log(level::CRITICAL));
-    l.write(msg);
-    return l;
+template <typename... Args>
+inline c11log::details::line_logger c11log::logger::critical(const Args&... args) {
+    return log(level::CRITICAL, args...);
 }
 
-
-
-
-inline c11log::details::line_logger c11log::logger::trace()
-{
-    return details::line_logger(this, level::TRACE, should_log(level::TRACE));
-}
-
-inline c11log::details::line_logger c11log::logger::debug()
-{
-    return details::line_logger(this, level::DEBUG, should_log(level::DEBUG));
-}
-
-
-inline c11log::details::line_logger c11log::logger::warn()
-{
-    return details::line_logger(this, level::WARNING, should_log(level::WARNING));
-}
-
-inline c11log::details::line_logger c11log::logger::critical()
-{
-    return details::line_logger(this, level::CRITICAL, should_log(level::CRITICAL));
-}
 
 
 inline const std::string& c11log::logger::name() const

@@ -90,11 +90,11 @@
     <ClInclude Include="..\..\include\c11log\factory.h">
       <Filter>Header Files\c11log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\pattern_formatter.h">
-      <Filter>Header Files\c11log\sinks</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\c11log\details\fast_istostr.h">
       <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\pattern_formatter.h">
+      <Filter>Header Files\c11log</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
