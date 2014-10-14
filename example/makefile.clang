@@ -1,22 +1,31 @@
 CXX	= clang++
 CXXFLAGS	= -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -I../include -B/usr/lib/gold-ld/
-CXX_RELEASE_FLAGS = -O3
+CXX_RELEASE_FLAGS = -O3 -flto
 CXX_DEBUG_FLAGS= -g 
 
-OUTBIN  = example-clang
 
-all: example.cpp
-	$(CXX) example.cpp -o $(OUTBIN) $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+all:	example bench
+debug: example-debug bench-debug
+
+example: example.cpp
+	$(CXX) example.cpp -o example-clang $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+
+bench: bench.cpp
+	$(CXX) bench.cpp -o bench-clang $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 	
 
-debug: example.cpp
-	$(CXX) example.cpp -o $(OUTBIN)-debug $(CXXFLAGS) $(CXX_DEBUG_FLAFS)
+example-debug: example.cpp
+	$(CXX) example.cpp -o example-clang-debug $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
+	
+bench-debug: bench.cpp
+	$(CXX) bench.cpp -o bench-clang-debug $(CXXFLAGS) $(CXX_DEBUG_FLAGS)	
 
 
 
 clean:
-	rm -f *.txt $(OUTBIN) $(OUTBIN)-debug
-	
+	rm -f *.o *.txt example-clang example-clang-debug bench-clang bench-clang-debug 
+
+
 rebuild: clean all
 rebuild-debug: clean debug
 
