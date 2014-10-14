@@ -27,7 +27,7 @@ class line_logger;
 class logger
 {
 public:
-    using sink_ptr = std::shared_ptr<sinks::isink>;
+    using sink_ptr = std::shared_ptr<sinks::sink>;
     using sinks_vector_t = std::vector<sink_ptr>;
     using sinks_init_list = std::initializer_list<sink_ptr>;
     using formatter_ptr = std::unique_ptr<formatter>;

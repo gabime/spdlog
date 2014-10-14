@@ -5,9 +5,9 @@
 #include <memory>
 #include <vector>
 
-#include "formatter.h"
-#include "details/log_msg.h"
-#include "details/fast_oss.h"
+#include "../formatter.h"
+#include "log_msg.h"
+#include "fast_oss.h"
 
 
 namespace c11log
@@ -46,7 +46,7 @@ class Y_appender :public pattern_appender
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
-        oss.put_int(msg.tm_time.tm_year+1900, 4);
+        oss.put_int(msg.tm_time.tm_year + 1900, 4);
     }
 };
 
@@ -140,7 +140,7 @@ public:
     {}
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
-        oss.putc( _ch);
+        oss.putc(_ch);
     }
 private:
     char _ch;
@@ -163,7 +163,7 @@ public:
 private:
     std::string _str;
 };
-}
+
 
 
 class pattern_formatter : public formatter
@@ -180,16 +180,16 @@ private:
     void compile_pattern(const std::string& pattern);
 };
 }
+}
 
 
-
-inline c11log::pattern_formatter::pattern_formatter(const std::string& pattern)
+inline c11log::details::pattern_formatter::pattern_formatter(const std::string& pattern)
 {
     compile_pattern(pattern);
 }
 
 
-inline void c11log::pattern_formatter::compile_pattern(const std::string& pattern)
+inline void c11log::details::pattern_formatter::compile_pattern(const std::string& pattern)
 {
     auto end = pattern.end();
     for (auto it = pattern.begin(); it != end; ++it)
@@ -209,7 +209,7 @@ inline void c11log::pattern_formatter::compile_pattern(const std::string& patter
     }
 
 }
-inline void c11log::pattern_formatter::handle_flag(char flag)
+inline void c11log::details::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
@@ -271,7 +271,7 @@ inline void c11log::pattern_formatter::handle_flag(char flag)
 }
 
 
-inline void c11log::pattern_formatter::format(details::log_msg& msg)
+inline void c11log::details::pattern_formatter::format(details::log_msg& msg)
 {
     details::fast_oss oss;
     for (auto &appender : _appenders)

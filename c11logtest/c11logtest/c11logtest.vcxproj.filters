@@ -84,17 +84,17 @@
     <ClInclude Include="..\..\include\c11log\common.h">
       <Filter>Header Files\c11log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\sinks\isink.h">
-      <Filter>Header Files\c11log\sinks</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\c11log\factory.h">
       <Filter>Header Files\c11log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\c11log\details\fast_istostr.h">
       <Filter>Header Files\c11log\details</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\pattern_formatter.h">
-      <Filter>Header Files\c11log</Filter>
+    <ClInclude Include="..\..\include\c11log\sinks\sink.h">
+      <Filter>Header Files\c11log\sinks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\pattern_formatter.h">
+      <Filter>Header Files\c11log\details</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

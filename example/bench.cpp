@@ -27,11 +27,11 @@ int main(int argc, char* argv[])
     cout_logger.info() << "Hello logger";
 
     auto nullsink = std::make_shared<sinks::null_sink<details::null_mutex>>();
+    auto rotating = std::make_shared<sinks::rotating_file_sink_mt>("myrotating", "txt", 1024 * 1024 * 5, 5, 100);
 
 
     auto formatter2 = std::unique_ptr<formatter>(new pattern_formatter(pattern));
-    logger my_logger("my_logger",  nullsink, std::move(formatter2));
-    //logger my_logger("my_logger", nullsink);
+    logger my_logger("my_logger", rotating, std::move(formatter2));
 
     auto start = system_clock::now();
     for (unsigned int i = 1; i <= howmany; ++i)
