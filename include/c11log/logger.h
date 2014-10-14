@@ -14,7 +14,8 @@
 
 #include "sinks/base_sink.h"
 #include "common.h"
-#include "pattern_formatter.h"
+#include "formatter.h"
+#include "details/pattern_formatter.h"
 
 namespace c11log
 {
@@ -97,29 +98,29 @@ private:
 #include "details/line_logger.h"
 
 
-inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_list, formatter_ptr f) :
-    _name(name),
+inline c11log::logger::logger(const std::string& logger_name, sinks_init_list sinks_list, formatter_ptr f) :
+    _name(logger_name),
     _formatter(std::move(f)),
     _sinks(sinks_list)
 {
     //Seems that vs2013 doesn't support std::atomic member initialization yet
     _level = level::INFO;
     if(!_formatter)
-        _formatter = std::make_unique<pattern_formatter>("%t");
+        _formatter = formatter_ptr(new details::pattern_formatter("%t"));
 
 }
 
 template<class It>
-inline c11log::logger::logger(const std::string& name, It begin, It end, formatter_ptr f):
-    _name(name),
+inline c11log::logger::logger(const std::string& logger_name, It begin, It end, formatter_ptr f):
+    _name(logger_name),
     _formatter(std::move(f)),
     _sinks(begin, end)
 {
 
 }
 
-inline c11log::logger::logger(const std::string& name, sink_ptr sink, formatter_ptr f) :
-    logger(name, {sink}, std::move(f)) {}
+inline c11log::logger::logger(const std::string& logger_name, sink_ptr sink, formatter_ptr f) :
+    logger(logger_name, {sink}, std::move(f)) {}
 
 
 template <typename... Args>
@@ -163,9 +164,9 @@ inline const std::string& c11log::logger::name() const
     return _name;
 }
 
-inline void c11log::logger::level(c11log::level::level_enum level)
+inline void c11log::logger::level(c11log::level::level_enum log_level)
 {
-    _level.store(level);
+    _level.store(log_level);
 }
 
 inline c11log::level::level_enum c11log::logger::level() const
@@ -173,13 +174,13 @@ inline c11log::level::level_enum c11log::logger::level() const
     return static_cast<c11log::level::level_enum>(_level.load());
 }
 
-inline bool c11log::logger::should_log(c11log::level::level_enum level) const
+inline bool c11log::logger::should_log(c11log::level::level_enum msg_level) const
 {
-    return level >= _level.load();
+    return msg_level >= _level.load();
 }
 
 
-inline void c11log::logger::_variadic_log(c11log::details::line_logger& l) {}
+inline void c11log::logger::_variadic_log(c11log::details::line_logger&) {}
 
 template <typename First, typename... Rest>
 void c11log::logger::_variadic_log(c11log::details::line_logger& l, const First& first, const Rest&... rest)

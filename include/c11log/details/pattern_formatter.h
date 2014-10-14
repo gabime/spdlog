@@ -138,7 +138,7 @@ class ch_appender :public pattern_appender
 public:
     explicit ch_appender(char ch) : _ch(ch)
     {}
-    void append(const details::log_msg& msg, details::fast_oss& oss) override
+    void append(const details::log_msg&, details::fast_oss& oss) override
     {
         oss.putc(_ch);
     }
@@ -156,7 +156,7 @@ public:
     {
         _str += ch;
     }
-    void append(const details::log_msg& msg, details::fast_oss& oss) override
+    void append(const details::log_msg&, details::fast_oss& oss) override
     {
         oss << _str;
     }

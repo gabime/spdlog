@@ -80,9 +80,9 @@ inline void c11log::sinks::async_sink::_thread_loop()
         q_type::item_type msg;
         if (_q.pop(msg, pop_timeout))
         {
-            for (auto &sink : _sinks)
+            for (auto &s : _sinks)
             {
-                sink->log(msg);
+                s->log(msg);
                 if(!_active)
                     break;
             }
@@ -90,17 +90,17 @@ inline void c11log::sinks::async_sink::_thread_loop()
     }
 }
 
-inline void c11log::sinks::async_sink::add_sink(logger::sink_ptr sink)
+inline void c11log::sinks::async_sink::add_sink(logger::sink_ptr s)
 {
     std::lock_guard<std::mutex> guard(_mutex);
-    _sinks.push_back(sink);
+    _sinks.push_back(s);
 }
 
 
-inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr sink)
+inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr s)
 {
     std::lock_guard<std::mutex> guard(_mutex);
-    _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
+    _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), s), _sinks.end());
 }
 
 

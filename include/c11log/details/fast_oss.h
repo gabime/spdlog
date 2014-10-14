@@ -122,9 +122,9 @@ public:
         //_dev.sputn(buf, width);
     }
 
-    void put_str(const std::string& str)
+    void put_str(const std::string& s)
     {
-        _dev.sputn(str.data(), str.size());
+        _dev.sputn(s.data(), s.size());
     }
 
 
