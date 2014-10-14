@@ -6,7 +6,7 @@ namespace c11log
 {
 namespace sinks
 {
-class isink
+class sink
 {
 public:
     virtual void log(const details::log_msg& msg) = 0;

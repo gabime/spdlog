@@ -3,7 +3,7 @@
 #include<string>
 #include<mutex>
 #include<atomic>
-#include "isink.h"
+#include "sink.h"
 #include "../formatter.h"
 #include "../common.h"
 #include "../details/log_msg.h"
@@ -14,7 +14,7 @@ namespace c11log
 namespace sinks
 {
 template<class Mutex>
-class base_sink:public isink
+class base_sink:public sink
 {
 public:
     base_sink():_mutex() {}
