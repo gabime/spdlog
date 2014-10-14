@@ -5,7 +5,9 @@
 
 #include <ostream>
 #include <iomanip>
+#include "fast_istostr.h"
 #include "stack_buf.h"
+
 
 namespace c11log
 {
@@ -15,7 +17,7 @@ namespace details
 class stack_devicebuf :public std::streambuf
 {
 public:
-    static const unsigned short stack_size = 192;
+    static const unsigned short stack_size = 256;
     using stackbuf_t = stack_buf<stack_size>;
 
     stack_devicebuf() = default;
@@ -102,6 +104,29 @@ public:
     {
         _dev.clear();
     }
+
+    // The following were added because they add significant boost to perfromance
+    void putc(char c)
+    {
+        _dev.sputc(c);
+    }
+
+
+    // put int and pad with zeroes if smalled than min_width
+    void put_int(int n, int min_width)
+    {
+        std::string s;
+        details::fast_itostr(n, s, min_width);
+        _dev.sputn(s.data(), s.size());
+        //sprintf_s(buf, "%d", n);
+        //_dev.sputn(buf, width);
+    }
+
+    void put_str(const std::string& str)
+    {
+        _dev.sputn(str.data(), str.size());
+    }
+
 
 private:
     stack_devicebuf _dev;

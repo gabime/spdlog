@@ -57,6 +57,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,6 +89,7 @@
     <ClInclude Include="..\..\include\c11log\details\blocking_queue.h" />
     <ClInclude Include="..\..\include\c11log\details\fast_oss.h" />
     <ClInclude Include="..\..\include\c11log\details\flush_helper.h" />
+    <ClInclude Include="..\..\include\c11log\details\fast_istostr.h" />
     <ClInclude Include="..\..\include\c11log\details\line_logger.h" />
     <ClInclude Include="..\..\include\c11log\details\log_msg.h" />
     <ClInclude Include="..\..\include\c11log\details\null_mutex.h" />
@@ -96,6 +98,7 @@
     <ClInclude Include="..\..\include\c11log\factory.h" />
     <ClInclude Include="..\..\include\c11log\formatter.h" />
     <ClInclude Include="..\..\include\c11log\logger.h" />
+    <ClInclude Include="..\..\include\c11log\pattern_formatter.h" />
     <ClInclude Include="..\..\include\c11log\sinks\async_sink.h" />
     <ClInclude Include="..\..\include\c11log\sinks\base_sink.h" />
     <ClInclude Include="..\..\include\c11log\sinks\ostream_sink.h" />

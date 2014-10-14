@@ -2,6 +2,7 @@
 //
 #include <mutex>
 #include "c11log/logger.h"
+#include "c11log/pattern_formatter.h"
 #include "c11log/sinks/async_sink.h"
 #include "c11log/sinks/file_sinks.h"
 #include "c11log/sinks/stdout_sinks.h"
@@ -15,26 +16,27 @@ using namespace c11log;
 using namespace utils;
 
 
-int main2(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
+    const unsigned int howmany = argc <= 1 ? 500000 : atoi(argv[1]);
 
-    const unsigned int howmany = argc <= 1 ? 1000000 : atoi(argv[1]);
+    std::string pattern = "%Y:%m:%d %H:%M:%S.%e [%n:%l] %t";
+    auto formatter1 = std::unique_ptr<formatters::formatter>(new formatters::pattern_formatter(pattern));
 
-    logger cout_logger("example", std::make_shared<sinks::stderr_sink_mt>());
+    logger cout_logger("bench",  std::make_shared<sinks::stderr_sink_mt>() , std::move(formatter1));
     cout_logger.info() << "Hello logger";
 
     auto nullsink = std::make_shared<sinks::null_sink<details::null_mutex>>();
 
 
-
-
-    logger my_logger("my_logger", nullsink);
-
+    auto formatter2 = std::unique_ptr<formatters::formatter>(new formatters::pattern_formatter(pattern));
+    logger my_logger("my_logger",  nullsink, std::move(formatter2));
+    //logger my_logger("my_logger", nullsink);
 
     auto start = system_clock::now();
     for (unsigned int i = 1; i <= howmany; ++i)
-        my_logger.info() << "Hello logger: msg #" << i << 1<<2<<3<<4<<5<<6<<7<<8<<9<<10<<11<<12<<13<<14<<15<<16<<17<<18<<19;
-    //my_logger.info("Hello logger: msg #",i,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19);
+        my_logger.info() << "Hello logger: msg #" << i;
+
 
 
     auto delta = system_clock::now() - start;

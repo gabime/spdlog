@@ -14,6 +14,7 @@ struct log_msg
         logger_name(),
         level(l),
         time(),
+        tm_time(),
         raw(),
         formatted() {}
 
@@ -21,6 +22,7 @@ struct log_msg
         logger_name(other.logger_name),
         level(other.level),
         time(other.time),
+        tm_time(other.tm_time),
         raw(other.raw),
         formatted(other.formatted) {}
 
@@ -35,6 +37,7 @@ struct log_msg
         swap(l.logger_name, r.logger_name);
         swap(l.level, r.level);
         swap(l.time, r.time);
+        swap(l.tm_time, r.tm_time);
         swap(l.raw, r.raw);
         swap(l.formatted, r.formatted);
     }
@@ -56,8 +59,10 @@ struct log_msg
     std::string logger_name;
     level::level_enum level;
     log_clock::time_point time;
+    std::tm tm_time;
     std::string raw;
     std::string formatted;
+
 
 };
 }

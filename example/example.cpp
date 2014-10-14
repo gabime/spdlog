@@ -9,7 +9,7 @@
 #include "c11log/sinks/file_sinks.h"
 using namespace std;
 
-int main(int argc, char* argv[])
+int main2(int argc, char* argv[])
 {
 
     auto console = c11log::factory::stdout_logger();
@@ -30,6 +30,6 @@ int main(int argc, char* argv[])
     auto sink1= std::make_shared<c11log::sinks::stdout_sink_mt>();
     auto sink2 = std::make_shared<c11log::sinks::daily_file_sink_mt>("rotating", "txt");
     c11log::logger combined("combined", { sink1, sink2 });
-
+    return 0;
 }
 
