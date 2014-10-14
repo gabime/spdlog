@@ -14,6 +14,7 @@
 
 #include "sinks/base_sink.h"
 #include "common.h"
+#include "pattern_formatter.h"
 
 namespace c11log
 {
@@ -29,7 +30,7 @@ public:
     using sink_ptr = std::shared_ptr<sinks::isink>;
     using sinks_vector_t = std::vector<sink_ptr>;
     using sinks_init_list = std::initializer_list<sink_ptr>;
-    using formatter_ptr = std::unique_ptr<formatters::formatter>;
+    using formatter_ptr = std::unique_ptr<formatter>;
 
     logger(const std::string& name, sinks_init_list, formatter_ptr = nullptr);
     template<class It>
@@ -112,7 +113,7 @@ inline c11log::logger::logger(const std::string& name, sinks_init_list sinks_lis
     //Seems that vs2013 doesn't support std::atomic member initialization yet
     _level = level::INFO;
     if(!_formatter)
-        _formatter = std::make_unique<formatters::default_formatter>();
+        _formatter = std::make_unique<pattern_formatter>("%t");
 
 }
 

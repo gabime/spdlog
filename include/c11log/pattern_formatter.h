@@ -119,7 +119,7 @@ class e_appender :public pattern_appender
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
         auto duration = msg.time.time_since_epoch();
-        auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
+        int millis = static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000);
         oss.put_int(millis, 3);
     }
 };
@@ -166,8 +166,6 @@ private:
 }
 
 
-namespace formatters
-{
 class pattern_formatter : public formatter
 {
 
@@ -182,16 +180,16 @@ private:
     void compile_pattern(const std::string& pattern);
 };
 }
-}
 
 
-c11log::formatters::pattern_formatter::pattern_formatter(const std::string& pattern)
+
+inline c11log::pattern_formatter::pattern_formatter(const std::string& pattern)
 {
     compile_pattern(pattern);
 }
 
 
-void c11log::formatters::pattern_formatter::compile_pattern(const std::string& pattern)
+inline void c11log::pattern_formatter::compile_pattern(const std::string& pattern)
 {
     auto end = pattern.end();
     for (auto it = pattern.begin(); it != end; ++it)
@@ -211,7 +209,7 @@ void c11log::formatters::pattern_formatter::compile_pattern(const std::string& p
     }
 
 }
-void c11log::formatters::pattern_formatter::handle_flag(char flag)
+inline void c11log::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
@@ -273,7 +271,7 @@ void c11log::formatters::pattern_formatter::handle_flag(char flag)
 }
 
 
-void c11log::formatters::pattern_formatter::format(details::log_msg& msg)
+inline void c11log::pattern_formatter::format(details::log_msg& msg)
 {
     details::fast_oss oss;
     for (auto &appender : _appenders)
