@@ -8,19 +8,20 @@
 #include "../formatter.h"
 #include "log_msg.h"
 #include "fast_oss.h"
+#include "os.h"
 
 
 namespace c11log
 {
 namespace details {
-class pattern_appender
+class pattern_compiler
 {
 public:
     virtual void append(const details::log_msg& msg, details::fast_oss& oss) = 0;
 };
 
 // log name appender
-class name_appender :public pattern_appender
+class name_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -29,7 +30,7 @@ class name_appender :public pattern_appender
 };
 
 // log level appender
-class level_appender :public pattern_appender
+class level_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -42,7 +43,7 @@ class level_appender :public pattern_appender
 ///////////////////////////////////////////////////////////////////////
 
 // year - 4 digit
-class Y_appender :public pattern_appender
+class Y_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -51,7 +52,7 @@ class Y_appender :public pattern_appender
 };
 
 // year - 2 digit
-class y_appender :public pattern_appender
+class y_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -59,7 +60,7 @@ class y_appender :public pattern_appender
     }
 };
 // month 1-12
-class m_appender :public pattern_appender
+class m_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -67,9 +68,8 @@ class m_appender :public pattern_appender
     }
 };
 
-
 // day of month 1-31
-class d_appender :public pattern_appender
+class d_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -78,7 +78,7 @@ class d_appender :public pattern_appender
 };
 
 // hours in 24 format  0-23
-class H_appender :public pattern_appender
+class H_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -87,7 +87,7 @@ class H_appender :public pattern_appender
 };
 
 // hours in 12 format  1-12
-class I_appender :public pattern_appender
+class I_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -96,7 +96,7 @@ class I_appender :public pattern_appender
 };
 
 // ninutes 0-59
-class M_appender :public pattern_appender
+class M_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -105,7 +105,7 @@ class M_appender :public pattern_appender
 };
 
 // seconds 0-59
-class S_appender :public pattern_appender
+class S_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -114,7 +114,7 @@ class S_appender :public pattern_appender
 };
 
 // milliseconds
-class e_appender :public pattern_appender
+class e_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -125,7 +125,7 @@ class e_appender :public pattern_appender
 };
 
 
-class t_appender :public pattern_appender
+class t_compiler :public pattern_compiler
 {
     void append(const details::log_msg& msg, details::fast_oss& oss) override
     {
@@ -133,10 +133,10 @@ class t_appender :public pattern_appender
     }
 };
 
-class ch_appender :public pattern_appender
+class ch_compiler :public pattern_compiler
 {
 public:
-    explicit ch_appender(char ch) : _ch(ch)
+    explicit ch_compiler(char ch) : _ch(ch)
     {}
     void append(const details::log_msg&, details::fast_oss& oss) override
     {
@@ -147,10 +147,10 @@ private:
 };
 
 
-class str_appender :public pattern_appender
+class str_compiler :public pattern_compiler
 {
 public:
-    str_appender()
+    str_compiler()
     {}
     void add_ch(char ch)
     {
@@ -175,7 +175,7 @@ public:
     void format(details::log_msg& msg) override;
 private:
     const std::string _pattern;
-    std::vector<std::unique_ptr<details::pattern_appender>> _appenders;
+    std::vector<std::unique_ptr<details::pattern_compiler>> _compilers;
     void handle_flag(char flag);
     void compile_pattern(const std::string& pattern);
 };
@@ -204,7 +204,7 @@ inline void c11log::details::pattern_formatter::compile_pattern(const std::strin
         else
         {
             // chars not following the % sign should be displayed as is
-            _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::ch_appender(*it)));
+            _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::ch_compiler(*it)));
         }
     }
 
@@ -215,66 +215,65 @@ inline void c11log::details::pattern_formatter::handle_flag(char flag)
     {
     // logger name
     case 'n':
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::name_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::name_compiler()));
         break;
     // message log level
     case 'l':
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::level_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::level_compiler()));
         break;
     // message text
     case('t') :
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::t_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::t_compiler()));
         break;
     // year
     case('Y') :
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::Y_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::Y_compiler()));
         break;
     // year 2 digits
     case('y') :
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::y_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::y_compiler()));
         break;
     // month
     case('m') :
         // minute
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::m_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::m_compiler()));
         break;
     // day in month
     case('d') :
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::d_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::d_compiler()));
         break;
     // hour (24)
     case('H') :
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::H_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::H_compiler()));
         break;
     // hour (12)
     case('I') :
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::I_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::I_compiler()));
         break;
     // minutes
     case('M') :
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::M_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::M_compiler()));
         break;
     // seconds
     case('S') :
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::S_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::S_compiler()));
         break;
     // milliseconds part
     case('e'):
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::e_appender()));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::e_compiler()));
         break;
     // % sign
     case('%') :
-        _appenders.push_back(std::unique_ptr<details::pattern_appender>(new details::ch_appender('%')));
+        _compilers.push_back(std::unique_ptr<details::pattern_compiler>(new details::ch_compiler('%')));
         break;
     }
-
 }
 
 
 inline void c11log::details::pattern_formatter::format(details::log_msg& msg)
 {
     details::fast_oss oss;
-    for (auto &appender : _appenders)
+    for (auto &appender : _compilers)
     {
         appender->append(msg, oss);
     }

@@ -3,7 +3,7 @@
 
 //Fast to int to string
 //Source: http://stackoverflow.com/a/4351484/192001
-//Modified version to pad zeros according to min_size
+//Modified version to pad zeros according to padding arg
 
 namespace c11log {
 namespace details {

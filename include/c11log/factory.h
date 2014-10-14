@@ -18,13 +18,13 @@ namespace factory
 std::unique_ptr<logger> stdout_logger(const std::string& name = "")
 {
     auto sink = std::make_shared<sinks::stderr_sink_st>();
-    return std::unique_ptr<logger>(new logger(name, sink));
+    return std::unique_ptr<logger>(new logger(name, { sink }));
 }
 
 std::unique_ptr<logger> stdout_logger_mt(const std::string& name = "")
 {
     auto sink = std::make_shared<sinks::stderr_sink_mt>();
-    return std::unique_ptr<logger>(new logger(name, sink));
+    return std::unique_ptr<logger>(new logger(name, { sink }));
 }
 
 //
@@ -33,13 +33,13 @@ std::unique_ptr<logger> stdout_logger_mt(const std::string& name = "")
 std::unique_ptr<logger> simple_file_logger(const std::string& filename, const std::string& logger_name = "" )
 {
     auto fsink = std::make_shared<sinks::simple_file_sink_st>(filename);
-    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, { fsink }));
 
 }
 std::unique_ptr<logger> simple_file_logger_mt(const std::string& filename, const std::string& logger_name = "")
 {
     auto fsink = std::make_shared<sinks::simple_file_sink_mt>(filename);
-    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, { fsink }));
 }
 
 //
@@ -52,7 +52,7 @@ std::unique_ptr<logger> daily_file_logger(
     const std::string& logger_name = "")
 {
     auto fsink = std::make_shared<sinks::daily_file_sink_st>(filename, extension, flush_every);
-    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, { fsink }));
 }
 
 std::unique_ptr<logger> daily_file_logger_mt(
@@ -62,7 +62,7 @@ std::unique_ptr<logger> daily_file_logger_mt(
     const std::string& logger_name = "")
 {
     auto fsink = std::make_shared<sinks::daily_file_sink_mt>(filename, extension, flush_every);
-    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, { fsink }));
 }
 
 //
@@ -77,7 +77,7 @@ std::unique_ptr<logger> rotating_file_logger(
     const std::string& logger_name = "")
 {
     auto fsink = std::make_shared<sinks::rotating_file_sink_st>(filename, extension, max_size, max_files, flush_every);
-    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, { fsink }));
 }
 
 std::unique_ptr<logger> rotating_file_logger_mt(
@@ -89,7 +89,7 @@ std::unique_ptr<logger> rotating_file_logger_mt(
     const std::string& logger_name = "")
 {
     auto fsink = std::make_shared<sinks::rotating_file_sink_mt>(filename, extension, max_size, max_files, flush_every);
-    return std::unique_ptr<logger>(new c11log::logger(logger_name, fsink));
+    return std::unique_ptr<logger>(new c11log::logger(logger_name, { fsink }));
 }
 } // ns factory
 } // ns c11log

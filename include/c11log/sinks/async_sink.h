@@ -39,7 +39,7 @@ protected:
     void _thread_loop();
 
 private:
-    c11log::logger::sinks_vector_t _sinks;
+    std::vector<std::shared_ptr<sink>> _sinks;
     std::atomic<bool> _active;
     q_type _q;
     std::thread _back_thread;

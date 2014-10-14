@@ -9,7 +9,7 @@
 #include "c11log/sinks/file_sinks.h"
 using namespace std;
 
-int main(int, char* [])
+int main2(int, char* [])
 {
 
     auto console = c11log::factory::stdout_logger();

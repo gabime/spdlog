@@ -105,21 +105,21 @@ public:
         _dev.clear();
     }
 
-    // The following were added because they add significant boost to perfromance
+    //
+    // The following were added because they significantly boost to perfromance
+    //
     void putc(char c)
     {
         _dev.sputc(c);
+        this->width(4);
     }
 
-
     // put int and pad with zeroes if smalled than min_width
-    void put_int(int n, int min_width)
+    void put_int(int n, int padding)
     {
         std::string s;
-        details::fast_itostr(n, s, min_width);
+        details::fast_itostr(n, s, padding);
         _dev.sputn(s.data(), s.size());
-        //sprintf_s(buf, "%d", n);
-        //_dev.sputn(buf, width);
     }
 
     void put_str(const std::string& s)
