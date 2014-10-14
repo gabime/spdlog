@@ -16,7 +16,7 @@ public:
 
     file_flush_helper(const file_flush_helper&) = delete;
 
-    void write(const log_msg msg, std::ofstream& ofs)
+    void write(const log_msg& msg, std::ofstream& ofs)
     {
         auto buf = msg.formatted.buf();
         ofs.write(buf.data(), buf.size());

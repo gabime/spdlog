@@ -114,7 +114,7 @@ inline c11log::logger::logger(const std::string& logger_name, const It& begin, c
 
 template <typename... Args>
 inline c11log::details::line_logger c11log::logger::log(level::level_enum lvl, const Args&... args) {
-    details::line_logger l(this, lvl, true);
+    details::line_logger l(this, lvl, should_log(lvl));
     _variadic_log(l, args...);
     return l;
 }
