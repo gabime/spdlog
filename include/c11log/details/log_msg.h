@@ -31,7 +31,7 @@ struct log_msg
         swap(*this, other);
     }
 
-    friend void swap(log_msg& l, log_msg& r)
+    void swap(log_msg& l, log_msg& r)
     {
         using std::swap;
         swap(l.logger_name, r.logger_name);

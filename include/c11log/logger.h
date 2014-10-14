@@ -101,7 +101,7 @@ inline c11log::logger::logger(const std::string& logger_name, std::initializer_l
     if (!formatter) //default formatter
         _formatter = std::make_shared<details::pattern_formatter>(_default_pattern);
 
-    //Seems that vs2013 doesn't support atomic member initialization yet
+    // no support under vs2013 for member initialization for std::atomic
     _level = level::INFO;
 
 }
