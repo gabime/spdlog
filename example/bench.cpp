@@ -17,16 +17,16 @@ using namespace utils;
 
 int main(int argc, char* argv[])
 {
-    const unsigned int howmany = argc <= 1 ? 1000000 : atoi(argv[1]);
+    const unsigned int howmany = argc <= 1 ? 500000 : atoi(argv[1]);
 
     //std::string pattern = "%Y:%m:%d %H:%M:%S.%e ---> [%n:%l] %t";
     //auto formatter = std::make_shared<details::pattern_formatter>(pattern);
 
     logger cout_logger("bench", { std::make_shared<sinks::stderr_sink_mt>() });
-    cout_logger.info() << "Hello logger " << std::setw(10) << std::setfill('x') << 1234.55;
+    cout_logger.info() << "Hello logger " << 1234;
 
     auto nullsink = std::make_shared<sinks::null_sink_st>();
-    auto rotating = std::make_shared<sinks::rotating_file_sink_mt>("myrotating", "txt", 1024 * 1024 * 5, 5, 100);
+    //auto rotating = std::make_shared<sinks::rotating_file_sink_mt>("myrotating", "txt", 1024 * 1024 * 5, 5, 100);
 
     logger my_logger("my_logger", { nullsink });
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <chrono>
 #include "../common.h"
+#include "fast_oss.h"
 
 namespace c11log
 {
@@ -38,8 +38,8 @@ struct log_msg
         swap(l.level, r.level);
         swap(l.time, r.time);
         swap(l.tm_time, r.tm_time);
-        swap(l.raw, r.raw);
-        swap(l.formatted, r.formatted);
+        //swap(l.raw, r.raw);
+        //swap(l.formatted, r.formatted);
     }
 
 
@@ -60,8 +60,8 @@ struct log_msg
     level::level_enum level;
     log_clock::time_point time;
     std::tm tm_time;
-    std::string raw;
-    std::string formatted;
+    fast_oss raw;
+    fast_oss formatted;
 
 
 };

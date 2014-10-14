@@ -16,9 +16,10 @@ public:
 
     file_flush_helper(const file_flush_helper&) = delete;
 
-    void write(const std::string& msg, std::ofstream& ofs)
+    void write(const log_msg msg, std::ofstream& ofs)
     {
-        ofs.write(msg.data(), msg.size());
+        auto buf = msg.formatted.buf();
+        ofs.write(buf.data(), buf.size());
         if(--_flush_countdown == 0)
         {
             ofs.flush();

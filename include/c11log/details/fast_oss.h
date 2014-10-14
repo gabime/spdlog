@@ -34,11 +34,10 @@ public:
         other.clear();
     }
 
-    stackbuf_t::bufpair_t buf() const
+    const stackbuf_t& buf() const
     {
-        return _stackbuf.get();
+        return _stackbuf;
     }
-
     std::size_t size() const
     {
         return _stackbuf.size();
@@ -91,7 +90,13 @@ public:
     std::string str()
     {
         auto buf = _dev.buf();
-        return std::string(buf.first, buf.second);
+        const char*data = buf.data();
+        return std::string(data, data+buf.size());
+    }
+
+    const stack_devicebuf::stackbuf_t& buf() const
+    {
+        return _dev.buf();
     }
 
 
@@ -111,20 +116,25 @@ public:
     void putc(char c)
     {
         _dev.sputc(c);
-        this->width(4);
     }
 
     // put int and pad with zeroes if smalled than min_width
-    void put_int(int n, int padding)
+    void write_int(int n, int padding)
     {
         std::string s;
         details::fast_itostr(n, s, padding);
         _dev.sputn(s.data(), s.size());
     }
 
-    void put_str(const std::string& s)
+    void write_str(const std::string& s)
     {
         _dev.sputn(s.data(), s.size());
+    }
+
+    void write_fast_oss(const fast_oss& oss)
+    {
+        auto buf = oss.buf();
+        _dev.sputn(buf.data(), buf.size());
     }
 
 

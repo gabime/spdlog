@@ -24,7 +24,8 @@ public:
 protected:
     virtual void _sink_it(const details::log_msg& msg) override
     {
-        _ostream << msg.formatted;
+        auto buf = msg.formatted.buf();
+        _ostream.write(buf.data(), buf.size());
     }
     std::ostream& _ostream;
 };

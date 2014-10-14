@@ -19,7 +19,6 @@ public:
     line_logger(logger* callback_logger, level::level_enum msg_level, bool enabled):
         _callback_logger(callback_logger),
         _log_msg(msg_level),
-        _oss(),
         _enabled(enabled)
     {}
 
@@ -32,7 +31,6 @@ public:
     line_logger(line_logger&& other) :
         _callback_logger(other._callback_logger),
         _log_msg(std::move(other._log_msg)),
-        _oss(std::move(other._oss)),
         _enabled(other._enabled)
     {
         other.disable();
@@ -46,7 +44,6 @@ public:
             _log_msg.logger_name = _callback_logger->name();
             _log_msg.time = log_clock::now();
             _log_msg.tm_time = details::os::localtime(log_clock::to_time_t(_log_msg.time));
-            _log_msg.raw = _oss.str();
             _callback_logger->_log_msg(_log_msg);
         }
     }
@@ -56,7 +53,7 @@ public:
     {
         if (_enabled)
         {
-            _oss << what;
+            _log_msg.raw << what;
         }
     }
 
@@ -77,7 +74,6 @@ public:
 private:
     logger* _callback_logger;
     log_msg _log_msg;
-    details::fast_oss _oss;
     bool _enabled;
 };
 } //Namespace details

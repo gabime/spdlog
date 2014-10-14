@@ -32,7 +32,7 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        _flush_helper.write(msg.formatted, _ofstream);
+        _flush_helper.write(msg, _ofstream);
     }
 private:
     std::ofstream _ofstream;
@@ -71,7 +71,7 @@ protected:
             _rotate();
             _current_size = msg.formatted.size();
         }
-        _flush_helper.write(msg.formatted, _ofstream);
+        _flush_helper.write(msg, _ofstream);
     }
 
 
@@ -146,7 +146,7 @@ protected:
             _ofstream.open(_calc_filename(_base_filename, _extension));
             _midnight_tp = _calc_midnight_tp();
         }
-        _flush_helper.write(msg.formatted, _ofstream);
+        _flush_helper.write(msg, _ofstream);
     }
 
 private:

@@ -5,7 +5,7 @@
 // Upon each log write the logger:
 // 1. Checks if its log level is enough to log the message
 // 2. Format the message using the formatter function
-// 3. Pass the formatted message to it sinks to performa the actual logging
+// 3. Pass the formatted message to its sinks to performa the actual logging
 
 #include<vector>
 #include<memory>
@@ -68,8 +68,6 @@ private:
     void _log_msg(details::log_msg& msg);
     formatter_ptr  _default_formatter();
     const char* _default_pattern = "[%Y:%m:%d %H:%M:%S.%e] [%n:%l] %t";
-
-
 };
 }
 
@@ -181,7 +179,6 @@ inline c11log::logger::formatter_ptr c11log::logger::formatter() const
 {
     return _formatter;
 }
-
 
 
 inline void c11log::logger::_variadic_log(c11log::details::line_logger&) {}

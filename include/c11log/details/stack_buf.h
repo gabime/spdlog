@@ -15,8 +15,6 @@ template<unsigned short STACK_SIZE>
 class stack_buf
 {
 public:
-    using bufpair_t = std::pair<const char*, std::size_t>;
-    using iterator = char const*;
     static const unsigned short stack_size = STACK_SIZE;
     stack_buf() :_v(), _stack_size(0) {}
     ~stack_buf() = default;
@@ -63,28 +61,28 @@ public:
         _v.clear();
     }
 
-    bufpair_t get() const
+    /* bufpair_t get() const
+     {
+         if (vector_used())
+             return bufpair_t(_v.data(), _v.size());
+         else
+             return bufpair_t(_stack_array.data(), _stack_size);
+     }*/
+
+    const char* data() const
     {
         if (vector_used())
-            return bufpair_t(_v.data(), _v.size());
+            return _v.data();
         else
-            return bufpair_t(_stack_array.data(), _stack_size);
-    }
-
-    iterator begin() const
-    {
-        return get().first;
-    }
-
-    iterator end() const
-    {
-        bufpair_t bpair = get();
-        return bpair.first + bpair.second;
+            return _stack_array.data();
     }
 
     std::size_t size() const
     {
-        return get().second;
+        if (vector_used())
+            return _v.size();
+        else
+            return _stack_size;
     }
 
 private:
