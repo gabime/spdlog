@@ -89,9 +89,9 @@ public:
 
     std::string str()
     {
-        auto buf = _dev.buf();
-        const char*data = buf.data();
-        return std::string(data, data+buf.size());
+        auto buffer = _dev.buf();
+        const char*data = buffer.data();
+        return std::string(data, data+buffer.size());
     }
 
     const stack_devicebuf::stackbuf_t& buf() const
@@ -133,11 +133,11 @@ public:
 
     void write_fast_oss(const fast_oss& oss)
     {
-        auto buf = oss.buf();
-        _dev.sputn(buf.data(), buf.size());
+        auto buffer = oss.buf();
+        _dev.sputn(buffer.data(), buffer.size());
     }
-
-
+    
+    
 private:
     stack_devicebuf _dev;
 };

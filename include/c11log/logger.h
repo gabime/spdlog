@@ -29,7 +29,7 @@ class logger
 {
 public:
     using sink_ptr = std::shared_ptr<sinks::sink>;
-    using formatter_ptr = std::shared_ptr<formatter>;
+    using formatter_ptr = std::shared_ptr<c11log::formatter>;
 
     logger(const std::string& name, std::initializer_list<sink_ptr>, formatter_ptr formatter = nullptr);
     template<class It>
@@ -93,12 +93,12 @@ private:
 #include "details/line_logger.h"
 
 
-inline c11log::logger::logger(const std::string& logger_name, std::initializer_list<sink_ptr> sinks_list, formatter_ptr formatter) :
+inline c11log::logger::logger(const std::string& logger_name, std::initializer_list<sink_ptr> sinks_list, formatter_ptr msg_formatter) :
     _name(logger_name),
-    _formatter(formatter),
+    _formatter(msg_formatter),
     _sinks(sinks_list)
 {
-    if (!formatter) //default formatter
+    if (!msg_formatter) //default formatter
         _formatter = std::make_shared<details::pattern_formatter>(_default_pattern);
 
     // no support under vs2013 for member initialization for std::atomic
@@ -169,10 +169,9 @@ inline bool c11log::logger::should_log(c11log::level::level_enum msg_level) cons
     return msg_level >= _level.load();
 }
 
-
-inline void c11log::logger::formatter(formatter_ptr formatter)
+inline void c11log::logger::formatter(formatter_ptr msg_formatter)
 {
-    _formatter = formatter;
+    _formatter = msg_formatter;
 }
 
 inline c11log::logger::formatter_ptr c11log::logger::formatter() const

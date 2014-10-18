@@ -37,9 +37,9 @@ int main(int argc, char* argv[])
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
 
-    cout << "Total:" << format(howmany) << endl;
-    cout << "Delta:" << format(delta_d) << endl;
-    cout << "Rate:" << format(howmany / delta_d) << "/sec" << endl;
+    cout_logger.info("Total:") << format(howmany);
+    cout_logger.info("Delta:") << format(delta_d);
+    cout_logger.info("Rate:") << format(howmany / delta_d) << "/sec";
 
     return 0;
 }

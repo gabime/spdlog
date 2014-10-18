@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <vector>
+#include <cstring>
 
 
 // Fast memory storage on the stack when possible or in std::vector
