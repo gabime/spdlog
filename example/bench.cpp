@@ -8,14 +8,12 @@
 #include "c11log/sinks/null_sink.h"
 #include "utils.h"
 
-using std::cout;
-using std::endl;
 using namespace std::chrono;
 using namespace c11log;
 using namespace utils;
 
 
-int main_(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     const unsigned int howmany = argc <= 1 ? 500000 : atoi(argv[1]);
 
@@ -26,9 +24,9 @@ int main_(int argc, char* argv[])
     cout_logger.info() << "Hello logger " << 1234;
 
     auto nullsink = std::make_shared<sinks::null_sink_st>();
-    //auto rotating = std::make_shared<sinks::rotating_file_sink_mt>("myrotating", "txt", 1024 * 1024 * 5, 5, 100);
+    auto rotating = std::make_shared<sinks::rotating_file_sink_mt>("myrotating", "txt", 1024 * 1024 * 5, 5, 1);
 
-    logger my_logger("my_logger", { nullsink });
+    logger my_logger("my_logger", { rotating });
 
     auto start = system_clock::now();
     for (unsigned int i = 1; i <= howmany; ++i)
