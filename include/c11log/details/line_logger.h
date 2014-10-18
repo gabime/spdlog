@@ -1,9 +1,8 @@
 #pragma once
 
-#include <sstream>
 #include "../common.h"
 #include "../logger.h"
-#include "fast_oss.h"
+#include "./fast_oss.h"
 
 
 // Line logger class - aggregates operator<< calls to fast ostream

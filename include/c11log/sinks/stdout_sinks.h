@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <mutex>
-#include "ostream_sink.h"
+#include "./ostream_sink.h"
 #include "../details/null_mutex.h"
 
 namespace c11log

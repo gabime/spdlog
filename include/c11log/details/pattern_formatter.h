@@ -6,10 +6,10 @@
 #include <vector>
 
 #include "../formatter.h"
-#include "log_msg.h"
-#include "fast_oss.h"
-#include "os.h"
-
+#include "./log_msg.h"
+#include "./fast_oss.h"
+#include "./os.h"
+#include "Windows.h"
 
 namespace c11log
 {
@@ -42,6 +42,101 @@ class level_formatter :public flag_formatter
 // Date time pattern appenders
 ///////////////////////////////////////////////////////////////////////
 
+static const char* ampm(const tm& t)
+{
+    return t.tm_hour >= 12 ? "PM" : "AM";
+}
+
+static int to12h(const tm& t)
+{
+    return t.tm_hour > 12 ? t.tm_hour - 12 : t.tm_hour;
+}
+
+//Abbreviated weekday name
+static const std::string days[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+class a_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_str(days[msg.tm_time.tm_wday]);
+    }
+};
+
+//Full weekday name
+static const std::string full_days[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+class A_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_str(full_days[msg.tm_time.tm_wday]);
+    }
+};
+
+//Abbreviated month
+static const std::string  months[] { "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" };
+class b_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_str(months[msg.tm_time.tm_mon]);
+    }
+};
+
+//Full month name
+static const std::string full_months[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+class B_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_str(full_months[msg.tm_time.tm_mon]);
+    }
+};
+
+//Date and time representation (Thu Aug 23 15:35:46 2014)
+class c_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_str(days[msg.tm_time.tm_wday]);
+        msg.formatted.putc(' ');
+        msg.formatted.write_str(months[msg.tm_time.tm_mon]);
+        msg.formatted.putc(' ');
+        msg.formatted.write_int(msg.tm_time.tm_mday, 2);
+        msg.formatted.putc(' ');
+        msg.formatted.write_int(msg.tm_time.tm_hour, 2);
+        msg.formatted.putc(':');
+        msg.formatted.write_int(msg.tm_time.tm_min, 2);
+        msg.formatted.putc(':');
+        msg.formatted.write_int(msg.tm_time.tm_sec, 2);
+    }
+};
+
+
+// year - 2 digit
+class C_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_int(msg.tm_time.tm_year%100, 2);
+    }
+};
+
+
+
+// Short MM/DD/YY date, equivalent to %m/%d/%y 08/23/01
+class D_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_int(msg.tm_time.tm_mon + 1, 2);
+        msg.formatted.putc('/');
+        msg.formatted.write_int(msg.tm_time.tm_mday, 2);
+        msg.formatted.putc('/');
+        msg.formatted.write_int(msg.tm_time.tm_year % 100, 2);
+    }
+};
+
+
 // year - 4 digit
 class Y_formatter :public flag_formatter
 {
@@ -51,14 +146,6 @@ class Y_formatter :public flag_formatter
     }
 };
 
-// year - 2 digit
-class y_formatter :public flag_formatter
-{
-    void format(details::log_msg& msg) override
-    {
-        msg.formatted.write_int(msg.tm_time.tm_year, 2);
-    }
-};
 // month 1-12
 class m_formatter :public flag_formatter
 {
@@ -91,7 +178,7 @@ class I_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write_int((msg.tm_time.tm_hour + 1) % 1, 2);
+        msg.formatted.write_int(to12h(msg.tm_time), 2);
     }
 };
 
@@ -124,6 +211,61 @@ class e_formatter :public flag_formatter
     }
 };
 
+// AM/PM
+class p_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_data(ampm(msg.tm_time), 2);
+    }
+};
+
+
+// 12 hour clock 02:55:02 pm
+class r_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        int hours = to12h(msg.tm_time);
+        msg.formatted.write_int(to12h(msg.tm_time), 2);
+        msg.formatted.putc(':');
+        msg.formatted.write_int(msg.tm_time.tm_min, 2);
+        msg.formatted.putc(':');
+        msg.formatted.write_int(msg.tm_time.tm_sec, 2);
+        msg.formatted.putc(' ');
+        msg.formatted.write_data(ampm(msg.tm_time), 2);
+    }
+};
+
+// 24-hour HH:MM time, equivalent to %H:%M
+class R_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_int(msg.tm_time.tm_hour, 2);
+        msg.formatted.putc(':');
+        msg.formatted.write_int(msg.tm_time.tm_min, 2);
+
+    }
+};
+
+// ISO 8601 time format (HH:MM:SS), equivalent to %H:%M:%S
+class T_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.write_int(msg.tm_time.tm_hour, 2);
+        msg.formatted.putc(':');
+        msg.formatted.write_int(msg.tm_time.tm_min, 2);
+        msg.formatted.putc(':');
+        msg.formatted.write_int(msg.tm_time.tm_sec, 2);
+
+    }
+};
+
+
+
+
 
 class t_formatter :public flag_formatter
 {
@@ -147,10 +289,11 @@ private:
 };
 
 
-class str_formatter :public flag_formatter
+//aggregate user chars to display as is
+class aggregate_formatter :public flag_formatter
 {
 public:
-    str_formatter()
+    aggregate_formatter()
     {}
     void add_ch(char ch)
     {
@@ -158,7 +301,7 @@ public:
     }
     void format(details::log_msg& msg) override
     {
-        msg.formatted << _str;
+        msg.formatted.write_str(_str);
     }
 private:
     std::string _str;
@@ -181,31 +324,40 @@ private:
 };
 }
 }
-
-
+///////////////////////////////////////////////////////////////////////////////
+// pattern_formatter inline impl
+///////////////////////////////////////////////////////////////////////////////
 inline c11log::details::pattern_formatter::pattern_formatter(const std::string& pattern)
 {
     compile_pattern(pattern);
 }
 
-
 inline void c11log::details::pattern_formatter::compile_pattern(const std::string& pattern)
 {
     auto end = pattern.end();
+    std::unique_ptr<aggregate_formatter> user_chars;
     for (auto it = pattern.begin(); it != end; ++it)
     {
         if (*it == '%')
         {
+            if (user_chars) //append user chars found so far
+                _formatters.push_back(std::move(user_chars));
+
             if (++it != end)
                 handle_flag(*it);
             else
-                return;
+                break;
         }
-        else
+        else // chars not following the % sign should be displayed as is
         {
-            // chars not following the % sign should be displayed as is
-            _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter(*it)));
+            if (!user_chars)
+                user_chars = std::unique_ptr<aggregate_formatter>(new aggregate_formatter());
+            user_chars->add_ch(*it);
         }
+    }
+    if (user_chars) //append raw chars found so far
+    {
+        _formatters.push_back(std::move(user_chars));
     }
 
 }
@@ -217,54 +369,97 @@ inline void c11log::details::pattern_formatter::handle_flag(char flag)
     case 'n':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::name_formatter()));
         break;
-    // message log level
+
     case 'l':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::level_formatter()));
         break;
-    // message text
+
     case('t') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::t_formatter()));
         break;
-    // year
+
+    case('a') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::a_formatter()));
+        break;
+
+    case('A') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::A_formatter()));
+        break;
+
+    case('b'):
+    case('h') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::b_formatter()));
+        break;
+
+    case('B') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::B_formatter()));
+        break;
+    case('c') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::c_formatter()));
+        break;
+
+    case('C') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::C_formatter()));
+        break;
+
     case('Y') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::Y_formatter()));
         break;
-    // year 2 digits
-    case('y') :
-        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::y_formatter()));
+
+    case('D') :
+    case('x') :
+
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::D_formatter()));
         break;
-    // month
+
     case('m') :
-        // minute
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::m_formatter()));
         break;
-    // day in month
+
     case('d') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::d_formatter()));
         break;
-    // hour (24)
+
     case('H') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::H_formatter()));
         break;
-    // hour (12)
+
     case('I') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::I_formatter()));
         break;
-    // minutes
+
     case('M') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::M_formatter()));
         break;
-    // seconds
+
     case('S') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::S_formatter()));
         break;
-    // milliseconds part
+
     case('e'):
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::e_formatter()));
         break;
-    // % sign
-    case('%') :
+
+    case('p'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::p_formatter()));
+        break;
+
+    case('r') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::r_formatter()));
+        break;
+
+    case('R') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::R_formatter()));
+        break;
+
+    case('T') :
+    case('X'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::T_formatter()));
+        break;
+
+    default: //Unkown flag appears as is
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter('%')));
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter(flag)));
         break;
     }
 }

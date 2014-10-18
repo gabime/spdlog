@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../common.h"
-#include "fast_oss.h"
+#include "./fast_oss.h"
 
 namespace c11log
 {

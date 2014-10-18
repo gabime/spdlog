@@ -17,16 +17,18 @@ int main(int argc, char* argv[])
 {
     const unsigned int howmany = argc <= 1 ? 500000 : atoi(argv[1]);
 
-    //std::string pattern = "%Y:%m:%d %H:%M:%S.%e ---> [%n:%l] %t";
-    //auto formatter = std::make_shared<details::pattern_formatter>(pattern);
+    //std::string pattern = "%B %d, %Y %H:%M:%S.%e **************[%n:%l] %t";
+    std::string pattern = " [%z] %t";
+    auto formatter = std::make_shared<details::pattern_formatter>(pattern);
 
     logger cout_logger("bench", { std::make_shared<sinks::stderr_sink_mt>() });
+    cout_logger.formatter(formatter);
     cout_logger.info() << "Hello logger " << 1234;
 
     auto nullsink = std::make_shared<sinks::null_sink_st>();
-    auto rotating = std::make_shared<sinks::rotating_file_sink_mt>("myrotating", "txt", 1024 * 1024 * 5, 5, 1);
+    auto rotating = std::make_shared<sinks::rotating_file_sink_mt>("myrotating", "txt", 1024 * 1024 * 5, 5, 100);
 
-    logger my_logger("my_logger", { rotating });
+    logger my_logger("my_logger", { nullsink }, formatter);
 
     auto start = system_clock::now();
     for (unsigned int i = 1; i <= howmany; ++i)

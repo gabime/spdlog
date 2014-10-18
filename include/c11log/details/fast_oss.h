@@ -143,6 +143,11 @@ public:
         _dev.sputn(s.data(), s.size());
     }
 
+    void write_data(const char* p, std::size_t size)
+    {
+        _dev.sputn(p, size);
+    }
+
     void write_str(const std::string& s)
     {
         _dev.sputn(s.data(), s.size());

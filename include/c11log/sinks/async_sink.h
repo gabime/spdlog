@@ -5,7 +5,7 @@
 #include <atomic>
 #include <algorithm>
 
-#include "base_sink.h"
+#include "./base_sink.h"
 #include "../logger.h"
 #include "../details/blocking_queue.h"
 #include "../details/null_mutex.h"

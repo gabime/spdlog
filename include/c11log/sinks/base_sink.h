@@ -3,7 +3,7 @@
 #include<string>
 #include<mutex>
 #include<atomic>
-#include "sink.h"
+#include "./sink.h"
 #include "../formatter.h"
 #include "../common.h"
 #include "../details/log_msg.h"

@@ -26,7 +26,7 @@ inline std::string& fast_itostr(int n, std::string& s, int padding)
 {
     if (n == 0)
     {
-        s = "0";
+        s = std::string(padding, '0');
         return s;
     }
 

@@ -3,6 +3,9 @@
 #include<string>
 #include<cstdio>
 #include<ctime>
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
 namespace c11log
 {
@@ -78,6 +81,17 @@ inline bool fopen_s(FILE** fp, const std::string& filename, const char* mode)
 #else
     *fp = fopen((filename.c_str()), mode);
     return fp == nullptr;
+#endif
+}
+
+inline float tz_offset()
+{
+#ifdef _WIN32
+    TIME_ZONE_INFORMATION tzinfo;
+    GetTimeZoneInformation(&tzinfo);
+    return tzinfo.Bias / -60.0f;
+#else
+    return 0.0f;
 #endif
 }
 
