@@ -7,7 +7,7 @@
 #include <iomanip>
 #include "fast_istostr.h"
 #include "stack_buf.h"
-
+#include<iostream>
 
 namespace c11log
 {
@@ -81,8 +81,6 @@ public:
     fast_oss() :std::ostream(&_dev) {}
     ~fast_oss() = default;
 
-
-
     fast_oss(const fast_oss& other) :std::basic_ios<char>(), std::ostream(&_dev), _dev(other._dev)
     {}
 
@@ -108,7 +106,7 @@ public:
 
     std::string str()
     {
-        auto buffer = _dev.buf();
+        auto& buffer = _dev.buf();
         const char*data = buffer.data();
         return std::string(data, data+buffer.size());
     }
@@ -152,7 +150,7 @@ public:
 
     void write_fast_oss(const fast_oss& oss)
     {
-        auto buffer = oss.buf();
+        auto& buffer = oss.buf();
         _dev.sputn(buffer.data(), buffer.size());
     }
 

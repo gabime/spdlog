@@ -18,7 +18,7 @@ public:
 
     void write(const log_msg& msg, std::ofstream& ofs)
     {
-        auto buf = msg.formatted.buf();
+        auto& buf = msg.formatted.buf();
         ofs.write(buf.data(), buf.size());
         if(--_flush_countdown == 0)
         {
