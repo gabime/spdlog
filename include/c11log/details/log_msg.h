@@ -38,8 +38,8 @@ struct log_msg
         swap(l.level, r.level);
         swap(l.time, r.time);
         swap(l.tm_time, r.tm_time);
-        //swap(l.raw, r.raw);
-        //swap(l.formatted, r.formatted);
+        swap(l.raw, r.raw);
+        swap(l.formatted, r.formatted);
     }
 
 

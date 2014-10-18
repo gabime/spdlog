@@ -15,7 +15,7 @@ using namespace c11log;
 using namespace utils;
 
 
-int main(int argc, char* argv[])
+int main_(int argc, char* argv[])
 {
     const unsigned int howmany = argc <= 1 ? 500000 : atoi(argv[1]);
 

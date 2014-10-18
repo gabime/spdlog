@@ -22,7 +22,6 @@ public:
 
     stack_devicebuf() = default;
     ~stack_devicebuf() = default;
-    stack_devicebuf& operator=(const stack_devicebuf&) = delete;
 
     stack_devicebuf(const stack_devicebuf& other) :std::basic_streambuf<char>(), _stackbuf(other._stackbuf)
     {}
@@ -32,6 +31,12 @@ public:
         _stackbuf(std::move(other._stackbuf))
     {
         other.clear();
+    }
+
+    stack_devicebuf& operator=(stack_devicebuf&& other)
+    {
+        std::swap(_stackbuf, other._stackbuf);
+        return *this;
     }
 
     const stackbuf_t& buf() const
@@ -76,8 +81,7 @@ public:
     fast_oss() :std::ostream(&_dev) {}
     ~fast_oss() = default;
 
-    fast_oss& operator=(const fast_oss& other) = delete;
-    fast_oss& operator=(const fast_oss&& other) = delete;
+
 
     fast_oss(const fast_oss& other) :std::basic_ios<char>(), std::ostream(&_dev), _dev(other._dev)
     {}
@@ -86,6 +90,21 @@ public:
     {
         other.clear();
     }
+
+
+    fast_oss& operator=(fast_oss&& other)
+    {
+        swap(*this, other);
+        return *this;
+    }
+
+    void swap(fast_oss& first, fast_oss& second) // nothrow
+    {
+        using std::swap;
+        swap(first._dev, second._dev);
+    }
+
+
 
     std::string str()
     {
@@ -136,8 +155,8 @@ public:
         auto buffer = oss.buf();
         _dev.sputn(buffer.data(), buffer.size());
     }
-    
-    
+
+
 private:
     stack_devicebuf _dev;
 };

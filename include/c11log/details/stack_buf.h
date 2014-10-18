@@ -19,15 +19,22 @@ public:
     static const unsigned short stack_size = STACK_SIZE;
     stack_buf() :_v(), _stack_size(0) {}
     ~stack_buf() = default;
-
-    stack_buf& operator=(const stack_buf& other) = delete;
-
     stack_buf(const stack_buf& other):stack_buf(other, delegate_copy_move {})
     {}
 
     stack_buf(stack_buf&& other):stack_buf(other, delegate_copy_move {})
     {
         other.clear();
+    }
+    template<class T1>
+    stack_buf& operator=(T1&& other)
+    {
+        _stack_size = other._stack_size;
+        if (other.vector_used())
+            _v = std::forward<T1>(other)._v;
+        else
+            std::copy_n(other._stack_array.begin(), other._stack_size, _stack_array.begin());
+        return *this;
     }
 
     void append(const char* buf, std::size_t buf_size)
@@ -61,14 +68,6 @@ public:
         _stack_size = 0;
         _v.clear();
     }
-
-    /* bufpair_t get() const
-     {
-         if (vector_used())
-             return bufpair_t(_v.data(), _v.size());
-         else
-             return bufpair_t(_stack_array.data(), _stack_size);
-     }*/
 
     const char* data() const
     {
