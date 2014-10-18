@@ -1,4 +1,5 @@
 #pragma once
+
 #include<string>
 #include<cstdio>
 #include<ctime>
@@ -13,10 +14,11 @@ namespace os
 inline std::tm localtime(const std::time_t &time_tt)
 {
 
-    std::tm tm;
 #ifdef _WIN32
+    std::tm tm;
     localtime_s(&tm, &time_tt);
 #else
+    std::tm tm;
     localtime_r(&time_tt, &tm);
 #endif
     return tm;
@@ -64,10 +66,21 @@ inline unsigned short eol_size()
 #else
 constexpr inline unsigned short eol_size()
 {
-
     return 1;
 }
 #endif
+
+//fopen_s on non windows for writing
+inline bool fopen_s(FILE** fp, const std::string& filename, const char* mode)
+{
+#ifdef _WIN32
+    return fopen_s(fp, filename, mode);
+#else
+    *fp = fopen((filename.c_str()), mode);
+    return fp == nullptr;
+#endif
+}
+
 
 } //os
 } //details
