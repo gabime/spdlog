@@ -33,6 +33,25 @@ inline std::tm localtime()
     return localtime(now_t);
 }
 
+
+inline std::tm gmtime(const std::time_t &time_tt)
+{
+
+#ifdef _WIN32
+    std::tm tm;
+    gmtime_s(&tm, &time_tt);
+#else
+    std::tm tm;
+    lgmtime_r(&time_tt, &tm);
+#endif
+    return tm;
+}
+
+inline std::tm gmtime()
+{
+    std::time_t now_t = time(0);
+    return gmtime(now_t);
+}
 inline bool operator==(const std::tm& tm1, const std::tm& tm2)
 {
     return (tm1.tm_sec == tm2.tm_sec &&
@@ -46,7 +65,7 @@ inline bool operator==(const std::tm& tm1, const std::tm& tm2)
 
 inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
 {
-    return !(tm1==tm2);
+    return !(tm1 == tm2);
 }
 
 #ifdef _WIN32
@@ -84,14 +103,18 @@ inline bool fopen_s(FILE** fp, const std::string& filename, const char* mode)
 #endif
 }
 
-inline float tz_offset()
+//Return utc offset in minutes or -1 on failure
+inline int utc_minutes_offset(const std::tm& tm = localtime())
 {
+
 #ifdef _WIN32
-    TIME_ZONE_INFORMATION tzinfo;
-    GetTimeZoneInformation(&tzinfo);
-    return tzinfo.Bias / -60.0f;
+    DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
+    auto rv = GetDynamicTimeZoneInformation(&tzinfo);
+    if (!rv)
+        return -1;
+    return -1 * (tzinfo.Bias + tzinfo.DaylightBias);
 #else
-    return 0.0f;
+    return tm.tm_gmtoff / 60;
 #endif
 }
 
