@@ -134,14 +134,6 @@ public:
     }
 
     // put int and pad with zeroes if smalled than min_width
-    fast_oss& operator<<(char c)
-    {
-        putc(c);
-        return *this;
-    }
-
-    /// put int and pad with zeroes if smalled than min_width///
-
     void put_int(int n, int padding)
     {
         std::string s;
