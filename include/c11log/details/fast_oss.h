@@ -33,7 +33,7 @@ public:
         other.clear();
     }
 
-    stack_devicebuf& operator=(stack_devicebuf&& other)
+    stack_devicebuf& operator=(stack_devicebuf other)
     {
         std::swap(_stackbuf, other._stackbuf);
         return *this;
@@ -90,7 +90,7 @@ public:
     }
 
 
-    fast_oss& operator=(fast_oss&& other)
+    fast_oss& operator=(fast_oss other)
     {
         swap(*this, other);
         return *this;
@@ -101,8 +101,6 @@ public:
         using std::swap;
         swap(first._dev, second._dev);
     }
-
-
 
     std::string str()
     {
@@ -136,24 +134,32 @@ public:
     }
 
     // put int and pad with zeroes if smalled than min_width
-    void write_int(int n, int padding)
+    fast_oss& operator<<(char c)
+    {
+        putc(c);
+        return *this;
+    }
+
+    /// put int and pad with zeroes if smalled than min_width///
+
+    void put_int(int n, int padding)
     {
         std::string s;
         details::fast_itostr(n, s, padding);
         _dev.sputn(s.data(), s.size());
     }
 
-    void write_data(const char* p, std::size_t size)
+    void put_data(const char* p, std::size_t size)
     {
         _dev.sputn(p, size);
     }
 
-    void write_str(const std::string& s)
+    void put_str(const std::string& s)
     {
         _dev.sputn(s.data(), s.size());
     }
 
-    void write_fast_oss(const fast_oss& oss)
+    void put_fast_oss(const fast_oss& oss)
     {
         auto& buffer = oss.buf();
         _dev.sputn(buffer.data(), buffer.size());
