@@ -146,6 +146,12 @@ inline c11log::details::line_logger c11log::logger::warn(const Args&... args)
 }
 
 template <typename... Args>
+inline c11log::details::line_logger c11log::logger::error(const Args&... args)
+{
+    return log(level::ERROR, args...);
+}
+
+template <typename... Args>
 inline c11log::details::line_logger c11log::logger::critical(const Args&... args)
 {
     return log(level::CRITICAL, args...);
