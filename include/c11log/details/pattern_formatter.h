@@ -225,7 +225,6 @@ class r_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        int hours = to12h(msg.tm_time);
         msg.formatted.put_int(to12h(msg.tm_time), 2);
         msg.formatted.putc(':');
         msg.formatted.put_int(msg.tm_time.tm_min, 2);

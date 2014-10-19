@@ -17,8 +17,8 @@ int main(int argc, char* argv[])
 {
     const unsigned int howmany = argc <= 1 ? 500000 : atoi(argv[1]);
 
-    //std::string pattern = "%B %d, %Y %H:%M:%S.%e **************[%n:%l] %t";
-    std::string pattern = " [%z] %t";
+    std::string pattern = "%z %B %d, %Y %H:%M:%S.%e **************[%n:%l] %t";
+    //std::string pattern = " [%z] %t";
     auto formatter = std::make_shared<details::pattern_formatter>(pattern);
 
     logger cout_logger("bench", { std::make_shared<sinks::stderr_sink_mt>() });

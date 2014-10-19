@@ -149,9 +149,9 @@ public:
         _dev.sputn(s.data(), s.size());
     }
 
-    void put_data(const char* p, std::size_t size)
+    void put_data(const char* p, std::size_t data_size)
     {
-        _dev.sputn(p, size);
+        _dev.sputn(p, data_size);
     }
 
     void put_str(const std::string& s)

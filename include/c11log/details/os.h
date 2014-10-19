@@ -42,7 +42,7 @@ inline std::tm gmtime(const std::time_t &time_tt)
     gmtime_s(&tm, &time_tt);
 #else
     std::tm tm;
-    lgmtime_r(&time_tt, &tm);
+    gmtime_r(&time_tt, &tm);
 #endif
     return tm;
 }
