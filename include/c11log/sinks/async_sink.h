@@ -27,8 +27,8 @@ public:
 
     //Stop logging and join the back thread
     ~async_sink();
-    void add_sink(logger::sink_ptr sink);
-    void remove_sink(logger::sink_ptr sink_ptr);
+    void add_sink(sink_ptr sink);
+    void remove_sink(sink_ptr sink_ptr);
     q_type& q();
     //Wait to remaining items (if any) in the queue to be written and shutdown
     void shutdown(const std::chrono::milliseconds& timeout);
@@ -90,14 +90,14 @@ inline void c11log::sinks::async_sink::_thread_loop()
     }
 }
 
-inline void c11log::sinks::async_sink::add_sink(logger::sink_ptr s)
+inline void c11log::sinks::async_sink::add_sink(c11log::sink_ptr s)
 {
     std::lock_guard<std::mutex> guard(_mutex);
     _sinks.push_back(s);
 }
 
 
-inline void c11log::sinks::async_sink::remove_sink(logger::sink_ptr s)
+inline void c11log::sinks::async_sink::remove_sink(c11log::sink_ptr s)
 {
     std::lock_guard<std::mutex> guard(_mutex);
     _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), s), _sinks.end());

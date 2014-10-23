@@ -17,7 +17,7 @@ details::fast_oss f(const std::string& what)
     oss << what;
     return oss;
 }
-int main(int, char* [])
+int main_(int, char* [])
 {
 
     auto foss = f("test2");

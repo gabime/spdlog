@@ -11,7 +11,7 @@ namespace utils
 {
 
 template<typename T>
-std::string format(const T& value)
+inline std::string format(const T& value)
 {
     static std::locale loc("");
     std::stringstream ss;
@@ -21,7 +21,7 @@ std::string format(const T& value)
 }
 
 template<>
-std::string format(const double & value)
+inline std::string format(const double & value)
 {
     static std::locale loc("");
     std::stringstream ss;

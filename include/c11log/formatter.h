@@ -6,7 +6,7 @@ namespace c11log
 class formatter
 {
 public:
-    virtual formatter() {}
+    virtual ~formatter() {}
     virtual void format(details::log_msg& msg) = 0;
 };
 }

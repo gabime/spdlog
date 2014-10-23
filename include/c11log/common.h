@@ -1,9 +1,23 @@
 #pragma once
 
+#include<initializer_list>
+#include<memory>
+#include<chrono>
+
 namespace c11log
 {
+class formatter;
+namespace sinks {
+class sink;
+}
 
+// Common types across the lib
 using log_clock = std::chrono::system_clock;
+using sink_ptr = std::shared_ptr < sinks::sink > ;
+using sinks_init_list = std::initializer_list < sink_ptr > ;
+using formatter_ptr = std::shared_ptr<c11log::formatter>;
+
+//Log level enum
 namespace level
 {
 typedef enum

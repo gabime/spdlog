@@ -298,8 +298,6 @@ private:
 
 
 
-
-
 class t_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
@@ -338,6 +336,40 @@ public:
     }
 private:
     std::string _str;
+};
+
+// Full info formatter
+// pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %t
+class full_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted.putc('[');
+        msg.formatted.put_int(msg.tm_time.tm_year+1900, 4);
+        msg.formatted.putc('-');
+        msg.formatted.put_int(msg.tm_time.tm_mon+ 1, 2);
+        msg.formatted.putc('-');
+        msg.formatted.put_int(msg.tm_time.tm_mday, 2);
+        msg.formatted.putc(' ');
+        msg.formatted.put_int(msg.tm_time.tm_hour, 2);
+        msg.formatted.putc(':');
+        msg.formatted.put_int(msg.tm_time.tm_min, 2);
+        msg.formatted.putc(':');
+        msg.formatted.put_int(msg.tm_time.tm_sec, 2);
+        //millis
+        msg.formatted.putc('.');
+        auto duration = msg.time.time_since_epoch();
+        auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
+        msg.formatted.put_int(static_cast<int>(millis), 3);
+        msg.formatted.putc(']');
+        msg.formatted << " [";
+        msg.formatted << msg.logger_name;
+        msg.formatted << "] [";
+        msg.formatted << level::to_str(msg.level);
+        msg.formatted << "] ";
+        msg.formatted.put_fast_oss(msg.raw);
+
+    }
 };
 
 
@@ -492,6 +524,10 @@ inline void c11log::details::pattern_formatter::handle_flag(char flag)
 
     case('z') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::z_formatter()));
+        break;
+
+    case ('+'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::full_formatter()));
         break;
 
     default: //Unkown flag appears as is

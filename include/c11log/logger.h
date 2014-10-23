@@ -14,7 +14,6 @@
 
 #include "sinks/base_sink.h"
 #include "common.h"
-#include "formatter.h"
 #include "details/pattern_formatter.h"
 
 namespace c11log
@@ -28,12 +27,20 @@ class line_logger;
 class logger
 {
 public:
-    using sink_ptr = std::shared_ptr<sinks::sink>;
-    using formatter_ptr = std::shared_ptr<c11log::formatter>;
 
-    logger(const std::string& name, std::initializer_list<sink_ptr>, formatter_ptr formatter = nullptr);
+    logger(const std::string& name, sinks_init_list);
     template<class It>
     logger(const std::string& name, const It& begin, const It& end);
+
+
+    //get/set default formatter
+    static formatter_ptr& default_formatter(formatter_ptr formatter = nullptr);
+
+    void set_formatter(formatter_ptr);
+    formatter_ptr get_formatter() const;
+
+
+
 
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
@@ -43,10 +50,6 @@ public:
 
     const std::string& name() const;
     bool should_log(level::level_enum) const;
-
-    void formatter(formatter_ptr);
-    formatter_ptr formatter() const;
-
 
     template <typename... Args> details::line_logger log(level::level_enum lvl, const Args&... args);
     template <typename... Args> details::line_logger trace(const Args&... args);
@@ -66,8 +69,6 @@ private:
     template <typename First, typename... Rest>
     void _variadic_log(details::line_logger&l, const First& first, const Rest&... rest);
     void _log_msg(details::log_msg& msg);
-    formatter_ptr  _default_formatter();
-    const char* _default_pattern = "[%Y:%m:%d %H:%M:%S.%e] [%n:%l] %t";
 };
 }
 
@@ -93,24 +94,38 @@ private:
 #include "details/line_logger.h"
 
 
-inline c11log::logger::logger(const std::string& logger_name, std::initializer_list<sink_ptr> sinks_list, formatter_ptr msg_formatter) :
+inline c11log::logger::logger(const std::string& logger_name, sinks_init_list sinks_list):
     _name(logger_name),
-    _formatter(msg_formatter),
     _sinks(sinks_list)
 {
-    if (!msg_formatter) //default formatter
-        _formatter = std::make_shared<details::pattern_formatter>(_default_pattern);
-
     // no support under vs2013 for member initialization for std::atomic
     _level = level::INFO;
-
 }
 
 template<class It>
-inline c11log::logger::logger(const std::string& logger_name, const It& begin, const It& end):
+inline c11log::logger::logger(const std::string& logger_name, const It& begin, const It& end) :
     _name(logger_name),
     _sinks(begin, end)
 {}
+
+
+inline void c11log::logger::set_formatter(c11log::formatter_ptr msg_formatter)
+{
+    _formatter = msg_formatter;
+}
+
+inline c11log::formatter_ptr c11log::logger::get_formatter() const
+{
+    return _formatter;
+}
+
+inline c11log::formatter_ptr& c11log::logger::default_formatter(formatter_ptr formatter)
+{
+    static formatter_ptr g_default_formatter = std::make_shared<details::pattern_formatter>("[%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %t");
+    if (formatter)
+        g_default_formatter = formatter;
+    return g_default_formatter;
+}
 
 template <typename... Args>
 inline c11log::details::line_logger c11log::logger::log(level::level_enum lvl, const Args&... args) {
@@ -177,15 +192,7 @@ inline bool c11log::logger::should_log(c11log::level::level_enum msg_level) cons
     return msg_level >= _level.load();
 }
 
-inline void c11log::logger::formatter(formatter_ptr msg_formatter)
-{
-    _formatter = msg_formatter;
-}
 
-inline c11log::logger::formatter_ptr c11log::logger::formatter() const
-{
-    return _formatter;
-}
 
 
 inline void c11log::logger::_variadic_log(c11log::details::line_logger&) {}
@@ -199,7 +206,8 @@ void c11log::logger::_variadic_log(c11log::details::line_logger& l, const First&
 
 inline void c11log::logger::_log_msg(details::log_msg& msg)
 {
-    _formatter->format(msg);
+    auto& formatter = _formatter ? _formatter : logger::default_formatter();
+    formatter->format(msg);
     for (auto &sink : _sinks)
         sink->log(msg);
 }
