@@ -22,6 +22,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 // name & level pattern appenders
 ///////////////////////////////////////////////////////////////////////
+namespace {
 class name_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
@@ -29,6 +30,7 @@ class name_formatter :public flag_formatter
         msg.formatted << msg.logger_name;
     }
 };
+}
 
 // log level appender
 class level_formatter :public flag_formatter
@@ -374,35 +376,20 @@ class full_formatter :public flag_formatter
     }
 };
 
-
-
-class pattern_formatter : public formatter
-{
-
-public:
-    explicit pattern_formatter(const std::string& pattern);
-    pattern_formatter(const pattern_formatter&) = delete;
-    void format(details::log_msg& msg) override;
-private:
-    const std::string _pattern;
-    std::vector<std::unique_ptr<details::flag_formatter>> _formatters;
-    void handle_flag(char flag);
-    void compile_pattern(const std::string& pattern);
-};
 }
 }
 ///////////////////////////////////////////////////////////////////////////////
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////
-inline c11log::details::pattern_formatter::pattern_formatter(const std::string& pattern)
+inline c11log::pattern_formatter::pattern_formatter(const std::string& pattern)
 {
     compile_pattern(pattern);
 }
 
-inline void c11log::details::pattern_formatter::compile_pattern(const std::string& pattern)
+inline void c11log::pattern_formatter::compile_pattern(const std::string& pattern)
 {
     auto end = pattern.end();
-    std::unique_ptr<aggregate_formatter> user_chars;
+    std::unique_ptr<details::aggregate_formatter> user_chars;
     for (auto it = pattern.begin(); it != end; ++it)
     {
         if (*it == '%')
@@ -418,7 +405,7 @@ inline void c11log::details::pattern_formatter::compile_pattern(const std::strin
         else // chars not following the % sign should be displayed as is
         {
             if (!user_chars)
-                user_chars = std::unique_ptr<aggregate_formatter>(new aggregate_formatter());
+                user_chars = std::unique_ptr<details::aggregate_formatter>(new details::aggregate_formatter());
             user_chars->add_ch(*it);
         }
     }
@@ -428,7 +415,7 @@ inline void c11log::details::pattern_formatter::compile_pattern(const std::strin
     }
 
 }
-inline void c11log::details::pattern_formatter::handle_flag(char flag)
+inline void c11log::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
@@ -540,7 +527,7 @@ inline void c11log::details::pattern_formatter::handle_flag(char flag)
 }
 
 
-inline void c11log::details::pattern_formatter::format(details::log_msg& msg)
+inline void c11log::pattern_formatter::format(details::log_msg& msg)
 {
     for (auto &f : _formatters)
     {

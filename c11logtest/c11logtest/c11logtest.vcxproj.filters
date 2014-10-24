@@ -90,11 +90,14 @@
     <ClInclude Include="..\..\include\c11log\sinks\sink.h">
       <Filter>Header Files\c11log\sinks</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\pattern_formatter.h">
+    <ClInclude Include="..\..\include\c11log\details\pattern_formatter_impl.h">
+      <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\logger_impl.h">
       <Filter>Header Files\c11log\details</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\c11log\details\registry.h">
-      <Filter>Header Files\c11log</Filter>
+      <Filter>Header Files\c11log\details</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

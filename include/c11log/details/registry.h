@@ -1,6 +1,6 @@
 #pragma once
 // Loggers registy of unique name->logger pointer
-// If 2 loggers with same name are added, the last will be used
+// If 2 loggers with same name are added, the second will be overrun the first
 // If user requests a non existing logger, nullptr will be returned
 // This class is thread safe
 
@@ -23,12 +23,15 @@ public:
     std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks)
     {
         std::lock_guard<std::mutex> l(_mutex);
-        return _loggers[logger_name] = std::make_shared<logger>(logger_name, sinks);
+        auto new_logger = std::make_shared<logger>(logger_name, sinks);
+        new_logger->set_formatter(_formatter);
+        _loggers[logger_name] = new_logger;
+        return new_logger;
     }
 
     std::shared_ptr<logger> create(const std::string& logger_name, sink_ptr sink)
     {
-        create(logger_name, { sink });
+        return create(logger_name, { sink });
     }
 
 
@@ -36,10 +39,27 @@ public:
     std::shared_ptr<logger> create (const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
     {
         std::lock_guard<std::mutex> l(_mutex);
-        return _loggers[logger_name] = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
+        auto new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
+        new_logger->set_formatter(_formatter);
+        _loggers[logger_name] = new_logger;
+        return new_logger;
+
     }
 
+    void formatter(formatter_ptr f)
+    {
+        _formatter = f;
+    }
 
+    formatter_ptr formatter()
+    {
+        return _formatter;
+    }
+
+    void set_format(const std::string& format_string)
+    {
+        _formatter = std::make_shared<pattern_formatter>(format_string);
+    }
 
 
     static registry& instance()
@@ -53,6 +73,7 @@ private:
     registry(const registry&) = delete;
     std::mutex _mutex;
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
+    formatter_ptr _formatter;
 
 };
 }

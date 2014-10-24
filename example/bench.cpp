@@ -1,6 +1,5 @@
 // example.cpp : Simple logger example
 //
-#include <mutex>
 #include "c11log/logger.h"
 #include "c11log/sinks/async_sink.h"
 #include "c11log/sinks/file_sinks.h"
@@ -18,16 +17,18 @@ int main(int argc, char* argv[])
 {
     const unsigned int howmany = argc <= 1 ? 600000 : atoi(argv[1]);
 
-    auto console = c11log::create<sinks::stderr_sink_st>("reporter");
-    console->set_format("[%n %l] %t");
+    c11log::set_format("%t");
+    auto console = c11log::create<sinks::stdout_sink_st>("reporter");
+    //console->set_format("[%n %l] %t");
     console->set_level(c11log::level::INFO);
     console->info("Starting bench with", howmany, "iterations..");
 
-    auto bench = c11log::create<sinks::rotating_file_sink_st>("bench", "myrotating", "txt", 1024 * 1024 * 5, 3, 100);
+    //auto bench = c11log::create<sinks::rotating_file_sink_st>("bench", "myrotating", "txt", 1024 * 1024 * 5, 3, 100);
+    auto bench = c11log::create<sinks::null_sink_st>("bench");
     auto start = system_clock::now();
     for (unsigned int i = 1; i <= howmany; ++i)
     {
-        bench->info() << "Hello logger: msg number " << i;
+        c11log::get("bench")->info("Hello logger: msg number", i);
     }
 
     auto delta = system_clock::now() - start;

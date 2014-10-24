@@ -91,10 +91,11 @@
     <ClInclude Include="..\..\include\c11log\details\flush_helper.h" />
     <ClInclude Include="..\..\include\c11log\details\fast_istostr.h" />
     <ClInclude Include="..\..\include\c11log\details\line_logger.h" />
+    <ClInclude Include="..\..\include\c11log\details\logger_impl.h" />
     <ClInclude Include="..\..\include\c11log\details\log_msg.h" />
     <ClInclude Include="..\..\include\c11log\details\null_mutex.h" />
     <ClInclude Include="..\..\include\c11log\details\os.h" />
-    <ClInclude Include="..\..\include\c11log\details\pattern_formatter.h" />
+    <ClInclude Include="..\..\include\c11log\details\pattern_formatter_impl.h" />
     <ClInclude Include="..\..\include\c11log\details\registry.h" />
     <ClInclude Include="..\..\include\c11log\details\stack_buf.h" />
     <ClInclude Include="..\..\include\c11log\formatter.h" />
