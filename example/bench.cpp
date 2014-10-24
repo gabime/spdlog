@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 {
     const unsigned int howmany = argc <= 1 ? 600000 : atoi(argv[1]);
 
-    c11log::set_format("%t");
+    //c11log::set_format("%t");
     auto console = c11log::create<sinks::stdout_sink_st>("reporter");
     //console->set_format("[%n %l] %t");
     console->set_level(c11log::level::INFO);

@@ -4,7 +4,7 @@
 //
 
 
-#include "details/line_logger.h"
+#include "./line_logger.h"
 
 
 inline c11log::logger::logger(const std::string& logger_name, sinks_init_list sinks_list) :
@@ -125,7 +125,7 @@ inline void c11log::logger::_log_msg(details::log_msg& msg)
 //
 // Global registry functions
 //
-#include "details/registry.h"
+#include "./registry.h"
 inline std::shared_ptr<c11log::logger> c11log::get(const std::string& name)
 {
     return details::registry::instance().get(name);
@@ -151,15 +151,9 @@ inline std::shared_ptr<c11log::logger> c11log::create(const std::string& logger_
     return details::registry::instance().create(logger_name, std::forward(sinks_begin), std::forward(sinks_end));
 }
 
-
-inline void c11log::formatter(c11log::formatter_ptr f)
+inline void c11log::set_formatter(c11log::formatter_ptr f)
 {
-    return details::registry::instance().formatter(f);
-}
-
-inline c11log::formatter_ptr c11log::formatter()
-{
-    return details::registry::instance().formatter();
+    details::registry::instance().formatter(f);
 }
 
 inline void c11log::set_format(const std::string& format_string)

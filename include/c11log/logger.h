@@ -31,7 +31,7 @@ public:
     template<class It>
     logger(const std::string& name, const It& begin, const It& end);
 
-    void c11log::logger::set_format(const std::string& format);
+    void set_format(const std::string&);
     void set_formatter(formatter_ptr);
     formatter_ptr get_formatter() const;
 
@@ -92,8 +92,7 @@ std::shared_ptr<c11log::logger> create(const std::string& logger_name, const Arg
 template<class It>
 std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
 
-void formatter(formatter_ptr f);
-formatter_ptr formatter();
+void set_formatter(formatter_ptr f);
 void set_format(const std::string& format_string);
 }
 
