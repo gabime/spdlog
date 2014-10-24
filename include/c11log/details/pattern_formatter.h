@@ -19,7 +19,9 @@ public:
     virtual void format(details::log_msg& msg) = 0;
 };
 
-// log name appender
+///////////////////////////////////////////////////////////////////////
+// name & level pattern appenders
+///////////////////////////////////////////////////////////////////////
 class name_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override

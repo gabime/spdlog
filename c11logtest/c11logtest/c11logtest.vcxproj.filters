@@ -84,9 +84,6 @@
     <ClInclude Include="..\..\include\c11log\common.h">
       <Filter>Header Files\c11log</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\factory.h">
-      <Filter>Header Files\c11log</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\c11log\details\fast_istostr.h">
       <Filter>Header Files\c11log\details</Filter>
     </ClInclude>
@@ -95,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\c11log\details\pattern_formatter.h">
       <Filter>Header Files\c11log\details</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\c11log\details\registry.h">
+      <Filter>Header Files\c11log</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -107,5 +107,8 @@
     <ClCompile Include="..\..\example\bench.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
 </Project>

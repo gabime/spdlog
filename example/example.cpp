@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include "c11log/logger.h"
-#include "c11log/factory.h"
 #include "c11log/sinks/stdout_sinks.h"
 #include "c11log/sinks/file_sinks.h"
 using namespace std;

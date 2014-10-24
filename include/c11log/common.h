@@ -25,8 +25,8 @@ typedef enum
     TRACE,
     DEBUG,
     INFO,
-    WARNING,
-    ERROR,
+    WARN,
+    ERR,
     CRITICAL,
     NONE = 99
 } level_enum;

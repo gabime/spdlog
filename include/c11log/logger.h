@@ -16,6 +16,7 @@
 #include "common.h"
 #include "details/pattern_formatter.h"
 
+
 namespace c11log
 {
 
@@ -32,20 +33,15 @@ public:
     template<class It>
     logger(const std::string& name, const It& begin, const It& end);
 
-
-    //get/set default formatter
-    static formatter_ptr& default_formatter(formatter_ptr formatter = nullptr);
-
+    void c11log::logger::set_format(const std::string& format);
     void set_formatter(formatter_ptr);
     formatter_ptr get_formatter() const;
-
-
 
 
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
 
-    void level(level::level_enum);
+    void set_level(level::level_enum);
     level::level_enum level() const;
 
     const std::string& name() const;
@@ -59,6 +55,11 @@ public:
     template <typename... Args> details::line_logger error(const Args&... args);
     template <typename... Args> details::line_logger critical(const Args&... args);
 
+    //static functions
+    //get/set default formatter
+    static formatter_ptr default_formatter(formatter_ptr formatter = nullptr);
+    static formatter_ptr default_format(const std::string& format);
+
 private:
     friend details::line_logger;
     std::string _name;
@@ -70,10 +71,27 @@ private:
     void _variadic_log(details::line_logger&l, const First& first, const Rest&... rest);
     void _log_msg(details::log_msg& msg);
 };
+
+//
+// Registry functions for easy loggers creation and retrieval
+// example
+// auto console_logger = c11log::create("my_logger", c11log::sinks<stdout_sink_mt>);
+// auto same_logger = c11log::get("my_logger");
+// auto file_logger = c11
+//
+std::shared_ptr<logger> get(const std::string& name);
+
+std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
+
+template <typename Sink, typename... Args>
+std::shared_ptr<c11log::logger> create(const std::string& logger_name, const Args&... args);
+
+template<class It>
+std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
 }
 
 //
-// trace & debug macros
+// Trace & debug macros
 //
 #ifdef FFLOG_ENABLE_TRACE
 #define FFLOG_TRACE(logger, ...) logger->log(c11log::level::TRACE, __FILE__, " #", __LINE__,": " __VA_ARGS__)
@@ -114,17 +132,27 @@ inline void c11log::logger::set_formatter(c11log::formatter_ptr msg_formatter)
     _formatter = msg_formatter;
 }
 
+inline void c11log::logger::set_format(const std::string& format)
+{
+    _formatter = std::make_shared<details::pattern_formatter>(format);
+}
+
 inline c11log::formatter_ptr c11log::logger::get_formatter() const
 {
     return _formatter;
 }
 
-inline c11log::formatter_ptr& c11log::logger::default_formatter(formatter_ptr formatter)
+inline c11log::formatter_ptr c11log::logger::default_formatter(formatter_ptr formatter)
 {
     static formatter_ptr g_default_formatter = std::make_shared<details::pattern_formatter>("[%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %t");
     if (formatter)
         g_default_formatter = formatter;
     return g_default_formatter;
+}
+
+inline c11log::formatter_ptr c11log::logger::default_format(const std::string& format)
+{
+    return default_formatter(std::make_shared<details::pattern_formatter>(format));
 }
 
 template <typename... Args>
@@ -157,13 +185,13 @@ inline c11log::details::line_logger c11log::logger::info(const Args&... args)
 template <typename... Args>
 inline c11log::details::line_logger c11log::logger::warn(const Args&... args)
 {
-    return log(level::WARNING, args...);
+    return log(level::WARN, args...);
 }
 
 template <typename... Args>
 inline c11log::details::line_logger c11log::logger::error(const Args&... args)
 {
-    return log(level::ERROR, args...);
+    return log(level::ERR, args...);
 }
 
 template <typename... Args>
@@ -177,7 +205,7 @@ inline const std::string& c11log::logger::name() const
     return _name;
 }
 
-inline void c11log::logger::level(c11log::level::level_enum log_level)
+inline void c11log::logger::set_level(c11log::level::level_enum log_level)
 {
     _level.store(log_level);
 }
@@ -201,15 +229,49 @@ template <typename First, typename... Rest>
 void c11log::logger::_variadic_log(c11log::details::line_logger& l, const First& first, const Rest&... rest)
 {
     l.write(first);
+    l.write(' ');
     _variadic_log(l, rest...);
 }
 
 inline void c11log::logger::_log_msg(details::log_msg& msg)
 {
-    auto& formatter = _formatter ? _formatter : logger::default_formatter();
-    formatter->format(msg);
+    if(!_formatter)
+        _formatter = logger::default_formatter();
+    _formatter->format(msg);
     for (auto &sink : _sinks)
         sink->log(msg);
 }
+
+//
+// Global registry functions
+//
+#include "details/registry.h"
+inline std::shared_ptr<c11log::logger> c11log::get(const std::string& name)
+{
+    return details::registry::instance().get(name);
+}
+
+inline std::shared_ptr<c11log::logger> c11log::create(const std::string& logger_name, c11log::sinks_init_list sinks)
+{
+    return details::registry::instance().create(logger_name, sinks);
+}
+
+
+template <typename Sink, typename... Args>
+inline std::shared_ptr<c11log::logger> c11log::create(const std::string& logger_name, const Args&... args)
+{
+    sink_ptr sink = std::make_shared<Sink>(args...);
+    return details::registry::instance().create(logger_name, { sink });
+}
+
+
+
+template<class It>
+inline std::shared_ptr<c11log::logger> c11log::create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
+{
+    std::lock_guard<std::mutex> l(_mutex);
+    return details::registry::instance().create(logger_name, std::forward(sinks_begin), std::forward(sinks_end));
+}
+
 
 

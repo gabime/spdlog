@@ -95,8 +95,8 @@
     <ClInclude Include="..\..\include\c11log\details\null_mutex.h" />
     <ClInclude Include="..\..\include\c11log\details\os.h" />
     <ClInclude Include="..\..\include\c11log\details\pattern_formatter.h" />
+    <ClInclude Include="..\..\include\c11log\details\registry.h" />
     <ClInclude Include="..\..\include\c11log\details\stack_buf.h" />
-    <ClInclude Include="..\..\include\c11log\factory.h" />
     <ClInclude Include="..\..\include\c11log\formatter.h" />
     <ClInclude Include="..\..\include\c11log\logger.h" />
     <ClInclude Include="..\..\include\c11log\sinks\async_sink.h" />
@@ -113,6 +113,9 @@
     <ClCompile Include="..\..\example\bench.cpp" />
     <ClCompile Include="..\..\example\example.cpp" />
     <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
