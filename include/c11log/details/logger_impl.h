@@ -115,8 +115,9 @@ void c11log::logger::_variadic_log(c11log::details::line_logger& l, const First&
 
 inline void c11log::logger::_log_msg(details::log_msg& msg)
 {
+    //Use default formatter if not set
     if (!_formatter)
-        _formatter = std::make_shared<pattern_formatter>("%+ %t");
+        _formatter = std::make_shared<pattern_formatter>("%+");
     _formatter->format(msg);
     for (auto &sink : _sinks)
         sink->log(msg);

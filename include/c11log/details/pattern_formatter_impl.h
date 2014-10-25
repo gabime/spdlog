@@ -366,11 +366,7 @@ class full_formatter :public flag_formatter
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
         msg.formatted.put_int(static_cast<int>(millis), 3);
         msg.formatted.putc(']');
-        msg.formatted << " [";
-        msg.formatted << msg.logger_name;
-        msg.formatted << "] [";
-        msg.formatted << level::to_str(msg.level);
-        msg.formatted << "] ";
+        msg.formatted << " [" << msg.logger_name << "] [" << level::to_str(msg.level) << "] ";
         msg.formatted.put_fast_oss(msg.raw);
 
     }

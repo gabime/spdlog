@@ -93,7 +93,7 @@ constexpr inline unsigned short eol_size()
 #endif
 
 //fopen_s on non windows for writing
-inline bool fopen_s(FILE** fp, const std::string& filename, const char* mode)
+inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
 {
 #ifdef _WIN32
     return ::fopen_s(fp, filename.c_str(), mode);

@@ -24,14 +24,14 @@ int main(int argc, char* argv[])
         console->set_level(c11log::level::INFO);
         console->info("Starting bench with", howmany, "iterations..");
 
-        //auto bench = c11log::create<sinks::rotating_file_sink_st>("bench", "myrotating", "txt", 1024 * 1024 * 5, 3, 0);
-        auto bench = c11log::create<sinks::daily_file_sink_mt>("bench", "sdfsfddaily", "txt", 0);
+        auto bench = c11log::create<sinks::rotating_file_sink_st>("bench", "myrotating", "txt", 1024 * 1024 * 5, 3, 0);
+
         //auto bench = c11log::create<sinks::simple_file_sink_st>("bench", "simplelog.txt", 1);
         //auto bench = c11log::create<sinks::null_sink_st>("bench");
         auto start = system_clock::now();
-        for (unsigned int i = 1; i <= howmany; ++i)
+        for (unsigned int i = 0; i < howmany; ++i)
         {
-            c11log::get("bench")->info("Hello logger: msg number", i);
+            bench->info("Hello logger: msg number") << i;
         }
 
         auto delta = system_clock::now() - start;
