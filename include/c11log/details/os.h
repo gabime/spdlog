@@ -96,11 +96,13 @@ constexpr inline unsigned short eol_size()
 inline bool fopen_s(FILE** fp, const std::string& filename, const char* mode)
 {
 #ifdef _WIN32
-    return fopen_s(fp, filename, mode);
+    return ::fopen_s(fp, filename.c_str(), mode);
 #else
     *fp = fopen((filename.c_str()), mode);
-    return fp == nullptr;
+    return *fp == nullptr;
 #endif
+
+
 }
 
 //Return utc offset in minutes or -1 on failure

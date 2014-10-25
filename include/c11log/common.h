@@ -1,7 +1,6 @@
 #pragma once
 
 #include<initializer_list>
-#include<memory>
 #include<chrono>
 
 namespace c11log
@@ -37,4 +36,20 @@ inline const char* to_str(c11log::level::level_enum l)
     return level_names[l];
 }
 } //level
+
+//
+// Log exception
+//
+class fflog_exception : public std::exception
+{
+public:
+    fflog_exception(const std::string& msg) :_msg(msg) {};
+    const char* what() const throw() override {
+        return _msg.c_str();
+    }
+private:
+    std::string _msg;
+
+};
+
 } //c11log

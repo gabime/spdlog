@@ -88,8 +88,8 @@
     <ClInclude Include="..\..\include\c11log\common.h" />
     <ClInclude Include="..\..\include\c11log\details\blocking_queue.h" />
     <ClInclude Include="..\..\include\c11log\details\fast_oss.h" />
-    <ClInclude Include="..\..\include\c11log\details\flush_helper.h" />
     <ClInclude Include="..\..\include\c11log\details\fast_istostr.h" />
+    <ClInclude Include="..\..\include\c11log\details\file_helper.h" />
     <ClInclude Include="..\..\include\c11log\details\line_logger.h" />
     <ClInclude Include="..\..\include\c11log\details\logger_impl.h" />
     <ClInclude Include="..\..\include\c11log\details\log_msg.h" />

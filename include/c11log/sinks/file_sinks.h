@@ -1,13 +1,11 @@
 #pragma once
 
-#include <fstream>
 #include <sstream>
-#include  <iomanip>
-#include "./base_sink.h"
 #include <mutex>
+#include "./base_sink.h"
+
 #include "../details/null_mutex.h"
-#include "../details/flush_helper.h"
-#include "../details/blocking_queue.h"
+#include "../details/file_helper.h"
 
 
 
@@ -24,19 +22,18 @@ class simple_file_sink : public base_sink<Mutex>
 {
 public:
     explicit simple_file_sink(const std::string &filename,
-                              const std::size_t flush_every=0):
-        _ofstream(filename, std::ofstream::binary|std::ofstream::app),
-        _flush_helper(flush_every)
+                              const std::size_t flush_inverval=0):
+        _file_helper(flush_inverval)
     {
+        _file_helper.open(filename);
     }
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        _flush_helper.write(msg, _ofstream);
+        _file_helper.write(msg);
     }
 private:
-    std::ofstream _ofstream;
-    details::file_flush_helper _flush_helper;
+    details::file_helper _file_helper;
 };
 
 typedef simple_file_sink<std::mutex> simple_file_sink_mt;
@@ -51,15 +48,15 @@ class rotating_file_sink : public base_sink<Mutex>
 public:
     rotating_file_sink(const std::string &base_filename, const std::string &extension,
                        const std::size_t max_size, const std::size_t max_files,
-                       const std::size_t flush_every=0):
+                       const std::size_t flush_inverval=0):
         _base_filename(base_filename),
         _extension(extension),
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
-        _ofstream(_calc_filename(_base_filename, 0, _extension), std::ofstream::binary),
-        _flush_helper(flush_every)
+        _file_helper(flush_inverval)
     {
+        _file_helper.open(_calc_filename(_base_filename, 0, _extension));
     }
 
 protected:
@@ -71,7 +68,7 @@ protected:
             _rotate();
             _current_size = msg.formatted.size();
         }
-        _flush_helper.write(msg, _ofstream);
+        _file_helper.write(msg);
     }
 
 
@@ -95,25 +92,24 @@ private:
 
     void _rotate()
     {
-        _ofstream.close();
+        _file_helper.close();
         //Remove oldest file
         for (auto i = _max_files; i > 0; --i)
         {
-            auto src = _calc_filename(_base_filename, i - 1, _extension);
-            auto target = _calc_filename(_base_filename, i, _extension);
+            std::string src = _calc_filename(_base_filename, i - 1, _extension);
+            std::string target = _calc_filename(_base_filename, i, _extension);
             if (i == _max_files)
                 std::remove(target.c_str());
             std::rename(src.c_str(), target.c_str());
         }
-        _ofstream.open(_calc_filename(_base_filename, 0, _extension), std::ofstream::binary);
+        _file_helper.open(_calc_filename(_base_filename, 0, _extension));
     }
     std::string _base_filename;
     std::string _extension;
     std::size_t _max_size;
     std::size_t _max_files;
     std::size_t _current_size;
-    std::ofstream _ofstream;
-    details::file_flush_helper _flush_helper;
+    details::file_helper _file_helper;
 };
 
 typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
@@ -128,13 +124,13 @@ class daily_file_sink:public base_sink<Mutex>
 public:
     explicit daily_file_sink(const std::string& base_filename,
                              const std::string& extension,
-                             const std::size_t flush_every=0):
+                             const std::size_t flush_inverval=0):
         _base_filename(base_filename),
         _extension(extension),
         _midnight_tp (_calc_midnight_tp() ),
-        _ofstream(_calc_filename(_base_filename, _extension), std::ofstream::binary|std::ofstream::app),
-        _flush_helper(flush_every)
+        _file_helper(flush_inverval)
     {
+        _file_helper.open(_calc_filename(_base_filename, _extension));
     }
 
 protected:
@@ -142,11 +138,11 @@ protected:
     {
         if (std::chrono::system_clock::now() >= _midnight_tp)
         {
-            _ofstream.close();
-            _ofstream.open(_calc_filename(_base_filename, _extension));
+            _file_helper.close();
+            _file_helper.open(_calc_filename(_base_filename, _extension));
             _midnight_tp = _calc_midnight_tp();
         }
-        _flush_helper.write(msg, _ofstream);
+        _file_helper.write(msg);
     }
 
 private:
@@ -176,8 +172,7 @@ private:
     std::string _base_filename;
     std::string _extension;
     std::chrono::system_clock::time_point _midnight_tp;
-    std::ofstream _ofstream;
-    details::file_flush_helper _flush_helper;
+    details::file_helper _file_helper;
 
 };
 

@@ -66,17 +66,6 @@ private:
     void _log_msg(details::log_msg& msg);
 };
 
-class fflog_exception : public std::exception
-{
-public:
-    fflog_exception(const std::string& msg) :_msg(msg) {};
-    const char* what() const throw() override {
-        return _msg.c_str();
-    }
-private:
-    std::string _msg;
-
-};
 
 //
 // Registry functions for easy loggers creation and retrieval
