@@ -1,4 +1,9 @@
 #pragma once
+//
+// base sink templated over a mutex (either dummy or realy)
+// concrete implementation should only overrid the _sink_it method.
+// all locking is taken care of here so no locking needed by the implementors..
+//
 
 #include<string>
 #include<mutex>

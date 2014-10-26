@@ -86,20 +86,18 @@ private:
 
     // Rotate files:
     // log.txt -> log.1.txt
-    // ..
-    // log.n.txt -> log.n+1.txt
+    // log.1.txt -> log2.txt
+    // log.2.txt -> log3.txt
+    // log.3.txt -> delete
 
 
     void _rotate()
     {
         _file_helper.close();
-        //Remove oldest file
         for (auto i = _max_files; i > 0; --i)
         {
             std::string src = _calc_filename(_base_filename, i - 1, _extension);
             std::string target = _calc_filename(_base_filename, i, _extension);
-            if (i == _max_files)
-                std::remove(target.c_str());
             std::rename(src.c_str(), target.c_str());
         }
         _file_helper.open(_calc_filename(_base_filename, 0, _extension));

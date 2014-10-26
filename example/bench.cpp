@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
         console->set_level(c11log::level::INFO);
         console->info("Starting bench with", howmany, "iterations..");
 
-        auto bench = c11log::create<sinks::rotating_file_sink_st>("bench", "myrotating", "txt", 1024 * 1024 * 5, 3, 0);
+        auto bench = c11log::create<sinks::rotating_file_sink_st>("bench", "myrotating", "txt", 1024 * 1024 * 1, 3, 0);
 
         //auto bench = c11log::create<sinks::simple_file_sink_st>("bench", "simplelog.txt", 1);
         //auto bench = c11log::create<sinks::null_sink_st>("bench");
