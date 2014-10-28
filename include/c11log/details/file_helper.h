@@ -62,6 +62,7 @@ public:
     void close()
     {
         std::fclose(_fd);
+        _fd = nullptr;
     }
 
     void write(const log_msg& msg)
