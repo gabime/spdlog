@@ -9,7 +9,7 @@
 #include "stack_buf.h"
 #include<iostream>
 
-namespace c11log
+namespace spitlog
 {
 namespace details
 {

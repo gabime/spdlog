@@ -33,71 +33,71 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\formatter.h">
-      <Filter>Header Files\c11log</Filter>
+    <ClInclude Include="..\..\include\spitlog\common.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\logger.h">
-      <Filter>Header Files\c11log</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\blocking_queue.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\blocking_queue.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\fast_oss.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\fast_oss.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\fast_istostr.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\line_logger.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\file_helper.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\log_msg.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\line_logger.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\os.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\logger_impl.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\stack_buf.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\log_msg.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\sinks\async_sink.h">
-      <Filter>Header Files\c11log\sinks</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\null_mutex.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\sinks\base_sink.h">
-      <Filter>Header Files\c11log\sinks</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\os.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\sinks\file_sinks.h">
-      <Filter>Header Files\c11log\sinks</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\pattern_formatter_impl.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\null_mutex.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\registry.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\sinks\null_sink.h">
-      <Filter>Header Files\c11log\sinks</Filter>
+    <ClInclude Include="..\..\include\spitlog\details\stack_buf.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\sinks\ostream_sink.h">
-      <Filter>Header Files\c11log\sinks</Filter>
+    <ClInclude Include="..\..\include\spitlog\formatter.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\sinks\stdout_sinks.h">
-      <Filter>Header Files\c11log\sinks</Filter>
+    <ClInclude Include="..\..\include\spitlog\logger.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\common.h">
-      <Filter>Header Files\c11log</Filter>
+    <ClInclude Include="..\..\include\spitlog\sinks\async_sink.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\fast_istostr.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\sinks\base_sink.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\sinks\sink.h">
-      <Filter>Header Files\c11log\sinks</Filter>
+    <ClInclude Include="..\..\include\spitlog\sinks\ostream_sink.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\pattern_formatter_impl.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\sinks\file_sinks.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\logger_impl.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\sinks\null_sink.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\registry.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\sinks\sink.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\c11log\details\file_helper.h">
-      <Filter>Header Files\c11log\details</Filter>
+    <ClInclude Include="..\..\include\spitlog\sinks\stdout_sinks.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

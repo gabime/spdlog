@@ -16,7 +16,7 @@
 
 
 
-namespace c11log
+namespace spitlog
 {
 namespace details
 {
@@ -70,12 +70,31 @@ public:
         auto& buf = msg.formatted.buf();
         size_t size = buf.size();
         if(std::fwrite(buf.data(), sizeof(char), size, _fd) != size)
-            throw fflog_exception("Failed writing to  file " + _filename);
+            throw fflog_exception("Failed writing to file " + _filename);
 
         if(--_flush_countdown == 0)
         {
             std::fflush(_fd);
             _flush_countdown = _flush_inverval;
+        }
+    }
+
+    const std::string& filename() const
+    {
+        return _filename;
+    }
+
+    static bool file_exists(const std::string& name)
+    {
+        FILE* file;
+        if (!os::fopen_s(&file, name.c_str(), "r"))
+        {
+            fclose(file);
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 

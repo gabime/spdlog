@@ -3,11 +3,11 @@
 #define FFLOG_ENABLE_TRACE
 
 #include <iostream>
-#include "c11log/logger.h"
-#include "c11log/sinks/stdout_sinks.h"
-#include "c11log/sinks/file_sinks.h"
+#include "spitlog/logger.h"
+#include "spitlog/sinks/stdout_sinks.h"
+#include "spitlog/sinks/file_sinks.h"
 using namespace std;
-using namespace c11log;
+using namespace spitlog;
 
 
 details::fast_oss f(const std::string& what)

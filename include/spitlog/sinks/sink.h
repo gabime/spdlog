@@ -2,7 +2,7 @@
 
 #include "../details/log_msg.h"
 
-namespace c11log
+namespace spitlog
 {
 namespace sinks
 {

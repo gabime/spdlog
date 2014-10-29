@@ -1,15 +1,16 @@
 #pragma once
 
-#include <sstream>
+
 #include <mutex>
 #include "./base_sink.h"
 
 #include "../details/null_mutex.h"
 #include "../details/file_helper.h"
+#include "../details/fast_oss.h"
 
 
 
-namespace c11log
+namespace spitlog
 {
 namespace sinks
 {
@@ -56,7 +57,7 @@ public:
         _current_size(0),
         _file_helper(flush_inverval)
     {
-        _file_helper.open(_calc_filename(_base_filename, 0, _extension));
+        _file_helper.open(calc_filename(_base_filename, 0, _extension));
     }
 
 protected:
@@ -73,9 +74,9 @@ protected:
 
 
 private:
-    static std::string _calc_filename(const std::string& filename, std::size_t index, const std::string& extension)
+    static std::string calc_filename(const std::string& filename, std::size_t index, const std::string& extension)
     {
-        std::ostringstream oss;
+        details::fast_oss oss;
         if (index)
             oss << filename << "." << index << "." << extension;
         else
@@ -96,11 +97,19 @@ private:
         _file_helper.close();
         for (auto i = _max_files; i > 0; --i)
         {
-            std::string src = _calc_filename(_base_filename, i - 1, _extension);
-            std::string target = _calc_filename(_base_filename, i, _extension);
-            std::rename(src.c_str(), target.c_str());
+            std::string src = calc_filename(_base_filename, i - 1, _extension);
+            std::string target = calc_filename(_base_filename, i, _extension);
+
+            if (details::file_helper::file_exists(target))
+                std::remove(target.c_str());
+            if (details::file_helper::file_exists(src) && std::rename(src.c_str(), target.c_str()))
+            {
+                throw fflog_exception("rotating_file_sink: failed renaming " + src + " to " + target);
+            }
         }
-        _file_helper.open(_calc_filename(_base_filename, 0, _extension));
+        auto cur_name = _file_helper.filename();
+        std::remove(cur_name.c_str());
+        _file_helper.open(cur_name);
     }
     std::string _base_filename;
     std::string _extension;
@@ -128,7 +137,7 @@ public:
         _midnight_tp (_calc_midnight_tp() ),
         _file_helper(flush_inverval)
     {
-        _file_helper.open(_calc_filename(_base_filename, _extension));
+        _file_helper.open(calc_filename(_base_filename, _extension));
     }
 
 protected:
@@ -137,7 +146,7 @@ protected:
         if (std::chrono::system_clock::now() >= _midnight_tp)
         {
             _file_helper.close();
-            _file_helper.open(_calc_filename(_base_filename, _extension));
+            _file_helper.open(calc_filename(_base_filename, _extension));
             _midnight_tp = _calc_midnight_tp();
         }
         _file_helper.write(msg);
@@ -150,17 +159,17 @@ private:
         using namespace std::chrono;
         auto now = system_clock::now();
         time_t tnow = std::chrono::system_clock::to_time_t(now);
-        tm date = c11log::details::os::localtime(tnow);
+        tm date = spitlog::details::os::localtime(tnow);
         date.tm_hour = date.tm_min = date.tm_sec = 0;
         auto midnight = std::chrono::system_clock::from_time_t(std::mktime(&date));
         return system_clock::time_point(midnight + hours(24));
     }
 
     //Create filename for the form basename.YYYY-MM-DD.extension
-    static std::string _calc_filename(const std::string& basename, const std::string& extension)
+    static std::string calc_filename(const std::string& basename, const std::string& extension)
     {
-        std::tm tm = c11log::details::os::localtime();
-        std::ostringstream oss;
+        std::tm tm = spitlog::details::os::localtime();
+        fast_oss oss;
         oss << basename << '.';
         oss << tm.tm_year + 1900 << '-' << std::setw(2) << std::setfill('0') << tm.tm_mon + 1 << '-' << tm.tm_mday;
         oss << '.' << extension;

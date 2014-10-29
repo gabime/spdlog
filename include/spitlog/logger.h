@@ -15,7 +15,7 @@
 #include "sinks/base_sink.h"
 #include "common.h"
 
-namespace c11log
+namespace spitlog
 {
 
 namespace details
@@ -70,14 +70,14 @@ private:
 //
 // Registry functions for easy loggers creation and retrieval
 // example
-// auto console_logger = c11log::create("my_logger", c11log::sinks<stdout_sink_mt>);
-// auto same_logger = c11log::get("my_logger");
+// auto console_logger = spitlog::create("my_logger", spitlog::sinks<stdout_sink_mt>);
+// auto same_logger = spitlog::get("my_logger");
 // auto file_logger = c11
 //
 std::shared_ptr<logger> get(const std::string& name);
 std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
 template <typename Sink, typename... Args>
-std::shared_ptr<c11log::logger> create(const std::string& logger_name, const Args&... args);
+std::shared_ptr<spitlog::logger> create(const std::string& logger_name, const Args&... args);
 template<class It>
 std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
 
@@ -89,13 +89,13 @@ void set_format(const std::string& format_string);
 // Trace & debug macros
 //
 #ifdef FFLOG_ENABLE_TRACE
-#define FFLOG_TRACE(logger, ...) logger->log(c11log::level::TRACE, __FILE__, " #", __LINE__,": " __VA_ARGS__)
+#define FFLOG_TRACE(logger, ...) logger->log(spitlog::level::TRACE, __FILE__, " #", __LINE__,": " __VA_ARGS__)
 #else
 #define FFLOG_TRACE(logger, ...) {}
 #endif
 
 #ifdef FFLOG_ENABLE_DEBUG
-#define FFLOG_DEBUG(logger, ...) logger->log(c11log::level::DEBUG, __VA_ARGS__)
+#define FFLOG_DEBUG(logger, ...) logger->log(spitlog::level::DEBUG, __VA_ARGS__)
 #else
 #define FFLOG_DEBUG(logger, ...) {}
 #endif

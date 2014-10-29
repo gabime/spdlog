@@ -7,7 +7,7 @@
 
 
 // Fast memory storage on the stack when possible or in std::vector
-namespace c11log
+namespace spitlog
 {
 namespace details
 {
@@ -108,4 +108,4 @@ private:
 };
 
 }
-} //namespace c11log { namespace details {
+} //namespace spitlog { namespace details {

@@ -5,7 +5,7 @@
 //Source: http://stackoverflow.com/a/4351484/192001
 //Modified version to pad zeros according to padding arg
 
-namespace c11log {
+namespace spitlog {
 namespace details {
 
 const char digit_pairs[201] = {

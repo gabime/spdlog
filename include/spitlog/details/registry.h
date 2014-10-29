@@ -10,7 +10,7 @@
 #include "../logger.h"
 #include "../common.h"
 
-namespace c11log {
+namespace spitlog {
 namespace details {
 class registry {
 public:

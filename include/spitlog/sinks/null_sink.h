@@ -4,7 +4,7 @@
 #include "../details/null_mutex.h"
 
 
-namespace c11log {
+namespace spitlog {
 namespace sinks {
 
 template <class Mutex>

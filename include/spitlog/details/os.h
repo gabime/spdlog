@@ -7,7 +7,7 @@
 #include <Windows.h>
 #endif
 
-namespace c11log
+namespace spitlog
 {
 namespace details
 {
@@ -123,7 +123,7 @@ inline int utc_minutes_offset(const std::tm& tm = localtime())
 
 } //os
 } //details
-} //c11log
+} //spitlog
 
 
 

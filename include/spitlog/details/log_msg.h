@@ -3,7 +3,7 @@
 #include "../common.h"
 #include "./fast_oss.h"
 
-namespace c11log
+namespace spitlog
 {
 namespace details
 {

@@ -7,7 +7,7 @@
 #include "../details/null_mutex.h"
 #include "./base_sink.h"
 
-namespace c11log
+namespace spitlog
 {
 namespace sinks
 {
