@@ -16,7 +16,7 @@
 
 
 
-namespace spitlog
+namespace spdlog
 {
 namespace details
 {
@@ -36,16 +36,14 @@ public:
 
     ~file_helper()
     {
-        if (_fd)
-            std::fclose(_fd);
+        close();
     }
 
 
     void open(const std::string& filename)
     {
 
-        if (_fd)
-            std::fclose(_fd);
+        close();
 
         _filename = filename;
         for (int tries = 0; tries < open_max_tries; ++tries)
@@ -61,8 +59,11 @@ public:
 
     void close()
     {
-        std::fclose(_fd);
-        _fd = nullptr;
+        if (_fd)
+        {
+            std::fclose(_fd);
+            _fd = nullptr;
+        }
     }
 
     void write(const log_msg& msg)

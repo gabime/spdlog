@@ -2,7 +2,7 @@
 
 // null, no cost mutex
 
-namespace spitlog {
+namespace spdlog {
 namespace details {
 struct null_mutex
 {

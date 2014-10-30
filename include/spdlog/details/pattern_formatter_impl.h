@@ -10,7 +10,7 @@
 #include "./fast_oss.h"
 #include "./os.h"
 
-namespace spitlog
+namespace spdlog
 {
 namespace details {
 class flag_formatter
@@ -377,12 +377,12 @@ class full_formatter :public flag_formatter
 ///////////////////////////////////////////////////////////////////////////////
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////
-inline spitlog::pattern_formatter::pattern_formatter(const std::string& pattern)
+inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern)
 {
     compile_pattern(pattern);
 }
 
-inline void spitlog::pattern_formatter::compile_pattern(const std::string& pattern)
+inline void spdlog::pattern_formatter::compile_pattern(const std::string& pattern)
 {
     auto end = pattern.end();
     std::unique_ptr<details::aggregate_formatter> user_chars;
@@ -411,7 +411,7 @@ inline void spitlog::pattern_formatter::compile_pattern(const std::string& patte
     }
 
 }
-inline void spitlog::pattern_formatter::handle_flag(char flag)
+inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
@@ -523,7 +523,7 @@ inline void spitlog::pattern_formatter::handle_flag(char flag)
 }
 
 
-inline void spitlog::pattern_formatter::format(details::log_msg& msg)
+inline void spdlog::pattern_formatter::format(details::log_msg& msg)
 {
     for (auto &f : _formatters)
     {

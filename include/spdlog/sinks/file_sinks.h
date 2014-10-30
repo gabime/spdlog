@@ -10,7 +10,7 @@
 
 
 
-namespace spitlog
+namespace spdlog
 {
 namespace sinks
 {
@@ -159,7 +159,7 @@ private:
         using namespace std::chrono;
         auto now = system_clock::now();
         time_t tnow = std::chrono::system_clock::to_time_t(now);
-        tm date = spitlog::details::os::localtime(tnow);
+        tm date = spdlog::details::os::localtime(tnow);
         date.tm_hour = date.tm_min = date.tm_sec = 0;
         auto midnight = std::chrono::system_clock::from_time_t(std::mktime(&date));
         return system_clock::time_point(midnight + hours(24));
@@ -168,8 +168,8 @@ private:
     //Create filename for the form basename.YYYY-MM-DD.extension
     static std::string calc_filename(const std::string& basename, const std::string& extension)
     {
-        std::tm tm = spitlog::details::os::localtime();
-        fast_oss oss;
+        std::tm tm = spdlog::details::os::localtime();
+        details::fast_oss oss;
         oss << basename << '.';
         oss << tm.tm_year + 1900 << '-' << std::setw(2) << std::setfill('0') << tm.tm_mon + 1 << '-' << tm.tm_mday;
         oss << '.' << extension;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "details/log_msg.h"
-namespace spitlog
+namespace spdlog
 {
 namespace details {
 class flag_formatter;
@@ -29,5 +29,5 @@ private:
 };
 }
 
-#include "./details/pattern_formatter_impl.h"
+#include "details/pattern_formatter_impl.h"
 

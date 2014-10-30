@@ -13,7 +13,7 @@
 
 #include<iostream>
 
-namespace spitlog
+namespace spdlog
 {
 namespace sinks
 {
@@ -53,26 +53,26 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-inline spitlog::sinks::async_sink::async_sink(const q_type::size_type max_queue_size)
+inline spdlog::sinks::async_sink::async_sink(const q_type::size_type max_queue_size)
     :_sinks(),
      _active(true),
      _q(max_queue_size),
      _back_thread(&async_sink::_thread_loop, this)
 {}
 
-inline spitlog::sinks::async_sink::~async_sink()
+inline spdlog::sinks::async_sink::~async_sink()
 {
     _shutdown();
 }
 
-inline void spitlog::sinks::async_sink::_sink_it(const details::log_msg& msg)
+inline void spdlog::sinks::async_sink::_sink_it(const details::log_msg& msg)
 {
     if(!_active)
         return;
     _q.push(msg);
 }
 
-inline void spitlog::sinks::async_sink::_thread_loop()
+inline void spdlog::sinks::async_sink::_thread_loop()
 {
     static std::chrono::seconds  pop_timeout { 1 };
     while (_active)
@@ -90,27 +90,27 @@ inline void spitlog::sinks::async_sink::_thread_loop()
     }
 }
 
-inline void spitlog::sinks::async_sink::add_sink(spitlog::sink_ptr s)
+inline void spdlog::sinks::async_sink::add_sink(spdlog::sink_ptr s)
 {
     std::lock_guard<std::mutex> guard(_mutex);
     _sinks.push_back(s);
 }
 
 
-inline void spitlog::sinks::async_sink::remove_sink(spitlog::sink_ptr s)
+inline void spdlog::sinks::async_sink::remove_sink(spdlog::sink_ptr s)
 {
     std::lock_guard<std::mutex> guard(_mutex);
     _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), s), _sinks.end());
 }
 
 
-inline spitlog::sinks::async_sink::q_type& spitlog::sinks::async_sink::q()
+inline spdlog::sinks::async_sink::q_type& spdlog::sinks::async_sink::q()
 {
     return _q;
 }
 
 
-inline void spitlog::sinks::async_sink::shutdown(const std::chrono::milliseconds& timeout)
+inline void spdlog::sinks::async_sink::shutdown(const std::chrono::milliseconds& timeout)
 {
     if(timeout > std::chrono::milliseconds::zero())
     {
@@ -124,7 +124,7 @@ inline void spitlog::sinks::async_sink::shutdown(const std::chrono::milliseconds
 }
 
 
-inline void spitlog::sinks::async_sink::_shutdown()
+inline void spdlog::sinks::async_sink::_shutdown()
 {
     std::lock_guard<std::mutex> guard(_mutex);
     if(_active)

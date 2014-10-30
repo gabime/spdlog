@@ -5,7 +5,7 @@
 #include "./ostream_sink.h"
 #include "../details/null_mutex.h"
 
-namespace spitlog
+namespace spdlog
 {
 namespace sinks
 {

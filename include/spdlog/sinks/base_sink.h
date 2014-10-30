@@ -14,7 +14,7 @@
 #include "../details/log_msg.h"
 
 
-namespace spitlog
+namespace spdlog
 {
 namespace sinks
 {

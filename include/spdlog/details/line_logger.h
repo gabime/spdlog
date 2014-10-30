@@ -8,7 +8,7 @@
 // Line logger class - aggregates operator<< calls to fast ostream
 // and logs upon destruction
 
-namespace spitlog
+namespace spdlog
 {
 namespace details
 {
@@ -76,4 +76,4 @@ private:
     bool _enabled;
 };
 } //Namespace details
-} // Namespace spitlog
+} // Namespace spdlog

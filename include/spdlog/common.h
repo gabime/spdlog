@@ -3,7 +3,7 @@
 #include<initializer_list>
 #include<chrono>
 
-namespace spitlog
+namespace spdlog
 {
 class formatter;
 namespace sinks {
@@ -14,7 +14,7 @@ class sink;
 using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr < sinks::sink > ;
 using sinks_init_list = std::initializer_list < sink_ptr > ;
-using formatter_ptr = std::shared_ptr<spitlog::formatter>;
+using formatter_ptr = std::shared_ptr<spdlog::formatter>;
 
 //Log level enum
 namespace level
@@ -27,11 +27,12 @@ typedef enum
     WARN,
     ERR,
     CRITICAL,
-    NONE = 99
+    ALWAYS,
+    OFF
 } level_enum;
 
-static const char* level_names[] { "trace", "debug", "info", "warning", "error", "critical", "fatal" };
-inline const char* to_str(spitlog::level::level_enum l)
+static const char* level_names[] { "trace", "debug", "info", "warning", "error", "critical", "", ""};
+inline const char* to_str(spdlog::level::level_enum l)
 {
     return level_names[l];
 }
@@ -52,4 +53,4 @@ private:
 
 };
 
-} //spitlog
+} //spdlog

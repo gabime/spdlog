@@ -15,7 +15,7 @@
 #include "sinks/base_sink.h"
 #include "common.h"
 
-namespace spitlog
+namespace spdlog
 {
 
 namespace details
@@ -31,7 +31,7 @@ public:
     template<class It>
     logger(const std::string& name, const It& begin, const It& end);
 
-    void set_format(const std::string&);
+    void set_pattern(const std::string&);
     void set_formatter(formatter_ptr);
     formatter_ptr get_formatter() const;
 
@@ -45,7 +45,10 @@ public:
     const std::string& name() const;
     bool should_log(level::level_enum) const;
 
+    void stop_logging();
+
     template <typename... Args> details::line_logger log(level::level_enum lvl, const Args&... args);
+    template <typename... Args> details::line_logger log(const Args&... args);
     template <typename... Args> details::line_logger trace(const Args&... args);
     template <typename... Args> details::line_logger debug(const Args&... args);
     template <typename... Args> details::line_logger info(const Args&... args);
@@ -67,35 +70,20 @@ private:
 };
 
 
-//
-// Registry functions for easy loggers creation and retrieval
-// example
-// auto console_logger = spitlog::create("my_logger", spitlog::sinks<stdout_sink_mt>);
-// auto same_logger = spitlog::get("my_logger");
-// auto file_logger = c11
-//
-std::shared_ptr<logger> get(const std::string& name);
-std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
-template <typename Sink, typename... Args>
-std::shared_ptr<spitlog::logger> create(const std::string& logger_name, const Args&... args);
-template<class It>
-std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
 
-void set_formatter(formatter_ptr f);
-void set_format(const std::string& format_string);
 }
 
 //
 // Trace & debug macros
 //
 #ifdef FFLOG_ENABLE_TRACE
-#define FFLOG_TRACE(logger, ...) logger->log(spitlog::level::TRACE, __FILE__, " #", __LINE__,": " __VA_ARGS__)
+#define FFLOG_TRACE(logger, ...) logger->log(spdlog::level::TRACE, __FILE__, " #", __LINE__,": " __VA_ARGS__)
 #else
 #define FFLOG_TRACE(logger, ...) {}
 #endif
 
 #ifdef FFLOG_ENABLE_DEBUG
-#define FFLOG_DEBUG(logger, ...) logger->log(spitlog::level::DEBUG, __VA_ARGS__)
+#define FFLOG_DEBUG(logger, ...) logger->log(spdlog::level::DEBUG, __VA_ARGS__)
 #else
 #define FFLOG_DEBUG(logger, ...) {}
 #endif

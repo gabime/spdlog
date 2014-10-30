@@ -10,7 +10,7 @@
 #include <mutex>
 #include <condition_variable>
 
-namespace spitlog
+namespace spdlog
 {
 namespace details
 {
