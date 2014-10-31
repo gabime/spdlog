@@ -12,7 +12,8 @@
 #include <string>
 #include <thread>
 #include <chrono>
-#include "../common.h"
+#include "os.h"
+
 
 
 
@@ -24,8 +25,8 @@ namespace details
 class file_helper
 {
 public:
-    static const int open_max_tries = 5;
-    static const int sleep_ms_bewteen_tries = 10;
+    const int open_tries = 5;
+    const int open_interval = 10;
 
     explicit file_helper(const std::size_t flush_inverval):
         _fd(nullptr),
@@ -40,21 +41,21 @@ public:
     }
 
 
-    void open(const std::string& filename)
+    void open(const std::string& fname)
     {
 
         close();
 
-        _filename = filename;
-        for (int tries = 0; tries < open_max_tries; ++tries)
+        _filename = fname;
+        for (int tries = 0; tries < open_tries; ++tries)
         {
-            if(!os::fopen_s(&_fd, filename, "wb"))
+            if(!os::fopen_s(&_fd, fname, "wb"))
                 return;
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms_bewteen_tries));
+            std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
         }
 
-        throw spdlog_ex("Failed opening file " + filename + " for writing");
+        throw spdlog_ex("Failed opening file " + fname + " for writing");
     }
 
     void close()

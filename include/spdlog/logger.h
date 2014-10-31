@@ -9,9 +9,6 @@
 
 #include<vector>
 #include<memory>
-#include<atomic>
-#include <sstream>
-#include <exception>
 #include "sinks/base_sink.h"
 #include "common.h"
 
@@ -74,20 +71,5 @@ private:
 
 
 }
-
-//
-// Trace & debug macros
-//
-#ifdef FFLOG_ENABLE_TRACE
-#define FFLOG_TRACE(logger, ...) logger->log(spdlog::level::TRACE, __FILE__, " #", __LINE__,": " __VA_ARGS__)
-#else
-#define FFLOG_TRACE(logger, ...) {}
-#endif
-
-#ifdef FFLOG_ENABLE_DEBUG
-#define FFLOG_DEBUG(logger, ...) logger->log(spdlog::level::DEBUG, __VA_ARGS__)
-#else
-#define FFLOG_DEBUG(logger, ...) {}
-#endif
 
 #include "./details/logger_impl.h"

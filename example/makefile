@@ -23,7 +23,7 @@ bench-debug: bench.cpp
 
 
 clean:
-	rm -f *.o *.txt example example-debug bench bench-debug 
+	rm -f *.o logs/*.txt example example-debug bench bench-debug 
 
 
 rebuild: clean all

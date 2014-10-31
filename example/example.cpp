@@ -10,11 +10,12 @@ int main(int, char* [])
 {
 
     namespace spd = spdlog;
+    
     try
     {
         std::string filename = "spdlog_example";
         auto console = spd::stderr_logger_mt("console");
-        console->info("Welcome to spdlog!");
+        console->info("Welcome to spdlog!") ;
         console->info() << "Creating file " << filename << "..";
 
         auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
@@ -25,7 +26,6 @@ int main(int, char* [])
             auto square = i*i;
             file_logger->info() << i << '*' << i << '=' << square << " (" << "0x" << std::hex << square << ")";
         }
-
 
         // Change log level to all loggers to warning and above
         spd::set_level(spd::level::WARN);
@@ -40,6 +40,5 @@ int main(int, char* [])
     {
         std::cout << "Log failed: " << ex.what() << std::endl;
     }
-
 }
 
