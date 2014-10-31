@@ -22,8 +22,7 @@ using namespace utils;
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
-		cout << log->name() << ", " << format(howmany) << " iterations.." << endl;
-      
+		cout << log->name() << "...\t\t" << flush;      
         auto start = system_clock::now();
         for (auto i = 0; i < howmany; ++i)
         {
@@ -32,15 +31,14 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 
         auto delta = system_clock::now() - start;
         auto delta_d = duration_cast<duration<double>> (delta).count();		
-        cout << "Delta:" << format(delta_d) << " seconds" << endl;
-        cout << "Rate:" << format(howmany / delta_d) << "/sec" << endl << endl;
+        cout << format(int(howmany / delta_d)) << "/sec" << endl;
 }
 
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
 {
 
-        cout << log->name() << ", " << format(howmany) << " iterations.." << endl;
+		cout << log->name() << "...\t\t" << flush;      
         std::atomic<int > msg_counter{0};   
       	vector<thread> threads;
 		auto start = system_clock::now();
@@ -60,8 +58,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 
         auto delta = system_clock::now() - start;
         auto delta_d = duration_cast<duration<double>> (delta).count();		
-        cout << "Delta:" << format(delta_d) << " seconds" << endl;
-        cout << "Rate:" << format(howmany / delta_d) << "/sec" << endl << endl;
+        cout << format(int(howmany / delta_d)) << "/sec" << endl;
  }
 
 
@@ -71,13 +68,13 @@ int main(int argc, char* argv[])
 
     try {
     	
-		int howmany = argc <= 1 ? 100000 : atoi(argv[1]);
+		int howmany = argc <= 1 ? 250000 : atoi(argv[1]);
 		int threads = argc <= 2 ? 4 : atoi(argv[2]);
 		int flush_interval = 100;
 
 		
 		cout << "*******************************************************************************\n";	
-		cout << "Single threaded benchmarks. flush_interval = " << flush_interval << endl;        		
+		cout << "Single thread, " << format(howmany)  << " iterations, flush every " << flush_interval << " lines"<< endl;        		
 		cout << "*******************************************************************************\n";	
 	
 		auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st", 1024 * 1024 * 5, 5, flush_interval);
@@ -88,8 +85,8 @@ int main(int argc, char* argv[])
 		
 		bench(howmany, spdlog::create<null_sink_st>("null_st"));        		
 		
-		cout << "*******************************************************************************\n";	
-		cout << "Multi threaded benchmarks (" << threads << " threads), flush_interval = " << flush_interval << endl;        		
+		cout << "\n*******************************************************************************\n";	
+		cout << threads << " threads, " << format(howmany)  << " iterations, flush every " << flush_interval << " lines" << endl;        		
 		cout << "*******************************************************************************\n";	
 	
 		auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt", 1024 * 1024 * 5, 5, flush_interval);
