@@ -1,33 +1,39 @@
 // example.cpp : Simple logger example
 //
-#include "spitlog/logger.h"
-#include "spitlog/sinks/async_sink.h"
-#include "spitlog/sinks/file_sinks.h"
-#include "spitlog/sinks/stdout_sinks.h"
-#include "spitlog/sinks/null_sink.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/file_sinks.h"
+#include "spdlog/sinks/stdout_sinks.h"
+#include "spdlog/sinks/null_sink.h"
 #include "utils.h"
-#include "spitlog/details/registry.h"
 
+
+using namespace std;
 using namespace std::chrono;
-using namespace spitlog;
+using namespace spdlog;
 using namespace utils;
 
 
-int main(int argc, char* argv[])
+int main_(int argc, char* argv[])
 {
     try {
+
+        using namespace spdlog::sinks;
+        spdlog::create<daily_file_sink_st>("mylog", "dailylog", "txt");
         const unsigned int howmany = argc <= 1 ? 1500000 : atoi(argv[1]);
 
-        //spitlog::set_format("%t");
-        auto console = spitlog::create<sinks::stdout_sink_st>("reporter");
-        //console->set_format("[%n %l] %t");
-        console->set_level(spitlog::level::INFO);
+        spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %t");
+
+
+        auto console = spdlog::create<sinks::stdout_sink_st>("reporter");
         console->info("Starting bench with", howmany, "iterations..");
+        console->log() <<  "Streams are also supprted: " << std::hex << 255;
+        spdlog::stop();
 
-        auto bench = spitlog::create<sinks::rotating_file_sink_st>("bench", "myrotating", "txt", 1024 * 1024 * 1, 10, 0);
+        //return 0;
+        auto bench = spdlog::create<sinks::rotating_file_sink_st>("bench", "myrotating", "txt", 1024 * 1024 * 1, 10, 0);
 
-        //auto bench = spitlog::create<sinks::simple_file_sink_st>("bench", "simplelog.txt", 1);
-        //auto bench = spitlog::create<sinks::null_sink_st>("bench");
+        //auto bench = spdlog::create<sinks::simple_file_sink_st>("bench", "simplelog.txt", 1);
+        //auto bench = spdlog::create<sinks::null_sink_st>("bench");
         auto start = system_clock::now();
         for (unsigned int i = 0; i < howmany; ++i)
         {
@@ -37,9 +43,9 @@ int main(int argc, char* argv[])
         auto delta = system_clock::now() - start;
         auto delta_d = duration_cast<duration<double>> (delta).count();
 
-        console->info("Total:") << format(howmany);
-        console->info("Delta:") << format(delta_d);
-        console->info("Rate:") << format(howmany / delta_d) << "/sec";
+        cout << "Total:" << format(howmany) << endl;
+        cout << "Delta:" << format(delta_d) << endl;
+        cout << "Rate:" << format(howmany / delta_d) << "/sec\n";
 
     }
     catch (std::exception &ex)

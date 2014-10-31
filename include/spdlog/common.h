@@ -41,10 +41,10 @@ inline const char* to_str(spdlog::level::level_enum l)
 //
 // Log exception
 //
-class fflog_exception : public std::exception
+class spdlog_ex : public std::exception
 {
 public:
-    fflog_exception(const std::string& msg) :_msg(msg) {};
+    spdlog_ex(const std::string& msg) :_msg(msg) {};
     const char* what() const throw() override {
         return _msg.c_str();
     }

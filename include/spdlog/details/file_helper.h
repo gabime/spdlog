@@ -54,7 +54,7 @@ public:
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep_ms_bewteen_tries));
         }
 
-        throw fflog_exception("Failed opening file " + filename + " for writing");
+        throw spdlog_ex("Failed opening file " + filename + " for writing");
     }
 
     void close()
@@ -71,7 +71,7 @@ public:
         auto& buf = msg.formatted.buf();
         size_t size = buf.size();
         if(std::fwrite(buf.data(), sizeof(char), size, _fd) != size)
-            throw fflog_exception("Failed writing to file " + _filename);
+            throw spdlog_ex("Failed writing to file " + _filename);
 
         if(--_flush_countdown == 0)
         {

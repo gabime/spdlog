@@ -29,47 +29,57 @@ namespace spdlog
 std::shared_ptr<logger> get(const std::string& name);
 
 
-// Example:
-// auto logger = spdlog::create("mylog", {sink1, sink2});
-std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
-
-
-// Example (create a logger with daily rotating file):
-// using namespace spdlog::sinks;
-// spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename", "txt");
-template <typename Sink, typename... Args>
-std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&... args);
-
-// Example:
-// using namespace spdlog::sinks;
-// std::vector<spdlog::sink_ptr> mySinks;
-// mySinks.push_back(std::make_shared<rotating_file_sink_mt>("filename", "txt", 1024 * 1024 * 5, 10));
-// mySinks.push_back(std::make_shared<stdout_sink_mt>());
-// spdlog::create("mylog", mySinks.begin(), mySinks.end());
-template<class It>
-std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
-
-
 // Set global formatting
-// Example:
 // spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %t");
 void set_pattern(const std::string& format_string);
 
 
-// Set global formatter object
-void set_formatter(formatter_ptr f);
-
-
-//Set global active logging level
+//Set global logging level
 void set_level(level::level_enum log_level);
 
+
+// Create multi/single threaded rotating file logger
+std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, size_t flush_inverval = 0);
+std::shared_ptr<logger> rotating_logger_st(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, size_t flush_inverval = 0);
+
+// Create file logger which creates new file at midnight):
+std::shared_ptr<logger> daily_logger_mt(const std::string& logger_name, const std::string& filename, size_t flush_inverval = 0);
+std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const std::string& filename, size_t flush_inverval = 0);
+
+
+// Create stdout/stderr loggers
+std::shared_ptr<logger> stdout_logger_mt(const std::string& logger_name);
+std::shared_ptr<logger> stdout_logger_st(const std::string& logger_name);
+std::shared_ptr<logger> stderr_logger_mt(const std::string& logger_name);
+std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name);
+
+
+
+//
+// Create a logger with multiple sinks
+//
+std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
+
+template<class It>
+std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
+
+
+// Create a logger with templated sink type
+// Example: spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename", "txt");
+template <typename Sink, typename... Args>
+std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&... args);
+
+
+
+// Set global formatter object
+void set_formatter(formatter_ptr f);
 
 //Stop all loggers
 void stop();
 
 
 //
-// Trace macro to turn on/off at compile time
+// Trace macro enabled only at debug compile
 // Example: SPDLOG_TRACE(my_logger, "Some trace message");
 //
 #ifdef _DEBUG

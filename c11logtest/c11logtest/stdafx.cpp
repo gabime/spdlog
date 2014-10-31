@@ -1,5 +1,5 @@
 // stdafx.cpp : source file that includes just the standard includes
-// spitlogtest.pch will be the pre-compiled header
+// spdlogtest.pch will be the pre-compiled header
 // stdafx.obj will contain the pre-compiled type information
 
 #include "stdafx.h"

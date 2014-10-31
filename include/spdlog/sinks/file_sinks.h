@@ -48,8 +48,8 @@ class rotating_file_sink : public base_sink<Mutex>
 {
 public:
     rotating_file_sink(const std::string &base_filename, const std::string &extension,
-                       const std::size_t max_size, const std::size_t max_files,
-                       const std::size_t flush_inverval=0):
+                       std::size_t max_size, std::size_t max_files,
+                       std::size_t flush_inverval=0):
         _base_filename(base_filename),
         _extension(extension),
         _max_size(max_size),
@@ -104,7 +104,7 @@ private:
                 std::remove(target.c_str());
             if (details::file_helper::file_exists(src) && std::rename(src.c_str(), target.c_str()))
             {
-                throw fflog_exception("rotating_file_sink: failed renaming " + src + " to " + target);
+                throw spdlog_ex("rotating_file_sink: failed renaming " + src + " to " + target);
             }
         }
         auto cur_name = _file_helper.filename();

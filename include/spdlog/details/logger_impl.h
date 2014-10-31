@@ -116,8 +116,16 @@ inline void spdlog::logger::stop_logging()
 
 inline void spdlog::logger::_variadic_log(spdlog::details::line_logger&) {}
 
+template <typename Last>
+inline void spdlog::logger::_variadic_log(spdlog::details::line_logger& l, const Last& last)
+{
+    l.write(last);
+}
+
+
+
 template <typename First, typename... Rest>
-void spdlog::logger::_variadic_log(spdlog::details::line_logger& l, const First& first, const Rest&... rest)
+inline void spdlog::logger::_variadic_log(spdlog::details::line_logger& l, const First& first, const Rest&... rest)
 {
     l.write(first);
     l.write(' ');

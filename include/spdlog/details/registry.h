@@ -1,6 +1,6 @@
 #pragma once
 // Loggers registy of unique name->logger pointer
-// If 2 loggers with same name are added, the second will be overrun the first
+// An attempt to create a logger with an alreasy existing name will be ignored
 // If user requests a non existing logger, nullptr will be returned
 // This class is thread safe
 
@@ -16,10 +16,10 @@ namespace details {
 
 class registry {
 public:
-    std::shared_ptr<logger> get(const std::string& name)
+    std::shared_ptr<logger> get(const std::string& logger_name)
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        auto found = _loggers.find(name);
+        auto found = _loggers.find(logger_name);
         return found == _loggers.end() ? nullptr : found->second;
     }
 
@@ -27,6 +27,11 @@ public:
     std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
     {
         std::lock_guard<std::mutex> lock(_mutex);
+        //If already exists, just return it
+        auto found = _loggers.find(logger_name);
+        if (found != _loggers.end())
+            return found->second;
+
         auto new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
         new_logger->set_formatter(_formatter);
         new_logger->set_level(_level);

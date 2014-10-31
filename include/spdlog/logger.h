@@ -64,6 +64,8 @@ private:
     std::vector<sink_ptr> _sinks;
     std::atomic_int _level;
     void _variadic_log(details::line_logger& l);
+    template <typename Last>
+    inline void _variadic_log(spdlog::details::line_logger& l, const Last& last);
     template <typename First, typename... Rest>
     void _variadic_log(details::line_logger&l, const First& first, const Rest&... rest);
     void _log_msg(details::log_msg& msg);
