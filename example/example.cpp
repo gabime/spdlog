@@ -28,6 +28,7 @@
 #include <iostream>
 #include "spdlog/spdlog.h"
 
+
 int main(int, char* [])
 {
 
@@ -35,29 +36,34 @@ int main(int, char* [])
 
     try
     {
-        std::string filename = "spdlog_example";
-        auto console = spd::stderr_logger_mt("console");
-        console->info("Welcome to spdlog!") ;
-        console->info() << "Creating file " << filename << "..";
+        std::string filename = "logs/spdlog_example";
+        // Set log level to all loggers to DEBUG and above
+        spd::set_level(spd::level::DEBUG);
 
+
+        //Create console, multithreaded logger
+        auto console = spd::stdout_logger_mt("console");
+        console->info("Welcome to spdlog!") ;
+        console->info("Varriadic template call are supproted", "...", 1, 2, 3.5);
+        console->info() << "streams are supported too  " << std::setw(5) << std::setfill('0') << 1;
+
+        //Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
         file_logger->info("Log file message number", 1);
 
         for (int i = 0; i < 100; ++i)
         {
-            auto square = i*i;
-            file_logger->info() << i << '*' << i << '=' << square << " (" << "0x" << std::hex << square << ")";
+            file_logger->info(i, "in hex is", "0x") << std::hex << std::uppercase << i;
         }
 
-        // Change log level to all loggers to warning and above
-        spd::set_level(spd::level::WARN);
-        console->info("This should not be displayed");
-        console->warn("This should!");
-        spd::set_level(spd::level::INFO);
+        spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
+        file_logger->info("This is another message with custom format");
 
-        // Change format pattern to all loggers
-        spd::set_pattern(" **** %Y-%m-%d %H:%M:%S.%e %l **** %v");
-        spd::get("console")->info("This is another message with different format");
+        spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
+
+        SPDLOG_TRACE(file_logger, "This is a trace message (only #ifdef _DEBUG)", 123);
+
+
     }
     catch (const spd::spdlog_ex& ex)
     {
