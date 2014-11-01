@@ -1,0 +1,13 @@
+spdlog is header only library.
+Just copy the files to your build tree and use a C++11 compiler
+
+Tested on:
+gcc 4.8.1 and above
+clang 3.5
+Visual Studio 2013
+
+gcc 4.8 flags: --std==c++11 -pthread -O3 -flto -Wl,--no-as-needed
+gcc 4.9 flags: --std=c++11 -pthread -O3 -flto
+
+
+see the makefile in the example folder
