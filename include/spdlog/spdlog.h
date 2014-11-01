@@ -29,7 +29,6 @@
 #pragma once
 
 #include "logger.h"
-#include "details/registry.h"
 
 namespace spdlog
 {
