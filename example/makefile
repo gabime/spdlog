@@ -1,4 +1,4 @@
-CXX	= /usr/bin/g++-4.8
+CXX	= g++
 CXXFLAGS	= -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -Wl,--no-as-needed  -I../include 
 CXX_RELEASE_FLAGS = -O3 -flto
 CXX_DEBUG_FLAGS= -g 
