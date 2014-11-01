@@ -1,6 +1,6 @@
 # spdlog
 
-Very fast, header only, c++11 logging library.
+Very fast, header only, C++ logging library.
 
 
 ## Install
