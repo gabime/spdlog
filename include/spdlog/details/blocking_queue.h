@@ -49,7 +49,7 @@ public:
         std::unique_lock<std::mutex> ul(_mutex);
         if (_q.size() >= _max_size)
         {
-            if (!_item_popped_cond.wait_until(ul, clock::now() + timeout, [this]()
+            if (!_item_popped_cond.wait_until(ul, clock::now() + timeout,[this]()
         {
             return this->_q.size() < this->_max_size;
             }))
@@ -59,7 +59,7 @@ public:
         if (_q.size() <= 1)
         {
             ul.unlock(); //So the notified thread will have better chance to accuire the lock immediatly..
-            _item_pushed_cond.notify_one();
+            _item_pushed_cond.notify_all();
         }
         return true;
     }
@@ -69,7 +69,7 @@ public:
     template<typename TT>
     void push(TT&& item)
     {
-        while (!push(std::forward<TT>(item), std::chrono::hours(1)));
+        while (!push(std::forward<TT>(item), std::chrono::seconds(10)));
     }
 
     // Pop a copy of the front item in the queue into the given item ref.
@@ -92,7 +92,7 @@ public:
         if (_q.size() >= _max_size - 1)
         {
             ul.unlock(); //So the notified thread will have better chance to accuire the lock immediatly..
-            _item_popped_cond.notify_one();
+            _item_popped_cond.notify_all();
         }
         return true;
     }

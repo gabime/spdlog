@@ -4,6 +4,7 @@
 #include <chrono>
 #include <memory>
 #include <vector>
+#include <thread>
 
 #include "../formatter.h"
 #include "./log_msg.h"
@@ -301,8 +302,17 @@ private:
 };
 
 
-
+//Thread id
 class t_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg) override
+    {
+        msg.formatted << std::this_thread::get_id();
+    }
+};
+
+
+class v_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
@@ -343,7 +353,7 @@ private:
 };
 
 // Full info formatter
-// pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %t
+// pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
 class full_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
@@ -426,6 +436,10 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 
     case('t') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::t_formatter()));
+        break;
+
+    case('v') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::v_formatter()));
         break;
 
     case('a') :

@@ -6,11 +6,11 @@
 #include "spdlog/spdlog.h"
 
 
-int main(int, char* [])
+int main_(int, char* [])
 {
 
     namespace spd = spdlog;
-    
+
     try
     {
         std::string filename = "spdlog_example";
@@ -33,12 +33,13 @@ int main(int, char* [])
         console->warn("This should!");
 
         // Change format pattern to all loggers
-        spd::set_pattern(" **** %Y-%m-%d %H:%M:%S.%e %l **** %t");
+        spd::set_pattern(" **** %Y-%m-%d %H:%M:%S.%e %l **** %v");
         spd::get("console")->warn("This is another message with different format");
     }
     catch (const spd::spdlog_ex& ex)
     {
         std::cout << "Log failed: " << ex.what() << std::endl;
     }
+    return 0;
 }
 

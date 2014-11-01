@@ -77,12 +77,12 @@ public:
 
     }
 
-    void stop_all()
+    void close_all()
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _level = level::OFF;
         for (auto& l : _loggers)
-            l.second->stop_logging();
+            l.second->close();
     }
 
 

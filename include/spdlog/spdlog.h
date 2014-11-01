@@ -30,7 +30,7 @@ std::shared_ptr<logger> get(const std::string& name);
 
 
 // Set global formatting
-// spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %t");
+// spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 void set_pattern(const std::string& format_string);
 
 
@@ -74,8 +74,8 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Arg
 // Set global formatter object
 void set_formatter(formatter_ptr f);
 
-//Stop all loggers
-void stop();
+// Close all loggers and stop logging
+void close();
 
 
 //

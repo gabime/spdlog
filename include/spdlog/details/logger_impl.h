@@ -22,6 +22,10 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
 {}
 
 
+inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink) :logger(logger_name, { single_sink })
+{}
+
+
 inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
 {
     _formatter = msg_formatter;
@@ -108,9 +112,11 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
     return msg_level >= _level.load();
 }
 
-inline void spdlog::logger::stop_logging()
+inline void spdlog::logger::close()
 {
     set_level(level::OFF);
+    for (auto &sink : _sinks)
+        sink->close();
 }
 
 

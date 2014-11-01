@@ -33,6 +33,9 @@ public:
     //Wait to remaining items (if any) in the queue to be written and shutdown
     void shutdown(const std::chrono::milliseconds& timeout);
 
+    void close() override;
+
+
 
 protected:
     void _sink_it(const details::log_msg& msg) override;
@@ -123,6 +126,11 @@ inline void spdlog::sinks::async_sink::shutdown(const std::chrono::milliseconds&
     _shutdown();
 }
 
+inline void spdlog::sinks::async_sink::close()
+{
+    _shutdown();
+}
+
 
 inline void spdlog::sinks::async_sink::_shutdown()
 {
@@ -133,5 +141,8 @@ inline void spdlog::sinks::async_sink::_shutdown()
         if (_back_thread.joinable())
             _back_thread.join();
     }
+
+    for (auto &s : _sinks)
+        s->close();
 }
 

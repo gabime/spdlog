@@ -95,7 +95,7 @@ inline void spdlog::set_level(level::level_enum log_level)
     return details::registry::instance().set_level(log_level);
 }
 
-inline void spdlog::stop()
+inline void spdlog::close()
 {
-    return details::registry::instance().stop_all();
+    return details::registry::instance().close_all();
 }

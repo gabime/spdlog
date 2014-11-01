@@ -24,6 +24,7 @@ class logger
 {
 public:
 
+    logger(const std::string& logger_name, sink_ptr single_sink);
     logger(const std::string& name, sinks_init_list);
     template<class It>
     logger(const std::string& name, const It& begin, const It& end);
@@ -42,7 +43,7 @@ public:
     const std::string& name() const;
     bool should_log(level::level_enum) const;
 
-    void stop_logging();
+    void close();
 
     template <typename... Args> details::line_logger log(level::level_enum lvl, const Args&... args);
     template <typename... Args> details::line_logger log(const Args&... args);
