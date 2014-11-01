@@ -6,7 +6,7 @@
 #include "spdlog/spdlog.h"
 
 
-int main_(int, char* [])
+int main(int, char* [])
 {
 
     namespace spd = spdlog;

@@ -26,7 +26,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int argc, char* argv[])
 {
 
-    int howmany = 123456;
+    int howmany = 250000;
     int threads = 4;
     int flush_interval = 1000;
     int file_size = 30 * 1024 * 1024;
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st", flush_interval);
         bench(howmany, daily_st);
-
+	    	        		
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
         cout << "\n*******************************************************************************\n";
@@ -62,13 +62,6 @@ int main(int argc, char* argv[])
 
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt", flush_interval);
         bench_mt(howmany, daily_mt, threads);
-
-
-        auto async_sink = std::make_shared<sinks::async_sink>(1000);
-        auto file_sink = std::make_shared<sinks::rotating_file_sink_mt>("logs/async_logger", "txt", file_size, rotating_files, flush_interval);
-        async_sink->add_sink(file_sink);
-        auto async_logger = std::make_shared<spdlog::logger>("async_logger", async_sink );
-        bench_mt(howmany, async_logger, threads);
 
         bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
     }
