@@ -43,7 +43,8 @@ inline spdlog::formatter_ptr spdlog::logger::get_formatter() const
 
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::log(level::level_enum lvl, const Args&... args) {
+inline spdlog::details::line_logger spdlog::logger::log(level::level_enum lvl, const Args&... args)
+{
     bool msg_enabled = should_log(lvl);
     details::line_logger l(this, lvl, msg_enabled);
     if (msg_enabled)
@@ -52,7 +53,8 @@ inline spdlog::details::line_logger spdlog::logger::log(level::level_enum lvl, c
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::log(const Args&... args) {
+inline spdlog::details::line_logger spdlog::logger::log(const Args&... args)
+{
     return log(level::ALWAYS, args...);
 }
 

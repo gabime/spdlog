@@ -2,8 +2,10 @@
 
 // null, no cost mutex
 
-namespace spdlog {
-namespace details {
+namespace spdlog
+{
+namespace details
+{
 struct null_mutex
 {
     void lock() {}

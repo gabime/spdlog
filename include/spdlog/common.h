@@ -6,7 +6,8 @@
 namespace spdlog
 {
 class formatter;
-namespace sinks {
+namespace sinks
+{
 class sink;
 }
 
@@ -45,7 +46,8 @@ class spdlog_ex : public std::exception
 {
 public:
     spdlog_ex(const std::string& msg) :_msg(msg) {};
-    const char* what() const throw() override {
+    const char* what() const throw() override
+    {
         return _msg.c_str();
     }
 private:

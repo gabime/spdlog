@@ -32,7 +32,8 @@ int main(int argc, char* argv[])
     int file_size = 30 * 1024 * 1024;
     int rotating_files = 5;
 
-    try {
+    try
+    {
 
         if(argc > 1)
             howmany = atoi(argv[1]);
@@ -49,7 +50,7 @@ int main(int argc, char* argv[])
 
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st", flush_interval);
         bench(howmany, daily_st);
-	    	        		
+
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
         cout << "\n*******************************************************************************\n";
@@ -100,7 +101,8 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
     auto start = system_clock::now();
     for (int t = 0; t < thread_count; ++t)
     {
-        threads.push_back(std::thread([&]() {
+        threads.push_back(std::thread([&]()
+        {
             while (true)
             {
                 int counter = ++msg_counter;

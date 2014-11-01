@@ -5,10 +5,13 @@
 //Source: http://stackoverflow.com/a/4351484/192001
 //Modified version to pad zeros according to padding arg
 
-namespace spdlog {
-namespace details {
+namespace spdlog
+{
+namespace details
+{
 
-const char digit_pairs[201] = {
+const char digit_pairs[201] =
+{
     "00010203040506070809"
     "10111213141516171819"
     "20212223242526272829"

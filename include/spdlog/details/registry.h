@@ -11,10 +11,13 @@
 #include "../logger.h"
 #include "../common.h"
 
-namespace spdlog {
-namespace details {
+namespace spdlog
+{
+namespace details
+{
 
-class registry {
+class registry
+{
 public:
     std::shared_ptr<logger> get(const std::string& logger_name)
     {

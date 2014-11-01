@@ -31,10 +31,11 @@ int main(int, char* [])
         spd::set_level(spd::level::WARN);
         console->info("This should not be displayed");
         console->warn("This should!");
+        spd::set_level(spd::level::INFO);
 
         // Change format pattern to all loggers
         spd::set_pattern(" **** %Y-%m-%d %H:%M:%S.%e %l **** %v");
-        spd::get("console")->warn("This is another message with different format");
+        spd::get("console")->info("This is another message with different format");
     }
     catch (const spd::spdlog_ex& ex)
     {

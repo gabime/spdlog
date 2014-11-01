@@ -57,9 +57,6 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::strin
 }
 
 
-
-
-
 inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_name, spdlog::sinks_init_list sinks)
 {
     return details::registry::instance().create(logger_name, sinks);

@@ -13,7 +13,8 @@
 
 namespace spdlog
 {
-namespace details {
+namespace details
+{
 class flag_formatter
 {
 public:
@@ -23,7 +24,8 @@ public:
 ///////////////////////////////////////////////////////////////////////
 // name & level pattern appenders
 ///////////////////////////////////////////////////////////////////////
-namespace {
+namespace
+{
 class name_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
@@ -425,7 +427,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
-    // logger name
+        // logger name
     case 'n':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::name_formatter()));
         break;

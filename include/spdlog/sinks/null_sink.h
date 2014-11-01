@@ -4,8 +4,10 @@
 #include "../details/null_mutex.h"
 
 
-namespace spdlog {
-namespace sinks {
+namespace spdlog
+{
+namespace sinks
+{
 
 template <class Mutex>
 class null_sink : public base_sink<Mutex>

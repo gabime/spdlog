@@ -3,7 +3,8 @@
 #include "details/log_msg.h"
 namespace spdlog
 {
-namespace details {
+namespace details
+{
 class flag_formatter;
 }
 
