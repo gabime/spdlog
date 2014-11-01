@@ -1,6 +1,6 @@
 # spdlog
 
-spdlog is very fast, header only, c++11 logging library.
+Very fast, header only, c++11 logging library.
 
 
 ## Install
@@ -13,13 +13,15 @@ Just copy the files to your build tree and use a C++11 compiler
 * visual studio 2013
 
 ##Features
-* Stream like, east to use interface
+* Very low overhead
+* Stream like, easy to use interface
 * Logging levels
 * Rotating log files
 * Daily log files
 * Async logging
 * Thread safety
-* Very low overhead
+* Custom formatting
+
 
 ## Performance
 The library is very fast. 
