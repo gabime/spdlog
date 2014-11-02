@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Spdlog by gabime</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/gabime/spdlog">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/gabime/spdlog/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/gabime/spdlog/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Spdlog</h1>
+          <p>Super fast C++ logging library.</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/gabime">gabime</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a name="spdlog" class="anchor" href="#spdlog"><span class="octicon octicon-link"></span></a>spdlog</h1>
+
+<p>Very fast, header only, C++ logging library.</p>
+
+<h2>
+<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<p>Just copy the files to your build tree and use a C++11 compiler</p>
+
+<h2>
+<a name="tested-on" class="anchor" href="#tested-on"><span class="octicon octicon-link"></span></a>Tested on:</h2>
+
+<ul>
+<li>gcc 4.8.1 and above</li>
+<li>clang 3.5</li>
+<li>visual studio 2013</li>
+</ul>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Very low overhead</li>
+<li>Stream like, easy to use interface</li>
+<li>Logging levels</li>
+<li>Rotating log files</li>
+<li>Daily log files</li>
+<li>Async logging</li>
+<li>Thread safety</li>
+<li>Custom formatting</li>
+</ul>
+
+<h2>
+<a name="performance" class="anchor" href="#performance"><span class="octicon octicon-link"></span></a>Performance</h2>
+
+<p>The library is very fast. 
+Here are some benchmarks  (Ubuntu, Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz)</p>
+
+<pre><code>*******************************************************************************
+Single thread, 250,000 iterations, flush every 1000 lines
+*******************************************************************************
+rotating_st...  817,860 lines/sec
+daily_st...     827,820 lines /sec
+
+*******************************************************************************
+4 threads sharing same logger, 250,000 iterations, flush every 1000 lines
+*******************************************************************************
+rotating_mt...  1,476,013 lines/sec
+daily_mt...     1,477,619 lines/sec
+</code></pre>
+
+<h2>
+<a name="usage-example" class="anchor" href="#usage-example"><span class="octicon octicon-link"></span></a>Usage Example</h2>
+
+<pre><code>#include &lt;iostream&gt;
+#include "spdlog/spdlog.h"
+
+int main(int, char* [])
+{
+    namespace spd = spdlog;
+
+    try
+    {
+        std::string filename = "spdlog_example";
+        auto console = spd::stderr_logger_mt("console");
+        console-&gt;info("Welcome to spdlog!") ;
+        console-&gt;info() &lt;&lt; "Creating file " &lt;&lt; filename &lt;&lt; "..";
+
+        auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
+        file_logger-&gt;info("Log file message number", 1);
+
+        for (int i = 0; i &lt; 100; ++i)
+        {
+            auto square = i*i;
+            file_logger-&gt;info() &lt;&lt; i &lt;&lt; '*' &lt;&lt; i &lt;&lt; '=' &lt;&lt; square &lt;&lt; " (" &lt;&lt; "0x" &lt;&lt; std::hex &lt;&lt; square &lt;&lt; ")";
+        }
+
+        // Change log level to all loggers to warning and above
+        spd::set_level(spd::level::WARN);
+        console-&gt;info("This should not be displayed");
+        console-&gt;warn("This should!");
+        spd::set_level(spd::level::INFO);
+
+        // Change format pattern to all loggers
+        spd::set_pattern(" **** %Y-%m-%d %H:%M:%S.%e %l **** %v");
+        spd::get("console")-&gt;info("This is another message with different format");
+    }
+    catch (const spd::spdlog_ex&amp; ex)
+    {
+        std::cout &lt;&lt; "Log failed: " &lt;&lt; ex.what() &lt;&lt; std::endl;
+    }
+    return 0;
+}
+</code></pre>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
