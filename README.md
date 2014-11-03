@@ -42,8 +42,8 @@ The bench writes 1,000,000 log lines to a rotating log file:
 #### spdlog vs. boost - 10 threads
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
-|*boost*|1000,000|10|**6.592s**|
-|*spdlog*|1000,000|10|**0.961s**|
+|*boost*|1,000,000|10|**6.592s**|
+|*spdlog*|1,000,000|10|**0.961s**|
 
 
 
