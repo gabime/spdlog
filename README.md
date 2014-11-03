@@ -13,7 +13,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * visual studio 2013
 
 ##Features
-* Very fast - performance is the primary goal
+* Very fast - performance is the primary goal (see becnhmarks below)
 * Headers only
 * No dependencies
 * Cross platform - Linux / Windows on 32/64 bits
