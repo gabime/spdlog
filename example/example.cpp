@@ -44,8 +44,8 @@ int main(int, char* [])
         //Create console, multithreaded logger
         auto console = spd::stdout_logger_mt("console");
         console->info("Welcome to spdlog!") ;
-        console->info("Varriadic template call are supproted", "...", 1, 2, 3.5);
-        console->info() << "streams are supported too  " << std::setw(5) << std::setfill('0') << 1;
+        console->info("An info message example", "...", 1, 2, 3.5);
+        console->info() << "Streams are supported too  " << std::setw(5) << std::setfill('0') << 1;
 
         //Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
@@ -53,7 +53,7 @@ int main(int, char* [])
 
         for (int i = 0; i < 100; ++i)
         {
-            file_logger->info(i, "in hex is", "0x") << std::hex << std::uppercase << i;
+            file_logger->info(i, "in hex is", "0x") <<  std::hex << std::uppercase << i;
         }
 
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");

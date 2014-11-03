@@ -13,19 +13,20 @@ Just copy the files to your build tree and use a C++11 compiler
 * visual studio 2013
 
 ##Features
-* Very low overhead
-* Stream like, easy to use interface
-* Logging levels
+* Very fast - performance is the primary goal
+* Headers only
+* No dependencies
+* Cross platform - Linux / Windows on 32/64 bits
+* Mult/Single threaded loggers
 * Rotating log files
 * Daily log files
-* Async logging
-* Thread safety
-* Custom formatting
+* Console logging
+* Async logging* 
+* Logging levels
+* Custom formatting with user defined patterns
 
-
-## Performance
-The library is very fast. 
-Here are some benchmarks  (Ubuntu, Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz)
+## Benchmarks
+Here are some benchmarks  (Ubuntu 64 bits, Intel i7-4770 CPU @ 3.40GHz)
 ```
 *******************************************************************************
 Single thread, 250,000 iterations, flush every 1000 lines
@@ -52,7 +53,7 @@ int main(int, char* [])
     try
     {
         std::string filename = "spdlog_example";
-        auto console = spd::stderr_logger_mt("console");
+        auto console = spd::stdout_logger_mt("console");
         console->info("Welcome to spdlog!") ;
         console->info() << "Creating file " << filename << "..";
 
