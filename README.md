@@ -25,21 +25,24 @@ Just copy the files to your build tree and use a C++11 compiler
 * Logging levels
 * Custom formatting with user defined patterns
 
-## Benchmarks
-Here are some benchmarks  (Ubuntu 64 bits, Intel i7-4770 CPU @ 3.40GHz)
-```
-*******************************************************************************
-Single thread, 250,000 iterations, flush every 1000 lines
-*******************************************************************************
-rotating_st...	817,860 lines/sec
-daily_st...		827,820 lines /sec
+## Benchmarks comparison
 
-*******************************************************************************
-4 threads sharing same logger, 250,000 iterations, flush every 1000 lines
-*******************************************************************************
-rotating_mt...	1,476,013 lines/sec
-daily_mt...		1,477,619 lines/sec
-```
+Here are some [benchmarks](bench-comparison) comparing spdlog vs boost log(1.56.0) on Ubuntu 64 bits, Intel i7-4770 CPU @ 3.40GHz.
+
+The bench writes 1000,000 log lines to a rotating log file of size 10MB with 5 back rotated files.
+The multi threaded test uses a shared logger object  across 10 threads.
+
+
+|library|log lines|threads|elapsed|
+|-------|:-------:|:-----:|------:|
+|*boost*|1000,000|1|**4.207s**|
+|*spdlog*|1000,000|1|**0.975s**|
+
+|library|log lines|threads|elapsed|
+|-------|:-------:|:-----:|------:|
+|*boost*|1000,000|10|**6.592s**|
+|*spdlog log*|1000,000|10|**0.961s**|
+
 
 ## Usage Example
 ```c++
