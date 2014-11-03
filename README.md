@@ -39,10 +39,10 @@ daily_st...		827,820 lines /sec
 *******************************************************************************
 rotating_mt...	1,476,013 lines/sec
 daily_mt...		1,477,619 lines/sec
-```c++
+```
 
 ## Usage Example
-```
+```c++
 #include <iostream>
 #include "spdlog/spdlog.h"
 
