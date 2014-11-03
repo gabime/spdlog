@@ -39,6 +39,7 @@ The multi threaded test uses a shared logger object  across 10 threads.
 |*spdlog*|1000,000|1|**0.975s**|
 
 
+
 #### spdlog vs. boost - Multi threaded
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
