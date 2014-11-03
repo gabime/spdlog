@@ -41,7 +41,8 @@ The bench writes 1000,000 log lines to a rotating log file of size 10MB with 5 b
 
 
 #### spdlog vs. boost - 10 threads
-- shared logger object  across multiple threads.
+shared logger object  across multiple threads.
+
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
 |*boost*|1000,000|10|**6.592s**|
