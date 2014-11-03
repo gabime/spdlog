@@ -25,7 +25,7 @@
 #pragma once
 
 // A faster-than-ostringstream class
-// uses stack_buf as the underlying buffer (upto 192 bytes before using the heap)
+// uses stack_buf as the underlying buffer (upto 256 bytes before using the heap)
 
 #include <ostream>
 #include <iomanip>
