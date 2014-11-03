@@ -32,13 +32,14 @@ Here are some [benchmarks](bench-comparison) comparing spdlog vs boost log(1.56.
 The bench writes 1000,000 log lines to a rotating log file of size 10MB with 5 back rotated files.
 The multi threaded test uses a shared logger object  across 10 threads.
 
-#### spdlog vs boost - Single threaded
+#### spdlog vs. boost - Single threaded
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
 |*boost*|1000,000|1|**4.207s**|
 |*spdlog*|1000,000|1|**0.975s**|
 
-#### spdlog vs boost - Multi threaded threaded
+
+#### spdlog vs. boost - Multi threaded
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
 |*boost*|1000,000|10|**6.592s**|
