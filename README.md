@@ -44,7 +44,7 @@ The bench writes 1000,000 log lines to a rotating log file of size 10MB with 5 b
 |-------|:-------:|:-----:|------:|
 |*boost*|1000,000|10|**6.592s**|
 |*spdlog*|1000,000|10|**0.961s**|
-<small>shared logger object  across multiple threads.</small>
+
 
 
 
