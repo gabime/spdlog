@@ -36,10 +36,14 @@ void init()
 
 using namespace std;
 
-int main(int, char*[])
+int main(int argc, char* argv[])
 {
 	int thread_count = 10;
+	if(argc > 1)
+		thread_count = atoi(argv[1]);
+		
 	int howmany = 1000000;
+
 	
     init();
     logging::add_common_attributes();

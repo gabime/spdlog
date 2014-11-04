@@ -30,14 +30,15 @@ void init()
 }
 
 
-int main(int, char*[])
+int main(int argc, char* argv[])
 {
+	int howmany = 1000000;
     init();
     logging::add_common_attributes();
 
     using namespace logging::trivial;
     src::severity_logger_mt< severity_level > lg;
-	for(int i  = 0 ; i < 1000000; ++i)
+	for(int i  = 0 ; i < howmany; ++i)
 	    BOOST_LOG_SEV(lg, info) << "Boost logger message #" << i;
 
     return 0;
