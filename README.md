@@ -25,11 +25,11 @@ Just copy the files to your build tree and use a C++11 compiler
 * Logging levels
 * Custom formatting with user defined patterns
 
-## Benchmarks comparison
+## Benchmarks
 
 Here are some [benchmarks](bench-comparison) comparing spdlog vs boost log(1.56.0) on Ubuntu 64 bits, Intel i7-4770 CPU @ 3.40GHz.
 
-The bench writes 1,000,000 log lines to a rotating log file:
+The bench writes 1,000,000 log lines to a rotating log file (using shared synchronous logger object):
 
 #### spdlog vs. boost - single thread
 |library|log lines|threads|elapsed|
