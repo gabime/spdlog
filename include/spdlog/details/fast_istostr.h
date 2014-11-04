@@ -49,7 +49,7 @@ const char digit_pairs[201] =
 };
 
 
-inline std::string& fast_itostr(int n, std::string& s, int padding)
+inline std::string& fast_itostr(int n, std::string& s, size_t padding)
 {
     if (n == 0)
     {
@@ -58,9 +58,9 @@ inline std::string& fast_itostr(int n, std::string& s, int padding)
     }
 
     int sign = -(n < 0);
-    unsigned int val = (n^sign) - sign;
+    unsigned int val = static_cast<unsigned int>((n^sign) - sign);
 
-    int size;
+    size_t size;
     if (val >= 10000)
     {
         if (val >= 10000000)
@@ -111,14 +111,14 @@ inline std::string& fast_itostr(int n, std::string& s, int padding)
     c += size - 1;
     while (val >= 100)
     {
-        int pos = val % 100;
+        size_t pos = val % 100;
         val /= 100;
         *(short*)(c - 1) = *(short*)(digit_pairs + 2 * pos);
         c -= 2;
     }
     while (val > 0)
     {
-        *c-- = '0' + (val % 10);
+        *c-- = static_cast<char>('0' + (val % 10));
         val /= 10;
     }
 

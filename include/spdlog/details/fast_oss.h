@@ -158,7 +158,7 @@ public:
     }
 
     // put int and pad with zeroes if smalled than min_width
-    void put_int(int n, int padding)
+    void put_int(int n, size_t padding)
     {
         std::string s;
         details::fast_itostr(n, s, padding);

@@ -122,6 +122,7 @@ public:
 private:
     registry() = default;
     registry(const registry&) = delete;
+    registry& operator=(const registry&) = delete;
     std::mutex _mutex;
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
     formatter_ptr _formatter;

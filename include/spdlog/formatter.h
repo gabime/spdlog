@@ -44,6 +44,7 @@ class pattern_formatter : public formatter
 public:
     explicit pattern_formatter(const std::string& pattern);
     pattern_formatter(const pattern_formatter&) = delete;
+    pattern_formatter& operator=(const pattern_formatter&) = delete;
     void format(details::log_msg& msg) override;
 private:
     const std::string _pattern;

@@ -55,6 +55,7 @@ public:
         _flush_countdown(flush_inverval) {};
 
     file_helper(const file_helper&) = delete;
+    file_helper& operator=(const file_helper&) = delete;
 
     ~file_helper()
     {

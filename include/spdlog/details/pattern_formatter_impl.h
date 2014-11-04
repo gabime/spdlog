@@ -42,6 +42,7 @@ namespace details
 class flag_formatter
 {
 public:
+    virtual ~flag_formatter() {}
     virtual void format(details::log_msg& msg) = 0;
 };
 
@@ -295,6 +296,9 @@ class T_formatter :public flag_formatter
 class z_formatter :public flag_formatter
 {
 public:
+    z_formatter() {}
+    z_formatter(const z_formatter&) = delete;
+    z_formatter& operator=(const z_formatter&) = delete;
 
     void format(log_msg& msg) override
     {
@@ -312,6 +316,8 @@ public:
 private:
     log_clock::time_point _last_update;
     std::string _value;
+    std::mutex _mutex;
+
     std::string get_value(const log_msg& msg)
     {
         int total_minutes = os::utc_minutes_offset(msg.tm_time);
@@ -324,7 +330,7 @@ private:
         oss.put_int(m, 2);
         return oss.str();
     }
-    std::mutex _mutex;
+
 };
 
 
@@ -451,7 +457,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
-        // logger name
+    // logger name
     case 'n':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::name_formatter()));
         break;
