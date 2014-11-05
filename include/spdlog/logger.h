@@ -67,7 +67,8 @@ public:
     const std::string& name() const;
     bool should_log(level::level_enum) const;
 
-    void close();
+    //Stop logging
+    void stop();
 
     template <typename... Args> details::line_logger log(level::level_enum lvl, const Args&... args);
     template <typename... Args> details::line_logger log(const Args&... args);

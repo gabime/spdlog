@@ -104,12 +104,12 @@ public:
 
     }
 
-    void close_all()
+    void stop_all()
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _level = level::OFF;
         for (auto& l : _loggers)
-            l.second->close();
+            l.second->stop();
     }
 
 

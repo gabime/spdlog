@@ -105,14 +105,13 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
     auto start = system_clock::now();
     for (auto i = 0; i < howmany; ++i)
     {
-        log->info("Hello logger: msg number ") << i <<  "**************************" << i + 1 << "," << 1 + 2;;
+        log->info("Hello logger: msg number ", i);
     }
 
 
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
     cout << format(int(howmany / delta_d)) << "/sec" << endl;
-    log->close();
 }
 
 
@@ -146,6 +145,5 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>> (delta).count();
     cout << format(int(howmany / delta_d)) << "/sec" << endl;
-    log->close();
 }
 

@@ -29,7 +29,7 @@
 #include "spdlog/spdlog.h"
 
 
-int main(int, char* [])
+int maina(int, char* [])
 {
 
     namespace spd = spdlog;

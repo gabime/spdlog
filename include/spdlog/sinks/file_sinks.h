@@ -50,10 +50,7 @@ public:
     {
         _file_helper.open(filename);
     }
-    void close() override
-    {
-        _file_helper.close();
-    }
+
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
@@ -86,10 +83,6 @@ public:
         _file_helper.open(calc_filename(_base_filename, 0, _extension));
     }
 
-    void close() override
-    {
-        _file_helper.close();
-    }
 
 protected:
     void _sink_it(const details::log_msg& msg) override
@@ -171,10 +164,6 @@ public:
         _file_helper.open(calc_filename(_base_filename, _extension));
     }
 
-    void close() override
-    {
-        _file_helper.close();
-    }
 
 protected:
     void _sink_it(const details::log_msg& msg) override
