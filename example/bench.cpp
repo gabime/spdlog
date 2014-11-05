@@ -105,7 +105,7 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
     auto start = system_clock::now();
     for (auto i = 0; i < howmany; ++i)
     {
-        log->info("Hello logger: msg number ") << i <<  "**************************" << i + 1 << "," << 1 + 2;;
+        log->info("Hello logger: msg number ", i);
     }
 
 
