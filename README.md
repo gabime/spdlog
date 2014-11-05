@@ -11,6 +11,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * gcc 4.8.1 and above
 * clang 3.5
 * visual studio 2013
+* mingw with g++ 4.9.x
 
 ##Features
 * Very fast - performance is the primary goal (see becnhmarks below)
