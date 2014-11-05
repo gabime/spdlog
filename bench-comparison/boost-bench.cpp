@@ -30,7 +30,7 @@ void init()
 }
 
 
-int main(int argc, char* argv[])
+int main(int argc, char* [])
 {
 	int howmany = 1000000;
     init();
