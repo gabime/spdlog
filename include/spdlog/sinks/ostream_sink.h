@@ -44,10 +44,6 @@ public:
     ostream_sink& operator=(const ostream_sink&) = delete;
     virtual ~ostream_sink() = default;
 
-
-    void close() override
-    {}
-
 protected:
     virtual void _sink_it(const details::log_msg& msg) override
     {

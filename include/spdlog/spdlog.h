@@ -88,8 +88,8 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Arg
 // Set global formatter object
 void set_formatter(formatter_ptr f);
 
-// Close all loggers and stop logging
-void close();
+// Stop logging by setting all the loggers to log level OFF
+void stop();
 
 
 //

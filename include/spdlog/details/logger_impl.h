@@ -137,11 +137,9 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
     return msg_level >= _level.load();
 }
 
-inline void spdlog::logger::close()
+inline void spdlog::logger::stop()
 {
     set_level(level::OFF);
-    for (auto &sink : _sinks)
-        sink->close();
 }
 
 
