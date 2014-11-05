@@ -142,7 +142,7 @@ inline void spdlog::sinks::async_sink::shutdown(const std::chrono::milliseconds&
         auto until = log_clock::now() + timeout;
         while (_q.size() > 0 && log_clock::now() < until)
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(2));
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
         }
     }
     _shutdown();
