@@ -81,7 +81,7 @@ std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_b
 // Create a logger with templated sink type
 // Example: spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename", "txt");
 template <typename Sink, typename... Args>
-std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&... args);
+std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&...);
 
 
 
