@@ -141,7 +141,7 @@ inline int utc_minutes_offset(const std::tm& tm = localtime())
         return -1;
     return -1 * (tzinfo.Bias + tzinfo.DaylightBias);
 #else
-    return tm.tm_gmtoff / 60;
+    return static_cast<int>(tm.tm_gmtoff / 60);
 #endif
 }
 
