@@ -126,7 +126,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
     {
         threads.push_back(std::thread([&]()
         {
-            while (true)
+            for(;;)
             {
                 int counter = ++msg_counter;
                 if (counter > howmany) break;

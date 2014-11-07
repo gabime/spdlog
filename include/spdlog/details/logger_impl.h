@@ -37,6 +37,7 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
     _sinks(begin, end),
     _formatter(std::make_shared<pattern_formatter>("%+"))
 {
+
     // no support under vs2013 for member initialization for std::atomic
     _level = level::INFO;
 }

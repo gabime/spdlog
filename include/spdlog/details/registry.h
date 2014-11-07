@@ -60,7 +60,8 @@ public:
             return found->second;
 
         auto new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
-        new_logger->set_formatter(_formatter);
+        if (_formatter)
+            new_logger->set_formatter(_formatter);
         new_logger->set_level(_level);
         _loggers[logger_name] = new_logger;
         return new_logger;
