@@ -42,10 +42,10 @@ namespace spdlog
 namespace sinks
 {
 
-class async_sink : public base_sink<details::null_mutex>
+class async_sink : public base_sink < details::null_mutex >
 {
 public:
-    using q_type = details::blocking_queue<details::log_msg>;
+    using q_type = details::blocking_queue < details::log_msg > ;
 
     explicit async_sink(const q_type::size_type max_queue_size);
 
@@ -69,7 +69,7 @@ private:
     q_type _q;
     std::thread _back_thread;
     //Clear all remaining messages(if any), stop the _back_thread and join it
-    void _shutdown();
+    void _join() ;
     std::mutex _mutex;
 };
 }
@@ -87,12 +87,12 @@ inline spdlog::sinks::async_sink::async_sink(const q_type::size_type max_queue_s
 
 inline spdlog::sinks::async_sink::~async_sink()
 {
-    _shutdown();
+    _join();
 }
 
 inline void spdlog::sinks::async_sink::_sink_it(const details::log_msg& msg)
 {
-    if(!_active)
+    if (!_active)
         return;
     _q.push(msg);
 }
@@ -105,11 +105,11 @@ inline void spdlog::sinks::async_sink::_thread_loop()
         q_type::item_type msg;
         if (_q.pop(msg, pop_timeout))
         {
+            if (!_active)
+                return;
             for (auto &s : _sinks)
             {
                 s->log(msg);
-                if(!_active)
-                    break;
             }
         }
     }
@@ -137,7 +137,7 @@ inline spdlog::sinks::async_sink::q_type& spdlog::sinks::async_sink::q()
 
 inline void spdlog::sinks::async_sink::shutdown(const std::chrono::milliseconds& timeout)
 {
-    if(timeout > std::chrono::milliseconds::zero())
+    if (timeout > std::chrono::milliseconds::zero())
     {
         auto until = log_clock::now() + timeout;
         while (_q.size() > 0 && log_clock::now() < until)
@@ -145,20 +145,26 @@ inline void spdlog::sinks::async_sink::shutdown(const std::chrono::milliseconds&
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
         }
     }
-    _shutdown();
+    _join();
 }
 
 
 
-inline void spdlog::sinks::async_sink::_shutdown()
+inline void spdlog::sinks::async_sink::_join()
 {
     std::lock_guard<std::mutex> guard(_mutex);
-    if(_active)
+    _active = false;
+    if (_back_thread.joinable())
     {
-        _active = false;
-        if (_back_thread.joinable())
+        try
+        {
             _back_thread.join();
+        }
+        catch (const std::system_error&) //Dont crush if thread not joinable
+        {
+        }
     }
+
 
 }
 
