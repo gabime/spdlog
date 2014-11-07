@@ -42,7 +42,7 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
 }
 
 inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list sinks_list) :
-    logger(logger_name, sinks_list.begin(), sinks_list.end()) {};
+    logger(logger_name, sinks_list.begin(), sinks_list.end()) {}
 
 
 

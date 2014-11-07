@@ -83,8 +83,8 @@ public:
 private:
     friend details::line_logger;
     std::string _name;
-    formatter_ptr _formatter;
     std::vector<sink_ptr> _sinks;
+    formatter_ptr _formatter;
     std::atomic_int _level;
     void _variadic_log(details::line_logger& l);
     template <typename Last>
