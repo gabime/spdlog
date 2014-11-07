@@ -23,7 +23,7 @@ void init()
         keywords::file_name = "logs/boost-sample_%N.log",                              /*< file name pattern >*/
         keywords::rotation_size = 10 * 1024 * 1024,                                   /*< rotate files every 10 MiB... >*/
         keywords::auto_flush = false,
-        keywords::format = "[%TimeStamp%]: %Message%"                                 
+        keywords::format = "[%TimeStamp%]: %Message%"
     );
 
     logging::core::get()->set_filter
@@ -38,24 +38,24 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-	int thread_count = 10;
-	if(argc > 1)
-		thread_count = atoi(argv[1]);
-		
-	int howmany = 1000000;
+    int thread_count = 10;
+    if(argc > 1)
+        thread_count = atoi(argv[1]);
 
-	
+    int howmany = 1000000;
+
+
     init();
     logging::add_common_attributes();
-    
+
 
     using namespace logging::trivial;
-    
+
     src::severity_logger_mt< severity_level > lg;
-    
+
     std::atomic<int > msg_counter {0};
     vector<thread> threads;
-    
+
     for (int t = 0; t < thread_count; ++t)
     {
         threads.push_back(std::thread([&]()
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
             {
                 int counter = ++msg_counter;
                 if (counter > howmany) break;
-              BOOST_LOG_SEV(lg, info) << "Boost logger message #" << counter;
+                BOOST_LOG_SEV(lg, info) << "Boost logger message #" << counter;
             }
         }));
     }
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
     {
         t.join();
     };
-    
-    
+
+
     return 0;
 }
