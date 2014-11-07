@@ -30,19 +30,20 @@
 #include "./line_logger.h"
 
 
-inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list sinks_list) :
+
+template<class It>
+inline spdlog::logger::logger(const std::string& logger_name, const It& begin, const It& end) :
     _name(logger_name),
-    _sinks(sinks_list)
+    _sinks(begin, end),
+    _formatter(std::make_shared<pattern_formatter>("%+"))
 {
     // no support under vs2013 for member initialization for std::atomic
     _level = level::INFO;
 }
 
-template<class It>
-inline spdlog::logger::logger(const std::string& logger_name, const It& begin, const It& end) :
-    _name(logger_name),
-    _sinks(begin, end)
-{}
+inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list sinks_list) :
+    logger(logger_name, sinks_list.begin(), sinks_list.end()) {};
+
 
 
 inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink) :logger(logger_name, { single_sink })
@@ -163,9 +164,6 @@ inline void spdlog::logger::_variadic_log(spdlog::details::line_logger& l, const
 
 inline void spdlog::logger::_log_msg(details::log_msg& msg)
 {
-    //Use default formatter if not set
-    if (!_formatter)
-        _formatter = std::make_shared<pattern_formatter>("%+");
     _formatter->format(msg);
     for (auto &sink : _sinks)
         sink->log(msg);
