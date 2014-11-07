@@ -96,7 +96,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 inline spdlog::sinks::async_sink::async_sink(const q_type::size_type max_queue_size)
     :_sinks(),
-     _active(false),
+     _active(true),
      _q(max_queue_size),
      _back_thread(&async_sink::_thread_loop, this)
 {}
