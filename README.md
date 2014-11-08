@@ -18,7 +18,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * Headers only
 * No dependencies
 * Cross platform - Linux / Windows on 32/64 bits
-* Mult/Single threaded loggers
+* Multi/Single threaded loggers
 * Rotating log files
 * Daily log files
 * Console logging
