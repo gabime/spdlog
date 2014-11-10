@@ -102,6 +102,12 @@ inline spdlog::details::line_logger spdlog::logger::info(const Args&... args)
 }
 
 template <typename... Args>
+inline spdlog::details::line_logger spdlog::logger::notice(const Args&... args)
+{
+    return log(level::NOTICE, args...);
+}
+
+template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::warn(const Args&... args)
 {
     return log(level::WARN, args...);
@@ -117,6 +123,18 @@ template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::critical(const Args&... args)
 {
     return log(level::CRITICAL, args...);
+}
+
+template <typename... Args>
+inline spdlog::details::line_logger spdlog::logger::alert(const Args&... args)
+{
+    return log(level::ALERT, args...);
+}
+
+template <typename... Args>
+inline spdlog::details::line_logger spdlog::logger::emerg(const Args&... args)
+{
+    return log(level::EMERG, args...);
 }
 
 inline const std::string& spdlog::logger::name() const

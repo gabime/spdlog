@@ -75,9 +75,12 @@ public:
     template <typename... Args> details::line_logger trace(const Args&... args);
     template <typename... Args> details::line_logger debug(const Args&... args);
     template <typename... Args> details::line_logger info(const Args&... args);
+    template <typename... Args> details::line_logger notice(const Args&... args);
     template <typename... Args> details::line_logger warn(const Args&... args);
     template <typename... Args> details::line_logger error(const Args&... args);
     template <typename... Args> details::line_logger critical(const Args&... args);
+    template <typename... Args> details::line_logger alert(const Args&... args);
+    template <typename... Args> details::line_logger emerg(const Args&... args);
 
 
 private:
