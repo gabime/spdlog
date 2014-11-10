@@ -126,7 +126,7 @@ public:
         swap(first._dev, second._dev);
     }
 
-    std::string str()
+    std::string str() const
     {
         auto& buffer = _dev.buf();
         const char*data = buffer.data();
