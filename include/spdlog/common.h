@@ -46,17 +46,17 @@ namespace level
 {
 typedef enum
 {
-    TRACE,
-    DEBUG,
-    INFO,
-    NOTICE,
-    WARN,
-    ERR,
-    CRITICAL,
-    ALERT,
-    EMERG,
-    ALWAYS,
-    OFF
+    TRACE    = 0,
+    DEBUG    = 1,
+    INFO     = 2,
+    NOTICE   = 3,
+    WARN     = 4, 
+    ERR      = 5,
+    CRITICAL = 6,
+    ALERT    = 7,
+    EMERG    = 8,
+    ALWAYS   = 9,
+    OFF      = 10
 } level_enum;
 
 static const char* level_names[] { "trace", "debug", "info", "notice", "warning", "error", "critical",
