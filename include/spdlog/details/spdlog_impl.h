@@ -30,6 +30,7 @@
 #include "registry.h"
 #include "../sinks/file_sinks.h"
 #include "../sinks/stdout_sinks.h"
+#include "../sinks/syslog_sink.h"
 
 inline std::shared_ptr<spdlog::logger> spdlog::get(const std::string& name)
 {
@@ -78,6 +79,13 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt(const std::strin
 inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::string& logger_name)
 {
     return create<spdlog::sinks::stderr_sink_st>(logger_name);
+}
+
+
+// Create syslog logger
+inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& logger_name)
+{
+    return create<spdlog::sinks::syslog_sink>(logger_name);
 }
 
 

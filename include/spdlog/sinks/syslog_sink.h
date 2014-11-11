@@ -22,57 +22,71 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-//
-// spdlog usage example
-//
-#include <iostream>
-#include "spdlog/spdlog.h"
+#pragma once
+
+#ifdef __linux__
+
+#include <cassert>
+#include <string>
+#include <mutex>
+#include <atomic>
+#include <syslog.h>
+#include "./sink.h"
+#include "../formatter.h"
+#include "../common.h"
+#include "../details/log_msg.h"
 
 
-int main(int, char* [])
+namespace spdlog
 {
-
-    namespace spd = spdlog;
-
-    try
+  namespace sinks
+  {
+    /**
+     * Sink that write to syslog using the `syscall()` library call.
+     *
+     * Locking is not needed, as `syslog()` itself is thread-safe.
+     */
+    class syslog_sink : public sink
     {
-        std::string filename = "logs/spdlog_example";
-        // Set log level to all loggers to DEBUG and above
-        spd::set_level(spd::level::DEBUG);
+    public:
+      syslog_sink()
+	{
+	  _priorities[static_cast<int>(level::TRACE)] = LOG_DEBUG;
+	  _priorities[static_cast<int>(level::DEBUG)] = LOG_DEBUG;
+	  _priorities[static_cast<int>(level::INFO)] = LOG_INFO;
+	  _priorities[static_cast<int>(level::NOTICE)] = LOG_NOTICE;
+	  _priorities[static_cast<int>(level::WARN)] = LOG_WARNING;
+	  _priorities[static_cast<int>(level::ERR)] = LOG_ERR;
+	  _priorities[static_cast<int>(level::CRITICAL)] = LOG_CRIT;
+	  _priorities[static_cast<int>(level::ALERT)] = LOG_ALERT;
+	  _priorities[static_cast<int>(level::EMERG)] = LOG_EMERG;
 
+	  _priorities[static_cast<int>(level::ALWAYS)] = LOG_INFO;
+	  _priorities[static_cast<int>(level::OFF)] = LOG_INFO;
+	}
+      virtual ~syslog_sink() = default;
+  
+      syslog_sink(const syslog_sink&) = delete;
+      syslog_sink& operator=(const syslog_sink&) = delete;
+  
+      void log(const details::log_msg &msg) override
+      {
+	syslog(syslog_prio_from_level(msg), "%s", msg.formatted.str().c_str());
+      };
 
-        //Create console, multithreaded logger
-        auto console = spd::stdout_logger_mt("console");
-        console->info("Welcome to spdlog!") ;
-        console->info("An info message example", "...", 1, 2, 3.5);
-        console->info() << "Streams are supported too  " << std::setw(5) << std::setfill('0') << 1;
+    protected:
+      /**
+       * Simply maps spdlog's log level to syslog priority level.
+       */
+      int syslog_prio_from_level(const details::log_msg &msg) const
+      {
+	return _priorities[static_cast<int>(msg.level)];
+      }
 
-        //Create a file rotating logger with 5mb size max and 3 rotated files
-        auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
-        file_logger->info("Log file message number", 1);
-
-        for (int i = 0; i < 100; ++i)
-        {
-            file_logger->info(i, "in hex is", "0x") <<  std::hex << std::uppercase << i;
-        }
-
-        spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
-        file_logger->info("This is another message with custom format");
-
-        spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
-
-        SPDLOG_TRACE(file_logger, "This is a trace message (only #ifdef _DEBUG)", 123);
-
-
-	#ifdef __linux__
-	auto syslog_logger = spd::syslog_logger("syslog");
-	syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
-	#endif
-    }
-    catch (const spd::spdlog_ex& ex)
-    {
-        std::cout << "Log failed: " << ex.what() << std::endl;
-    }
-    return 0;
+    private:
+      std::array<int, 11> _priorities;
+    };
+  }
 }
 
+#endif
