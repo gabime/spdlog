@@ -81,13 +81,17 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::strin
     return create<spdlog::sinks::stderr_sink_st>(logger_name);
 }
 
-
+#ifdef __linux__
 // Create syslog logger
 inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& logger_name)
 {
     return create<spdlog::sinks::syslog_sink>(logger_name);
 }
 
+#endif
+
+
+//Create logger with multiple sinks
 
 inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_name, spdlog::sinks_init_list sinks)
 {
