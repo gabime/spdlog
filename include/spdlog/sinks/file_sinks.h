@@ -125,14 +125,22 @@ private:
             std::string target = calc_filename(_base_filename, i, _extension);
 
             if (details::file_helper::file_exists(target))
-                std::remove(target.c_str());
+	      {
+		if (std::remove(target.c_str()) != 0)
+		  {
+		    throw spdlog_ex("rotating_file_sink: failed removing " + target);
+		  }
+	      }
             if (details::file_helper::file_exists(src) && std::rename(src.c_str(), target.c_str()))
             {
                 throw spdlog_ex("rotating_file_sink: failed renaming " + src + " to " + target);
             }
         }
         auto cur_name = _file_helper.filename();
-        std::remove(cur_name.c_str());
+        if (std::remove(cur_name.c_str()) != 0)
+	  {
+	    throw spdlog_ex("rotating_file_sink: failed removing " + cur_name);
+	  }
         _file_helper.open(cur_name);
     }
     std::string _base_filename;
