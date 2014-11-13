@@ -111,8 +111,8 @@ private:
 
     // Rotate files:
     // log.txt -> log.1.txt
-    // log.1.txt -> log2.txt
-    // log.2.txt -> log3.txt
+    // log.1.txt -> log.2.txt
+    // log.2.txt -> log.3.txt
     // log.3.txt -> delete
 
 
@@ -125,12 +125,12 @@ private:
             std::string target = calc_filename(_base_filename, i, _extension);
 
             if (details::file_helper::file_exists(target))
-	      {
-		if (std::remove(target.c_str()) != 0)
-		  {
-		    throw spdlog_ex("rotating_file_sink: failed removing " + target);
-		  }
-	      }
+            {
+                if (std::remove(target.c_str()) != 0)
+                {
+                    throw spdlog_ex("rotating_file_sink: failed removing " + target);
+                }
+            }
             if (details::file_helper::file_exists(src) && std::rename(src.c_str(), target.c_str()))
             {
                 throw spdlog_ex("rotating_file_sink: failed renaming " + src + " to " + target);
@@ -138,9 +138,9 @@ private:
         }
         auto cur_name = _file_helper.filename();
         if (std::remove(cur_name.c_str()) != 0)
-	  {
-	    throw spdlog_ex("rotating_file_sink: failed removing " + cur_name);
-	  }
+        {
+            throw spdlog_ex("rotating_file_sink: failed removing " + cur_name);
+        }
         _file_helper.open(cur_name);
     }
     std::string _base_filename;
