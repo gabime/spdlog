@@ -72,13 +72,13 @@ class rotating_file_sink : public base_sink<Mutex>
 public:
     rotating_file_sink(const std::string &base_filename, const std::string &extension,
                        std::size_t max_size, std::size_t max_files,
-                       std::size_t flush_inverval=0):
+                       std::size_t flush_interval=0):
         _base_filename(base_filename),
         _extension(extension),
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
-        _file_helper(flush_inverval)
+        _file_helper(flush_interval)
     {
         _file_helper.open(calc_filename(_base_filename, 0, _extension));
     }
@@ -119,7 +119,7 @@ private:
     void _rotate()
     {
         _file_helper.close();
-        for (auto i = _max_files; i > 0; --i)
+        for (auto i = _max_files - 1; i > 0; --i)
         {
             std::string src = calc_filename(_base_filename, i - 1, _extension);
             std::string target = calc_filename(_base_filename, i, _extension);
@@ -137,9 +137,9 @@ private:
             }
         }
         auto cur_name = _file_helper.filename();
-        if (std::remove(cur_name.c_str()) != 0)
+        if (details::file_helper::file_exists(cur_name))
         {
-            throw spdlog_ex("rotating_file_sink: failed removing " + cur_name);
+            throw spdlog_ex("rotating_file_sink: " + cur_name + " still exists after rotating");
         }
         _file_helper.open(cur_name);
     }
