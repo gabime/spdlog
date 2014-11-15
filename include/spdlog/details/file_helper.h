@@ -80,6 +80,14 @@ public:
         throw spdlog_ex("Failed opening file " + fname + " for writing");
     }
 
+    void reopen()
+    {
+       if(_filename.empty())
+          throw spdlog_ex("Failed re opening file - was not opened before");
+       open(_filename);	
+       
+    }
+
     void close()
     {
         if (_fd)

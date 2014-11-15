@@ -136,12 +136,7 @@ private:
                 throw spdlog_ex("rotating_file_sink: failed renaming " + src + " to " + target);
             }
         }
-        auto cur_name = _file_helper.filename();
-        if (std::remove(cur_name.c_str()) != 0)
-	  {
-	    throw spdlog_ex("rotating_file_sink: failed removing " + cur_name);
-	  }
-        _file_helper.open(cur_name);
+        _file_helper.reopen();
     }
     std::string _base_filename;
     std::string _extension;
