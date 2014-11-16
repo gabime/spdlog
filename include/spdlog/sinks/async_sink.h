@@ -53,7 +53,7 @@ namespace sinks
 class async_sink : public base_sink < details::null_mutex >
 {
 public:
-    using q_type = details::blocking_queue < details::log_msg > ;
+    using q_type = details::blocking_queue < std::unique_ptr<details::log_msg> > ;
 
     explicit async_sink(const q_type::size_type max_queue_size);
 
@@ -64,15 +64,19 @@ public:
     q_type& q();
     //Wait to remaining items (if any) in the queue to be written and shutdown
     void shutdown(const std::chrono::milliseconds& timeout);
+    void set_formatter(formatter_ptr formatter) { _formatter = formatter; }
+
 
 
 
 protected:
     void _sink_it(const details::log_msg& msg) override;
-    void _thread_loop();
+	
+    
 
 private:
-    std::vector<std::shared_ptr<sink>> _sinks;
+    void _thread_loop();
+    std::vector<std::shared_ptr<sink>> _sinks; 
     std::atomic<bool> _active;
     q_type _q;
     std::thread _back_thread;
@@ -80,7 +84,8 @@ private:
     //Last exception thrown from the back thread
     std::shared_ptr<spdlog_ex> _last_backthread_ex;
 
-
+    //formatter
+    formatter_ptr _formatter;
     //will throw last back thread exception or if backthread no active
     void _push_sentry();
 
@@ -108,8 +113,11 @@ inline spdlog::sinks::async_sink::~async_sink()
 
 inline void spdlog::sinks::async_sink::_sink_it(const details::log_msg& msg)
 {
-    _push_sentry();
-    _q.push(msg);
+    using namespace spdlog::details;
+    _push_sentry();      
+    //_q.push(std::move(msg)); 
+    auto msg_p = std::unique_ptr<log_msg>(new log_msg(msg));
+    _q.push(std::move(msg_p));
 }
 
 
@@ -123,12 +131,13 @@ inline void spdlog::sinks::async_sink::_thread_loop()
         if (_q.pop(msg, pop_timeout))
         {
             if (!_active)
-                return;
+                return;	              
+            _formatter->format(*msg);
             for (auto &s : _sinks)
             {
                 try
                 {
-                    s->log(msg);
+                    s->log(*msg);
                 }
 
                 catch (const std::exception& ex)
