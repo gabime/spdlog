@@ -24,9 +24,11 @@ Just copy the files to your build tree and use a C++11 compiler
 * Console logging
 * Linux syslog 
 * Optional async logging 
+* Custom formatting 
+* Runtime logging levels
 * Extend with custom log targets easily (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface)
-* Logging levels
-* Custom formatting with user defined patterns
+
+
 
 ## Benchmarks
 
