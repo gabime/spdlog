@@ -17,6 +17,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * Very fast - performance is the primary goal (see becnhmarks below)
 * Headers only
 * No dependencies
+* Simple to use, simple to understand, simple to hack or extend
 * Cross platform - Linux / Windows on 32/64 bits
 * Multi/Single threaded loggers
 * Rotating log files
@@ -24,7 +25,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * Console logging
 * Linux syslog 
 * Optional async logging 
-* Add custom log targets easily (just implement the single function in the [sink](include/spdlog/sinks/sink.h) interface)
+* Add custom log targets easily (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface)
 * Logging levels
 * Custom formatting with user defined patterns
 
