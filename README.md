@@ -22,7 +22,9 @@ Just copy the files to your build tree and use a C++11 compiler
 * Rotating log files
 * Daily log files
 * Console logging
+* Linux syslog 
 * Optional async logging 
+* Add your own custom logging targets easily (just implement the single function in the sink interface)
 * Logging levels
 * Custom formatting with user defined patterns
 
