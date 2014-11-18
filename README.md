@@ -18,6 +18,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * Headers only.
 * No dependencies.
 * Cross platform - Linux / Windows on 32/64 bits.
+* [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
 * Multi/Single threaded loggers.
 * Various log targets:
     * Rotating log files.
@@ -26,7 +27,6 @@ Just copy the files to your build tree and use a C++11 compiler
     * Linux syslog.
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Optional async logging .
-* [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
 * Log levels.
 
 
