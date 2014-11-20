@@ -18,7 +18,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * Headers only.
 * No dependencies.
 * Cross platform - Linux / Windows on 32/64 bits.
-* Variadic-template/stream call styles: ```logger.info("variadic", x, y, z) << " Or stream" << x << y << z;```
+* Variadic-template/stream call styles: ```logger.info("variadic", x, y) << " Or stream" << x << y;```
 * [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
 * Multi/Single threaded loggers.
 * Various log targets:
