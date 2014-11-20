@@ -65,9 +65,11 @@ namespace spdlog
       syslog_sink(const syslog_sink&) = delete;
       syslog_sink& operator=(const syslog_sink&) = delete;
   
-      void log(const details::log_msg &msg) override
+      void sink_it(const char* data, size_t size) override
       {
-	syslog(syslog_prio_from_level(msg), "%s", msg.formatted.str().c_str());
+	std::string s(data, size);
+	//syslog(syslog_prio_from_level(msg), "%s", s.c_str());
+	syslog(LOG_INFO, "%s", s.c_str());
       };
 
     protected:
