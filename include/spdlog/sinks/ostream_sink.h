@@ -45,9 +45,10 @@ public:
     virtual ~ostream_sink() = default;
 
 protected:
-    void _sink_it(const char* data, size_t size) override
+    virtual void _sink_it(const details::log_msg& msg) override
     {
-        _ostream.write(data, size);
+        auto& buf = msg.formatted.buf();
+        _ostream.write(buf.data(), buf.size());
     }
     std::ostream& _ostream;
 };

@@ -52,9 +52,9 @@ public:
     }
 
 protected:
-    void _sink_it(const char* data, size_t size) override
+    void _sink_it(const details::log_msg& msg) override
     {
-        _file_helper.write(data, size);
+        _file_helper.write(msg);
     }
 private:
     details::file_helper _file_helper;
@@ -85,15 +85,15 @@ public:
 
 
 protected:
-    void _sink_it(const char* data, size_t size) override
+    void _sink_it(const details::log_msg& msg) override
     {
-        _current_size += size;
+        _current_size += msg.formatted.size();
         if (_current_size  > _max_size)
         {
             _rotate();
-            _current_size = size;
+            _current_size = msg.formatted.size();
         }
-        _file_helper.write(data, size);
+        _file_helper.write(msg);
     }
 
 
@@ -125,12 +125,12 @@ private:
             std::string target = calc_filename(_base_filename, i, _extension);
 
             if (details::file_helper::file_exists(target))
-            {
-                if (std::remove(target.c_str()) != 0)
-                {
-                    throw spdlog_ex("rotating_file_sink: failed removing " + target);
-                }
-            }
+	      {
+		if (std::remove(target.c_str()) != 0)
+		  {
+		    throw spdlog_ex("rotating_file_sink: failed removing " + target);
+		  }
+	      }
             if (details::file_helper::file_exists(src) && std::rename(src.c_str(), target.c_str()))
             {
                 throw spdlog_ex("rotating_file_sink: failed renaming " + src + " to " + target);
@@ -169,7 +169,7 @@ public:
 
 
 protected:
-    void _sink_it(const char* data, size_t size) override
+    void _sink_it(const details::log_msg& msg) override
     {
         if (std::chrono::system_clock::now() >= _midnight_tp)
         {
@@ -177,7 +177,7 @@ protected:
             _file_helper.open(calc_filename(_base_filename, _extension));
             _midnight_tp = _calc_midnight_tp();
         }
-        _file_helper.write(data, size);
+        _file_helper.write(msg);
     }
 
 private:

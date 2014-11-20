@@ -14,24 +14,17 @@ Just copy the files to your build tree and use a C++11 compiler
 * mingw with g++ 4.9.x
 
 ##Features
-* Very fast - performance is the primary goal (see becnhmarks below).
-* Headers only.
-* No dependencies.
-* Cross platform - Linux / Windows on 32/64 bits.
-* Variadic-template/stream call styles: ```logger.info("variadic", x, y) << "or stream" << x << y;```
-* [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
-* Multi/Single threaded loggers.
-* Various log targets:
-    * Rotating log files.
-    * Daily log files.
-    * Console logging.
-    * Linux syslog.
-    * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
-* Optional async logging .
-* Log levels.
-
-
-
+* Very fast - performance is the primary goal (see becnhmarks below)
+* Headers only
+* No dependencies
+* Cross platform - Linux / Windows on 32/64 bits
+* Multi/Single threaded loggers
+* Rotating log files
+* Daily log files
+* Console logging
+* Optional async logging 
+* Logging levels
+* Custom formatting with user defined patterns
 
 ## Benchmarks
 

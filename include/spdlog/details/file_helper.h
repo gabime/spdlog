@@ -82,10 +82,10 @@ public:
 
     void reopen()
     {
-        if(_filename.empty())
-            throw spdlog_ex("Failed re opening file - was not opened before");
-        open(_filename);
-
+       if(_filename.empty())
+          throw spdlog_ex("Failed re opening file - was not opened before");
+       open(_filename);	
+       
     }
 
     void close()
@@ -97,11 +97,11 @@ public:
         }
     }
 
-    void write(const char* data, size_t size)
+    void write(const log_msg& msg)
     {
-
-
-        if(std::fwrite(data, sizeof(char), size, _fd) != size)
+        auto& buf = msg.formatted.buf();
+        size_t size = buf.size();
+        if(std::fwrite(buf.data(), sizeof(char), size, _fd) != size)
             throw spdlog_ex("Failed writing to file " + _filename);
 
         if(--_flush_countdown == 0)

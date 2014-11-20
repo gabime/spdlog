@@ -184,8 +184,7 @@ inline void spdlog::logger::_variadic_log(spdlog::details::line_logger& l, const
 inline void spdlog::logger::_log_msg(details::log_msg& msg)
 {
     _formatter->format(msg);
-    auto buf = msg.formatted.buf();
     for (auto &sink : _sinks)
-        sink->sink_it(buf.data(), buf.size());
+        sink->log(msg);
 }
 

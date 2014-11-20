@@ -53,8 +53,7 @@ namespace sinks
 class async_sink : public base_sink < details::null_mutex >
 {
 public:
-    using data_type = std::pair < const char*, size_t > ;
-    using q_type = details::blocking_queue < data_type > ;
+    using q_type = details::blocking_queue < details::log_msg > ;
 
     explicit async_sink(const q_type::size_type max_queue_size);
 
@@ -69,7 +68,7 @@ public:
 
 
 protected:
-    void _sink_it(const char*, size_t) override;
+    void _sink_it(const details::log_msg& msg) override;
     void _thread_loop();
 
 private:
@@ -107,12 +106,10 @@ inline spdlog::sinks::async_sink::~async_sink()
     _join();
 }
 
-inline void spdlog::sinks::async_sink::_sink_it(const char* data, size_t size)
+inline void spdlog::sinks::async_sink::_sink_it(const details::log_msg& msg)
 {
     _push_sentry();
-    auto data_copy = new char[size];
-    std::memcpy(data_copy, data, size);
-    _q.push(data_type(data_copy, size));
+    _q.push(msg);
 }
 
 
@@ -123,34 +120,30 @@ inline void spdlog::sinks::async_sink::_thread_loop()
     while (_active)
     {
         q_type::item_type msg;
-        if (!_q.pop(msg, pop_timeout))
-            continue;
-
-
-        if (!_active)
-            return;
-
-        for (auto &s : _sinks)
+        if (_q.pop(msg, pop_timeout))
         {
-            try
+            if (!_active)
+                return;
+            for (auto &s : _sinks)
             {
-                s->sink_it(msg.first, msg.second);
-            }
+                try
+                {
+                    s->log(msg);
+                }
 
-            catch (const std::exception& ex)
-            {
-                _last_backthread_ex = std::make_shared<spdlog_ex>(ex.what());
-            }
-            catch (...)
-            {
-                _last_backthread_ex = std::make_shared<spdlog_ex>("Unknown exception");
-            }
+                catch (const std::exception& ex)
+                {
+                    _last_backthread_ex = std::make_shared<spdlog_ex>(ex.what());
+                }
+                catch (...)
+                {
+                    _last_backthread_ex = std::make_shared<spdlog_ex>("Unknown exception");
+                }
 
+            }
         }
-        delete[] msg.first;
     }
 }
-
 
 inline void spdlog::sinks::async_sink::add_sink(spdlog::sink_ptr s)
 {

@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "../details/log_msg.h"
 
 namespace spdlog
 {
@@ -33,7 +34,7 @@ class sink
 {
 public:
     virtual ~sink() {}
-    virtual void sink_it(const char* data, size_t size) = 0;
+    virtual void log(const details::log_msg& msg) = 0;
 };
 }
 }
