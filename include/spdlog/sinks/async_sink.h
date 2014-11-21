@@ -53,7 +53,7 @@ namespace sinks
 class async_sink : public base_sink < details::null_mutex >
 {
 public:
-    using q_type = details::blocking_queue < details::log_msg > ;
+    using q_type = details::blocking_queue < std::unique_ptr<details::log_msg> > ;
 
     explicit async_sink(const q_type::size_type max_queue_size);
 
@@ -109,7 +109,7 @@ inline spdlog::sinks::async_sink::~async_sink()
 inline void spdlog::sinks::async_sink::_sink_it(const details::log_msg& msg)
 {
     _push_sentry();
-    _q.push(msg);
+    _q.push(std::unique_ptr<details::log_msg>(new details::log_msg(msg)));
 }
 
 
@@ -128,7 +128,7 @@ inline void spdlog::sinks::async_sink::_thread_loop()
             {
                 try
                 {
-                    s->log(msg);
+                    s->log(*msg);
                 }
 
                 catch (const std::exception& ex)
