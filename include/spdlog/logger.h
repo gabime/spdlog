@@ -96,9 +96,6 @@ private:
     void _variadic_log(details::line_logger&l, const First& first, const Rest&... rest);
     void _log_msg(details::log_msg& msg);
 };
-
-
-
 }
 
 #include "./details/logger_impl.h"

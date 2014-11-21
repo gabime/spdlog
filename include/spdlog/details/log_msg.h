@@ -50,28 +50,16 @@ struct log_msg
         raw(other.raw),
         formatted(other.formatted) {}
 
-    log_msg(log_msg&& other)
-    {
-        swap(*this, other);
-    }
+    log_msg(log_msg&& other) :
+        logger_name(std::move(other.logger_name)),
+        level(other.level),
+        time(std::move(other.time)),
+        tm_time(other.tm_time),
+        raw(std::move(other.raw)),
+        formatted(std::move(other.formatted)) {}
 
-    void swap(log_msg& l, log_msg& r)
-    {
-        using std::swap;
-        swap(l.logger_name, r.logger_name);
-        swap(l.level, r.level);
-        swap(l.time, r.time);
-        swap(l.tm_time, r.tm_time);
-        swap(l.raw, r.raw);
-        swap(l.formatted, r.formatted);
-    }
+    log_msg& operator=(log_msg&& other) = delete;
 
-
-    log_msg& operator=(log_msg other)
-    {
-        swap(*this, other);
-        return *this;
-    }
 
 
     void clear()
@@ -86,8 +74,6 @@ struct log_msg
     std::tm tm_time;
     fast_oss raw;
     fast_oss formatted;
-
-
 };
 }
 }

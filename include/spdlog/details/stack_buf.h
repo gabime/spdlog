@@ -42,10 +42,10 @@ public:
     static const unsigned short stack_size = STACK_SIZE;
     stack_buf() :_v(), _stack_size(0) {}
     ~stack_buf() = default;
-    stack_buf(const stack_buf& other):stack_buf(other, delegate_copy_move {})
+    stack_buf(const stack_buf& other) :stack_buf(other, delegate_copy_or_move {})
     {}
 
-    stack_buf(stack_buf&& other):stack_buf(other, delegate_copy_move {})
+    stack_buf(stack_buf&& other) :stack_buf(other, delegate_copy_or_move {})
     {
         other.clear();
     }
@@ -109,9 +109,9 @@ public:
     }
 
 private:
-    struct delegate_copy_move {};
+    struct delegate_copy_or_move {};
     template<class T1>
-    stack_buf(T1&& other, delegate_copy_move)
+    stack_buf(T1&& other, delegate_copy_or_move)
     {
         _stack_size = other._stack_size;
         if (other.vector_used())
