@@ -35,7 +35,7 @@ Just copy the files to your build tree and use a C++11 compiler
 
 ## Benchmarks
 
-Below are some [benchmarks](benchmarks) under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz:
+Below are some [benchmarks](bench) under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz:
 
 |library|log lines|single thread|10 threads
 |-------|:-------:|:-----:|------:|
