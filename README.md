@@ -35,9 +35,7 @@ Just copy the files to your build tree and use a C++11 compiler
 
 ## Benchmarks
 
-Here are some [benchmarks](bench) comparing spdlog vs other libs <sup>(Ubuntu 64, Intel i7-4770 CPU @ 3.40GHz)</sup>.
-
-The bench writes 1,000,000 log lines to a rotating log file (using shared synchronous logger object):
+Below are some [benchmarks](benchmarks) comparisons under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz:
 
 #### Single thread bench
 |library|log lines|threads|elapsed|
@@ -48,7 +46,7 @@ The bench writes 1,000,000 log lines to a rotating log file (using shared synchr
 
 
 
-#### 10 threads bench
+#### 10 threads bench <sup>sharing same logger object between threads</sup>
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
 |*boost log v1.56*|1,000,000|10|**6.592s**|
