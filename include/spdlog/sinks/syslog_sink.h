@@ -35,54 +35,54 @@
 
 namespace spdlog
 {
-  namespace sinks
-  {
-    /**
-     * Sink that write to syslog using the `syscall()` library call.
-     *
-     * Locking is not needed, as `syslog()` itself is thread-safe.
-     */
-    class syslog_sink : public sink
+namespace sinks
+{
+/**
+ * Sink that write to syslog using the `syscall()` library call.
+ *
+ * Locking is not needed, as `syslog()` itself is thread-safe.
+ */
+class syslog_sink : public sink
+{
+public:
+    syslog_sink()
     {
-    public:
-      syslog_sink()
-	{
-	  _priorities[static_cast<int>(level::TRACE)] = LOG_DEBUG;
-	  _priorities[static_cast<int>(level::DEBUG)] = LOG_DEBUG;
-	  _priorities[static_cast<int>(level::INFO)] = LOG_INFO;
-	  _priorities[static_cast<int>(level::NOTICE)] = LOG_NOTICE;
-	  _priorities[static_cast<int>(level::WARN)] = LOG_WARNING;
-	  _priorities[static_cast<int>(level::ERR)] = LOG_ERR;
-	  _priorities[static_cast<int>(level::CRITICAL)] = LOG_CRIT;
-	  _priorities[static_cast<int>(level::ALERT)] = LOG_ALERT;
-	  _priorities[static_cast<int>(level::EMERG)] = LOG_EMERG;
+        _priorities[static_cast<int>(level::TRACE)] = LOG_DEBUG;
+        _priorities[static_cast<int>(level::DEBUG)] = LOG_DEBUG;
+        _priorities[static_cast<int>(level::INFO)] = LOG_INFO;
+        _priorities[static_cast<int>(level::NOTICE)] = LOG_NOTICE;
+        _priorities[static_cast<int>(level::WARN)] = LOG_WARNING;
+        _priorities[static_cast<int>(level::ERR)] = LOG_ERR;
+        _priorities[static_cast<int>(level::CRITICAL)] = LOG_CRIT;
+        _priorities[static_cast<int>(level::ALERT)] = LOG_ALERT;
+        _priorities[static_cast<int>(level::EMERG)] = LOG_EMERG;
 
-	  _priorities[static_cast<int>(level::ALWAYS)] = LOG_INFO;
-	  _priorities[static_cast<int>(level::OFF)] = LOG_INFO;
-	}
-      virtual ~syslog_sink() = default;
-  
-      syslog_sink(const syslog_sink&) = delete;
-      syslog_sink& operator=(const syslog_sink&) = delete;
-  
-      void log(const details::log_msg &msg) override
-      {
-	syslog(syslog_prio_from_level(msg), "%s", msg.formatted.str().c_str());
-      };
+        _priorities[static_cast<int>(level::ALWAYS)] = LOG_INFO;
+        _priorities[static_cast<int>(level::OFF)] = LOG_INFO;
+    }
+    virtual ~syslog_sink() = default;
 
-    protected:
-      /**
-       * Simply maps spdlog's log level to syslog priority level.
-       */
-      int syslog_prio_from_level(const details::log_msg &msg) const
-      {
-	return _priorities[static_cast<int>(msg.level)];
-      }
+    syslog_sink(const syslog_sink&) = delete;
+    syslog_sink& operator=(const syslog_sink&) = delete;
 
-    private:
-      std::array<int, 11> _priorities;
+    void log(const details::log_msg &msg) override
+    {
+        syslog(syslog_prio_from_level(msg), "%s", msg.formatted.str().c_str());
     };
-  }
+
+protected:
+    /**
+     * Simply maps spdlog's log level to syslog priority level.
+     */
+    int syslog_prio_from_level(const details::log_msg &msg) const
+    {
+        return _priorities[static_cast<int>(msg.level)];
+    }
+
+private:
+    std::array<int, 11> _priorities;
+};
+}
 }
 
 #endif

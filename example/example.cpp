@@ -64,10 +64,10 @@ int main(int, char* [])
         SPDLOG_TRACE(file_logger, "This is a trace message (only #ifdef _DEBUG)", 123);
 
 
-	#ifdef __linux__
-	auto syslog_logger = spd::syslog_logger("syslog");
-	syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
-	#endif
+#ifdef __linux__
+        auto syslog_logger = spd::syslog_logger("syslog");
+        syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
+#endif
     }
     catch (const spd::spdlog_ex& ex)
     {

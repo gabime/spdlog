@@ -82,10 +82,10 @@ public:
 
     void reopen()
     {
-       if(_filename.empty())
-          throw spdlog_ex("Failed re opening file - was not opened before");
-       open(_filename);	
-       
+        if(_filename.empty())
+            throw spdlog_ex("Failed re opening file - was not opened before");
+        open(_filename);
+
     }
 
     void close()
