@@ -39,7 +39,7 @@ Here are some [benchmarks](bench) comparing spdlog vs other libs on Ubuntu 64 bi
 
 The bench writes 1,000,000 log lines to a rotating log file (using shared synchronous logger object):
 
-#### spdlog vs. boost - single thread
+#### Single thread bench
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
 |*boost log v1.56*|1,000,000|1|**4.207s**|
@@ -48,7 +48,7 @@ The bench writes 1,000,000 log lines to a rotating log file (using shared synchr
 
 
 
-#### spdlog vs. boost - 10 threads
+#### 10 threads bench
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
 |*boost log v1.56*|1,000,000|10|**6.592s**|
