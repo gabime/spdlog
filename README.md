@@ -52,7 +52,7 @@ The bench writes 1,000,000 log lines to a rotating log file (using shared synchr
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
 |*boost log v1.56*|1,000,000|10|**6.592s**|
-|*glog v0.3.3*|1,000,000|1|**1.678s**|
+|*glog v0.3.3*|1,000,000|10|**1.678s**|
 |*spdlog*|1,000,000|10|**0.961s**|
 
 
