@@ -29,7 +29,7 @@ glog-bench-mt: glog-bench-mt.cpp
 
 
 clean:
-	rm -f *.o logs/*.txt spdlog-bench spdlog-bench-mt boost-bench boost-bench-mt glog-bench
+	rm -f *.o logs/* spdlog-bench spdlog-bench-mt boost-bench boost-bench-mt glog-bench
 
 
 rebuild: clean all
