@@ -35,26 +35,13 @@ Just copy the files to your build tree and use a C++11 compiler
 
 ## Benchmarks
 
-Here are some [benchmarks](bench) comparing spdlog vs boost log(1.56.0) on Ubuntu 64 bits, Intel i7-4770 CPU @ 3.40GHz.
+Below are some [benchmarks](benchmarks) under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz:
 
-The bench writes 1,000,000 log lines to a rotating log file (using shared synchronous logger object):
-
-#### spdlog vs. boost - single thread
-|library|log lines|threads|elapsed|
+|library|log lines|single thread|10 threads
 |-------|:-------:|:-----:|------:|
-|*boost*|1,000,000|1|**4.207s**|
-|*spdlog*|1,000,000|1|**0.975s**|
-
-
-
-#### spdlog vs. boost - 10 threads
-|library|log lines|threads|elapsed|
-|-------|:-------:|:-----:|------:|
-|*boost*|1,000,000|10|**6.592s**|
-|*spdlog*|1,000,000|10|**0.961s**|
-
-
-
+|*boost log v1.56*|1,000,000|**4.207s**|**6.592s**|
+|*glog v0.3.3*|1,000,000|**1.077s**|**1.678s**|
+|*spdlog*|1,000,000|**0.975s**|**0.961s**|
 
 ## Usage Example
 ```c++
