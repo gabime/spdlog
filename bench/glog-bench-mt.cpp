@@ -15,10 +15,10 @@ int main(int argc, char* argv[])
         thread_count = atoi(argv[1]);
 
     int howmany = 1000000;
- 
-	FLAGS_logtostderr = 0;
-	FLAGS_log_dir = "logs";
-	google::InitGoogleLogging(argv[0]);
+
+    FLAGS_logtostderr = 0;
+    FLAGS_log_dir = "logs";
+    google::InitGoogleLogging(argv[0]);
 
     std::atomic<int > msg_counter {0};
     vector<thread> threads;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
             {
                 int counter = ++msg_counter;
                 if (counter > howmany) break;
-				LOG(INFO) << "glog message # " << counter;
+                LOG(INFO) << "glog message # " << counter;
             }
         }));
     }
