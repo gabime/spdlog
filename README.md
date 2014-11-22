@@ -46,7 +46,8 @@ Below are some [benchmarks](benchmarks) comparisons under Ubuntu 64 bit, Intel i
 
 
 
-#### 10 threads bench <sup>sharing same logger object between threads</sup>
+
+#### 10 threads bench
 |library|log lines|threads|elapsed|
 |-------|:-------:|:-----:|------:|
 |*boost log v1.56*|1,000,000|10|**6.592s**|
