@@ -130,7 +130,7 @@ inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
 }
 
 //Return utc offset in minutes or -1 on failure
-inline int utc_minutes_offset(const std::tm& tm = localtime())
+inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 {
 
 #ifdef _WIN32

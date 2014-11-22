@@ -3,7 +3,7 @@ CXXFLAGS	= -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -W
 CXX_RELEASE_FLAGS = -O3 -flto
 
 
-all:	spdlog-bench spdlog-bench-mt boost-bench boost-bench-mt
+all:	spdlog-bench spdlog-bench-mt boost-bench boost-bench-mt glog-bench glog-bench-mt
 
 spdlog-bench: spdlog-bench.cpp
 	$(CXX) spdlog-bench.cpp -o spdlog-bench $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
@@ -20,8 +20,16 @@ boost-bench-mt: boost-bench-mt.cpp
 	$(CXX) boost-bench-mt.cpp -o boost-bench-mt $(CXXFLAGS) $(BOOST_FLAGS) $(CXX_RELEASE_FLAGS)	
 
 
+GLOG_FLAGS = -lglog
+glog-bench: glog-bench.cpp
+	$(CXX) glog-bench.cpp -o glog-bench $(CXXFLAGS) $(GLOG_FLAGS) $(CXX_RELEASE_FLAGS)
+	
+glog-bench-mt: glog-bench-mt.cpp
+	$(CXX) glog-bench-mt.cpp -o glog-bench-mt $(CXXFLAGS) $(GLOG_FLAGS) $(CXX_RELEASE_FLAGS)	
+
+
 clean:
-	rm -f *.o logs/*.txt spdlog-bench spdlog-bench-mt boost-bench boost-bench-mt
+	rm -f *.o logs/*.txt spdlog-bench spdlog-bench-mt boost-bench boost-bench-mt glog-bench
 
 
 rebuild: clean all

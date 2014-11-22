@@ -4,19 +4,26 @@ echo
 echo "boost-bench (single thread).."
 time ./boost-bench
 echo ==================================
-sleep 1
+sleep 3
+echo "glog-bench (single thread).."
+time ./glog-bench
+echo ==================================
+sleep 3
 echo "spdlog-bench (single thread)"
 time ./spdlog-bench
 echo ==================================
-sleep 1
+sleep 3
 echo "boost-bench-mt (10 threads, single logger)"..
 time ./boost-bench-mt
 echo ==================================
-sleep 1
+sleep 3
+echo "glog-bench-mt (10 threads, single logger)"..
+time ./glog-bench-mt
+echo ==================================
+sleep 3
 echo "spdlog-bench-mt (10 threads, single logger)"..
 time ./spdlog-bench-mt
 echo ==================================
-sleep 1
 echo
 
 
