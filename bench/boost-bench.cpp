@@ -39,7 +39,7 @@ int main(int argc, char* [])
     using namespace logging::trivial;
     src::severity_logger_mt< severity_level > lg;
     for(int i  = 0 ; i < howmany; ++i)
-        BOOST_LOG_SEV(lg, info) << "Boost logger message #" << i;
+        BOOST_LOG_SEV(lg, info) << "boost message #" << i << ": This is some text for your pleasure";
 
     return 0;
 }

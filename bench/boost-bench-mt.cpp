@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
             {
                 int counter = ++msg_counter;
                 if (counter > howmany) break;
-                BOOST_LOG_SEV(lg, info) << "Boost logger message #" << counter;
+                BOOST_LOG_SEV(lg, info) << "boost message #" << counter << ": This is some text for your pleasure";
             }
         }));
     }

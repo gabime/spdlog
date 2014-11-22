@@ -11,7 +11,7 @@ int main(int, char* [])
 
     logger->set_pattern("[%Y-%b-%d %T.%e]: %v");
     for(int i  = 0 ; i < howmany; ++i)
-        logger->info() << "spdlogger message #" << i;
+        logger->info() << "spdlog message #" << i << ": This is some text for your pleasure";
 
     return 0;
 }

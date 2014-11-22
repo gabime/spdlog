@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
             {
                 int counter = ++msg_counter;
                 if (counter > howmany) break;
-                LOG(INFO) << "glog message # " << counter;
+                LOG(INFO) << "glog message #" << counter << ": This is some text for your pleasure";
             }
         }));
     }

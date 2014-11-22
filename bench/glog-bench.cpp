@@ -11,7 +11,7 @@ int main(int, char* argv[])
     FLAGS_log_dir = "logs";
     google::InitGoogleLogging(argv[0]);
     for(int i  = 0 ; i < howmany; ++i)
-        LOG(INFO) << "glog message # " << i;
+		LOG(INFO) << "glog message # " << i << ": This is some text for your pleasure";
 
     return 0;
 }

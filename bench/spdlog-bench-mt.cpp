@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
             {
                 int counter = ++msg_counter;
                 if (counter > howmany) break;
-                logger->info() << "spdlog logger message #" << counter;
+                logger->info() << "spdlog message #" << counter << ": This is some text for your pleasure";
             }
         }));
     }
