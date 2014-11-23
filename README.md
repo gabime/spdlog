@@ -39,8 +39,8 @@ Below are some [benchmarks](bench) comparing the time needed to log 1,000,000 li
 
 |threads|boost log|glog|spdlog|
 |-------|:-------:|:-----:|------:|
-|1|**4.223s**|**1.084s**|**0.998s**|
-|10|**14.141s**|**3.204s**|**0.987s**|
+|1|4.223s|1.084s|0.998s|
+|10|14.141s|3.204s|0.987s|
 
 
 ## Usage Example
