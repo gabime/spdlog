@@ -73,7 +73,8 @@ public:
             std::unique_lock<std::mutex> ul(_mutex);
             if (is_full())
             {
-                if (!_item_popped_cond.wait_until(ul, clock::now() + timeout, [this]() {
+                if (!_item_popped_cond.wait_until(ul, clock::now() + timeout, [this]()
+            {
                 return !this->is_full();
                 }))
                 return false;
