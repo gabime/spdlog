@@ -31,8 +31,8 @@
 #include <thread>
 #include <atomic>
 #include "spdlog/spdlog.h"
+#include "spdlog/async_logger.h"
 #include "spdlog/sinks/file_sinks.h"
-#include "spdlog/sinks/async_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "utils.h"
 
@@ -50,8 +50,8 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int argc, char* argv[])
 {
 
-    int howmany = 250000;
-    int threads = 4;
+    int howmany = 1000000;
+    int threads = 10;
     int flush_interval = 1000;
     int file_size = 30 * 1024 * 1024;
     int rotating_files = 5;
@@ -70,11 +70,8 @@ int main(int argc, char* argv[])
 
         auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st", file_size, rotating_files, flush_interval);
         bench(howmany, rotating_st);
-
-
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st", flush_interval);
         bench(howmany, daily_st);
-
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
         cout << "\n*******************************************************************************\n";
@@ -87,8 +84,25 @@ int main(int argc, char* argv[])
 
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt", flush_interval);
         bench_mt(howmany, daily_mt, threads);
+        bench(howmany, spdlog::create<null_sink_st>("null_mt"));
 
-        bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
+
+        cout << "\n*******************************************************************************\n";
+        cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations, flush every " << flush_interval << " lines" << endl;
+        cout << "*******************************************************************************\n";
+
+        spdlog::set_async_mode(howmany);
+        auto rotating_st_async = spdlog::rotating_logger_st("rotating_st_Async", "logs/rotating_st_async", file_size, rotating_files, flush_interval);
+        bench(howmany, rotating_st_async);
+        auto daily_st_async = spdlog::daily_logger_st("daily_st_async", "logs/daily_st_async", flush_interval);
+        bench(howmany, daily_st_async);
+        bench(howmany, spdlog::create<null_sink_st>("null_st_async"));
+
+
+        spdlog::stop();
+        cin.ignore();
+
+
     }
     catch (std::exception &ex)
     {

@@ -33,6 +33,7 @@
 #include <unordered_map>
 
 #include "../logger.h"
+#include "../async_logger.h"
 #include "../common.h"
 
 namespace spdlog
@@ -58,8 +59,12 @@ public:
         auto found = _loggers.find(logger_name);
         if (found != _loggers.end())
             return found->second;
+        std::shared_ptr<logger> new_logger;
+        if (_async_mode)
+            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _async_shutdown_duration);
+        else
+            new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
 
-        auto new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
         if (_formatter)
             new_logger->set_formatter(_formatter);
         new_logger->set_level(_level);
@@ -102,7 +107,20 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         for (auto& l : _loggers)
             l.second->set_level(log_level);
+    }
 
+    void set_async_mode(size_t q_size, const log_clock::duration& shutdown_duration)
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        _async_mode = true;
+        _async_q_size = q_size;
+        _async_shutdown_duration = shutdown_duration;
+    }
+
+    void set_sync_mode()
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        _async_mode = false;
     }
 
     void stop_all()
@@ -128,6 +146,9 @@ private:
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
     formatter_ptr _formatter;
     level::level_enum _level = level::INFO;
+    bool _async_mode = false;
+    size_t _async_q_size = 0;
+    log_clock::duration _async_shutdown_duration;
 };
 }
 }

@@ -30,7 +30,7 @@
 #include "./line_logger.h"
 
 
-
+/* public functions */
 template<class It>
 inline spdlog::logger::logger(const std::string& logger_name, const It& begin, const It& end) :
     _name(logger_name),
@@ -51,20 +51,18 @@ inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr s
 {}
 
 
+inline spdlog::logger::~logger() {}
+
 inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
 {
-    _formatter = msg_formatter;
+    _set_formatter(msg_formatter);
 }
 
 inline void spdlog::logger::set_pattern(const std::string& pattern)
 {
-    _formatter = std::make_shared<pattern_formatter>(pattern);
+    _set_pattern(pattern);
 }
 
-inline spdlog::formatter_ptr spdlog::logger::get_formatter() const
-{
-    return _formatter;
-}
 
 
 template <typename... Args>
@@ -159,10 +157,32 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 
 inline void spdlog::logger::stop()
 {
+    _stop();
+}
+
+/* protected virtual */
+inline void spdlog::logger::_log_msg(details::log_msg& msg)
+{
+    _formatter->format(msg);
+    for (auto &sink : _sinks)
+        sink->log(msg);
+}
+
+inline void spdlog::logger::_set_pattern(const std::string& pattern)
+{
+    _formatter = std::make_shared<pattern_formatter>(pattern);
+}
+inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
+{
+    _formatter = msg_formatter;
+}
+
+inline void spdlog::logger::_stop()
+{
     set_level(level::OFF);
 }
 
-
+/* private functions */
 inline void spdlog::logger::_variadic_log(spdlog::details::line_logger&) {}
 
 template <typename Last>
@@ -181,10 +201,5 @@ inline void spdlog::logger::_variadic_log(spdlog::details::line_logger& l, const
     _variadic_log(l, rest...);
 }
 
-inline void spdlog::logger::_log_msg(details::log_msg& msg)
-{
-    _formatter->format(msg);
-    for (auto &sink : _sinks)
-        sink->log(msg);
-}
+
 

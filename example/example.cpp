@@ -29,7 +29,7 @@
 #include "spdlog/spdlog.h"
 
 
-int main(int, char* [])
+int main_(int, char* [])
 {
 
     namespace spd = spdlog;
@@ -63,7 +63,19 @@ int main(int, char* [])
 
         SPDLOG_TRACE(file_logger, "This is a trace message (only #ifdef _DEBUG)", 123);
 
+        //
+        // Asynchronous logging is easy..
+        // Just call spdlog::set_async_mode(max_q_size) and all created loggers from now on will be asynchronous..
+        //
 
+        size_t max_q_size = 100000;
+        spdlog::set_async_mode(max_q_size);
+        auto async_file= spd::daily_logger_st("async_file_logger", "async_" + filename);
+        async_file->info() << "This is async log.." << "Should be very fast!";
+
+        //
+        // syslog example
+        //
 #ifdef __linux__
         auto syslog_logger = spd::syslog_logger("syslog");
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");

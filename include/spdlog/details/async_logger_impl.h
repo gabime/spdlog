@@ -24,68 +24,55 @@
 
 #pragma once
 
-#include "../common.h"
-#include "./fast_oss.h"
 
-namespace spdlog
+#include <memory>
+#include "../sinks/async_sink.h"
+
+//
+// Async Logger implementation
+// Use single async_sink (queue) to perform the logging in a worker thread
+//
+
+
+template<class It>
+inline spdlog::async_logger::async_logger(const std::string& name, const It& begin, const It& end, size_t queue_size, const log_clock::duration& shutdown_duration) :
+    logger(name, begin, end),
+    _shutdown_duration(shutdown_duration),
+    _as(std::unique_ptr<sinks::async_sink>(new sinks::async_sink(queue_size)))
 {
-namespace details
-{
-struct log_msg
-{
-    log_msg() = default;
-    log_msg(level::level_enum l):
-        logger_name(),
-        level(l),
-        time(),
-        tm_time(),
-        raw(),
-        formatted() {}
-
-    log_msg(const log_msg& other):
-        logger_name(other.logger_name),
-        level(other.level),
-        time(other.time),
-        tm_time(other.tm_time),
-        raw(other.raw),
-        formatted(other.formatted) {}
-
-    log_msg(log_msg&& other) :
-        logger_name(std::move(other.logger_name)),
-        level(other.level),
-        time(std::move(other.time)),
-        tm_time(other.tm_time),
-        raw(std::move(other.raw)),
-        formatted(std::move(other.formatted)) {}
-
-    log_msg& operator=(log_msg&& other)
-    {
-        if (this == &other)
-            return *this;
-
-        logger_name = std::move(other.logger_name);
-        level = other.level;
-        time = std::move(other.time);
-        tm_time = other.tm_time;
-        raw = std::move(other.raw);
-        formatted = std::move(other.formatted);
-        return *this;
-    }
-
-
-
-    void clear()
-    {
-        raw.clear();
-        formatted.clear();
-    }
-
-    std::string logger_name;
-    level::level_enum level;
-    log_clock::time_point time;
-    std::tm tm_time;
-    fast_oss raw;
-    fast_oss formatted;
+    _as->set_formatter(_formatter);
+    for (auto &s : _sinks)
+        _as->add_sink(s);
 };
+
+inline spdlog::async_logger::async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size, const log_clock::duration& shutdown_duration) :
+    async_logger(logger_name, sinks.begin(), sinks.end(), queue_size, shutdown_duration) {}
+
+inline spdlog::async_logger::async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size, const log_clock::duration& shutdown_duration) :
+    async_logger(logger_name, { single_sink }, queue_size, shutdown_duration) {}
+
+
+inline void spdlog::async_logger::_log_msg(details::log_msg& msg)
+{
+    _as->log(msg);
 }
+
+inline void spdlog::async_logger::_set_formatter(spdlog::formatter_ptr msg_formatter)
+{
+    _formatter = msg_formatter;
+    _as->set_formatter(_formatter);
+}
+
+inline void spdlog::async_logger::_set_pattern(const std::string& pattern)
+{
+    _formatter = std::make_shared<pattern_formatter>(pattern);
+    _as->set_formatter(_formatter);
+}
+
+
+
+inline void spdlog::async_logger::_stop()
+{
+    set_level(level::OFF);
+    _as->shutdown(_shutdown_duration);
 }

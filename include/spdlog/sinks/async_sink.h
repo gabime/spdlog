@@ -35,7 +35,6 @@
 #include <thread>
 #include <chrono>
 #include <atomic>
-#include <algorithm>
 
 #include "./base_sink.h"
 #include "../logger.h"
@@ -43,14 +42,14 @@
 #include "../details/null_mutex.h"
 #include "../details/log_msg.h"
 
-#include<iostream>
 
 namespace spdlog
 {
 namespace sinks
 {
 
-class async_sink : public base_sink < details::null_mutex >
+
+class async_sink : public base_sink < details::null_mutex > //single worker thread so null_mutex
 {
 public:
     using q_type = details::blocking_queue < std::unique_ptr<details::log_msg> > ;
@@ -61,9 +60,9 @@ public:
     ~async_sink();
     void add_sink(sink_ptr sink);
     void remove_sink(sink_ptr sink_ptr);
-    q_type& q();
+    void set_formatter(formatter_ptr);
     //Wait to remaining items (if any) in the queue to be written and shutdown
-    void shutdown(const std::chrono::milliseconds& timeout);
+    void shutdown(const log_clock::duration& timeout);
 
 
 
@@ -80,6 +79,7 @@ private:
     //Last exception thrown from the back thread
     std::shared_ptr<spdlog_ex> _last_backthread_ex;
 
+    formatter_ptr _formatter;
 
     //will throw last back thread exception or if backthread no active
     void _push_sentry();
@@ -124,13 +124,13 @@ inline void spdlog::sinks::async_sink::_thread_loop()
         {
             if (!_active)
                 return;
+            _formatter->format(*msg);
             for (auto &s : _sinks)
             {
                 try
                 {
                     s->log(*msg);
                 }
-
                 catch (const std::exception& ex)
                 {
                     _last_backthread_ex = std::make_shared<spdlog_ex>(ex.what());
@@ -139,7 +139,6 @@ inline void spdlog::sinks::async_sink::_thread_loop()
                 {
                     _last_backthread_ex = std::make_shared<spdlog_ex>("Unknown exception");
                 }
-
             }
         }
     }
@@ -159,13 +158,14 @@ inline void spdlog::sinks::async_sink::remove_sink(spdlog::sink_ptr s)
 }
 
 
-inline spdlog::sinks::async_sink::q_type& spdlog::sinks::async_sink::q()
+inline void spdlog::sinks::async_sink::set_formatter(formatter_ptr msg_formatter)
 {
-    return _q;
+    _formatter = msg_formatter;
 }
 
 
-inline void spdlog::sinks::async_sink::shutdown(const std::chrono::milliseconds& timeout)
+
+inline void spdlog::sinks::async_sink::shutdown(const log_clock::duration& timeout)
 {
     if (timeout > std::chrono::milliseconds::zero())
     {

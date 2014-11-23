@@ -34,6 +34,7 @@
 #include<vector>
 #include<memory>
 #include "sinks/base_sink.h"
+#include "sinks/async_sink.h"
 #include "common.h"
 
 namespace spdlog
@@ -47,17 +48,12 @@ class line_logger;
 class logger
 {
 public:
-
     logger(const std::string& logger_name, sink_ptr single_sink);
     logger(const std::string& name, sinks_init_list);
     template<class It>
     logger(const std::string& name, const It& begin, const It& end);
 
-    void set_pattern(const std::string&);
-    void set_formatter(formatter_ptr);
-    formatter_ptr get_formatter() const;
-
-
+    virtual ~logger();
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
 
@@ -83,18 +79,30 @@ public:
     template <typename... Args> details::line_logger emerg(const Args&... args);
 
 
-private:
+    void set_pattern(const std::string&);
+    void set_formatter(formatter_ptr);
+
+
+protected:
+    virtual void _log_msg(details::log_msg& msg);
+    virtual void _set_pattern(const std::string&);
+    virtual void _set_formatter(formatter_ptr);
+    virtual void _stop();
+
+
     friend details::line_logger;
     std::string _name;
     std::vector<sink_ptr> _sinks;
     formatter_ptr _formatter;
     std::atomic_int _level;
+
+private:
     void _variadic_log(details::line_logger& l);
     template <typename Last>
     inline void _variadic_log(spdlog::details::line_logger& l, const Last& last);
     template <typename First, typename... Rest>
     void _variadic_log(details::line_logger&l, const First& first, const Rest&... rest);
-    void _log_msg(details::log_msg& msg);
+
 };
 }
 

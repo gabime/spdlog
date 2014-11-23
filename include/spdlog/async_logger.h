@@ -24,68 +24,43 @@
 
 #pragma once
 
-#include "../common.h"
-#include "./fast_oss.h"
+// Async logger
+// Upon each log write the logger:
+// 1. Checks if its log level is enough to log the message
+// 2. Push a new copy of the message to a queue (uses sinks::async_sink for this)
+
+#include <chrono>
+#include "common.h"
+#include "logger.h"
+
 
 namespace spdlog
 {
-namespace details
+
+namespace sinks {
+class async_sink;
+}
+
+class async_logger :public logger
 {
-struct log_msg
-{
-    log_msg() = default;
-    log_msg(level::level_enum l):
-        logger_name(),
-        level(l),
-        time(),
-        tm_time(),
-        raw(),
-        formatted() {}
-
-    log_msg(const log_msg& other):
-        logger_name(other.logger_name),
-        level(other.level),
-        time(other.time),
-        tm_time(other.tm_time),
-        raw(other.raw),
-        formatted(other.formatted) {}
-
-    log_msg(log_msg&& other) :
-        logger_name(std::move(other.logger_name)),
-        level(other.level),
-        time(std::move(other.time)),
-        tm_time(other.tm_time),
-        raw(std::move(other.raw)),
-        formatted(std::move(other.formatted)) {}
-
-    log_msg& operator=(log_msg&& other)
-    {
-        if (this == &other)
-            return *this;
-
-        logger_name = std::move(other.logger_name);
-        level = other.level;
-        time = std::move(other.time);
-        tm_time = other.tm_time;
-        raw = std::move(other.raw);
-        formatted = std::move(other.formatted);
-        return *this;
-    }
+public:
+    template<class It>
+    async_logger(const std::string& name, const It& begin, const It& end, size_t queue_size, const log_clock::duration& shutdown_duration);
+    async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size, const log_clock::duration& shutdown_duration);
+    async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size, const log_clock::duration& shutdown_duration);
 
 
+protected:
+    void _log_msg(details::log_msg& msg) override;
+    void _set_formatter(spdlog::formatter_ptr msg_formatter) override;
+    void _set_pattern(const std::string& pattern) override;
+    void _stop() override;
 
-    void clear()
-    {
-        raw.clear();
-        formatted.clear();
-    }
-
-    std::string logger_name;
-    level::level_enum level;
-    log_clock::time_point time;
-    std::tm tm_time;
-    fast_oss raw;
-    fast_oss formatted;
+private:
+    std::unique_ptr<sinks::async_sink> _as;
+    log_clock::duration _shutdown_duration;
 };
 }
-}
+
+
+#include "./details/async_logger_impl.h"

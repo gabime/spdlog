@@ -43,36 +43,58 @@ namespace spdlog
 std::shared_ptr<logger> get(const std::string& name);
 
 
+//
 // Set global formatting
-// spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
+// e.g. spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
+//
 void set_pattern(const std::string& format_string);
+void set_formatter(formatter_ptr f);
 
-
-//Set global logging level
+//
+// Set global logging level
+//
 void set_level(level::level_enum log_level);
 
 
+//
+// Async mode - off by default.
+//
+
+// Turn on async mode and set the queue size for each async_logger
+// shutdown_duration indicates max time to wait for the worker thread to log its messages before terminating.
+
+void set_async_mode(size_t queue_size, const log_clock::duration& shutdown_duration = std::chrono::seconds(5));
+// Turn off async mode
+void set_sync_mode();
+
+//
 // Create multi/single threaded rotating file logger
+//
 std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, size_t flush_inverval = 0);
 std::shared_ptr<logger> rotating_logger_st(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, size_t flush_inverval = 0);
 
+//
 // Create file logger which creates new file at midnight):
+//
 std::shared_ptr<logger> daily_logger_mt(const std::string& logger_name, const std::string& filename, size_t flush_inverval = 0);
 std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const std::string& filename, size_t flush_inverval = 0);
 
 
+//
 // Create stdout/stderr loggers
+//
 std::shared_ptr<logger> stdout_logger_mt(const std::string& logger_name);
 std::shared_ptr<logger> stdout_logger_st(const std::string& logger_name);
 std::shared_ptr<logger> stderr_logger_mt(const std::string& logger_name);
 std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name);
 
 
+//
 // Create a syslog logger
+//
 #ifdef __linux__
 std::shared_ptr<logger> syslog_logger(const std::string& logger_name);
 #endif
-
 
 //
 // Create a logger with multiple sinks
@@ -90,8 +112,6 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Arg
 
 
 
-// Set global formatter object
-void set_formatter(formatter_ptr f);
 
 // Stop logging by setting all the loggers to log level OFF
 void stop();
