@@ -69,65 +69,60 @@ public:
     template<typename Duration_Rep, typename Duration_Period, typename TT>
     bool push(TT&& item, const std::chrono::duration<Duration_Rep, Duration_Period>& timeout)
     {
-        std::unique_lock<std::mutex> ul(_mutex);
-        if (_q.size() >= _max_size)
         {
-            if (!_item_popped_cond.wait_until(ul, clock::now() + timeout,[this]()
-        {
-            return this->_q.size() < this->_max_size;
-            }))
-            return false;
+            std::unique_lock<std::mutex> ul(_mutex);
+            if (is_full())
+            {
+                if (!_item_popped_cond.wait_until(ul, clock::now() + timeout, [this]() {
+                return !this->is_full();
+                }))
+                return false;
+            }
+            _q.push(std::forward<TT>(item));
         }
-        _q.push(std::forward<TT>(item));
-        if (_q.size() <= 1)
-        {
-            ul.unlock(); //So the notified thread will have better chance to accuire the lock immediatly..
-            _item_pushed_cond.notify_all();
-        }
+        _item_pushed_cond.notify_one();
         return true;
     }
 
-    // Push copy of item into the back of the queue.
-    // If the queue is full, block the calling thread until there is room.
+// Push copy of item into the back of the queue.
+// If the queue is full, block the calling thread until there is room.
     template<typename TT>
     void push(TT&& item)
     {
-        while (!push(std::forward<TT>(item), std::chrono::seconds(10)));
+        while (!push(std::forward<TT>(item), std::chrono::seconds(60)));
     }
 
-    // Pop a copy of the front item in the queue into the given item ref.
-    // If the queue is empty, block the calling thread util there is item to pop or timeout have passed.
-    // Return: false on timeout , true on successful pop/
+// Pop a copy of the front item in the queue into the given item ref.
+// If the queue is empty, block the calling thread util there is item to pop or timeout have passed.
+// Return: false on timeout , true on successful pop/
     template<class Duration_Rep, class Duration_Period>
     bool pop(T& item, const std::chrono::duration<Duration_Rep, Duration_Period>& timeout)
     {
-        std::unique_lock<std::mutex> ul(_mutex);
-        if (_q.empty())
         {
-            if (!_item_pushed_cond.wait_until(ul, clock::now() + timeout, [this]()
-        {
-            return !this->_q.empty();
-            }))
-            return false;
+            std::unique_lock<std::mutex> ul(_mutex);
+            if (is_empty())
+            {
+                if (!_item_pushed_cond.wait_until(ul, clock::now() + timeout, [this]()
+            {
+                return !this->is_empty();
+                }))
+                return false;
+            }
+            item = std::move(_q.front());
+            _q.pop();
         }
-        item = std::move(_q.front());
-        _q.pop();
-        if (_q.size() >= _max_size - 1)
-        {
-            ul.unlock(); //So the notified thread will have better chance to accuire the lock immediatly..
-            _item_popped_cond.notify_all();
-        }
+        _item_popped_cond.notify_one();
         return true;
     }
 
-    // Pop a copy of the front item in the queue into the given item ref.
-    // If the queue is empty, block the calling thread util there is item to pop.
+// Pop a copy of the front item in the queue into the given item ref.
+// If the queue is empty, block the calling thread util there is item to pop.
     void pop(T& item)
     {
         while (!pop(item, std::chrono::hours(1)));
     }
 
-    // Clear the queue
+// Clear the queue
     void clear()
     {
         {
@@ -143,6 +138,16 @@ private:
     std::mutex _mutex;
     std::condition_variable _item_pushed_cond;
     std::condition_variable _item_popped_cond;
+
+    inline bool is_full()
+    {
+        return _q.size() >= _max_size;
+    }
+
+    inline bool is_empty()
+    {
+        return _q.size() == 0;
+    }
 };
 
 }
