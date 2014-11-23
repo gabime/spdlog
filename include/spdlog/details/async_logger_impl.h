@@ -35,15 +35,15 @@
 
 
 template<class It>
-inline spdlog::async_logger::async_logger(const std::string& name, const It& begin, const It& end, size_t queue_size, const log_clock::duration& shutdown_duration) :
-    logger(name, begin, end),
+inline spdlog::async_logger::async_logger(const std::string& logger_name, const It& begin, const It& end, size_t queue_size, const log_clock::duration& shutdown_duration) :
+    logger(logger_name, begin, end),
     _shutdown_duration(shutdown_duration),
     _as(std::unique_ptr<sinks::async_sink>(new sinks::async_sink(queue_size)))
 {
     _as->set_formatter(_formatter);
     for (auto &s : _sinks)
         _as->add_sink(s);
-};
+}
 
 inline spdlog::async_logger::async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size, const log_clock::duration& shutdown_duration) :
     async_logger(logger_name, sinks.begin(), sinks.end(), queue_size, shutdown_duration) {}

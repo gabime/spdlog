@@ -57,8 +57,8 @@ protected:
     void _stop() override;
 
 private:
+    log_clock::duration _shutdown_duration;	
     std::unique_ptr<sinks::async_sink> _as;
-    log_clock::duration _shutdown_duration;
 };
 }
 
