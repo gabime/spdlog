@@ -3,13 +3,19 @@ CXXFLAGS	= -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -W
 CXX_RELEASE_FLAGS = -O3 -flto
 
 
-all:	spdlog-bench spdlog-bench-mt boost-bench boost-bench-mt glog-bench glog-bench-mt
+all:	spdlog-bench spdlog-bench-mt spdlog-bench-async spdlog-bench-mt-async boost-bench boost-bench-mt glog-bench glog-bench-mt
 
 spdlog-bench: spdlog-bench.cpp
 	$(CXX) spdlog-bench.cpp -o spdlog-bench $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 	
 spdlog-bench-mt: spdlog-bench-mt.cpp
-	$(CXX) spdlog-bench-mt.cpp -o spdlog-bench-mt  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)	
+	$(CXX) spdlog-bench-mt.cpp -o spdlog-bench-mt  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+	
+spdlog-bench-async: spdlog-bench-async.cpp
+	$(CXX) spdlog-bench-async.cpp -o spdlog-bench-async  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+	
+spdlog-bench-mt-async: spdlog-bench-mt-async.cpp
+	$(CXX) spdlog-bench-mt-async.cpp -o spdlog-bench-mt-async  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)							
 
 BOOST_FLAGS	= -DBOOST_LOG_DYN_LINK  -I/home/gabi/devel/boost_1_56_0/ -L/home/gabi/devel/boost_1_56_0/stage/lib -lboost_log  -lboost_log_setup -lboost_filesystem -lboost_system -lboost_thread -lboost_regex -lboost_date_time -lboost_chrono	
 
