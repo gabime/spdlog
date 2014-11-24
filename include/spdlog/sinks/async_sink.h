@@ -181,8 +181,12 @@ inline void spdlog::sinks::async_sink::shutdown(const log_clock::duration& timeo
 
 inline void spdlog::sinks::async_sink::_push_sentry()
 {
-  if (_last_backthread_ex)    
-        throw *std::move(_last_backthread_ex);
+    if (_last_backthread_ex)
+    {
+        auto ex = std::move(_last_backthread_ex);
+        _last_backthread_ex.reset();
+        throw *ex;
+    }
     if (!_active)
         throw(spdlog_ex("async_sink not active"));
 }
