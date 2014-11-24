@@ -1,5 +1,5 @@
 #~/bin/bash
-echo "Running benchmakrs (all with 1000,000 writes to the logs folder"
+echo "Running benchmakrs (all with 1000,000 writes to the logs folder)"
 echo
 echo "boost-bench (single thread).."
 time ./boost-bench
