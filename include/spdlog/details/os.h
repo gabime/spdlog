@@ -120,7 +120,8 @@ constexpr inline unsigned short eol_size()
 inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
 {
 #ifdef _WIN32
-    return ::fopen_s(fp, filename.c_str(), mode);
+    *fp = _fsopen((filename.c_str()), mode, _SH_DENYWR);
+    return *fp == nullptr;
 #else
     *fp = fopen((filename.c_str()), mode);
     return *fp == nullptr;
