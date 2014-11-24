@@ -2,32 +2,32 @@ Running benchmakrs (all with 1000,000 writes to the logs folder
 
 boost-bench (single thread)..
 
-real	0m4.430s
-user	0m4.359s
-sys	0m0.072s
+real	0m4.779s
+user	0m4.256s
+sys	0m0.044s
 
 
 glog-bench (single thread)..
 
-real	0m1.115s
-user	0m0.997s
-sys	0m0.117s
+real	0m1.109s
+user	0m0.967s
+sys	0m0.140s
 
 
 g2log-bench (single thread)..
 
-Exiting, log location: logs/g2log-bench.g2log.20141124-232519.log
+Exiting, log location: logs/g2log-bench.g2log.20141124-233419.log
 
-real	0m3.277s
-user	0m4.189s
-sys	0m1.021s
+real	0m3.155s
+user	0m4.255s
+sys	0m0.874s
 
 
 spdlog-bench (single thread)
 
-real	0m0.940s
-user	0m0.892s
-sys	0m0.048s
+real	0m0.947s
+user	0m0.914s
+sys	0m0.032s
 
 
 ------------------------------------
@@ -35,32 +35,32 @@ Multithreaded benchmarks..
 ------------------------------------
 boost-bench-mt (10 threads, single logger)..
 
-real	0m13.985s
-user	0m35.045s
-sys	0m7.196s
+real	0m15.151s
+user	0m35.555s
+sys	0m7.453s
 
 
 glog-bench-mt (10 threads, single logger)..
 
-real	0m2.027s
-user	0m5.552s
-sys	0m6.223s
+real	0m3.546s
+user	0m9.836s
+sys	0m10.985s
 
 
 g2log-bench-mt (10 threads, single logger)..
 
-Exiting, log location: logs/g2log-bench-mt.g2log.20141124-232551.log
+Exiting, log location: logs/g2log-bench-mt.g2log.20141124-233502.log
 
-real	0m3.476s
-user	0m7.649s
-sys	0m1.619s
+real	0m3.500s
+user	0m7.671s
+sys	0m1.646s
 
 
 spdlog-bench-mt (10 threads, single logger)..
 
-real	0m3.822s
-user	0m14.233s
-sys	0m6.117s
+real	0m1.549s
+user	0m6.994s
+sys	0m2.969s
 
 
 ------------------------------------
@@ -68,13 +68,13 @@ Async  benchmarks..
 ------------------------------------
 spdlog-bench-async (single thread)..
 
-real	0m1.574s
-user	0m2.613s
-sys	0m0.405s
+real	0m1.455s
+user	0m2.381s
+sys	0m0.417s
 
 
 spdlog-bench-mt-async (10 threads, single logger)..
 
-real	0m1.972s
-user	0m3.965s
-sys	0m2.747s
+real	0m2.040s
+user	0m4.076s
+sys	0m2.822s
