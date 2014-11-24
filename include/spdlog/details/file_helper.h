@@ -26,7 +26,7 @@
 
 // Helper class for file sink
 // When failing to open a file, retry several times(5) with small delay between the tries(10 ms)
-// Flush to file every X writes (or never if X==0)
+// Can be set to auto flush on every line
 // Throw spdlog_ex exception on errors
 
 #include <cstdio>
@@ -49,10 +49,10 @@ public:
     const int open_tries = 5;
     const int open_interval = 10;
 
-    explicit file_helper(const std::size_t flush_inverval):
+    explicit file_helper(bool auto_flush):
         _fd(nullptr),
-        _flush_inverval(flush_inverval),
-        _flush_countdown(flush_inverval) {};
+        _auto_flush(auto_flush)
+        {};
 
     file_helper(const file_helper&) = delete;
     file_helper& operator=(const file_helper&) = delete;
@@ -104,11 +104,9 @@ public:
         if(std::fwrite(buf.data(), sizeof(char), size, _fd) != size)
             throw spdlog_ex("Failed writing to file " + _filename);
 
-        if(--_flush_countdown == 0)
-        {
+        if(_auto_flush)
             std::fflush(_fd);
-            _flush_countdown = _flush_inverval;
-        }
+        
     }
 
     const std::string& filename() const
@@ -133,8 +131,8 @@ public:
 private:
     FILE* _fd;
     std::string _filename;
-    const std::size_t _flush_inverval;
-    std::size_t _flush_countdown;
+    bool _auto_flush;
+
 
 };
 }
