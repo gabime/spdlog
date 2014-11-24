@@ -1,0 +1,80 @@
+Running benchmakrs (all with 1000,000 writes to the logs folder
+
+boost-bench (single thread)..
+
+real	0m4.430s
+user	0m4.359s
+sys	0m0.072s
+
+
+glog-bench (single thread)..
+
+real	0m1.115s
+user	0m0.997s
+sys	0m0.117s
+
+
+g2log-bench (single thread)..
+
+Exiting, log location: logs/g2log-bench.g2log.20141124-232519.log
+
+real	0m3.277s
+user	0m4.189s
+sys	0m1.021s
+
+
+spdlog-bench (single thread)
+
+real	0m0.940s
+user	0m0.892s
+sys	0m0.048s
+
+
+------------------------------------
+Multithreaded benchmarks..
+------------------------------------
+boost-bench-mt (10 threads, single logger)..
+
+real	0m13.985s
+user	0m35.045s
+sys	0m7.196s
+
+
+glog-bench-mt (10 threads, single logger)..
+
+real	0m2.027s
+user	0m5.552s
+sys	0m6.223s
+
+
+g2log-bench-mt (10 threads, single logger)..
+
+Exiting, log location: logs/g2log-bench-mt.g2log.20141124-232551.log
+
+real	0m3.476s
+user	0m7.649s
+sys	0m1.619s
+
+
+spdlog-bench-mt (10 threads, single logger)..
+
+real	0m3.822s
+user	0m14.233s
+sys	0m6.117s
+
+
+------------------------------------
+Async  benchmarks..
+------------------------------------
+spdlog-bench-async (single thread)..
+
+real	0m1.574s
+user	0m2.613s
+sys	0m0.405s
+
+
+spdlog-bench-mt-async (10 threads, single logger)..
+
+real	0m1.972s
+user	0m3.965s
+sys	0m2.747s

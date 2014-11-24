@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 
     int howmany = 1000000;
     int threads = 10;
-    int flush_interval = 1000;
+    int flush_interval = 0;
     int file_size = 30 * 1024 * 1024;
     int rotating_files = 5;
 
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
             howmany = atoi(argv[1]);
         if (argc > 2)
             threads =   atoi(argv[2]);
-	
+		/*
         cout << "*******************************************************************************\n";
         cout << "Single thread, " << format(howmany)  << " iterations, flush every " << flush_interval << " lines"<< endl;
         cout << "*******************************************************************************\n";
@@ -88,14 +88,13 @@ int main(int argc, char* argv[])
 		
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations, flush every " << flush_interval << " lines" << endl;
-        cout << "*******************************************************************************\n";
-
-        spdlog::set_async_mode(howmany);
-        auto rotating_st_async = spdlog::rotating_logger_st("rotating_async", "logs/rotating_async", file_size, rotating_files, flush_interval);
-        bench(howmany, rotating_st_async);
+e	        cout << "*******************************************************************************\n";
+		*/
+		
+        spdlog::set_async_mode(2500);
         auto daily_st_async = spdlog::daily_logger_st("daily_async", "logs/daily_async", flush_interval);
-        bench(howmany, daily_st_async);
-        bench(howmany, spdlog::create<null_sink_st>("null_async"));
+        bench_mt(howmany, daily_st_async, threads);
+
 
         spdlog::stop();
 

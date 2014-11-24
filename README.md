@@ -37,10 +37,12 @@ Just copy the files to your build tree and use a C++11 compiler
 
 Below are some [benchmarks](bench) comparing the time needed to log 1,000,000 lines to file under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz:
 
-|threads|boost log|glog|g2log|spdlog|
+|threads|boost log|glog|g2log|spdlog|spdlog<sup>async mode</sup>|
 |-------|:-------:|:-----:|------:|------:|
-|1|4.223s|1.084s|3.104s|0.998s|
-|10|14.141s|4.204s|3.412s|0.987s|
+|1|4.430s|1.115s|3.227s|0.940s|1.574s
+|10|13.985s|2.027s|3.476s|3.822s|1.972
+
+
 
 
 ## Usage Example

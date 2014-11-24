@@ -24,7 +24,9 @@ time ./spdlog-bench
 echo
 echo
 sleep 3
-
+echo "------------------------------------"
+echo "Multithreaded benchmarks.."
+echo "------------------------------------"
 echo "boost-bench-mt (10 threads, single logger)"..
 time ./boost-bench-mt
 echo
@@ -45,6 +47,16 @@ sleep 3
 
 echo "spdlog-bench-mt (10 threads, single logger)"..
 time ./spdlog-bench-mt
+echo
+echo
+sleep 3
+
+echo "------------------------------------"
+echo "Async  benchmarks.."
+echo "------------------------------------"
+
+echo "spdlog-bench-async (single thread)"..
+time ./spdlog-bench-async
 echo
 echo
 sleep 3
