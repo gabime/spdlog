@@ -3,7 +3,7 @@ CXXFLAGS	= -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -W
 CXX_RELEASE_FLAGS = -O3 -flto
 
 
-all:	spdlog-bench spdlog-bench-mt spdlog-bench-async spdlog-bench-mt-async boost-bench boost-bench-mt glog-bench glog-bench-mt
+all:	spdlog-bench spdlog-bench-mt spdlog-bench-async spdlog-bench-mt-async boost-bench boost-bench-mt glog-bench glog-bench-mt g2log-bench g2log-bench-mt 
 
 spdlog-bench: spdlog-bench.cpp
 	$(CXX) spdlog-bench.cpp -o spdlog-bench $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
@@ -32,6 +32,15 @@ glog-bench: glog-bench.cpp
 	
 glog-bench-mt: glog-bench-mt.cpp
 	$(CXX) glog-bench-mt.cpp -o glog-bench-mt $(CXXFLAGS) $(GLOG_FLAGS) $(CXX_RELEASE_FLAGS)	
+
+
+G2LOG_FLAGS = -I/home/gabi/devel/g2log/g2log/src -L/home/gabi/devel/g2log/g2log -llib_g2logger 
+g2log-bench: g2log-bench.cpp
+	$(CXX) g2log-bench.cpp -o g2log-bench $(CXXFLAGS) $(G2LOG_FLAGS) $(CXX_RELEASE_FLAGS)
+	
+g2log-bench-mt: g2log-bench-mt.cpp
+	$(CXX) g2log-bench-mt.cpp -o g2log-bench-mt $(CXXFLAGS) $(G2LOG_FLAGS) $(CXX_RELEASE_FLAGS)	
+
 
 
 clean:
