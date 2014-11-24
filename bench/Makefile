@@ -1,5 +1,5 @@
 CXX	= g++
-CXXFLAGS	= -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -Wl,--no-as-needed  -I../include 
+CXXFLAGS	= -g -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -Wl,--no-as-needed  -I../include 
 CXX_RELEASE_FLAGS = -O3 -flto
 
 
@@ -44,7 +44,7 @@ g2log-bench-mt: g2log-bench-mt.cpp
 
 
 clean:
-	rm -f *.o logs/* spdlog-bench spdlog-bench-mt boost-bench boost-bench-mt glog-bench
+	rm -f *.o logs/* spdlog-bench spdlog-bench-mt spdlog-bench-async spdlog-bench-mt-async boost-bench boost-bench-mt glog-bench glog-bench-mt g2log-bench g2log-bench-mt
 
 
 rebuild: clean all
