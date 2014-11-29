@@ -219,7 +219,7 @@ class S_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        //msg.formatted.put_int(msg.tm_time.tm_sec, 2);
+        msg.formatted.write("{:02d}", msg.tm_time.tm_sec);
     }
 };
 
@@ -230,7 +230,7 @@ class e_formatter :public flag_formatter
     {
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-        msg.formatted.write("{03:d}", static_cast<int>(millis));
+        msg.formatted.write("{:03d}", static_cast<int>(millis));
     }
 };
 
@@ -318,7 +318,7 @@ class t_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted << std::this_thread::get_id().hash();
+        msg.formatted << std::hash<std::thread::id>()(std::this_thread::get_id());
     }
 };
 
