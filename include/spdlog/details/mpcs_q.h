@@ -61,8 +61,10 @@ should not be interpreted as representing official policies, either expressed or
 
 
 #include <atomic>
-namespace spdlog {
-namespace details {
+namespace spdlog
+{
+namespace details
+{
 template<typename T>
 class mpsc_q
 {
