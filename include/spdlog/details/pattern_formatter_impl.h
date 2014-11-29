@@ -32,7 +32,6 @@
 
 #include "../formatter.h"
 #include "./log_msg.h"
-#include "./fast_oss.h"
 #include "./os.h"
 
 namespace spdlog
@@ -89,7 +88,7 @@ class a_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_str(days[msg.tm_time.tm_wday]);
+        msg.formatted << days[msg.tm_time.tm_wday];
     }
 };
 
@@ -99,7 +98,7 @@ class A_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_str(full_days[msg.tm_time.tm_wday]);
+        msg.formatted << full_days[msg.tm_time.tm_wday];
     }
 };
 
@@ -109,7 +108,7 @@ class b_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_str(months[msg.tm_time.tm_mon]);
+        msg.formatted<< months[msg.tm_time.tm_mon];
     }
 };
 
@@ -119,7 +118,7 @@ class B_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_str(full_months[msg.tm_time.tm_mon]);
+        msg.formatted << full_months[msg.tm_time.tm_mon];
     }
 };
 
@@ -128,17 +127,14 @@ class c_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_str(days[msg.tm_time.tm_wday]);
-        msg.formatted.putc(' ');
-        msg.formatted.put_str(months[msg.tm_time.tm_mon]);
-        msg.formatted.putc(' ');
-        msg.formatted.put_int(msg.tm_time.tm_mday, 2);
-        msg.formatted.putc(' ');
-        msg.formatted.put_int(msg.tm_time.tm_hour, 2);
-        msg.formatted.putc(':');
-        msg.formatted.put_int(msg.tm_time.tm_min, 2);
-        msg.formatted.putc(':');
-        msg.formatted.put_int(msg.tm_time.tm_sec, 2);
+        msg.formatted.write("{} {} {:02d} {:02d}:{:02d}:{:02d} {:04d}",
+                            days[msg.tm_time.tm_wday],
+                            months[msg.tm_time.tm_mon],
+                            msg.tm_time.tm_mday,
+                            msg.tm_time.tm_hour,
+                            msg.tm_time.tm_min,
+                            msg.tm_time.tm_sec,
+                            msg.tm_time.tm_year + 1900);
     }
 };
 
@@ -148,7 +144,7 @@ class C_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_year % 100, 2);
+        msg.formatted.write("{02:d}", msg.tm_time.tm_year % 100);
     }
 };
 
@@ -159,11 +155,7 @@ class D_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_mon + 1, 2);
-        msg.formatted.putc('/');
-        msg.formatted.put_int(msg.tm_time.tm_mday, 2);
-        msg.formatted.putc('/');
-        msg.formatted.put_int(msg.tm_time.tm_year % 100, 2);
+        msg.formatted.write("{:02d}/{:02d}/{:02d}", msg.tm_time.tm_mon + 1, msg.tm_time.tm_mday, msg.tm_time.tm_year % 100);
     }
 };
 
@@ -173,7 +165,7 @@ class Y_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_year + 1900, 4);
+        msg.formatted.write("{:04d}", msg.tm_time.tm_year + 1900);
     }
 };
 
@@ -182,7 +174,7 @@ class m_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_mon + 1, 2);
+        msg.formatted.write("{:02d}", msg.tm_time.tm_mon + 1);
     }
 };
 
@@ -191,7 +183,7 @@ class d_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_mday, 2);
+        msg.formatted.write("{:02d}", msg.tm_time.tm_mday);
     }
 };
 
@@ -200,7 +192,7 @@ class H_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_hour, 2);
+        msg.formatted.write("{:02d}", msg.tm_time.tm_hour);
     }
 };
 
@@ -209,7 +201,7 @@ class I_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(to12h(msg.tm_time), 2);
+        msg.formatted.write("{:02d}", to12h(msg.tm_time));
     }
 };
 
@@ -218,7 +210,7 @@ class M_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_min, 2);
+        msg.formatted.write("{:02d}", msg.tm_time.tm_min);
     }
 };
 
@@ -227,7 +219,7 @@ class S_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_sec, 2);
+        //msg.formatted.put_int(msg.tm_time.tm_sec, 2);
     }
 };
 
@@ -238,7 +230,7 @@ class e_formatter :public flag_formatter
     {
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-        msg.formatted.put_int(static_cast<int>(millis), 3);
+        msg.formatted.write("{03:d}", static_cast<int>(millis));
     }
 };
 
@@ -247,7 +239,7 @@ class p_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_data(ampm(msg.tm_time), 2);
+        msg.formatted << ampm(msg.tm_time);
     }
 };
 
@@ -257,13 +249,7 @@ class r_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(to12h(msg.tm_time), 2);
-        msg.formatted.putc(':');
-        msg.formatted.put_int(msg.tm_time.tm_min, 2);
-        msg.formatted.putc(':');
-        msg.formatted.put_int(msg.tm_time.tm_sec, 2);
-        msg.formatted.putc(' ');
-        msg.formatted.put_data(ampm(msg.tm_time), 2);
+        msg.formatted.write("{:02d}:{:02d}:{:02d} {}", to12h(msg.tm_time), msg.tm_time.tm_min, msg.tm_time.tm_sec, ampm(msg.tm_time));
     }
 };
 
@@ -272,9 +258,7 @@ class R_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_hour, 2);
-        msg.formatted.putc(':');
-        msg.formatted.put_int(msg.tm_time.tm_min, 2);
+        msg.formatted.write("{:02d}:{:02d}", msg.tm_time.tm_hour, msg.tm_time.tm_min);
 
     }
 };
@@ -284,13 +268,10 @@ class T_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_int(msg.tm_time.tm_hour, 2);
-        msg.formatted.putc(':');
-        msg.formatted.put_int(msg.tm_time.tm_min, 2);
-        msg.formatted.putc(':');
-        msg.formatted.put_int(msg.tm_time.tm_sec, 2);
+        msg.formatted.write("{:02d}:{:02d}:{:02d}", msg.tm_time.tm_hour, msg.tm_time.tm_min, msg.tm_time.tm_sec);
     }
 };
+
 
 // ISO 8601 offset from UTC in timezone (HH:MM)
 class z_formatter :public flag_formatter
@@ -311,7 +292,7 @@ public:
             _value = get_value(msg);
             _last_update = msg.time;
         }
-        msg.formatted.put_str(_value);
+        msg.formatted << _value;
     }
 private:
     log_clock::time_point _last_update;
@@ -323,15 +304,13 @@ private:
         int total_minutes = os::utc_minutes_offset(msg.tm_time);
         int h = total_minutes / 60;
         int m = total_minutes % 60;
-        fast_oss oss;
-        oss.putc(h < 0 ? '-' : '+');
-        oss.put_int(h, 2);
-        oss.putc(':');
-        oss.put_int(m, 2);
-        return oss.str();
+        fmt::MemoryWriter w;
+        w.write("{} {:02d}:{:02d}", h >= 0 ? '+' : '-', h, m);
+        return w.str();
     }
 
 };
+
 
 
 //Thread id
@@ -339,7 +318,7 @@ class t_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted << std::this_thread::get_id();
+        msg.formatted << std::this_thread::get_id().hash();
     }
 };
 
@@ -348,7 +327,7 @@ class v_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_fast_oss(msg.raw);
+        msg.formatted.write(msg.raw.data(), msg.raw.size());
     }
 };
 
@@ -359,7 +338,7 @@ public:
     {}
     void format(details::log_msg& msg) override
     {
-        msg.formatted.putc(_ch);
+        msg.formatted << _ch;
     }
 private:
     char _ch;
@@ -378,7 +357,7 @@ public:
     }
     void format(details::log_msg& msg) override
     {
-        msg.formatted.put_str(_str);
+        msg.formatted << _str;
     }
 private:
     std::string _str;
@@ -390,27 +369,20 @@ class full_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.putc('[');
-        msg.formatted.put_int(msg.tm_time.tm_year+1900, 4);
-        msg.formatted.putc('-');
-        msg.formatted.put_int(msg.tm_time.tm_mon+ 1, 2);
-        msg.formatted.putc('-');
-        msg.formatted.put_int(msg.tm_time.tm_mday, 2);
-        msg.formatted.putc(' ');
-        msg.formatted.put_int(msg.tm_time.tm_hour, 2);
-        msg.formatted.putc(':');
-        msg.formatted.put_int(msg.tm_time.tm_min, 2);
-        msg.formatted.putc(':');
-        msg.formatted.put_int(msg.tm_time.tm_sec, 2);
-        //millis
-        msg.formatted.putc('.');
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-        msg.formatted.put_int(static_cast<int>(millis), 3);
-        msg.formatted.putc(']');
-        msg.formatted << " [" << msg.logger_name << "] [" << level::to_str(msg.level) << "] ";
-        msg.formatted.put_fast_oss(msg.raw);
+        msg.formatted.write("[{:d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}.{:03d}] [{}] [{}] ",
+                            msg.tm_time.tm_year + 1900,
+                            msg.tm_time.tm_mon + 1,
+                            msg.tm_time.tm_mday,
+                            msg.tm_time.tm_hour,
+                            msg.tm_time.tm_min,
+                            msg.tm_time.tm_sec,
+                            static_cast<int>(millis),
+                            msg.logger_name,
+                            level::to_str(msg.level));
 
+        msg.formatted.write(msg.raw.str());
     }
 };
 
@@ -457,7 +429,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
-        // logger name
+    // logger name
     case 'n':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::name_formatter()));
         break;

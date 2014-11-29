@@ -25,7 +25,7 @@
 #pragma once
 
 #include "../common.h"
-#include "./fast_oss.h"
+#include "./format.h"
 
 namespace spdlog
 {
@@ -42,13 +42,18 @@ struct log_msg
         raw(),
         formatted() {}
 
-    log_msg(const log_msg& other):
+
+    log_msg(const log_msg& other) :
         logger_name(other.logger_name),
         level(other.level),
         time(other.time),
-        tm_time(other.tm_time),
-        raw(other.raw),
-        formatted(other.formatted) {}
+        tm_time(other.tm_time)
+
+    {
+        //fmt::MemoryWriter does not allow copy ctor}
+        raw.write(other.raw.data(), other.raw.size());
+        formatted.write(other.formatted.data(), other.formatted.size());
+    }
 
     log_msg(log_msg&& other) :
         logger_name(std::move(other.logger_name)),
@@ -56,7 +61,9 @@ struct log_msg
         time(std::move(other.time)),
         tm_time(other.tm_time),
         raw(std::move(other.raw)),
-        formatted(std::move(other.formatted)) {}
+        formatted(std::move(other.formatted))
+    {
+    }
 
     log_msg& operator=(log_msg&& other)
     {
@@ -84,8 +91,8 @@ struct log_msg
     level::level_enum level;
     log_clock::time_point time;
     std::tm tm_time;
-    fast_oss raw;
-    fast_oss formatted;
+    fmt::MemoryWriter raw;
+    fmt::MemoryWriter formatted;
 };
 }
 }

@@ -52,7 +52,7 @@ public:
     explicit file_helper(bool auto_flush):
         _fd(nullptr),
         _auto_flush(auto_flush)
-        {};
+    {};
 
     file_helper(const file_helper&) = delete;
     file_helper& operator=(const file_helper&) = delete;
@@ -99,14 +99,15 @@ public:
 
     void write(const log_msg& msg)
     {
-        auto& buf = msg.formatted.buf();
-        size_t size = buf.size();
-        if(std::fwrite(buf.data(), sizeof(char), size, _fd) != size)
+
+        size_t size = msg.formatted.size();
+        auto data = msg.formatted.data();
+        if(std::fwrite(data, sizeof(char), size, _fd) != size)
             throw spdlog_ex("Failed writing to file " + _filename);
 
         if(_auto_flush)
             std::fflush(_fd);
-        
+
     }
 
     const std::string& filename() const
