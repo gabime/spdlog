@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 
     int howmany = 1000000;
     int threads = 10;
-	bool auto_flush = true;
+	bool auto_flush = false;
     int file_size = 30 * 1024 * 1024;
     int rotating_files = 5;
 
@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
         cout << "*******************************************************************************\n";
 
         auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt", file_size, rotating_files, auto_flush);
-        bench_mt(howmany, rotating_mt, threads);
+		bench_mt(howmany, rotating_mt, threads);
 
 
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt", auto_flush);
