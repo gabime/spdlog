@@ -70,7 +70,7 @@ int main(int, char* [])
 
         size_t max_q_size = 100000;
         spdlog::set_async_mode(max_q_size);
-        auto async_file= spd::daily_logger_st("async_file_logger", "async_" + filename);
+        auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
         async_file->info() << "This is async log.." << "Should be very fast!";
 
         //
