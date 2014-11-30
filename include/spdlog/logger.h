@@ -34,7 +34,6 @@
 #include<vector>
 #include<memory>
 #include "sinks/base_sink.h"
-#include "sinks/async_sink.h"
 #include "common.h"
 
 namespace spdlog
@@ -66,17 +65,17 @@ public:
     //Stop logging
     void stop();
 
-    template <typename... Args> details::line_logger log(level::level_enum lvl, const Args&... args);
-    template <typename... Args> details::line_logger log(const Args&... args);
-    template <typename... Args> details::line_logger trace(const Args&... args);
-    template <typename... Args> details::line_logger debug(const Args&... args);
-    template <typename... Args> details::line_logger info(const Args&... args);
-    template <typename... Args> details::line_logger notice(const Args&... args);
-    template <typename... Args> details::line_logger warn(const Args&... args);
-    template <typename... Args> details::line_logger error(const Args&... args);
-    template <typename... Args> details::line_logger critical(const Args&... args);
-    template <typename... Args> details::line_logger alert(const Args&... args);
-    template <typename... Args> details::line_logger emerg(const Args&... args);
+    template <typename... Args> details::line_logger log(level::level_enum lvl, const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger log(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger trace(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger debug(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger info(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger notice(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger warn(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger error(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger critical(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger alert(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger emerg(const std::string& fmt, const Args&... args);
 
 
     void set_pattern(const std::string&);
@@ -95,13 +94,6 @@ protected:
     std::vector<sink_ptr> _sinks;
     formatter_ptr _formatter;
     std::atomic_int _level;
-
-private:
-    void _variadic_log(details::line_logger& l);
-    template <typename Last>
-    inline void _variadic_log(spdlog::details::line_logger& l, const Last& last);
-    template <typename First, typename... Rest>
-    void _variadic_log(details::line_logger&l, const First& first, const Rest&... rest);
 
 };
 }
