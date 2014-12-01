@@ -65,7 +65,6 @@ public:
     //Stop logging
     void stop();
 
-    template <typename... Args> details::line_logger log(level::level_enum lvl, const std::string& fmt, const Args&... args);
     template <typename... Args> details::line_logger log(const std::string& fmt, const Args&... args);
     template <typename... Args> details::line_logger trace(const std::string& fmt, const Args&... args);
     template <typename... Args> details::line_logger debug(const std::string& fmt, const Args&... args);
@@ -77,16 +76,31 @@ public:
     template <typename... Args> details::line_logger alert(const std::string& fmt, const Args&... args);
     template <typename... Args> details::line_logger emerg(const std::string& fmt, const Args&... args);
 
+    //API to support logger.info() << ".." calls
+
+    details::line_logger log();
+    details::line_logger trace();
+    details::line_logger debug();
+    details::line_logger info();
+    details::line_logger notice();
+    details::line_logger warn();
+    details::line_logger error();
+    details::line_logger critical();
+    details::line_logger alert();
+    details::line_logger emerg();
+
 
     void set_pattern(const std::string&);
     void set_formatter(formatter_ptr);
 
 
 protected:
-    virtual void _log_msg(details::log_msg& msg);
+    virtual void _log_msg(details::log_msg&);
     virtual void _set_pattern(const std::string&);
     virtual void _set_formatter(formatter_ptr);
     virtual void _stop();
+    details::line_logger _log(level::level_enum lvl);
+    template <typename... Args> details::line_logger _log(level::level_enum lvl, const std::string& fmt, const Args&... args);
 
 
     friend details::line_logger;
