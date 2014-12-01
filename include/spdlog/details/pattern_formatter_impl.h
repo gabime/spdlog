@@ -30,6 +30,7 @@
 #include <vector>
 #include <thread>
 
+
 #include "../formatter.h"
 #include "./log_msg.h"
 #include "./os.h"
@@ -122,19 +123,31 @@ class B_formatter :public flag_formatter
     }
 };
 
+
+//write 2 ints seperated by sep with padding of 2
+static fmt::MemoryWriter& pad_n_join(fmt::MemoryWriter& w, int v1, int v2, char sep)
+{
+    w << fmt::pad(v1, 2, '0') << sep << fmt::pad(v2, 2, '0');
+    return w;
+}
+
+//write 3 ints seperated by sep with padding of 2
+static fmt::MemoryWriter& pad_n_join(fmt::MemoryWriter& w, int v1, int v2, int v3, char sep)
+{
+    w << fmt::pad(v1, 2, '0') << sep << fmt::pad(v2, 2, '0') << sep << fmt::pad(v3, 2, '0');
+    return w;
+}
+
+
+
+
 //Date and time representation (Thu Aug 23 15:35:46 2014)
 class c_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{} {} {:02d} {:02d}:{:02d}:{:02d} {:04d}",
-                            days[msg.tm_time.tm_wday],
-                            months[msg.tm_time.tm_mon],
-                            msg.tm_time.tm_mday,
-                            msg.tm_time.tm_hour,
-                            msg.tm_time.tm_min,
-                            msg.tm_time.tm_sec,
-                            msg.tm_time.tm_year + 1900);
+        msg.formatted << days[msg.tm_time.tm_wday] << ' ' << months[msg.tm_time.tm_mon] << ' ' << msg.tm_time.tm_mday << ' ';
+        pad_n_join(msg.formatted, msg.tm_time.tm_hour, msg.tm_time.tm_min, msg.tm_time.tm_sec, ':') << ' ' << msg.tm_time.tm_year + 1900;
     }
 };
 
@@ -144,7 +157,7 @@ class C_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{02:d}", msg.tm_time.tm_year % 100);
+        msg.formatted << fmt::pad(msg.tm_time.tm_year % 100, 2, '0');
     }
 };
 
@@ -155,7 +168,7 @@ class D_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}/{:02d}/{:02d}", msg.tm_time.tm_mon + 1, msg.tm_time.tm_mday, msg.tm_time.tm_year % 100);
+        pad_n_join(msg.formatted, msg.tm_time.tm_mon + 1, msg.tm_time.tm_mday, msg.tm_time.tm_year % 100, '/');
     }
 };
 
@@ -165,7 +178,7 @@ class Y_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:04d}", msg.tm_time.tm_year + 1900);
+        msg.formatted << msg.tm_time.tm_year + 1900;
     }
 };
 
@@ -174,7 +187,7 @@ class m_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}", msg.tm_time.tm_mon + 1);
+        msg.formatted << fmt::pad(msg.tm_time.tm_mon + 1, 2, '0');
     }
 };
 
@@ -183,7 +196,7 @@ class d_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}", msg.tm_time.tm_mday);
+        msg.formatted << fmt::pad(msg.tm_time.tm_mday, 2, '0');
     }
 };
 
@@ -192,7 +205,7 @@ class H_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}", msg.tm_time.tm_hour);
+        msg.formatted << fmt::pad(msg.tm_time.tm_hour, 2, '0');
     }
 };
 
@@ -201,7 +214,7 @@ class I_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}", to12h(msg.tm_time));
+        msg.formatted << fmt::pad(to12h(msg.tm_time), 2, '0');
     }
 };
 
@@ -210,7 +223,7 @@ class M_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}", msg.tm_time.tm_min);
+        msg.formatted << fmt::pad(msg.tm_time.tm_min, 2, '0');
     }
 };
 
@@ -219,7 +232,7 @@ class S_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}", msg.tm_time.tm_sec);
+        msg.formatted << fmt::pad(msg.tm_time.tm_sec, 2, '0');
     }
 };
 
@@ -230,7 +243,7 @@ class e_formatter :public flag_formatter
     {
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-        msg.formatted.write("{:03d}", static_cast<int>(millis));
+        msg.formatted << fmt::pad(static_cast<int>(millis), 3, '0');
     }
 };
 
@@ -249,7 +262,7 @@ class r_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}:{:02d}:{:02d} {}", to12h(msg.tm_time), msg.tm_time.tm_min, msg.tm_time.tm_sec, ampm(msg.tm_time));
+        pad_n_join(msg.formatted, to12h(msg.tm_time), msg.tm_time.tm_min, msg.tm_time.tm_sec, ':') << ' ' << ampm(msg.tm_time);
     }
 };
 
@@ -258,8 +271,7 @@ class R_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}:{:02d}", msg.tm_time.tm_hour, msg.tm_time.tm_min);
-
+        pad_n_join(msg.formatted, msg.tm_time.tm_hour, msg.tm_time.tm_min, ':');
     }
 };
 
@@ -268,47 +280,53 @@ class T_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted.write("{:02d}:{:02d}:{:02d}", msg.tm_time.tm_hour, msg.tm_time.tm_min, msg.tm_time.tm_sec);
+        pad_n_join(msg.formatted, msg.tm_time.tm_hour, msg.tm_time.tm_min, msg.tm_time.tm_sec, ':');
     }
 };
 
 
-// ISO 8601 offset from UTC in timezone (HH:MM)
+// ISO 8601 offset from UTC in timezone (+-HH:MM)
 class z_formatter :public flag_formatter
 {
 public:
-    z_formatter() {}
+    const std::chrono::seconds cache_refresh = const std::chrono::seconds(5);
+
+    z_formatter() :_last_update(std::chrono::seconds(0)) {}
     z_formatter(const z_formatter&) = delete;
     z_formatter& operator=(const z_formatter&) = delete;
 
     void format(log_msg& msg) override
     {
-        std::lock_guard<std::mutex> l(_mutex);
-        using namespace std::chrono;
-        auto diff = msg.time - _last_update;
-        auto secs_diff = std::abs((duration_cast<seconds>(diff)).count());
-        if (secs_diff >= 2)
-        {
-            _value = get_value(msg);
-            _last_update = msg.time;
-        }
-        msg.formatted << _value;
+#ifdef _WIN32
+        int total_minutes = get_cached_offset(msg);
+#else
+        // No need to chache under gcc,
+        // it is very fast (already stored in tm.tm_gmtoff)
+        int total_minutes = os::utc_minutes_offset(msg.tm_time);
+#endif
+
+        int h = total_minutes / 60;
+        int m = total_minutes % 60;
+        char sign = h >= 0 ? '+' : '-';
+        msg.formatted << sign;
+        pad_n_join(msg.formatted, h, m, ':');
     }
 private:
     log_clock::time_point _last_update;
-    std::string _value;
+    int _offset_minutes;
     std::mutex _mutex;
 
-    std::string get_value(const log_msg& msg)
+    int get_cached_offset(const log_msg& msg)
     {
-        int total_minutes = os::utc_minutes_offset(msg.tm_time);
-        int h = total_minutes / 60;
-        int m = total_minutes % 60;
-        fmt::MemoryWriter w;
-        w.write("{} {:02d}:{:02d}", h >= 0 ? '+' : '-', h, m);
-        return w.str();
+        using namespace std::chrono;
+        std::lock_guard<std::mutex> l(_mutex);
+        if (msg.time - _last_update >= cache_refresh)
+        {
+            _offset_minutes = os::utc_minutes_offset(msg.tm_time);
+            _last_update = msg.time;
+        }
+        return _offset_minutes;
     }
-
 };
 
 
@@ -372,8 +390,7 @@ class full_formatter :public flag_formatter
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
 
-
-        /* Slower version(while still very fast - about 3.2 million lines/sec),
+        /* Slower version(while still very fast - about 3.2 million lines/sec under 10 threads),
         msg.formatted.write("[{:d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}.{:03d}] [{}] [{}] {} ",
         msg.tm_time.tm_year + 1900,
         msg.tm_time.tm_mon + 1,
@@ -386,7 +403,7 @@ class full_formatter :public flag_formatter
         level::to_str(msg.level),
         msg.raw.str());*/
 
-        // Faster (albeit uglier) way to format the line (5.6 million lines/sec)
+        // Faster (albeit uglier) way to format the line (5.6 million lines/sec under 10 threads)
         msg.formatted << '[' << msg.tm_time.tm_year + 1900 << '-'
                       << fmt::pad(msg.tm_time.tm_mon + 1, 2, '0') << '-'
                       << fmt::pad(msg.tm_time.tm_mday, 2, '0') << ' '
