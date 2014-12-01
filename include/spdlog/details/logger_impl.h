@@ -71,7 +71,17 @@ inline spdlog::details::line_logger spdlog::logger::log(level::level_enum lvl, c
     bool msg_enabled = should_log(lvl);
     details::line_logger l(this, lvl, msg_enabled);
     if (msg_enabled)
-        l.write(fmt, args...);
+    {
+        try
+        {
+            l.write(fmt, args...);
+        }
+        catch(const fmt::FormatError& e)
+        {
+            throw spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
+        }
+
+    }
     return l;
 }
 
