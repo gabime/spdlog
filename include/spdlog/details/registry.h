@@ -72,7 +72,7 @@ public:
         return new_logger;
     }
 
-    void drop(const std::string &logger_name)
+    void drop(const std::string& logger_name)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _loggers.erase(logger_name);
