@@ -289,7 +289,7 @@ class T_formatter :public flag_formatter
 class z_formatter :public flag_formatter
 {
 public:
-    const std::chrono::seconds cache_refresh = const std::chrono::seconds(5);
+    const std::chrono::seconds cache_refresh = std::chrono::seconds(5);
 
     z_formatter() :_last_update(std::chrono::seconds(0)) {}
     z_formatter(const z_formatter&) = delete;
