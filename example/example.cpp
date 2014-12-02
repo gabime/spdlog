@@ -27,7 +27,7 @@
 //
 #include <iostream>
 #include "spdlog/spdlog.h"
-
+#include "spdlog/details/format.h"
 
 int main(int, char* [])
 {
@@ -36,6 +36,8 @@ int main(int, char* [])
 
     try
     {
+    	fmt::print("Hello man {} {:1f}\n", 1, 2.2);
+    	return 0;
         std::string filename = "logs/spdlog_example";
         // Set log level to all loggers to DEBUG and above
         spd::set_level(spd::level::DEBUG);
