@@ -89,11 +89,11 @@ public:
     }
 
     template<typename TT>
-    bool push(TT&& value)
+    bool push(TT&& val)
     {
         if (_size >= _max_size)
             return false;
-        mpscq_node_t* new_node = new mpscq_node_t(std::forward<TT>(value));
+        mpscq_node_t* new_node = new mpscq_node_t(std::forward<TT>(val));
         push_node(new_node);
         ++_size;
         return true;
@@ -143,13 +143,13 @@ private:
         mpscq_node_t(const mpscq_node_t&) = delete;
         mpscq_node_t& operator=(const mpscq_node_t&) = delete;
 
-        explicit mpscq_node_t(const T& value):
+        explicit mpscq_node_t(const T& val):
             next(nullptr),
-            value(value) {}
+            value(val) {}
 
-        explicit mpscq_node_t(T&& value) :
+        explicit mpscq_node_t(T&& val) :
             next(nullptr),
-            value(std::move(value)) {}
+            value(std::move(val)) {}
     };
 
     size_t _max_size;

@@ -87,7 +87,7 @@ class async_log_helper
 public:
 
     using q_type = details::mpsc_q < std::unique_ptr<async_msg> >;
-    using clock = std::chrono::monotonic_clock;
+    using clock = std::chrono::steady_clock;
 
 
     explicit async_log_helper(size_t max_queue_size);
@@ -175,16 +175,16 @@ inline void spdlog::details::async_log_helper::_thread_loop()
     clock::time_point last_pop = clock::now();
     while (_active)
     {
-        q_type::item_type async_msg;
+        q_type::item_type popped_msg;
 
-        if (_q.pop(async_msg))
+        if (_q.pop(popped_msg))
         {
 
             last_pop = clock::now();
 
             try
             {
-                details::log_msg log_msg = async_msg->to_log_msg();
+                details::log_msg log_msg = popped_msg->to_log_msg();
 
                 _formatter->format(log_msg);
                 for (auto &s : _sinks)
