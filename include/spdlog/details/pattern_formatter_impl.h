@@ -345,7 +345,7 @@ class v_formatter :public flag_formatter
 {
     void format(details::log_msg& msg) override
     {
-        msg.formatted << fmt::BasicStringRef<char>(msg.raw.data(), msg.raw.size());
+        msg.formatted << fmt::StringRef(msg.raw.data(), msg.raw.size());
     }
 };
 
@@ -404,16 +404,16 @@ class full_formatter :public flag_formatter
         msg.raw.str());*/
 
         // Faster (albeit uglier) way to format the line (5.6 million lines/sec under 10 threads)
-        msg.formatted << '[' << msg.tm_time.tm_year + 1900 << '-'
-                      << fmt::pad(msg.tm_time.tm_mon + 1, 2, '0') << '-'
-                      << fmt::pad(msg.tm_time.tm_mday, 2, '0') << ' '
-                      << fmt::pad(msg.tm_time.tm_hour, 2, '0') << ':'
-                      << fmt::pad(msg.tm_time.tm_min, 2, '0') << ':'
-                      << fmt::pad(msg.tm_time.tm_sec, 2, '0') << '.'
-                      << fmt::pad(static_cast<int>(millis), 3, '0') << "] ";
+        msg.formatted << '[' << static_cast<unsigned int>(msg.tm_time.tm_year + 1900) << '-'
+                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_mon + 1), 2, '0') << '-'
+                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_mday), 2, '0') << ' '
+                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_hour), 2, '0') << ':'
+                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_min), 2, '0') << ':'
+                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_sec), 2, '0') << '.'
+                      << fmt::pad(static_cast<unsigned int>(millis), 3, '0') << "] ";
 
         msg.formatted << '[' << msg.logger_name << "] [" << level::to_str(msg.level) << "] ";
-        msg.formatted << fmt::BasicStringRef<char>(msg.raw.data(), msg.raw.size());
+        msg.formatted << fmt::StringRef(msg.raw.data(), msg.raw.size());
     }
 };
 
