@@ -48,9 +48,13 @@ struct log_msg
         level(other.level),
         time(other.time),
         tm_time(other.tm_time)
+
     {
-        raw.write(other.raw.data(), other.raw.size());
-        formatted.write(other.formatted.data(), other.formatted.size());
+        if (other.raw.size())
+            raw << fmt::BasicStringRef<char>(other.raw.data(), other.raw.size());
+        if (other.formatted.size())
+            formatted << fmt::BasicStringRef<char>(other.formatted.data(), other.formatted.size());
+
     }
 
     log_msg(log_msg&& other) :

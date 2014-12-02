@@ -1,7 +1,5 @@
-#pragma once
-/*************************************************************************/
 /*
-Modified version of Intrusive MPSC node-based queue
+A modified version of Intrusive MPSC node-based queue
 
 Original code from
 http://www.1024cores.net/home/lock-free-algorithms/queues/intrusive-mpsc-node-based-queue
@@ -32,9 +30,10 @@ ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those of the authors and
 should not be interpreted as representing official policies, either expressed or implied, of Dmitry Vyukov.
+*/
 
 /*************************************************************************/
-/* The code in its current form adds the license below:                  */
+/********* The code in its current form adds the license below: **********/
 /*************************************************************************/
 /* spdlog - an extremely fast and easy to use c++11 logging library.     */
 /* Copyright (c) 2014 Gabi Melman.                                       */
@@ -59,6 +58,7 @@ should not be interpreted as representing official policies, either expressed or
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
+#pragma once
 
 #include <atomic>
 namespace spdlog
@@ -70,35 +70,40 @@ class mpsc_q
 {
 
 public:
-    mpsc_q(size_t size) :_stub(T()), _head(&_stub), _tail(&_stub)
+    using item_type = T;
+    mpsc_q(size_t max_size) :
+        _max_size(max_size),
+        _size(0),
+        _stub(),
+        _head(&_stub),
+        _tail(&_stub)
     {
-        _stub.next = nullptr;
     }
 
     ~mpsc_q()
     {
-        reset();
+        clear();
     }
 
-    void reset()
+    template<typename TT>
+    bool push(TT&& value)
     {
-        T dummy_val;
-        while (pop(dummy_val));
-    }
-
-    bool push(const T& value)
-    {
-        mpscq_node_t* new_node = new mpscq_node_t(value);
+        if (_size >= _max_size)
+            return false;
+        mpscq_node_t* new_node = new mpscq_node_t(std::forward<TT>(value));
         push_node(new_node);
+        ++_size;
         return true;
     }
 
+    // Try to pop or return false immediatly is queue is empty
     bool pop(T& value)
     {
         mpscq_node_t* node = pop_node();
         if (node != nullptr)
         {
-            value = node->value;
+            --_size;
+            value = std::move(node->value);
             delete(node);
             return true;
         }
@@ -108,23 +113,48 @@ public:
         }
     }
 
+    // Empty the queue by popping all its elements
+    void clear()
+    {
+
+        while (mpscq_node_t* node = pop_node())
+        {
+            --_size;
+            delete(node);
+
+        }
+
+    }
+
+    // Return approx size
+    size_t approx_size() const
+    {
+        return _size.load();
+    }
+
 private:
     struct mpscq_node_t
     {
         std::atomic<mpscq_node_t*>  next;
         T value;
 
-        explicit mpscq_node_t(const T& value) :next(nullptr), value(value)
-        {
-        }
+        mpscq_node_t() :next(nullptr) {}
+        explicit mpscq_node_t(const T& value):
+            next(nullptr),
+            value(value) {}
+
+        explicit mpscq_node_t(T&& value) :
+            next(nullptr),
+            value(std::move(value)) {}
     };
 
+    size_t _max_size;
+    std::atomic<size_t> _size;
     mpscq_node_t            _stub;
     std::atomic<mpscq_node_t*>  _head;
     mpscq_node_t*           _tail;
 
-
-
+    // Lockfree push
     void push_node(mpscq_node_t* n)
     {
         n->next = nullptr;
@@ -132,6 +162,8 @@ private:
         prev->next = n;
     }
 
+    // Clever lockfree pop algorithm by Dmitry Vyukov using single xchng instruction..
+    // Return pointer to the poppdc node or nullptr if no items left in the queue
     mpscq_node_t* pop_node()
     {
         mpscq_node_t* tail = _tail;
@@ -151,7 +183,7 @@ private:
         }
         mpscq_node_t* head = _head;
         if (tail != head)
-            return 0;
+            return nullptr;
 
         push_node(&_stub);
         next = tail->next;
@@ -162,8 +194,6 @@ private:
         }
         return nullptr;
     }
-
-
 
 };
 }

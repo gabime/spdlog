@@ -31,7 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #undef _SCL_SECURE_NO_WARNINGS
 #define _SCL_SECURE_NO_WARNINGS
 
-#include "format.h"
 
 #include <string.h>
 

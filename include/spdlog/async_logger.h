@@ -37,9 +37,9 @@
 namespace spdlog
 {
 
-namespace sinks
+namespace details
 {
-class async_sink;
+class async_log_helper;
 }
 
 class async_logger :public logger
@@ -59,7 +59,7 @@ protected:
 
 private:
     log_clock::duration _shutdown_duration;
-    std::unique_ptr<sinks::async_sink> _as;
+    std::unique_ptr<details::async_log_helper> _async_log_helper;
 };
 }
 

@@ -102,7 +102,7 @@ public:
 
         size_t size = msg.formatted.size();
         auto data = msg.formatted.data();
-        if(std::fwrite(data, sizeof(char), size, _fd) != size)
+        if(std::fwrite(data, 1, size, _fd) != size)
             throw spdlog_ex("Failed writing to file " + _filename);
 
         if(_auto_flush)

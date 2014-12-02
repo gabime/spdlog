@@ -22,7 +22,7 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 
-// async sink:
+// async log helper :
 // Process logs asynchronously using a back thread.
 //
 // If the internal queue of log messages reaches its max size,
@@ -30,36 +30,69 @@
 //
 // If the back thread throws during logging, a spdlog::spdlog_ex exception
 // will be thrown in client's thread when tries to log the next message
+
 #pragma once
 
 #include <thread>
 #include <chrono>
 #include <atomic>
 
-#include "./base_sink.h"
+#include "../sinks/sink.h"
 #include "../logger.h"
-#include "../details/blocking_queue.h"
-#include "../details/null_mutex.h"
+#include "../details/mpcs_q.h"
 #include "../details/log_msg.h"
 #include "../details/format.h"
 
 
 namespace spdlog
 {
-namespace sinks
+namespace details
 {
 
-
-class async_sink : public base_sink < details::null_mutex > //single worker thread so null_mutex
+class async_log_helper
 {
+    struct async_msg
+    {
+        std::string logger_name;
+        level::level_enum level;
+        log_clock::time_point time;
+        std::tm tm_time;
+        std::string raw_msg_str;
+
+        async_msg() = default;
+
+        async_msg(const details::log_msg& m) :
+            logger_name(m.logger_name),
+            level(m.level),
+            time(m.time),
+            tm_time(m.tm_time),
+            raw_msg_str(m.raw.data(), m.raw.size())
+        {
+
+        }
+
+
+        log_msg to_log_msg()
+        {
+            log_msg msg;
+            msg.logger_name = logger_name;
+            msg.level = level;
+            msg.time = time;
+            msg.tm_time = tm_time;
+            msg.raw << raw_msg_str;
+            return msg;
+        }
+    };
+
 public:
 
-    using q_type = details::blocking_queue < details::log_msg > ;
+    using q_type = details::mpsc_q < std::unique_ptr<async_msg> >;
 
-    explicit async_sink(const q_type::size_type max_queue_size);
+    explicit async_log_helper(size_t max_queue_size);
+    void log(const details::log_msg& msg);
 
     //Stop logging and join the back thread
-    ~async_sink();
+    ~async_log_helper();
     void add_sink(sink_ptr sink);
     void remove_sink(sink_ptr sink_ptr);
     void set_formatter(formatter_ptr);
@@ -68,25 +101,28 @@ public:
 
 
 
-protected:
-    void _sink_it(const details::log_msg& msg) override;
-    void _thread_loop();
+
 
 private:
-    std::vector<std::shared_ptr<sink>> _sinks;
+    std::vector<std::shared_ptr<sinks::sink>> _sinks;
     std::atomic<bool> _active;
     q_type _q;
-    std::thread _back_thread;
+    std::thread _worker_thread;
     std::mutex _mutex;
-    //Last exception thrown from the back thread
-    std::shared_ptr<spdlog_ex> _last_backthread_ex;
 
+    // last exception thrown from the worker thread
+    std::shared_ptr<spdlog_ex> _last_workerthread_ex;
+
+    // worker thread formatter
     formatter_ptr _formatter;
 
-    //will throw last back thread exception or if backthread no active
+    // will throw last back thread exception or if worker hread no active
     void _push_sentry();
 
-    //Clear all remaining messages(if any), stop the _back_thread and join it
+    // worker thread loop
+    void _thread_loop();
+
+    // clear all remaining messages(if any), stop the _worker_thread and join it
     void _join();
 
 };
@@ -96,85 +132,87 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::sinks::async_sink::async_sink(const q_type::size_type max_queue_size)
+inline spdlog::details::async_log_helper::async_log_helper(size_t max_queue_size)
     :_sinks(),
      _active(true),
      _q(max_queue_size),
-     _back_thread(&async_sink::_thread_loop, this)
+     _worker_thread(&async_log_helper::_thread_loop, this)
 {}
 
-inline spdlog::sinks::async_sink::~async_sink()
+inline spdlog::details::async_log_helper::~async_log_helper()
 {
     _join();
 }
 
-inline void spdlog::sinks::async_sink::_sink_it(const details::log_msg& msg)
+inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 {
     _push_sentry();
-    _q.push(std::move(msg));
 
+    _q.push(std::unique_ptr<async_msg>(new async_msg(msg)));
 }
 
-inline void spdlog::sinks::async_sink::_thread_loop()
+inline void spdlog::details::async_log_helper::_thread_loop()
 {
-    std::chrono::seconds  pop_timeout { 1 };
 
     while (_active)
     {
-        q_type::item_type msg;
-        if (_q.pop(msg, pop_timeout))
-        {
-            if (!_active)
-                return;
+        q_type::item_type async_msg;
 
+        if (_q.pop(async_msg))
+        {
             try
             {
 
-                _formatter->format(msg);
+                details::log_msg log_msg = async_msg->to_log_msg();
+
+                _formatter->format(log_msg);
                 for (auto &s : _sinks)
-                    s->log(msg);
+                    s->log(log_msg);
 
             }
             catch (const std::exception& ex)
             {
-                _last_backthread_ex = std::make_shared<spdlog_ex>(ex.what());
+                _last_workerthread_ex = std::make_shared<spdlog_ex>(ex.what());
             }
             catch (...)
             {
-                _last_backthread_ex = std::make_shared<spdlog_ex>("Unknown exception");
+                _last_workerthread_ex = std::make_shared<spdlog_ex>("Unknown exception");
             }
-
+        }
+        else //Sleep and retry if empty
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
         }
     }
 }
 
-inline void spdlog::sinks::async_sink::add_sink(spdlog::sink_ptr s)
+inline void spdlog::details::async_log_helper::add_sink(spdlog::sink_ptr s)
 {
     std::lock_guard<std::mutex> guard(_mutex);
     _sinks.push_back(s);
 }
 
 
-inline void spdlog::sinks::async_sink::remove_sink(spdlog::sink_ptr s)
+inline void spdlog::details::async_log_helper::remove_sink(spdlog::sink_ptr s)
 {
     std::lock_guard<std::mutex> guard(_mutex);
     _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), s), _sinks.end());
 }
 
 
-inline void spdlog::sinks::async_sink::set_formatter(formatter_ptr msg_formatter)
+inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
 {
     _formatter = msg_formatter;
 }
 
 
 
-inline void spdlog::sinks::async_sink::shutdown(const log_clock::duration& timeout)
+inline void spdlog::details::async_log_helper::shutdown(const log_clock::duration& timeout)
 {
     if (timeout > std::chrono::milliseconds::zero())
     {
         auto until = log_clock::now() + timeout;
-        while (_q.size() > 0 && log_clock::now() < until)
+        while (_q.approx_size() > 0 && log_clock::now() < until)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
         }
@@ -182,13 +220,13 @@ inline void spdlog::sinks::async_sink::shutdown(const log_clock::duration& timeo
     _join();
 }
 
-#include <iostream>
-inline void spdlog::sinks::async_sink::_push_sentry()
+
+inline void spdlog::details::async_log_helper::_push_sentry()
 {
-    if (_last_backthread_ex)
+    if (_last_workerthread_ex)
     {
-        auto ex = std::move(_last_backthread_ex);
-        _last_backthread_ex.reset();
+        auto ex = std::move(_last_workerthread_ex);
+        _last_workerthread_ex.reset();
         throw *ex;
     }
     if (!_active)
@@ -196,17 +234,18 @@ inline void spdlog::sinks::async_sink::_push_sentry()
 }
 
 
-inline void spdlog::sinks::async_sink::_join()
+inline void spdlog::details::async_log_helper::_join()
 {
     _active = false;
-    if (_back_thread.joinable())
+    if (_worker_thread.joinable())
     {
         try
         {
-            _back_thread.join();
+            _worker_thread.join();
         }
         catch (const std::system_error&) //Dont crash if thread not joinable
-        {}
+        {
+        }
     }
 
 }
