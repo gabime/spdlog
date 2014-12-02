@@ -87,6 +87,8 @@ class async_log_helper
 public:
 
     using q_type = details::mpsc_q < std::unique_ptr<async_msg> >;
+    using clock = std::chrono::monotonic_clock;
+
 
     explicit async_log_helper(size_t max_queue_size);
     void log(const details::log_msg& msg);
@@ -116,11 +118,16 @@ private:
     // worker thread formatter
     formatter_ptr _formatter;
 
+
     // will throw last back thread exception or if worker hread no active
     void _push_sentry();
 
     // worker thread loop
     void _thread_loop();
+
+    // guess how much to sleep if queue is empty
+    static clock::duration spdlog::details::async_log_helper::_calc_pop_sleep(const clock::time_point& last_pop);
+
 
     // clear all remaining messages(if any), stop the _worker_thread and join it
     void _join();
@@ -154,15 +161,18 @@ inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 inline void spdlog::details::async_log_helper::_thread_loop()
 {
 
+    clock::time_point last_pop = clock::now();
     while (_active)
     {
         q_type::item_type async_msg;
 
         if (_q.pop(async_msg))
         {
+
+            last_pop = clock::now();
+
             try
             {
-
                 details::log_msg log_msg = async_msg->to_log_msg();
 
                 _formatter->format(log_msg);
@@ -179,11 +189,29 @@ inline void spdlog::details::async_log_helper::_thread_loop()
                 _last_workerthread_ex = std::make_shared<spdlog_ex>("Unknown exception");
             }
         }
-        else //Sleep and retry if empty
+        //Sleep for a while if empty.
+        else
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(100));
+            std::this_thread::sleep_for(_calc_pop_sleep(last_pop));
         }
     }
+}
+
+//Try to guess sleep duration according to the time passed since last message
+inline spdlog::details::async_log_helper::clock::duration spdlog::details::async_log_helper::_calc_pop_sleep(const clock::time_point& last_pop)
+{
+    using std::chrono::milliseconds;
+    using std::chrono::microseconds;
+    auto time_since_pop = clock::now() - last_pop;
+
+
+    if (time_since_pop > milliseconds(1000))
+        return milliseconds(500);
+    if (time_since_pop > microseconds(0))
+        return(time_since_pop / 2);
+    return microseconds(0);
+
+
 }
 
 inline void spdlog::details::async_log_helper::add_sink(spdlog::sink_ptr s)
