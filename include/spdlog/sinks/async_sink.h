@@ -41,6 +41,7 @@
 #include "../details/blocking_queue.h"
 #include "../details/null_mutex.h"
 #include "../details/log_msg.h"
+#include "../details/format.h"
 
 
 namespace spdlog
@@ -52,7 +53,8 @@ namespace sinks
 class async_sink : public base_sink < details::null_mutex > //single worker thread so null_mutex
 {
 public:
-    using q_type = details::blocking_queue < std::unique_ptr<details::log_msg> > ;
+
+    using q_type = details::blocking_queue < details::log_msg > ;
 
     explicit async_sink(const q_type::size_type max_queue_size);
 
@@ -109,9 +111,9 @@ inline spdlog::sinks::async_sink::~async_sink()
 inline void spdlog::sinks::async_sink::_sink_it(const details::log_msg& msg)
 {
     _push_sentry();
-    _q.push(std::unique_ptr<details::log_msg>(new details::log_msg(msg)));
+    _q.push(std::move(msg));
+	
 }
-
 
 inline void spdlog::sinks::async_sink::_thread_loop()
 {
@@ -124,22 +126,24 @@ inline void spdlog::sinks::async_sink::_thread_loop()
         {
             if (!_active)
                 return;
-            _formatter->format(*msg);
-            for (auto &s : _sinks)
+
+            try
             {
-                try
-                {
-                    s->log(*msg);
-                }
-                catch (const std::exception& ex)
-                {
-                    _last_backthread_ex = std::make_shared<spdlog_ex>(ex.what());
-                }
-                catch (...)
-                {
-                    _last_backthread_ex = std::make_shared<spdlog_ex>("Unknown exception");
-                }
+
+                _formatter->format(msg);
+                for (auto &s : _sinks)             
+                    s->log(msg);
+             
             }
+            catch (const std::exception& ex)
+            {
+                _last_backthread_ex = std::make_shared<spdlog_ex>(ex.what());
+            }
+            catch (...)
+            {
+                _last_backthread_ex = std::make_shared<spdlog_ex>("Unknown exception");
+            }
+
         }
     }
 }
@@ -178,7 +182,7 @@ inline void spdlog::sinks::async_sink::shutdown(const log_clock::duration& timeo
     _join();
 }
 
-
+#include <iostream>
 inline void spdlog::sinks::async_sink::_push_sentry()
 {
     if (_last_backthread_ex)
