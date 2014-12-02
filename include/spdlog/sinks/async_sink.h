@@ -112,7 +112,7 @@ inline void spdlog::sinks::async_sink::_sink_it(const details::log_msg& msg)
 {
     _push_sentry();
     _q.push(std::move(msg));
-	
+
 }
 
 inline void spdlog::sinks::async_sink::_thread_loop()
@@ -131,9 +131,9 @@ inline void spdlog::sinks::async_sink::_thread_loop()
             {
 
                 _formatter->format(msg);
-                for (auto &s : _sinks)             
+                for (auto &s : _sinks)
                     s->log(msg);
-             
+
             }
             catch (const std::exception& ex)
             {
