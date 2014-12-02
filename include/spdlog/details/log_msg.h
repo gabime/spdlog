@@ -48,9 +48,7 @@ struct log_msg
         level(other.level),
         time(other.time),
         tm_time(other.tm_time)
-
-    {
-        //fmt::MemoryWriter does not allow copy ctor}
+    {        
         raw.write(other.raw.data(), other.raw.size());
         formatted.write(other.formatted.data(), other.formatted.size());
     }
@@ -63,6 +61,7 @@ struct log_msg
         raw(std::move(other.raw)),
         formatted(std::move(other.formatted))
     {
+	other.clear();
     }
 
     log_msg& operator=(log_msg&& other)
@@ -76,6 +75,7 @@ struct log_msg
         tm_time = other.tm_time;
         raw = std::move(other.raw);
         formatted = std::move(other.formatted);
+	other.clear();
         return *this;
     }
 
@@ -83,6 +83,7 @@ struct log_msg
 
     void clear()
     {
+	level = level::OFF;
         raw.clear();
         formatted.clear();
     }
