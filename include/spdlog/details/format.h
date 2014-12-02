@@ -51,6 +51,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 // when using __extension__.
 # if FMT_GCC_VERSION >= 406
 #  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wshadow"
 #  pragma GCC diagnostic ignored "-Wlong-long"
 # endif
 #else
