@@ -71,7 +71,7 @@ class mpsc_q
 
 public:
     using item_type = T;
-    mpsc_q(size_t max_size) :
+    explicit mpsc_q(size_t max_size) :
         _max_size(max_size),
         _size(0),
         _stub(),
@@ -79,6 +79,9 @@ public:
         _tail(&_stub)
     {
     }
+
+    mpsc_q(const mpsc_q&) = delete;
+    mpsc_q& operator=(const mpsc_q&) = delete;
 
     ~mpsc_q()
     {
@@ -116,12 +119,10 @@ public:
     // Empty the queue by popping all its elements
     void clear()
     {
-
         while (mpscq_node_t* node = pop_node())
         {
             --_size;
             delete(node);
-
         }
 
     }
@@ -139,6 +140,9 @@ private:
         T value;
 
         mpscq_node_t() :next(nullptr) {}
+        mpscq_node_t(const mpscq_node_t&) = delete;
+        mpscq_node_t& operator=(const mpscq_node_t&) = delete;
+
         explicit mpscq_node_t(const T& value):
             next(nullptr),
             value(value) {}
