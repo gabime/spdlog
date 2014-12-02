@@ -125,8 +125,8 @@ private:
     // worker thread loop
     void _thread_loop();
 
-    // guess how much to sleep if queue is empty
-    static clock::duration spdlog::details::async_log_helper::_calc_pop_sleep(const clock::time_point& last_pop);
+    // guess how much to sleep if queue is empty/full using last succesful op time as hint
+    static void _sleep_or_yield(const clock::time_point& last_op_time);
 
 
     // clear all remaining messages(if any), stop the _worker_thread and join it
@@ -151,11 +151,21 @@ inline spdlog::details::async_log_helper::~async_log_helper()
     _join();
 }
 
+
+//Try to push and block until succeeded
 inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 {
     _push_sentry();
 
-    _q.push(std::unique_ptr<async_msg>(new async_msg(msg)));
+    //Only if queue is full, enter wait loop
+    if (!_q.push(std::unique_ptr < async_msg >(new async_msg(msg))))
+    {
+        auto last_op_time = clock::now();
+        while (!_q.push(std::unique_ptr < async_msg >(new async_msg(msg))))
+        {
+            _sleep_or_yield(last_op_time);
+        }
+    }
 }
 
 inline void spdlog::details::async_log_helper::_thread_loop()
@@ -192,27 +202,11 @@ inline void spdlog::details::async_log_helper::_thread_loop()
         //Sleep for a while if empty.
         else
         {
-            std::this_thread::sleep_for(_calc_pop_sleep(last_pop));
+            _sleep_or_yield(last_pop);
         }
     }
 }
 
-//Try to guess sleep duration according to the time passed since last message
-inline spdlog::details::async_log_helper::clock::duration spdlog::details::async_log_helper::_calc_pop_sleep(const clock::time_point& last_pop)
-{
-    using std::chrono::milliseconds;
-    using std::chrono::microseconds;
-    auto time_since_pop = clock::now() - last_pop;
-
-
-    if (time_since_pop > milliseconds(1000))
-        return milliseconds(500);
-    if (time_since_pop > microseconds(0))
-        return(time_since_pop / 2);
-    return microseconds(0);
-
-
-}
 
 inline void spdlog::details::async_log_helper::add_sink(spdlog::sink_ptr s)
 {
@@ -249,6 +243,23 @@ inline void spdlog::details::async_log_helper::shutdown(const log_clock::duratio
 }
 
 
+// Sleep or yield using the time passed since last message as a hint
+inline void spdlog::details::async_log_helper::_sleep_or_yield(const clock::time_point& last_op_time)
+{
+    using std::chrono::milliseconds;
+    using std::this_thread::sleep_for;
+    using std::this_thread::yield;
+
+    clock::duration sleep_duration;
+    auto time_since_op = clock::now() - last_op_time;
+    if (time_since_op > milliseconds(1000))
+        sleep_for(milliseconds(500));
+    else if (time_since_op > milliseconds(1))
+        sleep_for(time_since_op / 2);
+    else
+        yield();
+}
+
 inline void spdlog::details::async_log_helper::_push_sentry()
 {
     if (_last_workerthread_ex)
@@ -277,4 +288,7 @@ inline void spdlog::details::async_log_helper::_join()
     }
 
 }
+
+
+
 
