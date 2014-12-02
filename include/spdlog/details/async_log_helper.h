@@ -163,7 +163,7 @@ inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
         auto last_op_time = clock::now();
         do
         {
-            _sleep_or_yield(last_op_time);
+            _sleep_or_yield(last_op_time ;
         }
         while (!_q.push(std::unique_ptr < async_msg >(new async_msg(msg))));
     }
