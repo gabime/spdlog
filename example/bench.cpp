@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
         cout << "*******************************************************************************\n";
 
 
-        spdlog::set_async_mode(2500);
+        spdlog::set_async_mode(howmany);
         auto daily_st_async = spdlog::daily_logger_st("daily_async", "logs/daily_async", auto_flush);
         bench_mt(howmany, daily_st_async, threads);
 
