@@ -64,12 +64,13 @@ int main(int argc, char* argv[])
         if (argc > 2)
             threads =   atoi(argv[2]);
 
+
         cout << "*******************************************************************************\n";
         cout << "Single thread, " << format(howmany)  << " iterations, auto flush=" << auto_flush << endl;
         cout << "*******************************************************************************\n";
 
-        auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st", file_size, rotating_files, auto_flush);
-        bench(howmany, rotating_st);
+        auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st", file_size, rotating_files, auto_flush);		
+        bench(howmany, rotating_st);		
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st", auto_flush);
         bench(howmany, daily_st);
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
@@ -92,8 +93,15 @@ int main(int argc, char* argv[])
 
 
         spdlog::set_async_mode(howmany);
-        auto daily_st_async = spdlog::daily_logger_st("daily_async", "logs/daily_async", auto_flush);
-        bench_mt(howmany, daily_st_async, threads);
+
+		for(int i = 0; i < 3; ++i)
+		{
+			auto as = spdlog::daily_logger_st("as", "logs/daily_async", auto_flush);
+			//bench_mt(howmany, spdlog::create<null_sink_st>("as"), threads);
+			bench_mt(howmany, as, threads);
+			as->stop();
+			spdlog::drop("as");
+		}
 
         spdlog::stop();
 

@@ -55,8 +55,7 @@ class async_log_helper
     {
         std::string logger_name;
         level::level_enum level;
-        log_clock::time_point time;
-        std::tm tm_time;
+        log_clock::time_point time;        
         std::string raw_msg_str;
 
         async_msg() = default;
@@ -64,21 +63,16 @@ class async_log_helper
         async_msg(const details::log_msg& m) :
             logger_name(m.logger_name),
             level(m.level),
-            time(m.time),
-            tm_time(m.tm_time),
+            time(m.time),            
             raw_msg_str(m.raw.data(), m.raw.size())
-        {
-
-        }
-
+        {}
 
         log_msg to_log_msg()
         {
             log_msg msg;
             msg.logger_name = logger_name;
             msg.level = level;
-            msg.time = time;
-            msg.tm_time = tm_time;
+            msg.time = time;            
             msg.raw << raw_msg_str;
             return msg;
         }

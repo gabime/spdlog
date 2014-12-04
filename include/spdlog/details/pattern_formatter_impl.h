@@ -43,7 +43,7 @@ class flag_formatter
 {
 public:
     virtual ~flag_formatter() {}
-    virtual void format(details::log_msg& msg) = 0;
+    virtual void format(details::log_msg& msg, const std::tm& tm_time) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ namespace
 {
 class name_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm&) override
     {
         msg.formatted << msg.logger_name;
     }
@@ -63,7 +63,7 @@ class name_formatter :public flag_formatter
 // log level appender
 class level_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm&) override
     {
         msg.formatted << level::to_str(msg.level);
     }
@@ -87,9 +87,9 @@ static int to12h(const tm& t)
 static const std::string days[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 class a_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << days[msg.tm_time.tm_wday];
+        msg.formatted << days[tm_time.tm_wday];
     }
 };
 
@@ -97,9 +97,9 @@ class a_formatter :public flag_formatter
 static const std::string full_days[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 class A_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << full_days[msg.tm_time.tm_wday];
+        msg.formatted << full_days[tm_time.tm_wday];
     }
 };
 
@@ -107,9 +107,9 @@ class A_formatter :public flag_formatter
 static const std::string  months[] { "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" };
 class b_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted<< months[msg.tm_time.tm_mon];
+        msg.formatted<< months[tm_time.tm_mon];
     }
 };
 
@@ -117,9 +117,9 @@ class b_formatter :public flag_formatter
 static const std::string full_months[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 class B_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << full_months[msg.tm_time.tm_mon];
+        msg.formatted << full_months[tm_time.tm_mon];
     }
 };
 
@@ -139,15 +139,13 @@ static fmt::MemoryWriter& pad_n_join(fmt::MemoryWriter& w, int v1, int v2, int v
 }
 
 
-
-
 //Date and time representation (Thu Aug 23 15:35:46 2014)
 class c_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << days[msg.tm_time.tm_wday] << ' ' << months[msg.tm_time.tm_mon] << ' ' << msg.tm_time.tm_mday << ' ';
-        pad_n_join(msg.formatted, msg.tm_time.tm_hour, msg.tm_time.tm_min, msg.tm_time.tm_sec, ':') << ' ' << msg.tm_time.tm_year + 1900;
+        msg.formatted << days[tm_time.tm_wday] << ' ' << months[tm_time.tm_mon] << ' ' << tm_time.tm_mday << ' ';
+        pad_n_join(msg.formatted, tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, ':') << ' ' << tm_time.tm_year + 1900;
     }
 };
 
@@ -155,9 +153,9 @@ class c_formatter :public flag_formatter
 // year - 2 digit
 class C_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << fmt::pad(msg.tm_time.tm_year % 100, 2, '0');
+        msg.formatted << fmt::pad(tm_time.tm_year % 100, 2, '0');
     }
 };
 
@@ -166,9 +164,9 @@ class C_formatter :public flag_formatter
 // Short MM/DD/YY date, equivalent to %m/%d/%y 08/23/01
 class D_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        pad_n_join(msg.formatted, msg.tm_time.tm_mon + 1, msg.tm_time.tm_mday, msg.tm_time.tm_year % 100, '/');
+        pad_n_join(msg.formatted, tm_time.tm_mon + 1, tm_time.tm_mday, tm_time.tm_year % 100, '/');
     }
 };
 
@@ -176,70 +174,70 @@ class D_formatter :public flag_formatter
 // year - 4 digit
 class Y_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << msg.tm_time.tm_year + 1900;
+        msg.formatted << tm_time.tm_year + 1900;
     }
 };
 
 // month 1-12
 class m_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << fmt::pad(msg.tm_time.tm_mon + 1, 2, '0');
+        msg.formatted << fmt::pad(tm_time.tm_mon + 1, 2, '0');
     }
 };
 
 // day of month 1-31
 class d_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << fmt::pad(msg.tm_time.tm_mday, 2, '0');
+        msg.formatted << fmt::pad(tm_time.tm_mday, 2, '0');
     }
 };
 
 // hours in 24 format  0-23
 class H_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << fmt::pad(msg.tm_time.tm_hour, 2, '0');
+        msg.formatted << fmt::pad(tm_time.tm_hour, 2, '0');
     }
 };
 
 // hours in 12 format  1-12
 class I_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << fmt::pad(to12h(msg.tm_time), 2, '0');
+        msg.formatted << fmt::pad(to12h(tm_time), 2, '0');
     }
 };
 
 // ninutes 0-59
 class M_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << fmt::pad(msg.tm_time.tm_min, 2, '0');
+        msg.formatted << fmt::pad(tm_time.tm_min, 2, '0');
     }
 };
 
 // seconds 0-59
 class S_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << fmt::pad(msg.tm_time.tm_sec, 2, '0');
+        msg.formatted << fmt::pad(tm_time.tm_sec, 2, '0');
     }
 };
 
 // milliseconds
 class e_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm&) override
     {
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
@@ -250,9 +248,9 @@ class e_formatter :public flag_formatter
 // AM/PM
 class p_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        msg.formatted << ampm(msg.tm_time);
+        msg.formatted << ampm(tm_time);
     }
 };
 
@@ -260,27 +258,27 @@ class p_formatter :public flag_formatter
 // 12 hour clock 02:55:02 pm
 class r_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        pad_n_join(msg.formatted, to12h(msg.tm_time), msg.tm_time.tm_min, msg.tm_time.tm_sec, ':') << ' ' << ampm(msg.tm_time);
+        pad_n_join(msg.formatted, to12h(tm_time), tm_time.tm_min, tm_time.tm_sec, ':') << ' ' << ampm(tm_time);
     }
 };
 
 // 24-hour HH:MM time, equivalent to %H:%M
 class R_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        pad_n_join(msg.formatted, msg.tm_time.tm_hour, msg.tm_time.tm_min, ':');
+        pad_n_join(msg.formatted, tm_time.tm_hour, tm_time.tm_min, ':');
     }
 };
 
 // ISO 8601 time format (HH:MM:SS), equivalent to %H:%M:%S
 class T_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
-        pad_n_join(msg.formatted, msg.tm_time.tm_hour, msg.tm_time.tm_min, msg.tm_time.tm_sec, ':');
+        pad_n_join(msg.formatted, tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, ':');
     }
 };
 
@@ -295,14 +293,14 @@ public:
     z_formatter(const z_formatter&) = delete;
     z_formatter& operator=(const z_formatter&) = delete;
 
-    void format(log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
 #ifdef _WIN32
-        int total_minutes = get_cached_offset(msg);
+        int total_minutes = get_cached_offset(msg, tm_time);
 #else
         // No need to chache under gcc,
         // it is very fast (already stored in tm.tm_gmtoff)
-        int total_minutes = os::utc_minutes_offset(msg.tm_time);
+        int total_minutes = os::utc_minutes_offset(tm_time);
 #endif
 
         int h = total_minutes / 60;
@@ -316,13 +314,13 @@ private:
     int _offset_minutes;
     std::mutex _mutex;
 
-    int get_cached_offset(const log_msg& msg)
+    int get_cached_offset(const log_msg& msg, const std::tm& tm_time)
     {
         using namespace std::chrono;
         std::lock_guard<std::mutex> l(_mutex);
         if (msg.time - _last_update >= cache_refresh)
         {
-            _offset_minutes = os::utc_minutes_offset(msg.tm_time);
+            _offset_minutes = os::utc_minutes_offset(tm_time);
             _last_update = msg.time;
         }
         return _offset_minutes;
@@ -334,7 +332,7 @@ private:
 //Thread id
 class t_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm&) override
     {
         msg.formatted << std::hash<std::thread::id>()(std::this_thread::get_id());
     }
@@ -343,7 +341,7 @@ class t_formatter :public flag_formatter
 
 class v_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm&) override
     {
         msg.formatted << fmt::StringRef(msg.raw.data(), msg.raw.size());
     }
@@ -354,7 +352,7 @@ class ch_formatter :public flag_formatter
 public:
     explicit ch_formatter(char ch) : _ch(ch)
     {}
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm&) override
     {
         msg.formatted << _ch;
     }
@@ -373,7 +371,7 @@ public:
     {
         _str += ch;
     }
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm&) override
     {
         msg.formatted << _str;
     }
@@ -385,31 +383,31 @@ private:
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
 class full_formatter :public flag_formatter
 {
-    void format(details::log_msg& msg) override
+    void format(details::log_msg& msg, const std::tm& tm_time) override
     {
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
 
         /* Slower version(while still very fast - about 3.2 million lines/sec under 10 threads),
         msg.formatted.write("[{:d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}.{:03d}] [{}] [{}] {} ",
-        msg.tm_time.tm_year + 1900,
-        msg.tm_time.tm_mon + 1,
-        msg.tm_time.tm_mday,
-        msg.tm_time.tm_hour,
-        msg.tm_time.tm_min,
-        msg.tm_time.tm_sec,
+        tm_time.tm_year + 1900,
+        tm_time.tm_mon + 1,
+        tm_time.tm_mday,
+        tm_time.tm_hour,
+        tm_time.tm_min,
+        tm_time.tm_sec,
         static_cast<int>(millis),
         msg.logger_name,
         level::to_str(msg.level),
         msg.raw.str());*/
 
         // Faster (albeit uglier) way to format the line (5.6 million lines/sec under 10 threads)
-        msg.formatted << '[' << static_cast<unsigned int>(msg.tm_time.tm_year + 1900) << '-'
-                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_mon + 1), 2, '0') << '-'
-                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_mday), 2, '0') << ' '
-                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_hour), 2, '0') << ':'
-                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_min), 2, '0') << ':'
-                      << fmt::pad(static_cast<unsigned int>(msg.tm_time.tm_sec), 2, '0') << '.'
+        msg.formatted << '[' << static_cast<unsigned int>(tm_time.tm_year + 1900) << '-'
+                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_mon + 1), 2, '0') << '-'
+                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_mday), 2, '0') << ' '
+                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_hour), 2, '0') << ':'
+                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_min), 2, '0') << ':'
+                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_sec), 2, '0') << '.'
                       << fmt::pad(static_cast<unsigned int>(millis), 3, '0') << "] ";
 
         msg.formatted << '[' << msg.logger_name << "] [" << level::to_str(msg.level) << "] ";
@@ -576,9 +574,10 @@ inline void spdlog::pattern_formatter::format(details::log_msg& msg)
 {
     try
     {
+		auto tm_time = details::os::localtime(log_clock::to_time_t(msg.time));
         for (auto &f : _formatters)
         {
-            f->format(msg);
+            f->format(msg, tm_time);
         }
         //write eol
         msg.formatted << details::os::eol();
