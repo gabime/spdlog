@@ -45,13 +45,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #endif
 
 #ifdef __GNUC__
+// Ignore shadow warnings
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wshadow"
+
 # define FMT_GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
 # define FMT_GCC_EXTENSION __extension__
 // Disable warning about "long long" which is sometimes reported even
 // when using __extension__.
 # if FMT_GCC_VERSION >= 406
 #  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wshadow"
 #  pragma GCC diagnostic ignored "-Wlong-long"
 # endif
 #else
@@ -2861,8 +2864,12 @@ FMT_VARIADIC(int, fprintf, std::FILE *, StringRef)
 # pragma GCC diagnostic pop
 #endif
 
+
 #define FMT_HEADER_ONLY
 # include "format.cc"
 
+#ifdef __GNUC__
+# pragma GCC diagnostic pop //pop -Wshadow warnings ignore
+#endif
 
 #endif  // FMT_FORMAT_H_
