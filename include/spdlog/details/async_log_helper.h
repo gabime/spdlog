@@ -37,6 +37,7 @@
 #include <thread>
 #include <atomic>
 
+#include "../common.h"
 #include "../sinks/sink.h"
 #include "./mpmc_bounded_q.h"
 #include "./log_msg.h"
@@ -108,38 +109,35 @@ public:
     using clock = std::chrono::steady_clock;
 
 
-    explicit async_log_helper(size_t queue_size);
+	async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size);
     void log(const details::log_msg& msg);
 
     //Stop logging and join the back thread
-    ~async_log_helper();
-    void add_sink(sink_ptr sink);
-    void remove_sink(sink_ptr sink_ptr);
+    ~async_log_helper();   
     void set_formatter(formatter_ptr);
     //Wait to remaining items (if any) in the queue to be written and shutdown
     void shutdown(const log_clock::duration& timeout);
 
 
 
-private:
-    std::vector<std::shared_ptr<sinks::sink>> _sinks;
-    std::atomic<bool> _active;
+private:	
+	std::atomic<bool> _active;
+	formatter_ptr _formatter;
+    std::vector<std::shared_ptr<sinks::sink>> _sinks;    
     q_type _q;
-    std::thread _worker_thread;
-    std::mutex _mutex;
+    std::thread _worker_thread;    
 
     // last exception thrown from the worker thread
     std::shared_ptr<spdlog_ex> _last_workerthread_ex;
+    
 
-    // worker thread formatter
-    formatter_ptr _formatter;
 
 
     // will throw last worker thread exception or if worker thread no active
     void throw_if_bad_worker();
 
     // worker thread loop
-    void thread_loop();
+    void worker_loop();
 
     // guess how much to sleep if queue is empty/full using last succesful op time as hint
     static void sleep_or_yield(const clock::time_point& last_op_time);
@@ -156,11 +154,12 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::details::async_log_helper::async_log_helper(size_t queue_size)
-    :_sinks(),
-     _active(true),
+inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size):
+	_active(false),
+	_formatter(formatter),
+	_sinks(sinks),
      _q(queue_size),
-     _worker_thread(&async_log_helper::thread_loop, this)
+     _worker_thread(&async_log_helper::worker_loop, this)
 {}
 
 inline spdlog::details::async_log_helper::~async_log_helper()
@@ -190,12 +189,11 @@ inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 	
 }
 
-inline void spdlog::details::async_log_helper::thread_loop()
+inline void spdlog::details::async_log_helper::worker_loop()
 {
-
 	log_msg popped_log_msg;
-    clock::time_point last_pop = clock::now();
-	size_t counter = 0;
+    clock::time_point last_pop = clock::now();	
+	_active = true;
     while (_active)
     {
         q_type::item_type popped_msg;
@@ -229,26 +227,10 @@ inline void spdlog::details::async_log_helper::thread_loop()
 }
 
 
-inline void spdlog::details::async_log_helper::add_sink(spdlog::sink_ptr s)
-{
-    std::lock_guard<std::mutex> guard(_mutex);
-    _sinks.push_back(s);
-}
-
-
-inline void spdlog::details::async_log_helper::remove_sink(spdlog::sink_ptr s)
-{
-    std::lock_guard<std::mutex> guard(_mutex);
-    _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), s), _sinks.end());
-}
-
-
 inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
 {
     _formatter = msg_formatter;
 }
-
-
 
 inline void spdlog::details::async_log_helper::shutdown(const log_clock::duration& timeout)
 {
