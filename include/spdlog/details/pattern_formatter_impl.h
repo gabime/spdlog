@@ -458,7 +458,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
-    // logger name
+        // logger name
     case 'n':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::name_formatter()));
         break;
@@ -574,7 +574,7 @@ inline void spdlog::pattern_formatter::format(details::log_msg& msg)
 {
     try
     {
-		auto tm_time = details::os::localtime(log_clock::to_time_t(msg.time));
+        auto tm_time = details::os::localtime(log_clock::to_time_t(msg.time));
         for (auto &f : _formatters)
         {
             f->format(msg, tm_time);

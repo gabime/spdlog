@@ -65,7 +65,6 @@ public:
         {
             _log_msg.logger_name = _callback_logger->name();
             _log_msg.time = log_clock::now();
-            //_log_msg.tm_time = details::os::localtime(log_clock::to_time_t(_log_msg.time));
             _callback_logger->_log_msg(_log_msg);
         }
     }

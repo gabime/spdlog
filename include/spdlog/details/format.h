@@ -1050,7 +1050,7 @@ public:
         {
         default:
             assert(false);
-        // Fall through.
+            // Fall through.
         case Arg::INT:
             return FMT_DISPATCH(visit_int(arg.int_value));
         case Arg::UINT:
@@ -2219,7 +2219,7 @@ void BasicWriter<Char>::write_double(
         // MSVC's printf doesn't support 'F'.
         type = 'f';
 #endif
-    // Fall through.
+        // Fall through.
     case 'E':
     case 'G':
     case 'A':

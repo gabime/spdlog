@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <ostream> 
+#include <ostream>
 #include <mutex>
 #include <memory>
 
