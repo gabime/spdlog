@@ -19,7 +19,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * **new!** Feature rich cppfromat [call style](http://cppformat.readthedocs.org/en/stable/syntax.html) using the excellent [cppformat](http://cppformat.github.io/) library.
 * Example: ```logger.info("Hello {} {:08x}!!", "world", 42);```
 * ostream call style: ```logger.info() << "Hello << "logger";```
-* **new!** Extremely fast asynchronous mode(optional) using lockfree queues and other tricks, pre allocated memory and deffered formatting.
+* **new!** Extremely fast asynchronous mode (optional) using lockfree queues and other tricks, pre allocated memory and deffered formatting.
 * [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
 * Multi/Single threaded loggers.
 * Various log targets:
