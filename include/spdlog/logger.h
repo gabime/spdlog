@@ -65,16 +65,16 @@ public:
     //Stop logging
     void stop();
 
-    template <typename... Args> details::line_logger log(const std::string& fmt, const Args&... args);
-    template <typename... Args> details::line_logger trace(const std::string& fmt, const Args&... args);
-    template <typename... Args> details::line_logger debug(const std::string& fmt, const Args&... args);
-    template <typename... Args> details::line_logger info(const std::string& fmt, const Args&... args);
-    template <typename... Args> details::line_logger notice(const std::string& fmt, const Args&... args);
-    template <typename... Args> details::line_logger warn(const std::string& fmt, const Args&... args);
-    template <typename... Args> details::line_logger error(const std::string& fmt, const Args&... args);
-    template <typename... Args> details::line_logger critical(const std::string& fmt, const Args&... args);
-    template <typename... Args> details::line_logger alert(const std::string& fmt, const Args&... args);
-    template <typename... Args> details::line_logger emerg(const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger log(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger trace(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger debug(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger info(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger notice(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger warn(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger error(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger critical(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger alert(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger emerg(const char* fmt, const Args&... args);
 
     //API to support logger.info() << ".." calls
 
@@ -100,7 +100,7 @@ protected:
     virtual void _set_formatter(formatter_ptr);
     virtual void _stop();
     details::line_logger _log(level::level_enum lvl);
-    template <typename... Args> details::line_logger _log(level::level_enum lvl, const std::string& fmt, const Args&... args);
+    template <typename... Args> details::line_logger _log(level::level_enum lvl, const char* fmt, const Args&... args);
 
 
     friend details::line_logger;

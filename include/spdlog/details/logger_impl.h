@@ -67,7 +67,7 @@ inline void spdlog::logger::set_pattern(const std::string& pattern)
 // cppformat API of the form logger.info("hello {} {}", "world", 1);
 //
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl, const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl, const char* fmt, const Args&... args)
 {
     bool msg_enabled = should_log(lvl);
     details::line_logger l(this, lvl, msg_enabled);
@@ -76,61 +76,61 @@ inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl, 
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::log(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::log(const char* fmt, const Args&... args)
 {
     return _log(level::ALWAYS, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::trace(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::trace(const char* fmt, const Args&... args)
 {
     return _log(level::TRACE, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::debug(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::debug(const char* fmt, const Args&... args)
 {
     return _log(level::DEBUG, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::info(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::info(const char* fmt, const Args&... args)
 {
     return _log(level::INFO, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::notice(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::notice(const char* fmt, const Args&... args)
 {
     return _log(level::NOTICE, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::warn(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::warn(const char* fmt, const Args&... args)
 {
     return _log(level::WARN, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::error(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::error(const char* fmt, const Args&... args)
 {
     return _log(level::ERR, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::critical(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::critical(const char* fmt, const Args&... args)
 {
     return _log(level::CRITICAL, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::alert(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::alert(const char* fmt, const Args&... args)
 {
     return _log(level::ALERT, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::emerg(const std::string& fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::emerg(const char* fmt, const Args&... args)
 {
     return _log(level::EMERG, fmt, args...);
 }

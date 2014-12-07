@@ -71,7 +71,7 @@ public:
 
 
     template <typename... Args>
-    void write(const std::string& fmt, const Args&... args)
+    void write(const char* fmt, const Args&... args)
     {
         if (!_enabled)
             return;
