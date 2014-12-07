@@ -19,7 +19,8 @@ Just copy the files to your build tree and use a C++11 compiler
 * No dependencies.
 * Cross platform - Linux / Windows on 32/64 bits.
 * **new**! Feature rich [cppfromat call style](http://cppformat.readthedocs.org/en/stable/syntax.html) using the excellent [cppformat](http://cppformat.github.io/) library:```logger.info("Hello {} !!", "world");```
-* ostream call style ```logger.info() << "Hello << "logger";
+* ostream call style ```logger.info() << "Hello << "logger";```
+* Mixed cppformat/ostream call style ```logger.info("{} + {} = ", 1, 2) << "?";```
 * [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
 * Multi/Single threaded loggers.
 * Various log targets:
