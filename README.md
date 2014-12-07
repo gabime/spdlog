@@ -76,7 +76,6 @@ int main(int, char* [])
         
         //Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
-        file_logger->info("Log file message number", 1);
         for(int i = 0; i < 10; ++i)
 		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
