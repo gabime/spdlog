@@ -46,9 +46,9 @@ class async_logger :public logger
 {
 public:
     template<class It>
-    async_logger(const std::string& name, const It& begin, const It& end, size_t queue_size, const log_clock::duration& shutdown_duration);
-    async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size, const log_clock::duration& shutdown_duration);
-    async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size, const log_clock::duration& shutdown_duration);
+    async_logger(const std::string& name, const It& begin, const It& end, size_t queue_size);
+    async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size);
+    async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size);
 
 
 protected:
@@ -58,7 +58,6 @@ protected:
     void _stop() override;
 
 private:
-    log_clock::duration _shutdown_duration;
     std::unique_ptr<details::async_log_helper> _async_log_helper;
 };
 }
