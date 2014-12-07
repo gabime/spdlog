@@ -18,7 +18,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * Headers only.
 * No dependencies.
 * Cross platform - Linux / Windows on 32/64 bits.
-* **new**! Now using the excellent [cppformat](http://cppformat.github.io/) for feature rich formatting and extra performance: ```logger.info("The number {} in hex is {:X}", 255, 255)
+* **new**! Now using the excellent [cppformat](http://cppformat.github.io/) for providing the user feature rich (formatting)[http://cppformat.readthedocs.org/en/stable/syntax.html] and extra performance boost
 * stream call style: ```logger.info("Hello") << " logger";
 * mixed calls style ```logger.info("Hello {}", name) << 1 << 2 << 3;
 * [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
