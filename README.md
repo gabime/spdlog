@@ -2,10 +2,8 @@
 
 Very fast, header only, C++ logging library.
 
-
 ## Install
 Just copy the files to your build tree and use a C++11 compiler
-
 
 ## Tested on:
 * gcc 4.8.1 and above
@@ -38,7 +36,7 @@ Just copy the files to your build tree and use a C++11 compiler
 
 Below are some [benchmarks](bench) comparing the time needed to log 1,000,000 lines to file under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz (the best of 3 runs for each logger):
 
-|threads|boost log|glog|g2log|spdlog|spdlog <sup>async mode</sup>|
+|threads|boost log|glog|g2log<sup>async mode</sup>|spdlog|spdlog <sup>async mode</sup>|
 |-------|:-------:|:-----:|------:|------:|------:|
 |1|4.779s|1.109s|3.155s|0.319s|0.212s
 |10|15.151ss|3.546s|3.500s|0.641s|0.199s|
@@ -51,15 +49,12 @@ Below are some [benchmarks](bench) comparing the time needed to log 1,000,000 li
 
 int main(int, char* [])
 {
-
     namespace spd = spdlog;
-
     try
     {
         std::string filename = "logs/spdlog_example";
         // Set log level to all loggers to DEBUG and above
         spd::set_level(spd::level::DEBUG);
-
 
         //Create console, multithreaded logger
         auto console = spd::stdout_logger_mt("console");
@@ -67,7 +62,6 @@ int main(int, char* [])
         console->info("An info message example {}..", 1);
         console->info() << "Streams are supported too  " << 1;
 
-				
         console->info("Easy padding in numbers like {:08d}", 12);
         console->info("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
         console->info("Support for floats {:03.2f}", 1.23456);
@@ -80,7 +74,6 @@ int main(int, char* [])
         //Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
         file_logger->info("Log file message number", 1);
-
 
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
@@ -110,7 +103,6 @@ int main(int, char* [])
     {
         std::cout << "Log failed: " << ex.what() << std::endl;
     }
-    return 0;
 }
 
 ```
