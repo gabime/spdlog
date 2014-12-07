@@ -14,9 +14,9 @@ int main(int, char* [])
     for(int i  = 0 ; i < howmany; ++i)
         logger->info() << "spdlog message #" << i << ": This is some text for your pleasure";
 
-	
-	//because spdlog async logger waits for the back thread logger to finish all messages upon destrcuting,
-	//and we want to measure only the time it took to push those messages to the backthread..
-	abort(); 	    
+
+    //because spdlog async logger waits for the back thread logger to finish all messages upon destrcuting,
+    //and we want to measure only the time it took to push those messages to the backthread..
+    abort();
     return 0;
 }

@@ -47,7 +47,7 @@ int main(int, char* [])
         console->info("An info message example {}..", 1);
         console->info() << "Streams are supported too  " << 1;
 
-				
+
         console->info("Easy padding in numbers like {:08d}", 12);
         console->info("Support for int: {0:d};  hex: {0:08x};  oct: {0:o}; bin: {0:b}", 42);
         console->info("Support for floats {:03.2f}", 1.23456);
@@ -56,13 +56,13 @@ int main(int, char* [])
         console->info("{:<30}", "left aligned");
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
-        
+
         //Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
-        
-        file_logger->info("Log file message number", 1);        
-		for(int i = 0; i < 10; ++i)
-			file_logger->info("{} * {} equals {:>10}", i, i, i*i);
+
+        file_logger->info("Log file message number", 1);
+        for(int i = 0; i < 10; ++i)
+            file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");

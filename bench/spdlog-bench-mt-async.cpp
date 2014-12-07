@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
         t.join();
     };
 
-	//because spdlog async logger waits for the back thread logger to finish all messages upon destrcuting,
-	//and we want to measure only the time it took to push those messages to the backthread..
-	abort(); 	    
+    //because spdlog async logger waits for the back thread logger to finish all messages upon destrcuting,
+    //and we want to measure only the time it took to push those messages to the backthread..
+    abort();
 }
