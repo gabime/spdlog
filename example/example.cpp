@@ -26,7 +26,7 @@
 // spdlog usage example
 //
 #include <iostream>
-#include "spdlog/spdlog.h"ls
+#include "spdlog/spdlog.h"
 
 
 int main(int, char* [])
@@ -49,7 +49,7 @@ int main(int, char* [])
 
 				
         console->info("Easy padding in numbers like {:08d}", 12);
-        console->info("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
+        console->info("Support for int: {0:d};  hex: {0:08x};  oct: {0:o}; bin: {0:b}", 42);
         console->info("Support for floats {:03.2f}", 1.23456);
         console->info("Positional args are {1} {0}..", "too", "supported");
 

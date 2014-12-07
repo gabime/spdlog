@@ -52,11 +52,7 @@ int main(int argc, char* argv[])
 
     int howmany = 1048576;
     int threads = 10;
-<<<<<<< HEAD
-	bool auto_flush = false;
-=======
     bool auto_flush = false;
->>>>>>> cppformat
     int file_size = 30 * 1024 * 1024;
     int rotating_files = 5;
 
