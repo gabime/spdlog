@@ -20,9 +20,9 @@ Just copy the files to your build tree and use a C++11 compiler
 * ```logger.info("Hello {} !!", "world");```
 * ostream call style ```logger.info() << "Hello << "logger";```
 * Mixed cppformat/ostream call style ```logger.info("{} + {} = ", 1, 2) << "?";```
+* **new!** Extremly fast asynchronous logging (optional) using lockfree queues.
 * [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
 * Multi/Single threaded loggers.
-* **new!** Extremly fast asynchronous logging(optional) using lockfree queues and finely tuned implementation 
 * Various log targets:
     * Rotating log files.
     * Daily log files.
