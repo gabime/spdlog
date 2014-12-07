@@ -28,7 +28,7 @@ Just copy the files to your build tree and use a C++11 compiler
     * Console logging.
     * Linux syslog.
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
-* Severity based filtering - can be modified in runtime.
+* Severity based filtering - threshold levels can be modified in runtime.
 
 
 
