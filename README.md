@@ -14,7 +14,7 @@ Just copy the files to your build tree and use a C++11 compiler
 ##Features
 * Very fast - performance is the primary goal (see [becnhmarks](#benchmarks) below).
 * Headers only.
-* No dependencies.
+* No dependencies - just copy and use.
 * Cross platform - Linux / Windows on 32/64 bits.
 * **new!** Feature rich [call style](#usage-example) using the excellent [cppformat](http://cppformat.github.io/) library.
 * Optional ostream call style.
