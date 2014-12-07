@@ -445,7 +445,7 @@ FMT_FUNC void fmt::internal::report_unknown_type(char code, const char *type) {
 
 #ifdef _WIN32
 
-fmt::internal::UTF8ToUTF16::UTF8ToUTF16(fmt::StringRef s) {
+FMT_FUNC fmt::internal::UTF8ToUTF16::UTF8ToUTF16(fmt::StringRef s) {
     int length = MultiByteToWideChar(
                      CP_UTF8, MB_ERR_INVALID_CHARS, s.c_str(), -1, 0, 0);
     static const char ERROR[] = "cannot convert string from UTF-8 to UTF-16";
@@ -458,14 +458,14 @@ fmt::internal::UTF8ToUTF16::UTF8ToUTF16(fmt::StringRef s) {
         FMT_THROW(WindowsError(GetLastError(), ERROR));
 }
 
-fmt::internal::UTF16ToUTF8::UTF16ToUTF8(fmt::WStringRef s) {
+FMT_FUNC fmt::internal::UTF16ToUTF8::UTF16ToUTF8(fmt::WStringRef s) {
     if (int error_code = convert(s)) {
         FMT_THROW(WindowsError(error_code,
                                "cannot convert string from UTF-16 to UTF-8"));
     }
 }
 
-int fmt::internal::UTF16ToUTF8::convert(fmt::WStringRef s) {
+FMT_FUNC int fmt::internal::UTF16ToUTF8::convert(fmt::WStringRef s) {
     int length = WideCharToMultiByte(CP_UTF8, 0, s.c_str(), -1, 0, 0, 0, 0);
     if (length == 0)
         return GetLastError();
@@ -477,7 +477,7 @@ int fmt::internal::UTF16ToUTF8::convert(fmt::WStringRef s) {
     return 0;
 }
 
-void fmt::WindowsError::init(
+FMT_FUNC void fmt::WindowsError::init(
     int error_code, StringRef format_str, ArgList args) {
     error_code_ = error_code;
     MemoryWriter w;
@@ -510,7 +510,7 @@ FMT_FUNC void fmt::internal::format_system_error(
 }
 
 #ifdef _WIN32
-void fmt::internal::format_windows_error(
+FMT_FUNC void fmt::internal::format_windows_error(
     fmt::Writer &out, int error_code,
     fmt::StringRef message) FMT_NOEXCEPT(true) {
     class String {
@@ -1090,7 +1090,7 @@ FMT_FUNC void fmt::report_system_error(
 }
 
 #ifdef _WIN32
-void fmt::report_windows_error(
+FMT_FUNC void fmt::report_windows_error(
     int error_code, fmt::StringRef message) FMT_NOEXCEPT(true) {
     report_error(internal::format_windows_error, error_code, message);
 }
