@@ -71,18 +71,7 @@ inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl, 
 {
     bool msg_enabled = should_log(lvl);
     details::line_logger l(this, lvl, msg_enabled);
-    if (msg_enabled)
-    {
-        try
-        {
-            l.write(fmt, args...);
-        }
-        catch(const fmt::FormatError& e)
-        {
-            throw spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
-        }
-
-    }
+    l.write(fmt, args...);
     return l;
 }
 
@@ -151,7 +140,6 @@ inline spdlog::details::line_logger spdlog::logger::emerg(const std::string& fmt
 // //API to support logger.info() << ".." calls
 //
 
-
 inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl)
 {
     bool msg_enabled = should_log(lvl);
@@ -213,7 +201,8 @@ inline spdlog::details::line_logger spdlog::logger::emerg()
 
 
 //
-
+// name and level
+//
 inline const std::string& spdlog::logger::name() const
 {
     return _name;
@@ -239,7 +228,9 @@ inline void spdlog::logger::stop()
     _stop();
 }
 
-/* protected virtual */
+//
+// protected virtual called at end of each user log call (if enabled) by the line_logger
+//
 inline void spdlog::logger::_log_msg(details::log_msg& msg)
 {
     _formatter->format(msg);

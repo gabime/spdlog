@@ -69,25 +69,27 @@ public:
         }
     }
 
-    template<typename T>
-    void write(const T& what)
-    {
-        if (_enabled)
-        {
-            _log_msg.raw << what;
-        }
-    }
 
     template <typename... Args>
     void write(const std::string& fmt, const Args&... args)
     {
-        _log_msg.raw.write(fmt, args...);
+        if (!_enabled)
+            return;
+        try
+        {
+            _log_msg.raw.write(fmt, args...);
+        }
+        catch (const fmt::FormatError& e)
+        {
+            throw spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
+        }
     }
 
     template<typename T>
     line_logger& operator<<(const T& what)
     {
-        write(what);
+        if (_enabled)
+            _log_msg.raw << what;
         return *this;
     }
 
