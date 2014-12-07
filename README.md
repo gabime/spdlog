@@ -72,7 +72,7 @@ int main(int, char* [])
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
         
-        //See full cppformat documation here:
+        //See cppformat syntax documation here:
         //http://cppformat.readthedocs.org/en/stable/syntax.html
         
        
