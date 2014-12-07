@@ -72,6 +72,10 @@ int main(int, char* [])
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
         
+        //See full cppformat documation here:
+        //http://cppformat.readthedocs.org/en/stable/syntax.html
+        
+       
         //Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
         file_logger->info("Log file message number", 1);
