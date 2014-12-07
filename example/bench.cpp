@@ -50,9 +50,13 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int argc, char* argv[])
 {
 
-    int howmany = 1000000;
+    int howmany = 1048576;
     int threads = 10;
+<<<<<<< HEAD
 	bool auto_flush = false;
+=======
+    bool auto_flush = false;
+>>>>>>> cppformat
     int file_size = 30 * 1024 * 1024;
     int rotating_files = 5;
 
@@ -64,12 +68,13 @@ int main(int argc, char* argv[])
         if (argc > 2)
             threads =   atoi(argv[2]);
 
+
         cout << "*******************************************************************************\n";
         cout << "Single thread, " << format(howmany)  << " iterations, auto flush=" << auto_flush << endl;
         cout << "*******************************************************************************\n";
 
-        auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st", file_size, rotating_files, auto_flush);
-        bench(howmany, rotating_st);
+        auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st", file_size, rotating_files, auto_flush);		
+        bench(howmany, rotating_st);		
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st", auto_flush);
         bench(howmany, daily_st);
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
@@ -85,18 +90,20 @@ int main(int argc, char* argv[])
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt", auto_flush);
         bench_mt(howmany, daily_mt, threads);
         bench(howmany, spdlog::create<null_sink_st>("null_mt"));
-		
+
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations, auto_flush=" << auto_flush << endl;
-	    cout << "*******************************************************************************\n";
+        cout << "*******************************************************************************\n";
 
-		
-        spdlog::set_async_mode(2500);
-        auto daily_st_async = spdlog::daily_logger_st("daily_async", "logs/daily_async", auto_flush);
-		bench_mt(howmany, daily_st_async, threads);
-	
-        spdlog::stop();
 
+        spdlog::set_async_mode(howmany);
+
+		for(int i = 0; i < 5; ++i)
+		{
+			auto as = spdlog::daily_logger_st("as", "logs/daily_async", auto_flush);
+			bench_mt(howmany, as, threads);			
+			spdlog::drop("as");
+		}
     }
     catch (std::exception &ex)
     {
@@ -113,7 +120,7 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
     auto start = system_clock::now();
     for (auto i = 0; i < howmany; ++i)
     {
-        log->info("Hello logger: msg number ", i);
+        log->info("Hello logger: msg number {}", i);
     }
 
 
@@ -138,7 +145,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
             {
                 int counter = ++msg_counter;
                 if (counter > howmany) break;
-                log->info("Hello logger: msg number ") << counter;
+                log->info("Hello logger: msg number {}", counter);
             }
         }));
     }

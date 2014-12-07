@@ -133,9 +133,9 @@ inline void spdlog::set_level(level::level_enum log_level)
 }
 
 
-inline void spdlog::set_async_mode(size_t queue_size, const log_clock::duration& shutdown_duration)
+inline void spdlog::set_async_mode(size_t queue_size)
 {
-    details::registry::instance().set_async_mode(queue_size, shutdown_duration);
+    details::registry::instance().set_async_mode(queue_size);
 }
 
 inline void spdlog::set_sync_mode()
