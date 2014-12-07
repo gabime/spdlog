@@ -50,7 +50,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int argc, char* argv[])
 {
 
-    int howmany = 1000000;
+    int howmany = 1048576;
     int threads = 10;
     bool auto_flush = false;
     int file_size = 30 * 1024 * 1024;
@@ -94,17 +94,12 @@ int main(int argc, char* argv[])
 
         spdlog::set_async_mode(howmany);
 
-		for(int i = 0; i < 3; ++i)
+		for(int i = 0; i < 5; ++i)
 		{
 			auto as = spdlog::daily_logger_st("as", "logs/daily_async", auto_flush);
-			//bench_mt(howmany, spdlog::create<null_sink_st>("as"), threads);
-			bench_mt(howmany, as, threads);
-			as->stop();
+			bench_mt(howmany, as, threads);			
 			spdlog::drop("as");
 		}
-
-        spdlog::stop();
-
     }
     catch (std::exception &ex)
     {

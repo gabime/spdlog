@@ -14,10 +14,10 @@ int main(int argc, char* argv[])
     if(argc > 1)
         thread_count = atoi(argv[1]);
 
-    int howmany = 1000000;
+    int howmany = 1048576;
 
     namespace spd = spdlog;
-    spd::set_async_mode(howmany, std::chrono::seconds(0));
+    spd::set_async_mode(howmany);
     ///Create a file rotating logger with 5mb size max and 3 rotated files
     auto logger = spd::rotating_logger_mt("file_logger", "logs/spd-sample", 10 *1024 * 1024 , 5);
 
@@ -45,5 +45,7 @@ int main(int argc, char* argv[])
         t.join();
     };
 
-    return 0;
+	//because spdlog async logger waits for the back thread logger to finish all messages upon destrcuting,
+	//and we want to measure only the time it took to push those messages to the backthread..
+	abort(); 	    
 }
