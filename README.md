@@ -29,7 +29,7 @@ Just copy the files to your build tree and use a C++11 compiler
     * Console logging.
     * Linux syslog.
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
-* Optional, even faster, async logging .
+* Optional, (extremly fast!), async logging.
 * Log levels.
 
 
