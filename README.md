@@ -68,7 +68,7 @@ int main(int, char* [])
 
         for (int j = 1; j <= 10; ++j)
            for (int i = 1; i < 10; ++i)
-            file_logger->info("{} * {} equals {}, i, j, i*j );
+             file_logger->info("{} * {} equals {}, i, j, i*j );
         
         console->info("Easy padding in numbers like {:08d}", 12);
         console->info("int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
