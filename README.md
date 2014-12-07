@@ -28,7 +28,7 @@ Just copy the files to your build tree and use a C++11 compiler
     * Console logging.
     * Linux syslog.
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
-* Log levels.
+* Severity based filtering - can be modified in runtime.
 
 
 
@@ -74,10 +74,11 @@ int main(int, char* [])
         //See cppformat syntax documation here:
         //http://cppformat.readthedocs.org/en/stable/syntax.html
         
-       
         //Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
         file_logger->info("Log file message number", 1);
+        for(int i = 0; i < 10; ++i)
+		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
@@ -94,7 +95,7 @@ int main(int, char* [])
         spdlog::set_async_mode(q_size);
         auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
         async_file->info() << "This is async log.." << "Should be very fast!";
-
+        
         //
         // syslog example
         //
