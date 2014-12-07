@@ -4,7 +4,7 @@ CXX_RELEASE_FLAGS = -O3 -flto
 CXX_DEBUG_FLAGS= -g 
 
 
-all:	bench
+all:	example bench
 debug: example-debug bench-debug
 
 example: example.cpp
