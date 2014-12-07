@@ -79,6 +79,7 @@ int main(int, char* [])
         for(int i = 0; i < 10; ++i)
 		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
+         //Customize msg format 
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
 
