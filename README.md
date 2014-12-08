@@ -69,16 +69,14 @@ int main(int, char* [])
         console->info("{:<30}", "left aligned");
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
-        
-        //See cppformat syntax documation here:
-        //http://cppformat.readthedocs.org/en/stable/syntax.html
-        
+       
         //Create a file rotating logger with 5mb size max and 3 rotated files
-        auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
+        auto file_logger = spd::rotating_logger_mt("file_logger", "logs/mylogfile", 1048576 * 5, 3);
+        file_logger->set_level(spd::level::INFO);
         for(int i = 0; i < 10; ++i)
 		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
-         //Customize msg format 
+         //Customize msg format for all messages
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
 
@@ -87,8 +85,8 @@ int main(int, char* [])
         SPDLOG_TRACE(file_logger, "This is a trace message (only #ifdef _DEBUG)", 123);
 
         //
-        // Asynchronous logging is easy..
-        // Just call spdlog::set_async_mode(max_q_size) and all created loggers from now on will be asynchronous..
+        // Asynchronous logging is very fast..
+        // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
         //
         size_t q_size = 1048576; //queue size must be power of 2
         spdlog::set_async_mode(q_size);
