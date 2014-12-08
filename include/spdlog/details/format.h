@@ -115,7 +115,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define FMT_DISALLOW_COPY_AND_ASSIGN(TypeName) \
   TypeName(const TypeName&); \
   void operator=(const TypeName&)
-
+namespace spdlog {
+namespace details {
 namespace fmt
 {
 
@@ -1053,7 +1054,7 @@ public:
         {
         default:
             assert(false);
-            // Fall through.
+        // Fall through.
         case Arg::INT:
             return FMT_DISPATCH(visit_int(arg.int_value));
         case Arg::UINT:
@@ -2222,7 +2223,7 @@ void BasicWriter<Char>::write_double(
         // MSVC's printf doesn't support 'F'.
         type = 'f';
 #endif
-        // Fall through.
+    // Fall through.
     case 'E':
     case 'G':
     case 'A':
@@ -2739,7 +2740,9 @@ inline void format_decimal(char *&buffer, T value)
     internal::format_decimal(buffer, abs_value, num_digits);
     buffer += num_digits;
 }
-}
+} // ns fmt
+} // ns deatils
+} // ns spdlog
 
 #if FMT_GCC_VERSION
 // Use the system_header pragma to suppress warnings about variadic macros
@@ -2846,6 +2849,8 @@ fmt::print(format, args...);
 #define FMT_VARIADIC_W(ReturnType, func, ...) \
   FMT_VARIADIC_(wchar_t, ReturnType, func, return func, __VA_ARGS__)
 
+namespace spdlog {
+namespace details {
 namespace fmt
 {
 FMT_VARIADIC(std::string, format, StringRef)
@@ -2857,6 +2862,8 @@ FMT_VARIADIC(void, print_colored, Color, StringRef)
 FMT_VARIADIC(std::string, sprintf, StringRef)
 FMT_VARIADIC(int, printf, StringRef)
 FMT_VARIADIC(int, fprintf, std::FILE *, StringRef)
+}
+}
 }
 
 // Restore warnings.

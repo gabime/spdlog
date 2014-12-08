@@ -99,7 +99,7 @@ protected:
 private:
     static std::string calc_filename(const std::string& filename, std::size_t index, const std::string& extension)
     {
-        fmt::MemoryWriter w;
+        details::fmt::MemoryWriter w;
         if (index)
             w.write("{}.{}.{}", filename, index, extension);
         else
@@ -196,7 +196,7 @@ private:
     static std::string calc_filename(const std::string& basename, const std::string& extension)
     {
         std::tm tm = spdlog::details::os::localtime();
-        fmt::MemoryWriter w;
+        details::fmt::MemoryWriter w;
         w.write("{}.{:04d}-{:02d}-{:02d}.{}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, extension);
         return w.str();
     }
