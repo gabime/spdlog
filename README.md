@@ -17,7 +17,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * No dependencies - just copy and use.
 * Cross platform - Linux / Windows on 32/64 bits.
 * **new!** Feature rich [call style](#usage-example) using the excellent [cppformat](http://cppformat.github.io/) library.
-* Optional ostream call style.
+* ostream call style is supported too.
 * Extremely fast asynchronous mode (optional) - use of lockfree queues and other tricks to reach millions  of calls per second from multiple threads.
 * [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
 * Multi/Single threaded loggers.
