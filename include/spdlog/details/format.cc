@@ -28,11 +28,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-// Disable useless MSVC warnings.
-#undef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#undef _SCL_SECURE_NO_WARNINGS
-#define _SCL_SECURE_NO_WARNINGS
 
 
 #include <string.h>
@@ -49,7 +44,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #  include <cstring>
 # endif
 # include <windows.h>
-# undef ERROR
 #endif
 
 using spdlog::details::fmt::LongLong;
@@ -176,14 +170,14 @@ FMT_FUNC void format_error_code(spdlog::details::fmt::Writer &out, int error_cod
     // bad_alloc.
     out.clear();
     static const char SEP[] = ": ";
-    static const char ERROR[] = "error ";
+    static const char FMT_ERROR[] = "error ";
     spdlog::details::fmt::internal::IntTraits<int>::MainType ec_value = error_code;
-    // Subtract 2 to account for terminating null characters in SEP and ERROR.
+    // Subtract 2 to account for terminating null characters in SEP and FMT_ERROR.
     std::size_t error_code_size =
-        sizeof(SEP) + sizeof(ERROR) + spdlog::details::fmt::internal::count_digits(ec_value) - 2;
+        sizeof(SEP) + sizeof(FMT_ERROR) + spdlog::details::fmt::internal::count_digits(ec_value) - 2;
     if (message.size() <= spdlog::details::fmt::internal::INLINE_BUFFER_SIZE - error_code_size)
         out << message << SEP;
-    out << ERROR << error_code;
+    out << FMT_ERROR << error_code;
     assert(out.size() <= spdlog::details::fmt::internal::INLINE_BUFFER_SIZE);
 }
 
@@ -451,14 +445,14 @@ FMT_FUNC void spdlog::details::fmt::internal::report_unknown_type(char code, con
 FMT_FUNC spdlog::details::fmt::internal::UTF8ToUTF16::UTF8ToUTF16(spdlog::details::fmt::StringRef s) {
     int length = MultiByteToWideChar(
                      CP_UTF8, MB_ERR_INVALID_CHARS, s.c_str(), -1, 0, 0);
-    static const char ERROR[] = "cannot convert string from UTF-8 to UTF-16";
+    static const char FMT_ERROR[] = "cannot convert string from UTF-8 to UTF-16";
     if (length == 0)
-        FMT_THROW(WindowsError(GetLastError(), ERROR));
+        FMT_THROW(WindowsError(GetLastError(), FMT_ERROR));
     buffer_.resize(length);
     length = MultiByteToWideChar(
                  CP_UTF8, MB_ERR_INVALID_CHARS, s.c_str(), -1, &buffer_[0], length);
     if (length == 0)
-        FMT_THROW(WindowsError(GetLastError(), ERROR));
+        FMT_THROW(WindowsError(GetLastError(), FMT_ERROR));
 }
 
 FMT_FUNC spdlog::details::fmt::internal::UTF16ToUTF8::UTF16ToUTF8(spdlog::details::fmt::WStringRef s) {
