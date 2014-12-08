@@ -51,7 +51,6 @@ int main(int, char* [])
     namespace spd = spdlog;
     try
     {
-        std::string filename = "logs/spdlog_example";
         // Set log level to all loggers to DEBUG and above
         spd::set_level(spd::level::DEBUG);
 
