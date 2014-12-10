@@ -26,7 +26,6 @@
 
 #include "../common.h"
 #include "../logger.h"
-#include "fast_oss.h"
 
 
 // Line logger class - aggregates operator<< calls to fast ostream
@@ -66,26 +65,34 @@ public:
         {
             _log_msg.logger_name = _callback_logger->name();
             _log_msg.time = log_clock::now();
-            _log_msg.tm_time = details::os::localtime(log_clock::to_time_t(_log_msg.time));
             _callback_logger->_log_msg(_log_msg);
         }
     }
 
-    template<typename T>
-    void write(const T& what)
+
+    template <typename... Args>
+    void write(const char* fmt, const Args&... args)
     {
-        if (_enabled)
+        if (!_enabled)
+            return;
+        try
         {
-            _log_msg.raw << what;
+            _log_msg.raw.write(fmt, args...);
+        }
+        catch (const fmt::FormatError& e)
+        {
+            throw spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
         }
     }
 
     template<typename T>
     line_logger& operator<<(const T& what)
     {
-        write(what);
+        if (_enabled)
+            _log_msg.raw << what;
         return *this;
     }
+
 
     void disable()
     {

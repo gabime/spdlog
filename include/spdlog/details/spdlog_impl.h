@@ -37,6 +37,10 @@ inline std::shared_ptr<spdlog::logger> spdlog::get(const std::string& name)
     return details::registry::instance().get(name);
 }
 
+inline void spdlog::drop(const std::string &name)
+{
+    details::registry::instance().drop(name);
+}
 
 // Create multi/single threaded rotating file logger
 inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_mt(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool auto_flush)
@@ -129,9 +133,9 @@ inline void spdlog::set_level(level::level_enum log_level)
 }
 
 
-inline void spdlog::set_async_mode(size_t queue_size, const log_clock::duration& shutdown_duration)
+inline void spdlog::set_async_mode(size_t queue_size)
 {
-    details::registry::instance().set_async_mode(queue_size, shutdown_duration);
+    details::registry::instance().set_async_mode(queue_size);
 }
 
 inline void spdlog::set_sync_mode()

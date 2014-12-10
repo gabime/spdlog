@@ -63,78 +63,146 @@ inline void spdlog::logger::set_pattern(const std::string& pattern)
     _set_pattern(pattern);
 }
 
-
-
+//
+// cppformat API of the form logger.info("hello {} {}", "world", 1);
+//
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::log(level::level_enum lvl, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl, const char* fmt, const Args&... args)
 {
     bool msg_enabled = should_log(lvl);
     details::line_logger l(this, lvl, msg_enabled);
-    if (msg_enabled)
-        _variadic_log(l, args...);
+    l.write(fmt, args...);
     return l;
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::log(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::log(const char* fmt, const Args&... args)
 {
-    return log(level::ALWAYS, args...);
+    return _log(level::ALWAYS, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::trace(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::trace(const char* fmt, const Args&... args)
 {
-    return log(level::TRACE, args...);
+    return _log(level::TRACE, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::debug(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::debug(const char* fmt, const Args&... args)
 {
-    return log(level::DEBUG, args...);
+    return _log(level::DEBUG, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::info(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::info(const char* fmt, const Args&... args)
 {
-    return log(level::INFO, args...);
+    return _log(level::INFO, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::notice(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::notice(const char* fmt, const Args&... args)
 {
-    return log(level::NOTICE, args...);
+    return _log(level::NOTICE, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::warn(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::warn(const char* fmt, const Args&... args)
 {
-    return log(level::WARN, args...);
+    return _log(level::WARN, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::error(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::error(const char* fmt, const Args&... args)
 {
-    return log(level::ERR, args...);
+    return _log(level::ERR, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::critical(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::critical(const char* fmt, const Args&... args)
 {
-    return log(level::CRITICAL, args...);
+    return _log(level::CRITICAL, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::alert(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::alert(const char* fmt, const Args&... args)
 {
-    return log(level::ALERT, args...);
+    return _log(level::ALERT, fmt, args...);
 }
 
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::emerg(const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::emerg(const char* fmt, const Args&... args)
 {
-    return log(level::EMERG, args...);
+    return _log(level::EMERG, fmt, args...);
 }
 
+
+//
+// //API to support logger.info() << ".." calls
+//
+
+inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl)
+{
+    bool msg_enabled = should_log(lvl);
+    details::line_logger l(this, lvl, msg_enabled);
+    return l;
+}
+
+inline spdlog::details::line_logger spdlog::logger::log()
+{
+    return _log(level::ALWAYS);
+}
+
+inline spdlog::details::line_logger spdlog::logger::trace()
+{
+    return _log(level::TRACE);
+}
+
+
+inline spdlog::details::line_logger spdlog::logger::debug()
+{
+    return _log(level::DEBUG);
+}
+
+inline spdlog::details::line_logger spdlog::logger::info()
+{
+    return _log(level::INFO);
+}
+
+inline spdlog::details::line_logger spdlog::logger::notice()
+{
+    return _log(level::NOTICE);
+}
+
+inline spdlog::details::line_logger spdlog::logger::warn()
+{
+    return _log(level::WARN);
+}
+
+inline spdlog::details::line_logger spdlog::logger::error()
+{
+    return _log(level::ERR);
+}
+
+inline spdlog::details::line_logger spdlog::logger::critical()
+{
+    return _log(level::CRITICAL);
+}
+
+inline spdlog::details::line_logger spdlog::logger::alert()
+{
+    return _log(level::ALERT);
+}
+
+inline spdlog::details::line_logger spdlog::logger::emerg()
+{
+    return _log(level::EMERG);
+}
+
+
+
+//
+// name and level
+//
 inline const std::string& spdlog::logger::name() const
 {
     return _name;
@@ -160,7 +228,9 @@ inline void spdlog::logger::stop()
     _stop();
 }
 
-/* protected virtual */
+//
+// protected virtual called at end of each user log call (if enabled) by the line_logger
+//
 inline void spdlog::logger::_log_msg(details::log_msg& msg)
 {
     _formatter->format(msg);
@@ -182,24 +252,7 @@ inline void spdlog::logger::_stop()
     set_level(level::OFF);
 }
 
-/* private functions */
-inline void spdlog::logger::_variadic_log(spdlog::details::line_logger&) {}
 
-template <typename Last>
-inline void spdlog::logger::_variadic_log(spdlog::details::line_logger& l, const Last& last)
-{
-    l.write(last);
-}
-
-
-
-template <typename First, typename... Rest>
-inline void spdlog::logger::_variadic_log(spdlog::details::line_logger& l, const First& first, const Rest&... rest)
-{
-    l.write(first);
-    l.write(' ');
-    _variadic_log(l, rest...);
-}
 
 
 

@@ -42,6 +42,10 @@ namespace spdlog
 // logger.info() << "This is another message" << x << y << z;
 std::shared_ptr<logger> get(const std::string& name);
 
+//
+// Drop the reference to this logger.
+//
+void drop(const std::string &name);
 
 //
 // Set global formatting
@@ -61,9 +65,8 @@ void set_level(level::level_enum log_level);
 //
 
 // Turn on async mode and set the queue size for each async_logger
-// shutdown_duration indicates max time to wait for the worker thread to log its messages before terminating.
 
-void set_async_mode(size_t queue_size, const log_clock::duration& shutdown_duration = std::chrono::seconds(5));
+void set_async_mode(size_t queue_size);
 // Turn off async mode
 void set_sync_mode();
 

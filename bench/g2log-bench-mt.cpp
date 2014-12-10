@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 
     g2LogWorker g2log(argv[0], "logs");
     g2::initializeLogging(&g2log);
-      
+
 
     std::atomic<int > msg_counter {0};
     vector<thread> threads;
