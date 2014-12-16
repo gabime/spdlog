@@ -96,7 +96,8 @@ int main(int, char* [])
         // syslog example
         //
 #ifdef __linux__
-        auto syslog_logger = spd::syslog_logger("syslog");
+        std::string ident = "my_app";
+        auto syslog_logger = spd::syslog_logger("syslog", ident, spd::sinks::syslog::option::PID | spd::sinks::syslog::option::PERROR, "mail" );
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
 #endif
     }
