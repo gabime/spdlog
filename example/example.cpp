@@ -76,7 +76,7 @@ int main(int, char* [])
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
         // Note: queue size must be power of 2!
         //
-        size_t max_q_size = 1048576; 
+        size_t max_q_size = 1048576;
         spdlog::set_async_mode(max_q_size);
         auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
         async_file->info() << "This is async log.." << "Should be very fast!";
@@ -85,7 +85,8 @@ int main(int, char* [])
         // syslog example
         //
 #ifdef __linux__
-        auto syslog_logger = spd::syslog_logger("syslog");
+        std::string ident = "my_ident";
+        auto syslog_logger = spd::syslog_logger("syslog", ident, spd::sinks::syslog::option::PID | spd::sinks::syslog::option::PERROR, "mail" );
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
 #endif
     }

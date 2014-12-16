@@ -87,9 +87,9 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::strin
 
 #ifdef __linux__
 // Create syslog logger
-inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& logger_name)
+inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& logger_name, const std::string& ident, int option , const std::string & facility)
 {
-    return create<spdlog::sinks::syslog_sink>(logger_name);
+    return create<spdlog::sinks::syslog_sink>(logger_name, ident, option, facility);
 }
 
 #endif
