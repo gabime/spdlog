@@ -55,13 +55,11 @@ typedef enum
     CRITICAL = 6,
     ALERT    = 7,
     EMERG    = 8,
-    ALWAYS   = 9,
-    OFF      = 10
+    OFF      = 9
 } level_enum;
 
-static const char* level_names[] { "trace", "debug", "info", "notice", "warning", "error", "critical",
-                                   "alert", "emerg", "", ""
-                                 };
+static const char* level_names[] { "trace", "debug", "info", "notice", "warning", "error", "critical", "alert", "emerg", "off"};
+
 inline const char* to_str(spdlog::level::level_enum l)
 {
     return level_names[l];

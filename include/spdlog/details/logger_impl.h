@@ -30,7 +30,8 @@
 #include "./line_logger.h"
 
 
-/* public functions */
+// create logger with given name, sinks and the default pattern formatter
+// all other ctors will call this one
 template<class It>
 inline spdlog::logger::logger(const std::string& logger_name, const It& begin, const It& end) :
     _name(logger_name),
@@ -42,16 +43,18 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
     _level = level::INFO;
 }
 
+// ctor with sinks as init list
 inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list sinks_list) :
     logger(logger_name, sinks_list.begin(), sinks_list.end()) {}
 
 
+// ctor with single sink
+inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink) :
+    logger(logger_name, { single_sink }) {}
 
-inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink) :logger(logger_name, { single_sink })
-{}
 
+inline spdlog::logger::~logger() = default;
 
-inline spdlog::logger::~logger() {}
 
 inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
 {
@@ -64,10 +67,12 @@ inline void spdlog::logger::set_pattern(const std::string& pattern)
 }
 
 //
-// cppformat API of the form logger.info("hello {} {}", "world", 1);
+// log only if given level>=logger's log level
 //
+
+
 template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl, const char* fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::_log_if_enabled(level::level_enum lvl, const char* fmt, const Args&... args)
 {
     bool msg_enabled = should_log(lvl);
     details::line_logger l(this, lvl, msg_enabled);
@@ -75,130 +80,131 @@ inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl, 
     return l;
 }
 
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::log(const char* fmt, const Args&... args)
+inline spdlog::details::line_logger spdlog::logger::_log_if_enabled(level::level_enum lvl)
 {
-    return _log(level::ALWAYS, fmt, args...);
+    return details::line_logger(this, lvl, should_log(lvl));
 }
 
+
+//
+// following functions will log only if at the right level
+//
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::trace(const char* fmt, const Args&... args)
 {
-    return _log(level::TRACE, fmt, args...);
+    return _log_if_enabled(level::TRACE, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::debug(const char* fmt, const Args&... args)
 {
-    return _log(level::DEBUG, fmt, args...);
+    return _log_if_enabled(level::DEBUG, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::info(const char* fmt, const Args&... args)
 {
-    return _log(level::INFO, fmt, args...);
+    return _log_if_enabled(level::INFO, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::notice(const char* fmt, const Args&... args)
 {
-    return _log(level::NOTICE, fmt, args...);
+    return _log_if_enabled(level::NOTICE, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::warn(const char* fmt, const Args&... args)
 {
-    return _log(level::WARN, fmt, args...);
+    return _log_if_enabled(level::WARN, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::error(const char* fmt, const Args&... args)
 {
-    return _log(level::ERR, fmt, args...);
+    return _log_if_enabled(level::ERR, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::critical(const char* fmt, const Args&... args)
 {
-    return _log(level::CRITICAL, fmt, args...);
+    return _log_if_enabled(level::CRITICAL, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::alert(const char* fmt, const Args&... args)
 {
-    return _log(level::ALERT, fmt, args...);
+    return _log_if_enabled(level::ALERT, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::emerg(const char* fmt, const Args&... args)
 {
-    return _log(level::EMERG, fmt, args...);
+    return _log_if_enabled(level::EMERG, fmt, args...);
 }
 
 
 //
-// //API to support logger.info() << ".." calls
+// support logger.info() << ".." calls
 //
 
-inline spdlog::details::line_logger spdlog::logger::_log(level::level_enum lvl)
-{
-    bool msg_enabled = should_log(lvl);
-    details::line_logger l(this, lvl, msg_enabled);
-    return l;
-}
 
-inline spdlog::details::line_logger spdlog::logger::log()
-{
-    return _log(level::ALWAYS);
-}
 
 inline spdlog::details::line_logger spdlog::logger::trace()
 {
-    return _log(level::TRACE);
+    return _log_if_enabled(level::TRACE);
 }
 
 
 inline spdlog::details::line_logger spdlog::logger::debug()
 {
-    return _log(level::DEBUG);
+    return _log_if_enabled(level::DEBUG);
 }
 
 inline spdlog::details::line_logger spdlog::logger::info()
 {
-    return _log(level::INFO);
+    return _log_if_enabled(level::INFO);
 }
 
 inline spdlog::details::line_logger spdlog::logger::notice()
 {
-    return _log(level::NOTICE);
+    return _log_if_enabled(level::NOTICE);
 }
 
 inline spdlog::details::line_logger spdlog::logger::warn()
 {
-    return _log(level::WARN);
+    return _log_if_enabled(level::WARN);
 }
 
 inline spdlog::details::line_logger spdlog::logger::error()
 {
-    return _log(level::ERR);
+    return _log_if_enabled(level::ERR);
 }
 
 inline spdlog::details::line_logger spdlog::logger::critical()
 {
-    return _log(level::CRITICAL);
+    return _log_if_enabled(level::CRITICAL);
 }
 
 inline spdlog::details::line_logger spdlog::logger::alert()
 {
-    return _log(level::ALERT);
+    return _log_if_enabled(level::ALERT);
 }
 
 inline spdlog::details::line_logger spdlog::logger::emerg()
 {
-    return _log(level::EMERG);
+    return _log_if_enabled(level::EMERG);
 }
 
 
+// always log, no matter what is the actual logger's log level
+template <typename... Args>
+inline spdlog::details::line_logger spdlog::logger::force_log(level::level_enum lvl, const char* fmt, const Args&... args)
+{
+    details::line_logger l(this, lvl, true);
+    l.write(fmt, args...);
+    return l;
+}
 
 //
 // name and level
