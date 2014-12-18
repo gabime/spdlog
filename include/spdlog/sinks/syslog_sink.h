@@ -64,7 +64,9 @@ public:
 
         ::openlog(ident.c_str(), option, syslog_facility_from_name(facility));
     }
-    virtual ~syslog_sink() = default;
+    virtual ~syslog_sink() {
+	::closelog();
+    }
 
     syslog_sink(const syslog_sink&) = delete;
     syslog_sink& operator=(const syslog_sink&) = delete;
