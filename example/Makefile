@@ -4,20 +4,20 @@ CXX_RELEASE_FLAGS = -O3 -flto
 CXX_DEBUG_FLAGS= -g 
 
 
-all:	test-example test-bench
-debug: test-example-debug test-bench-debug
+all:	example bench
+debug:	example-debug bench-debug
 
-test-example: example.cpp
+example: example.cpp
 	$(CXX) example.cpp -o example $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 
-test-bench: bench.cpp
+bench: bench.cpp
 	$(CXX) bench.cpp -o bench $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 	
 
-test-example-debug: example.cpp
+example-debug: example.cpp
 	$(CXX) example.cpp -o example-debug $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
 	
-test-bench-debug: bench.cpp
+bench-debug: bench.cpp
 	$(CXX) bench.cpp -o bench-debug $(CXXFLAGS) $(CXX_DEBUG_FLAGS)	
 
 
