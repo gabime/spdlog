@@ -58,8 +58,6 @@ public:
         _priorities[static_cast<int>(level::CRITICAL)] = LOG_CRIT;
         _priorities[static_cast<int>(level::ALERT)] = LOG_ALERT;
         _priorities[static_cast<int>(level::EMERG)] = LOG_EMERG;
-
-        _priorities[static_cast<int>(level::ALWAYS)] = LOG_INFO;
         _priorities[static_cast<int>(level::OFF)] = LOG_INFO;
 
         ::openlog(ident.c_str(), option, syslog_facility_from_name(facility));
