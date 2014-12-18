@@ -25,8 +25,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef FMT_FORMAT_H_
-#define FMT_FORMAT_H_
+#ifndef SPDLOG_FMT_FORMAT_H_
+#define SPDLOG_FMT_FORMAT_H_
 
 #include <stdint.h>
 
@@ -2879,4 +2879,4 @@ FMT_VARIADIC(int, fprintf, std::FILE *, StringRef)
 # pragma GCC diagnostic pop //pop -Wshadow warnings ignore
 #endif
 
-#endif  // FMT_FORMAT_H_
+#endif  // SPDLOG_FMT_FORMAT_H_
