@@ -28,9 +28,7 @@
 
 #include <string>
 
-#define SYSLOG_NAMES 1
 
-#include <syslog.h>
 #include "./sink.h"
 #include "../common.h"
 #include "../details/log_msg.h"
@@ -40,21 +38,6 @@ namespace spdlog
 {
 namespace sinks
 {
-namespace syslog
-{
-namespace option
-{
-typedef enum
-{
-    CONS     = LOG_CONS,
-    NDELAY   = LOG_NDELAY,
-    NOWAIT   = LOG_NOWAIT,
-    ODELAY   = LOG_ODELAY,
-    PERROR   = LOG_PERROR,
-    PID      = LOG_PID
-} option_enum;
-}
-}
 /**
  * Sink that write to syslog using the `syscall()` library call.
  *
