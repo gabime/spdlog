@@ -27,7 +27,8 @@
 #ifdef __linux__
 
 #include <string>
-#include <syslog.h>
+
+
 #include "./sink.h"
 #include "../common.h"
 #include "../details/log_msg.h"
@@ -45,8 +46,9 @@ namespace sinks
 class syslog_sink : public sink
 {
 public:
-    syslog_sink()
+    syslog_sink(const std::string& ident = "", int option = static_cast<int>(syslog::option::PID), const std::string &facility = "user")
     {
+
         _priorities[static_cast<int>(level::TRACE)] = LOG_DEBUG;
         _priorities[static_cast<int>(level::DEBUG)] = LOG_DEBUG;
         _priorities[static_cast<int>(level::INFO)] = LOG_INFO;
@@ -59,18 +61,23 @@ public:
 
         _priorities[static_cast<int>(level::ALWAYS)] = LOG_INFO;
         _priorities[static_cast<int>(level::OFF)] = LOG_INFO;
+
+        ::openlog(ident.c_str(), option, syslog_facility_from_name(facility));
     }
-    virtual ~syslog_sink() = default;
+    virtual ~syslog_sink() {
+	::closelog();
+    }
 
     syslog_sink(const syslog_sink&) = delete;
     syslog_sink& operator=(const syslog_sink&) = delete;
 
     void log(const details::log_msg &msg) override
     {
-        syslog(syslog_prio_from_level(msg), "%s", msg.formatted.str().c_str());
+        ::syslog(syslog_prio_from_level(msg), "%s", msg.formatted.str().c_str());
     };
 
 protected:
+
     /**
      * Simply maps spdlog's log level to syslog priority level.
      */
@@ -81,6 +88,21 @@ protected:
 
 private:
     std::array<int, 11> _priorities;
+
+    inline int syslog_facility_from_name (const std::string & name)
+    {
+        if (name.empty())
+            return LOG_USER;
+
+        for (int i = 0; facilitynames[i].c_name != NULL; ++i)
+        {
+            if (name == facilitynames[i].c_name)
+                return facilitynames[i].c_val;
+        }
+
+        return LOG_USER;
+
+    }
 };
 }
 }

@@ -5,7 +5,7 @@ CXX_DEBUG_FLAGS= -g
 
 
 all:	example bench
-debug: example-debug bench-debug
+debug:	example-debug bench-debug
 
 example: example.cpp
 	$(CXX) example.cpp -o example $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
