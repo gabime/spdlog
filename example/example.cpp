@@ -69,8 +69,8 @@ int main(int, char* [])
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
 
-        SPDLOG_TRACE(console, "Trace message - enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
-        SPDLOG_DEBUG(console, "Debug message - enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
+        SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
+        SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
 
         //
         // Asynchronous logging is easy..
