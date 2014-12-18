@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
         if (argc > 2)
             threads =   atoi(argv[2]);
 
-		/*
+		
         cout << "*******************************************************************************\n";
         cout << "Single thread, " << format(howmany)  << " iterations, auto flush=" << auto_flush << endl;
         cout << "*******************************************************************************\n";
@@ -86,8 +86,7 @@ int main(int argc, char* argv[])
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt", auto_flush);
         bench_mt(howmany, daily_mt, threads);
         bench(howmany, spdlog::create<null_sink_st>("null_mt"));
-
-		*/
+		
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations, auto_flush=" << auto_flush << endl;
         cout << "*******************************************************************************\n";
@@ -95,10 +94,9 @@ int main(int argc, char* argv[])
 
         spdlog::set_async_mode(howmany);
 
-        for(int i = 0; i < 5; ++i)
+        for(int i = 0; i < 3; ++i)
         {
-            //auto as = spdlog::daily_logger_st("as", "logs/daily_async", auto_flush);
-            auto as = spdlog::create<null_sink_st>("as");
+            auto as = spdlog::daily_logger_st("as", "logs/daily_async", auto_flush);        
             bench_mt(howmany, as, threads);
             spdlog::drop("as");
         }
