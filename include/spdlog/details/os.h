@@ -27,10 +27,18 @@
 #include<string>
 #include<cstdio>
 #include<ctime>
+
 #ifdef _WIN32
+
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
-#endif
+#undef WIN32_LEAN_AND_MEAN
+#else
+#include <Windows.h>
+#endif 
+
+#endif //_WIN32
 
 namespace spdlog
 {
