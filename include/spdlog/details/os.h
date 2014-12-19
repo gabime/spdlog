@@ -29,12 +29,7 @@
 #include<ctime>
 
 #ifdef _WIN32
-
-#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
-#include <Windows.h>
-#undef WIN32_LEAN_AND_MEAN
-#else
 #include <Windows.h>
 #endif 
 
