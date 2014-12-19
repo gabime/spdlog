@@ -33,8 +33,6 @@
 #include <Windows.h>
 #endif 
 
-#endif //_WIN32
-
 namespace spdlog
 {
 namespace details
