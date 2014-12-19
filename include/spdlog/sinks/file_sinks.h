@@ -135,7 +135,7 @@ private:
                 throw spdlog_ex("rotating_file_sink: failed renaming " + src + " to " + target);
             }
         }
-        _file_helper.reopen();
+        _file_helper.reopen(true);
     }
     std::string _base_filename;
     std::string _extension;

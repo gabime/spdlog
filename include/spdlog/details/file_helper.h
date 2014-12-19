@@ -63,15 +63,15 @@ public:
     }
 
 
-    void open(const std::string& fname)
+    void open(const std::string& fname, bool truncate=false)
     {
 
         close();
-
+		const char* mode = truncate ? "wb" : "ab";
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
-            if(!os::fopen_s(&_fd, fname, "wb"))
+            if(!os::fopen_s(&_fd, fname, mode))
                 return;
 
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
@@ -80,11 +80,11 @@ public:
         throw spdlog_ex("Failed opening file " + fname + " for writing");
     }
 
-    void reopen()
+    void reopen(bool truncate)
     {
         if(_filename.empty())
             throw spdlog_ex("Failed re opening file - was not opened before");
-        open(_filename);
+        open(_filename, truncate);
 
     }
 
