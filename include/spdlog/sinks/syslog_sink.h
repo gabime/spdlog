@@ -27,7 +27,7 @@
 #ifdef __linux__
 
 #include <string>
-
+#include <syslog.h>
 
 #include "./sink.h"
 #include "../common.h"
@@ -46,9 +46,10 @@ namespace sinks
 class syslog_sink : public sink
 {
 public:
-    syslog_sink(const std::string& ident = "", int option = static_cast<int>(syslog::option::PID), const std::string &facility = "user")
+	//
+    syslog_sink(const std::string& ident = "", int syslog_option=0, int syslog_facility=LOG_USER):
+    	_ident(ident)
     {
-
         _priorities[static_cast<int>(level::TRACE)] = LOG_DEBUG;
         _priorities[static_cast<int>(level::DEBUG)] = LOG_DEBUG;
         _priorities[static_cast<int>(level::INFO)] = LOG_INFO;
@@ -60,10 +61,12 @@ public:
         _priorities[static_cast<int>(level::EMERG)] = LOG_EMERG;
         _priorities[static_cast<int>(level::OFF)] = LOG_INFO;
 
-        ::openlog(ident.c_str(), option, syslog_facility_from_name(facility));
+		//set ident to be program name if empty
+        ::openlog(_ident.empty()? nullptr:_ident.c_str(), syslog_option, syslog_facility);
     }
-    virtual ~syslog_sink() {
-	::closelog();
+ 	~syslog_sink()
+ 	{
+		::closelog();
     }
 
     syslog_sink(const syslog_sink&) = delete;
@@ -74,33 +77,20 @@ public:
         ::syslog(syslog_prio_from_level(msg), "%s", msg.formatted.str().c_str());
     };
 
-protected:
 
-    /**
-     * Simply maps spdlog's log level to syslog priority level.
-     */
+
+private:
+    std::array<int, 10> _priorities;
+    //must store the ident because the man says openlog might use the pointer as is and not a string copy
+	const std::string _ident; 
+    
+    //
+    // Simply maps spdlog's log level to syslog priority level.
+    //
     int syslog_prio_from_level(const details::log_msg &msg) const
     {
         return _priorities[static_cast<int>(msg.level)];
-    }
-
-private:
-    std::array<int, 11> _priorities;
-
-    inline int syslog_facility_from_name (const std::string & name)
-    {
-        if (name.empty())
-            return LOG_USER;
-
-        for (int i = 0; facilitynames[i].c_name != NULL; ++i)
-        {
-            if (name == facilitynames[i].c_name)
-                return facilitynames[i].c_val;
-        }
-
-        return LOG_USER;
-
-    }
+    }    
 };
 }
 }

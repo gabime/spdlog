@@ -27,42 +27,12 @@
 #include<initializer_list>
 #include<chrono>
 
-#ifdef __linux__
-
-#define SYSLOG_NAMES 1
-#include <syslog.h>
-#endif
-
 namespace spdlog
 {
 
 class formatter;
 
-namespace sinks
-{
-
-class sink;
-
-#ifdef __linux__
-namespace syslog
-{
-namespace option
-{
-typedef enum
-{
-    CONS     = LOG_CONS,
-    NDELAY   = LOG_NDELAY,
-    NOWAIT   = LOG_NOWAIT,
-    ODELAY   = LOG_ODELAY,
-    PERROR   = LOG_PERROR,
-    PID      = LOG_PID
-} option_enum;
-}
-}
-#endif
-
-}
-
+namespace sinks { class sink;}
 
 // Common types across the lib
 using log_clock = std::chrono::system_clock;

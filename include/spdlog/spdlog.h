@@ -96,8 +96,7 @@ std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name);
 // Create a syslog logger
 //
 #ifdef __linux__
-
-std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int option = static_cast<int>(sinks::syslog::option::PID), const std::string &facility = "user");
+std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0);
 #endif
 
 //
