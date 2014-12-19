@@ -29,7 +29,6 @@
 // Can be set to auto flush on every line
 // Throw spdlog_ex exception on errors
 
-#include <cstdio>
 #include <string>
 #include <thread>
 #include <chrono>
