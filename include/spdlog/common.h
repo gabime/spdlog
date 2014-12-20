@@ -71,8 +71,8 @@ inline const char* to_str(spdlog::level::level_enum l)
 class spdlog_ex : public std::exception
 {
 public:
-    spdlog_ex(const std::string& msg) :_msg(msg) {};
-    const char* what() const throw() override
+    spdlog_ex(const std::string& msg) :_msg(msg) {}
+    const char* what() const noexcept override
     {
         return _msg.c_str();
     }
