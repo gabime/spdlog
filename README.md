@@ -46,7 +46,7 @@ Time needed to log 1,000,000 lines under synchronous mode (the best of 3 runs):
 
 
 #### Asynchronous mode 
-Time needed to log 1,000,000 lines under asynchronous mode, i.e. the time it takes to put the messages in the async queue (the best of 3 runs):
+Time needed to log 1,000,000 lines under asynchronous mode, i.e. the time it takes to put them in the async queue (the best of 3 runs):
 
 |threads|g2log   |spdlog<sup>async mode</sup>|
 |:-------|:-----:|-------------------------:|
