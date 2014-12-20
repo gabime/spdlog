@@ -68,7 +68,7 @@ int main(int, char* [])
     try
     {
         // Set log level to all loggers to DEBUG and above
-        spd::set_level(spd::level::DEBUG);
+        spd::set_level(spd::level::debug);
 
         //Create console, multithreaded logger
         auto console = spd::stdout_logger_mt("console");
@@ -87,7 +87,7 @@ int main(int, char* [])
        
         //Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", "logs/mylogfile", 1048576 * 5, 3);
-        file_logger->set_level(spd::level::INFO);
+        file_logger->set_level(spd::level::info);
         for(int i = 0; i < 10; ++i)
 		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
@@ -114,7 +114,7 @@ int main(int, char* [])
         //
 #ifdef __linux__
         std::string ident = "my_app";
-        auto syslog_logger = spd::syslog_logger("syslog", ident, spd::sinks::syslog::option::PID | spd::sinks::syslog::option::PERROR, "mail" );
+        auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID | LOG_PERROR);
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
 #endif
     }

@@ -130,7 +130,7 @@ public:
     void stop_all()
     {
         std::lock_guard<std::mutex> lock(_mutex);
-        _level = level::OFF;
+        _level = level::off;
         for (auto& l : _loggers)
             l.second->stop();
     }
@@ -149,7 +149,7 @@ private:
     std::mutex _mutex;
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
     formatter_ptr _formatter;
-    level::level_enum _level = level::INFO;
+    level::level_enum _level = level::info;
     bool _async_mode = false;
     size_t _async_q_size = 0;
 };

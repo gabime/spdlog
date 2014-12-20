@@ -80,7 +80,7 @@ struct log_msg
 
     void clear()
     {
-        level = level::OFF;
+        level = level::off;
         raw.clear();
         formatted.clear();
     }

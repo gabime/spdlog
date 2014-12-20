@@ -28,17 +28,13 @@
 #include <iostream>
 #include "spdlog/spdlog.h"
 
-
 int main(int, char* [])
 {
-
     namespace spd = spdlog;
-
     try
     {
-        std::string filename = "logs/spdlog_example";
         // Set log level to all loggers to DEBUG and above
-        spd::set_level(spd::level::DEBUG);
+        spd::set_level(spd::level::debug);
 
         //Create console, multithreaded logger
         auto console = spd::stdout_logger_mt("console");
@@ -47,55 +43,49 @@ int main(int, char* [])
         console->info() << "Streams are supported too  " << 1;
 
         console->info("Easy padding in numbers like {:08d}", 12);
-        console->info("Support for int: {0:d};  hex: {0:08x};  oct: {0:o}; bin: {0:b}", 42);
+        console->info("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
         console->info("Support for floats {:03.2f}", 1.23456);
         console->info("Positional args are {1} {0}..", "too", "supported");
 
         console->info("{:<30}", "left aligned");
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
-
+       
         //Create a file rotating logger with 5mb size max and 3 rotated files
-        auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
-
-        file_logger->info("Log file message number", 1);
+        auto file_logger = spd::rotating_logger_mt("file_logger", "logs/mylogfile", 1048576 * 5, 3);
+        file_logger->set_level(spd::level::info);
         for(int i = 0; i < 10; ++i)
-            file_logger->info("{} * {} equals {:>10}", i, i, i*i);
+		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
+         //Customize msg format for all messages
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
 
-		// Debug and trace macros to be turned on/off at compile time.
-		// Evaluates to empty statements if not turned on
-		// Define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON - before including spdlog.h
         SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
         SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
-        
 
-#ifdef __linux__		
-		// syslog example
-		std::string ident = "spdlog_example"; // empty ident can be used to use current program name
-        auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
-        syslog_logger->set_pattern("[%l] %v"); //syslog already put timestamps so set the pattern to minimum (log level and the message)
-        syslog_logger->warn("This message that will end up in syslog. This is Linux only..");
-#endif
-        
-        // Asynchronous logging is easy..
+        //
+        // Asynchronous logging is very fast..
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
-        // Note: queue size must be power of 2!                
-        size_t q_size = 1048576;
+        //
+        size_t q_size = 1048576; //queue size must be power of 2
         spdlog::set_async_mode(q_size);
         auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
-        for(int i = 0; i < 100; i++)
-	        async_file->info("This is async log message #{}.. Should be very fast.. ", i);
-    
+        async_file->info() << "This is async log.." << "Should be very fast!";
+        
+        //
+        // syslog example
+        //
+#ifdef __linux__
+        std::string ident = "my_app";
+        auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID | LOG_PERROR);
+        syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
+#endif
     }
     catch (const spd::spdlog_ex& ex)
     {
         std::cout << "Log failed: " << ex.what() << std::endl;
     }
-    return 0;
 }
-

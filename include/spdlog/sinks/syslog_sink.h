@@ -50,16 +50,16 @@ public:
     syslog_sink(const std::string& ident = "", int syslog_option=0, int syslog_facility=LOG_USER):
     	_ident(ident)
     {
-        _priorities[static_cast<int>(level::TRACE)] = LOG_DEBUG;
-        _priorities[static_cast<int>(level::DEBUG)] = LOG_DEBUG;
-        _priorities[static_cast<int>(level::INFO)] = LOG_INFO;
-        _priorities[static_cast<int>(level::NOTICE)] = LOG_NOTICE;
-        _priorities[static_cast<int>(level::WARN)] = LOG_WARNING;
-        _priorities[static_cast<int>(level::ERR)] = LOG_ERR;
-        _priorities[static_cast<int>(level::CRITICAL)] = LOG_CRIT;
-        _priorities[static_cast<int>(level::ALERT)] = LOG_ALERT;
-        _priorities[static_cast<int>(level::EMERG)] = LOG_EMERG;
-        _priorities[static_cast<int>(level::OFF)] = LOG_INFO;
+        _priorities[static_cast<int>(level::trace)] = LOG_DEBUG;
+        _priorities[static_cast<int>(level::debug)] = LOG_DEBUG;
+        _priorities[static_cast<int>(level::info)] = LOG_INFO;
+        _priorities[static_cast<int>(level::notice)] = LOG_NOTICE;
+        _priorities[static_cast<int>(level::warn)] = LOG_WARNING;
+        _priorities[static_cast<int>(level::err)] = LOG_ERR;
+        _priorities[static_cast<int>(level::critical)] = LOG_CRIT;
+        _priorities[static_cast<int>(level::alert)] = LOG_ALERT;
+        _priorities[static_cast<int>(level::emerg)] = LOG_EMERG;
+        _priorities[static_cast<int>(level::off)] = LOG_INFO;
 
 		//set ident to be program name if empty
         ::openlog(_ident.empty()? nullptr:_ident.c_str(), syslog_option, syslog_facility);

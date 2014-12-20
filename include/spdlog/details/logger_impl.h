@@ -40,7 +40,7 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
 {
 
     // no support under vs2013 for member initialization for std::atomic
-    _level = level::INFO;
+    _level = level::info;
 }
 
 // ctor with sinks as init list
@@ -92,55 +92,55 @@ inline spdlog::details::line_logger spdlog::logger::_log_if_enabled(level::level
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::trace(const char* fmt, const Args&... args)
 {
-    return _log_if_enabled(level::TRACE, fmt, args...);
+    return _log_if_enabled(level::trace, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::debug(const char* fmt, const Args&... args)
 {
-    return _log_if_enabled(level::DEBUG, fmt, args...);
+    return _log_if_enabled(level::debug, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::info(const char* fmt, const Args&... args)
 {
-    return _log_if_enabled(level::INFO, fmt, args...);
+    return _log_if_enabled(level::info, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::notice(const char* fmt, const Args&... args)
 {
-    return _log_if_enabled(level::NOTICE, fmt, args...);
+    return _log_if_enabled(level::notice, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::warn(const char* fmt, const Args&... args)
 {
-    return _log_if_enabled(level::WARN, fmt, args...);
+    return _log_if_enabled(level::warn, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::error(const char* fmt, const Args&... args)
 {
-    return _log_if_enabled(level::ERR, fmt, args...);
+    return _log_if_enabled(level::err, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::critical(const char* fmt, const Args&... args)
 {
-    return _log_if_enabled(level::CRITICAL, fmt, args...);
+    return _log_if_enabled(level::critical, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::alert(const char* fmt, const Args&... args)
 {
-    return _log_if_enabled(level::ALERT, fmt, args...);
+    return _log_if_enabled(level::alert, fmt, args...);
 }
 
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::emerg(const char* fmt, const Args&... args)
 {
-    return _log_if_enabled(level::EMERG, fmt, args...);
+    return _log_if_enabled(level::emerg, fmt, args...);
 }
 
 
@@ -152,48 +152,48 @@ inline spdlog::details::line_logger spdlog::logger::emerg(const char* fmt, const
 
 inline spdlog::details::line_logger spdlog::logger::trace()
 {
-    return _log_if_enabled(level::TRACE);
+    return _log_if_enabled(level::trace);
 }
 
 
 inline spdlog::details::line_logger spdlog::logger::debug()
 {
-    return _log_if_enabled(level::DEBUG);
+    return _log_if_enabled(level::debug);
 }
 
 inline spdlog::details::line_logger spdlog::logger::info()
 {
-    return _log_if_enabled(level::INFO);
+    return _log_if_enabled(level::info);
 }
 
 inline spdlog::details::line_logger spdlog::logger::notice()
 {
-    return _log_if_enabled(level::NOTICE);
+    return _log_if_enabled(level::notice);
 }
 
 inline spdlog::details::line_logger spdlog::logger::warn()
 {
-    return _log_if_enabled(level::WARN);
+    return _log_if_enabled(level::warn);
 }
 
 inline spdlog::details::line_logger spdlog::logger::error()
 {
-    return _log_if_enabled(level::ERR);
+    return _log_if_enabled(level::err);
 }
 
 inline spdlog::details::line_logger spdlog::logger::critical()
 {
-    return _log_if_enabled(level::CRITICAL);
+    return _log_if_enabled(level::critical);
 }
 
 inline spdlog::details::line_logger spdlog::logger::alert()
 {
-    return _log_if_enabled(level::ALERT);
+    return _log_if_enabled(level::alert);
 }
 
 inline spdlog::details::line_logger spdlog::logger::emerg()
 {
-    return _log_if_enabled(level::EMERG);
+    return _log_if_enabled(level::emerg);
 }
 
 
@@ -255,7 +255,7 @@ inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
 
 inline void spdlog::logger::_stop()
 {
-    set_level(level::OFF);
+    set_level(level::off);
 }
 
 
