@@ -43,12 +43,12 @@ Below are some [benchmarks](bench) comparing the time needed to log 1,000,000 li
 |100|     15.008  |1.139s |4.512s     :|0.497s|
 
 
-### ASynchronous mode 
+### Asynchronous mode 
 |threads|g2log   |spdlog<sup>async mode</sup>|
-|:-------|----- :|:-------------------------:|
-|1|       1.850s |0.216s 
-|10|      0.943s  |0.173s
-|100|      0.959s |0.202
+|:-------|:-----:|-------------------------:|
+|1|       1.850s |0.216s |
+|10|      0.943s  |0.173s|
+|100|      0.959s |0.202|
 
 
 
