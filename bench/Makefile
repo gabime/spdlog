@@ -3,7 +3,9 @@ CXXFLAGS	= -march=native -Wall -Wshadow -Wextra -pedantic -std=c++11 -pthread -W
 CXX_RELEASE_FLAGS = -O3 -flto
 
 
-all:	spdlog-bench spdlog-bench-mt spdlog-bench-async spdlog-bench-mt-async boost-bench boost-bench-mt glog-bench glog-bench-mt g2log-bench g2log-bench-mt 
+binaries=spdlog-bench spdlog-bench-mt spdlog-bench-async spdlog-bench-mt-async boost-bench boost-bench-mt glog-bench glog-bench-mt g2log-bench g2log-bench-mt easylogging-bench easylogging-bench-mt
+
+all: $(binaries)
 
 spdlog-bench: spdlog-bench.cpp
 	$(CXX) spdlog-bench.cpp -o spdlog-bench $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
@@ -43,8 +45,17 @@ g2log-bench-mt: g2log-bench-mt.cpp
 
 
 
+
+EASYL_FLAGS = -I../../easylogging/src/
+easylogging-bench: easylogging-bench.cpp
+	$(CXX) easylogging-bench.cpp -o easylogging-bench $(CXXFLAGS) $(EASYL_FLAGS) $(CXX_RELEASE_FLAGS)
+easylogging-bench-mt: easylogging-bench-mt.cpp
+	$(CXX) easylogging-bench-mt.cpp -o easylogging-bench-mt $(CXXFLAGS) $(EASYL_FLAGS) $(CXX_RELEASE_FLAGS)	
+	
+.PHONY: clean
+
 clean:
-	rm -f *.o logs/* spdlog-bench spdlog-bench-mt spdlog-bench-async spdlog-bench-mt-async boost-bench boost-bench-mt glog-bench glog-bench-mt g2log-bench g2log-bench-mt
+	rm -f *.o logs/* $(binaries)
 
 
 rebuild: clean all

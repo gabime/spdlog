@@ -1,4 +1,8 @@
 #~/bin/bash
+
+exec 2>&1
+
+
 echo "Running benchmakrs (all with 1000,000 writes to the logs folder)"
 echo
 echo "boost-bench (single thread).."
