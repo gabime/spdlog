@@ -40,9 +40,9 @@ Time needed to log 1,000,000 lines under synchronous mode (the best of 3 runs):
 
 |threads|boost log|glog   |easylogging |spdlog|
 |-------|:-------:|:-----:|----------:|------:|
-|1|       4.169s  |1.066s |0.975s     :|0.302s|
-|10|     16.029   |3.032s |2.857      :|0.968s|
-|100|     15.008  |1.139s |4.512s     :|0.497s|
+|1|       4.169s  |1.066s |0.975s     |0.302s|
+|10|     16.029   |3.032s |2.857      |0.968s|
+|100|     15.008  |1.139s |4.512s     |0.497s|
 
 
 #### Asynchronous mode 
