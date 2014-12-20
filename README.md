@@ -44,6 +44,8 @@ Below are some [benchmarks](bench) comparing the time needed to log 1,000,000 li
 
 
 ### Asynchronous mode 
+Time needed to log 1,000,000 lines under async mode, i.e. the time takes tp put the messages in the async queue (the best of 3 runs):
+
 |threads|g2log   |spdlog<sup>async mode</sup>|
 |:-------|:-----:|-------------------------:|
 |1|       1.850s |0.216s |
