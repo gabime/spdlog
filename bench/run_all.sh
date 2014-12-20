@@ -20,6 +20,7 @@ bench_async ()
 	echo "**************** $1 ****************"
 	for i in {1..3}; do 
 		./$1 $2; 
+		echo		
 		rm  -f logs/*
 		sleep 3
 	done;
