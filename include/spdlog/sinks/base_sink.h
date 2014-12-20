@@ -56,7 +56,7 @@ public:
     {
         std::lock_guard<Mutex> lock(_mutex);
         _sink_it(msg);
-    };
+    }
 
 
 protected:

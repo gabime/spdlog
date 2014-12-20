@@ -51,7 +51,7 @@ public:
     explicit file_helper(bool auto_flush):
         _fd(nullptr),
         _auto_flush(auto_flush)
-    {};
+    {}
 
     file_helper(const file_helper&) = delete;
     file_helper& operator=(const file_helper&) = delete;
