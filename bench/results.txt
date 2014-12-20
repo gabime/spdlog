@@ -1,0 +1,235 @@
+----------------------------------------------------------
+Single threaded benchmarks.. (1 thread,  1,000,000 lines)
+----------------------------------------------------------
+**************** boost-bench ****************
+
+real	0m4.382s
+user	0m4.213s
+sys	0m0.048s
+
+real	0m4.159s
+user	0m4.120s
+sys	0m0.040s
+
+real	0m4.169s
+user	0m4.117s
+sys	0m0.052s
+**************** glog-bench ****************
+
+real	0m1.082s
+user	0m0.944s
+sys	0m0.136s
+
+real	0m1.079s
+user	0m0.977s
+sys	0m0.101s
+
+real	0m1.066s
+user	0m0.951s
+sys	0m0.114s
+**************** easylogging-bench ****************
+
+real	0m0.975s
+user	0m0.963s
+sys	0m0.012s
+
+real	0m0.986s
+user	0m0.954s
+sys	0m0.033s
+
+real	0m0.963s
+user	0m0.919s
+sys	0m0.044s
+**************** spdlog-bench ****************
+
+real	0m0.302s
+user	0m0.285s
+sys	0m0.016s
+
+real	0m0.311s
+user	0m0.287s
+sys	0m0.025s
+
+real	0m0.308s
+user	0m0.276s
+sys	0m0.032s
+----------------------------------------------------------
+Multi threaded benchmarks.. (10 threads,  1,000,000 lines)
+----------------------------------------------------------
+**************** boost-bench-mt ****************
+
+real	0m16.293s
+user	0m38.723s
+sys	0m8.469s
+
+real	0m16.029s
+user	0m39.186s
+sys	0m8.413s
+
+real	0m16.257s
+user	0m38.322s
+sys	0m7.880s
+**************** glog-bench-mt ****************
+
+real	0m4.455s
+user	0m12.871s
+sys	0m13.508s
+
+real	0m5.039s
+user	0m14.239s
+sys	0m15.900s
+
+real	0m3.032s
+user	0m8.654s
+sys	0m9.473s
+**************** easylogging-bench-mt ****************
+
+real	0m4.076s
+user	0m4.350s
+sys	0m2.861s
+
+real	0m2.857s
+user	0m3.270s
+sys	0m1.744s
+
+real	0m4.588s
+user	0m5.085s
+sys	0m3.058s
+**************** spdlog-bench-mt ****************
+
+real	0m2.374s
+user	0m4.369s
+sys	0m10.426s
+
+real	0m0.968s
+user	0m1.804s
+sys	0m4.186s
+
+real	0m1.527s
+user	0m3.132s
+sys	0m6.427s
+----------------------------------------------------------
+Multi threaded benchmarks.. (100 threads,  1,000,000 lines)
+----------------------------------------------------------
+**************** boost-bench-mt ****************
+
+real	0m15.623s
+user	0m39.283s
+sys	0m8.428s
+
+real	0m15.008s
+user	0m36.851s
+sys	0m7.956s
+
+real	0m15.478s
+user	0m38.873s
+sys	0m8.368s
+**************** glog-bench-mt ****************
+
+real	0m1.139s
+user	0m3.003s
+sys	0m5.214s
+
+real	0m1.167s
+user	0m3.004s
+sys	0m5.431s
+
+real	0m1.159s
+user	0m2.909s
+sys	0m5.456s
+**************** easylogging-bench-mt ****************
+
+real	0m4.510s
+user	0m4.565s
+sys	0m3.510s
+
+real	0m8.841s
+user	0m8.363s
+sys	0m7.057s
+
+real	0m5.638s
+user	0m5.531s
+sys	0m4.168s
+**************** spdlog-bench-mt ****************
+
+real	0m0.497s
+user	0m0.951s
+sys	0m2.743s
+
+real	0m0.502s
+user	0m0.940s
+sys	0m2.816s
+
+real	0m0.504s
+user	0m0.911s
+sys	0m2.860s
+---------------------------------------------------------------
+Async, single threaded benchmark.. (1 thread,  1,000,000 lines)
+---------------------------------------------------------------
+**************** spdlog-async ****************
+Total: 1000000
+Threads: 1
+Delta = 0.216366 seconds
+Rate = 4.62179e+06/sec
+Total: 1000000
+Threads: 1
+Delta = 0.215076 seconds
+Rate = 4.64953e+06/sec
+Total: 1000000
+Threads: 1
+Delta = 0.210712 seconds
+Rate = 4.74581e+06/sec
+**************** g2log-async ****************
+Total: 1000000
+Threads: 1
+Delta = 1.85039 seconds
+Rate = 540428/sec
+
+Exiting, log location: logs/g2log-async.g2log.20141220-214929.log
+Total: 1000000
+Threads: 1
+Delta = 1.85434 seconds
+Rate = 539274/sec
+
+Exiting, log location: logs/g2log-async.g2log.20141220-214935.log
+Total: 1000000
+Threads: 1
+Delta = 1.86829 seconds
+Rate = 535249/sec
+
+Exiting, log location: logs/g2log-async.g2log.20141220-214941.log
+---------------------------------------------------------------
+Async, multi threaded benchmark.. (10 threads,  1,000,000 lines)
+---------------------------------------------------------------
+**************** spdlog-async ****************
+Total: 1000000
+Threads: 10
+Delta = 0.175684 seconds
+Rate = 5.69204e+06/sec
+Total: 1000000
+Threads: 10
+Delta = 0.173104 seconds
+Rate = 5.77688e+06/sec
+Total: 1000000
+Threads: 10
+Delta = 0.173881 seconds
+Rate = 5.75106e+06/sec
+**************** g2log-async ****************
+Total: 1000000
+Threads: 10
+Delta = 0.945252 seconds
+Rate = 1.05792e+06/sec
+
+Exiting, log location: logs/g2log-async.g2log.20141220-214958.log
+Total: 1000000
+Threads: 10
+Delta = 0.950362 seconds
+Rate = 1.05223e+06/sec
+
+Exiting, log location: logs/g2log-async.g2log.20141220-215004.log
+Total: 1000000
+Threads: 10
+Delta = 0.943302 seconds
+Rate = 1.06011e+06/sec
+
+Exiting, log location: logs/g2log-async.g2log.20141220-215011.log
