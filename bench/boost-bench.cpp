@@ -17,8 +17,7 @@ void init()
 {
     logging::add_file_log
     (
-        keywords::file_name = "logs/boost-sample_%N.log",                              /*< file name pattern >*/
-        keywords::rotation_size = 10 * 1024 * 1024,                                   /*< rotate files every 10 MiB... >*/
+        keywords::file_name = "logs/boost-sample_%N.log",                              /*< file name pattern >*/ 
         keywords::auto_flush = false,
         keywords::format = "[%TimeStamp%]: %Message%"
     );
