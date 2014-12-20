@@ -264,7 +264,6 @@ inline void spdlog::details::async_log_helper::throw_if_bad_worker()
     if (_last_workerthread_ex)
     {
         auto ex = std::move(_last_workerthread_ex);
-        _last_workerthread_ex.reset();
         throw *ex;
     }
     if (!_active)
