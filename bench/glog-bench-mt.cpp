@@ -1,7 +1,6 @@
 #include <thread>
 #include <vector>
 #include <atomic>
-#include <iostream>
 
 #include "glog/logging.h"
 
