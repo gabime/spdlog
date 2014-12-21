@@ -49,7 +49,6 @@ namespace spdlog
 namespace details
 {
 
-
 class async_log_helper
 {
 	// Async msg to move to/from the queue
