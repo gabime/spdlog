@@ -141,10 +141,6 @@ private:
     // guess how much to sleep if queue is empty/full using last succesful op time as hint
     static void sleep_or_yield(const clock::time_point& last_op_time);
 
-
-    // clear all remaining messages(if any), stop the _worker_thread and join it
-    void join_worker();
-
 };
 }
 }
@@ -160,9 +156,17 @@ inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatt
     _worker_thread(&async_log_helper::worker_loop, this)
 {}
 
+// Send to the worker thread termination message(level=off)
+// and wait for it to finish gracefully
 inline spdlog::details::async_log_helper::~async_log_helper()
 {
-    join_worker();
+	log(log_msg(level::off)); 
+    try
+    {
+        _worker_thread.join();
+    }
+    catch (const std::system_error&) //Dont crash if thread not joinable
+    {}
 }
 
 
@@ -193,7 +197,9 @@ inline void spdlog::details::async_log_helper::worker_loop()
     }
 }
 
-
+//Process next message in the queue 
+//Return true if message was processed in the queue, or false if queue was empty
+//Will set _active to be false upon receiving log_msg with level==off (idicating the worker need to die)
 inline bool spdlog::details::async_log_helper::process_next_msg(clock::time_point& last_pop)
 {
 
@@ -206,7 +212,12 @@ inline bool spdlog::details::async_log_helper::process_next_msg(clock::time_poin
         try
         {
             incoming_async_msg.fill_log_msg(incoming_log_msg);
-            _formatter->format(incoming_log_msg);
+            if(incoming_log_msg.level == level::off)
+            {
+            	_active = false;
+            	return false;
+            }
+            _formatter->format(incoming_log_msg);            
             for (auto &s : _sinks)
                 s->log(incoming_log_msg);
         }
@@ -271,17 +282,7 @@ inline void spdlog::details::async_log_helper::throw_if_bad_worker()
 }
 
 
-inline void spdlog::details::async_log_helper::join_worker()
-{
-    _active = false;
 
-    try
-    {
-        _worker_thread.join();
-    }
-    catch (const std::system_error&) //Dont crash if thread not joinable
-    {}
-}
 
 
 
