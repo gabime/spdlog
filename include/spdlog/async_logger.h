@@ -50,20 +50,20 @@ class async_log_helper;
 class async_logger :public logger
 {
 public:
-	template<class It>
-	async_logger(const std::string& name, const It& begin, const It& end, size_t queue_size);
-	async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size);
-	async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size);
+    template<class It>
+    async_logger(const std::string& name, const It& begin, const It& end, size_t queue_size);
+    async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size);
+    async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size);
 
 
 protected:
-	void _log_msg(details::log_msg& msg) override;
-	void _set_formatter(spdlog::formatter_ptr msg_formatter) override;
-	void _set_pattern(const std::string& pattern) override;
-	void _stop() override;
+    void _log_msg(details::log_msg& msg) override;
+    void _set_formatter(spdlog::formatter_ptr msg_formatter) override;
+    void _set_pattern(const std::string& pattern) override;
+    void _stop() override;
 
 private:
-	std::unique_ptr<details::async_log_helper> _async_log_helper;
+    std::unique_ptr<details::async_log_helper> _async_log_helper;
 };
 }
 

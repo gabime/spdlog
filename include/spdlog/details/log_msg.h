@@ -33,62 +33,62 @@ namespace details
 {
 struct log_msg
 {
-	log_msg() = default;
-	log_msg(level::level_enum l):
-		logger_name(),
-		level(l),
-		time(),
-		raw(),
-		formatted() {}
+    log_msg() = default;
+    log_msg(level::level_enum l):
+        logger_name(),
+        level(l),
+        time(),
+        raw(),
+        formatted() {}
 
 
-	log_msg(const log_msg& other) :
-		logger_name(other.logger_name),
-		level(other.level),
-		time(other.time)
-	{
-		if (other.raw.size())
-			raw << fmt::BasicStringRef<char>(other.raw.data(), other.raw.size());
-		if (other.formatted.size())
-			formatted << fmt::BasicStringRef<char>(other.formatted.data(), other.formatted.size());
-	}
+    log_msg(const log_msg& other) :
+        logger_name(other.logger_name),
+        level(other.level),
+        time(other.time)
+    {
+        if (other.raw.size())
+            raw << fmt::BasicStringRef<char>(other.raw.data(), other.raw.size());
+        if (other.formatted.size())
+            formatted << fmt::BasicStringRef<char>(other.formatted.data(), other.formatted.size());
+    }
 
-	log_msg(log_msg&& other) :
-		logger_name(std::move(other.logger_name)),
-		level(other.level),
-		time(std::move(other.time)),
-		raw(std::move(other.raw)),
-		formatted(std::move(other.formatted))
-	{
-		other.clear();
-	}
+    log_msg(log_msg&& other) :
+        logger_name(std::move(other.logger_name)),
+        level(other.level),
+        time(std::move(other.time)),
+        raw(std::move(other.raw)),
+        formatted(std::move(other.formatted))
+    {
+        other.clear();
+    }
 
-	log_msg& operator=(log_msg&& other)
-	{
-		if (this == &other)
-			return *this;
+    log_msg& operator=(log_msg&& other)
+    {
+        if (this == &other)
+            return *this;
 
-		logger_name = std::move(other.logger_name);
-		level = other.level;
-		time = std::move(other.time);
-		raw = std::move(other.raw);
-		formatted = std::move(other.formatted);
-		other.clear();
-		return *this;
-	}
+        logger_name = std::move(other.logger_name);
+        level = other.level;
+        time = std::move(other.time);
+        raw = std::move(other.raw);
+        formatted = std::move(other.formatted);
+        other.clear();
+        return *this;
+    }
 
-	void clear()
-	{
-		level = level::off;
-		raw.clear();
-		formatted.clear();
-	}
+    void clear()
+    {
+        level = level::off;
+        raw.clear();
+        formatted.clear();
+    }
 
-	std::string logger_name;
-	level::level_enum level;
-	log_clock::time_point time;
-	fmt::MemoryWriter raw;
-	fmt::MemoryWriter formatted;
+    std::string logger_name;
+    level::level_enum level;
+    log_clock::time_point time;
+    fmt::MemoryWriter raw;
+    fmt::MemoryWriter formatted;
 };
 }
 }

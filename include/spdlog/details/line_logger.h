@@ -38,73 +38,73 @@ namespace details
 class line_logger
 {
 public:
-	line_logger(logger* callback_logger, level::level_enum msg_level, bool enabled):
-		_callback_logger(callback_logger),
-		_log_msg(msg_level),
-		_enabled(enabled)
-	{}
+    line_logger(logger* callback_logger, level::level_enum msg_level, bool enabled):
+        _callback_logger(callback_logger),
+        _log_msg(msg_level),
+        _enabled(enabled)
+    {}
 
-	// No copy intended. Only move
-	line_logger(const line_logger& other) = delete;
-	line_logger& operator=(const line_logger&) = delete;
-	line_logger& operator=(line_logger&&) = delete;
-
-
-	line_logger(line_logger&& other) :
-		_callback_logger(other._callback_logger),
-		_log_msg(std::move(other._log_msg)),
-		_enabled(other._enabled)
-	{
-		other.disable();
-	}
-
-	//Log the log message using the callback logger
-	~line_logger()
-	{
-		if (_enabled)
-		{
-			_log_msg.logger_name = _callback_logger->name();
-			_log_msg.time = log_clock::now();
-			_callback_logger->_log_msg(_log_msg);
-		}
-	}
+    // No copy intended. Only move
+    line_logger(const line_logger& other) = delete;
+    line_logger& operator=(const line_logger&) = delete;
+    line_logger& operator=(line_logger&&) = delete;
 
 
-	template <typename... Args>
-	void write(const char* fmt, const Args&... args)
-	{
-		if (!_enabled)
-			return;
-		try
-		{
-			_log_msg.raw.write(fmt, args...);
-		}
-		catch (const fmt::FormatError& e)
-		{
-			throw spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
-		}
-	}
+    line_logger(line_logger&& other) :
+        _callback_logger(other._callback_logger),
+        _log_msg(std::move(other._log_msg)),
+        _enabled(other._enabled)
+    {
+        other.disable();
+    }
 
-	template<typename T>
-	line_logger& operator<<(const T& what)
-	{
-		if (_enabled)
-			_log_msg.raw << what;
-		return *this;
-	}
+    //Log the log message using the callback logger
+    ~line_logger()
+    {
+        if (_enabled)
+        {
+            _log_msg.logger_name = _callback_logger->name();
+            _log_msg.time = log_clock::now();
+            _callback_logger->_log_msg(_log_msg);
+        }
+    }
 
 
-	void disable()
-	{
-		_enabled = false;
-	}
+    template <typename... Args>
+    void write(const char* fmt, const Args&... args)
+    {
+        if (!_enabled)
+            return;
+        try
+        {
+            _log_msg.raw.write(fmt, args...);
+        }
+        catch (const fmt::FormatError& e)
+        {
+            throw spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
+        }
+    }
+
+    template<typename T>
+    line_logger& operator<<(const T& what)
+    {
+        if (_enabled)
+            _log_msg.raw << what;
+        return *this;
+    }
+
+
+    void disable()
+    {
+        _enabled = false;
+    }
 
 
 
 private:
-	logger* _callback_logger;
-	log_msg _log_msg;
-	bool _enabled;
+    logger* _callback_logger;
+    log_msg _log_msg;
+    bool _enabled;
 };
 } //Namespace details
 } // Namespace spdlog
