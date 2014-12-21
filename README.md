@@ -85,13 +85,13 @@ int main(int, char* [])
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
        
-        //Create a file rotating logger with 5mb size max and 3 rotated files
+        // Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", "logs/mylogfile", 1048576 * 5, 3);
         file_logger->set_level(spd::level::info);
         for(int i = 0; i < 10; ++i)
 		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
-        //Customize msg format for all messages
+        // Customize msg format for all messages
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
 
