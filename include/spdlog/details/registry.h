@@ -44,114 +44,114 @@ namespace details
 class registry
 {
 public:
-    std::shared_ptr<logger> get(const std::string& logger_name)
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        auto found = _loggers.find(logger_name);
-        return found == _loggers.end() ? nullptr : found->second;
-    }
+	std::shared_ptr<logger> get(const std::string& logger_name)
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		auto found = _loggers.find(logger_name);
+		return found == _loggers.end() ? nullptr : found->second;
+	}
 
-    template<class It>
-    std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        //If already exists, just return it
-        auto found = _loggers.find(logger_name);
-        if (found != _loggers.end())
-            return found->second;
-        std::shared_ptr<logger> new_logger;
-        if (_async_mode)
-            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size);
-        else
-            new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
+	template<class It>
+	std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		//If already exists, just return it
+		auto found = _loggers.find(logger_name);
+		if (found != _loggers.end())
+			return found->second;
+		std::shared_ptr<logger> new_logger;
+		if (_async_mode)
+			new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size);
+		else
+			new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
 
-        if (_formatter)
-            new_logger->set_formatter(_formatter);
-        new_logger->set_level(_level);
-        _loggers[logger_name] = new_logger;
-        return new_logger;
-    }
+		if (_formatter)
+			new_logger->set_formatter(_formatter);
+		new_logger->set_level(_level);
+		_loggers[logger_name] = new_logger;
+		return new_logger;
+	}
 
-    void drop(const std::string& logger_name)
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        _loggers.erase(logger_name);
-    }
+	void drop(const std::string& logger_name)
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_loggers.erase(logger_name);
+	}
 
-    std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks)
-    {
-        return create(logger_name, sinks.begin(), sinks.end());
-    }
+	std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks)
+	{
+		return create(logger_name, sinks.begin(), sinks.end());
+	}
 
-    std::shared_ptr<logger> create(const std::string& logger_name, sink_ptr sink)
-    {
-        return create(logger_name, { sink });
-    }
-
-
-    void formatter(formatter_ptr f)
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        _formatter = f;
-        for (auto& l : _loggers)
-            l.second->set_formatter(_formatter);
-    }
+	std::shared_ptr<logger> create(const std::string& logger_name, sink_ptr sink)
+	{
+		return create(logger_name, { sink });
+	}
 
 
-    void set_pattern(const std::string& pattern)
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        _formatter = std::make_shared<pattern_formatter>(pattern);
-        for (auto& l : _loggers)
-            l.second->set_formatter(_formatter);
-
-    }
-
-    void set_level(level::level_enum log_level)
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        for (auto& l : _loggers)
-            l.second->set_level(log_level);
-    }
-
-    void set_async_mode(size_t q_size)
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        _async_mode = true;
-        _async_q_size = q_size;
-    }
-
-    void set_sync_mode()
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        _async_mode = false;
-    }
-
-    void stop_all()
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        _level = level::off;
-        for (auto& l : _loggers)
-            l.second->stop();
-    }
+	void formatter(formatter_ptr f)
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_formatter = f;
+		for (auto& l : _loggers)
+			l.second->set_formatter(_formatter);
+	}
 
 
-    static registry& instance()
-    {
-        static registry s_instance;
-        return s_instance;
-    }
+	void set_pattern(const std::string& pattern)
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_formatter = std::make_shared<pattern_formatter>(pattern);
+		for (auto& l : _loggers)
+			l.second->set_formatter(_formatter);
+
+	}
+
+	void set_level(level::level_enum log_level)
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		for (auto& l : _loggers)
+			l.second->set_level(log_level);
+	}
+
+	void set_async_mode(size_t q_size)
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_async_mode = true;
+		_async_q_size = q_size;
+	}
+
+	void set_sync_mode()
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_async_mode = false;
+	}
+
+	void stop_all()
+	{
+		std::lock_guard<std::mutex> lock(_mutex);
+		_level = level::off;
+		for (auto& l : _loggers)
+			l.second->stop();
+	}
+
+
+	static registry& instance()
+	{
+		static registry s_instance;
+		return s_instance;
+	}
 
 private:
-    registry() = default;
-    registry(const registry&) = delete;
-    registry& operator=(const registry&) = delete;
-    std::mutex _mutex;
-    std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
-    formatter_ptr _formatter;
-    level::level_enum _level = level::info;
-    bool _async_mode = false;
-    size_t _async_q_size = 0;
+	registry() = default;
+	registry(const registry&) = delete;
+	registry& operator=(const registry&) = delete;
+	std::mutex _mutex;
+	std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
+	formatter_ptr _formatter;
+	level::level_enum _level = level::info;
+	bool _async_mode = false;
+	size_t _async_q_size = 0;
 };
 }
 }

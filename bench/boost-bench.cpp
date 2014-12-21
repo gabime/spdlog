@@ -15,30 +15,30 @@ namespace keywords = boost::log::keywords;
 
 void init()
 {
-    logging::add_file_log
-    (
-        keywords::file_name = "logs/boost-sample_%N.log",                              /*< file name pattern >*/ 
-        keywords::auto_flush = false,
-        keywords::format = "[%TimeStamp%]: %Message%"
-    );
+	logging::add_file_log
+	(
+	    keywords::file_name = "logs/boost-sample_%N.log",                              /*< file name pattern >*/
+	    keywords::auto_flush = false,
+	    keywords::format = "[%TimeStamp%]: %Message%"
+	);
 
-    logging::core::get()->set_filter
-    (
-        logging::trivial::severity >= logging::trivial::info
-    );
+	logging::core::get()->set_filter
+	(
+	    logging::trivial::severity >= logging::trivial::info
+	);
 }
 
 
 int main(int argc, char* [])
 {
-    int howmany = 1000000;
-    init();
-    logging::add_common_attributes();
+	int howmany = 1000000;
+	init();
+	logging::add_common_attributes();
 
-    using namespace logging::trivial;
-    src::severity_logger_mt< severity_level > lg;
-    for(int i  = 0 ; i < howmany; ++i)
-        BOOST_LOG_SEV(lg, info) << "boost message #" << i << ": This is some text for your pleasure";
+	using namespace logging::trivial;
+	src::severity_logger_mt< severity_level > lg;
+	for(int i  = 0 ; i < howmany; ++i)
+		BOOST_LOG_SEV(lg, info) << "boost message #" << i << ": This is some text for your pleasure";
 
-    return 0;
+	return 0;
 }

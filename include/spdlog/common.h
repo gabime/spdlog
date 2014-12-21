@@ -39,7 +39,8 @@ namespace spdlog
 
 class formatter;
 
-namespace sinks {
+namespace sinks
+{
 class sink;
 }
 
@@ -70,7 +71,7 @@ static const char* level_names[] { "trace", "debug", "info", "notice", "warning"
 
 inline const char* to_str(spdlog::level::level_enum l)
 {
-    return level_names[l];
+	return level_names[l];
 }
 } //level
 
@@ -80,13 +81,13 @@ inline const char* to_str(spdlog::level::level_enum l)
 class spdlog_ex : public std::exception
 {
 public:
-    spdlog_ex(const std::string& msg) :_msg(msg) {}
-    const char* what() const SPDLOG_NOEXCEPT override
-    {
-        return _msg.c_str();
-    }
+	spdlog_ex(const std::string& msg) :_msg(msg) {}
+	const char* what() const SPDLOG_NOEXCEPT override
+	{
+		return _msg.c_str();
+	}
 private:
-    std::string _msg;
+	std::string _msg;
 
 };
 

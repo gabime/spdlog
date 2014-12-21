@@ -47,88 +47,88 @@ class line_logger;
 class logger
 {
 public:
-    logger(const std::string& logger_name, sink_ptr single_sink);
-    logger(const std::string& name, sinks_init_list);
-    template<class It>
-    logger(const std::string& name, const It& begin, const It& end);
+	logger(const std::string& logger_name, sink_ptr single_sink);
+	logger(const std::string& name, sinks_init_list);
+	template<class It>
+	logger(const std::string& name, const It& begin, const It& end);
 
-    virtual ~logger();
-    logger(const logger&) = delete;
-    logger& operator=(const logger&) = delete;
+	virtual ~logger();
+	logger(const logger&) = delete;
+	logger& operator=(const logger&) = delete;
 
-    void set_level(level::level_enum);
-    level::level_enum level() const;
+	void set_level(level::level_enum);
+	level::level_enum level() const;
 
-    const std::string& name() const;
-    bool should_log(level::level_enum) const;
+	const std::string& name() const;
+	bool should_log(level::level_enum) const;
 
-    //Stop logging
-    void stop();
-
-
-    template <typename... Args>
-    details::line_logger trace(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger debug(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger info(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger notice(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger warn(const char* fmt, const Args&... args);
-
-    template <typename... Args>details::line_logger error(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger critical(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger alert(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger emerg(const char* fmt, const Args&... args);
+	//Stop logging
+	void stop();
 
 
-    //API to support logger.info() << ".." call  style
-    details::line_logger trace();
-    details::line_logger debug();
-    details::line_logger info();
-    details::line_logger notice();
-    details::line_logger warn();
-    details::line_logger error();
-    details::line_logger critical();
-    details::line_logger alert();
-    details::line_logger emerg();
+	template <typename... Args>
+	details::line_logger trace(const char* fmt, const Args&... args);
+
+	template <typename... Args>
+	details::line_logger debug(const char* fmt, const Args&... args);
+
+	template <typename... Args>
+	details::line_logger info(const char* fmt, const Args&... args);
+
+	template <typename... Args>
+	details::line_logger notice(const char* fmt, const Args&... args);
+
+	template <typename... Args>
+	details::line_logger warn(const char* fmt, const Args&... args);
+
+	template <typename... Args>details::line_logger error(const char* fmt, const Args&... args);
+
+	template <typename... Args>
+	details::line_logger critical(const char* fmt, const Args&... args);
+
+	template <typename... Args>
+	details::line_logger alert(const char* fmt, const Args&... args);
+
+	template <typename... Args>
+	details::line_logger emerg(const char* fmt, const Args&... args);
 
 
-    // Create log message with the given level, no matter what is the actual logger's level
-    template <typename... Args>
-    details::line_logger force_log(level::level_enum lvl, const char* fmt, const Args&... args);
+	//API to support logger.info() << ".." call  style
+	details::line_logger trace();
+	details::line_logger debug();
+	details::line_logger info();
+	details::line_logger notice();
+	details::line_logger warn();
+	details::line_logger error();
+	details::line_logger critical();
+	details::line_logger alert();
+	details::line_logger emerg();
 
-    // Set the format of the log messages from this logger
-    void set_pattern(const std::string&);
-    void set_formatter(formatter_ptr);
+
+	// Create log message with the given level, no matter what is the actual logger's level
+	template <typename... Args>
+	details::line_logger force_log(level::level_enum lvl, const char* fmt, const Args&... args);
+
+	// Set the format of the log messages from this logger
+	void set_pattern(const std::string&);
+	void set_formatter(formatter_ptr);
 
 
 protected:
-    virtual void _log_msg(details::log_msg&);
-    virtual void _set_pattern(const std::string&);
-    virtual void _set_formatter(formatter_ptr);
-    virtual void _stop();
-    details::line_logger _log_if_enabled(level::level_enum lvl);
-    template <typename... Args>
-    details::line_logger _log_if_enabled(level::level_enum lvl, const char* fmt, const Args&... args);
+	virtual void _log_msg(details::log_msg&);
+	virtual void _set_pattern(const std::string&);
+	virtual void _set_formatter(formatter_ptr);
+	virtual void _stop();
+	details::line_logger _log_if_enabled(level::level_enum lvl);
+	template <typename... Args>
+	details::line_logger _log_if_enabled(level::level_enum lvl, const char* fmt, const Args&... args);
 
 
-    friend details::line_logger;
-    std::string _name;
-    std::vector<sink_ptr> _sinks;
-    formatter_ptr _formatter;
-    std::atomic_int _level;
+	friend details::line_logger;
+	std::string _name;
+	std::vector<sink_ptr> _sinks;
+	formatter_ptr _formatter;
+	std::atomic_int _level;
 
 };
 }
