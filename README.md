@@ -67,7 +67,7 @@ int main(int, char* [])
     namespace spd = spdlog;
     try
     {
-        // Set log level to all loggers to DEBUG and above
+        // Set log level to all loggers to debug and above
         spd::set_level(spd::level::debug);
 
         //Create console, multithreaded logger
