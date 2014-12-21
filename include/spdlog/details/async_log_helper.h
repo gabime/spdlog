@@ -118,7 +118,6 @@ public:
 
 
 private:
-    std::atomic<bool> _active;
     formatter_ptr _formatter;
     std::vector<std::shared_ptr<sinks::sink>> _sinks;
     q_type _q;
@@ -149,7 +148,6 @@ private:
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
 inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size):
-    _active(true),
     _formatter(formatter),
     _sinks(sinks),
     _q(queue_size),
@@ -160,12 +158,13 @@ inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatt
 // and wait for it to finish gracefully
 inline spdlog::details::async_log_helper::~async_log_helper()
 {
-	log(log_msg(level::off)); 
+
     try
     {
+    	log(log_msg(level::off)); 
         _worker_thread.join();
     }
-    catch (const std::system_error&) //Dont crash if thread not joinable
+    catch (...) //Dont crash if thread not joinable
     {}
 }
 
@@ -189,17 +188,23 @@ inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 
 inline void spdlog::details::async_log_helper::worker_loop()
 {
-    clock::time_point last_pop = clock::now();
-    while (_active)
-    {
-        //Dont die if there are still messages in the q to process
-        while(process_next_msg(last_pop));
+	try 
+	{
+		clock::time_point last_pop = clock::now();          
+		while(process_next_msg(last_pop));    
     }
+	catch (const std::exception& ex)
+    {
+        _last_workerthread_ex = std::make_shared<spdlog_ex>(std::string("async_logger worker thread exception: ") + ex.what());
+    }
+    catch (...)
+    {
+        _last_workerthread_ex = std::make_shared<spdlog_ex>("async_logger worker thread exception");
+    }        
 }
 
-//Process next message in the queue 
-//Return true if message was processed in the queue, or false if queue was empty
-//Will set _active to be false upon receiving log_msg with level==off (idicating the worker need to die)
+// Process next message in the queue
+// Return true if this thread should still be active (no msg with level::off was received)
 inline bool spdlog::details::async_log_helper::process_next_msg(clock::time_point& last_pop)
 {
 
@@ -208,35 +213,21 @@ inline bool spdlog::details::async_log_helper::process_next_msg(clock::time_poin
 
     if (_q.dequeue(incoming_async_msg))
     {
-        last_pop = clock::now();
-        try
-        {
-            incoming_async_msg.fill_log_msg(incoming_log_msg);
-            if(incoming_log_msg.level == level::off)
-            {
-            	_active = false;
-            	return false;
-            }
-            _formatter->format(incoming_log_msg);            
-            for (auto &s : _sinks)
-                s->log(incoming_log_msg);
-        }
-        catch (const std::exception& ex)
-        {
-            _last_workerthread_ex = std::make_shared<spdlog_ex>(std::string("async_logger worker thread exception: ") + ex.what());
-        }
-        catch (...)
-        {
-            _last_workerthread_ex = std::make_shared<spdlog_ex>("async_logger worker thread exception");
-        }
-        return true;
-    }
-    // sleep or yield if queue is empty.
-    else
+		last_pop = clock::now();
+		
+		if(incoming_async_msg.level == level::off)            
+			return false;
+
+	    incoming_async_msg.fill_log_msg(incoming_log_msg);            
+	    _formatter->format(incoming_log_msg);            
+	    for (auto &s : _sinks)
+	        s->log(incoming_log_msg);
+    }    
+    else //empty queue
     {
-        sleep_or_yield(last_pop);
-        return false;
+        sleep_or_yield(last_pop);        
     }
+    return true;
 }
 
 inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
@@ -277,8 +268,6 @@ inline void spdlog::details::async_log_helper::throw_if_bad_worker()
         auto ex = std::move(_last_workerthread_ex);
         throw *ex;
     }
-    if (!_active)
-        throw(spdlog_ex("async logger is not active"));
 }
 
 
