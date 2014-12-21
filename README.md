@@ -91,7 +91,7 @@ int main(int, char* [])
         for(int i = 0; i < 10; ++i)
 		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
-         //Customize msg format for all messages
+        //Customize msg format for all messages
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
 
@@ -109,8 +109,8 @@ int main(int, char* [])
         auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
         async_file->info() << "This is async log.." << "Should be very fast!";
                
+        // syslog example. linux only..
         #ifdef __linux__
-        // syslog example                
         std::string ident = "spdlog-example";
         auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");       
