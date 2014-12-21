@@ -33,10 +33,10 @@ int main(int, char* [])
     namespace spd = spdlog;
     try
     {
-        // Set log level to all loggers to DEBUG and above
+        // Set log level to all loggers to debug and above
         spd::set_level(spd::level::debug);
 
-        //Create console, multithreaded logger
+        // Create console, multithreaded logger
         auto console = spd::stdout_logger_mt("console");
         console->info("Welcome to spdlog!") ;
         console->info("An info message example {}..", 1);
@@ -51,13 +51,13 @@ int main(int, char* [])
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
        
-        //Create a file rotating logger with 5mb size max and 3 rotated files
+        // Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", "logs/mylogfile", 1048576 * 5, 3);
         file_logger->set_level(spd::level::info);
         for(int i = 0; i < 10; ++i)
 		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
-        //Customize msg format for all messages
+        // Customize msg format for all messages
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
 
@@ -75,8 +75,8 @@ int main(int, char* [])
         auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
         async_file->info() << "This is async log.." << "Should be very fast!";
                
+    	// syslog example. linux only..       
 		#ifdef __linux__
-        // syslog example. linux only..
         std::string ident = "spdlog-example";
         auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");       
