@@ -39,8 +39,6 @@ g2log-async: g2log-async.cpp
 	$(CXX) g2log-async.cpp -o g2log-async $(CXXFLAGS) $(G2LOG_FLAGS) $(CXX_RELEASE_FLAGS)
 	
 
-
-
 EASYL_FLAGS = -I../../easylogging/src/
 easylogging-bench: easylogging-bench.cpp
 	$(CXX) easylogging-bench.cpp -o easylogging-bench $(CXXFLAGS) $(EASYL_FLAGS) $(CXX_RELEASE_FLAGS)
