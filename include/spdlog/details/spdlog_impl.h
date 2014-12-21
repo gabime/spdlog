@@ -142,7 +142,4 @@ inline void spdlog::set_sync_mode()
     details::registry::instance().set_sync_mode();
 }
 
-inline void spdlog::stop()
-{
-    return details::registry::instance().stop_all();
-}
+

@@ -60,12 +60,6 @@ inline void spdlog::async_logger::_set_pattern(const std::string& pattern)
 }
 
 
-
-inline void spdlog::async_logger::_stop()
-{
-    set_level(level::off);
-}
-
 inline void spdlog::async_logger::_log_msg(details::log_msg& msg)
 {
     _async_log_helper->log(msg);

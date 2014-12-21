@@ -113,11 +113,6 @@ std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_b
 template <typename Sink, typename... Args>
 std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&...);
 
-
-// Stop logging by setting all the loggers to log level OFF
-void stop();
-
-
 //
 // Trace & debug macros to be switched on/off at compile time for zero cost debug statements.
 // Note: using these mactors overrides the runtime log threshold of the logger.

@@ -127,14 +127,6 @@ public:
         _async_mode = false;
     }
 
-    void stop_all()
-    {
-        std::lock_guard<std::mutex> lock(_mutex);
-        _level = level::off;
-        for (auto& l : _loggers)
-            l.second->stop();
-    }
-
 
     static registry& instance()
     {

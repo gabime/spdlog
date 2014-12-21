@@ -62,10 +62,6 @@ public:
     const std::string& name() const;
     bool should_log(level::level_enum) const;
 
-    //Stop logging
-    void stop();
-
-
     template <typename... Args>
     details::line_logger trace(const char* fmt, const Args&... args);
 
@@ -118,7 +114,6 @@ protected:
     virtual void _log_msg(details::log_msg&);
     virtual void _set_pattern(const std::string&);
     virtual void _set_formatter(formatter_ptr);
-    virtual void _stop();
     details::line_logger _log_if_enabled(level::level_enum lvl);
     template <typename... Args>
     details::line_logger _log_if_enabled(level::level_enum lvl, const char* fmt, const Args&... args);

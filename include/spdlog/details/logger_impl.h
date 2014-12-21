@@ -229,11 +229,6 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
     return msg_level >= _level.load();
 }
 
-inline void spdlog::logger::stop()
-{
-    _stop();
-}
-
 //
 // protected virtual called at end of each user log call (if enabled) by the line_logger
 //
@@ -252,13 +247,5 @@ inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
 {
     _formatter = msg_formatter;
 }
-
-inline void spdlog::logger::_stop()
-{
-    set_level(level::off);
-}
-
-
-
 
 
