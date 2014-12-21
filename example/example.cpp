@@ -75,12 +75,12 @@ int main(int, char* [])
         auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
         async_file->info() << "This is async log.." << "Should be very fast!";
                
-#ifdef __linux__
+		#ifdef __linux__
         // syslog example                
         std::string ident = "spdlog-example";
         auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");       
-#endif
+		#endif
 
     }
     catch (const spd::spdlog_ex& ex)
