@@ -82,8 +82,8 @@ int main(int, char* [])
         console->info("{:<30}", "left aligned");
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
-     
-     	//
+    
+        //
 	// Runtime log levels
 	//
         spd::set_level(spd::level::info); //Set global log level to info
@@ -91,14 +91,14 @@ int main(int, char* [])
         console->set_level(spd::level::info); // Set specific logger's log level
         console->info("Now it should..");
   
-  	//
+        //
         // Create a file rotating logger with 5mb size max and 3 rotated files
         //
         auto file_logger = spd::rotating_logger_mt("file_logger", "logs/mylogfile", 1048576 * 5, 3);
         for(int i = 0; i < 10; ++i)
 		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
-	// 
+        // 
         // Customize msg format for all messages
         //
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
@@ -106,10 +106,10 @@ int main(int, char* [])
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
 
-	//
-	// Compile time debug or trace macros.
-	// Enabled #ifdef SPDLOG_DEBUG_ON or #ifdef SPDLOG_TRACE_ON
-	//
+        //
+        // Compile time debug or trace macros.
+        // Enabled #ifdef SPDLOG_DEBUG_ON or #ifdef SPDLOG_TRACE_ON
+        //
         SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
         SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
         
