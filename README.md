@@ -82,10 +82,10 @@ int main(int, char* [])
         console->info("{:<30}", "left aligned");
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
-    
+        
         //
-	// Runtime log levels
-	//
+        // Runtime log levels
+        //
         spd::set_level(spd::level::info); //Set global log level to info
         console->debug("This message shold not be displayed!");
         console->set_level(spd::level::info); // Set specific logger's log level
