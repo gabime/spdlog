@@ -26,6 +26,7 @@
 
 #ifdef __linux__
 
+#include <array>
 #include <string>
 #include <syslog.h>
 
