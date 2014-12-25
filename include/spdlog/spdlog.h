@@ -126,14 +126,14 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Arg
 //
 
 #ifdef SPDLOG_TRACE_ON
-#define SPDLOG_TRACE(logger, ...) logger->force_log(level::TRACE, __FILE__, " #", __LINE__,": " __VA_ARGS__)
+#define SPDLOG_TRACE(logger, ...) logger->force_log(spdlog::level::trace,  __VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
 #else
 #define SPDLOG_TRACE(logger, ...)
 #endif
 
 
 #ifdef SPDLOG_DEBUG_ON
-#define SPDLOG_DEBUG(logger, ...) logger->force_log(level::DEBUG, __VA_ARGS__)
+#define SPDLOG_DEBUG(logger, ...) logger->force_log(spdlog::level::debug, __VA_ARGS__)
 #else
 #define SPDLOG_DEBUG(logger, ...)
 #endif
