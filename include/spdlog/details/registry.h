@@ -78,6 +78,11 @@ public:
         _loggers.erase(logger_name);
     }
 
+    void drop_all()
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        _loggers.clear();
+    }
     std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks)
     {
         return create(logger_name, sinks.begin(), sinks.end());

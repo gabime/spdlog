@@ -42,10 +42,7 @@ namespace spdlog
 // logger.info() << "This is another message" << x << y << z;
 std::shared_ptr<logger> get(const std::string& name);
 
-//
-// Drop the reference to this logger.
-//
-void drop(const std::string &name);
+
 
 //
 // Set global formatting
@@ -138,6 +135,15 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Arg
 #define SPDLOG_DEBUG(logger, ...)
 #endif
 
+
+
+// Drop the reference to the given logger
+void drop(const std::string &name);
+// Drop all references
+void drop_all();
+
 }
+
+
 
 #include "details/spdlog_impl.h"

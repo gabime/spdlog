@@ -142,4 +142,8 @@ inline void spdlog::set_sync_mode()
     details::registry::instance().set_sync_mode();
 }
 
+inline void spdlog::drop_all()
+{
+    details::registry::instance().drop_all();
+}
 
