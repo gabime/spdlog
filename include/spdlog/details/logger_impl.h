@@ -85,9 +85,17 @@ inline spdlog::details::line_logger spdlog::logger::_log_if_enabled(level::level
     return details::line_logger(this, lvl, should_log(lvl));
 }
 
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::_log_if_enabled(level::level_enum lvl, const T& msg)
+{
+    bool msg_enabled = should_log(lvl);
+    details::line_logger l(this, lvl, msg_enabled);
+    l << msg;
+    return l;
+}
 
 //
-// following functions will log only if at the right level
+// logger.info(cppformat_string, arg1, arg2, arg3, ...) call style
 //
 template <typename... Args>
 inline spdlog::details::line_logger spdlog::logger::trace(const char* fmt, const Args&... args)
@@ -143,18 +151,74 @@ inline spdlog::details::line_logger spdlog::logger::emerg(const char* fmt, const
     return _log_if_enabled(level::emerg, fmt, args...);
 }
 
+//
+// logger.info(msg) << ".." call style
+//
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::trace(const T& msg)
+{
+    return _log_if_enabled(level::trace, msg);
+}
+
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::debug(const T& msg)
+{
+    return _log_if_enabled(level::debug, msg);
+}
+
+
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::info(const T& msg)
+{
+    return _log_if_enabled(level::info, msg);
+}
+
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::notice(const T& msg)
+{
+    return _log_if_enabled(level::notice, msg);
+}
+
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::warn(const T& msg)
+{
+    return _log_if_enabled(level::warn, msg);
+}
+
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::error(const T& msg)
+{
+    return _log_if_enabled(level::err, msg);
+}
+
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::critical(const T& msg)
+{
+    return _log_if_enabled(level::critical, msg);
+}
+
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::alert(const T& msg)
+{
+    return _log_if_enabled(level::alert, msg);
+}
+
+template<typename T>
+inline spdlog::details::line_logger spdlog::logger::emerg(const T& msg)
+{
+    return _log_if_enabled(level::emerg, msg);
+}
+
+
+
 
 //
-// support logger.info() << ".." calls
+// logger.info() << ".." call  style
 //
-
-
-
 inline spdlog::details::line_logger spdlog::logger::trace()
 {
     return _log_if_enabled(level::trace);
 }
-
 
 inline spdlog::details::line_logger spdlog::logger::debug()
 {

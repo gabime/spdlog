@@ -62,34 +62,31 @@ public:
     const std::string& name() const;
     bool should_log(level::level_enum) const;
 
-    template <typename... Args>
-    details::line_logger trace(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger debug(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger info(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger notice(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger warn(const char* fmt, const Args&... args);
-
-    template <typename... Args>details::line_logger error(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger critical(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger alert(const char* fmt, const Args&... args);
-
-    template <typename... Args>
-    details::line_logger emerg(const char* fmt, const Args&... args);
+    // logger.info(cppformat_string, arg1, arg2, arg3, ...) call style
+    template <typename... Args> details::line_logger trace(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger debug(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger info(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger notice(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger warn(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger error(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger critical(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger alert(const char* fmt, const Args&... args);
+    template <typename... Args> details::line_logger emerg(const char* fmt, const Args&... args);
 
 
-    //API to support logger.info() << ".." call  style
+    // logger.info(msg) << ".." call style
+    template <typename T> details::line_logger trace(const T&);
+    template <typename T> details::line_logger debug(const T&);
+    template <typename T> details::line_logger info(const T&);
+    template <typename T> details::line_logger notice(const T&);
+    template <typename T> details::line_logger warn(const T&);
+    template <typename T> details::line_logger error(const T&);
+    template <typename T> details::line_logger critical(const T&);
+    template <typename T> details::line_logger alert(const T&);
+    template <typename T> details::line_logger emerg(const T&);
+
+
+    // logger.info() << ".." call  style
     details::line_logger trace();
     details::line_logger debug();
     details::line_logger info();
@@ -99,6 +96,7 @@ public:
     details::line_logger critical();
     details::line_logger alert();
     details::line_logger emerg();
+
 
 
     // Create log message with the given level, no matter what is the actual logger's level
@@ -117,6 +115,8 @@ protected:
     details::line_logger _log_if_enabled(level::level_enum lvl);
     template <typename... Args>
     details::line_logger _log_if_enabled(level::level_enum lvl, const char* fmt, const Args&... args);
+    template<typename T>
+    inline details::line_logger _log_if_enabled(level::level_enum lvl, const T& msg);
 
 
     friend details::line_logger;
