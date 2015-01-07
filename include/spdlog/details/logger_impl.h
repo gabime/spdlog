@@ -285,12 +285,12 @@ inline void spdlog::logger::set_level(spdlog::level::level_enum log_level)
 
 inline spdlog::level::level_enum spdlog::logger::level() const
 {
-    return static_cast<spdlog::level::level_enum>(_level.load());
+    return static_cast<spdlog::level::level_enum>(_level.load(std::memory_order_relaxed));
 }
 
 inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) const
 {
-    return msg_level >= _level.load();
+    return msg_level >= _level.load(std::memory_order_relaxed);
 }
 
 //
