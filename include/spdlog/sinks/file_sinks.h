@@ -44,8 +44,8 @@ class simple_file_sink : public base_sink<Mutex>
 {
 public:
     explicit simple_file_sink(const std::string &filename,
-                              bool auto_flush=false):
-        _file_helper(auto_flush)
+                              bool force_flush=false):
+        _file_helper(force_flush)
     {
         _file_helper.open(filename);
     }
@@ -71,13 +71,13 @@ class rotating_file_sink : public base_sink<Mutex>
 public:
     rotating_file_sink(const std::string &base_filename, const std::string &extension,
                        std::size_t max_size, std::size_t max_files,
-                       bool auto_flush=false):
+                       bool force_flush=false):
         _base_filename(base_filename),
         _extension(extension),
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
-        _file_helper(auto_flush)
+        _file_helper(force_flush)
     {
         _file_helper.open(calc_filename(_base_filename, 0, _extension));
     }
@@ -157,11 +157,11 @@ class daily_file_sink:public base_sink<Mutex>
 public:
     explicit daily_file_sink(const std::string& base_filename,
                              const std::string& extension,
-                             bool auto_flush=false):
+                             bool force_flush=false):
         _base_filename(base_filename),
         _extension(extension),
         _midnight_tp (_calc_midnight_tp() ),
-        _file_helper(auto_flush)
+        _file_helper(force_flush)
     {
         _file_helper.open(calc_filename(_base_filename, _extension));
     }
