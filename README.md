@@ -12,7 +12,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * mingw with g++ 4.9.x
 
 ##Features
-* Very fast - performance is the primary goal (see [becnhmarks](#benchmarks) below).
+* Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
 * Headers only.
 * No dependencies - just copy and use.
 * Cross platform - Linux / Windows on 32/64 bits.
