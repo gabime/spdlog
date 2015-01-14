@@ -44,10 +44,7 @@ inline spdlog::async_logger::async_logger(const std::string& logger_name, sinks_
     async_logger(logger_name, sinks.begin(), sinks.end(), queue_size, worker_warmup_cb) {}
 
 inline spdlog::async_logger::async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size, const std::function<void()>& worker_warmup_cb) :
-    async_logger(logger_name,
-{
-    single_sink
-}, queue_size, worker_warmup_cb) {}
+    async_logger(logger_name, { single_sink }, queue_size, worker_warmup_cb) {}
 
 
 inline void spdlog::async_logger::_set_formatter(spdlog::formatter_ptr msg_formatter)
