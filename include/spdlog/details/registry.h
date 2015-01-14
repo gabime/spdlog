@@ -125,7 +125,7 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _async_mode = true;
         _async_q_size = q_size;
-		_worker_warmup_cb = worker_warmup_cb;
+        _worker_warmup_cb = worker_warmup_cb;
     }
 
     void set_sync_mode()
@@ -151,7 +151,7 @@ private:
     level::level_enum _level = level::info;
     bool _async_mode = false;
     size_t _async_q_size = 0;
-	std::function<void()> _worker_warmup_cb = nullptr;
+    std::function<void()> _worker_warmup_cb = nullptr;
 };
 }
 }

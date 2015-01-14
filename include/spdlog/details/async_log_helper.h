@@ -125,9 +125,9 @@ private:
 
     // last exception thrown from the worker thread
     std::shared_ptr<spdlog_ex> _last_workerthread_ex;
-	
-	// worker thread warmup callback - one can set thread priority, affinity, etc
-	const std::function<void()> _worker_warmup_cb;
+
+    // worker thread warmup callback - one can set thread priority, affinity, etc
+    const std::function<void()> _worker_warmup_cb;
 
 
     // throw last worker thread exception or if worker thread is not active
@@ -154,7 +154,7 @@ inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatt
     _formatter(formatter),
     _sinks(sinks),
     _q(queue_size),
-	_worker_warmup_cb(worker_warmup_cb),
+    _worker_warmup_cb(worker_warmup_cb),
     _worker_thread(&async_log_helper::worker_loop, this)
 {}
 
@@ -194,7 +194,7 @@ inline void spdlog::details::async_log_helper::worker_loop()
 {
     try
     {
-		if (_worker_warmup_cb) _worker_warmup_cb();
+        if (_worker_warmup_cb) _worker_warmup_cb();
         clock::time_point last_pop = clock::now();
         while(process_next_msg(last_pop));
     }

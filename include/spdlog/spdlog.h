@@ -63,7 +63,7 @@ void set_level(level::level_enum log_level);
 
 // Turn on async mode and set the queue size for each async_logger
 
-void set_async_mode(size_t queue_size, const std::function<void()>& worker_warmup_cb);
+void set_async_mode(size_t queue_size, const std::function<void()>& worker_warmup_cb = nullptr);
 // Turn off async mode
 void set_sync_mode();
 
