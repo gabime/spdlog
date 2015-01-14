@@ -132,9 +132,9 @@ inline void spdlog::set_level(level::level_enum log_level)
 }
 
 
-inline void spdlog::set_async_mode(size_t queue_size)
+inline void spdlog::set_async_mode(size_t queue_size, const std::function<void()>& worker_warmup_cb)
 {
-    details::registry::instance().set_async_mode(queue_size);
+    details::registry::instance().set_async_mode(queue_size, worker_warmup_cb);
 }
 
 inline void spdlog::set_sync_mode()

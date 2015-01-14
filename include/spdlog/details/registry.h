@@ -31,6 +31,7 @@
 #include <string>
 #include <mutex>
 #include <unordered_map>
+#include <functional>
 
 #include "../logger.h"
 #include "../async_logger.h"
@@ -61,7 +62,7 @@ public:
             return found->second;
         std::shared_ptr<logger> new_logger;
         if (_async_mode)
-            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size);
+            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _worker_warmup_cb);
         else
             new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
 
@@ -119,11 +120,12 @@ public:
             l.second->set_level(log_level);
     }
 
-    void set_async_mode(size_t q_size)
+    void set_async_mode(size_t q_size, const std::function<void()>& worker_warmup_cb = nullptr)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _async_mode = true;
         _async_q_size = q_size;
+		_worker_warmup_cb = worker_warmup_cb;
     }
 
     void set_sync_mode()
@@ -149,6 +151,7 @@ private:
     level::level_enum _level = level::info;
     bool _async_mode = false;
     size_t _async_q_size = 0;
+	std::function<void()> _worker_warmup_cb = nullptr;
 };
 }
 }
