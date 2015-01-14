@@ -125,8 +125,8 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _async_mode = true;
         _async_q_size = q_size;
-		_overflow_policy = overflow_policy;
-		_worker_warmup_cb = worker_warmup_cb;
+        _overflow_policy = overflow_policy;
+        _worker_warmup_cb = worker_warmup_cb;
     }
 
     void set_sync_mode()
@@ -152,8 +152,8 @@ private:
     level::level_enum _level = level::info;
     bool _async_mode = false;
     size_t _async_q_size = 0;
-	async_queue_overflow_policy _overflow_policy = async_queue_overflow_policy::block_retry;
-	std::function<void()> _worker_warmup_cb = nullptr;
+    async_queue_overflow_policy _overflow_policy = async_queue_overflow_policy::block_retry;
+    std::function<void()> _worker_warmup_cb = nullptr;
 };
 }
 }

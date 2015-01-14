@@ -125,9 +125,9 @@ private:
 
     // last exception thrown from the worker thread
     std::shared_ptr<spdlog_ex> _last_workerthread_ex;
-	
-	// overflow policy
-	const async_queue_overflow_policy _overflow_policy;
+
+    // overflow policy
+    const async_queue_overflow_policy _overflow_policy;
 
     // worker thread warmup callback - one can set thread priority, affinity, etc
     const std::function<void()> _worker_warmup_cb;
@@ -157,7 +157,7 @@ inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatt
     _formatter(formatter),
     _sinks(sinks),
     _q(queue_size),
-	_overflow_policy(overflow_policy),
+    _overflow_policy(overflow_policy),
     _worker_warmup_cb(worker_warmup_cb),
     _worker_thread(&async_log_helper::worker_loop, this)
 {}

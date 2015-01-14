@@ -61,9 +61,10 @@ void set_level(level::level_enum log_level);
 // Async mode - off by default.
 //
 
-enum class async_queue_overflow_policy {
-	block_retry, // Block / yield / sleep until message can be enqueued
-	discard_log_msg // Discard the message it enqueue fails
+enum class async_queue_overflow_policy
+{
+    block_retry, // Block / yield / sleep until message can be enqueued
+    discard_log_msg // Discard the message it enqueue fails
 };
 
 // Turn on async mode and set the queue size for each async_logger
