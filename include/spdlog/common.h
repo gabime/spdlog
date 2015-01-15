@@ -24,8 +24,10 @@
 
 #pragma once
 
-#include<initializer_list>
-#include<chrono>
+#include <string>
+#include <initializer_list>
+#include <chrono>
+#include <memory>
 
 //visual studio does not support noexcept yet
 #ifndef _MSC_VER

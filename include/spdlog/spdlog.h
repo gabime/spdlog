@@ -28,7 +28,12 @@
 
 #pragma once
 
+
+
+#include "common.h"
 #include "logger.h"
+
+
 
 namespace spdlog
 {
@@ -57,7 +62,7 @@ void set_formatter(formatter_ptr f);
 void set_level(level::level_enum log_level);
 
 
-// Turn on async mode and set the queue size for each async_logger. 
+// Turn on async mode and set the queue size for each async_logger.
 // queue_size: size of queue (must be power of 2). The queue will pre allocate queue_size entries upon construction.
 // async_overflow_policy (optional):
 //     async_overflow_policy::block_retry (default policy, if queue is full, block until queue has room for the new log entry)
