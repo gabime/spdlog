@@ -110,11 +110,11 @@ public:
 
 
     async_log_helper(formatter_ptr formatter,
-    	const std::vector<sink_ptr>& sinks, 
-    	size_t queue_size, 
-    	const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-    	const std::function<void()>& worker_warmup_cb = nullptr);
-    	
+                     const std::vector<sink_ptr>& sinks,
+                     size_t queue_size,
+                     const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
+                     const std::function<void()>& worker_warmup_cb = nullptr);
+
     void log(const details::log_msg& msg);
 
     //Stop logging and join the back thread
@@ -125,10 +125,10 @@ public:
 private:
     formatter_ptr _formatter;
     std::vector<std::shared_ptr<sinks::sink>> _sinks;
-    
+
     // queue of messages to log
     q_type _q;
-    
+
     // last exception thrown from the worker thread
     std::shared_ptr<spdlog_ex> _last_workerthread_ex;
 
@@ -137,10 +137,10 @@ private:
 
     // worker thread warmup callback - one can set thread priority, affinity, etc
     const std::function<void()> _worker_warmup_cb;
-	
-	// worker thread	
-	std::thread _worker_thread;
-	
+
+    // worker thread
+    std::thread _worker_thread;
+
     // throw last worker thread exception or if worker thread is not active
     void throw_if_bad_worker();
 
