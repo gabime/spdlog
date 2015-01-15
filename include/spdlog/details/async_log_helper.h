@@ -112,7 +112,7 @@ public:
     async_log_helper(formatter_ptr formatter,
     	const std::vector<sink_ptr>& sinks, 
     	size_t queue_size, 
-    	const async_queue_overflow_policy overflow_policy = async_queue_overflow_policy::block_retry,
+    	const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
     	const std::function<void()>& worker_warmup_cb = nullptr);
     	
     void log(const details::log_msg& msg);
@@ -133,7 +133,7 @@ private:
     std::shared_ptr<spdlog_ex> _last_workerthread_ex;
 
     // overflow policy
-    const async_queue_overflow_policy _overflow_policy;
+    const async_overflow_policy _overflow_policy;
 
     // worker thread warmup callback - one can set thread priority, affinity, etc
     const std::function<void()> _worker_warmup_cb;
@@ -161,7 +161,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size, const async_queue_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb):
+inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb):
     _formatter(formatter),
     _sinks(sinks),
     _q(queue_size),
@@ -190,7 +190,7 @@ inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 {
     throw_if_bad_worker();
     async_msg new_msg(msg);
-    if (!_q.enqueue(std::move(new_msg)) && _overflow_policy != async_queue_overflow_policy::discard_log_msg)
+    if (!_q.enqueue(std::move(new_msg)) && _overflow_policy != async_overflow_policy::discard_log_msg)
     {
         auto last_op_time = clock::now();
         do

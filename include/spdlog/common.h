@@ -75,6 +75,17 @@ inline const char* to_str(spdlog::level::level_enum l)
 }
 } //level
 
+
+//
+// Async mode - off by default.
+//
+enum class async_overflow_policy
+{
+    block_retry, // Block / yield / sleep until message can be enqueued
+    discard_log_msg // Discard the message it enqueue fails
+};
+
+
 //
 // Log exception
 //

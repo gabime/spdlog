@@ -120,7 +120,7 @@ public:
             l.second->set_level(log_level);
     }
 
-    void set_async_mode(size_t q_size, const async_queue_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb)
+    void set_async_mode(size_t q_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _async_mode = true;
@@ -152,7 +152,7 @@ private:
     level::level_enum _level = level::info;
     bool _async_mode = false;
     size_t _async_q_size = 0;
-    async_queue_overflow_policy _overflow_policy = async_queue_overflow_policy::block_retry;
+    async_overflow_policy _overflow_policy = async_overflow_policy::block_retry;
     std::function<void()> _worker_warmup_cb = nullptr;
 };
 }

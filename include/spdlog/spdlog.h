@@ -57,19 +57,8 @@ void set_formatter(formatter_ptr f);
 void set_level(level::level_enum log_level);
 
 
-//
-// Async mode - off by default.
-//
-
-enum class async_queue_overflow_policy
-{
-    block_retry, // Block / yield / sleep until message can be enqueued
-    discard_log_msg // Discard the message it enqueue fails
-};
-
 // Turn on async mode and set the queue size for each async_logger
-
-void set_async_mode(size_t queue_size, const async_queue_overflow_policy overflow_policy = async_queue_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
+void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
 // Turn off async mode
 void set_sync_mode();
 
