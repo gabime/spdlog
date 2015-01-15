@@ -47,29 +47,31 @@ namespace spdlog
 // logger.info() << "This is another message" << x << y << z;
 std::shared_ptr<logger> get(const std::string& name);
 
-
-
 //
 // Set global formatting
-// e.g. spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
+// example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 //
 void set_pattern(const std::string& format_string);
 void set_formatter(formatter_ptr f);
 
 //
-// Set global logging level
+// Set global logging level for 
 //
 void set_level(level::level_enum log_level);
 
-
+//
 // Turn on async mode (off by default) and set the queue size for each async_logger.
 // effective only for loggers created after this call.
 // queue_size: size of queue (must be power of 2):
-//     Each logger will pre-allocate a dedicated queue with queue_size entries upon construction.
-// async_overflow_policy (optional):
-//     async_overflow_policy::block_retry (default policy, if queue is full, block until queue has room for the new log entry)
-//     async_overflow_policy::discard_log_msg (never block and discard any new messages when queue  overflows)
-// worker_warmup_cb(optional): callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
+//    Each logger will pre-allocate a dedicated queue with queue_size entries upon construction.
+//
+// async_overflow_policy (optional, block_retry by default):
+//    async_overflow_policy::block_retry - if queue is full, block until queue has room for the new log entry.
+//    async_overflow_policy::discard_log_msg - never block and discard any new messages when queue  overflows.
+//
+// worker_warmup_cb (optional): 
+//     callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
+//
 void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
 
 // Turn off async mode
@@ -104,11 +106,9 @@ std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name);
 std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0);
 #endif
 
-//
-// Create a logger with multiple sinks
-//
-std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
 
+// Create a logger with multiple sinks
+std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
 template<class It>
 std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
 
@@ -147,11 +147,11 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Arg
 
 // Drop the reference to the given logger
 void drop(const std::string &name);
+
 // Drop all references
 void drop_all();
 
 }
-
 
 
 #include "details/spdlog_impl.h"
