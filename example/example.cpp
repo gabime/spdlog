@@ -38,7 +38,8 @@ int main(int, char* [])
 
         // Create console, multithreaded logger
         auto console = spd::stdout_logger_mt("console");
-        console->info("Welcome to spdlog!") ;
+        const std::string s("Hello {}", 1);
+        console->info(s) ;
         console->info("An info message example {}..", 1);
         console->info() << "Streams are supported too  " << 1;
 
