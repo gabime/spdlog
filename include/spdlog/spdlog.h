@@ -57,8 +57,14 @@ void set_formatter(formatter_ptr f);
 void set_level(level::level_enum log_level);
 
 
-// Turn on async mode and set the queue size for each async_logger
+// Turn on async mode and set the queue size for each async_logger. 
+// queue_size: size of queue (must be power of 2). The queue will pre allocate queue_size entries upon construction.
+// async_overflow_policy (optional):
+//     async_overflow_policy::block_retry (default policy, if queue is full, block until queue has room for the new log entry)
+//     async_overflow_policy::discard_log_msg (never block and discard any new messages when queue  overflows)
+// worker_warmup_cb(optional): callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
 void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
+
 // Turn off async mode
 void set_sync_mode();
 

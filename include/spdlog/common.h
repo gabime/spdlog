@@ -77,7 +77,7 @@ inline const char* to_str(spdlog::level::level_enum l)
 
 
 //
-// Async mode - off by default.
+// Async overflow policy - block by default.
 //
 enum class async_overflow_policy
 {
