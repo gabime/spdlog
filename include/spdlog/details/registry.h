@@ -62,7 +62,7 @@ public:
             return found->second;
         std::shared_ptr<logger> new_logger;
         if (_async_mode)
-            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _worker_warmup_cb);
+            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _overflow_policy, _worker_warmup_cb);
         else
             new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
 
@@ -120,11 +120,12 @@ public:
             l.second->set_level(log_level);
     }
 
-    void set_async_mode(size_t q_size, const std::function<void()>& worker_warmup_cb = nullptr)
+    void set_async_mode(size_t q_size, const async_queue_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _async_mode = true;
         _async_q_size = q_size;
+        _overflow_policy = overflow_policy;
         _worker_warmup_cb = worker_warmup_cb;
     }
 
@@ -151,6 +152,7 @@ private:
     level::level_enum _level = level::info;
     bool _async_mode = false;
     size_t _async_q_size = 0;
+    async_queue_overflow_policy _overflow_policy = async_queue_overflow_policy::block_retry;
     std::function<void()> _worker_warmup_cb = nullptr;
 };
 }

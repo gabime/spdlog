@@ -38,6 +38,7 @@
 #include <functional>
 #include "common.h"
 #include "logger.h"
+#include "spdlog.h"
 
 
 namespace spdlog
@@ -52,9 +53,9 @@ class async_logger :public logger
 {
 public:
     template<class It>
-    async_logger(const std::string& name, const It& begin, const It& end, size_t queue_size, const std::function<void()>& worker_warmup_cb = nullptr);
-    async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size, const std::function<void()>& worker_warmup_cb = nullptr);
-    async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size, const std::function<void()>& worker_warmup_cb = nullptr);
+    async_logger(const std::string& name, const It& begin, const It& end, size_t queue_size, const async_queue_overflow_policy overflow_policy = async_queue_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
+    async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size, const async_queue_overflow_policy overflow_policy = async_queue_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
+    async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size, const async_queue_overflow_policy overflow_policy = async_queue_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
 
 
 protected:
