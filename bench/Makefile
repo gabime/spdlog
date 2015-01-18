@@ -1,4 +1,4 @@
-CXX	= g++
+CXX	?= g++
 CXXFLAGS	= -march=native -Wall -Wextra -pedantic -std=c++11 -pthread -Wl,--no-as-needed  -I../include 
 CXX_RELEASE_FLAGS = -O3 -flto
 
