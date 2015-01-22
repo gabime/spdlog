@@ -53,7 +53,7 @@ int main(int, char* [])
         console->info("{:^30}", "centered");
 
         // Create a file rotating logger with 5mb size max and 3 rotated files
-        auto file_logger = spd::rotating_logger_mt("file_logger", "logs/mylogfile", 1048576 * 5, 3);
+        auto file_logger = spd::rotating_logger_mt("file_logger", "mylogfile.log", 1048576 * 5, 3);
         file_logger->set_level(spd::level::info);
         for(int i = 0; i < 10; ++i)
             file_logger->info("{} * {} equals {:>10}", i, i, i*i);
@@ -71,7 +71,7 @@ int main(int, char* [])
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
         size_t q_size = 1048576; //queue size must be power of 2
         spdlog::set_async_mode(q_size);
-        auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
+        auto async_file= spd::daily_logger_st("async_file_logger", "async_log.log");
         async_file->info() << "This is async log.." << "Should be very fast!";
 
         // syslog example. linux only..

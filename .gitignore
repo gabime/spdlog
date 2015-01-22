@@ -33,4 +33,4 @@ example/*
 !example/makefile
 !example/makefile.clang
 
-
+*.log
