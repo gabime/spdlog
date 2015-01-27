@@ -69,6 +69,15 @@ class level_formatter :public flag_formatter
     }
 };
 
+// short log level appender
+class short_level_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        msg.formatted << level::to_short_str(msg.level);
+    }
+};
+
 ///////////////////////////////////////////////////////////////////////
 // Date time pattern appenders
 ///////////////////////////////////////////////////////////////////////
@@ -478,6 +487,10 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::level_formatter()));
         break;
 
+    case 'L':
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::short_level_formatter()));
+        break;
+		
     case('t') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::t_formatter()));
         break;

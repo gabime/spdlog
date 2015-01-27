@@ -71,9 +71,16 @@ typedef enum
 
 static const char* level_names[] { "trace", "debug", "info", "notice", "warning", "error", "critical", "alert", "emerg", "off"};
 
+static const char* short_level_names[] { "T", "D", "I", "N", "W", "E", "C", "A", "M", "O"};
+
 inline const char* to_str(spdlog::level::level_enum l)
 {
     return level_names[l];
+}
+
+inline const char* to_short_str(spdlog::level::level_enum l)
+{
+    return short_level_names[l];
 }
 } //level
 
