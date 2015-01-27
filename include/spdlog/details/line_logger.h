@@ -26,6 +26,9 @@
 
 #include "../common.h"
 #include "../logger.h"
+#ifdef SPDLOG_CLOCK_COARSE
+#include <time.h>
+#endif
 
 
 // Line logger class - aggregates operator<< calls to fast ostream
@@ -64,7 +67,15 @@ public:
         if (_enabled)
         {
             _log_msg.logger_name = _callback_logger->name();
+#ifndef SPDLOG_CLOCK_COARSE
             _log_msg.time = log_clock::now();
+#else
+			timespec ts;
+			::clock_gettime(CLOCK_REALTIME_COARSE, &ts);
+			_log_msg.time = std::chrono::time_point<log_clock, typename log_clock::duration>(
+				std::chrono::duration_cast<typename log_clock::duration>(
+					std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec)));
+#endif
             _callback_logger->_log_msg(_log_msg);
         }
     }
