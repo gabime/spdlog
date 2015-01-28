@@ -80,6 +80,16 @@ public:
         }
     }
 
+    //
+    // Support for format string with variadic args
+    //
+    
+
+    void write(const char* what)
+    {
+        if (_enabled)
+            _log_msg.raw << what;
+    }
 
     template <typename... Args>
     void write(const char* fmt, const Args&... args)
@@ -96,80 +106,96 @@ public:
         }
     }
 
-    void write(const char* what)
+    
+    //
+    // Support for operator<<
+    //
+    line_logger& operator<<(const char* what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(const std::string& what)
+    line_logger& operator<<(const std::string& what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(int what)
+    line_logger& operator<<(int what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(unsigned int what)
+    line_logger& operator<<(unsigned int what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
 
-    void write(long what)
+    line_logger& operator<<(long what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(unsigned long what)
+    line_logger& operator<<(unsigned long what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(long long what)
+    line_logger& operator<<(long long what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(unsigned long long what)
+    line_logger& operator<<(unsigned long long what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(double what)
+    line_logger& operator<<(double what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(long double what)
+    line_logger& operator<<(long double what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(float what)
+    line_logger& operator<<(float what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
 
-    void write(char what)
+    line_logger& operator<<(char what)
     {
         if (_enabled)
             _log_msg.raw << what;
+        return *this;
     }
-
-
+   
+    //Support user types which implements operator<<
     template<typename T>
     line_logger& operator<<(const T& what)
     {
@@ -178,12 +204,11 @@ public:
         return *this;
     }
 
-
+           
     void disable()
     {
         _enabled = false;
     }
-
 
 
 private:
