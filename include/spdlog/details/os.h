@@ -34,7 +34,7 @@
 # include <Windows.h>
 #endif
 
-#include "..\common.h"
+#include "../common.h"
 
 namespace spdlog
 {
