@@ -136,4 +136,17 @@ int main(int, char* [])
         std::cout << "Log failed: " << ex.what() << std::endl;
     }
 }
+
+
+// Example of user defined class with operator<<
+class some_class {};
+std::ostream& operator<<(std::ostream& os, const some_class& c) { return os << "some_class"; }
+
+void custom_class_example()
+{
+    some_class c;
+    spdlog::get("console")->info("custom class with operator<<: {}..", c);
+    spdlog::get("console")->info() << "custom class with operator<<: " << c << "..";
+}
+
 ```
