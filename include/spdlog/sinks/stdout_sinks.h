@@ -38,7 +38,7 @@ template <class Mutex>
 class stdout_sink : public ostream_sink<Mutex>
 {
 public:
-    stdout_sink() : ostream_sink<Mutex>(std::cout) {}
+    stdout_sink() : ostream_sink<Mutex>(std::cout, true) {}
 
 };
 
@@ -50,7 +50,7 @@ template <class Mutex>
 class stderr_sink : public ostream_sink<Mutex>
 {
 public:
-    stderr_sink() : ostream_sink<Mutex>(std::cerr) {}
+    stderr_sink() : ostream_sink<Mutex>(std::cerr, true) {}
 };
 
 typedef stderr_sink<std::mutex> stderr_sink_mt;
