@@ -26,9 +26,6 @@
 #include <type_traits>
 #include "../common.h"
 #include "../logger.h"
-#ifdef SPDLOG_CLOCK_COARSE
-#include <time.h>
-#endif
 
 
 // Line logger class - aggregates operator<< calls to fast ostream
@@ -67,15 +64,7 @@ public:
         if (_enabled)
         {
             _log_msg.logger_name = _callback_logger->name();
-#ifndef SPDLOG_CLOCK_COARSE
-            _log_msg.time = log_clock::now();
-#else
-            timespec ts;
-            ::clock_gettime(CLOCK_REALTIME_COARSE, &ts);
-            _log_msg.time = std::chrono::time_point<log_clock, typename log_clock::duration>(
-                                std::chrono::duration_cast<typename log_clock::duration>(
-                                    std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec)));
-#endif
+            _log_msg.time = os::now();
             _callback_logger->_log_msg(_log_msg);
         }
     }
@@ -83,7 +72,7 @@ public:
     //
     // Support for format string with variadic args
     //
-    
+
 
     void write(const char* what)
     {
@@ -106,7 +95,7 @@ public:
         }
     }
 
-    
+
     //
     // Support for operator<<
     //
@@ -194,7 +183,7 @@ public:
             _log_msg.raw << what;
         return *this;
     }
-   
+
     //Support user types which implements operator<<
     template<typename T>
     line_logger& operator<<(const T& what)
@@ -204,7 +193,7 @@ public:
         return *this;
     }
 
-           
+
     void disable()
     {
         _enabled = false;

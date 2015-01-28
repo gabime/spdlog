@@ -36,6 +36,14 @@
 #define SPDLOG_NOEXCEPT
 #endif
 
+// under linux, use the much faster CLOCK_REALTIME_COARSE clock.
+// this clock is less accurate - resolution is 1ms under i386 and x86_64.
+// comment to use the regular (and slower) clock
+
+#ifdef __linux__
+#define SPDLOG_CLOCK_COARSE
+#endif
+
 namespace spdlog
 {
 
