@@ -37,7 +37,7 @@
 #endif
 
 // under linux, use the much faster CLOCK_REALTIME_COARSE clock.
-// this clock is less accurate - resolution is 1ms under i386 and x86_64.
+// this clock is less accurate - accuracy  upto ~1ms under i386 and x86_64.
 // comment to use the regular (and slower) clock
 
 #ifdef __linux__
