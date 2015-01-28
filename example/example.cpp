@@ -65,7 +65,7 @@ int main(int, char* [])
 
         SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
         SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
-
+      
         // Asynchronous logging is very fast..
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
         size_t q_size = 1048576; //queue size must be power of 2
@@ -88,3 +88,18 @@ int main(int, char* [])
         std::cout << "Log failed: " << ex.what() << std::endl;
     }
 }
+
+
+//
+// Example of user defined class with operator<<
+//
+class some_class {};
+std::ostream& operator<<(std::ostream& os, const some_class& c) { return os << "some_class"; }
+
+void custom_class_example()
+{
+    some_class c;
+    spdlog::get("console")->info("custom class with operator<<: {}", c);
+    spdlog::get("console")->info() << "custom class with operator<<: " << c;
+}
+
