@@ -37,9 +37,8 @@ int main(int, char* [])
         spd::set_level(spd::level::debug);
 
         // Create console, multithreaded logger
-        auto console = spd::stdout_logger_mt("console");
-        const std::string s("Hello {}", 1);
-        console->info(s) ;
+        auto console = spd::stdout_logger_mt("console");        
+        console->info("Hello {}", 1);
         console->info("An info message example {}..", 1);
         console->info() << "Streams are supported too  " << 1;
 
@@ -81,6 +80,8 @@ int main(int, char* [])
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
 #endif
 
+        //Close all loggers
+        spd::drop_all();
     }
     catch (const spd::spdlog_ex& ex)
     {
