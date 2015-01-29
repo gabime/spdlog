@@ -36,7 +36,7 @@
 #define SPDLOG_NOEXCEPT
 #endif
 
-// under linux, use the much faster CLOCK_REALTIME_COARSE clock.
+// under linux, you can use the much faster CLOCK_REALTIME_COARSE clock.
 // this clock is less accurate - can be off by few millis - depending on the kernel HZ
 // uncomment to use it instead of the regular (and slower) clock
 
