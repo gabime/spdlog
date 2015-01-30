@@ -88,8 +88,8 @@ int main(int, char* [])
         //
         spd::set_level(spd::level::info); //Set global log level to info
         console->debug("This message shold not be displayed!");
-        console->set_level(spd::level::info); // Set specific logger's log level
-        console->info("Now it should..");
+        console->set_level(spd::level::debug); // Set specific logger's log level
+        console->debug("Now it should..");
   
         //
         // Create a file rotating logger with 5mb size max and 3 rotated files
