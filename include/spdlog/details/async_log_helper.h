@@ -64,9 +64,14 @@ class async_log_helper
         async_msg() = default;
         ~async_msg() = default;
 
+        async_msg(async_msg&& other) = default;
+        async_msg& operator=(async_msg&& other) = default;
+
+        // never copy or assign. should only be moved..
         async_msg(const async_msg&) = delete;
         async_msg& operator=(async_msg& other) = delete;
 
+        // construct from log_msg
         async_msg(const details::log_msg& m) :
             logger_name(m.logger_name),
             level(m.level),
@@ -74,23 +79,8 @@ class async_log_helper
             txt(m.raw.data(), m.raw.size())
         {}
 
-        async_msg(async_msg&& other) :
-            logger_name(std::move(other.logger_name)),
-            level(std::move(other.level)),
-            time(std::move(other.time)),
-            txt(std::move(other.txt))
-        {}
 
-        async_msg& operator=(async_msg&& other)
-        {
-            logger_name = std::move(other.logger_name);
-            level = other.level;
-            time = std::move(other.time);
-            txt = std::move(other.txt);
-            return *this;
-        }
-
-
+        // copy into log_msg
         void fill_log_msg(log_msg &msg)
         {
             msg.clear();
