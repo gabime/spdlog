@@ -33,7 +33,7 @@
 #ifndef _MSC_VER
 #define SPDLOG_NOEXCEPT noexcept
 #else
-#define SPDLOG_NOEXCEPT
+#define SPDLOG_NOEXCEPT throw()
 #endif
 
 // under linux, you can use the much faster CLOCK_REALTIME_COARSE clock.
