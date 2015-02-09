@@ -73,7 +73,7 @@ inline std::tm localtime(const std::time_t &time_tt)
 
 inline std::tm localtime()
 {
-    std::time_t now_t = time(0);
+    std::time_t now_t = time(nullptr);
     return localtime(now_t);
 }
 
@@ -93,7 +93,7 @@ inline std::tm gmtime(const std::time_t &time_tt)
 
 inline std::tm gmtime()
 {
-    std::time_t now_t = time(0);
+    std::time_t now_t = time(nullptr);
     return gmtime(now_t);
 }
 inline bool operator==(const std::tm& tm1, const std::tm& tm2)
