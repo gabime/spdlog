@@ -490,7 +490,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
     case 'L':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::short_level_formatter()));
         break;
-		
+
     case('t') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::t_formatter()));
         break;

@@ -55,7 +55,7 @@ void set_pattern(const std::string& format_string);
 void set_formatter(formatter_ptr f);
 
 //
-// Set global logging level for 
+// Set global logging level for
 //
 void set_level(level::level_enum log_level);
 
@@ -69,7 +69,7 @@ void set_level(level::level_enum log_level);
 //    async_overflow_policy::block_retry - if queue is full, block until queue has room for the new log entry.
 //    async_overflow_policy::discard_log_msg - never block and discard any new messages when queue  overflows.
 //
-// worker_warmup_cb (optional): 
+// worker_warmup_cb (optional):
 //     callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
 //
 void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
