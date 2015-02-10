@@ -19,9 +19,9 @@ int main(int argc, char* argv[])
     int thread_count = 10;
     if(argc > 1)
         thread_count = atoi(argv[1]);
-    int howmany = 10000001;
+    int howmany = 1000000;
 
-    spd::set_async_mode(1048576*16, spd::async_overflow_policy::discard_log_msg);
+    spd::set_async_mode(1048576);
     auto logger = spdlog::create<spd::sinks::simple_file_sink_mt>("file_logger", "logs/spd-bench-async.txt", false);
     logger->set_pattern("[%Y-%b-%d %T.%e]: %v");
 
