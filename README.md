@@ -73,7 +73,7 @@ int main(int, char* [])
         console->info("An info message example {}..", 1);
         console->info() << "Streams are supported too  " << 1;
 	
-	//Formatting examples
+        //Formatting examples
         console->info("Easy padding in numbers like {:08d}", 12);
         console->info("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
         console->info("Support for floats {:03.2f}", 1.23456);
