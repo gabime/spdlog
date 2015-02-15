@@ -84,10 +84,10 @@ std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const
 std::shared_ptr<logger> rotating_logger_st(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
 
 //
-// Create file logger which creates new file at midnight):
+// Create file logger which creates new file on the given time (default in  midnight):
 //
-std::shared_ptr<logger> daily_logger_mt(const std::string& logger_name, const std::string& filename, bool force_flush = false);
-std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const std::string& filename, bool force_flush = false);
+std::shared_ptr<logger> daily_logger_mt(const std::string& logger_name, const std::string& filename, int hour=0, int minute=0, bool force_flush = false);
+std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const std::string& filename, int hour=0, int minute=0, bool force_flush = false);
 
 
 //

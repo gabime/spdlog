@@ -642,11 +642,9 @@ FMT_FUNC void spdlog::details::fmt::BasicWriter<Char>::write_str(
 template <typename Char>
 inline Arg spdlog::details::fmt::BasicFormatter<Char>::parse_arg_index(const Char *&s) {
     const char *error = 0;
-    Arg arg = *s < '0' || *s > '9' ?
-              next_arg(error) : get_arg(parse_nonnegative_int(s), error);
+    Arg arg = *s < '0' || *s > '9' ? next_arg(error) : get_arg(parse_nonnegative_int(s), error);
     if (error) {
-        FMT_THROW(FormatError(
-                      *s != '}' && *s != ':' ? "invalid format string" : error));
+        FMT_THROW(FormatError(*s != '}' && *s != ':' ? "invalid format string" : error));
     }
     return arg;
 }
