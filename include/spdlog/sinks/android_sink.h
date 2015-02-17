@@ -50,7 +50,7 @@ public:
 protected:
     virtual void _sink_it(const details::log_msg& msg) override
     {
-        constexpr int LoveLevelMapping[] =
+        constexpr int LogLevelMapping[] =
         {
             ANDROID_LOG_VERBOSE,
             ANDROID_LOG_DEBUG,
@@ -63,7 +63,7 @@ protected:
             ANDROID_LOG_FATAL,
             ANDROID_LOG_SILENT,
         };
-        ((void)__android_log_print(LoveLevelMapping[msg.level], msg.logger_name.c_str(), msg.formatted.data()));
+        ((void)__android_log_print(LogLevelMapping[msg.level], msg.logger_name.c_str(), msg.formatted.data()));
     }
 
     //std::ostream& _ostream;
