@@ -478,7 +478,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
-        // logger name
+    // logger name
     case 'n':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::name_formatter()));
         break;
@@ -610,8 +610,8 @@ inline void spdlog::pattern_formatter::format(details::log_msg& msg)
         //write eol
         msg.formatted << details::os::eol();
     }
-    catch(const details::fmt::FormatError& e)
+    catch(const fmt::FormatError& e)
     {
-        throw spdlog_ex(details::fmt::format("formatting error while processing format string: {}", e.what()));
+        throw spdlog_ex(fmt::format("formatting error while processing format string: {}", e.what()));
     }
 }
