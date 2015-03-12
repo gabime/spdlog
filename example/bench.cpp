@@ -50,7 +50,8 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int argc, char* argv[])
 {
 
-    int howmany = 1048576;
+    int queue_size = 1048576;
+    int howmany = 1000000;
     int threads = 10;
     bool auto_flush = false;
     int file_size = 30 * 1024 * 1024;
@@ -63,6 +64,8 @@ int main(int argc, char* argv[])
             howmany = atoi(argv[1]);
         if (argc > 2)
             threads =   atoi(argv[2]);
+        if (argc > 3)
+            queue_size = atoi(argv[3]);
 
 
         cout << "*******************************************************************************\n";
@@ -92,7 +95,7 @@ int main(int argc, char* argv[])
         cout << "*******************************************************************************\n";
 
 
-        spdlog::set_async_mode(howmany);
+        spdlog::set_async_mode(queue_size);
 
         for(int i = 0; i < 3; ++i)
         {
