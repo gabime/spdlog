@@ -33,6 +33,7 @@
 
 #include<vector>
 #include<memory>
+#include<mutex>
 #include "sinks/base_sink.h"
 #include "common.h"
 
@@ -107,6 +108,7 @@ public:
     void set_pattern(const std::string&);
     void set_formatter(formatter_ptr);
 
+    void set_shared_mux( std::mutex *m ) { _shared_mux = m; }
 
 protected:
     virtual void _log_msg(details::log_msg&);
@@ -124,6 +126,7 @@ protected:
     std::vector<sink_ptr> _sinks;
     formatter_ptr _formatter;
     std::atomic_int _level;
+    std::mutex *_shared_mux;
 
 };
 }

@@ -29,6 +29,7 @@
 #pragma once
 
 
+#include <mutex>
 
 #include "common.h"
 #include "logger.h"
@@ -93,9 +94,9 @@ std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const st
 //
 // Create stdout/stderr loggers
 //
-std::shared_ptr<logger> stdout_logger_mt(const std::string& logger_name);
+std::shared_ptr<logger> stdout_logger_mt(const std::string& logger_name, std::mutex *shared = nullptr);
 std::shared_ptr<logger> stdout_logger_st(const std::string& logger_name);
-std::shared_ptr<logger> stderr_logger_mt(const std::string& logger_name);
+std::shared_ptr<logger> stderr_logger_mt(const std::string& logger_name, std::mutex *shared = nullptr);
 std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name);
 
 
