@@ -64,11 +64,11 @@ class async_log_helper
         async_msg() = default;
         ~async_msg() = default;
 
-        async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
-            logger_name(std::move(other.logger_name)),
-            level(std::move(other.level)),
-            time(std::move(other.time)),
-            txt(std::move(other.txt))
+async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
+        logger_name(std::move(other.logger_name)),
+                    level(std::move(other.level)),
+                    time(std::move(other.time)),
+                    txt(std::move(other.txt))
         {}
 
         async_msg& operator=(async_msg&& other) SPDLOG_NOEXCEPT
