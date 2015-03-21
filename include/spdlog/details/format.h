@@ -175,6 +175,7 @@ inline uint32_t clzll(uint64_t x) {
 #endif
 
 namespace fmt {
+
 // Fix the warning about long long on older versions of GCC
 // that don't support the diagnostic pragma.
 FMT_GCC_EXTENSION typedef long long LongLong;
@@ -288,6 +289,7 @@ public:
 };
 
 namespace internal {
+
 // The number of characters to store in the MemoryBuffer object itself
 // to avoid dynamic memory allocation.
 enum { INLINE_BUFFER_SIZE = 500 };
@@ -378,7 +380,7 @@ void Buffer<T>::append(const T *begin, const T *end) {
 // A memory buffer for POD types with the first SIZE elements stored in
 // the object itself.
 template <typename T, std::size_t SIZE, typename Allocator = std::allocator<T> >
-class MemoryBuffer : private Allocator, public Buffer < T > {
+class MemoryBuffer : private Allocator, public Buffer<T> {
 private:
     T data_[SIZE];
 
@@ -515,7 +517,7 @@ template <typename Char>
 class CharTraits;
 
 template <>
-class CharTraits<char> : public BasicCharTraits < char > {
+class CharTraits<char> : public BasicCharTraits<char> {
 private:
     // Conversion from wchar_t to char is not allowed.
     static char convert(wchar_t);
@@ -532,7 +534,7 @@ public:
 };
 
 template <>
-class CharTraits<wchar_t> : public BasicCharTraits < wchar_t > {
+class CharTraits<wchar_t> : public BasicCharTraits<wchar_t> {
 public:
     static wchar_t convert(char value) {
         return value;
@@ -556,7 +558,7 @@ struct SignChecker {
 };
 
 template <>
-struct SignChecker < false > {
+struct SignChecker<false> {
     template <typename T>
     static bool is_negative(T) {
         return false;
@@ -577,7 +579,7 @@ struct TypeSelector {
 };
 
 template <>
-struct TypeSelector < false > {
+struct TypeSelector<false> {
     typedef uint64_t Type;
 };
 
@@ -753,7 +755,7 @@ struct NonZero {
 };
 
 template <>
-struct NonZero < 0 > {
+struct NonZero<0> {
     enum { VALUE = 1 };
 };
 
@@ -814,7 +816,7 @@ struct WCharHelper {
 };
 
 template <typename T>
-struct WCharHelper < T, wchar_t > {
+struct WCharHelper<T, wchar_t> {
     typedef T Supported;
     typedef None<T> Unsupported;
 };
@@ -928,7 +930,7 @@ public:
 #define FMT_MAKE_WSTR_VALUE(Type, TYPE) \
   MakeValue(typename WCharHelper<Type, Char>::Supported value) { \
     set_string(value); \
-                          } \
+              } \
   static uint64_t type(Type) { return Arg::TYPE; }
 
     FMT_MAKE_WSTR_VALUE(wchar_t *, WSTRING)
@@ -942,7 +944,7 @@ public:
     template <typename T>
     MakeValue(const T &value) {
         custom.value = &value;
-        custom.format = &format_custom_arg < T > ;
+        custom.format = &format_custom_arg<T>;
     }
     template <typename T>
     static uint64_t type(const T &) {
@@ -1110,6 +1112,7 @@ public:
 struct FormatSpec;
 
 namespace internal {
+
 class FormatterBase {
 private:
     ArgList args_;
@@ -1358,26 +1361,26 @@ IntFormatSpec<int, AlignTypeSpec<TYPE_CODE>, Char> pad(
 #define FMT_DEFINE_INT_FORMATTERS(TYPE) \
 inline IntFormatSpec<TYPE, TypeSpec<'b'> > bin(TYPE value) { \
   return IntFormatSpec<TYPE, TypeSpec<'b'> >(value, TypeSpec<'b'>()); \
-        } \
+    } \
  \
 inline IntFormatSpec<TYPE, TypeSpec<'o'> > oct(TYPE value) { \
   return IntFormatSpec<TYPE, TypeSpec<'o'> >(value, TypeSpec<'o'>()); \
-        } \
+    } \
  \
 inline IntFormatSpec<TYPE, TypeSpec<'x'> > hex(TYPE value) { \
   return IntFormatSpec<TYPE, TypeSpec<'x'> >(value, TypeSpec<'x'>()); \
-        } \
+    } \
  \
 inline IntFormatSpec<TYPE, TypeSpec<'X'> > hexu(TYPE value) { \
   return IntFormatSpec<TYPE, TypeSpec<'X'> >(value, TypeSpec<'X'>()); \
-        } \
+    } \
  \
 template <char TYPE_CODE> \
 inline IntFormatSpec<TYPE, AlignTypeSpec<TYPE_CODE> > pad( \
     IntFormatSpec<TYPE, TypeSpec<TYPE_CODE> > f, unsigned width) { \
   return IntFormatSpec<TYPE, AlignTypeSpec<TYPE_CODE> >( \
       f.value(), AlignTypeSpec<TYPE_CODE>(width, ' ')); \
-        } \
+    } \
  \
 /* For compatibility with older compilers we provide two overloads for pad, */ \
 /* one that takes a fill character and one that doesn't. In the future this */ \
@@ -1389,20 +1392,20 @@ inline IntFormatSpec<TYPE, AlignTypeSpec<TYPE_CODE>, Char> pad( \
     unsigned width, Char fill) { \
   return IntFormatSpec<TYPE, AlignTypeSpec<TYPE_CODE>, Char>( \
       f.value(), AlignTypeSpec<TYPE_CODE>(width, fill)); \
-        } \
+    } \
  \
 inline IntFormatSpec<TYPE, AlignTypeSpec<0> > pad( \
     TYPE value, unsigned width) { \
   return IntFormatSpec<TYPE, AlignTypeSpec<0> >( \
       value, AlignTypeSpec<0>(width, ' ')); \
-        } \
+    } \
  \
 template <typename Char> \
 inline IntFormatSpec<TYPE, AlignTypeSpec<0>, Char> pad( \
    TYPE value, unsigned width, Char fill) { \
  return IntFormatSpec<TYPE, AlignTypeSpec<0>, Char>( \
      value, AlignTypeSpec<0>(width, fill)); \
-        }
+    }
 
 FMT_DEFINE_INT_FORMATTERS(int)
 FMT_DEFINE_INT_FORMATTERS(long)
@@ -1504,9 +1507,9 @@ inline uint64_t make_type(FMT_GEN15(FMT_ARG_TYPE_DEFAULT)) {
     const fmt::internal::Value values[ \
       fmt::internal::NonZero<sizeof...(Args)>::VALUE] = { \
       fmt::internal::MakeValue<Char>(args)... \
-            }; \
+        }; \
     func(arg1, ArgList(fmt::internal::make_type(args...), values)); \
-          }
+      }
 
 // Defines a variadic constructor.
 # define FMT_VARIADIC_CTOR(ctor, func, arg0_type, arg1_type) \
@@ -1516,9 +1519,9 @@ inline uint64_t make_type(FMT_GEN15(FMT_ARG_TYPE_DEFAULT)) {
     const fmt::internal::Value values[ \
         fmt::internal::NonZero<sizeof...(Args)>::VALUE] = { \
       MakeValue<Char>(args)... \
-            }; \
+        }; \
     func(arg0, arg1, ArgList(fmt::internal::make_type(args...), values)); \
-          }
+      }
 
 #else
 
@@ -1533,7 +1536,7 @@ inline uint64_t make_type(FMT_GEN15(FMT_ARG_TYPE_DEFAULT)) {
     const fmt::internal::Value vals[] = {FMT_GEN(n, FMT_MAKE_REF)}; \
     func(arg1, fmt::ArgList( \
       fmt::internal::make_type(FMT_GEN(n, FMT_MAKE_REF2)), vals)); \
-          }
+      }
 
 // Emulates a variadic function returning void on a pre-C++11 compiler.
 # define FMT_VARIADIC_VOID(func, arg_type) \
@@ -1550,7 +1553,7 @@ inline uint64_t make_type(FMT_GEN15(FMT_ARG_TYPE_DEFAULT)) {
     const fmt::internal::Value vals[] = {FMT_GEN(n, FMT_MAKE_REF)}; \
     func(arg0, arg1, fmt::ArgList( \
       fmt::internal::make_type(FMT_GEN(n, FMT_MAKE_REF2)), vals)); \
-          }
+      }
 
 // Emulates a variadic constructor on a pre-C++11 compiler.
 # define FMT_VARIADIC_CTOR(ctor, func, arg0_type, arg1_type) \
@@ -1738,8 +1741,8 @@ private:
     template<typename T>
     void append_float_length(Char *&, T) {}
 
-    friend class internal::ArgFormatter < Char > ;
-    friend class internal::PrintfFormatter < Char > ;
+    friend class internal::ArgFormatter<Char>;
+    friend class internal::PrintfFormatter<Char>;
 
 protected:
     /**
@@ -2281,7 +2284,7 @@ accessed as a C string with ``out.c_str()``.
 \endrst
 */
 template <typename Char, typename Allocator = std::allocator<Char> >
-class BasicMemoryWriter : public BasicWriter < Char > {
+class BasicMemoryWriter : public BasicWriter<Char> {
 private:
     internal::MemoryBuffer<Char, internal::INLINE_BUFFER_SIZE, Allocator> buffer_;
 
