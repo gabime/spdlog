@@ -28,16 +28,11 @@
 
 #pragma once
 
-
-
 #include "common.h"
 #include "logger.h"
 
-
-
 namespace spdlog
 {
-
 // Return an existing logger or nullptr if a logger with such name doesn't exist.
 // Examples:
 //
