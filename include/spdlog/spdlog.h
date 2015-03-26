@@ -119,8 +119,10 @@ template <typename Sink, typename... Args>
 std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&...);
 
 //
-// Trace & debug macros to be switched on/off at compile time for zero cost debug statements.
-// Note: using these mactors overrides the runtime log threshold of the logger.
+//
+// Macros to be display source file & line
+//
+// Trace & debug can be switched on/off at compile time for zero cost debug statements.
 //
 // Example:
 //
@@ -135,7 +137,6 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Arg
 #else
 #define SPDLOG_TRACE(logger, ...)
 #endif
-
 
 #ifdef SPDLOG_DEBUG_ON
 #define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)  << " (" << __FILE__ << " #" << __LINE__ <<")";
