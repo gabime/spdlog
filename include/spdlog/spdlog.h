@@ -131,19 +131,25 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Arg
 //
 
 #ifdef SPDLOG_TRACE_ON
-#define SPDLOG_TRACE(logger, ...) logger->force_log(spdlog::level::trace,  __VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_TRACE(logger, ...) logger->trace(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
 #else
 #define SPDLOG_TRACE(logger, ...)
 #endif
 
 
 #ifdef SPDLOG_DEBUG_ON
-#define SPDLOG_DEBUG(logger, ...) logger->force_log(spdlog::level::debug, __VA_ARGS__)
+#define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)  << " (" << __FILE__ << " #" << __LINE__ <<")";
 #else
 #define SPDLOG_DEBUG(logger, ...)
 #endif
 
-
+#define SPDLOG_INFO(logger, ...)     logger->info(__VA_ARGS__)     << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_NOTICE(logger, ...)   logger->notice(__VA_ARGS__)   << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_WARN(logger, ...)     logger->warn(__VA_ARGS__)     << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_ERROR(logger, ...)    logger->err(__VA_ARGS__)      << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_CRITICAL(logger, ...) logger->critical(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_ALERT(logger, ...)    logger->alert(__VA_ARGS__)    << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_EMERG(logger, ...)    logger->emerg(__VA_ARGS__)    << " (" << __FILE__ << " #" << __LINE__ <<")";
 
 // Drop the reference to the given logger
 void drop(const std::string &name);
