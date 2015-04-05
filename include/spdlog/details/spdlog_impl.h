@@ -65,9 +65,11 @@ inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string
 
 
 // Create stdout/stderr loggers
-inline std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt(const std::string& logger_name)
+inline std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt(const std::string& logger_name, std::mutex *shared)
 {
-    return create<spdlog::sinks::stdout_sink_mt>(logger_name);
+   std::shared_ptr<spdlog::logger> l = create<spdlog::sinks::stdout_sink_mt>(logger_name);
+   l->set_shared_mux( shared );
+   return l;
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st(const std::string& logger_name)
@@ -75,9 +77,11 @@ inline std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st(const std::strin
     return create<spdlog::sinks::stdout_sink_st>(logger_name);
 }
 
-inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt(const std::string& logger_name)
+inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt(const std::string& logger_name, std::mutex *shared)
 {
-    return create<spdlog::sinks::stderr_sink_mt>(logger_name);
+    std::shared_ptr<spdlog::logger> l = create<spdlog::sinks::stderr_sink_mt>(logger_name);
+    l->set_shared_mux( shared );
+    return l;
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::string& logger_name)

@@ -36,7 +36,8 @@ template<class It>
 inline spdlog::logger::logger(const std::string& logger_name, const It& begin, const It& end) :
     _name(logger_name),
     _sinks(begin, end),
-    _formatter(std::make_shared<pattern_formatter>("%+"))
+    _formatter(std::make_shared<pattern_formatter>("%+")),
+    _shared_mux( nullptr )
 {
 
     // no support under vs2013 for member initialization for std::atomic
@@ -300,7 +301,17 @@ inline void spdlog::logger::_log_msg(details::log_msg& msg)
 {
     _formatter->format(msg);
     for (auto &sink : _sinks)
+    {
+        if ( ! _shared_mux )
+        {
         sink->log(msg);
+}
+        else
+        {
+            std::lock_guard<std::mutex> lock( *_shared_mux );
+            sink->log(msg);
+        }
+    }
 }
 
 inline void spdlog::logger::_set_pattern(const std::string& pattern)
