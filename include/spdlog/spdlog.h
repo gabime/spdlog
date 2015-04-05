@@ -28,17 +28,13 @@
 
 #pragma once
 
-
 #include <mutex>
 
 #include "common.h"
 #include "logger.h"
 
-
-
 namespace spdlog
 {
-
 // Return an existing logger or nullptr if a logger with such name doesn't exist.
 // Examples:
 //
@@ -119,38 +115,43 @@ std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_b
 template <typename Sink, typename... Args>
 std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&...);
 
-//
-// Trace & debug macros to be switched on/off at compile time for zero cost debug statements.
-// Note: using these mactors overrides the runtime log threshold of the logger.
-//
-// Example:
-//
-// Enable debug macro, must be defined before including spdlog.h
-// #define SPDLOG_DEBUG_ON
-// include "spdlog/spdlog.h"
-// SPDLOG_DEBUG(my_logger, "Some debug message {} {}", 1, 3.2);
-//
-
-#ifdef SPDLOG_TRACE_ON
-#define SPDLOG_TRACE(logger, ...) logger->force_log(spdlog::level::trace,  __VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
-#else
-#define SPDLOG_TRACE(logger, ...)
-#endif
-
-
-#ifdef SPDLOG_DEBUG_ON
-#define SPDLOG_DEBUG(logger, ...) logger->force_log(spdlog::level::debug, __VA_ARGS__)
-#else
-#define SPDLOG_DEBUG(logger, ...)
-#endif
-
-
 
 // Drop the reference to the given logger
 void drop(const std::string &name);
 
 // Drop all references
 void drop_all();
+
+
+//
+//
+// Macros to be display source file & line
+// Trace & Debug can be switched on/off at compile time for zero cost debug statements.
+//
+// Example:
+// #define SPDLOG_DEBUG_ON 
+// include "spdlog/spdlog.h" 
+// SPDLOG_DEBUG(my_logger, "Some debug message {} {}", 1, 3.2);
+//
+#ifdef SPDLOG_TRACE_ON
+#define SPDLOG_TRACE(logger, ...) logger->trace(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
+#else
+#define SPDLOG_TRACE(logger, ...)
+#endif
+
+#ifdef SPDLOG_DEBUG_ON
+#define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)  << " (" << __FILE__ << " #" << __LINE__ <<")";
+#else
+#define SPDLOG_DEBUG(logger, ...)
+#endif
+
+#define SPDLOG_INFO(logger, ...)     logger->info(__VA_ARGS__)     << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_NOTICE(logger, ...)   logger->notice(__VA_ARGS__)   << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_WARN(logger, ...)     logger->warn(__VA_ARGS__)     << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_ERROR(logger, ...)    logger->err(__VA_ARGS__)      << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_CRITICAL(logger, ...) logger->critical(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_ALERT(logger, ...)    logger->alert(__VA_ARGS__)    << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_EMERG(logger, ...)    logger->emerg(__VA_ARGS__)    << " (" << __FILE__ << " #" << __LINE__ <<")";
 
 }
 

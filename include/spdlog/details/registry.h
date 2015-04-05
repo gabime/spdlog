@@ -41,7 +41,6 @@ namespace spdlog
 {
 namespace details
 {
-
 class registry
 {
 public:
@@ -94,7 +93,6 @@ public:
         return create(logger_name, { sink });
     }
 
-
     void formatter(formatter_ptr f)
     {
         std::lock_guard<std::mutex> lock(_mutex);
@@ -103,14 +101,12 @@ public:
             l.second->set_formatter(_formatter);
     }
 
-
     void set_pattern(const std::string& pattern)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _formatter = std::make_shared<pattern_formatter>(pattern);
         for (auto& l : _loggers)
             l.second->set_formatter(_formatter);
-
     }
 
     void set_level(level::level_enum log_level)
@@ -118,6 +114,7 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         for (auto& l : _loggers)
             l.second->set_level(log_level);
+        _level = log_level;
     }
 
     void set_async_mode(size_t q_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb)
@@ -134,7 +131,6 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _async_mode = false;
     }
-
 
     static registry& instance()
     {

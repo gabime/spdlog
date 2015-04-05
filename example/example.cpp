@@ -112,7 +112,8 @@ int main(int, char*[])
 
 // Example of user defined class with operator<<
 class some_class {};
-std::ostream& operator<<(std::ostream& os, const some_class&) {
+std::ostream& operator<<(std::ostream& os, const some_class&)
+{
     return os << "some_class";
 }
 
