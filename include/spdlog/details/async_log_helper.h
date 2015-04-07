@@ -59,7 +59,7 @@ class async_log_helper
         std::string logger_name;
         level::level_enum level;
         log_clock::time_point time;
-        thread_id thread_id;
+        log_thread_id thread_id;
         std::string txt;
 
         async_msg() = default;
