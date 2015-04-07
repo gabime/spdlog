@@ -32,8 +32,11 @@
 #  define WIN32_LEAN_AND_MEAN
 # endif
 # include <Windows.h>
+#elif __linux__ 
+#include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
+#include <unistd.h>
 #else
-#include <pthread.h>
+#include <pthread.h> 
 #endif
 
 #include "../common.h"
@@ -168,13 +171,15 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 #endif
 }
 
-
+//Return current thread id as 64 bit integer
 inline uint64_t thread_id()
 {
 
 #ifdef _WIN32
     return ::GetCurrentThreadId();
-#else
+#elif __linux__
+    return  (uint64_t) syscall(SYS_gettid);
+#else     
     return (uint64_t) pthread_self();
 #endif
 
