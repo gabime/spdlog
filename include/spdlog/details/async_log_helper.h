@@ -59,8 +59,8 @@ class async_log_helper
         std::string logger_name;
         level::level_enum level;
         log_clock::time_point time;
-        std::string txt;
         uint64_t thread_id;
+        std::string txt;
 
         async_msg() = default;
         ~async_msg() = default;
@@ -77,6 +77,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
             logger_name = std::move(other.logger_name);
             level = other.level;
             time = std::move(other.time);
+	    thread_id = other.thread_id;
             txt = std::move(other.txt);
             return *this;
         }
@@ -89,6 +90,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
             logger_name(m.logger_name),
             level(m.level),
             time(m.time),
+	    thread_id(m.thread_id),
             txt(m.raw.data(), m.raw.size())
         {}
 
