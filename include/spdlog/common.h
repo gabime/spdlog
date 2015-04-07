@@ -59,6 +59,7 @@ using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr < sinks::sink > ;
 using sinks_init_list = std::initializer_list < sink_ptr > ;
 using formatter_ptr = std::shared_ptr<spdlog::formatter>;
+using thread_id = std::size_t;
 
 //Log level enum
 namespace level
