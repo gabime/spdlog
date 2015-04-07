@@ -146,7 +146,7 @@ void drop_all();
 #define SPDLOG_INFO(logger, ...)     logger->info(__VA_ARGS__)     << " (" << __FILE__ << " #" << __LINE__ <<")";
 #define SPDLOG_NOTICE(logger, ...)   logger->notice(__VA_ARGS__)   << " (" << __FILE__ << " #" << __LINE__ <<")";
 #define SPDLOG_WARN(logger, ...)     logger->warn(__VA_ARGS__)     << " (" << __FILE__ << " #" << __LINE__ <<")";
-#define SPDLOG_ERROR(logger, ...)    logger->err(__VA_ARGS__)      << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_ERROR(logger, ...)    logger->error(__VA_ARGS__)      << " (" << __FILE__ << " #" << __LINE__ <<")";
 #define SPDLOG_CRITICAL(logger, ...) logger->critical(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
 #define SPDLOG_ALERT(logger, ...)    logger->alert(__VA_ARGS__)    << " (" << __FILE__ << " #" << __LINE__ <<")";
 #define SPDLOG_EMERG(logger, ...)    logger->emerg(__VA_ARGS__)    << " (" << __FILE__ << " #" << __LINE__ <<")";
