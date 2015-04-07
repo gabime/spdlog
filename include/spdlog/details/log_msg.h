@@ -38,8 +38,6 @@ struct log_msg
     log_msg(level::level_enum l):
         logger_name(),
         level(l),
-        time(),
-        thread_id(),
         raw(),
         formatted() {}
 
