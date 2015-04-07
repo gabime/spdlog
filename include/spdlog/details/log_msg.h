@@ -46,7 +46,7 @@ struct log_msg
 
     log_msg(const log_msg& other) :
         logger_name(other.logger_name),
-        level(other.level),        
+        level(other.level),
         time(other.time),
         thread_id(other.thread_id)
     {
@@ -84,7 +84,7 @@ struct log_msg
 
     void clear()
     {
-        level = level::off;        
+        level = level::off;
         raw.clear();
         formatted.clear();
     }
@@ -92,7 +92,7 @@ struct log_msg
     std::string logger_name;
     level::level_enum level;
     log_clock::time_point time;
-    std::thread::id thread_id;
+    uint64_t thread_id;
     fmt::MemoryWriter raw;
     fmt::MemoryWriter formatted;
 };

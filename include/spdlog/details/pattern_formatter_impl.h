@@ -354,7 +354,7 @@ class t_formatter :public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
-        msg.formatted << std::hash<std::thread::id>()(msg.thread_id);
+        msg.formatted << msg.thread_id;
     }
 };
 
@@ -478,7 +478,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
-        // logger name
+    // logger name
     case 'n':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::name_formatter()));
         break;

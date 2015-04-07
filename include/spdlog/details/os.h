@@ -32,6 +32,8 @@
 #  define WIN32_LEAN_AND_MEAN
 # endif
 # include <Windows.h>
+#else
+#include <pthread.h>
 #endif
 
 #include "../common.h"
@@ -166,6 +168,17 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 #endif
 }
 
+
+inline uint64_t thread_id()
+{
+
+#ifdef _WIN32
+    return ::GetCurrentThreadId();
+#else
+    return (uint64_t) pthread_self();
+#endif
+
+}
 
 } //os
 } //details

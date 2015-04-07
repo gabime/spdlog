@@ -64,7 +64,9 @@ public:
         {
             _log_msg.logger_name = _callback_logger->name();
             _log_msg.time = os::now();
-            _log_msg.thread_id = std::this_thread::get_id();
+            _log_msg.thread_id = os::thread_id();
+
+
             _callback_logger->_log_msg(_log_msg);
         }
     }
