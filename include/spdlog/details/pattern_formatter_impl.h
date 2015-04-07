@@ -354,7 +354,7 @@ class t_formatter :public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
-        msg.formatted << std::hash<std::thread::id>()(std::this_thread::get_id());
+        msg.formatted << std::hash<std::thread::id>()(msg.thread_id);
     }
 };
 

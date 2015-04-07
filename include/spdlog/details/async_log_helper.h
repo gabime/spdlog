@@ -60,6 +60,7 @@ class async_log_helper
         level::level_enum level;
         log_clock::time_point time;
         std::string txt;
+        std::thread::id thread_id;
 
         async_msg() = default;
         ~async_msg() = default;
@@ -99,6 +100,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
             msg.logger_name = logger_name;
             msg.level = level;
             msg.time = time;
+            msg.thread_id = thread_id;
             msg.raw << txt;
         }
     };
