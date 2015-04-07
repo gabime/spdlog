@@ -175,6 +175,10 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 inline size_t thread_id()
 {
 
+#ifdef SPDLOG_NO_THREAD_ID
+    return 0;
+#else
+
 #ifdef _WIN32
     return ::GetCurrentThreadId();
 #elif __linux__
@@ -182,7 +186,7 @@ inline size_t thread_id()
 #else
     return (uint64_t) pthread_self();
 #endif
-
+#endif //SPDLOG_NO_THREAD_ID
 }
 
 } //os

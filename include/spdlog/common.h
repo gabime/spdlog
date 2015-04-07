@@ -44,6 +44,10 @@
 //#define SPDLOG_CLOCK_COARSE
 //#endif
 
+
+// uncomment if thread id logging is needed - to gain few nanos
+// #define SPDLOG_NO_THREAD_ID
+//
 namespace spdlog
 {
 
