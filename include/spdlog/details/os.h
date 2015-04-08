@@ -171,7 +171,8 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 #endif
 }
 
-//Return current thread id as 64 bit integer
+//Return current thread id as size_t
+//It exists because the std::this_thread::get_id() is much slower(espcially under VS 2013)
 inline size_t thread_id()
 {
 
@@ -182,9 +183,9 @@ inline size_t thread_id()
 #ifdef _WIN32
     return ::GetCurrentThreadId();
 #elif __linux__
-    return  (uint64_t) syscall(SYS_gettid);
+    return  syscall(SYS_gettid);
 #else
-    return (uint64_t) pthread_self();
+    return pthread_self();
 #endif
 #endif //SPDLOG_NO_THREAD_ID
 }
