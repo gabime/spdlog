@@ -435,7 +435,7 @@ class full_formatter :public flag_formatter
 //no datetime needed
 #else
         (void)tm_time;
-#endif;
+#endif
 
 #ifndef SPDLOG_NO_NAME
         msg.formatted << '[' << msg.logger_name << "] ";
