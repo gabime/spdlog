@@ -36,18 +36,7 @@
 #define SPDLOG_NOEXCEPT throw()
 #endif
 
-// under linux, you can use the much faster CLOCK_REALTIME_COARSE clock.
-// this clock is less accurate - can be off by few millis - depending on the kernel HZ
-// uncomment to use it instead of the regular (and slower) clock
 
-//#ifdef __linux__
-//#define SPDLOG_CLOCK_COARSE
-//#endif
-
-
-// uncomment if thread id logging is needed - to gain few nanos
-// #define SPDLOG_NO_THREAD_ID
-//
 namespace spdlog
 {
 

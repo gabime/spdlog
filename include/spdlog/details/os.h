@@ -51,7 +51,7 @@ namespace os
 inline spdlog::log_clock::time_point now()
 {
 
-#ifdef SPDLOG_CLOCK_COARSE
+#if defined __linux__ && defined SPDLOG_CLOCK_COARSE
     timespec ts;
     ::clock_gettime(CLOCK_REALTIME_COARSE, &ts);
     return std::chrono::time_point<log_clock, typename log_clock::duration>(
@@ -175,19 +175,14 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 //It exists because the std::this_thread::get_id() is much slower(espcially under VS 2013)
 inline size_t thread_id()
 {
-
-#ifdef SPDLOG_NO_THREAD_ID
-    return 0;
-#else
-
 #ifdef _WIN32
-    return ::GetCurrentThreadId();
+    return  static_cast<size_t>(::GetCurrentThreadId());
 #elif __linux__
-    return  syscall(SYS_gettid);
-#else
-    return pthread_self();
+    return  static_cast<size_t>(syscall(SYS_gettid));
+#else //Default to standard C++11 (OSX and other Unix)
+    return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
 #endif
-#endif //SPDLOG_NO_THREAD_ID
+
 }
 
 } //os

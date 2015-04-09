@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include "tweakme.h"
 #include "common.h"
 #include "logger.h"
 
@@ -121,16 +122,17 @@ void drop(const std::string &name);
 void drop_all();
 
 
-//
+///////////////////////////////////////////////////////////////////////////////
 //
 // Macros to be display source file & line
 // Trace & Debug can be switched on/off at compile time for zero cost debug statements.
+// Uncomment SPDLOG_DEBUG_ON/SPDLOG_TRACE_ON in teakme.h to enable.
 //
 // Example:
-// #define SPDLOG_DEBUG_ON 
-// include "spdlog/spdlog.h" 
+// spdlog::set_level(spdlog::level::debug);
 // SPDLOG_DEBUG(my_logger, "Some debug message {} {}", 1, 3.2);
-//
+///////////////////////////////////////////////////////////////////////////////
+
 #ifdef SPDLOG_TRACE_ON
 #define SPDLOG_TRACE(logger, ...) logger->trace(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
 #else
@@ -143,13 +145,6 @@ void drop_all();
 #define SPDLOG_DEBUG(logger, ...)
 #endif
 
-#define SPDLOG_INFO(logger, ...)     logger->info(__VA_ARGS__)     << " (" << __FILE__ << " #" << __LINE__ <<")";
-#define SPDLOG_NOTICE(logger, ...)   logger->notice(__VA_ARGS__)   << " (" << __FILE__ << " #" << __LINE__ <<")";
-#define SPDLOG_WARN(logger, ...)     logger->warn(__VA_ARGS__)     << " (" << __FILE__ << " #" << __LINE__ <<")";
-#define SPDLOG_ERROR(logger, ...)    logger->error(__VA_ARGS__)      << " (" << __FILE__ << " #" << __LINE__ <<")";
-#define SPDLOG_CRITICAL(logger, ...) logger->critical(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
-#define SPDLOG_ALERT(logger, ...)    logger->alert(__VA_ARGS__)    << " (" << __FILE__ << " #" << __LINE__ <<")";
-#define SPDLOG_EMERG(logger, ...)    logger->emerg(__VA_ARGS__)    << " (" << __FILE__ << " #" << __LINE__ <<")";
 
 }
 
