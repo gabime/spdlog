@@ -7,7 +7,7 @@ Just copy the files to your build tree and use a C++11 compiler
 
 ## Tested on:
 * gcc 4.8.1 and above
-* clang 3.5
+* clang 3.5 (Linux and OSX)
 * visual studio 2013
 * mingw with g++ 4.9.x
 
@@ -153,5 +153,11 @@ void custom_class_example()
     spdlog::get("console")->info("custom class with operator<<: {}..", c);
     spdlog::get("console")->info() << "custom class with operator<<: " << c << "..";
 }
-
 ```
+
+## Tweaking
+spdlog can be tweaked to improve even more performance.
+
+Edit [this](include/spdlog/tweakme.h) file  to disable at compile time un needed features.
+
+
