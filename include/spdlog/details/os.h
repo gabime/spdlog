@@ -36,7 +36,7 @@
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
 #include <unistd.h>
 #else
-#include <pthread.h>
+#include <thread>
 #endif
 
 #include "../common.h"
