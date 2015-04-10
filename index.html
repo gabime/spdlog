@@ -1,142 +1,265 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Spdlog by gabime</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/gabime/spdlog">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/gabime/spdlog/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/gabime/spdlog/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
+    <section class="page-header">
+      <h1 class="project-name">Spdlog</h1>
+      <h2 class="project-tagline">Super fast C++ logging library.</h2>
+      <a href="https://github.com/gabime/spdlog" class="btn">View on GitHub</a>
+      <a href="https://github.com/gabime/spdlog/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/gabime/spdlog/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-    <div class="wrapper">
-
-      <section>
-        <div id="title">
-          <h1>Spdlog</h1>
-          <p>Super fast C++ logging library.</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/gabime">gabime</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
-        </div>
-
-        <h1>
-<a name="spdlog" class="anchor" href="#spdlog"><span class="octicon octicon-link"></span></a>spdlog</h1>
+    <section class="main-content">
+      <h1>
+<a id="spdlog" class="anchor" href="#spdlog" aria-hidden="true"><span class="octicon octicon-link"></span></a>spdlog</h1>
 
 <p>Very fast, header only, C++ logging library.</p>
 
 <h2>
-<a name="install" class="anchor" href="#install"><span class="octicon octicon-link"></span></a>Install</h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
 
 <p>Just copy the files to your build tree and use a C++11 compiler</p>
 
 <h2>
-<a name="tested-on" class="anchor" href="#tested-on"><span class="octicon octicon-link"></span></a>Tested on:</h2>
+<a id="tested-on" class="anchor" href="#tested-on" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tested on:</h2>
 
 <ul>
 <li>gcc 4.8.1 and above</li>
-<li>clang 3.5</li>
+<li>clang 3.5 (Linux and OSX)</li>
 <li>visual studio 2013</li>
+<li>mingw with g++ 4.9.x</li>
 </ul>
 
 <h2>
-<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
-<li>Very low overhead</li>
-<li>Stream like, easy to use interface</li>
-<li>Logging levels</li>
-<li>Rotating log files</li>
-<li>Daily log files</li>
-<li>Async logging</li>
-<li>Thread safety</li>
-<li>Custom formatting</li>
+<li>Very fast - performance is the primary goal (see <a href="#benchmarks">benchmarks</a> below).</li>
+<li>Headers only.</li>
+<li>No dependencies - just copy and use.</li>
+<li>Cross platform - Linux / Windows on 32/64 bits.</li>
+<li>
+<strong>new!</strong> Feature rich <a href="#usage-example">call style</a> using the excellent <a href="http://cppformat.github.io/">cppformat</a> library.</li>
+<li>ostream call style is supported too.</li>
+<li>Extremely fast asynchronous mode (optional) - using lockfree queues and other tricks to reach millions of calls/sec.</li>
+<li>
+<a href="https://github.com/gabime/spdlog/wiki/Custom-formatting">Custom</a> formatting.</li>
+<li>Multi/Single threaded loggers.</li>
+<li>Various log targets:
+
+<ul>
+<li>Rotating log files.</li>
+<li>Daily log files.</li>
+<li>Console logging.</li>
+<li>Linux syslog.</li>
+<li>Easily extendable with custom log targets  (just implement a single function in the <a href="include/spdlog/sinks/sink.h">sink</a> interface).</li>
+</ul>
+</li>
+<li>Severity based filtering - threshold levels can be modified in runtime as well as in compile time.</li>
 </ul>
 
 <h2>
-<a name="performance" class="anchor" href="#performance"><span class="octicon octicon-link"></span></a>Performance</h2>
+<a id="benchmarks" class="anchor" href="#benchmarks" aria-hidden="true"><span class="octicon octicon-link"></span></a>Benchmarks</h2>
 
-<p>The library is very fast. 
-Here are some benchmarks  (Ubuntu, Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz)</p>
+<p>Below are some <a href="bench">benchmarks</a> comparing popular log libraries under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz </p>
 
-<pre><code>*******************************************************************************
-Single thread, 250,000 iterations, flush every 1000 lines
-*******************************************************************************
-rotating_st...  817,860 lines/sec
-daily_st...     827,820 lines /sec
+<h4>
+<a id="synchronous-mode" class="anchor" href="#synchronous-mode" aria-hidden="true"><span class="octicon octicon-link"></span></a>Synchronous mode</h4>
 
-*******************************************************************************
-4 threads sharing same logger, 250,000 iterations, flush every 1000 lines
-*******************************************************************************
-rotating_mt...  1,476,013 lines/sec
-daily_mt...     1,477,619 lines/sec
-</code></pre>
+<p>Time needed to log 1,000,000 lines in synchronous mode (in seconds, the best of 3 runs):</p>
+
+<table>
+<thead>
+<tr>
+<th>threads</th>
+<th align="center">boost log</th>
+<th align="center">glog</th>
+<th align="right">easylogging</th>
+<th align="right">spdlog</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td align="center">4.169s</td>
+<td align="center">1.066s</td>
+<td align="right">0.975s</td>
+<td align="right">0.302s</td>
+</tr>
+<tr>
+<td>10</td>
+<td align="center">16.029</td>
+<td align="center">3.032s</td>
+<td align="right">2.857s</td>
+<td align="right">0.968s</td>
+</tr>
+<tr>
+<td>100</td>
+<td align="center">15.008</td>
+<td align="center">1.139s</td>
+<td align="right">4.512s</td>
+<td align="right">0.497s</td>
+</tr>
+</tbody>
+</table>
+
+<h4>
+<a id="asynchronous-mode" class="anchor" href="#asynchronous-mode" aria-hidden="true"><span class="octicon octicon-link"></span></a>Asynchronous mode</h4>
+
+<p>Time needed to log 1,000,000 lines in asynchronous mode, i.e. the time it takes to put them in the async queue (in seconds, the best of 3 runs):</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">threads</th>
+<th align="center">g2log <sup>async logger</sup>
+</th>
+<th align="right">spdlog <sup>async mode</sup>
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">1</td>
+<td align="center">1.850s</td>
+<td align="right">0.216s</td>
+</tr>
+<tr>
+<td align="left">10</td>
+<td align="center">0.943s</td>
+<td align="right">0.173s</td>
+</tr>
+<tr>
+<td align="left">100</td>
+<td align="center">0.959s</td>
+<td align="right">0.202s</td>
+</tr>
+</tbody>
+</table>
 
 <h2>
-<a name="usage-example" class="anchor" href="#usage-example"><span class="octicon octicon-link"></span></a>Usage Example</h2>
+<a id="usage-example" class="anchor" href="#usage-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage Example</h2>
 
-<pre><code>#include &lt;iostream&gt;
-#include "spdlog/spdlog.h"
+<div class="highlight highlight-c++"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>iostream<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">"</span>spdlog/spdlog.h<span class="pl-pds">"</span></span>
 
-int main(int, char* [])
+<span class="pl-k">int</span> <span class="pl-en">main</span>(<span class="pl-k">int</span>, <span class="pl-k">char</span>* [])
 {
-    namespace spd = spdlog;
-
-    try
+    <span class="pl-k">namespace</span> <span class="pl-en">spd</span> <span class="pl-k">=</span> spdlog;
+    <span class="pl-k">try</span>
     {
-        std::string filename = "spdlog_example";
-        auto console = spd::stderr_logger_mt("console");
-        console-&gt;info("Welcome to spdlog!") ;
-        console-&gt;info() &lt;&lt; "Creating file " &lt;&lt; filename &lt;&lt; "..";
+        <span class="pl-c">//Create console, multithreaded logger</span>
+        <span class="pl-k">auto</span> console = <span class="pl-c1">spd::stdout_logger_mt</span>(<span class="pl-s"><span class="pl-pds">"</span>console<span class="pl-pds">"</span></span>);
+        console-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>Welcome to spdlog!<span class="pl-pds">"</span></span>) ;
+        console-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>An info message example {}..<span class="pl-pds">"</span></span>, <span class="pl-c1">1</span>);
+        console-&gt;<span class="pl-c1">info</span>() &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Streams are supported too  <span class="pl-pds">"</span></span> &lt;&lt; <span class="pl-c1">1</span>;
 
-        auto file_logger = spd::rotating_logger_mt("file_logger", filename, 1024 * 1024 * 5, 3);
-        file_logger-&gt;info("Log file message number", 1);
+        <span class="pl-c">//Formatting examples</span>
+        console-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>Easy padding in numbers like {:08d}<span class="pl-pds">"</span></span>, <span class="pl-c1">12</span>);
+        console-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}<span class="pl-pds">"</span></span>, <span class="pl-c1">42</span>);
+        console-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>Support for floats {:03.2f}<span class="pl-pds">"</span></span>, <span class="pl-c1">1.23456</span>);
+        console-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>Positional args are {1} {0}..<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>too<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>supported<span class="pl-pds">"</span></span>);
 
-        for (int i = 0; i &lt; 100; ++i)
-        {
-            auto square = i*i;
-            file_logger-&gt;info() &lt;&lt; i &lt;&lt; '*' &lt;&lt; i &lt;&lt; '=' &lt;&lt; square &lt;&lt; " (" &lt;&lt; "0x" &lt;&lt; std::hex &lt;&lt; square &lt;&lt; ")";
-        }
+        console-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>{:&lt;30}<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>left aligned<span class="pl-pds">"</span></span>);
+        console-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>{:&gt;30}<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>right aligned<span class="pl-pds">"</span></span>);
+        console-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>{:^30}<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>centered<span class="pl-pds">"</span></span>);
 
-        // Change log level to all loggers to warning and above
-        spd::set_level(spd::level::WARN);
-        console-&gt;info("This should not be displayed");
-        console-&gt;warn("This should!");
-        spd::set_level(spd::level::INFO);
+        <span class="pl-c">//</span>
+        <span class="pl-c">// Runtime log levels</span>
+        <span class="pl-c">//</span>
+        <span class="pl-c1">spd::set_level</span>(spd::level::info); <span class="pl-c">//Set global log level to info</span>
+        console-&gt;<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">"</span>This message shold not be displayed!<span class="pl-pds">"</span></span>);
+        console-&gt;<span class="pl-c1">set_level</span>(spd::level::debug); <span class="pl-c">// Set specific logger's log level</span>
+        console-&gt;<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">"</span>Now it should..<span class="pl-pds">"</span></span>);
 
-        // Change format pattern to all loggers
-        spd::set_pattern(" **** %Y-%m-%d %H:%M:%S.%e %l **** %v");
-        spd::get("console")-&gt;info("This is another message with different format");
+        <span class="pl-c">//</span>
+        <span class="pl-c">// Create a file rotating logger with 5mb size max and 3 rotated files</span>
+        <span class="pl-c">//</span>
+        <span class="pl-k">auto</span> file_logger = <span class="pl-c1">spd::rotating_logger_mt</span>(<span class="pl-s"><span class="pl-pds">"</span>file_logger<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>logs/mylogfile<span class="pl-pds">"</span></span>, <span class="pl-c1">1048576</span> * <span class="pl-c1">5</span>, <span class="pl-c1">3</span>);
+        <span class="pl-k">for</span>(<span class="pl-k">int</span> i = <span class="pl-c1">0</span>; i &lt; <span class="pl-c1">10</span>; ++i)
+              file_logger-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>{} * {} equals {:&gt;10}<span class="pl-pds">"</span></span>, i, i, i*i);
+
+        <span class="pl-c">//</span>
+        <span class="pl-c">// Create a daily logger - a new file is created every day on 2:30am</span>
+        <span class="pl-c">//</span>
+        <span class="pl-k">auto</span> daily_logger = <span class="pl-c1">spd::daily_logger_mt</span>(<span class="pl-s"><span class="pl-pds">"</span>daily_logger<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>logs/daily<span class="pl-pds">"</span></span>, <span class="pl-c1">2</span>, <span class="pl-c1">30</span>);
+
+        <span class="pl-c">// </span>
+        <span class="pl-c">// Customize msg format for all messages</span>
+        <span class="pl-c">//</span>
+        <span class="pl-c1">spd::set_pattern</span>(<span class="pl-s"><span class="pl-pds">"</span>*** [<span class="pl-ii">%</span>H:<span class="pl-ii">%</span>M:<span class="pl-c1">%S</span> <span class="pl-ii">%</span>z] [thread <span class="pl-ii">%</span>t] <span class="pl-ii">%</span>v ***<span class="pl-pds">"</span></span>);
+        file_logger-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>This is another message with custom format<span class="pl-pds">"</span></span>);
+
+        <span class="pl-c1">spd::get</span>(<span class="pl-s"><span class="pl-pds">"</span>console<span class="pl-pds">"</span></span>)-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>loggers can be retrieved from a global registry using the spdlog::get(logger_name) function<span class="pl-pds">"</span></span>);
+
+        <span class="pl-c">//</span>
+        <span class="pl-c">// Compile time debug or trace macros.</span>
+        <span class="pl-c">// Enabled #ifdef SPDLOG_DEBUG_ON or #ifdef SPDLOG_TRACE_ON</span>
+        <span class="pl-c">//</span>
+        <span class="pl-c1">SPDLOG_TRACE</span>(console, <span class="pl-s"><span class="pl-pds">"</span>Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}<span class="pl-pds">"</span></span>, <span class="pl-c1">1</span>, <span class="pl-c1">3.23</span>);
+        <span class="pl-c1">SPDLOG_DEBUG</span>(console, <span class="pl-s"><span class="pl-pds">"</span>Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}<span class="pl-pds">"</span></span>, <span class="pl-c1">1</span>, <span class="pl-c1">3.23</span>);
+
+        <span class="pl-c">//</span>
+        <span class="pl-c">// Asynchronous logging is very fast..</span>
+        <span class="pl-c">// Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..</span>
+        <span class="pl-c">//</span>
+        <span class="pl-c1">size_t</span> q_size = <span class="pl-c1">1048576</span>; <span class="pl-c">//queue size must be power of 2</span>
+        <span class="pl-c1">spdlog::set_async_mode</span>(q_size);
+        <span class="pl-k">auto</span> async_file= <span class="pl-c1">spd::daily_logger_st</span>(<span class="pl-s"><span class="pl-pds">"</span>async_file_logger<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>logs/async_log.txt<span class="pl-pds">"</span></span>);
+        async_file-&gt;<span class="pl-c1">info</span>() &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>This is async log..<span class="pl-pds">"</span></span> &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Should be very fast!<span class="pl-pds">"</span></span>;
+
+        <span class="pl-c">//      </span>
+        <span class="pl-c">// syslog example. linux only..</span>
+        <span class="pl-c">//</span>
+        #<span class="pl-k">ifdef</span> __linux__
+        std::string ident = <span class="pl-s"><span class="pl-pds">"</span>spdlog-example<span class="pl-pds">"</span></span>;
+        <span class="pl-k">auto</span> syslog_logger = <span class="pl-c1">spd::syslog_logger</span>(<span class="pl-s"><span class="pl-pds">"</span>syslog<span class="pl-pds">"</span></span>, ident, LOG_PID);
+        syslog_logger-&gt;<span class="pl-c1">warn</span>(<span class="pl-s"><span class="pl-pds">"</span>This is warning that will end up in syslog. This is Linux only!<span class="pl-pds">"</span></span>);       
+        #<span class="pl-k">endif</span>
     }
-    catch (const spd::spdlog_ex&amp; ex)
+    <span class="pl-k">catch</span> (<span class="pl-k">const</span> spd::spdlog_ex&amp; ex)
     {
-        std::cout &lt;&lt; "Log failed: " &lt;&lt; ex.what() &lt;&lt; std::endl;
+        std::cout &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>Log failed: <span class="pl-pds">"</span></span> &lt;&lt; ex.<span class="pl-c1">what</span>() &lt;&lt; std::endl;
     }
-    return 0;
 }
-</code></pre>
-      </section>
 
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+
+<span class="pl-c">// Example of user defined class with operator&lt;&lt;</span>
+<span class="pl-k">class</span> <span class="pl-en">some_class</span> {};
+std::ostream&amp; <span class="pl-k">operator</span>&lt;&lt;(std::ostream&amp; os, <span class="pl-k">const</span> some_class&amp; c) { <span class="pl-k">return</span> os &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>some_class<span class="pl-pds">"</span></span>; }
+
+<span class="pl-k">void</span> <span class="pl-en">custom_class_example</span>()
+{
+    some_class c;
+    <span class="pl-c1">spdlog::get</span>(<span class="pl-s"><span class="pl-pds">"</span>console<span class="pl-pds">"</span></span>)-&gt;<span class="pl-c1">info</span>(<span class="pl-s"><span class="pl-pds">"</span>custom class with operator&lt;&lt;: {}..<span class="pl-pds">"</span></span>, c);
+    <span class="pl-c1">spdlog::get</span>(<span class="pl-s"><span class="pl-pds">"</span>console<span class="pl-pds">"</span></span>)-&gt;<span class="pl-c1">info</span>() &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>custom class with operator&lt;&lt;: <span class="pl-pds">"</span></span> &lt;&lt; c &lt;&lt; <span class="pl-s"><span class="pl-pds">"</span>..<span class="pl-pds">"</span></span>;
+}</pre></div>
+
+<h2>
+<a id="tweaking" class="anchor" href="#tweaking" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tweaking</h2>
+
+<p>spdlog can be tweaked to improve performance even more.</p>
+
+<p>Edit <a href="include/spdlog/tweakme.h">this</a> file  to disable at compile time unneeded features.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/gabime/spdlog">Spdlog</a> is maintained by <a href="https://github.com/gabime">gabime</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
   </body>
 </html>
+
