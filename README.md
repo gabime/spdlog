@@ -5,17 +5,11 @@ Very fast, header only, C++ logging library.
 ## Install
 Just copy the files to your build tree and use a C++11 compiler
 
-## Supported Platforms
- * Linux (32/64 bits)
- * Windows (32/64 bits)
- * MAC OSX 
+## Platforms
+ * Linux (gcc 4.8.1+, clang 3.5+)
+ * Windows (visual studio 2013+, mingw with g++ 4.9.1+)
+ * MAC OSX (clang 3.5+)
  
-## Supported Compilers:
-* gcc 4.8.1 and above
-* clang 3.5 and above
-* visual studio 2013 and above
-* mingw with g++ 4.9.x and above
-
 ##Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
 * Headers only.
