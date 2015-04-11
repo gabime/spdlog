@@ -8,7 +8,7 @@ Just copy the files to your build tree and use a C++11 compiler
 ## Platforms
  * Linux (gcc 4.8.1+, clang 3.5+)
  * Windows (visual studio 2013+, mingw with g++ 4.9.1+)
- * MAC OSX (clang 3.5+)
+ * Mac OSX (clang 3.5+)
  
 ##Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
