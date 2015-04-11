@@ -45,9 +45,10 @@ class registry
 {
 public:
 
-    void register_logger(std::shared_ptr<logger> logger, const std::string& logger_name)
+    void register_logger(std::shared_ptr<logger> logger)
     {
-        _loggers[logger_name] = logger;
+        std::lock_guard<std::mutex> lock(_mutex);
+        register_logger_impl(logger);
     }
 
 
@@ -61,12 +62,12 @@ public:
     template<class It>
     std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
-        //If already exists, just return it
-        auto found = _loggers.find(logger_name);
-        if (found != _loggers.end())
-            return found->second;
+
         std::shared_ptr<logger> new_logger;
+
+        std::lock_guard<std::mutex> lock(_mutex);
+
+
         if (_async_mode)
             new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _overflow_policy, _worker_warmup_cb);
         else
@@ -74,9 +75,9 @@ public:
 
         if (_formatter)
             new_logger->set_formatter(_formatter);
-        new_logger->set_level(_level);
-        register_logger(new_logger, logger_name);
 
+        new_logger->set_level(_level);
+        register_logger_impl(new_logger);
         return new_logger;
     }
 
@@ -148,6 +149,13 @@ public:
     }
 
 private:
+    void register_logger_impl(std::shared_ptr<logger> logger)
+    {
+        auto logger_name = logger->name();
+        if (_loggers.find(logger_name) != std::end(_loggers))
+            throw spdlog_ex("logger with name " + logger_name + " already exists");
+        _loggers[logger->name()] = logger;
+    }
     registry() = default;
     registry(const registry&) = delete;
     registry& operator=(const registry&) = delete;

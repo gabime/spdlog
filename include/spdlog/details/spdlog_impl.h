@@ -32,9 +32,9 @@
 #include "../sinks/stdout_sinks.h"
 #include "../sinks/syslog_sink.h"
 
-inline void spdlog::register_logger(std::shared_ptr<logger> logger, const std::string& logger_name)
+inline void spdlog::register_logger(std::shared_ptr<logger> logger)
 {
-    return details::registry::instance().register_logger(logger, logger_name);
+    return details::registry::instance().register_logger(logger);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::get(const std::string& name)

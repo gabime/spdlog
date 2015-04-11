@@ -116,7 +116,7 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Arg
 
 
 // Register the given logger with the given name
-void register_logger(std::shared_ptr<logger> logger, const std::string& logger_name);
+void register_logger(std::shared_ptr<logger> logger);
 
 // Drop the reference to the given logger
 void drop(const std::string &name);
