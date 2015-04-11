@@ -14,7 +14,7 @@ Just copy the files to your build tree and use a C++11 compiler
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
 * Headers only.
 * No dependencies - just copy and use.
-* **new!** Feature rich [call style](#usage-example) using the excellent [cppformat](http://cppformat.github.io/) library.
+* Feature rich [call style](#usage-example) using the excellent [cppformat](http://cppformat.github.io/) library.
 * ostream call style is supported too.
 * Extremely fast asynchronous mode (optional) - using lockfree queues and other tricks to reach millions of calls/sec.
 * [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
