@@ -32,7 +32,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Under Linux, the much faster CLOCK_REALTIME_COARSE clock can be used.
-// This clock is less accurate - can be off by dozens millis - depending on the kernel HZ
+// This clock is less accurate - can be off by dozens of millis - depending on the kernel HZ
 // Uncomment to use it instead of the regular (but slower) clock.
 // #define SPDLOG_CLOCK_COARSE
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Uncomment if date/time logging is not needed.
-// This will prevent spdlog from quering the system clock on each log call.
+// This will prevent spdlog from quering the clock on each log call.
 // #define SPDLOG_NO_DATETIME
 ///////////////////////////////////////////////////////////////////////////////
 

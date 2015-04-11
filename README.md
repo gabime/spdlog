@@ -156,8 +156,4 @@ void custom_class_example()
 ```
 
 ## Tweaking
-spdlog can be tweaked to improve performance even more.
-
-Edit [this](include/spdlog/tweakme.h) file  to disable at compile time unneeded features.
-
-
+spdlog can be [tweaked](include/spdlog/tweakme.h) to improve performance even more.
