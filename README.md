@@ -5,17 +5,21 @@ Very fast, header only, C++ logging library.
 ## Install
 Just copy the files to your build tree and use a C++11 compiler
 
-## Tested on:
+## Supported Platforms
+ * Linux (32/64 bits)
+ * Windows (32/64 bits)
+ * MAC OSX 
+ 
+## Supported Compilers:
 * gcc 4.8.1 and above
-* clang 3.5 (Linux and OSX)
-* visual studio 2013
-* mingw with g++ 4.9.x
+* clang 3.5 and above
+* visual studio 2013 and above
+* mingw with g++ 4.9.x and above
 
 ##Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
 * Headers only.
 * No dependencies - just copy and use.
-* Cross platform - Linux / Windows on 32/64 bits.
 * **new!** Feature rich [call style](#usage-example) using the excellent [cppformat](http://cppformat.github.io/) library.
 * ostream call style is supported too.
 * Extremely fast asynchronous mode (optional) - using lockfree queues and other tricks to reach millions of calls/sec.
