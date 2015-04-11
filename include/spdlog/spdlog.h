@@ -74,7 +74,7 @@ void set_async_mode(size_t queue_size, const async_overflow_policy overflow_poli
 void set_sync_mode();
 
 //
-// Create multi/single threaded rotating file logger
+// Create and register multi/single threaded rotating file logger
 //
 std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
 std::shared_ptr<logger> rotating_logger_st(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
@@ -87,7 +87,7 @@ std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const st
 
 
 //
-// Create stdout/stderr loggers
+// Create and register stdout/stderr loggers
 //
 std::shared_ptr<logger> stdout_logger_mt(const std::string& logger_name);
 std::shared_ptr<logger> stdout_logger_st(const std::string& logger_name);
@@ -96,24 +96,27 @@ std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name);
 
 
 //
-// Create a syslog logger
+// Create and register a syslog logger
 //
 #ifdef __linux__
 std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0);
 #endif
 
 
-// Create a logger with multiple sinks
+// Create and register a logger with multiple sinks
 std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
 template<class It>
 std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
 
 
-// Create a logger with templated sink type
+// Create and register a logger with templated sink type
 // Example: spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename", "txt");
 template <typename Sink, typename... Args>
 std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&...);
 
+
+// Register the given logger with the given name
+void register_logger(std::shared_ptr<logger> logger, const std::string& logger_name);
 
 // Drop the reference to the given logger
 void drop(const std::string &name);

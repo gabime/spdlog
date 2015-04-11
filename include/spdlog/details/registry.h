@@ -44,6 +44,13 @@ namespace details
 class registry
 {
 public:
+
+    void register_logger(std::shared_ptr<logger> logger, const std::string& logger_name)
+    {
+        _loggers[logger_name] = logger;
+    }
+
+
     std::shared_ptr<logger> get(const std::string& logger_name)
     {
         std::lock_guard<std::mutex> lock(_mutex);
@@ -68,7 +75,8 @@ public:
         if (_formatter)
             new_logger->set_formatter(_formatter);
         new_logger->set_level(_level);
-        _loggers[logger_name] = new_logger;
+        register_logger(new_logger, logger_name);
+
         return new_logger;
     }
 
@@ -92,6 +100,7 @@ public:
     {
         return create(logger_name, { sink });
     }
+
 
     void formatter(formatter_ptr f)
     {
