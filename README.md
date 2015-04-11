@@ -159,5 +159,5 @@ void custom_class_example()
 spdlog can be [tweaked](include/spdlog/tweakme.h) to improve performance even more.
 
 ## Documentation
-Can be found in the [wiki](wiki) pages.
+Can be found in the [wiki](https://github.com/gabime/spdlog/wiki) pages.
 
