@@ -28,7 +28,7 @@
 #ifndef FMT_FORMAT_H_
 #define FMT_FORMAT_H_
 
-#ifdef FMT_HEADER_ONLY
+#define FMT_HEADER_ONLY
 
 #include <stdint.h>
 
