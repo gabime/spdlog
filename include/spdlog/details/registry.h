@@ -41,10 +41,17 @@ namespace spdlog
 {
 namespace details
 {
-
 class registry
 {
 public:
+
+    void register_logger(std::shared_ptr<logger> logger)
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        register_logger_impl(logger);
+    }
+
+
     std::shared_ptr<logger> get(const std::string& logger_name)
     {
         std::lock_guard<std::mutex> lock(_mutex);
@@ -55,12 +62,12 @@ public:
     template<class It>
     std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
-        //If already exists, just return it
-        auto found = _loggers.find(logger_name);
-        if (found != _loggers.end())
-            return found->second;
+
         std::shared_ptr<logger> new_logger;
+
+        std::lock_guard<std::mutex> lock(_mutex);
+
+
         if (_async_mode)
             new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _overflow_policy, _worker_warmup_cb);
         else
@@ -68,8 +75,9 @@ public:
 
         if (_formatter)
             new_logger->set_formatter(_formatter);
+
         new_logger->set_level(_level);
-        _loggers[logger_name] = new_logger;
+        register_logger_impl(new_logger);
         return new_logger;
     }
 
@@ -103,14 +111,12 @@ public:
             l.second->set_formatter(_formatter);
     }
 
-
     void set_pattern(const std::string& pattern)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _formatter = std::make_shared<pattern_formatter>(pattern);
         for (auto& l : _loggers)
             l.second->set_formatter(_formatter);
-
     }
 
     void set_level(level::level_enum log_level)
@@ -118,6 +124,7 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         for (auto& l : _loggers)
             l.second->set_level(log_level);
+        _level = log_level;
     }
 
     void set_async_mode(size_t q_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb)
@@ -135,7 +142,6 @@ public:
         _async_mode = false;
     }
 
-
     static registry& instance()
     {
         static registry s_instance;
@@ -143,6 +149,13 @@ public:
     }
 
 private:
+    void register_logger_impl(std::shared_ptr<logger> logger)
+    {
+        auto logger_name = logger->name();
+        if (_loggers.find(logger_name) != std::end(_loggers))
+            throw spdlog_ex("logger with name " + logger_name + " already exists");
+        _loggers[logger->name()] = logger;
+    }
     registry() = default;
     registry(const registry&) = delete;
     registry& operator=(const registry&) = delete;

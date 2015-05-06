@@ -32,6 +32,11 @@
 #include "../sinks/stdout_sinks.h"
 #include "../sinks/syslog_sink.h"
 
+inline void spdlog::register_logger(std::shared_ptr<logger> logger)
+{
+    return details::registry::instance().register_logger(logger);
+}
+
 inline std::shared_ptr<spdlog::logger> spdlog::get(const std::string& name)
 {
     return details::registry::instance().get(name);
@@ -54,35 +59,35 @@ inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_st(const std::str
 }
 
 // Create file logger which creates new file at midnight):
-inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_mt(const std::string& logger_name, const std::string& filename, bool force_flush)
+inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_mt(const std::string& logger_name, const std::string& filename, int hour, int minute, bool force_flush)
 {
-    return create<spdlog::sinks::daily_file_sink_mt>(logger_name, filename, "txt", force_flush);
+    return create<spdlog::sinks::daily_file_sink_mt>(logger_name, filename, "txt", hour, minute, force_flush);
 }
-inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string& logger_name, const std::string& filename, bool force_flush)
+inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string& logger_name, const std::string& filename, int hour, int minute, bool force_flush)
 {
-    return create<spdlog::sinks::daily_file_sink_st>(logger_name, filename, "txt", force_flush);
+    return create<spdlog::sinks::daily_file_sink_st>(logger_name, filename, "txt", hour, minute, force_flush);
 }
 
 
 // Create stdout/stderr loggers
 inline std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt(const std::string& logger_name)
 {
-    return create<spdlog::sinks::stdout_sink_mt>(logger_name);
+    return details::registry::instance().create(logger_name, spdlog::sinks::stdout_sink_mt::instance());
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st(const std::string& logger_name)
 {
-    return create<spdlog::sinks::stdout_sink_st>(logger_name);
+    return details::registry::instance().create(logger_name, spdlog::sinks::stdout_sink_st::instance());
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt(const std::string& logger_name)
 {
-    return create<spdlog::sinks::stderr_sink_mt>(logger_name);
+    return details::registry::instance().create(logger_name, spdlog::sinks::stderr_sink_mt::instance());
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::string& logger_name)
 {
-    return create<spdlog::sinks::stderr_sink_st>(logger_name);
+    return details::registry::instance().create(logger_name, spdlog::sinks::stderr_sink_st::instance());
 }
 
 #ifdef __linux__

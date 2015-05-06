@@ -33,16 +33,9 @@
 #ifndef _MSC_VER
 #define SPDLOG_NOEXCEPT noexcept
 #else
-#define SPDLOG_NOEXCEPT
+#define SPDLOG_NOEXCEPT throw()
 #endif
 
-// under linux, you can use the much faster CLOCK_REALTIME_COARSE clock.
-// this clock is less accurate - can be off by few millis - depending on the kernel HZ
-// uncomment to use it instead of the regular (and slower) clock
-
-//#ifdef __linux__
-//#define SPDLOG_CLOCK_COARSE
-//#endif
 
 namespace spdlog
 {
@@ -59,6 +52,7 @@ using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr < sinks::sink > ;
 using sinks_init_list = std::initializer_list < sink_ptr > ;
 using formatter_ptr = std::shared_ptr<spdlog::formatter>;
+
 
 //Log level enum
 namespace level

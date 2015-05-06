@@ -30,21 +30,19 @@
 #include "../details/file_helper.h"
 #include "../details/format.h"
 
-
 namespace spdlog
 {
 namespace sinks
 {
-
 /*
 * Trivial file sink with single file as target
 */
 template<class Mutex>
-class simple_file_sink : public base_sink<Mutex>
+class simple_file_sink : public base_sink < Mutex >
 {
 public:
     explicit simple_file_sink(const std::string &filename,
-                              bool force_flush=false):
+                              bool force_flush = false) :
         _file_helper(force_flush)
     {
         _file_helper.open(filename);
@@ -64,14 +62,14 @@ typedef simple_file_sink<details::null_mutex> simple_file_sink_st;
 
 /*
  * Rotating file sink based on size
-*/
+ */
 template<class Mutex>
-class rotating_file_sink : public base_sink<Mutex>
+class rotating_file_sink : public base_sink < Mutex >
 {
 public:
     rotating_file_sink(const std::string &base_filename, const std::string &extension,
                        std::size_t max_size, std::size_t max_files,
-                       bool force_flush=false):
+                       bool force_flush = false) :
         _base_filename(base_filename),
         _extension(extension),
         _max_size(max_size),
@@ -82,12 +80,11 @@ public:
         _file_helper.open(calc_filename(_base_filename, 0, _extension));
     }
 
-
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
         _current_size += msg.formatted.size();
-        if (_current_size  > _max_size)
+        if (_current_size > _max_size)
         {
             _rotate();
             _current_size = msg.formatted.size();
@@ -95,11 +92,10 @@ protected:
         _file_helper.write(msg);
     }
 
-
 private:
     static std::string calc_filename(const std::string& filename, std::size_t index, const std::string& extension)
     {
-        details::fmt::MemoryWriter w;
+        fmt::MemoryWriter w;
         if (index)
             w.write("{}.{}.{}", filename, index, extension);
         else
@@ -107,13 +103,11 @@ private:
         return w.str();
     }
 
-
     // Rotate files:
     // log.txt -> log.1.txt
     // log.1.txt -> log2.txt
     // log.2.txt -> log3.txt
     // log.3.txt -> delete
-
 
     void _rotate()
     {
@@ -152,60 +146,70 @@ typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
  * Rotating file sink based on date. rotates at midnight
  */
 template<class Mutex>
-class daily_file_sink:public base_sink<Mutex>
+class daily_file_sink :public base_sink < Mutex >
 {
 public:
-    explicit daily_file_sink(const std::string& base_filename,
-                             const std::string& extension,
-                             bool force_flush=false):
-        _base_filename(base_filename),
+    //create daily file sink which rotates on given time
+    daily_file_sink(
+        const std::string& base_filename,
+        const std::string& extension,
+        int rotation_hour,
+        int rotation_minute,
+        bool force_flush = false) : _base_filename(base_filename),
         _extension(extension),
-        _midnight_tp (_calc_midnight_tp() ),
+        _rotation_h(rotation_hour),
+        _rotation_m(rotation_minute),
         _file_helper(force_flush)
     {
+        if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
+            throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
+        _rotation_tp = _next_rotation_tp();
         _file_helper.open(calc_filename(_base_filename, _extension));
     }
-
 
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        if (std::chrono::system_clock::now() >= _midnight_tp)
+        if (std::chrono::system_clock::now() >= _rotation_tp)
         {
-            _file_helper.close();
             _file_helper.open(calc_filename(_base_filename, _extension));
-            _midnight_tp = _calc_midnight_tp();
+            _rotation_tp = _next_rotation_tp();
         }
         _file_helper.write(msg);
     }
 
 private:
-    // Return next midnight's time_point
-    static std::chrono::system_clock::time_point _calc_midnight_tp()
+    std::chrono::system_clock::time_point _next_rotation_tp()
     {
         using namespace std::chrono;
         auto now = system_clock::now();
         time_t tnow = std::chrono::system_clock::to_time_t(now);
         tm date = spdlog::details::os::localtime(tnow);
-        date.tm_hour = date.tm_min = date.tm_sec = 0;
-        auto midnight = std::chrono::system_clock::from_time_t(std::mktime(&date));
-        return system_clock::time_point(midnight + hours(24));
+        date.tm_hour = _rotation_h;
+        date.tm_min = _rotation_m;
+        date.tm_sec = 0;
+        auto rotation_time = std::chrono::system_clock::from_time_t(std::mktime(&date));
+        if (rotation_time > now)
+            return rotation_time;
+        else
+            return system_clock::time_point(rotation_time + hours(24));
     }
 
     //Create filename for the form basename.YYYY-MM-DD.extension
     static std::string calc_filename(const std::string& basename, const std::string& extension)
     {
         std::tm tm = spdlog::details::os::localtime();
-        details::fmt::MemoryWriter w;
-        w.write("{}.{:04d}-{:02d}-{:02d}.{}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, extension);
+        fmt::MemoryWriter w;
+        w.write("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.{}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, extension);
         return w.str();
     }
 
     std::string _base_filename;
     std::string _extension;
-    std::chrono::system_clock::time_point _midnight_tp;
+    int _rotation_h;
+    int _rotation_m;
+    std::chrono::system_clock::time_point _rotation_tp;
     details::file_helper _file_helper;
-
 };
 
 typedef daily_file_sink<std::mutex> daily_file_sink_mt;

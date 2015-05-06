@@ -27,7 +27,6 @@
 #include "../common.h"
 #include "../logger.h"
 
-
 // Line logger class - aggregates operator<< calls to fast ostream
 // and logs upon destruction
 
@@ -63,8 +62,16 @@ public:
     {
         if (_enabled)
         {
+#ifndef SPDLOG_NO_NAME
             _log_msg.logger_name = _callback_logger->name();
+#endif
+#ifndef SPDLOG_NO_DATETIME
             _log_msg.time = os::now();
+#endif
+
+#ifndef SPDLOG_NO_THREAD_ID
+            _log_msg.thread_id = os::thread_id();
+#endif
             _callback_logger->_log_msg(_log_msg);
         }
     }

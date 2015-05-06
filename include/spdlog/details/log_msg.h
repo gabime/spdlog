@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <thread>
 #include "../common.h"
 #include "./format.h"
 
@@ -37,7 +38,6 @@ struct log_msg
     log_msg(level::level_enum l):
         logger_name(),
         level(l),
-        time(),
         raw(),
         formatted() {}
 
@@ -45,7 +45,8 @@ struct log_msg
     log_msg(const log_msg& other) :
         logger_name(other.logger_name),
         level(other.level),
-        time(other.time)
+        time(other.time),
+        thread_id(other.thread_id)
     {
         if (other.raw.size())
             raw << fmt::BasicStringRef<char>(other.raw.data(), other.raw.size());
@@ -57,6 +58,7 @@ struct log_msg
         logger_name(std::move(other.logger_name)),
         level(other.level),
         time(std::move(other.time)),
+        thread_id(other.thread_id),
         raw(std::move(other.raw)),
         formatted(std::move(other.formatted))
     {
@@ -71,6 +73,7 @@ struct log_msg
         logger_name = std::move(other.logger_name);
         level = other.level;
         time = std::move(other.time);
+        thread_id = other.thread_id;
         raw = std::move(other.raw);
         formatted = std::move(other.formatted);
         other.clear();
@@ -87,6 +90,7 @@ struct log_msg
     std::string logger_name;
     level::level_enum level;
     log_clock::time_point time;
+    size_t thread_id;
     fmt::MemoryWriter raw;
     fmt::MemoryWriter formatted;
 };
