@@ -87,6 +87,10 @@ public:
 
     }
 
+    void flush() {
+        std::fflush(_fd);
+    }
+
     void close()
     {
         if (_fd)
