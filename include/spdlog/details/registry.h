@@ -52,7 +52,7 @@ public:
     }
 
 
-    std::shared_ptr<logger> get(const std::string& logger_name)
+    std::shared_ptr<logger> get(const SPDLOG_NAME_TYPE_REF logger_name)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         auto found = _loggers.find(logger_name);
@@ -60,7 +60,7 @@ public:
     }
 
     template<class It>
-    std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
+    std::shared_ptr<logger> create(const SPDLOG_NAME_TYPE_REF logger_name, const It& sinks_begin, const It& sinks_end)
     {
 
         std::shared_ptr<logger> new_logger;
@@ -81,7 +81,7 @@ public:
         return new_logger;
     }
 
-    void drop(const std::string& logger_name)
+    void drop(const SPDLOG_NAME_TYPE_REF logger_name)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _loggers.erase(logger_name);
@@ -92,12 +92,12 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _loggers.clear();
     }
-    std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks)
+    std::shared_ptr<logger> create(const SPDLOG_NAME_TYPE_REF logger_name, sinks_init_list sinks)
     {
         return create(logger_name, sinks.begin(), sinks.end());
     }
 
-    std::shared_ptr<logger> create(const std::string& logger_name, sink_ptr sink)
+    std::shared_ptr<logger> create(const SPDLOG_NAME_TYPE_REF logger_name, sink_ptr sink)
     {
         return create(logger_name, { sink });
     }
@@ -153,14 +153,14 @@ private:
     {
         auto logger_name = logger->name();
         if (_loggers.find(logger_name) != std::end(_loggers))
-            throw spdlog_ex("logger with name " + logger_name + " already exists");
+            throw spdlog_ex("logger with name already exists");
         _loggers[logger->name()] = logger;
     }
     registry() = default;
     registry(const registry&) = delete;
     registry& operator=(const registry&) = delete;
     std::mutex _mutex;
-    std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
+    std::unordered_map <SPDLOG_NAME_TYPE, std::shared_ptr<logger>> _loggers;
     formatter_ptr _formatter;
     level::level_enum _level = level::info;
     bool _async_mode = false;

@@ -47,10 +47,10 @@ class line_logger;
 class logger
 {
 public:
-    logger(const std::string& logger_name, sink_ptr single_sink);
-    logger(const std::string& name, sinks_init_list);
+    logger(const SPDLOG_NAME_TYPE_REF logger_name, sink_ptr single_sink);
+    logger(const SPDLOG_NAME_TYPE_REF name, sinks_init_list);
     template<class It>
-    logger(const std::string& name, const It& begin, const It& end);
+    logger(const SPDLOG_NAME_TYPE_REF name, const It& begin, const It& end);
 
     virtual ~logger();
     logger(const logger&) = delete;
@@ -59,7 +59,7 @@ public:
     void set_level(level::level_enum);
     level::level_enum level() const;
 
-    const std::string& name() const;
+    const SPDLOG_NAME_TYPE_REF name() const;
     bool should_log(level::level_enum) const;
 
     // logger.info(cppformat_string, arg1, arg2, arg3, ...) call style
@@ -120,7 +120,7 @@ protected:
 
 
     friend details::line_logger;
-    std::string _name;
+    SPDLOG_NAME_TYPE _name;
     std::vector<sink_ptr> _sinks;
     formatter_ptr _formatter;
     std::atomic_int _level;
