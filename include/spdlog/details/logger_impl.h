@@ -33,7 +33,7 @@
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
 template<class It>
-inline spdlog::logger::logger(const std::string& logger_name, const It& begin, const It& end) :
+inline spdlog::logger::logger(const SPDLOG_NAME_TYPE_REF logger_name, const It& begin, const It& end) :
     _name(logger_name),
     _sinks(begin, end),
     _formatter(std::make_shared<pattern_formatter>("%+"))
@@ -44,12 +44,12 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
 }
 
 // ctor with sinks as init list
-inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list sinks_list) :
+inline spdlog::logger::logger(const SPDLOG_NAME_TYPE_REF logger_name, sinks_init_list sinks_list) :
     logger(logger_name, sinks_list.begin(), sinks_list.end()) {}
 
 
 // ctor with single sink
-inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink) :
+inline spdlog::logger::logger(const SPDLOG_NAME_TYPE_REF logger_name, spdlog::sink_ptr single_sink) :
     logger(logger_name, { single_sink }) {}
 
 
@@ -273,7 +273,7 @@ inline spdlog::details::line_logger spdlog::logger::force_log(level::level_enum 
 //
 // name and level
 //
-inline const std::string& spdlog::logger::name() const
+inline const SPDLOG_NAME_TYPE_REF spdlog::logger::name() const
 {
     return _name;
 }

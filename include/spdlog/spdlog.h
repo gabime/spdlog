@@ -29,6 +29,10 @@
 #pragma once
 
 #include "tweakme.h"
+#ifndef SPDLOG_NAME_TYPE
+#define SPDLOG_NAME_TYPE std::string
+#define SPDLOG_NAME_TYPE_REF std::string&
+#endif
 #include "common.h"
 #include "logger.h"
 
@@ -41,7 +45,7 @@ namespace spdlog
 // auto logger = spdlog::get("mylog");
 // logger.info("This is another message" , x, y, z);
 // logger.info() << "This is another message" << x << y << z;
-std::shared_ptr<logger> get(const std::string& name);
+std::shared_ptr<logger> get(const SPDLOG_NAME_TYPE_REF name);
 
 //
 // Set global formatting
@@ -76,50 +80,50 @@ void set_sync_mode();
 //
 // Create and register multi/single threaded rotating file logger
 //
-std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
-std::shared_ptr<logger> rotating_logger_st(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
+std::shared_ptr<logger> rotating_logger_mt(const SPDLOG_NAME_TYPE_REF logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
+std::shared_ptr<logger> rotating_logger_st(const SPDLOG_NAME_TYPE_REF logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
 
 //
 // Create file logger which creates new file on the given time (default in  midnight):
 //
-std::shared_ptr<logger> daily_logger_mt(const std::string& logger_name, const std::string& filename, int hour=0, int minute=0, bool force_flush = false);
-std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const std::string& filename, int hour=0, int minute=0, bool force_flush = false);
+std::shared_ptr<logger> daily_logger_mt(const SPDLOG_NAME_TYPE_REF logger_name, const std::string& filename, int hour=0, int minute=0, bool force_flush = false);
+std::shared_ptr<logger> daily_logger_st(const SPDLOG_NAME_TYPE_REF logger_name, const std::string& filename, int hour=0, int minute=0, bool force_flush = false);
 
 
 //
 // Create and register stdout/stderr loggers
 //
-std::shared_ptr<logger> stdout_logger_mt(const std::string& logger_name);
-std::shared_ptr<logger> stdout_logger_st(const std::string& logger_name);
-std::shared_ptr<logger> stderr_logger_mt(const std::string& logger_name);
-std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name);
+std::shared_ptr<logger> stdout_logger_mt(const SPDLOG_NAME_TYPE_REF logger_name);
+std::shared_ptr<logger> stdout_logger_st(const SPDLOG_NAME_TYPE_REF logger_name);
+std::shared_ptr<logger> stderr_logger_mt(const SPDLOG_NAME_TYPE_REF logger_name);
+std::shared_ptr<logger> stderr_logger_st(const SPDLOG_NAME_TYPE_REF logger_name);
 
 
 //
 // Create and register a syslog logger
 //
 #ifdef __linux__
-std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0);
+std::shared_ptr<logger> syslog_logger(const SPDLOG_NAME_TYPE_REF logger_name, const std::string& ident = "", int syslog_option = 0);
 #endif
 
 
 // Create and register a logger with multiple sinks
-std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
+std::shared_ptr<logger> create(const SPDLOG_NAME_TYPE_REF logger_name, sinks_init_list sinks);
 template<class It>
-std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
+std::shared_ptr<logger> create(const SPDLOG_NAME_TYPE_REF logger_name, const It& sinks_begin, const It& sinks_end);
 
 
 // Create and register a logger with templated sink type
 // Example: spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename", "txt");
 template <typename Sink, typename... Args>
-std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&...);
+std::shared_ptr<spdlog::logger> create(const SPDLOG_NAME_TYPE_REF logger_name, const Args&...);
 
 
 // Register the given logger with the given name
 void register_logger(std::shared_ptr<logger> logger);
 
 // Drop the reference to the given logger
-void drop(const std::string &name);
+void drop(const SPDLOG_NAME_TYPE_REF name);
 
 // Drop all references
 void drop_all();
