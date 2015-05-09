@@ -54,9 +54,19 @@ public:
 
     std::shared_ptr<logger> get(const std::string& logger_name)
     {
+#ifndef SPDLOG_NO_REGISTRY_MUTEX
         std::lock_guard<std::mutex> lock(_mutex);
+#endif
+#ifdef SPDLOG_VECTOR_BASED_REGISTRY
+        for (auto& logger : _loggers) {
+            if (logger_name == logger->name())
+                return logger;
+        }
+        return nullptr;
+#else
         auto found = _loggers.find(logger_name);
         return found == _loggers.end() ? nullptr : found->second;
+#endif
     }
 
     template<class It>
@@ -84,7 +94,17 @@ public:
     void drop(const std::string& logger_name)
     {
         std::lock_guard<std::mutex> lock(_mutex);
+#ifdef SPDLOG_VECTOR_BASED_REGISTRY
+        for (auto it = _loggers.begin(); it != _loggers.end();) {
+            if (logger_name == (*it)->name()) {
+                it = _loggers.erase(it);
+            } else {
+                ++it;
+            }
+        }
+#else
         _loggers.erase(logger_name);
+#endif
     }
 
     void drop_all()
@@ -108,7 +128,11 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _formatter = f;
         for (auto& l : _loggers)
+#ifdef SPDLOG_VECTOR_BASED_REGISTRY
+            l->set_formatter(_formatter);
+#else
             l.second->set_formatter(_formatter);
+#endif
     }
 
     void set_pattern(const std::string& pattern)
@@ -116,14 +140,22 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _formatter = std::make_shared<pattern_formatter>(pattern);
         for (auto& l : _loggers)
+#ifdef SPDLOG_VECTOR_BASED_REGISTRY
+            l->set_formatter(_formatter);
+#else
             l.second->set_formatter(_formatter);
+#endif
     }
 
     void set_level(level::level_enum log_level)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         for (auto& l : _loggers)
+#ifdef SPDLOG_VECTOR_BASED_REGISTRY
+            l->set_level(log_level);
+#else
             l.second->set_level(log_level);
+#endif
         _level = log_level;
     }
 
@@ -152,15 +184,25 @@ private:
     void register_logger_impl(std::shared_ptr<logger> logger)
     {
         auto logger_name = logger->name();
-        if (_loggers.find(logger_name) != std::end(_loggers))
+        if (get(logger_name) != nullptr)
             throw spdlog_ex("logger with name " + logger_name + " already exists");
+#ifdef SPDLOG_VECTOR_BASED_REGISTRY
+        _loggers.push_back(logger);
+#else
         _loggers[logger->name()] = logger;
+#endif
     }
     registry() = default;
     registry(const registry&) = delete;
     registry& operator=(const registry&) = delete;
     std::mutex _mutex;
+
+#ifdef SPDLOG_VECTOR_BASED_REGISTRY
+    std::vector <std::shared_ptr<logger>> _loggers;
+#else
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
+#endif
+
     formatter_ptr _formatter;
     level::level_enum _level = level::info;
     bool _async_mode = false;
