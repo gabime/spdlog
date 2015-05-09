@@ -169,10 +169,10 @@ private:
     async_overflow_policy _overflow_policy = async_overflow_policy::block_retry;
     std::function<void()> _worker_warmup_cb = nullptr;
 };
-#ifndef SPDLOG_NO_REGISTRY_MUTEX
-typedef registry_t<std::mutex> registry;
-#else
+#ifdef SPDLOG_NO_REGISTRY_MUTEX
 typedef registry_t<spdlog::details::null_mutex> registry;
+#else
+typedef registry_t<std::mutex> registry;
 #endif
 }
 }
