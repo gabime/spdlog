@@ -67,12 +67,14 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Uncomment to enable lockless registry
+// Uncomment to avoid locking in the registry operations (spdlog::get() spdlog::drop() spdlog::register())
+// Use only if your code is single threaded or never modifes concurrently the registry
 // #define SPDLOG_NO_REGISTRY_MUTEX
 ///////////////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Uncomment to enable vector based registry
+// Uncomment to enable vector based registry instead of the default unordered_map
+// spdlog::get(..) operations will be faster on small registry sizes (upto ~10-20 loggers)
 // #define SPDLOG_VECTOR_BASED_REGISTRY
 ///////////////////////////////////////////////////////////////////////////////
