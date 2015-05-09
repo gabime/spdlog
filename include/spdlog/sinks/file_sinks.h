@@ -80,7 +80,8 @@ public:
         _file_helper.open(calc_filename(_base_filename, 0, _extension));
     }
 
-    virtual void flush() override {
+    void flush() override
+    {
         _file_helper.flush();
     }
 
@@ -171,7 +172,8 @@ public:
         _file_helper.open(calc_filename(_base_filename, _extension));
     }
 
-    virtual void flush() override {
+    void flush() override
+    {
         _file_helper.flush();
     }
 
