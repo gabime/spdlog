@@ -51,6 +51,11 @@ protected:
         if (_force_flush)
             _ostream.flush();
     }
+
+    virtual void flush() override {
+        _ostream.flush();
+    }
+
     std::ostream& _ostream;
     bool _force_flush;
 };

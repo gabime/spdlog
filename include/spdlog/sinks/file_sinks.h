@@ -80,6 +80,10 @@ public:
         _file_helper.open(calc_filename(_base_filename, 0, _extension));
     }
 
+    virtual void flush() override {
+        _file_helper.flush();
+    }
+
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
@@ -165,6 +169,10 @@ public:
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         _rotation_tp = _next_rotation_tp();
         _file_helper.open(calc_filename(_base_filename, _extension));
+    }
+
+    virtual void flush() override {
+        _file_helper.flush();
     }
 
 protected:

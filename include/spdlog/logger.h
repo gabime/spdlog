@@ -107,6 +107,7 @@ public:
     void set_pattern(const std::string&);
     void set_formatter(formatter_ptr);
 
+    void flush();
 
 protected:
     virtual void _log_msg(details::log_msg&);
