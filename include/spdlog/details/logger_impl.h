@@ -312,4 +312,8 @@ inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
     _formatter = msg_formatter;
 }
 
-
+inline void spdlog::logger::flush() {
+    for (auto& sink : _sinks) {
+        sink->flush();
+    }
+}
