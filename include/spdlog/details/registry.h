@@ -33,6 +33,7 @@
 #include <unordered_map>
 #include <functional>
 
+#include "./null_mutex.h"
 #include "../logger.h"
 #include "../async_logger.h"
 #include "../common.h"
@@ -41,20 +42,20 @@ namespace spdlog
 {
 namespace details
 {
-class registry
+template <class Mutex> class registry_t
 {
 public:
 
     void register_logger(std::shared_ptr<logger> logger)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
         register_logger_impl(logger);
     }
 
 
     std::shared_ptr<logger> get(const std::string& logger_name)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
         auto found = _loggers.find(logger_name);
         return found == _loggers.end() ? nullptr : found->second;
     }
@@ -65,7 +66,7 @@ public:
 
         std::shared_ptr<logger> new_logger;
 
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
 
 
         if (_async_mode)
@@ -83,13 +84,13 @@ public:
 
     void drop(const std::string& logger_name)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
         _loggers.erase(logger_name);
     }
 
     void drop_all()
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
         _loggers.clear();
     }
     std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks)
@@ -105,7 +106,7 @@ public:
 
     void formatter(formatter_ptr f)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
         _formatter = f;
         for (auto& l : _loggers)
             l.second->set_formatter(_formatter);
@@ -113,7 +114,7 @@ public:
 
     void set_pattern(const std::string& pattern)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
         _formatter = std::make_shared<pattern_formatter>(pattern);
         for (auto& l : _loggers)
             l.second->set_formatter(_formatter);
@@ -121,7 +122,7 @@ public:
 
     void set_level(level::level_enum log_level)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
         for (auto& l : _loggers)
             l.second->set_level(log_level);
         _level = log_level;
@@ -129,7 +130,7 @@ public:
 
     void set_async_mode(size_t q_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb)
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
         _async_mode = true;
         _async_q_size = q_size;
         _overflow_policy = overflow_policy;
@@ -138,13 +139,13 @@ public:
 
     void set_sync_mode()
     {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(_mutex);
         _async_mode = false;
     }
 
-    static registry& instance()
+    static registry_t<Mutex>& instance()
     {
-        static registry s_instance;
+        static registry_t<Mutex> s_instance;
         return s_instance;
     }
 
@@ -156,10 +157,10 @@ private:
             throw spdlog_ex("logger with name " + logger_name + " already exists");
         _loggers[logger->name()] = logger;
     }
-    registry() = default;
-    registry(const registry&) = delete;
-    registry& operator=(const registry&) = delete;
-    std::mutex _mutex;
+    registry_t<Mutex>() = default;
+    registry_t<Mutex>(const registry_t<Mutex>&) = delete;
+    registry_t<Mutex>& operator=(const registry_t<Mutex>&) = delete;
+    Mutex _mutex;
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
     formatter_ptr _formatter;
     level::level_enum _level = level::info;
@@ -168,5 +169,10 @@ private:
     async_overflow_policy _overflow_policy = async_overflow_policy::block_retry;
     std::function<void()> _worker_warmup_cb = nullptr;
 };
+#ifndef SPDLOG_NO_REGISTRY_MUTEX
+typedef registry_t<std::mutex> registry;
+#else
+typedef registry_t<spdlog::details::null_mutex> registry;
+#endif
 }
 }
