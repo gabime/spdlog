@@ -65,7 +65,7 @@ class async_log_helper
         async_msg() = default;
         ~async_msg() = default;
 
-async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
+        async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
         logger_name(std::move(other.logger_name)),
                     level(std::move(other.level)),
                     time(std::move(other.time)),
@@ -119,7 +119,8 @@ public:
                      const std::vector<sink_ptr>& sinks,
                      size_t queue_size,
                      const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-                     const std::function<void()>& worker_warmup_cb = nullptr);
+                     const std::function<void()>& worker_warmup_cb = nullptr,
+                     const std::chrono::milliseconds auto_flush_millis = std::chrono::milliseconds::zero());
 
     void log(const details::log_msg& msg);
 
@@ -145,6 +146,9 @@ private:
     // worker thread warmup callback - one can set thread priority, affinity, etc
     const std::function<void()> _worker_warmup_cb;
 
+    // auto periodic sink flush parameter
+    const std::chrono::milliseconds _auto_flush_millis;
+
     // worker thread
     std::thread _worker_thread;
 
@@ -159,7 +163,7 @@ private:
     bool process_next_msg(clock::time_point& last_pop);
 
     // sleep,yield or return immediatly using the time passed since last message as a hint
-    static void sleep_or_yield(const clock::time_point& last_op_time);
+    static std::chrono::nanoseconds sleep_or_yield(const clock::time_point& last_op_time);
 
 };
 }
@@ -168,12 +172,13 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb):
+inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds auto_flush_millis):
     _formatter(formatter),
     _sinks(sinks),
     _q(queue_size),
     _overflow_policy(overflow_policy),
     _worker_warmup_cb(worker_warmup_cb),
+    _auto_flush_millis(auto_flush_millis),
     _worker_thread(&async_log_helper::worker_loop, this)
 {}
 
@@ -249,7 +254,12 @@ inline bool spdlog::details::async_log_helper::process_next_msg(clock::time_poin
     }
     else //empty queue
     {
-        sleep_or_yield(last_pop);
+        auto time_since_op = sleep_or_yield(last_pop);
+        if (_auto_flush_millis > std::chrono::milliseconds::zero() && time_since_op > _auto_flush_millis)
+        {
+            for (auto &s : _sinks)
+                s->flush();
+        }
     }
     return true;
 }
@@ -261,7 +271,7 @@ inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_f
 
 
 // sleep,yield or return immediatly using the time passed since last message as a hint
-inline void spdlog::details::async_log_helper::sleep_or_yield(const clock::time_point& last_op_time)
+inline std::chrono::nanoseconds spdlog::details::async_log_helper::sleep_or_yield(const clock::time_point& last_op_time)
 {
     using std::chrono::milliseconds;
     using namespace std::this_thread;
@@ -270,18 +280,25 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const clock::time_
 
     // spin upto 1 ms
     if (time_since_op <= milliseconds(1))
-        return;
+        return time_since_op;
 
     // yield upto 10ms
     if (time_since_op <= milliseconds(10))
-        return yield();
+    {
+        yield();
+        return time_since_op;
+    }
 
 
     // sleep for half of duration since last op
     if (time_since_op <= milliseconds(100))
-        return sleep_for(time_since_op / 2);
+    {
+        sleep_for(time_since_op / 2);
+        return time_since_op;
+    }
 
-    return sleep_for(milliseconds(100));
+    sleep_for(milliseconds(100));
+    return time_since_op;
 }
 
 // throw if the worker thread threw an exception or not active
