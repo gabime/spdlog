@@ -43,6 +43,7 @@
 #include "./mpmc_bounded_q.h"
 #include "./log_msg.h"
 #include "./format.h"
+#include "os.h"
 
 
 namespace spdlog
@@ -204,11 +205,11 @@ inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
     async_msg new_msg(msg);
     if (!_q.enqueue(std::move(new_msg)) && _overflow_policy != async_overflow_policy::discard_log_msg)
     {
-        auto last_op_time = log_clock::now();
+        auto last_op_time = details::os::now();
         auto now = last_op_time;
         do
         {
-            now = log_clock::now();
+            now = details::os::now();
             sleep_or_yield(now, last_op_time);
         }
         while (!_q.enqueue(std::move(new_msg)));
@@ -221,7 +222,7 @@ inline void spdlog::details::async_log_helper::worker_loop()
     try
     {
         if (_worker_warmup_cb) _worker_warmup_cb();
-        auto last_pop = log_clock::now();
+        auto last_pop = details::os::now();
         auto last_flush = last_pop;
         while(process_next_msg(last_pop, last_flush));
     }
@@ -245,7 +246,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
 
     if (_q.dequeue(incoming_async_msg))
     {
-        last_pop = log_clock::now();
+        last_pop = details::os::now();
 
         if(incoming_async_msg.level == level::off)
             return false;
@@ -257,7 +258,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
     }
     else //empty queue
     {
-        auto now = log_clock::now();
+        auto now = details::os::now();
         if (_flush_interval_ms > std::chrono::milliseconds::zero())
         {
             auto time_since_flush = now - last_flush;
