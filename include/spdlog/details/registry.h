@@ -69,7 +69,7 @@ public:
 
 
         if (_async_mode)
-            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _overflow_policy, _worker_warmup_cb);
+            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _overflow_policy, _worker_warmup_cb, _flush_interval_ms);
         else
             new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
 
@@ -127,13 +127,14 @@ public:
         _level = log_level;
     }
 
-    void set_async_mode(size_t q_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb)
+    void set_async_mode(size_t q_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _async_mode = true;
         _async_q_size = q_size;
         _overflow_policy = overflow_policy;
         _worker_warmup_cb = worker_warmup_cb;
+        _flush_interval_ms = flush_interval_ms;
     }
 
     void set_sync_mode()
@@ -167,6 +168,7 @@ private:
     size_t _async_q_size = 0;
     async_overflow_policy _overflow_policy = async_overflow_policy::block_retry;
     std::function<void()> _worker_warmup_cb = nullptr;
+    std::chrono::milliseconds _flush_interval_ms;
 };
 }
 }
