@@ -47,6 +47,10 @@ public:
     {
         _file_helper.open(filename);
     }
+    void flush() override
+    {
+        _file_helper.flush();
+    }
 
 protected:
     void _sink_it(const details::log_msg& msg) override
