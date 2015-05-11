@@ -170,9 +170,7 @@ install:
 
 script:
   - ./example
-  - ./bench
   - valgrind --trace-children=yes --leak-check=full ./example
-  - valgrind --trace-children=yes --leak-check=full ./bench
 
 notifications:
   email: false
