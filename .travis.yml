@@ -161,7 +161,7 @@ install:
   - if [ -n "$CLANG_VERSION" ]; then CXX_FLAGS="${CXX_FLAGS} -D__extern_always_inline=inline"; fi
   - if [ "$LIBCXX" == "On" ]; then CXX_FLAGS="${CXX_FLAGS} -stdlib=libc++ -I/usr/include/c++/v1/"; fi
   - if [ "$LIBCXX" == "On" ]; then CXX_LINKER_FLAGS="${CXX_FLAGS} -L/usr/lib/ -lc++"; fi
-  - CXX_FLAGS="${CXX_FLAGS} -std=${CPP}"
+  - CXX_FLAGS="${CXX_FLAGS} -std=c++${CPP}"
 
   # Build examples
   - cd example
