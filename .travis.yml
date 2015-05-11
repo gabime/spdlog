@@ -165,12 +165,12 @@ install:
 
   # Build examples
   - cd example
-  - if [ "$BUILD_TYPE" == "Release" ]; then make CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; fi
-  - if [ "$BUILD_TYPE" == "Debug" ]; then make debug CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; fi
+  - if [ "$BUILD_TYPE" == "Release" ]; then make CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example; fi
+  - if [ "$BUILD_TYPE" == "Debug" ]; then make debug CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example-debug; fi
 
 script:
-  - ./example
-  - valgrind --trace-children=yes --leak-check=full ./example
+  - ./"${BIN}"
+  - valgrind --trace-children=yes --leak-check=full ./"${BIN}"
 
 notifications:
   email: false
