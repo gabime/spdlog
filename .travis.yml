@@ -16,16 +16,16 @@ language: cpp
 matrix:
   include:
     # Test clang-3.5: C++11/C++14, Buidd=Debug/Release, ASAN=On/Off
-    # - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=11 ASAN=On LIBCXX=On
-    #   os: linux
-    #   addons: &clang35
-    #     apt:
-    #       packages:
-    #         - clang-3.5
-    #         - valgrind
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-    #         - llvm-toolchain-precise-3.5
+    - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=11 ASAN=On LIBCXX=On
+      os: linux
+      addons: &clang35
+        apt:
+          packages:
+            - clang-3.5
+            - valgrind
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.5
 
     # - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=11 ASAN=On LIBCXX=On
     #   os: linux
@@ -54,16 +54,16 @@ matrix:
     #   addons: *clang35
 
     # Test clang-3.6: C++11/C++14, Buidd=Debug/Release, ASAN=On/Off
-    # - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug CPP=11 ASAN=On LIBCXX=On
-    #   os: linux
-    #   addons: &clang36
-    #     apt:
-    #       packages:
-    #         - clang-3.6
-    #         - valgrind
-    #       sources:
-    #         - ubuntu-toolchain-r-test
-    #         - llvm-toolchain-precise-3.6
+    - env: CLANG_VERSION=3.6 BUILD_TYPE=Debug CPP=11 ASAN=On LIBCXX=On
+      os: linux
+      addons: &clang36
+        apt:
+          packages:
+            - clang-3.6
+            - valgrind
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.6
 
     # - env: CLANG_VERSION=3.6 BUILD_TYPE=Release CPP=11 ASAN=On LIBCXX=On
     #   os: linux
@@ -132,15 +132,15 @@ matrix:
     #   addons: *clang37
 
     # Test gcc-4.9: C++11, Build=Debug/Release, ASAN=Off
-    # - env: GCC_VERSION=4.9 BUILD_TYPE=Debug CPP=11 ASAN=Off LIBCXX=Off
-    #   os: linux
-    #   addons: &gcc49
-    #     apt:
-    #       packages:
-    #         - g++-4.9
-    #         - valgrind
-    #       sources:
-    #         - ubuntu-toolchain-r-test
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug CPP=11 ASAN=Off LIBCXX=Off
+      os: linux
+      addons: &gcc49
+        apt:
+          packages:
+            - g++-4.9
+            - valgrind
+          sources:
+            - ubuntu-toolchain-r-test
 
     # - env: GCC_VERSION=4.9 BUILD_TYPE=Release CPP=11 ASAN=Off LIBCXX=Off
     #   os: linux
