@@ -66,7 +66,7 @@ class async_log_helper
         async_msg() = default;
         ~async_msg() = default;
 
-        async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
+async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
         logger_name(std::move(other.logger_name)),
                     level(std::move(other.level)),
                     time(std::move(other.time)),
@@ -163,8 +163,12 @@ private:
     // return true if a message was available (queue was not empty), will set the last_pop to the pop time
     bool process_next_msg(log_clock::time_point& last_pop, log_clock::time_point& last_flush);
 
+    void handle_flush_interval(log_clock::time_point& now, log_clock::time_point& last_flush);
+
     // sleep,yield or return immediatly using the time passed since last message as a hint
     static void sleep_or_yield(const spdlog::log_clock::time_point& now, const log_clock::time_point& last_op_time);
+
+
 
 };
 }
@@ -259,21 +263,21 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
     else //empty queue
     {
         auto now = details::os::now();
-        if (_flush_interval_ms > std::chrono::milliseconds::zero())
-        {
-            auto time_since_flush = now - last_flush;
-            if (time_since_flush >= _flush_interval_ms)
-            {
-                last_flush = now;
-                for (auto &s : _sinks)
-                    s->flush();
-            }
-        }
+        handle_flush_interval(now, last_flush);
         sleep_or_yield(now, last_pop);
     }
     return true;
 }
 
+inline void spdlog::details::async_log_helper::handle_flush_interval(log_clock::time_point& now, log_clock::time_point& last_flush)
+{
+    if (_flush_interval_ms != std::chrono::milliseconds::zero() && now - last_flush >= _flush_interval_ms)
+    {
+        for (auto &s : _sinks)
+            s->flush();
+        now = last_flush = details::os::now();
+    }
+}
 inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
 {
     _formatter = msg_formatter;
