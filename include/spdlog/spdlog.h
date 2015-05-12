@@ -68,7 +68,7 @@ void set_level(level::level_enum log_level);
 // worker_warmup_cb (optional):
 //     callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
 //
-void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
+void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero());
 
 // Turn off async mode
 void set_sync_mode();
