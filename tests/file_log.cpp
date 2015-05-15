@@ -32,13 +32,13 @@ std::ifstream::pos_type filesize(const std::string& filename)
     return ifs.tellg();
 }
 
-static void delete_logs()
+static void prepare_logdir()
 {
     spdlog::drop_all();
 #ifdef _WIN32
-    auto rv = system("del /F /Q logs\\*");
+    auto rv = system("mkdir logs;del /F /Q logs\\*");
 #else
-    auto rv = system("rm -f logs/*");
+    auto rv = system("mkdir logs;rm -f logs/*");
 #endif
 }
 
@@ -46,7 +46,7 @@ static void delete_logs()
 
 TEST_CASE("simple_file_logger", "[simple_logger]]")
 {
-    delete_logs();
+    prepare_logdir();
     std::string filename = "logs/simple_log.txt";
 
     auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
@@ -64,7 +64,7 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
 
 TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 {
-    delete_logs();
+    prepare_logdir();
     std::string basename = "logs/rotating_log";
     auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 0, true);
     for (int i = 0; i < 10; ++i)
@@ -80,7 +80,7 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 
 TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 {
-    delete_logs();
+    prepare_logdir();
     std::string basename = "logs/rotating_log";
     auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 1, false);
     for (int i = 0; i < 10; ++i)
@@ -102,8 +102,8 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 TEST_CASE("daily_logger", "[daily_logger]]")
 {
 
-    delete_logs();
-//calculate filename (time based)
+    prepare_logdir();
+    //calculate filename (time based)
     std::string basename = "logs/daily_log";
     std::tm tm = spdlog::details::os::localtime();
     fmt::MemoryWriter w;
