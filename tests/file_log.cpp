@@ -4,7 +4,7 @@ static std::string file_contents(const std::string& filename)
 {
     std::ifstream ifs(filename);
     if (!ifs)
-        throw std::exception("Failed open file ");
+        throw std::runtime_error("Failed open file ");
     return std::string((std::istreambuf_iterator<char>(ifs)),
                        (std::istreambuf_iterator<char>()));
 
@@ -15,7 +15,7 @@ static std::size_t count_lines(const std::string& filename)
 {
     std::ifstream ifs(filename);
     if (!ifs)
-        throw std::exception("Failed open file ");
+        throw std::runtime_error("Failed open file ");
 
     std::string line;
     size_t counter = 0;
@@ -28,7 +28,7 @@ std::ifstream::pos_type filesize(const std::string& filename)
 {
     std::ifstream ifs(filename, std::ifstream::ate | std::ifstream::binary);
     if (!ifs)
-        throw std::exception("Failed open file ");
+        throw std::runtime_error("Failed open file ");
 
     return ifs.tellg();
 }
