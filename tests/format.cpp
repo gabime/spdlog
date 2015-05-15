@@ -2,7 +2,8 @@
 #include "includes.h"
 
 template<class T>
-std::string log_info(const T& what, spdlog::level::level_enum logger_level = spdlog::level::info) {
+std::string log_info(const T& what, spdlog::level::level_enum logger_level = spdlog::level::info)
+{
 
     std::ostringstream oss;
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
@@ -28,13 +29,15 @@ struct some_logged_class
     some_logged_class(const std::string val) :value(val) {};
     std::string value;
 };
-std::ostream& operator<<(std::ostream& os, const some_logged_class& c) {
+std::ostream& operator<<(std::ostream& os, const some_logged_class& c)
+{
     return os << c.value;
 }
 
 
 
-TEST_CASE("basic_logging ", "[basic_logging]") {
+TEST_CASE("basic_logging ", "[basic_logging]")
+{
     //const char
     REQUIRE(log_info("Hello") == "Hello");
     REQUIRE(log_info("") == "");

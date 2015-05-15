@@ -10,7 +10,6 @@ static std::string file_contents(const std::string& filename)
 
 }
 
-
 static std::size_t count_lines(const std::string& filename)
 {
     std::ifstream ifs(filename);
@@ -51,12 +50,9 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     std::string filename = "logs/simple_log.txt";
 
     auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
-
-    REQUIRE_THROWS_AS(
-        auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger2", filename);
-        , spdlog::spdlog_ex);
-
     logger->set_pattern("%v");
+
+    
     logger->info("Test message {}", 1);
     logger->info("Test message {}", 2);
     logger->flush();
@@ -107,7 +103,7 @@ TEST_CASE("daily_logger", "[daily_logger]]")
 {
 
     delete_logs();
-    //calculate filename (time based)
+//calculate filename (time based)
     std::string basename = "logs/daily_log";
     std::tm tm = spdlog::details::os::localtime();
     fmt::MemoryWriter w;

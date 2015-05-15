@@ -1,5 +1,5 @@
 CXX	?= g++
-CXXFLAGS	=  -D_WIN32_WINNT=0x600 -march=native -Wall  -pedantic -std=c++11 -pthread -Wl,--no-as-needed -O
+CXXFLAGS	=  -Wall  -pedantic -std=c++11 -pthread -Wl,--no-as-needed -O2
 LDPFALGS = -pthread -flto
 
 CPP_FILES := $(wildcard *.cpp)
