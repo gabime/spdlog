@@ -36,9 +36,9 @@ static void prepare_logdir()
 {
     spdlog::drop_all();
 #ifdef _WIN32
-    auto rv = system("mkdir logs;del /F /Q logs\\*");
+    auto rv = system("del /F /Q logs\\*");
 #else
-    auto rv = system("mkdir logs;rm -f logs/*");
+    auto rv = system("rm -f logs/*");
 #endif
 }
 
