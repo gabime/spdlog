@@ -136,7 +136,7 @@ install:
 script:
   - ./"${BIN}"
   - valgrind --trace-children=yes --leak-check=full ./"${BIN}"
-  - cd tests; make rebuild; ./tests
+  - cd $CHECKOUT_PATH/tests; make rebuild; ./tests
 
 notifications:
   email: false
