@@ -129,8 +129,8 @@ install:
 
   # Build examples
   - cd example
-  - if [ "$BUILD_TYPE" == "Release" ]; then make CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example; fi
-  - if [ "$BUILD_TYPE" == "Debug" ]; then make debug CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example-debug; fi
+  - if [ "$BUILD_TYPE" == "Release" ]; then make rebuild CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example; fi
+  - if [ "$BUILD_TYPE" == "Debug" ]; then make rebuild debug CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example-debug; fi
 
 script:
   - ./"${BIN}"
