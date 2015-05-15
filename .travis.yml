@@ -107,7 +107,7 @@ before_install:
   - which $CXX
   - which $CC
   - which valgrind
-  - if [ -n "$CLANG_VERSION" ]; then sudo CXX=$CXX CC=$CC .tests/install_libcxx.sh; fi
+  - if [ -n "$CLANG_VERSION" ]; then sudo CXX=$CXX CC=$CC ./tests/install_libcxx.sh; fi
 
 install:
   - cd $CHECKOUT_PATH
