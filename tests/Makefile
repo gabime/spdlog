@@ -1,6 +1,6 @@
 CXX	?= g++
-CXXFLAGS	=  -D_WIN32_WINNT=0x600 -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -Wl,--no-as-needed  -I../include 
-LDPFALGS = -pthread
+CXXFLAGS	=  -D_WIN32_WINNT=0x600 -march=native -Wall  -pedantic -std=c++11 -pthread -Wl,--no-as-needed -O
+LDPFALGS = -pthread -flto
 
 CPP_FILES := $(wildcard *.cpp)
 OBJ_FILES := $(addprefix ./,$(notdir $(CPP_FILES:.cpp=.o)))
@@ -15,7 +15,7 @@ tests: $(OBJ_FILES)
 clean:
 	rm -f tests *.o logs/*     
  
-rebuild: clean all
+rebuild: clean tests
 
 
 
