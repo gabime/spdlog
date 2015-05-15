@@ -107,7 +107,7 @@ before_install:
   - which $CXX
   - which $CC
   - which valgrind
-  - if [ -n "$CLANG_VERSION" ]; then sudo CXX=$CXX CC=$CC ./install_libcxx.sh; fi
+  - if [ -n "$CLANG_VERSION" ]; then sudo CXX=$CXX CC=$CC .tests/install_libcxx.sh; fi
 
 install:
   - cd $CHECKOUT_PATH
@@ -131,10 +131,12 @@ install:
   - cd example
   - if [ "$BUILD_TYPE" == "Release" ]; then make rebuild CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example; fi
   - if [ "$BUILD_TYPE" == "Debug" ]; then make rebuild debug CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example-debug; fi
+  
 
 script:
   - ./"${BIN}"
   - valgrind --trace-children=yes --leak-check=full ./"${BIN}"
+  - cd tests; make rebuild; ./tests
 
 notifications:
   email: false
