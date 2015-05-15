@@ -10,18 +10,8 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="file_log.cpp" />
-    <ClCompile Include="format.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="registry.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="catch.hpp" />
-    <ClInclude Include="includes.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1274FDEC-109A-45DF-8AEC-E3334C3A925F}</ProjectGuid>
+    <ProjectGuid>{59A07559-5F38-4DD6-A7FA-DB4153690B42}</ProjectGuid>
     <RootNamespace>tests</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -48,15 +38,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)</OutDir>
-    <IntDir>$(ProjectDir)\$(Configuration-obj)\</IntDir>
-    <TargetName>$(ProjectName)-debug</TargetName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)</OutDir>
-    <IntDir>$(ProjectDir)\$(Configuration)-obj\</IntDir>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -83,6 +65,16 @@
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="file_log.cpp" />
+    <ClCompile Include="format.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="registry.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="catch.hpp" />
+    <ClInclude Include="includes.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
