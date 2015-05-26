@@ -28,7 +28,6 @@
 // Global registry functions
 //
 #include "registry.h"
-#include "registry_shared.h"
 #include "../sinks/file_sinks.h"
 #include "../sinks/stdout_sinks.h"
 #include "../sinks/syslog_sink.h"

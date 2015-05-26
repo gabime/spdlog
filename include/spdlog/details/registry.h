@@ -144,16 +144,23 @@ public:
         _async_mode = false;
     }
 
-    static registry_t<Mutex>* instance()
+    static std::shared_ptr<registry_t<Mutex> > instance()
     {
-        static registry_t<Mutex> s_instance;
-        return &s_instance;
+        if(!_instance)
+            _instance = std::make_shared<registry_t<Mutex>>();
+        return _instance;
     }
 
-protected:
+    static void set_registry(std::shared_ptr<registry_t<Mutex> > registry)
+    {
+        _instance = registry;
+    }
+
     registry_t<Mutex>() {}
 
 private:
+    static std::shared_ptr<registry_t<Mutex> > _instance;
+
     void register_logger_impl(std::shared_ptr<logger> logger)
     {
         auto logger_name = logger->name();
@@ -173,14 +180,13 @@ private:
     std::function<void()> _worker_warmup_cb = nullptr;
     std::chrono::milliseconds _flush_interval_ms;
 };
-
-#ifndef SPDLOG_USE_SHARED_REGISTRY
-#   ifdef SPDLOG_NO_REGISTRY_MUTEX
-        typedef registry_t<spdlog::details::null_mutex> registry;
+#ifdef SPDLOG_NO_REGISTRY_MUTEX
+typedef registry_t<spdlog::details::null_mutex> registry;
 #   else
-        typedef registry_t<std::mutex> registry;
-#   endif //SPDLOG_NO_REGISTRY_MUTEX
-#endif //SPDLOG_USE_SHARED_REGISTRY
+typedef registry_t<std::mutex> registry;
+#endif //SPDLOG_NO_REGISTRY_MUTEX
+
+std::shared_ptr<registry> registry::_instance = nullptr;
 
 }
 }
