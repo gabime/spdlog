@@ -144,14 +144,14 @@ public:
         _async_mode = false;
     }
 
-    static std::shared_ptr<registry_t<Mutex> > instance()
+    static std::shared_ptr<registry_t<Mutex>> instance()
     {
         if(!_instance)
             _instance = std::make_shared<registry_t<Mutex>>();
         return _instance;
     }
 
-    static void set_registry(std::shared_ptr<registry_t<Mutex> > registry)
+    static void set_registry(std::shared_ptr<registry_t<Mutex>> registry)
     {
         _instance = registry;
     }
@@ -159,7 +159,7 @@ public:
     registry_t<Mutex>() {}
 
 private:
-    static std::shared_ptr<registry_t<Mutex> > _instance;
+    static std::shared_ptr<registry_t<Mutex>> _instance;
 
     void register_logger_impl(std::shared_ptr<logger> logger)
     {
@@ -180,13 +180,14 @@ private:
     std::function<void()> _worker_warmup_cb = nullptr;
     std::chrono::milliseconds _flush_interval_ms;
 };
+
+template<class Mutex>
+std::shared_ptr<registry_t<Mutex>> registry_t<Mutex>::_instance = nullptr;
+
 #ifdef SPDLOG_NO_REGISTRY_MUTEX
 typedef registry_t<spdlog::details::null_mutex> registry;
 #   else
 typedef registry_t<std::mutex> registry;
 #endif //SPDLOG_NO_REGISTRY_MUTEX
-
-std::shared_ptr<registry> registry::_instance = nullptr;
-
 }
 }
