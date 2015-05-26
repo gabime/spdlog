@@ -146,7 +146,7 @@ public:
 
     static std::shared_ptr<registry_t<Mutex>> instance()
     {
-        if(!_instance)
+        if(_instance == nullptr)
             _instance = std::make_shared<registry_t<Mutex>>();
         return _instance;
     }
