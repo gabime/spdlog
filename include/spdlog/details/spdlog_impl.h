@@ -147,6 +147,11 @@ inline void spdlog::set_sync_mode()
     details::registry::instance().set_sync_mode();
 }
 
+inline void spdlog::set_default_logger(std::shared_ptr<spdlog::logger> logger)
+{
+    details::registry::instance().set_default_logger(logger);
+}
+
 inline void spdlog::drop_all()
 {
     details::registry::instance().drop_all();
