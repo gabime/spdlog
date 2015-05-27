@@ -37,6 +37,7 @@
 #include "../logger.h"
 #include "../async_logger.h"
 #include "../common.h"
+#include "../sinks/null_sink.h"
 
 namespace spdlog
 {
@@ -57,7 +58,7 @@ public:
     {
         std::lock_guard<Mutex> lock(_mutex);
         auto found = _loggers.find(logger_name);
-        return found == _loggers.end() ? nullptr : found->second;
+        return found == _loggers.end() ? _default_logger : found->second;
     }
 
     template<class It>
@@ -144,6 +145,12 @@ public:
         _async_mode = false;
     }
 
+    void set_default_logger(std::shared_ptr<logger> default_logger)
+    {
+        std::lock_guard<Mutex> lock(_mutex);
+        _default_logger = default_logger;
+    }
+
     static registry_t<Mutex>& instance()
     {
         static registry_t<Mutex> s_instance;
@@ -158,7 +165,10 @@ private:
             throw spdlog_ex("logger with name " + logger_name + " already exists");
         _loggers[logger->name()] = logger;
     }
-    registry_t<Mutex>(){}
+    registry_t<Mutex>()
+    {
+        _default_logger = std::make_shared<spdlog::logger>("null", std::make_shared<spdlog::sinks::null_sink<Mutex>>());
+    }
     registry_t<Mutex>(const registry_t<Mutex>&) = delete;
     registry_t<Mutex>& operator=(const registry_t<Mutex>&) = delete;
     Mutex _mutex;
@@ -170,6 +180,7 @@ private:
     async_overflow_policy _overflow_policy = async_overflow_policy::block_retry;
     std::function<void()> _worker_warmup_cb = nullptr;
     std::chrono::milliseconds _flush_interval_ms;
+    std::shared_ptr<logger> _default_logger;
 };
 #ifdef SPDLOG_NO_REGISTRY_MUTEX
 typedef registry_t<spdlog::details::null_mutex> registry;

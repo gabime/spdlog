@@ -74,6 +74,12 @@ void set_async_mode(size_t queue_size, const async_overflow_policy overflow_poli
 void set_sync_mode();
 
 //
+// Set default logger
+// Current default use a null sink
+//
+void set_default_logger(std::shared_ptr<logger> logger);
+
+//
 // Create and register multi/single threaded rotating file logger
 //
 std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
