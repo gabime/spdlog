@@ -206,6 +206,11 @@ public:
         _enabled = false;
     }
 
+    bool is_enabled()
+    {
+        return _enabled;
+    }
+
 
 private:
     logger* _callback_logger;
