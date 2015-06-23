@@ -134,18 +134,19 @@ void drop_all();
 // Example:
 // spdlog::set_level(spdlog::level::debug);
 // SPDLOG_DEBUG(my_logger, "Some debug message {} {}", 1, 3.2);
+// SPDLOG_DEBUG(my_logger) << "Some debug message";
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef SPDLOG_TRACE_ON
-#define SPDLOG_TRACE(logger, ...) logger->trace(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_TRACE(logger, ...) logger->trace(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")"
 #else
-#define SPDLOG_TRACE(logger, ...)
+#define SPDLOG_TRACE(logger, ...) while(false) logger->trace()
 #endif
 
 #ifdef SPDLOG_DEBUG_ON
-#define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)  << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)  << " (" << __FILE__ << " #" << __LINE__ <<")"
 #else
-#define SPDLOG_DEBUG(logger, ...)
+#define SPDLOG_DEBUG(logger, ...) while(false) logger->debug()
 #endif
 
 
