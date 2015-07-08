@@ -107,7 +107,7 @@ before_install:
   - which $CXX
   - which $CC
   - which valgrind
-  - if [ -n "$CLANG_VERSION" ]; then sudo CXX=$CXX CC=$CC .tests/install_libcxx.sh; fi
+  - if [ -n "$CLANG_VERSION" ]; then sudo CXX=$CXX CC=$CC ./tests/install_libcxx.sh; fi
 
 install:
   - cd $CHECKOUT_PATH
@@ -136,7 +136,7 @@ install:
 script:
   - ./"${BIN}"
   - valgrind --trace-children=yes --leak-check=full ./"${BIN}"
-  - cd tests; make rebuild; ./tests
+  - cd $CHECKOUT_PATH/tests; make rebuild; ./tests
 
 notifications:
   email: false
