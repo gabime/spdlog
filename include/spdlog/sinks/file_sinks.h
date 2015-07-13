@@ -107,9 +107,9 @@ private:
     {
         fmt::TMemoryWriter w;
         if (index)
-            w.write(L"{}.{}.{}", filename, index, extension);
+            w.write(S("{}.{}.{}"), filename, index, extension);
         else
-            w.write(L"{}.{}", filename, extension);
+            w.write(S("{}.{}"), filename, extension);
         return w.str();
     }
 
@@ -215,7 +215,7 @@ private:
     {
         std::tm tm = spdlog::details::os::localtime();
         fmt::TMemoryWriter w;
-        w.write(L"{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.{}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, extension);
+        w.write(S("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, extension);
         return w.str();
     }
 

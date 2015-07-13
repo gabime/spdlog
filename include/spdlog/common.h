@@ -39,8 +39,9 @@
 #ifdef WIN32
 typedef std::wstring tstring;
 typedef wchar_t tchar;
+#define S(s) L ## s
 #else
-#define L
+#define S(s) s
 typedef std::string tstring;
 typedef char tchar;
 #endif
