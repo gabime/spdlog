@@ -141,11 +141,11 @@ private:
         }
         _file_helper.reopen(true);
     }
-    tstring _base_filename,
-            _extension;
-    std::size_t _max_size,
-                _max_files,
-                _current_size;
+    tstring _base_filename;
+    tstring _extension;
+    std::size_t _max_size;
+    std::size_t _max_files;
+    std::size_t _current_size;
     details::file_helper _file_helper;
 };
 
