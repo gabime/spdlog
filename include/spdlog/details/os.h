@@ -147,17 +147,33 @@ constexpr inline unsigned short eol_size()
 #endif
 
 //fopen_s on non windows for writing
-inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
+inline int fopen_s(FILE** fp, const tstring& filename, tchar* mode)
 {
 #ifdef _WIN32
-    *fp = _fsopen((filename.c_str()), mode, _SH_DENYWR);
+    *fp = _wfsopen((filename.c_str()), mode, _SH_DENYWR);
     return *fp == nullptr;
 #else
     *fp = fopen((filename.c_str()), mode);
     return *fp == nullptr;
 #endif
+}
 
+inline int remove(const tchar* filename)
+{
+#ifdef _WIN32
+    return _wremove(filename);
+#else
+    return std::remove(filename);
+#endif
+}
 
+inline int rename(const tchar* filename1, const tchar* filename2)
+{
+#ifdef _WIN32
+    return _wrename(filename1, filename2);
+#else
+    return std::remove(filename1, filename2);
+#endif
 }
 
 //Return utc offset in minutes or -1 on failure

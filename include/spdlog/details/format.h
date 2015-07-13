@@ -2648,6 +2648,11 @@ Any write method will throw ``std::runtime_error`` if the output doesn't fit
 into the array.
 
 You can use one of the following typedefs for common character types:
+#ifdef WIN32
+#define TMemoryWriter WMemoryWriter
+#else
+#define TMemoryWriter MemoryWriter
+#endif
 
 +--------------+---------------------------+
 | Type         | Definition                |

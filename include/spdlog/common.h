@@ -36,6 +36,14 @@
 #define SPDLOG_NOEXCEPT throw()
 #endif
 
+#ifdef WIN32
+typedef std::wstring tstring;
+typedef wchar_t tchar;
+#else
+#define L
+typedef std::string tstring;
+typedef char tchar;
+#endif
 
 namespace spdlog
 {
