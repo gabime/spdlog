@@ -62,11 +62,11 @@ public:
     }
 
 
-    void open(const std::string& fname, bool truncate=false)
+    void open(const tstring& fname, bool truncate=false)
     {
 
         close();
-        const char* mode = truncate ? "wb" : "ab";
+        tchar* mode = truncate ? S("wb") : S("ab");
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
@@ -76,7 +76,7 @@ public:
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
         }
 
-        throw spdlog_ex("Failed opening file " + fname + " for writing");
+        throw spdlog_ex("Failed opening file for writing");
     }
 
     void reopen(bool truncate)
@@ -106,22 +106,22 @@ public:
         size_t size = msg.formatted.size();
         auto data = msg.formatted.data();
         if(std::fwrite(data, 1, size, _fd) != size)
-            throw spdlog_ex("Failed writing to file " + _filename);
+            throw spdlog_ex("Failed writing to file");
 
         if(_force_flush)
             std::fflush(_fd);
 
     }
 
-    const std::string& filename() const
+    const tstring& filename() const
     {
         return _filename;
     }
 
-    static bool file_exists(const std::string& name)
+    static bool file_exists(const tstring& name)
     {
         FILE* file;
-        if (!os::fopen_s(&file, name.c_str(), "r"))
+        if (!os::fopen_s(&file, name.c_str(), S("r")))
         {
             fclose(file);
             return true;
@@ -134,7 +134,7 @@ public:
 
 private:
     FILE* _fd;
-    std::string _filename;
+    tstring _filename;
     bool _force_flush;
 
 
