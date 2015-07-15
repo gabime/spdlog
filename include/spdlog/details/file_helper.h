@@ -66,7 +66,7 @@ public:
     {
 
         close();
-        tchar* mode = truncate ? S("wb") : S("ab");
+        const tchar* mode = truncate ? S("wb") : S("ab");
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
