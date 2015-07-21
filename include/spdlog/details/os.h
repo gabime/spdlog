@@ -149,8 +149,12 @@ constexpr inline unsigned short eol_size()
 //fopen_s on non windows for writing
 inline int fopen_s(FILE** fp, const tstring& filename, const tchar* mode)
 {
-#ifdef _WIN32
+#if defined(WIN32)
+  #if defined(SPDLOG_USE_WCHAR)
     *fp = _wfsopen((filename.c_str()), mode, _SH_DENYWR);
+  #else
+    *fp = _fsopen((filename.c_str()), mode, _SH_DENYWR);
+  #endif
     return *fp == nullptr;
 #else
     *fp = fopen((filename.c_str()), mode);
@@ -160,7 +164,7 @@ inline int fopen_s(FILE** fp, const tstring& filename, const tchar* mode)
 
 inline int remove(const tchar* filename)
 {
-#ifdef _WIN32
+#if defined(WIN32) && defined(SPDLOG_USE_WCHAR)
     return _wremove(filename);
 #else
     return std::remove(filename);
@@ -169,10 +173,10 @@ inline int remove(const tchar* filename)
 
 inline int rename(const tchar* filename1, const tchar* filename2)
 {
-#ifdef _WIN32
+#if defined(WIN32) && defined(SPDLOG_USE_WCHAR)
     return _wrename(filename1, filename2);
 #else
-    return std::remove(filename1);
+    return std::rename(filename1, filename2);
 #endif
 }
 
