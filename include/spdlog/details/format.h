@@ -2638,6 +2638,12 @@ public:
 typedef BasicMemoryWriter<char> MemoryWriter;
 typedef BasicMemoryWriter<wchar_t> WMemoryWriter;
 
+#if defined(WIN32) && defined(SPDLOG_USE_WCHAR)
+#define TMemoryWriter WMemoryWriter
+#else
+#define TMemoryWriter MemoryWriter
+#endif
+
 /**
 \rst
 This class template provides operations for formatting and writing data
