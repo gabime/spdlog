@@ -36,10 +36,6 @@
 #define SPDLOG_NOEXCEPT throw()
 #endif
 
-#if !defined(SPDLOG_NO_WCHAR) && defined(WIN32)
-#define SPDLOG_USE_WCHAR
-#endif
-
 #if defined(WIN32) && defined(SPDLOG_USE_WCHAR)
 typedef std::wstring tstring;
 typedef wchar_t tchar;
