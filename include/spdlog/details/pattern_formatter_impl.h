@@ -265,6 +265,17 @@ class f_formatter :public flag_formatter
     }
 };
 
+// nanoseconds
+class F_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        auto duration = msg.time.time_since_epoch();
+        auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() % 1000000000;
+        msg.formatted << fmt::pad(static_cast<int>(ns), 9, '0');
+    }
+};
+
 // AM/PM
 class p_formatter :public flag_formatter
 {
@@ -574,6 +585,9 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 
     case('f') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::f_formatter()));
+        break;
+    case('F') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::F_formatter()));
         break;
 
     case('p') :
