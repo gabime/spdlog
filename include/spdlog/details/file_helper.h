@@ -48,7 +48,7 @@ public:
     const int open_tries = 5;
     const int open_interval = 10;
 
-    explicit file_helper(bool force_flush):
+    explicit file_helper(bool force_flush) :
         _fd(nullptr),
         _force_flush(force_flush)
     {}
@@ -62,26 +62,26 @@ public:
     }
 
 
-    void open(const tstring& fname, bool truncate=false)
+    void open(const std::string& fname, bool truncate = false)
     {
 
         close();
-        const tchar* mode = truncate ? S("wb") : S("ab");
+        const char* mode = truncate ? "wb" : "ab";
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
-            if(!os::fopen_s(&_fd, fname, mode))
+            if (!os::fopen_s(&_fd, fname, mode))
                 return;
 
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
         }
 
-        throw spdlog_ex("Failed opening file for writing");
+        throw spdlog_ex("Failed opening file " + fname + " for writing");
     }
 
     void reopen(bool truncate)
     {
-        if(_filename.empty())
+        if (_filename.empty())
             throw spdlog_ex("Failed re opening file - was not opened before");
         open(_filename, truncate);
 
@@ -105,23 +105,23 @@ public:
 
         size_t size = msg.formatted.size();
         auto data = msg.formatted.data();
-        if(std::fwrite(data, 1, size, _fd) != size)
-            throw spdlog_ex("Failed writing to file");
+        if (std::fwrite(data, 1, size, _fd) != size)
+            throw spdlog_ex("Failed writing to file " + _filename);
 
-        if(_force_flush)
+        if (_force_flush)
             std::fflush(_fd);
 
     }
 
-    const tstring& filename() const
+    const std::string& filename() const
     {
         return _filename;
     }
 
-    static bool file_exists(const tstring& name)
+    static bool file_exists(const std::string& name)
     {
         FILE* file;
-        if (!os::fopen_s(&file, name.c_str(), S("r")))
+        if (!os::fopen_s(&file, name.c_str(), "r"))
         {
             fclose(file);
             return true;
@@ -134,11 +134,10 @@ public:
 
 private:
     FILE* _fd;
-    tstring _filename;
+    std::string _filename;
     bool _force_flush;
 
 
 };
 }
 }
-

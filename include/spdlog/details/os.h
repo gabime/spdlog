@@ -147,37 +147,17 @@ constexpr inline unsigned short eol_size()
 #endif
 
 //fopen_s on non windows for writing
-inline int fopen_s(FILE** fp, const tstring& filename, const tchar* mode)
+inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
 {
-#if defined(WIN32)
-  #if defined(SPDLOG_USE_WCHAR)
-    *fp = _wfsopen((filename.c_str()), mode, _SH_DENYWR);
-  #else
+#ifdef _WIN32
     *fp = _fsopen((filename.c_str()), mode, _SH_DENYWR);
-  #endif
     return *fp == nullptr;
 #else
     *fp = fopen((filename.c_str()), mode);
     return *fp == nullptr;
 #endif
-}
 
-inline int remove(const tchar* filename)
-{
-#if defined(WIN32) && defined(SPDLOG_USE_WCHAR)
-    return _wremove(filename);
-#else
-    return std::remove(filename);
-#endif
-}
 
-inline int rename(const tchar* filename1, const tchar* filename2)
-{
-#if defined(WIN32) && defined(SPDLOG_USE_WCHAR)
-    return _wrename(filename1, filename2);
-#else
-    return std::rename(filename1, filename2);
-#endif
 }
 
 //Return utc offset in minutes or -1 on failure
@@ -213,6 +193,5 @@ inline size_t thread_id()
 } //os
 } //details
 } //spdlog
-
 
 

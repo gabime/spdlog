@@ -29,7 +29,6 @@
 #include "../details/null_mutex.h"
 #include "../details/file_helper.h"
 #include "../details/format.h"
-#include "../details/os.h"
 
 namespace spdlog
 {
@@ -66,13 +65,13 @@ typedef simple_file_sink<std::mutex> simple_file_sink_mt;
 typedef simple_file_sink<details::null_mutex> simple_file_sink_st;
 
 /*
- * Rotating file sink based on size
- */
+* Rotating file sink based on size
+*/
 template<class Mutex>
 class rotating_file_sink : public base_sink < Mutex >
 {
 public:
-    rotating_file_sink(const tstring &base_filename, const tstring &extension,
+    rotating_file_sink(const std::string &base_filename, const std::string &extension,
                        std::size_t max_size, std::size_t max_files,
                        bool force_flush = false) :
         _base_filename(base_filename),
@@ -103,13 +102,13 @@ protected:
     }
 
 private:
-    static tstring calc_filename(const tstring& filename, std::size_t index, const tstring& extension)
+    static std::string calc_filename(const std::string& filename, std::size_t index, const std::string& extension)
     {
-        fmt::TMemoryWriter w;
+        fmt::MemoryWriter w;
         if (index)
-            w.write(S("{}.{}.{}"), filename, index, extension);
+            w.write("{}.{}.{}", filename, index, extension);
         else
-            w.write(S("{}.{}"), filename, extension);
+            w.write("{}.{}", filename, extension);
         return w.str();
     }
 
@@ -124,25 +123,25 @@ private:
         _file_helper.close();
         for (auto i = _max_files; i > 0; --i)
         {
-            tstring src = calc_filename(_base_filename, i - 1, _extension);
-            tstring target = calc_filename(_base_filename, i, _extension);
+            std::string src = calc_filename(_base_filename, i - 1, _extension);
+            std::string target = calc_filename(_base_filename, i, _extension);
 
             if (details::file_helper::file_exists(target))
             {
-                if (details::os::remove(target.c_str()) != 0)
+                if (std::remove(target.c_str()) != 0)
                 {
-                    throw spdlog_ex("rotating_file_sink: failed removing");
+                    throw spdlog_ex("rotating_file_sink: failed removing " + target);
                 }
             }
-            if (details::file_helper::file_exists(src) && details::os::rename(src.c_str(), target.c_str()))
+            if (details::file_helper::file_exists(src) && std::rename(src.c_str(), target.c_str()))
             {
-                throw spdlog_ex("rotating_file_sink: failed renaming");
+                throw spdlog_ex("rotating_file_sink: failed renaming " + src + " to " + target);
             }
         }
         _file_helper.reopen(true);
     }
-    tstring _base_filename;
-    tstring _extension;
+    std::string _base_filename;
+    std::string _extension;
     std::size_t _max_size;
     std::size_t _max_files;
     std::size_t _current_size;
@@ -153,16 +152,16 @@ typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
 typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
 
 /*
- * Rotating file sink based on date. rotates at midnight
- */
+* Rotating file sink based on date. rotates at midnight
+*/
 template<class Mutex>
 class daily_file_sink :public base_sink < Mutex >
 {
 public:
     //create daily file sink which rotates on given time
     daily_file_sink(
-        const tstring& base_filename,
-        const tstring& extension,
+        const std::string& base_filename,
+        const std::string& extension,
         int rotation_hour,
         int rotation_minute,
         bool force_flush = false) : _base_filename(base_filename),
@@ -211,16 +210,16 @@ private:
     }
 
     //Create filename for the form basename.YYYY-MM-DD.extension
-    static tstring calc_filename(const tstring& basename, const tstring& extension)
+    static std::string calc_filename(const std::string& basename, const std::string& extension)
     {
         std::tm tm = spdlog::details::os::localtime();
-        fmt::TMemoryWriter w;
-        w.write(S("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, extension);
+        fmt::MemoryWriter w;
+        w.write("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.{}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, extension);
         return w.str();
     }
 
-    tstring _base_filename;
-    tstring _extension;
+    std::string _base_filename;
+    std::string _extension;
     int _rotation_h;
     int _rotation_m;
     std::chrono::system_clock::time_point _rotation_tp;
