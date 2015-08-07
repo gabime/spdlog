@@ -33,40 +33,6 @@ matrix:
       addons: *clang35
     
 
-    # Test clang-3.7: C++11/C++14, Buidd=Debug/Release, ASAN=On/Off
-    - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug CPP=11 ASAN=On LIBCXX=On
-      os: linux
-      addons: &clang37
-        apt:
-          packages:
-            - clang-3.7
-            - valgrind
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise
-
-    - env: CLANG_VERSION=3.7 BUILD_TYPE=Release CPP=11 ASAN=On LIBCXX=On
-      os: linux
-      addons: *clang37
-    - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug CPP=14 ASAN=On LIBCXX=On
-      os: linux
-      addons: *clang37
-    - env: CLANG_VERSION=3.7 BUILD_TYPE=Release CPP=14 ASAN=On LIBCXX=On
-      os: linux
-      addons: *clang37
-    - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug CPP=11 ASAN=Off LIBCXX=On
-      os: linux
-      addons: *clang37
-    - env: CLANG_VERSION=3.7 BUILD_TYPE=Release CPP=11 ASAN=Off LIBCXX=On
-      os: linux
-      addons: *clang37
-    - env: CLANG_VERSION=3.7 BUILD_TYPE=Debug CPP=14 ASAN=Off LIBCXX=On
-      os: linux
-      addons: *clang37
-    - env: CLANG_VERSION=3.7 BUILD_TYPE=Release CPP=14 ASAN=Off LIBCXX=On
-      os: linux
-      addons: *clang37
-
 
 # Test gcc-4.8: C++11, Build=Debug/Release, ASAN=Off
     - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11 ASAN=Off LIBCXX=Off
