@@ -27,7 +27,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef FMT_FORMAT_H_
 #define FMT_FORMAT_H_
-
 #define FMT_HEADER_ONLY
 
 #include <stdint.h>
@@ -763,24 +762,23 @@ inline unsigned count_digits(uint32_t n) {
 // Formats a decimal unsigned integer value writing into buffer.
 template <typename UInt, typename Char>
 inline void format_decimal(Char *buffer, UInt value, unsigned num_digits) {
-    --num_digits;
+    buffer += num_digits;
     while (value >= 100) {
         // Integer division is slow so do it for a group of two digits instead
         // of for every digit. The idea comes from the talk by Alexandrescu
         // "Three Optimization Tips for C++". See speed-test for a comparison.
         unsigned index = (value % 100) * 2;
         value /= 100;
-        buffer[num_digits] = Data::DIGITS[index + 1];
-        buffer[num_digits - 1] = Data::DIGITS[index];
-        num_digits -= 2;
+        *--buffer = Data::DIGITS[index + 1];
+        *--buffer = Data::DIGITS[index];
     }
     if (value < 10) {
-        *buffer = static_cast<char>('0' + value);
+        *--buffer = static_cast<char>('0' + value);
         return;
     }
     unsigned index = static_cast<unsigned>(value * 2);
-    buffer[1] = Data::DIGITS[index + 1];
-    buffer[0] = Data::DIGITS[index];
+    *--buffer = Data::DIGITS[index + 1];
+    *--buffer = Data::DIGITS[index];
 }
 
 #ifndef _WIN32
@@ -924,11 +922,11 @@ private:
 
     static const T &get();
 
-    static yes &check(fmt::ULongLong);
-    static no &check(...);
+    static yes &convert(fmt::ULongLong);
+    static no &convert(...);
 
 public:
-    enum { value = (sizeof(check(get())) == sizeof(yes)) };
+    enum { value = (sizeof(convert(get())) == sizeof(yes)) };
 };
 
 #define FMT_CONVERTIBLE_TO_INT(Type) \
@@ -1127,8 +1125,8 @@ struct NamedArg : Arg {
     BasicStringRef<Char> name;
 
     template <typename T>
-    NamedArg(BasicStringRef<Char> name, const T &value)
-        : name(name), Arg(MakeValue<Char>(value)) {
+    NamedArg(BasicStringRef<Char> argname, const T &value)
+        : name(argname), Arg(MakeValue<Char>(value)) {
         type = static_cast<internal::Arg::Type>(MakeValue<Char>::type(value));
     }
 };
@@ -1363,7 +1361,7 @@ protected:
         return args_;
     }
 
-    void set_args(const ArgList &args) {
+    explicit FormatterBase(const ArgList &args) {
         args_ = args;
         next_arg_index_ = 0;
     }
@@ -1399,8 +1397,8 @@ private:
     unsigned parse_header(const Char *&s, FormatSpec &spec);
 
 public:
-    void format(BasicWriter<Char> &writer,
-                BasicCStringRef<Char> format_str, const ArgList &args);
+    explicit PrintfFormatter(const ArgList &args) : FormatterBase(args) {}
+    void format(BasicWriter<Char> &writer, BasicCStringRef<Char> format_str);
 };
 }  // namespace internal
 
@@ -1409,7 +1407,6 @@ template <typename Char>
 class BasicFormatter : private internal::FormatterBase {
 private:
     BasicWriter<Char> &writer_;
-    const Char *start_;
     internal::ArgMap<Char> map_;
 
     FMT_DISALLOW_COPY_AND_ASSIGN(BasicFormatter);
@@ -1427,13 +1424,14 @@ private:
     internal::Arg parse_arg_name(const Char *&s);
 
 public:
-    explicit BasicFormatter(BasicWriter<Char> &w) : writer_(w) {}
+    BasicFormatter(const ArgList &args, BasicWriter<Char> &w)
+        : FormatterBase(args), writer_(w) {}
 
     BasicWriter<Char> &writer() {
         return writer_;
     }
 
-    void format(BasicCStringRef<Char> format_str, const ArgList &args);
+    void format(BasicCStringRef<Char> format_str);
 
     const Char *format(const Char *&format_str, const internal::Arg &arg);
 };
@@ -1996,6 +1994,28 @@ private:
         return internal::make_ptr(&buffer_[size], n);
     }
 
+    // Writes an unsigned decimal integer.
+    template <typename UInt>
+    Char *write_unsigned_decimal(UInt value, unsigned prefix_size = 0) {
+        unsigned num_digits = internal::count_digits(value);
+        Char *ptr = get(grow_buffer(prefix_size + num_digits));
+        internal::format_decimal(ptr + prefix_size, value, num_digits);
+        return ptr;
+    }
+
+    // Writes a decimal integer.
+    template <typename Int>
+    void write_decimal(Int value) {
+        typename internal::IntTraits<Int>::MainType abs_value = value;
+        if (internal::is_negative(value)) {
+            abs_value = 0 - abs_value;
+            *write_unsigned_decimal(abs_value, 1) = '-';
+        }
+        else {
+            write_unsigned_decimal(abs_value, 0);
+        }
+    }
+
     // Prepare a buffer for integer formatting.
     CharPtr prepare_int_buffer(unsigned num_digits,
                                const EmptySpec &, const char *prefix, unsigned prefix_size) {
@@ -2123,24 +2143,27 @@ public:
     \endrst
     */
     void write(BasicCStringRef<Char> format, ArgList args) {
-        BasicFormatter<Char>(*this).format(format, args);
+        BasicFormatter<Char>(args, *this).format(format);
     }
     FMT_VARIADIC_VOID(write, BasicCStringRef<Char>)
 
     BasicWriter &operator<<(int value) {
-        return *this << IntFormatSpec<int>(value);
+        write_decimal(value);
+        return *this;
     }
     BasicWriter &operator<<(unsigned value) {
         return *this << IntFormatSpec<unsigned>(value);
     }
     BasicWriter &operator<<(long value) {
-        return *this << IntFormatSpec<long>(value);
+        write_decimal(value);
+        return *this;
     }
     BasicWriter &operator<<(unsigned long value) {
         return *this << IntFormatSpec<unsigned long>(value);
     }
     BasicWriter &operator<<(LongLong value) {
-        return *this << IntFormatSpec<LongLong>(value);
+        write_decimal(value);
+        return *this;
     }
 
     /**
@@ -2638,12 +2661,6 @@ public:
 typedef BasicMemoryWriter<char> MemoryWriter;
 typedef BasicMemoryWriter<wchar_t> WMemoryWriter;
 
-#if defined(WIN32) && defined(SPDLOG_USE_WCHAR)
-#define TMemoryWriter WMemoryWriter
-#else
-#define TMemoryWriter MemoryWriter
-#endif
-
 /**
 \rst
 This class template provides operations for formatting and writing data
@@ -2823,7 +2840,7 @@ void print(std::ostream &os, CStringRef format_str, ArgList args);
 
 template <typename Char>
 void printf(BasicWriter<Char> &w, BasicCStringRef<Char> format, ArgList args) {
-    internal::PrintfFormatter<Char>().format(w, format, args);
+    internal::PrintfFormatter<Char>(args).format(w, format);
 }
 
 /**

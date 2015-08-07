@@ -207,8 +207,8 @@ int safe_strerror(
         }
 
     public:
-        StrError(int error_code, char *&buffer, std::size_t buffer_size)
-            : error_code_(error_code), buffer_(buffer), buffer_size_(buffer_size) {}
+        StrError(int err_code, char *&buf, std::size_t buf_size)
+            : error_code_(err_code), buffer_(buf), buffer_size_(buf_size) {}
 
         int run() {
             strerror_r(0, 0, "");  // Suppress a warning about unused strerror_r.
@@ -521,25 +521,25 @@ public:
         : BasicArgFormatter<PrintfArgFormatter<Char>, Char>(w, s) {}
 
     void visit_char(int value) {
-        const FormatSpec &spec = this->spec();
-        BasicWriter<Char> &writer = this->writer();
-        if (spec.type_ && spec.type_ != 'c')
-            writer.write_int(value, spec);
+        const FormatSpec &fmt_spec = this->spec();
+        BasicWriter<Char> &w = this->writer();
+        if (fmt_spec.type_ && fmt_spec.type_ != 'c')
+            w.write_int(value, fmt_spec);
         typedef typename BasicWriter<Char>::CharPtr CharPtr;
         CharPtr out = CharPtr();
-        if (spec.width_ > 1) {
+        if (fmt_spec.width_ > 1) {
             Char fill = ' ';
-            out = writer.grow_buffer(spec.width_);
-            if (spec.align_ != ALIGN_LEFT) {
-                std::fill_n(out, spec.width_ - 1, fill);
-                out += spec.width_ - 1;
+            out = w.grow_buffer(fmt_spec.width_);
+            if (fmt_spec.align_ != ALIGN_LEFT) {
+                std::fill_n(out, fmt_spec.width_ - 1, fill);
+                out += fmt_spec.width_ - 1;
             }
             else {
-                std::fill_n(out + 1, spec.width_ - 1, fill);
+                std::fill_n(out + 1, fmt_spec.width_ - 1, fill);
             }
         }
         else {
-            out = writer.grow_buffer(1);
+            out = w.grow_buffer(1);
         }
         *out = static_cast<Char>(value);
     }
@@ -959,10 +959,8 @@ unsigned fmt::internal::PrintfFormatter<Char>::parse_header(
 
 template <typename Char>
 void fmt::internal::PrintfFormatter<Char>::format(
-    BasicWriter<Char> &writer, BasicCStringRef<Char> format_str,
-    const ArgList &args) {
+    BasicWriter<Char> &writer, BasicCStringRef<Char> format_str) {
     const Char *start = format_str.c_str();
-    set_args(args);
     const Char *s = start;
     while (*s) {
         Char c = *s++;
@@ -1227,7 +1225,6 @@ const Char *fmt::BasicFormatter<Char>::format(
 
     if (*s++ != '}')
         FMT_THROW(FormatError("missing '}' in format string"));
-    start_ = s;
 
     // Format argument.
     internal::ArgFormatter<Char>(*this, spec, s - 1).visit(arg);
@@ -1235,25 +1232,24 @@ const Char *fmt::BasicFormatter<Char>::format(
 }
 
 template <typename Char>
-void fmt::BasicFormatter<Char>::format(
-    BasicCStringRef<Char> format_str, const ArgList &args) {
-    const Char *s = start_ = format_str.c_str();
-    set_args(args);
+void fmt::BasicFormatter<Char>::format(BasicCStringRef<Char> format_str) {
+    const Char *s = format_str.c_str();
+    const Char *start = s;
     while (*s) {
         Char c = *s++;
         if (c != '{' && c != '}') continue;
         if (*s == c) {
-            write(writer_, start_, s);
-            start_ = ++s;
+            write(writer_, start, s);
+            start = ++s;
             continue;
         }
         if (c == '}')
             FMT_THROW(FormatError("unmatched '}' in format string"));
-        write(writer_, start_, s - 1);
+        write(writer_, start, s - 1);
         Arg arg = is_name_start(*s) ? parse_arg_name(s) : parse_arg_index(s);
-        s = format(s, arg);
+        start = s = format(s, arg);
     }
-    write(writer_, start_, s);
+    write(writer_, start, s);
 }
 
 FMT_FUNC void fmt::report_system_error(
@@ -1310,11 +1306,10 @@ template void fmt::internal::FixedBuffer<char>::grow(std::size_t);
 template const char *fmt::BasicFormatter<char>::format(
     const char *&format_str, const fmt::internal::Arg &arg);
 
-template void fmt::BasicFormatter<char>::format(
-    CStringRef format, const ArgList &args);
+template void fmt::BasicFormatter<char>::format(CStringRef format);
 
 template void fmt::internal::PrintfFormatter<char>::format(
-    BasicWriter<char> &writer, CStringRef format, const ArgList &args);
+    BasicWriter<char> &writer, CStringRef format);
 
 template int fmt::internal::CharTraits<char>::format_float(
     char *buffer, std::size_t size, const char *format,
@@ -1332,11 +1327,10 @@ template const wchar_t *fmt::BasicFormatter<wchar_t>::format(
     const wchar_t *&format_str, const fmt::internal::Arg &arg);
 
 template void fmt::BasicFormatter<wchar_t>::format(
-    BasicCStringRef<wchar_t> format, const ArgList &args);
+    BasicCStringRef<wchar_t> format);
 
 template void fmt::internal::PrintfFormatter<wchar_t>::format(
-    BasicWriter<wchar_t> &writer, WCStringRef format,
-    const ArgList &args);
+    BasicWriter<wchar_t> &writer, WCStringRef format);
 
 template int fmt::internal::CharTraits<wchar_t>::format_float(
     wchar_t *buffer, std::size_t size, const wchar_t *format,
