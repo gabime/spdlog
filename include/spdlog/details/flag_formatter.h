@@ -21,21 +21,19 @@
 /* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     */
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
-
 #pragma once
+#include <ctime>
 
 namespace spdlog
 {
-namespace details { struct log_msg; }
-namespace sinks
+namespace details
 {
-class sink
+class log_msg;
+class flag_formatter
 {
 public:
-    virtual ~sink() {}
-    virtual void log(const details::log_msg& msg) = 0;
-    virtual void flush() = 0;
+    virtual ~flag_formatter() {}
+    virtual void format(details::log_msg& msg, const std::tm& tm_time) = 0;
 };
-}
-}
-
+} // ns details
+} // ns spdlog

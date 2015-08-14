@@ -31,9 +31,9 @@
 // 2. Format the message using the formatter function
 // 3. Pass the formatted message to its sinks to performa the actual logging
 
-#include<vector>
-#include<memory>
-#include "sinks/base_sink.h"
+#include <atomic>
+#include <vector>
+#include <memory>
 #include "common.h"
 
 namespace spdlog
@@ -42,6 +42,7 @@ namespace spdlog
 namespace details
 {
 class line_logger;
+class log_msg;
 }
 
 class logger

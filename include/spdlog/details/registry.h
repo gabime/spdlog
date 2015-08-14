@@ -27,16 +27,11 @@
 // An attempt to create a logger with an alreasy existing name will be ignored
 // If user requests a non existing logger, nullptr will be returned
 // This class is thread safe
-
-#include <string>
 #include <mutex>
 #include <unordered_map>
-#include <functional>
 
-#include "./null_mutex.h"
-#include "../logger.h"
 #include "../async_logger.h"
-#include "../common.h"
+#include "./flag_formatter.h"
 
 namespace spdlog
 {

@@ -27,7 +27,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef FMT_FORMAT_H_
 #define FMT_FORMAT_H_
+#ifndef SPDLOG_LIBRARY
 #define FMT_HEADER_ONLY
+#endif
 
 #include <stdint.h>
 

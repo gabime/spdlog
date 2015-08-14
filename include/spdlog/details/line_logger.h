@@ -26,6 +26,7 @@
 #include <type_traits>
 #include "../common.h"
 #include "../logger.h"
+#include "./os.h"
 
 // Line logger class - aggregates operator<< calls to fast ostream
 // and logs upon destruction
