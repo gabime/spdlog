@@ -82,6 +82,7 @@ public:
         _file_helper(force_flush)
     {
         _file_helper.open(calc_filename(_base_filename, 0, _extension));
+        _current_size = _file_helper.size(); //expensive. called only once
     }
 
     void flush() override

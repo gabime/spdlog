@@ -113,6 +113,29 @@ public:
 
     }
 
+    long size()
+    {
+        if (!_fd)
+            throw spdlog_ex("Cannot use size() on closed file " + _filename);
+
+        auto pos = ftell(_fd);
+        if (fseek(_fd, 0, SEEK_END) != 0)
+            throw spdlog_ex("fseek failed on file " + _filename);
+
+        auto size = ftell(_fd);
+
+        if(fseek(_fd, pos, SEEK_SET) !=0)
+            throw spdlog_ex("fseek failed on file " + _filename);
+
+        if (size == -1)
+            throw spdlog_ex("ftell failed on file " + _filename);
+
+
+        return size;
+
+
+    }
+
     const std::string& filename() const
     {
         return _filename;
@@ -131,6 +154,8 @@ public:
             return false;
         }
     }
+
+
 
 private:
     FILE* _fd;
