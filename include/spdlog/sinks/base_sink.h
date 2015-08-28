@@ -58,7 +58,6 @@ public:
         _sink_it(msg);
     }
 
-
 protected:
     virtual void _sink_it(const details::log_msg& msg) = 0;
     Mutex _mutex;

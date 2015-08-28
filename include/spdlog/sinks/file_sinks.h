@@ -47,6 +47,10 @@ public:
     {
         _file_helper.open(filename);
     }
+    void flush() override
+    {
+        _file_helper.flush();
+    }
 
 protected:
     void _sink_it(const details::log_msg& msg) override
@@ -61,8 +65,8 @@ typedef simple_file_sink<std::mutex> simple_file_sink_mt;
 typedef simple_file_sink<details::null_mutex> simple_file_sink_st;
 
 /*
- * Rotating file sink based on size
- */
+* Rotating file sink based on size
+*/
 template<class Mutex>
 class rotating_file_sink : public base_sink < Mutex >
 {
@@ -78,6 +82,12 @@ public:
         _file_helper(force_flush)
     {
         _file_helper.open(calc_filename(_base_filename, 0, _extension));
+        _current_size = _file_helper.size(); //expensive. called only once
+    }
+
+    void flush() override
+    {
+        _file_helper.flush();
     }
 
 protected:
@@ -143,8 +153,8 @@ typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
 typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
 
 /*
- * Rotating file sink based on date. rotates at midnight
- */
+* Rotating file sink based on date. rotates at midnight
+*/
 template<class Mutex>
 class daily_file_sink :public base_sink < Mutex >
 {
@@ -165,6 +175,11 @@ public:
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         _rotation_tp = _next_rotation_tp();
         _file_helper.open(calc_filename(_base_filename, _extension));
+    }
+
+    void flush() override
+    {
+        _file_helper.flush();
     }
 
 protected:

@@ -78,6 +78,9 @@ public:
         ::syslog(syslog_prio_from_level(msg), "%s", msg.formatted.str().c_str());
     }
 
+    void flush() override
+    {
+    }
 
 
 private:

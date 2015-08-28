@@ -1,0 +1,108 @@
+# Adapted from various sources, including:
+# - Louis Dionne's Hana: https://github.com/ldionne/hana
+# - Paul Fultz II's FIT: https://github.com/pfultz2/Fit
+# - Eric Niebler's range-v3: https://github.com/ericniebler/range-v3
+language: cpp
+
+# Test matrix:
+# - Build matrix per compiler: C++11/C++14 + Debug/Release
+# - Optionally: AddressSanitizer (ASAN)
+# - Valgrind: all release builds are also tested with valgrind
+# - clang 3.4, 3.5, 3.6, trunk
+#   - Note: 3.4 and trunk are tested with/without ASAN,
+#     the rest is only tested with ASAN=On.
+# - gcc 4.9, 5.0
+#
+matrix:
+  include:
+    # Test clang-3.5: C++11/C++14, Buidd=Debug/Release, ASAN=On/Off
+    - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=11 ASAN=On LIBCXX=On
+      os: linux
+      addons: &clang35
+        apt:
+          packages:
+            - clang-3.5
+            - valgrind
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-precise-3.5
+
+ 
+    - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=11 ASAN=Off LIBCXX=On
+      os: linux
+      addons: *clang35
+    
+
+
+# Test gcc-4.8: C++11, Build=Debug/Release, ASAN=Off
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11 ASAN=Off LIBCXX=Off
+      os: linux
+      addons: &gcc48
+        apt:
+          packages:
+            - g++-4.8
+            - valgrind
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11 ASAN=Off LIBCXX=Off
+      os: linux
+      addons: *gcc48
+      
+    # Test gcc-4.9: C++11, Build=Debug/Release, ASAN=Off
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug CPP=11 ASAN=Off LIBCXX=Off
+      os: linux
+      addons: &gcc49
+        apt:
+          packages:
+            - g++-4.9
+            - valgrind
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release CPP=11 ASAN=Off LIBCXX=Off
+      os: linux
+      addons: *gcc49
+
+# Install dependencies
+before_install:
+  - export CHECKOUT_PATH=`pwd`;
+  - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
+  - if [ -n "$CLANG_VERSION" ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
+  - if [ "$CLANG_VERSION" == "3.4" ]; then export CXX="/usr/local/clang-3.4/bin/clang++" CC="/usr/local/clang-3.4/bin/clang"; fi
+  - which $CXX
+  - which $CC
+  - which valgrind
+  - if [ -n "$CLANG_VERSION" ]; then sudo CXX=$CXX CC=$CC ./tests/install_libcxx.sh; fi
+
+install:
+  - cd $CHECKOUT_PATH
+
+  # Workaround for valgrind bug: https://bugs.kde.org/show_bug.cgi?id=326469.
+  # It is fixed in valgrind 3.10 so this won't be necessary if someone
+  # replaces the current valgrind (3.7) with valgrind-3.10
+  - sed -i 's/march=native/msse4.2/' example/Makefile
+
+  - if [ ! -d build ]; then mkdir build; fi
+  - export CXX_FLAGS=""
+  - export CXX_LINKER_FLAGS=""
+  - if [ -z "$BUILD_TYPE" ]; then export BUILD_TYPE=Release; fi
+  - if [ "$ASAN" == "On"]; then export CXX_FLAGS="${CXX_FLAGS} -fsanitize=address,undefined,integer -fno-omit-frame-pointer -fno-sanitize=unsigned-integer-overflow"; fi
+  - if [ -n "$CLANG_VERSION" ]; then CXX_FLAGS="${CXX_FLAGS} -D__extern_always_inline=inline"; fi
+  - if [ "$LIBCXX" == "On" ]; then CXX_FLAGS="${CXX_FLAGS} -stdlib=libc++ -I/usr/include/c++/v1/"; fi
+  - if [ "$LIBCXX" == "On" ]; then CXX_LINKER_FLAGS="${CXX_FLAGS} -L/usr/lib/ -lc++"; fi
+  - CXX_FLAGS="${CXX_FLAGS} -std=c++${CPP}"
+
+  # Build examples
+  - cd example
+  - if [ "$BUILD_TYPE" == "Release" ]; then make rebuild CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example; fi
+  - if [ "$BUILD_TYPE" == "Debug" ]; then make rebuild debug CXXFLAGS="${CXX_FLAGS} ${CXX_LINKER_FLAGS}" VERBOSE=1; export BIN=example-debug; fi
+  
+
+script:
+  - ./"${BIN}"
+  - valgrind --trace-children=yes --leak-check=full ./"${BIN}"
+  - cd $CHECKOUT_PATH/tests; make rebuild; ./tests
+
+notifications:
+  email: false

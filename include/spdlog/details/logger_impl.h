@@ -50,7 +50,9 @@ inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list si
 
 // ctor with single sink
 inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink) :
-    logger(logger_name, { single_sink }) {}
+    logger(logger_name, {
+    single_sink
+}) {}
 
 
 inline spdlog::logger::~logger() = default;
@@ -312,4 +314,7 @@ inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
     _formatter = msg_formatter;
 }
 
-
+inline void spdlog::logger::flush() {
+    for (auto& sink : _sinks)
+        sink->flush();
+}

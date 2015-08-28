@@ -195,4 +195,3 @@ inline size_t thread_id()
 } //spdlog
 
 
-

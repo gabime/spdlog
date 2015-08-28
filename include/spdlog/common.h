@@ -49,8 +49,8 @@ class sink;
 
 // Common types across the lib
 using log_clock = std::chrono::system_clock;
-using sink_ptr = std::shared_ptr < sinks::sink > ;
-using sinks_init_list = std::initializer_list < sink_ptr > ;
+using sink_ptr = std::shared_ptr < sinks::sink >;
+using sinks_init_list = std::initializer_list < sink_ptr >;
 using formatter_ptr = std::shared_ptr<spdlog::formatter>;
 
 
@@ -59,16 +59,16 @@ namespace level
 {
 typedef enum
 {
-    trace    = 0,
-    debug    = 1,
-    info     = 2,
-    notice   = 3,
-    warn     = 4,
-    err      = 5,
+    trace = 0,
+    debug = 1,
+    info = 2,
+    notice = 3,
+    warn = 4,
+    err = 5,
     critical = 6,
-    alert    = 7,
-    emerg    = 8,
-    off      = 9
+    alert = 7,
+    emerg = 8,
+    off = 9
 } level_enum;
 
 static const char* level_names[] { "trace", "debug", "info", "notice", "warning", "error", "critical", "alert", "emerg", "off"};

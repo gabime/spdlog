@@ -45,12 +45,18 @@ public:
     virtual ~ostream_sink() = default;
 
 protected:
-    virtual void _sink_it(const details::log_msg& msg) override
+    void _sink_it(const details::log_msg& msg) override
     {
         _ostream.write(msg.formatted.data(), msg.formatted.size());
         if (_force_flush)
             _ostream.flush();
     }
+
+    void flush() override
+    {
+        _ostream.flush();
+    }
+
     std::ostream& _ostream;
     bool _force_flush;
 };
