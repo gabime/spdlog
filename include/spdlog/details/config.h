@@ -1,6 +1,6 @@
 /*************************************************************************/
 /* spdlog - an extremely fast and easy to use c++11 logging library.     */
-/* Copyright (c) 2014 Gabi Melman.                                       */
+/* Copyright (c) 2015 Gabi Melman.                                       */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -21,21 +21,10 @@
 /* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     */
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
-
 #pragma once
-
-namespace spdlog
-{
-namespace details { struct log_msg; }
-namespace sinks
-{
-class sink
-{
-public:
-    virtual ~sink() {}
-    virtual void log(const details::log_msg& msg) = 0;
-    virtual void flush() = 0;
-};
-}
-}
-
+#include "../tweakme.h"
+#ifdef SPDLOG_LIBRARY
+#define SPDLOG_INLINE
+#else
+#define SPDLOG_INLINE inline
+#endif

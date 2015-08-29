@@ -22,13 +22,16 @@
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
 #pragma once
+#include <memory>
+#include <string>
+#include <vector>
 
-#include "details/log_msg.h"
 namespace spdlog
 {
 namespace details
 {
 class flag_formatter;
+class log_msg;
 }
 
 class formatter
@@ -54,5 +57,7 @@ private:
 };
 }
 
-#include "details/pattern_formatter_impl.h"
+#ifndef SPDLOG_LIBRARY
+#include "./details/pattern_formatter_impl.cc"
+#endif
 

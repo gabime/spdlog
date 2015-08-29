@@ -21,30 +21,24 @@
 /* TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     */
 /* SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 /*************************************************************************/
-
-#pragma once
-
-#include <string>
-#include <chrono>
-#include <memory>
-#include <vector>
-#include <thread>
-
-
+#ifdef SPDLOG_LIBRARY
 #include "../formatter.h"
+#else
+#pragma once
+#endif
+
+#include <mutex>
+
+#include "./flag_formatter.h"
 #include "./log_msg.h"
 #include "./os.h"
+#include "./config.h"
 
 namespace spdlog
 {
 namespace details
 {
-class flag_formatter
-{
-public:
-    virtual ~flag_formatter() {}
-    virtual void format(details::log_msg& msg, const std::tm& tm_time) = 0;
-};
+
 
 ///////////////////////////////////////////////////////////////////////
 // name & level pattern appenders
@@ -462,12 +456,12 @@ class full_formatter :public flag_formatter
 ///////////////////////////////////////////////////////////////////////////////
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern)
+SPDLOG_INLINE spdlog::pattern_formatter::pattern_formatter(const std::string& pattern)
 {
     compile_pattern(pattern);
 }
 
-inline void spdlog::pattern_formatter::compile_pattern(const std::string& pattern)
+SPDLOG_INLINE void spdlog::pattern_formatter::compile_pattern(const std::string& pattern)
 {
     auto end = pattern.end();
     std::unique_ptr<details::aggregate_formatter> user_chars;
@@ -496,7 +490,7 @@ inline void spdlog::pattern_formatter::compile_pattern(const std::string& patter
     }
 
 }
-inline void spdlog::pattern_formatter::handle_flag(char flag)
+SPDLOG_INLINE void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
@@ -623,7 +617,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 }
 
 
-inline void spdlog::pattern_formatter::format(details::log_msg& msg)
+SPDLOG_INLINE void spdlog::pattern_formatter::format(details::log_msg& msg)
 {
     try
     {

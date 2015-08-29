@@ -38,7 +38,6 @@
 #include <functional>
 #include "common.h"
 #include "logger.h"
-#include "spdlog.h"
 
 
 namespace spdlog
