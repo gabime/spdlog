@@ -28,16 +28,12 @@
 
 #pragma once
 
-
-
+#include "tweakme.h"
 #include "common.h"
 #include "logger.h"
 
-
-
 namespace spdlog
 {
-
 // Return an existing logger or nullptr if a logger with such name doesn't exist.
 // Examples:
 //
@@ -72,15 +68,15 @@ void set_level(level::level_enum log_level);
 // worker_warmup_cb (optional):
 //     callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
 //
-void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr);
+void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero());
 
 // Turn off async mode
 void set_sync_mode();
 
 //
-// Create multi/single threaded rotating file logger
+// Create and register multi/single threaded rotating file logger
 //
-std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
+std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const std::string& filenameB, size_t max_file_size, size_t max_files, bool force_flush = false);
 std::shared_ptr<logger> rotating_logger_st(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush = false);
 
 //
@@ -91,7 +87,7 @@ std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const st
 
 
 //
-// Create stdout/stderr loggers
+// Create and register stdout/stderr loggers
 //
 std::shared_ptr<logger> stdout_logger_mt(const std::string& logger_name);
 std::shared_ptr<logger> stdout_logger_st(const std::string& logger_name);
@@ -100,56 +96,58 @@ std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name);
 
 
 //
-// Create a syslog logger
+// Create and register a syslog logger
 //
 #ifdef __linux__
 std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0);
 #endif
 
 
-// Create a logger with multiple sinks
+// Create and register a logger with multiple sinks
 std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
 template<class It>
 std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
 
 
-// Create a logger with templated sink type
+// Create and register a logger with templated sink type
 // Example: spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename", "txt");
 template <typename Sink, typename... Args>
 std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&...);
 
-//
-// Trace & debug macros to be switched on/off at compile time for zero cost debug statements.
-// Note: using these mactors overrides the runtime log threshold of the logger.
-//
-// Example:
-//
-// Enable debug macro, must be defined before including spdlog.h
-// #define SPDLOG_DEBUG_ON
-// include "spdlog/spdlog.h"
-// SPDLOG_DEBUG(my_logger, "Some debug message {} {}", 1, 3.2);
-//
 
-#ifdef SPDLOG_TRACE_ON
-#define SPDLOG_TRACE(logger, ...) logger->force_log(spdlog::level::trace,  __VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
-#else
-#define SPDLOG_TRACE(logger, ...)
-#endif
-
-
-#ifdef SPDLOG_DEBUG_ON
-#define SPDLOG_DEBUG(logger, ...) logger->force_log(spdlog::level::debug, __VA_ARGS__)
-#else
-#define SPDLOG_DEBUG(logger, ...)
-#endif
-
-
+// Register the given logger with the given name
+void register_logger(std::shared_ptr<logger> logger);
 
 // Drop the reference to the given logger
 void drop(const std::string &name);
 
 // Drop all references
 void drop_all();
+
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// Macros to be display source file & line
+// Trace & Debug can be switched on/off at compile time for zero cost debug statements.
+// Uncomment SPDLOG_DEBUG_ON/SPDLOG_TRACE_ON in teakme.h to enable.
+//
+// Example:
+// spdlog::set_level(spdlog::level::debug);
+// SPDLOG_DEBUG(my_logger, "Some debug message {} {}", 1, 3.2);
+///////////////////////////////////////////////////////////////////////////////
+
+#ifdef SPDLOG_TRACE_ON
+#define SPDLOG_TRACE(logger, ...) logger->trace(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
+#else
+#define SPDLOG_TRACE(logger, ...)
+#endif
+
+#ifdef SPDLOG_DEBUG_ON
+#define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)  << " (" << __FILE__ << " #" << __LINE__ <<")";
+#else
+#define SPDLOG_DEBUG(logger, ...)
+#endif
+
 
 }
 

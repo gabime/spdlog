@@ -48,7 +48,7 @@ public:
     const int open_tries = 5;
     const int open_interval = 10;
 
-    explicit file_helper(bool force_flush):
+    explicit file_helper(bool force_flush) :
         _fd(nullptr),
         _force_flush(force_flush)
     {}
@@ -62,7 +62,7 @@ public:
     }
 
 
-    void open(const std::string& fname, bool truncate=false)
+    void open(const std::string& fname, bool truncate = false)
     {
 
         close();
@@ -70,7 +70,7 @@ public:
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
-            if(!os::fopen_s(&_fd, fname, mode))
+            if (!os::fopen_s(&_fd, fname, mode))
                 return;
 
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
@@ -81,10 +81,14 @@ public:
 
     void reopen(bool truncate)
     {
-        if(_filename.empty())
+        if (_filename.empty())
             throw spdlog_ex("Failed re opening file - was not opened before");
         open(_filename, truncate);
 
+    }
+
+    void flush() {
+        std::fflush(_fd);
     }
 
     void close()
@@ -101,11 +105,34 @@ public:
 
         size_t size = msg.formatted.size();
         auto data = msg.formatted.data();
-        if(std::fwrite(data, 1, size, _fd) != size)
+        if (std::fwrite(data, 1, size, _fd) != size)
             throw spdlog_ex("Failed writing to file " + _filename);
 
-        if(_force_flush)
+        if (_force_flush)
             std::fflush(_fd);
+
+    }
+
+    long size()
+    {
+        if (!_fd)
+            throw spdlog_ex("Cannot use size() on closed file " + _filename);
+
+        auto pos = ftell(_fd);
+        if (fseek(_fd, 0, SEEK_END) != 0)
+            throw spdlog_ex("fseek failed on file " + _filename);
+
+        auto size = ftell(_fd);
+
+        if(fseek(_fd, pos, SEEK_SET) !=0)
+            throw spdlog_ex("fseek failed on file " + _filename);
+
+        if (size == -1)
+            throw spdlog_ex("ftell failed on file " + _filename);
+
+
+        return size;
+
 
     }
 
@@ -128,6 +155,8 @@ public:
         }
     }
 
+
+
 private:
     FILE* _fd;
     std::string _filename;
@@ -137,4 +166,3 @@ private:
 };
 }
 }
-

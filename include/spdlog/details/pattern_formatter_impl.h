@@ -265,6 +265,17 @@ class f_formatter :public flag_formatter
     }
 };
 
+// nanoseconds
+class F_formatter :public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        auto duration = msg.time.time_since_epoch();
+        auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() % 1000000000;
+        msg.formatted << fmt::pad(static_cast<int>(ns), 9, '0');
+    }
+};
+
 // AM/PM
 class p_formatter :public flag_formatter
 {
@@ -354,7 +365,7 @@ class t_formatter :public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
-        msg.formatted << std::hash<std::thread::id>()(std::this_thread::get_id());
+        msg.formatted << msg.thread_id;
     }
 };
 
@@ -405,6 +416,7 @@ class full_formatter :public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
+#ifndef SPDLOG_NO_DATETIME
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
 
@@ -421,6 +433,7 @@ class full_formatter :public flag_formatter
         level::to_str(msg.level),
         msg.raw.str());*/
 
+
         // Faster (albeit uglier) way to format the line (5.6 million lines/sec under 10 threads)
         msg.formatted << '[' << static_cast<unsigned int>(tm_time.tm_year + 1900) << '-'
                       << fmt::pad(static_cast<unsigned int>(tm_time.tm_mon + 1), 2, '0') << '-'
@@ -430,7 +443,16 @@ class full_formatter :public flag_formatter
                       << fmt::pad(static_cast<unsigned int>(tm_time.tm_sec), 2, '0') << '.'
                       << fmt::pad(static_cast<unsigned int>(millis), 3, '0') << "] ";
 
-        msg.formatted << '[' << msg.logger_name << "] [" << level::to_str(msg.level) << "] ";
+//no datetime needed
+#else
+        (void)tm_time;
+#endif
+
+#ifndef SPDLOG_NO_NAME
+        msg.formatted << '[' << msg.logger_name << "] ";
+#endif
+
+        msg.formatted << '[' << level::to_str(msg.level) << "] ";
         msg.formatted << fmt::StringRef(msg.raw.data(), msg.raw.size());
     }
 };
@@ -478,7 +500,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
-        // logger name
+    // logger name
     case 'n':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::name_formatter()));
         break;
@@ -564,6 +586,9 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
     case('f') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::f_formatter()));
         break;
+    case('F') :
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::F_formatter()));
+        break;
 
     case('p') :
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::p_formatter()));
@@ -610,8 +635,8 @@ inline void spdlog::pattern_formatter::format(details::log_msg& msg)
         //write eol
         msg.formatted << details::os::eol();
     }
-    catch(const details::fmt::FormatError& e)
+    catch(const fmt::FormatError& e)
     {
-        throw spdlog_ex(details::fmt::format("formatting error while processing format string: {}", e.what()));
+        throw spdlog_ex(fmt::format("formatting error while processing format string: {}", e.what()));
     }
 }

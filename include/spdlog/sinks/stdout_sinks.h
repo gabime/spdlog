@@ -45,9 +45,14 @@ template <class Mutex>
 
 class stdout_sink : public outstream_sink<Mutex>
 {
+    using MyType = stdout_sink<Mutex>;
 public:
-    stdout_sink() : outstream_sink<Mutex>(std::cout, true) {}
-
+    stdout_sink() : ostream_sink<Mutex>(std::cout, true) {}
+    static std::shared_ptr<MyType> instance()
+    {
+        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
+        return instance;
+    }
 };
 
 typedef stdout_sink<details::null_mutex> stdout_sink_st;
@@ -57,8 +62,15 @@ typedef stdout_sink<std::mutex> stdout_sink_mt;
 template <class Mutex>
 class stderr_sink : public outstream_sink<Mutex>
 {
+    using MyType = stderr_sink<Mutex>;
 public:
-    stderr_sink() : outstream_sink<Mutex>(std::cerr, true) {}
+    stderr_sink() : ostream_sink<Mutex>(std::cerr, true) {}
+    static std::shared_ptr<MyType> instance()
+    {
+        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
+        return instance;
+    }
+
 };
 
 typedef stderr_sink<std::mutex> stderr_sink_mt;

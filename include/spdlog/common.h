@@ -36,13 +36,6 @@
 #define SPDLOG_NOEXCEPT throw()
 #endif
 
-// under linux, you can use the much faster CLOCK_REALTIME_COARSE clock.
-// this clock is less accurate - can be off by few millis - depending on the kernel HZ
-// uncomment to use it instead of the regular (and slower) clock
-
-//#ifdef __linux__
-//#define SPDLOG_CLOCK_COARSE
-//#endif
 
 namespace spdlog
 {
@@ -56,25 +49,26 @@ class sink;
 
 // Common types across the lib
 using log_clock = std::chrono::system_clock;
-using sink_ptr = std::shared_ptr < sinks::sink > ;
-using sinks_init_list = std::initializer_list < sink_ptr > ;
+using sink_ptr = std::shared_ptr < sinks::sink >;
+using sinks_init_list = std::initializer_list < sink_ptr >;
 using formatter_ptr = std::shared_ptr<spdlog::formatter>;
+
 
 //Log level enum
 namespace level
 {
 typedef enum
 {
-    trace    = 0,
-    debug    = 1,
-    info     = 2,
-    notice   = 3,
-    warn     = 4,
-    err      = 5,
+    trace = 0,
+    debug = 1,
+    info = 2,
+    notice = 3,
+    warn = 4,
+    err = 5,
     critical = 6,
-    alert    = 7,
-    emerg    = 8,
-    off      = 9
+    alert = 7,
+    emerg = 8,
+    off = 9
 } level_enum;
 
 static const char* level_names[] { "trace", "debug", "info", "notice", "warning", "error", "critical", "alert", "emerg", "off"};

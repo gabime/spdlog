@@ -43,6 +43,7 @@
 #include "./mpmc_bounded_q.h"
 #include "./log_msg.h"
 #include "./format.h"
+#include "os.h"
 
 
 namespace spdlog
@@ -59,16 +60,17 @@ class async_log_helper
         std::string logger_name;
         level::level_enum level;
         log_clock::time_point time;
+        size_t thread_id;
         std::string txt;
 
         async_msg() = default;
         ~async_msg() = default;
 
-        async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
-            logger_name(std::move(other.logger_name)),
-            level(std::move(other.level)),
-            time(std::move(other.time)),
-            txt(std::move(other.txt))
+async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
+        logger_name(std::move(other.logger_name)),
+                    level(std::move(other.level)),
+                    time(std::move(other.time)),
+                    txt(std::move(other.txt))
         {}
 
         async_msg& operator=(async_msg&& other) SPDLOG_NOEXCEPT
@@ -76,6 +78,7 @@ class async_log_helper
             logger_name = std::move(other.logger_name);
             level = other.level;
             time = std::move(other.time);
+            thread_id = other.thread_id;
             txt = std::move(other.txt);
             return *this;
         }
@@ -88,6 +91,7 @@ class async_log_helper
             logger_name(m.logger_name),
             level(m.level),
             time(m.time),
+            thread_id(m.thread_id),
             txt(m.raw.data(), m.raw.size())
         {}
 
@@ -99,6 +103,7 @@ class async_log_helper
             msg.logger_name = logger_name;
             msg.level = level;
             msg.time = time;
+            msg.thread_id = thread_id;
             msg.raw << txt;
         }
     };
@@ -115,7 +120,8 @@ public:
                      const std::vector<sink_ptr>& sinks,
                      size_t queue_size,
                      const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-                     const std::function<void()>& worker_warmup_cb = nullptr);
+                     const std::function<void()>& worker_warmup_cb = nullptr,
+                     const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero());
 
     void log(const details::log_msg& msg);
 
@@ -141,6 +147,9 @@ private:
     // worker thread warmup callback - one can set thread priority, affinity, etc
     const std::function<void()> _worker_warmup_cb;
 
+    // auto periodic sink flush parameter
+    const std::chrono::milliseconds _flush_interval_ms;
+
     // worker thread
     std::thread _worker_thread;
 
@@ -152,10 +161,14 @@ private:
 
     // pop next message from the queue and process it
     // return true if a message was available (queue was not empty), will set the last_pop to the pop time
-    bool process_next_msg(clock::time_point& last_pop);
+    bool process_next_msg(log_clock::time_point& last_pop, log_clock::time_point& last_flush);
+
+    void handle_flush_interval(log_clock::time_point& now, log_clock::time_point& last_flush);
 
     // sleep,yield or return immediatly using the time passed since last message as a hint
-    static void sleep_or_yield(const clock::time_point& last_op_time);
+    static void sleep_or_yield(const spdlog::log_clock::time_point& now, const log_clock::time_point& last_op_time);
+
+
 
 };
 }
@@ -164,12 +177,13 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb):
+inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms):
     _formatter(formatter),
     _sinks(sinks),
     _q(queue_size),
     _overflow_policy(overflow_policy),
     _worker_warmup_cb(worker_warmup_cb),
+    _flush_interval_ms(flush_interval_ms),
     _worker_thread(&async_log_helper::worker_loop, this)
 {}
 
@@ -195,10 +209,12 @@ inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
     async_msg new_msg(msg);
     if (!_q.enqueue(std::move(new_msg)) && _overflow_policy != async_overflow_policy::discard_log_msg)
     {
-        auto last_op_time = clock::now();
+        auto last_op_time = details::os::now();
+        auto now = last_op_time;
         do
         {
-            sleep_or_yield(last_op_time);
+            now = details::os::now();
+            sleep_or_yield(now, last_op_time);
         }
         while (!_q.enqueue(std::move(new_msg)));
     }
@@ -210,8 +226,9 @@ inline void spdlog::details::async_log_helper::worker_loop()
     try
     {
         if (_worker_warmup_cb) _worker_warmup_cb();
-        clock::time_point last_pop = clock::now();
-        while(process_next_msg(last_pop));
+        auto last_pop = details::os::now();
+        auto last_flush = last_pop;
+        while(process_next_msg(last_pop, last_flush));
     }
     catch (const std::exception& ex)
     {
@@ -225,7 +242,7 @@ inline void spdlog::details::async_log_helper::worker_loop()
 
 // process next message in the queue
 // return true if this thread should still be active (no msg with level::off was received)
-inline bool spdlog::details::async_log_helper::process_next_msg(clock::time_point& last_pop)
+inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_point& last_pop, log_clock::time_point& last_flush)
 {
 
     async_msg incoming_async_msg;
@@ -233,7 +250,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg(clock::time_poin
 
     if (_q.dequeue(incoming_async_msg))
     {
-        last_pop = clock::now();
+        last_pop = details::os::now();
 
         if(incoming_async_msg.level == level::off)
             return false;
@@ -245,11 +262,22 @@ inline bool spdlog::details::async_log_helper::process_next_msg(clock::time_poin
     }
     else //empty queue
     {
-        sleep_or_yield(last_pop);
+        auto now = details::os::now();
+        handle_flush_interval(now, last_flush);
+        sleep_or_yield(now, last_pop);
     }
     return true;
 }
 
+inline void spdlog::details::async_log_helper::handle_flush_interval(log_clock::time_point& now, log_clock::time_point& last_flush)
+{
+    if (_flush_interval_ms != std::chrono::milliseconds::zero() && now - last_flush >= _flush_interval_ms)
+    {
+        for (auto &s : _sinks)
+            s->flush();
+        now = last_flush = details::os::now();
+    }
+}
 inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
 {
     _formatter = msg_formatter;
@@ -257,12 +285,12 @@ inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_f
 
 
 // sleep,yield or return immediatly using the time passed since last message as a hint
-inline void spdlog::details::async_log_helper::sleep_or_yield(const clock::time_point& last_op_time)
+inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_clock::time_point& now, const spdlog::log_clock::time_point& last_op_time)
 {
     using std::chrono::milliseconds;
     using namespace std::this_thread;
 
-    auto time_since_op = clock::now() - last_op_time;
+    auto time_since_op = now - last_op_time;
 
     // spin upto 1 ms
     if (time_since_op <= milliseconds(1))

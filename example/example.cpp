@@ -93,7 +93,7 @@ int main(int, char*[])
         spdlog::set_async_mode(q_size);
         auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
         async_file->info() << "This is async log.." << "Should be very fast!";
-
+        spdlog::drop_all(); //Close all loggers
         //
         // syslog example. linux only..
         //
@@ -112,7 +112,8 @@ int main(int, char*[])
 
 // Example of user defined class with operator<<
 class some_class {};
-std::ostream& operator<<(std::ostream& os, const some_class&) {
+std::ostream& operator<<(std::ostream& os, const some_class&)
+{
     return os << "some_class";
 }
 
