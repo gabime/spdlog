@@ -183,6 +183,9 @@ inline size_t thread_id()
 #ifdef _WIN32
     return  static_cast<size_t>(::GetCurrentThreadId());
 #elif __linux__
+# if defined(__ANDROID__) && defined(__ANDROID_API__) && (__ANDROID_API__ < 21)
+#  define SYS_gettid __NR_gettid
+# endif
     return  static_cast<size_t>(syscall(SYS_gettid));
 #else //Default to standard C++11 (OSX and other Unix)
     return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
