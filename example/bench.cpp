@@ -25,11 +25,12 @@
 //
 // bench.cpp : spdlog benchmarks
 //
+#include <atomic>
+#include <cstdlib> // EXIT_FAILURE
 #include <iostream>
 #include <memory>
 #include <string>
 #include <thread>
-#include <atomic>
 #include "spdlog/spdlog.h"
 #include "spdlog/async_logger.h"
 #include "spdlog/sinks/file_sinks.h"
@@ -108,8 +109,9 @@ int main(int argc, char* argv[])
     {
         std::cerr << "Error: " << ex.what() << std::endl;
         perror("Last error");
+        return EXIT_FAILURE;
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 
