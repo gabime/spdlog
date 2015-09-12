@@ -1,6 +1,6 @@
 /*************************************************************************/
 /* spdlog - an extremely fast and easy to use c++11 logging library.     */
-/* Copyright (c) 2014 Gabi Melman.                                       */
+/* Copyright (c) 2015 Francois Coulombe.                                       */
 /*                                                                       */
 /* Permission is hereby granted, free of charge, to any person obtaining */
 /* a copy of this software and associated documentation files (the       */
@@ -23,57 +23,55 @@
 /*************************************************************************/
 
 #pragma once
-
-#include <iostream>
+#ifdef __ANDROID__
+#include <ostream>
 #include <mutex>
-
-#include "./android_sink.h"
-#include "./ostream_sink.h"
+#include <memory>
+#include <android/log.h>
 #include "../details/null_mutex.h"
+#include "./base_sink.h"
+
 
 namespace spdlog
 {
 namespace sinks
 {
+template<class Mutex>
+class android_sink: public base_sink<Mutex>
+{
+public:
+    explicit android_sink(std::ostream& /*os*/, bool force_flush=false)
+    ://_ostream(os),
+    _force_flush(force_flush) {}
+    android_sink(const android_sink&) = delete;
+    android_sink& operator=(const android_sink&) = delete;
+    virtual ~android_sink() = default;
 
-template <class Mutex>
-#ifdef __ANDROID__
-#	define outstream_sink android_sink
-#else
-#	define outstream_sink ostream_sink
+protected:
+    virtual void _sink_it(const details::log_msg& msg) override
+    {
+        constexpr int LogLevelMapping[] =
+        {
+            ANDROID_LOG_VERBOSE,
+            ANDROID_LOG_DEBUG,
+            ANDROID_LOG_INFO,
+            ANDROID_LOG_INFO,
+            ANDROID_LOG_WARN,
+            ANDROID_LOG_ERROR,
+            ANDROID_LOG_FATAL,
+            ANDROID_LOG_FATAL,
+            ANDROID_LOG_FATAL,
+            ANDROID_LOG_SILENT,
+        };
+        ((void)__android_log_print(LogLevelMapping[msg.level], msg.logger_name.c_str(), msg.formatted.data()));
+    }
+
+    //std::ostream& _ostream;
+    bool _force_flush;
+};
+
+typedef android_sink<std::mutex> android_sink_mt;
+typedef android_sink<details::null_mutex> android_sink_st;
+}
+}
 #endif
-
-class stdout_sink : public outstream_sink<Mutex>
-{
-    using MyType = stdout_sink<Mutex>;
-public:
-    stdout_sink() : ostream_sink<Mutex>(std::cout, true) {}
-    static std::shared_ptr<MyType> instance()
-    {
-        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
-        return instance;
-    }
-};
-
-typedef stdout_sink<details::null_mutex> stdout_sink_st;
-typedef stdout_sink<std::mutex> stdout_sink_mt;
-
-
-template <class Mutex>
-class stderr_sink : public outstream_sink<Mutex>
-{
-    using MyType = stderr_sink<Mutex>;
-public:
-    stderr_sink() : ostream_sink<Mutex>(std::cerr, true) {}
-    static std::shared_ptr<MyType> instance()
-    {
-        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
-        return instance;
-    }
-
-};
-
-typedef stderr_sink<std::mutex> stderr_sink_mt;
-typedef stderr_sink<details::null_mutex> stderr_sink_st;
-}
-}
