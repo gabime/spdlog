@@ -55,10 +55,6 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        if (msg.level == spdlog::level::off)
-        {
-            return;
-        }
         const android_LogPriority priority = convert_to_android(msg.level);
         const int expected_size = msg.formatted.size();
         const int size = __android_log_write(
