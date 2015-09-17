@@ -60,6 +60,7 @@ protected:
 public:
     void flush() override
     {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         for (auto iter = _sinks.begin(); iter != _sinks.end(); iter++)
             (*iter)->flush();
     }
