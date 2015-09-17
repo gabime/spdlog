@@ -225,7 +225,7 @@ class I_formatter :public flag_formatter
     }
 };
 
-// ninutes 0-59
+// minutes 0-59
 class M_formatter :public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
