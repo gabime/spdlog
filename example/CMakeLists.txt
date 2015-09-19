@@ -32,6 +32,11 @@ else()
   find_package(spdlog CONFIG REQUIRED)
 endif()
 
+if (CMAKE_COMPILER_IS_GNUCXX)
+  set ( CMAKE_CXX_FLAGS "--std=c++11 -pthread")  
+  set ( CMAKE_EXE_LIKKER_FLAGS "-pthread")  
+endif ()
+
 add_executable(example example.cpp)
 target_link_libraries(example spdlog::spdlog)
 
