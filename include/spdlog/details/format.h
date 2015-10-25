@@ -947,7 +947,9 @@ class MakeValue : public Arg {
 
   FMT_MAKE_VALUE(bool, int_value, BOOL)
   FMT_MAKE_VALUE(short, int_value, INT)
+#if !defined(_MSC_VER) || defined(_NATIVE_WCHAR_T_DEFINED)
   FMT_MAKE_VALUE(unsigned short, uint_value, UINT)
+#endif
   FMT_MAKE_VALUE(int, int_value, INT)
   FMT_MAKE_VALUE(unsigned, uint_value, UINT)
 
