@@ -108,7 +108,7 @@ inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_
 
 
 template <typename Sink, typename... Args>
-inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_name, const Args&... args)
+inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_name, Args&... args)
 {
     sink_ptr sink = std::make_shared<Sink>(args...);
     return details::registry::instance().create(logger_name, { sink });
