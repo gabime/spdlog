@@ -52,10 +52,10 @@
 using fmt::internal::Arg;
 
 // Check if exceptions are disabled.
-#if __GNUC__ && !__EXCEPTIONS
+#if defined(__GNUC__) && !defined(__EXCEPTIONS)
 # define FMT_EXCEPTIONS 0
 #endif
-#if _MSC_VER && !_HAS_EXCEPTIONS
+#if defined(_MSC_VER) && !_HAS_EXCEPTIONS
 # define FMT_EXCEPTIONS 0
 #endif
 #ifndef FMT_EXCEPTIONS
@@ -84,7 +84,7 @@ using fmt::internal::Arg;
 # define FMT_FUNC
 #endif
 
-#if _MSC_VER
+#ifdef _MSC_VER
 # pragma warning(push)
 # pragma warning(disable: 4127)  // conditional expression is constant
 # pragma warning(disable: 4702)  // unreachable code
@@ -142,6 +142,7 @@ struct IntChecker<true> {
   static bool fits_in_int(T value) {
     return value >= INT_MIN && value <= INT_MAX;
   }
+  static bool fits_in_int(int) { return true; }
 };
 
 const char RESET_COLOR[] = "\x1b[0m";
@@ -443,18 +444,20 @@ class BasicArgFormatter : public ArgVisitor<Impl, void> {
     typedef typename BasicWriter<Char>::CharPtr CharPtr;
     Char fill = internal::CharTraits<Char>::cast(spec_.fill());
     CharPtr out = CharPtr();
-    if (spec_.width_ > 1) {
+    const unsigned CHAR_WIDTH = 1;
+    if (spec_.width_ > CHAR_WIDTH) {
       out = writer_.grow_buffer(spec_.width_);
       if (spec_.align_ == ALIGN_RIGHT) {
-        std::fill_n(out, spec_.width_ - 1, fill);
-        out += spec_.width_ - 1;
+        std::fill_n(out, spec_.width_ - CHAR_WIDTH, fill);
+        out += spec_.width_ - CHAR_WIDTH;
       } else if (spec_.align_ == ALIGN_CENTER) {
-        out = writer_.fill_padding(out, spec_.width_, 1, fill);
+        out = writer_.fill_padding(out, spec_.width_,
+                                   internal::check(CHAR_WIDTH), fill);
       } else {
-        std::fill_n(out + 1, spec_.width_ - 1, fill);
+        std::fill_n(out + CHAR_WIDTH, spec_.width_ - CHAR_WIDTH, fill);
       }
     } else {
-      out = writer_.grow_buffer(1);
+      out = writer_.grow_buffer(CHAR_WIDTH);
     }
     *out = internal::CharTraits<Char>::cast(value);
   }
@@ -522,6 +525,13 @@ class PrintfArgFormatter :
       out = w.grow_buffer(1);
     }
     *out = static_cast<Char>(value);
+  }
+
+  void visit_custom(Arg::CustomValue c) {
+    BasicFormatter<Char> formatter(ArgList(), this->writer());
+    const Char format_str[] = {'}', 0};
+    const Char *format = format_str;
+    c.format(&formatter, c.value, &format);
   }
 };
 }  // namespace internal
@@ -773,8 +783,10 @@ void fmt::BasicWriter<Char>::write_str(
   const StrChar *str_value = s.value;
   std::size_t str_size = s.size;
   if (str_size == 0) {
-    if (!str_value)
+    if (!str_value) {
       FMT_THROW(FormatError("string pointer is null"));
+      return;
+    }
     if (*str_value)
       str_size = std::char_traits<StrChar>::length(str_value);
   }
@@ -1253,7 +1265,7 @@ FMT_FUNC void fmt::print(std::ostream &os, CStringRef format_str, ArgList args) 
 
 FMT_FUNC void fmt::print_colored(Color c, CStringRef format, ArgList args) {
   char escape[] = "\x1b[30m";
-  escape[3] = '0' + static_cast<char>(c);
+  escape[3] = static_cast<char>('0' + c);
   std::fputs(escape, stdout);
   print(format, args);
   std::fputs(RESET_COLOR, stdout);
@@ -1313,6 +1325,6 @@ template int fmt::internal::CharTraits<wchar_t>::format_float(
 
 #endif  // FMT_HEADER_ONLY
 
-#if _MSC_VER
+#ifdef _MSC_VER
 # pragma warning(pop)
 #endif

@@ -39,10 +39,23 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
-#include <sstream>
 #include <map>
 
-#if _SECURE_SCL
+#ifndef FMT_USE_IOSTREAMS
+# define FMT_USE_IOSTREAMS 1
+#endif
+
+#if FMT_USE_IOSTREAMS
+# include <sstream>
+#endif
+
+#ifdef _SECURE_SCL
+# define FMT_SECURE_SCL _SECURE_SCL
+#else
+# define FMT_SECURE_SCL 0
+#endif
+
+#if FMT_SECURE_SCL
 # include <iterator>
 #endif
 
@@ -93,6 +106,9 @@ inline uint32_t clzll(uint64_t x) {
 // Disable the warning about declaration shadowing because it affects too
 // many valid cases.
 #  pragma GCC diagnostic ignored "-Wshadow"
+// Disable the warning about implicit conversions that may change the sign of
+// an integer; silencing it otherwise would require many explicit casts.
+#  pragma GCC diagnostic ignored "-Wsign-conversion"
 # endif
 # if __cplusplus >= 201103L || defined __GXX_EXPERIMENTAL_CXX0X__
 #  define FMT_HAS_GXX_CXX11 1
@@ -154,9 +170,14 @@ inline uint32_t clzll(uint64_t x) {
 #endif
 
 // Define FMT_USE_NOEXCEPT to make C++ Format use noexcept (C++11 feature).
+#ifndef FMT_USE_NOEXCEPT
+# define FMT_USE_NOEXCEPT 0
+#endif
+
 #ifndef FMT_NOEXCEPT
 # if FMT_USE_NOEXCEPT || FMT_HAS_FEATURE(cxx_noexcept) || \
-   (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11)
+   (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11) || \
+   _MSC_VER >= 1900
 #  define FMT_NOEXCEPT noexcept
 # else
 #  define FMT_NOEXCEPT throw()
@@ -165,6 +186,10 @@ inline uint32_t clzll(uint64_t x) {
 
 // A macro to disallow the copy constructor and operator= functions
 // This should be used in the private: declarations for a class
+#ifndef FMT_USE_DELETED_FUNCTIONS
+# define FMT_USE_DELETED_FUNCTIONS 0
+#endif
+
 #if FMT_USE_DELETED_FUNCTIONS || FMT_HAS_FEATURE(cxx_deleted_functions) || \
   (FMT_GCC_VERSION >= 404 && FMT_HAS_GXX_CXX11) || _MSC_VER >= 1800
 # define FMT_DELETED_OR_UNDEFINED  = delete
@@ -176,6 +201,16 @@ inline uint32_t clzll(uint64_t x) {
 # define FMT_DISALLOW_COPY_AND_ASSIGN(TypeName) \
     TypeName(const TypeName&); \
     TypeName& operator=(const TypeName&)
+#endif
+
+#ifndef FMT_USE_USER_DEFINED_LITERALS
+// All compilers which support UDLs also support variadic templates. This
+// makes the fmt::literals implementation easier. However, an explicit check
+// for variadic templates is added here just in case.
+# define FMT_USE_USER_DEFINED_LITERALS \
+   FMT_USE_VARIADIC_TEMPLATES && \
+   (FMT_HAS_FEATURE(cxx_user_literals) || \
+       (FMT_GCC_VERSION >= 407 && FMT_HAS_GXX_CXX11) || _MSC_VER >= 1900)
 #endif
 
 #ifndef FMT_ASSERT
@@ -271,21 +306,37 @@ class BasicStringRef {
   /** Returns the string size. */
   std::size_t size() const { return size_; }
 
+  // Lexicographically compare this string reference to other.
+  int compare(BasicStringRef other) const {
+    std::size_t size = std::min(size_, other.size_);
+    int result = std::char_traits<Char>::compare(data_, other.data_, size);
+    if (result == 0)
+      result = size_ == other.size_ ? 0 : (size_ < other.size_ ? -1 : 1);
+    return result;
+  }
+
   friend bool operator==(BasicStringRef lhs, BasicStringRef rhs) {
-    return lhs.data_ == rhs.data_;
+    return lhs.compare(rhs) == 0;
   }
   friend bool operator!=(BasicStringRef lhs, BasicStringRef rhs) {
-    return lhs.data_ != rhs.data_;
+    return lhs.compare(rhs) != 0;
   }
   friend bool operator<(BasicStringRef lhs, BasicStringRef rhs) {
-    return std::lexicographical_compare(
-          lhs.data_, lhs.data_ + lhs.size_, rhs.data_, rhs.data_ + rhs.size_);
+    return lhs.compare(rhs) < 0;
+  }
+  friend bool operator<=(BasicStringRef lhs, BasicStringRef rhs) {
+    return lhs.compare(rhs) <= 0;
+  }
+  friend bool operator>(BasicStringRef lhs, BasicStringRef rhs) {
+    return lhs.compare(rhs) > 0;
+  }
+  friend bool operator>=(BasicStringRef lhs, BasicStringRef rhs) {
+    return lhs.compare(rhs) >= 0;
   }
 };
 
 typedef BasicStringRef<char> StringRef;
 typedef BasicStringRef<wchar_t> WStringRef;
-
 
 /**
   \rst
@@ -349,7 +400,7 @@ namespace internal {
 // to avoid dynamic memory allocation.
 enum { INLINE_BUFFER_SIZE = 500 };
 
-#if _SECURE_SCL
+#if FMT_SECURE_SCL
 // Use checked iterator to avoid warnings on MSVC.
 template <typename T>
 inline stdext::checked_array_iterator<T*> make_ptr(T *ptr, std::size_t size) {
@@ -450,9 +501,9 @@ class MemoryBuffer : private Allocator, public Buffer<T> {
  private:
   T data_[SIZE];
 
-  // Free memory allocated by the buffer.
-  void free() {
-    if (this->ptr_ != data_) this->deallocate(this->ptr_, this->capacity_);
+  // Deallocate memory allocated by the buffer.
+  void deallocate() {
+    if (this->ptr_ != data_) Allocator::deallocate(this->ptr_, this->capacity_);
   }
 
  protected:
@@ -461,7 +512,7 @@ class MemoryBuffer : private Allocator, public Buffer<T> {
  public:
   explicit MemoryBuffer(const Allocator &alloc = Allocator())
       : Allocator(alloc), Buffer<T>(data_, SIZE) {}
-  ~MemoryBuffer() { free(); }
+  ~MemoryBuffer() { deallocate(); }
 
 #if FMT_USE_RVALUE_REFERENCES
  private:
@@ -478,7 +529,7 @@ class MemoryBuffer : private Allocator, public Buffer<T> {
     } else {
       this->ptr_ = other.ptr_;
       // Set pointer to the inline array so that delete is not called
-      // when freeing.
+      // when deallocating.
       other.ptr_ = other.data_;
     }
   }
@@ -490,7 +541,7 @@ class MemoryBuffer : private Allocator, public Buffer<T> {
 
   MemoryBuffer &operator=(MemoryBuffer &&other) {
     assert(this != &other);
-    free();
+    deallocate();
     move(other);
     return *this;
   }
@@ -516,7 +567,7 @@ void MemoryBuffer<T, SIZE, Allocator>::grow(std::size_t size) {
   // the buffer already uses the new storage and will deallocate it in case
   // of exception.
   if (old_ptr != data_)
-    this->deallocate(old_ptr, old_capacity);
+    Allocator::deallocate(old_ptr, old_capacity);
 }
 
 // A fixed-size buffer.
@@ -549,6 +600,15 @@ inline int isinfinity(long double x) { return isinf(x); }
 inline int isinfinity(double x) { return std::isinf(x); }
 inline int isinfinity(long double x) { return std::isinf(x); }
 # endif
+
+// Portable version of isnan.
+# ifdef isnan
+inline int isnotanumber(double x) { return isnan(x); }
+inline int isnotanumber(long double x) { return isnan(x); }
+# else
+inline int isnotanumber(double x) { return std::isnan(x); }
+inline int isnotanumber(long double x) { return std::isnan(x); }
+# endif
 #else
 inline int getsign(double value) {
   if (value < 0) return 1;
@@ -562,12 +622,16 @@ inline int isinfinity(double x) { return !_finite(x); }
 inline int isinfinity(long double x) {
   return !_finite(static_cast<double>(x));
 }
+inline int isnotanumber(double x) { return _isnan(x); }
+inline int isnotanumber(long double x) {
+    return _isnan(static_cast<double>(x));
+}
 #endif
 
 template <typename Char>
 class BasicCharTraits {
  public:
-#if _SECURE_SCL
+#if FMT_SECURE_SCL
   typedef stdext::checked_array_iterator<Char*> CharPtr;
 #else
   typedef Char *CharPtr;
@@ -718,7 +782,7 @@ inline void format_decimal(Char *buffer, UInt value, unsigned num_digits) {
     // Integer division is slow so do it for a group of two digits instead
     // of for every digit. The idea comes from the talk by Alexandrescu
     // "Three Optimization Tips for C++". See speed-test for a comparison.
-    unsigned index = (value % 100) * 2;
+    unsigned index = static_cast<unsigned>((value % 100) * 2);
     value /= 100;
     *--buffer = Data::DIGITS[index + 1];
     *--buffer = Data::DIGITS[index];
@@ -851,7 +915,7 @@ struct WCharHelper<T, wchar_t> {
 
 template <typename T>
 class IsConvertibleToInt {
- private:
+ protected:
   typedef char yes[1];
   typedef char no[2];
 
@@ -890,7 +954,8 @@ struct Conditional<false, T, F> { typedef F type; };
 
 // A helper function to suppress bogus "conditional expression is constant"
 // warnings.
-inline bool check(bool value) { return value; }
+template <typename T>
+inline T check(T value) { return value; }
 
 // Makes an Arg object from any type.
 template <typename Char>
@@ -910,7 +975,9 @@ class MakeValue : public Arg {
   // characters and strings into narrow strings as in
   //   fmt::format("{}", L"test");
   // To fix this, use a wide format string: fmt::format(L"{}", L"test").
+#if !defined(_MSC_VER) || defined(_NATIVE_WCHAR_T_DEFINED)
   MakeValue(typename WCharHelper<wchar_t, Char>::Unsupported);
+#endif
   MakeValue(typename WCharHelper<wchar_t *, Char>::Unsupported);
   MakeValue(typename WCharHelper<const wchar_t *, Char>::Unsupported);
   MakeValue(typename WCharHelper<const std::wstring &, Char>::Unsupported);
@@ -983,10 +1050,12 @@ class MakeValue : public Arg {
   FMT_MAKE_VALUE(unsigned char, int_value, CHAR)
   FMT_MAKE_VALUE(char, int_value, CHAR)
 
+#if !defined(_MSC_VER) || defined(_NATIVE_WCHAR_T_DEFINED)
   MakeValue(typename WCharHelper<wchar_t, Char>::Supported value) {
     int_value = value;
   }
   static uint64_t type(wchar_t) { return Arg::CHAR; }
+#endif
 
 #define FMT_MAKE_STR_VALUE(Type, TYPE) \
   MakeValue(Type value) { set_string(value); } \
@@ -1047,7 +1116,7 @@ struct NamedArg : Arg {
 
   template <typename T>
   NamedArg(BasicStringRef<Char> argname, const T &value)
-  : name(argname), Arg(MakeValue<Char>(value)) {
+  : Arg(MakeValue<Char>(value)), name(argname) {
     type = static_cast<internal::Arg::Type>(MakeValue<Char>::type(value));
   }
 };
@@ -1847,7 +1916,7 @@ class BasicWriter {
 
   typedef typename internal::CharTraits<Char>::CharPtr CharPtr;
 
-#if _SECURE_SCL
+#if FMT_SECURE_SCL
   // Returns pointer value.
   static Char *get(CharPtr p) { return p.base(); }
 #else
@@ -2265,7 +2334,7 @@ void BasicWriter<Char>::write_int(T value, Spec spec) {
     Char *p = get(prepare_int_buffer(num_digits, spec, prefix, prefix_size));
     n = abs_value;
     do {
-      *p-- = '0' + (n & 1);
+      *p-- = static_cast<Char>('0' + (n & 1));
     } while ((n >>= 1) != 0);
     break;
   }
@@ -2280,7 +2349,7 @@ void BasicWriter<Char>::write_int(T value, Spec spec) {
     Char *p = get(prepare_int_buffer(num_digits, spec, prefix, prefix_size));
     n = abs_value;
     do {
-      *p-- = '0' + (n & 7);
+      *p-- = static_cast<Char>('0' + (n & 7));
     } while ((n >>= 3) != 0);
     break;
   }
@@ -2328,7 +2397,7 @@ void BasicWriter<Char>::write_double(
     sign = spec.flag(PLUS_FLAG) ? '+' : ' ';
   }
 
-  if (value != value) {
+  if (internal::isnotanumber(value)) {
     // Format NaN ourselves because sprintf's output is not consistent
     // across platforms.
     std::size_t nan_size = 4;
@@ -2396,7 +2465,7 @@ void BasicWriter<Char>::write_double(
   Char fill = internal::CharTraits<Char>::cast(spec.fill());
   for (;;) {
     std::size_t buffer_size = buffer_.capacity() - offset;
-#if _MSC_VER
+#ifdef _MSC_VER
     // MSVC's vsnprintf_s doesn't work with zero size, so reserve
     // space for at least one extra character to make the size non-zero.
     // Note that the buffer's capacity will increase by more than 1.
@@ -2677,17 +2746,6 @@ void print(std::FILE *f, CStringRef format_str, ArgList args);
  */
 void print(CStringRef format_str, ArgList args);
 
-/**
-  \rst
-  Prints formatted data to the stream *os*.
-
-  **Example**::
-
-    print(cerr, "Don't {}!", "panic");
-  \endrst
- */
-void print(std::ostream &os, CStringRef format_str, ArgList args);
-
 template <typename Char>
 void printf(BasicWriter<Char> &w, BasicCStringRef<Char> format, ArgList args) {
   internal::PrintfFormatter<Char>(args).format(w, format);
@@ -2704,6 +2762,12 @@ void printf(BasicWriter<Char> &w, BasicCStringRef<Char> format, ArgList args) {
 */
 inline std::string sprintf(CStringRef format, ArgList args) {
   MemoryWriter w;
+  printf(w, format, args);
+  return w.str();
+}
+
+inline std::wstring sprintf(WCStringRef format, ArgList args) {
+  WMemoryWriter w;
   printf(w, format, args);
   return w.str();
 }
@@ -2750,7 +2814,7 @@ class FormatInt {
       // Integer division is slow so do it for a group of two digits instead
       // of for every digit. The idea comes from the talk by Alexandrescu
       // "Three Optimization Tips for C++". See speed-test for a comparison.
-      unsigned index = (value % 100) * 2;
+      unsigned index = static_cast<unsigned>((value % 100) * 2);
       value /= 100;
       *--buffer_end = internal::Data::DIGITS[index + 1];
       *--buffer_end = internal::Data::DIGITS[index];
@@ -2993,12 +3057,90 @@ FMT_VARIADIC(std::string, format, CStringRef)
 FMT_VARIADIC_W(std::wstring, format, WCStringRef)
 FMT_VARIADIC(void, print, CStringRef)
 FMT_VARIADIC(void, print, std::FILE *, CStringRef)
-FMT_VARIADIC(void, print, std::ostream &, CStringRef)
+
 FMT_VARIADIC(void, print_colored, Color, CStringRef)
 FMT_VARIADIC(std::string, sprintf, CStringRef)
+FMT_VARIADIC_W(std::wstring, sprintf, WCStringRef)
 FMT_VARIADIC(int, printf, CStringRef)
 FMT_VARIADIC(int, fprintf, std::FILE *, CStringRef)
-}
+
+#if FMT_USE_IOSTREAMS
+/**
+  \rst
+  Prints formatted data to the stream *os*.
+
+  **Example**::
+
+    print(cerr, "Don't {}!", "panic");
+  \endrst
+ */
+void print(std::ostream &os, CStringRef format_str, ArgList args);
+FMT_VARIADIC(void, print, std::ostream &, CStringRef)
+#endif
+}  // namespace fmt
+
+#if FMT_USE_USER_DEFINED_LITERALS
+namespace fmt {
+namespace internal {
+
+template <typename Char>
+struct UdlFormat {
+  const Char *str;
+
+  template <typename... Args>
+  auto operator()(Args && ... args) const
+                  -> decltype(format(str, std::forward<Args>(args)...)) {
+    return format(str, std::forward<Args>(args)...);
+  }
+};
+
+template <typename Char>
+struct UdlArg {
+  const Char *str;
+
+  template <typename T>
+  NamedArg<Char> operator=(T &&value) const {
+    return {str, std::forward<T>(value)};
+  }
+};
+
+} // namespace internal
+
+inline namespace literals {
+
+/**
+  \rst
+  C++11 literal equivalent of :func:`fmt::format`.
+
+  **Example**::
+  
+    using namespace fmt::literals;
+    std::string message = "The answer is {}"_format(42);
+  \endrst
+ */
+inline internal::UdlFormat<char>
+operator"" _format(const char *s, std::size_t) { return {s}; }
+inline internal::UdlFormat<wchar_t>
+operator"" _format(const wchar_t *s, std::size_t) { return {s}; }
+
+/**
+  \rst
+  C++11 literal equivalent of :func:`fmt::arg`.
+
+  **Example**::
+    
+    using namespace fmt::literals;
+    print("Elapsed time: {s:.2f} seconds", "s"_a=1.23);
+  \endrst
+ */
+inline internal::UdlArg<char>
+operator"" _a(const char *s, std::size_t) { return {s}; }
+inline internal::UdlArg<wchar_t>
+operator"" _a(const wchar_t *s, std::size_t) { return {s}; }
+
+} // inline namespace literals
+} // namespace fmt
+#endif // FMT_USE_USER_DEFINED_LITERALS
 
 // Restore warnings.
 #if FMT_GCC_VERSION >= 406
