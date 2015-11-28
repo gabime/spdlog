@@ -93,8 +93,9 @@ int main(int, char*[])
         size_t q_size = 1048576; //queue size must be power of 2
         spdlog::set_async_mode(q_size);
         auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
-        async_file->info() << "This is async log.." << "Should be very fast!";
-        spdlog::drop_all(); //Close all loggers
+        for (int i = 0; i < 100; ++i)
+            async_file->info("Async message #{}", i);
+
         //
         // syslog example. linux only..
         //
@@ -103,7 +104,13 @@ int main(int, char*[])
         auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
 #endif
+
+        //
+        //Release and close all loggers
+        //
+        spdlog::drop_all();
     }
+
     catch (const spd::spdlog_ex& ex)
     {
         std::cout << "Log failed: " << ex.what() << std::endl;
