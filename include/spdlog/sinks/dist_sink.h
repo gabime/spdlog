@@ -69,7 +69,7 @@ public:
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         if (sink &&
-            _sinks.end() == std::find(_sinks.begin(), _sinks.end(), sink))
+                _sinks.end() == std::find(_sinks.begin(), _sinks.end(), sink))
         {
             _sinks.push_back(sink);
         }

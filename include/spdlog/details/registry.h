@@ -158,7 +158,7 @@ private:
             throw spdlog_ex("logger with name " + logger_name + " already exists");
         _loggers[logger->name()] = logger;
     }
-    registry_t<Mutex>(){}
+    registry_t<Mutex>() {}
     registry_t<Mutex>(const registry_t<Mutex>&) = delete;
     registry_t<Mutex>& operator=(const registry_t<Mutex>&) = delete;
     Mutex _mutex;

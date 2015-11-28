@@ -58,8 +58,8 @@ protected:
         const android_LogPriority priority = convert_to_android(msg.level);
         const int expected_size = msg.formatted.size();
         const int size = __android_log_write(
-            priority, _tag.c_str(), msg.formatted.c_str()
-        );
+                             priority, _tag.c_str(), msg.formatted.c_str()
+                         );
         if (size > expected_size)
         {
             // Will write a little bit more than original message
@@ -75,16 +75,26 @@ private:
     {
         switch(level)
         {
-            case spdlog::level::trace: return ANDROID_LOG_VERBOSE;
-            case spdlog::level::debug: return ANDROID_LOG_DEBUG;
-            case spdlog::level::info: return ANDROID_LOG_INFO;
-            case spdlog::level::notice: return ANDROID_LOG_INFO;
-            case spdlog::level::warn: return ANDROID_LOG_WARN;
-            case spdlog::level::err: return ANDROID_LOG_ERROR;
-            case spdlog::level::critical: return ANDROID_LOG_FATAL;
-            case spdlog::level::alert: return ANDROID_LOG_FATAL;
-            case spdlog::level::emerg: return ANDROID_LOG_FATAL;
-            default: throw spdlog_ex("Incorrect level value");
+        case spdlog::level::trace:
+            return ANDROID_LOG_VERBOSE;
+        case spdlog::level::debug:
+            return ANDROID_LOG_DEBUG;
+        case spdlog::level::info:
+            return ANDROID_LOG_INFO;
+        case spdlog::level::notice:
+            return ANDROID_LOG_INFO;
+        case spdlog::level::warn:
+            return ANDROID_LOG_WARN;
+        case spdlog::level::err:
+            return ANDROID_LOG_ERROR;
+        case spdlog::level::critical:
+            return ANDROID_LOG_FATAL;
+        case spdlog::level::alert:
+            return ANDROID_LOG_FATAL;
+        case spdlog::level::emerg:
+            return ANDROID_LOG_FATAL;
+        default:
+            throw spdlog_ex("Incorrect level value");
         }
     }
 

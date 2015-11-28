@@ -87,7 +87,8 @@ public:
 
     }
 
-    void flush() {
+    void flush()
+    {
         std::fflush(_fd);
     }
 

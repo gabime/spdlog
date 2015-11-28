@@ -60,7 +60,8 @@ inline spdlog::async_logger::async_logger(const std::string& logger_name,
         const  async_overflow_policy overflow_policy,
         const std::function<void()>& worker_warmup_cb,
         const std::chrono::milliseconds& flush_interval_ms) :
-    async_logger(logger_name, {
+    async_logger(logger_name,
+{
     single_sink
 }, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms) {}
 

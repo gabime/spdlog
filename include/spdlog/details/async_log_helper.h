@@ -249,7 +249,8 @@ inline void spdlog::details::async_log_helper::push_msg(details::async_log_helpe
         {
             now = details::os::now();
             sleep_or_yield(now, last_op_time);
-        } while (!_q.enqueue(std::move(new_msg)));
+        }
+        while (!_q.enqueue(std::move(new_msg)));
     }
 
 }
