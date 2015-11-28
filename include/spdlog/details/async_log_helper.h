@@ -173,7 +173,7 @@ private:
     // worker thread
     std::thread _worker_thread;
 
-    void push_msg(async_msg& new_msg);
+    void push_msg(async_msg&& new_msg);
     // throw last worker thread exception or if worker thread is not active
 
     void throw_if_bad_worker();
@@ -232,14 +232,13 @@ inline spdlog::details::async_log_helper::~async_log_helper()
 //Try to push and block until succeeded
 inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 {
-    async_msg new_msg(msg);
-    push_msg(new_msg);
+    push_msg(async_msg(msg));
 
 
 }
 
 //Try to push and block until succeeded
-inline void spdlog::details::async_log_helper::push_msg(details::async_log_helper::async_msg& new_msg)
+inline void spdlog::details::async_log_helper::push_msg(details::async_log_helper::async_msg&& new_msg)
 {
     throw_if_bad_worker();
     if (!_q.enqueue(std::move(new_msg)) && _overflow_policy != async_overflow_policy::discard_log_msg)
