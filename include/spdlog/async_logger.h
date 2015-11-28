@@ -76,6 +76,7 @@ public:
                  const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero());
 
 
+    void flush() override;
 protected:
     void _log_msg(details::log_msg& msg) override;
     void _set_formatter(spdlog::formatter_ptr msg_formatter) override;
