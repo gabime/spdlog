@@ -325,12 +325,12 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
 inline void spdlog::details::async_log_helper::handle_flush_interval(log_clock::time_point& now, log_clock::time_point& last_flush)
 {
     auto should_flush = _flush_requested || (_flush_interval_ms != std::chrono::milliseconds::zero() && now - last_flush >= _flush_interval_ms);
-    if ( should_flush)
+    if (should_flush)
     {
         for (auto &s : _sinks)
             s->flush();
         now = last_flush = details::os::now();
-        _flush_requested = false;
+        _flush_requested = false;s
     }
 }
 inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
