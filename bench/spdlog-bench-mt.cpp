@@ -1,3 +1,8 @@
+//
+// Copyright(c) 2015 Gabi Melman.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
+//
+
 #include <thread>
 #include <vector>
 #include <atomic>

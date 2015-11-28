@@ -1,3 +1,6 @@
+/*
+ * This content is released under the MIT License as specified in https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
+ */
 #include "includes.h"
 
 static std::string file_contents(const std::string& filename)
