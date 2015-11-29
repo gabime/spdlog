@@ -3,6 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
+#pragma once
+
 #include <mutex>
 #include "base_sink.h"
 #include "../details/null_mutex.h"
