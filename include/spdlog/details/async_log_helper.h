@@ -311,7 +311,7 @@ inline void spdlog::details::async_log_helper::handle_flush_interval(log_clock::
         for (auto &s : _sinks)
             s->flush();
         now = last_flush = details::os::now();
-        _flush_requested = false;s
+        _flush_requested = false;
     }
 }
 inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
