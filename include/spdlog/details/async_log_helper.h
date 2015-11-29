@@ -61,7 +61,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
                     msg_type(std::move(other.msg_type))
         {}
 
-        async_msg(async_msg_type msg_type) :msg_type(msg_type)
+        async_msg(async_msg_type m_type) :msg_type(m_type)
         {};
 
         async_msg& operator=(async_msg&& other) SPDLOG_NOEXCEPT
