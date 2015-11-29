@@ -85,9 +85,9 @@ public:
     void write(const log_msg& msg)
     {
 
-        size_t size = msg.formatted.size();
+        size_t msg_size = msg.formatted.size();
         auto data = msg.formatted.data();
-        if (std::fwrite(data, 1, size, _fd) != size)
+        if (std::fwrite(data, 1, msg_size, _fd) != msg_size)
             throw spdlog_ex("Failed writing to file " + _filename);
 
         if (_force_flush)
@@ -104,16 +104,16 @@ public:
         if (fseek(_fd, 0, SEEK_END) != 0)
             throw spdlog_ex("fseek failed on file " + _filename);
 
-        auto size = ftell(_fd);
+        auto file_size = ftell(_fd);
 
         if(fseek(_fd, pos, SEEK_SET) !=0)
             throw spdlog_ex("fseek failed on file " + _filename);
 
-        if (size == -1)
+        if (file_size == -1)
             throw spdlog_ex("ftell failed on file " + _filename);
 
 
-        return size;
+        return file_size;
 
 
     }
