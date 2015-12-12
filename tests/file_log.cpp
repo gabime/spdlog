@@ -54,7 +54,6 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
 
 }
 
-
 TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 {
     prepare_logdir();
