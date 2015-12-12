@@ -150,7 +150,7 @@ inline bool file_exists(const std::string& filename)
     return (attribs != INVALID_FILE_ATTRIBUTES && !(attribs & FILE_ATTRIBUTE_DIRECTORY));
 #else
     struct stat buffer;
-    return (stat (name.c_str(), &buffer) == 0);
+    return (stat (filename.c_str(), &buffer) == 0);
 #endif
 
 }
