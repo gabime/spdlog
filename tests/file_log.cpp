@@ -35,16 +35,6 @@ std::ifstream::pos_type filesize(const std::string& filename)
     return ifs.tellg();
 }
 
-static void prepare_logdir()
-{
-    spdlog::drop_all();
-#ifdef _WIN32
-    auto rv = system("del /F /Q logs\\*");
-#else
-    auto rv = system("rm -f logs/*");
-#endif
-}
-
 
 
 TEST_CASE("simple_file_logger", "[simple_logger]]")

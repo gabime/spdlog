@@ -2,8 +2,8 @@
 // Copyright(c) 2015 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
-
 #pragma once
+
 #include<string>
 #include<cstdio>
 #include<ctime>
@@ -20,6 +20,7 @@
 
 #elif __linux__
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
+#include <sys/stat.h>
 #include <unistd.h>
 #else
 #include <thread>
@@ -138,6 +139,19 @@ inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
     return *fp == nullptr;
 #endif
 
+}
+
+
+//Return if file exists
+inline bool file_exists(const std::string& filename)
+{
+#ifdef _WIN32
+    auto attribs = GetFileAttributesA(filename.c_str());
+    return (attribs != INVALID_FILE_ATTRIBUTES && !(attribs & FILE_ATTRIBUTE_DIRECTORY));
+#else
+    struct stat buffer;
+    return (stat (name.c_str(), &buffer) == 0);
+#endif
 
 }
 

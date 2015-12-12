@@ -14,7 +14,7 @@
 #include <thread>
 #include <chrono>
 #include "os.h"
-
+#include "log_msg.h"
 
 
 
@@ -125,16 +125,8 @@ public:
 
     static bool file_exists(const std::string& name)
     {
-        FILE* file;
-        if (!os::fopen_s(&file, name.c_str(), "r"))
-        {
-            fclose(file);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+
+        return os::file_exists(name);
     }
 
 
