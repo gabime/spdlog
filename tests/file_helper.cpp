@@ -36,7 +36,7 @@ TEST_CASE("file_helper_size", "[file_helper::size()]]")
         write_with_helper(helper, expected_size);
         REQUIRE(helper.size() == expected_size);
     }
-    REQUIRE(filesize(filename) == expected_size);
+    REQUIRE(get_filesize(filename) == expected_size);
 }
 
 

@@ -52,9 +52,9 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
         logger->info("Test message {}", i);
 
     logger->flush();
-    REQUIRE(filesize(filename) <= 1024);
+    REQUIRE(get_filesize(filename) <= 1024);
     auto filename1 = basename + ".1.txt";
-    REQUIRE(filesize(filename1) <= 1024);
+    REQUIRE(get_filesize(filename1) <= 1024);
 }
 
 

@@ -34,7 +34,7 @@ std::size_t count_lines(const std::string& filename)
     return counter;
 }
 
-std::ifstream::pos_type filesize(const std::string& filename)
+std::size_t get_filesize(const std::string& filename)
 {
     std::ifstream ifs(filename, std::ifstream::ate | std::ifstream::binary);
     if (!ifs)
