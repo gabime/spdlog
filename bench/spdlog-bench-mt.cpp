@@ -6,7 +6,7 @@
 #include <thread>
 #include <vector>
 #include <atomic>
-
+#include <cstdlib>
 #include "spdlog/spdlog.h"
 
 
@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 
     int thread_count = 10;
     if(argc > 1)
-        thread_count = atoi(argv[1]);
+        thread_count = std::atoi(argv[1]);
 
     int howmany = 1000000;
 
