@@ -36,11 +36,11 @@ Below are some [benchmarks](bench) comparing popular log libraries under Ubuntu 
 #### Synchronous mode
 Time needed to log 1,000,000 lines in synchronous mode (in seconds, the best of 3 runs):
 
-|threads|boost log|glog   |easylogging |spdlog|
+|threads|boost log 1.54|glog   |easylogging |spdlog|
 |-------|:-------:|:-----:|----------:|------:|
 |1|       4.169s  |1.066s |0.975s     |0.302s|
-|10|     16.029   |3.032s |2.857s     |0.968s|
-|100|     15.008  |1.139s |4.512s     |0.497s|
+|10|     6.180s   |3.032s |2.857s     |0.968s|
+|100|     5.981s  |1.139s |4.512s     |0.497s|
 
 
 #### Asynchronous mode
