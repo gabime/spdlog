@@ -148,9 +148,18 @@ inline bool file_exists(const std::string& filename)
 #ifdef _WIN32
     auto attribs = GetFileAttributesA(filename.c_str());
     return (attribs != INVALID_FILE_ATTRIBUTES && !(attribs & FILE_ATTRIBUTE_DIRECTORY));
-#else
+#elif __linux__
     struct stat buffer;
     return (stat (filename.c_str(), &buffer) == 0);
+#else  
+    auto *file = fopen(filename.c_str(), "r");
+    if (file != nullptr)
+    {
+        fclose(file);
+        return true;
+    }
+    return false;
+
 #endif
 
 }
