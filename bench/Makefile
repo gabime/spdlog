@@ -17,7 +17,7 @@ spdlog-async: spdlog-async.cpp
 	$(CXX) spdlog-async.cpp -o spdlog-async  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 	
 
-BOOST_FLAGS	= -DBOOST_LOG_DYN_LINK  -I/home/gabi/devel/boost_1_56_0/ -L/home/gabi/devel/boost_1_56_0/stage/lib -lboost_log  -lboost_log_setup -lboost_filesystem -lboost_system -lboost_thread -lboost_regex -lboost_date_time -lboost_chrono	
+BOOST_FLAGS	= -DBOOST_LOG_DYN_LINK  -I/usr/include -lboost_log  -lboost_log_setup -lboost_filesystem -lboost_system -lboost_thread -lboost_regex -lboost_date_time -lboost_chrono	
 
 boost-bench: boost-bench.cpp
 	$(CXX) boost-bench.cpp -o boost-bench $(CXXFLAGS) $(BOOST_FLAGS) $(CXX_RELEASE_FLAGS)
