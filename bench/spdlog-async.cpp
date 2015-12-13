@@ -8,7 +8,7 @@
 #include <atomic>
 #include <iostream>
 #include <chrono>
-
+#include <cstdlib>
 #include "spdlog/spdlog.h"
 
 using namespace std;
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
     int thread_count = 10;
     if(argc > 1)
-        thread_count = atoi(argv[1]);
+        thread_count = ::atoi(argv[1]);
     int howmany = 1000000;
 
     spd::set_async_mode(1048576);
