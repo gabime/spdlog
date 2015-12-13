@@ -7,15 +7,6 @@ using namespace spdlog::details;
 
 static const std::string filename = "logs/file_helper_test.txt";
 
-size_t filesize2(const std::string& filename)
-{
-    std::ifstream ifs(filename, std::ifstream::ate | std::ifstream::binary);
-    if (!ifs)
-        throw std::runtime_error("Failed open file ");
-
-    return (size_t)ifs.tellg();
-}
-
 static void write_with_helper(file_helper &helper, size_t howmany)
 {
     log_msg msg;
@@ -45,7 +36,7 @@ TEST_CASE("file_helper_size", "[file_helper::size()]]")
         write_with_helper(helper, expected_size);
         REQUIRE(helper.size() == expected_size);
     }
-    REQUIRE(filesize2(filename) == expected_size);
+    REQUIRE(filesize(filename) == expected_size);
 }
 
 
