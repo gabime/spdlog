@@ -7,6 +7,7 @@
 #include<string>
 #include<cstdio>
 #include<ctime>
+#include<list>
 
 #ifdef _WIN32
 # ifndef WIN32_LEAN_AND_MEAN
@@ -128,6 +129,65 @@ constexpr inline unsigned short eol_size()
 }
 #endif
 
+//Return true and list if filename contains relative
+inline bool dir_check(const std::string& filename, std::list<std::string>& dirs)
+{
+#ifdef __linux__
+	std::string::size_type index, previndex = 0, size;
+
+	index = filename.find("/", previndex);
+	if(!index)
+		return false;
+
+	do {
+		dirs.push_back(filename.substr(previndex, index));
+		previndex = index + 1;
+		index = filename.find("/", previndex);
+	}while(index != std::string::npos);
+
+	size = filename.length() - 1;
+	if(previndex < size)
+		dirs.push_back(filename.substr(previndex, size));
+
+	return true;
+
+#endif
+
+}
+
+//Create directories by referring to list 
+//Return 0 if success 
+inline bool create_dirs(std::list<std::string>& dirs)
+{
+#ifdef __linux__
+	std::string origin_path;
+	std::list<std::string>::iterator li;
+
+	int r;
+
+	origin_path = get_current_dir_name();
+	for(li = dirs.begin(); li != dirs.end(); li++) {
+		r = mkdir((*li).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+		if(r) 
+		{
+			if(errno == EEXIST)
+				return 0;
+		}
+		else return r;
+
+		r = chdir((*li).c_str());
+		if(r) return r;
+	}
+
+	r = chdir(origin_path.c_str());
+	if(r) return r;
+
+	return 0;
+
+#endif
+
+}
+
 //fopen_s on non windows for writing
 inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
 {
@@ -135,7 +195,16 @@ inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
     *fp = _fsopen((filename.c_str()), mode, _SH_DENYWR);
     return *fp == nullptr;
 #else
-    *fp = fopen((filename.c_str()), mode);
+	std::list<std::string> dirs;
+
+	if(dir_check(filename, dirs)) 
+	{
+		dirs.pop_back();
+		if(create_dirs(dirs))
+			return true;
+	}
+    
+	*fp = fopen((filename.c_str()), mode);
     return *fp == nullptr;
 #endif
 
@@ -163,6 +232,7 @@ inline bool file_exists(const std::string& filename)
 #endif
 
 }
+
 
 //Return utc offset in minutes or -1 on failure
 inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
