@@ -133,23 +133,23 @@ constexpr inline unsigned short eol_size()
 inline bool dir_check(const std::string& filename, std::list<std::string>& dirs)
 {
 #ifdef __linux__
-	std::string::size_type index, previndex = 0, size;
+    std::string::size_type index, previndex = 0, size;
 
-	index = filename.find("/", previndex);
-	if(!index)
-		return false;
+    index = filename.find("/", previndex);
+    if(!index)
+        return false;
 
-	do {
-		dirs.push_back(filename.substr(previndex, index));
-		previndex = index + 1;
-		index = filename.find("/", previndex);
-	}while(index != std::string::npos);
+    do {
+        dirs.push_back(filename.substr(previndex, index));
+        previndex = index + 1;
+        index = filename.find("/", previndex);
+    }while(index != std::string::npos);
 
-	size = filename.length() - 1;
-	if(previndex < size)
-		dirs.push_back(filename.substr(previndex, size));
+    size = filename.length() - 1;
+    if(previndex < size)
+	    dirs.push_back(filename.substr(previndex, size));
 
-	return true;
+    return true;
 
 #endif
 
@@ -160,29 +160,29 @@ inline bool dir_check(const std::string& filename, std::list<std::string>& dirs)
 inline bool create_dirs(std::list<std::string>& dirs)
 {
 #ifdef __linux__
-	std::string origin_path;
-	std::list<std::string>::iterator li;
+    std::string origin_path;
+    std::list<std::string>::iterator li;
 
-	int r;
+    int r;
 
-	origin_path = get_current_dir_name();
-	for(li = dirs.begin(); li != dirs.end(); li++) {
-		r = mkdir((*li).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-		if(r) 
-		{
-			if(errno == EEXIST)
-				return 0;
-		}
-		else return r;
+    origin_path = get_current_dir_name();
+    for(li = dirs.begin(); li != dirs.end(); li++) {
+        r = mkdir((*li).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        if(r) 
+        {
+            if(errno == EEXIST)
+                return 0;
+        }
+        else return r;
 
-		r = chdir((*li).c_str());
-		if(r) return r;
-	}
+        r = chdir((*li).c_str());
+        if(r) return r;
+    }
 
-	r = chdir(origin_path.c_str());
-	if(r) return r;
+    r = chdir(origin_path.c_str());
+    if(r) return r;
 
-	return 0;
+    return 0;
 
 #endif
 
@@ -195,17 +195,18 @@ inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
     *fp = _fsopen((filename.c_str()), mode, _SH_DENYWR);
     return *fp == nullptr;
 #else
-	std::list<std::string> dirs;
+    std::list<std::string> dirs;
 
-	if(dir_check(filename, dirs)) 
-	{
-		dirs.pop_back();
-		if(create_dirs(dirs))
-			return true;
-	}
-    
-	*fp = fopen((filename.c_str()), mode);
+    if(dir_check(filename, dirs)) 
+    {
+        dirs.pop_back();
+        if(create_dirs(dirs))
+            return true;
+    }
+
+    *fp = fopen((filename.c_str()), mode);
     return *fp == nullptr;
+
 #endif
 
 }
