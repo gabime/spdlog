@@ -145,8 +145,10 @@ inline bool dir_check(const std::string& filename, std::list<std::string>& dirs)
             directory = filename.substr(previndex, index - previndex + 1);
         else 
             directory = filename.substr(previndex, index - previndex);
+
         if(directory != "/")
             dirs.push_back(directory);
+
         previndex = index + 1;
         index = filename.find("/", previndex);
     }while(index != std::string::npos);
