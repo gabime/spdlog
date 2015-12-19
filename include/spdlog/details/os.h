@@ -133,21 +133,23 @@ constexpr inline unsigned short eol_size()
 inline bool dir_check(const std::string& filename, std::list<std::string>& dirs)
 {
 #ifdef __linux__
+    std::string directory;
     std::string::size_type index, previndex = 0, size;
 
     index = filename.find("/", previndex);
     if(!index)
-        return false;
+        dirs.push_back("/");
 
     do {
-        dirs.push_back(filename.substr(previndex, index));
+        if(index - previndex == 0) 
+            directory = filename.substr(previndex, index - previndex + 1);
+        else 
+            directory = filename.substr(previndex, index - previndex);
+        if(directory != "/")
+            dirs.push_back(directory);
         previndex = index + 1;
         index = filename.find("/", previndex);
     }while(index != std::string::npos);
-
-    size = filename.length() - 1;
-    if(previndex < size)
-	    dirs.push_back(filename.substr(previndex, size));
 
     return true;
 
@@ -166,14 +168,10 @@ inline bool create_dirs(std::list<std::string>& dirs)
     int r;
 
     origin_path = get_current_dir_name();
-    for(li = dirs.begin(); li != dirs.end(); li++) {
+    for(li = dirs.begin(); li != dirs.end(); ++li) {
         r = mkdir((*li).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-        if(r) 
-        {
-            if(errno == EEXIST)
-                return 0;
-        }
-        else return r;
+        if(r && errno != EEXIST)
+            return r;
 
         r = chdir((*li).c_str());
         if(r) return r;
@@ -199,7 +197,6 @@ inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
 
     if(dir_check(filename, dirs)) 
     {
-        dirs.pop_back();
         if(create_dirs(dirs))
             return true;
     }
