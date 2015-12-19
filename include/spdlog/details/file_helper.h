@@ -51,12 +51,12 @@ public:
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
-            if (os::dir_check(fname, dirs))
+            if (os::dir_check(fname, dirs)) 
                 if(os::create_dirs(dirs))
-                    return;
+                    break;
 
-            if (!os::fopen_s(&_fd, fname, mode))
-                return ;
+            if(!os::fopen_s(&_fd, fname, mode))
+                return;
 
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
         }
