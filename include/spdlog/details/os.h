@@ -195,14 +195,6 @@ inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
     *fp = _fsopen((filename.c_str()), mode, _SH_DENYWR);
     return *fp == nullptr;
 #else
-    std::list<std::string> dirs;
-
-    if(dir_check(filename, dirs)) 
-    {
-        if(create_dirs(dirs))
-            return true;
-    }
-
     *fp = fopen((filename.c_str()), mode);
     return *fp == nullptr;
 
