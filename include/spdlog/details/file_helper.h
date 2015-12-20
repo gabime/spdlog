@@ -47,13 +47,17 @@ public:
     {
 
         close();
+        std::list<std::string> dirs;
         const char* mode = truncate ? "wb" : "ab";
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
-            if (os::dir_check(fname, dirs)) 
-                if(os::create_dirs(dirs))
+            if (dir_check(fname)) 
+            {
+                get_dirlist(fname, dirs);
+                if(create_dirs(dirs))
                     break;
+            }
 
             if(!os::fopen_s(&_fd, fname, mode))
                 return;
@@ -133,11 +137,81 @@ public:
         return os::file_exists(name);
     }
 
+    //Return true if filenamd contains relative path
+    bool dir_check(const std::string &name)
+    {
+        std::string::size_type index = 0;
+
+        index = name.find("/", index);
+        if(index != std::string::npos)
+            return true;
+        
+        return false;
+    }
+
+    //Get list contain directories name 
+    void get_dirlist(const std::string &name, std::list<std::string>& dirs)
+    {
+        std::string directory;
+        std::string::size_type index, previndex = 0;
+
+        index = name.find("/", previndex);
+        if(!index)
+            dirs.push_back("/");
+
+        do {
+            if(index - previndex == 0)
+                directory = name.substr(previndex, index - previndex + 1);
+            else
+                directory = name.substr(previndex, index - previndex);
+
+            if(directory != "/")
+                dirs.push_back(directory);
+
+            previndex = index + 1;
+            index = name.find("/", previndex);
+        }while(index != std::string::npos);
+    }
+
+
+    //Create directories by referring to list
+    //Return 0 if success
+    bool create_dirs(std::list<std::string>& dirs) 
+    {
+        std::string origin_path, dirname;
+        std::list<std::string>::iterator li;
+
+        int r;
+
+        origin_path = os::getpwd();
+
+        for(li = dirs.begin(); li != dirs.end(); ++li) {
+            dirname = *li;
+
+            r = os::_mkdir(dirname);
+            if(r)
+            {
+#ifdef _WIN32
+                //not yet
+#else
+                if(os::get_lasterror() != EEXIST)
+                    return r;
+#endif
+            }
+
+            r = os::_chdir(dirname);
+            if(r) return r;
+        }
+
+        r = os::_chdir(origin_path);
+        if(r) return r;
+
+        return 0;
+    }
 
 
 private:
     FILE* _fd;
-    std::list<std::string> dirs;
     std::string _filename;
     bool _force_flush;
 

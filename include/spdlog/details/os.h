@@ -129,63 +129,41 @@ constexpr inline unsigned short eol_size()
 }
 #endif
 
-//Return true and list if filename contains relative
-inline bool dir_check(const std::string& filename, std::list<std::string>& dirs)
+
+inline int get_lasterror()
 {
-#ifdef __linux__
-    std::string directory;
-    std::string::size_type index, previndex = 0, size;
-
-    index = filename.find("/", previndex);
-    if(!index)
-        dirs.push_back("/");
-
-    do {
-        if(index - previndex == 0) 
-            directory = filename.substr(previndex, index - previndex + 1);
-        else 
-            directory = filename.substr(previndex, index - previndex);
-
-        if(directory != "/")
-            dirs.push_back(directory);
-
-        previndex = index + 1;
-        index = filename.find("/", previndex);
-    }while(index != std::string::npos);
-
-    return true;
-
+#ifdef _WIN32
+    //not yet
+#else
+    return errno;
 #endif
-
 }
 
-//Create directories by referring to list 
-//Return 0 if success 
-inline bool create_dirs(std::list<std::string>& dirs)
+inline std::string getpwd()
 {
-#ifdef __linux__
-    std::string origin_path;
-    std::list<std::string>::iterator li;
-
-    int r;
-
-    origin_path = get_current_dir_name();
-    for(li = dirs.begin(); li != dirs.end(); ++li) {
-        r = mkdir((*li).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-        if(r && errno != EEXIST)
-            return r;
-
-        r = chdir((*li).c_str());
-        if(r) return r;
-    }
-
-    r = chdir(origin_path.c_str());
-    if(r) return r;
-
-    return 0;
-
+#ifdef _WIN32
+    //not yet
+#else
+    return get_current_dir_name();
 #endif
+}
 
+inline bool _mkdir(const std::string& dirname)
+{
+#ifdef _WIN32
+    //not yet
+#else
+    return mkdir(dirname.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#endif
+}
+
+inline bool _chdir(const std::string& dirname)
+{
+#ifdef _WIN32
+    //not yet
+#else
+    return chdir(dirname.c_str());
+#endif
 }
 
 //fopen_s on non windows for writing
