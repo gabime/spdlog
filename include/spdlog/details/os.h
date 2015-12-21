@@ -35,6 +35,20 @@ namespace details
 namespace os
 {
 
+#if defined __linux__ && defined SPDLOG_CLOCK_MONOTONIC
+inline uint64_t clock_offset()
+{
+    timespec ts_realtime;
+    ::clock_gettime(CLOCK_REALTIME, &ts_realtime);
+    timespec ts_monotonic;
+    ::clock_gettime(CLOCK_MONOTONIC, &ts_monotonic);
+
+    const uint64_t realtime = ts_realtime.tv_sec * 1000000000 + ts_realtime.tv_nsec;
+    const uint64_t monotonic = ts_monotonic.tv_sec * 1000000000 + ts_monotonic.tv_nsec;
+    return realtime - monotonic;
+}
+#endif
+
 inline spdlog::log_clock::time_point now()
 {
 
@@ -45,6 +59,14 @@ inline spdlog::log_clock::time_point now()
                std::chrono::duration_cast<typename log_clock::duration>(
                    std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec)));
 
+#elif defined __linux__ && defined SPDLOG_CLOCK_MONOTONIC
+    static const auto offset = std::chrono::nanoseconds(clock_offset());
+
+    timespec ts;
+    ::clock_gettime(CLOCK_MONOTONIC, &ts);
+    return std::chrono::time_point<log_clock, typename log_clock::duration>(
+               std::chrono::duration_cast<typename log_clock::duration>(
+                   offset + std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec)));
 #else
     return log_clock::now();
 #endif
@@ -151,7 +173,7 @@ inline bool file_exists(const std::string& filename)
 #elif __linux__
     struct stat buffer;
     return (stat (filename.c_str(), &buffer) == 0);
-#else  
+#else
     auto *file = fopen(filename.c_str(), "r");
     if (file != nullptr)
     {
