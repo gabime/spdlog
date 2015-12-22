@@ -139,30 +139,12 @@ inline int get_lasterror()
 #endif
 }
 
-inline std::string getpwd()
-{
-#ifdef _WIN32
-    //not yet
-#else
-    return get_current_dir_name();
-#endif
-}
-
 inline bool _mkdir(const std::string& dirname)
 {
 #ifdef _WIN32
     //not yet
 #else
     return mkdir(dirname.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-#endif
-}
-
-inline bool _chdir(const std::string& dirname)
-{
-#ifdef _WIN32
-    //not yet
-#else
-    return chdir(dirname.c_str());
 #endif
 }
 
