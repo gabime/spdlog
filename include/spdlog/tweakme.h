@@ -18,14 +18,6 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Under Linux, the much faster CLOCK_MONOTONIC clock can be used.
-// This clock is more accurate than CLOCK_REALTIME_COARSE and faster than regular clock.
-// Uncomment to use it instead of the regular clock.
-// #define SPDLOG_CLOCK_MONOTONIC
-///////////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////////
 // Uncomment if date/time logging is not needed.
 // This will prevent spdlog from quering the clock on each log call.
 // #define SPDLOG_NO_DATETIME
