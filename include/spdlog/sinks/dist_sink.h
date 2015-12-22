@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2015 David Schury, Gabi Melman   
+// Copyright (c) 2015 David Schury, Gabi Melman
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
