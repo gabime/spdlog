@@ -133,7 +133,7 @@ constexpr inline unsigned short eol_size()
 inline int get_lasterror()
 {
 #ifdef _WIN32
-    //not yet
+    return GetLastError();
 #else
     return errno;
 #endif
@@ -142,7 +142,7 @@ inline int get_lasterror()
 inline bool _mkdir(const std::string& dirname)
 {
 #ifdef _WIN32
-    //not yet
+    return CreateDirectoryA(dirname.c_str(), NULL) == 0;
 #else
     return mkdir(dirname.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 #endif

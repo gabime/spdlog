@@ -215,7 +215,8 @@ public:
             if(r)
             {
 #ifdef _WIN32
-                //not yet
+                if(os::get_lasterror() != ERROR_ALREADY_EXISTS)
+                    return r;
 #else
                 if(os::get_lasterror() != EEXIST)
                     return r;
