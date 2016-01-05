@@ -51,7 +51,17 @@ public:
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
-            if (!os::fopen_s(&_fd, fname, mode))
+            if(!_dir_created) 
+            {
+                if (dir_check(fname)) 
+                {
+                    get_dirlist(fname);
+                    if(create_dirs())
+                        break;
+                }
+            }
+
+            if(!os::fopen_s(&_fd, fname, mode))
                 return;
 
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
@@ -129,11 +139,103 @@ public:
         return os::file_exists(name);
     }
 
+    //Return true if filenamd contains relative path
+    bool dir_check(const std::string &name)
+    {
+        std::string::size_type index = 0;
+
+        index = name.find("/", index);
+        if(index != std::string::npos) 
+        {
+            if(index == 0)
+                _path_type = 1;
+            else
+                _path_type = 0;
+
+            return true;
+        }
+        
+        return false;
+    }
+
+    //Get list contain directories name 
+    void get_dirlist(const std::string &name)
+    {
+        std::string directory;
+        std::string::size_type index, previndex = 0;
+
+        index = name.find("/", previndex);
+
+        do {
+            if(index - previndex == 0)
+                directory = name.substr(previndex, index - previndex + 1);
+            else
+                directory = name.substr(previndex, index - previndex);
+
+            if(directory != "/")
+                dirs.push_back(directory);
+
+            previndex = index + 1;
+            index = name.find("/", previndex);
+        }while(index != std::string::npos);
+    }
+
+
+    std::string make_dirstring(int depth)
+    {
+        std::string dirname;
+        std::list<std::string>::iterator li;
+
+        int i;
+
+        if(_path_type)
+            dirname = "/";
+
+        for(i = 0, li = dirs.begin(); i <= depth; i++, li++) 
+            dirname = dirname + *li + "/";
+
+        return dirname;
+    }
+
+
+    //Create directories by referring to list
+    //Return 0 if success
+    bool create_dirs() 
+    {
+        std::string dirname;
+        std::list<std::string>::iterator li;
+
+        int r, depth = 0;
+
+        for(li = dirs.begin(); li != dirs.end(); li++, depth++)
+        { 
+            dirname = make_dirstring(depth);
+            r = os::_mkdir(dirname);
+
+            if(r)
+            {
+#ifdef _WIN32
+                if(os::get_lasterror() != ERROR_ALREADY_EXISTS)
+                    return r;
+#else
+                if(os::get_lasterror() != EEXIST)
+                    return r;
+#endif
+            }
+        }
+
+        _dir_created = 1;
+
+        return 0;
+    }
 
 
 private:
     FILE* _fd;
     std::string _filename;
+    std::list<std::string> dirs;
+    bool _dir_created;
+    bool _path_type;
     bool _force_flush;
 
 

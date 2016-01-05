@@ -7,6 +7,7 @@
 #include<string>
 #include<cstdio>
 #include<ctime>
+#include<list>
 
 #ifdef _WIN32
 # ifndef WIN32_LEAN_AND_MEAN
@@ -129,6 +130,25 @@ constexpr inline unsigned short eol_size()
 }
 #endif
 
+
+inline int get_lasterror()
+{
+#ifdef _WIN32
+    return GetLastError();
+#else
+    return errno;
+#endif
+}
+
+inline bool _mkdir(const std::string& dirname)
+{
+#ifdef _WIN32
+    return CreateDirectoryA(dirname.c_str(), NULL) == 0;
+#else
+    return mkdir(dirname.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+#endif
+}
+
 //fopen_s on non windows for writing
 inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
 {
@@ -138,6 +158,7 @@ inline int fopen_s(FILE** fp, const std::string& filename, const char* mode)
 #else
     *fp = fopen((filename.c_str()), mode);
     return *fp == nullptr;
+
 #endif
 
 }
@@ -164,6 +185,7 @@ inline bool file_exists(const std::string& filename)
 #endif
 
 }
+
 
 //Return utc offset in minutes or -1 on failure
 inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
