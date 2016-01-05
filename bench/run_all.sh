@@ -24,13 +24,13 @@ bench_async ()
 		rm  -f logs/*
 		sleep 3
 	done;
-}  
+}
 
 
 echo "----------------------------------------------------------"
 echo "Single threaded benchmarks.. (1 thread,  1,000,000 lines)"
 echo "----------------------------------------------------------"
-for exe in boost-bench glog-bench easylogging-bench spdlog-bench;
+for exe in boost-bench glog-bench easylogging-bench zf_log-bench spdlog-bench;
 do
 	bench_exe $exe 1
 done;
@@ -38,7 +38,7 @@ done;
 echo "----------------------------------------------------------"
 echo "Multi threaded benchmarks.. (10 threads,  1,000,000 lines)"
 echo "----------------------------------------------------------"
-for exe in boost-bench-mt glog-bench-mt easylogging-bench-mt spdlog-bench-mt;
+for exe in boost-bench-mt glog-bench-mt easylogging-bench-mt zf_log-bench-mt spdlog-bench-mt;
 do
 	bench_exe $exe 10
 done;
@@ -46,11 +46,10 @@ done;
 echo "----------------------------------------------------------"
 echo "Multi threaded benchmarks.. (100 threads,  1,000,000 lines)"
 echo "----------------------------------------------------------"
-for exe in boost-bench-mt glog-bench-mt easylogging-bench-mt spdlog-bench-mt;
+for exe in boost-bench-mt glog-bench-mt easylogging-bench-mt zf_log-bench-mt spdlog-bench-mt;
 do
 	bench_exe $exe 100
 done;
-	
 
 echo "---------------------------------------------------------------"
 echo "Async, single threaded benchmark.. (1 thread,  1,000,000 lines)"
@@ -68,7 +67,6 @@ do
 	bench_async $exe 10
 done;
 
-
 echo "---------------------------------------------------------------"
 echo "Async, multi threaded benchmark.. (100 threads,  1,000,000 lines)"
 echo "---------------------------------------------------------------"
@@ -76,6 +74,3 @@ for exe in spdlog-async g2log-async
 do
 	bench_async $exe 100
 done;
-
-
-
