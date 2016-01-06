@@ -165,7 +165,7 @@ inline bool file_exists(const std::string& filename)
 
 }
 
-//Return utc offset in minutes or -1 on failure
+//Return utc offset in minutes or throw spdlog_ex on failure
 inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 {
 
@@ -178,7 +178,8 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
     auto rv = GetDynamicTimeZoneInformation(&tzinfo);
 #endif
     if (rv == TIME_ZONE_ID_INVALID)
-        return -1;
+        throw spdlog::spdlog_ex("Failed getting timezone info. Last error: " + GetLastError());
+
     int offset = -tzinfo.Bias;
     if (tm.tm_isdst)
         offset -= tzinfo.DaylightBias;
