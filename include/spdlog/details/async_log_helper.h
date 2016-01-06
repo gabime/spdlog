@@ -52,12 +52,29 @@ class async_log_helper
 
         async_msg() = default;
         ~async_msg() = default;
-        async_msg(async_msg&& ) = default;
+
+
+async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
+        logger_name(std::move(other.logger_name)),
+                    level(std::move(other.level)),
+                    time(std::move(other.time)),
+                    txt(std::move(other.txt)),
+                    msg_type(std::move(other.msg_type))
+        {}
 
         async_msg(async_msg_type m_type) :msg_type(m_type)
         {};
 
-        async_msg& operator=(async_msg&& ) = default;
+        async_msg& operator=(async_msg&& other) SPDLOG_NOEXCEPT
+        {
+            logger_name = std::move(other.logger_name);
+            level = other.level;
+            time = std::move(other.time);
+            thread_id = other.thread_id;
+            txt = std::move(other.txt);
+            msg_type = other.msg_type;
+            return *this;
+        }
 
         // never copy or assign. should only be moved..
         async_msg(const async_msg&) = delete;
