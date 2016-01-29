@@ -32,6 +32,10 @@ public:
     {
     }
 
+    void clear() override
+    {
+    }
+
 protected:
     void _sink_it(const details::log_msg& msg) override
     {

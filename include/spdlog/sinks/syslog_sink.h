@@ -63,6 +63,10 @@ public:
     {
     }
 
+    void clear() override
+    {
+    }
+
 
 private:
     std::array<int, 10> _priorities;

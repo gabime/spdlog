@@ -38,6 +38,10 @@ protected:
         _ostream.flush();
     }
 
+    void clear() override
+    {
+    }
+
     std::ostream& _ostream;
     bool _force_flush;
 };

@@ -33,6 +33,11 @@ public:
         _file_helper.flush();
     }
 
+    void clear() override
+    {
+        _file_helper.reopen(true);
+    }
+
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
@@ -69,6 +74,11 @@ public:
     void flush() override
     {
         _file_helper.flush();
+    }
+
+    void clear() override
+    {
+        _file_helper.reopen(true);
     }
 
 protected:
@@ -161,6 +171,11 @@ public:
     void flush() override
     {
         _file_helper.flush();
+    }
+
+    void clear() override
+    {
+        _file_helper.reopen(true);
     }
 
 protected:
