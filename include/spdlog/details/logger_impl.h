@@ -297,3 +297,9 @@ inline void spdlog::logger::flush()
     for (auto& sink : _sinks)
         sink->flush();
 }
+
+inline void spdlog::logger::clear()
+{
+    for (auto& sink : _sinks)
+        sink->clear();
+}

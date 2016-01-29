@@ -89,6 +89,7 @@ public:
     void set_formatter(formatter_ptr);
 
     virtual void flush();
+    virtual void clear();
 
 protected:
     virtual void _log_msg(details::log_msg&);
