@@ -66,7 +66,7 @@ TEST_CASE("daily_logger", "[daily_logger]]")
     std::string basename = "logs/daily_log";
     std::tm tm = spdlog::details::os::localtime();
     fmt::MemoryWriter w;
-    w.write("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.txt", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
+    w.write("{}_{:04d}-{:02d}-{:02d}.txt", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
     auto logger = spdlog::daily_logger_mt("logger", basename, 0, 0, true);
     for (int i = 0; i < 10; ++i)
