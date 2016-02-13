@@ -71,7 +71,7 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::strin
     return details::registry::instance().create(logger_name, spdlog::sinks::stderr_sink_st::instance());
 }
 
-#ifdef __linux__
+#if defined(__linux__) || defined(__APPLE__)
 // Create syslog logger
 inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& logger_name, const std::string& syslog_ident, int syslog_option)
 {
