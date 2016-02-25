@@ -5,16 +5,18 @@
 
 #pragma once
 
-#include <string>
+#include <spdlog/formatter.h>
+#include <spdlog/details/log_msg.h>
+#include <spdlog/details/os.h>
+
 #include <chrono>
+#include <ctime>
 #include <memory>
-#include <vector>
+#include <mutex>
+#include <string>
 #include <thread>
-
-
-#include "../formatter.h"
-#include "./log_msg.h"
-#include "./os.h"
+#include <utility>
+#include <vector>
 
 namespace spdlog
 {

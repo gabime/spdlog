@@ -5,10 +5,12 @@
 
 #pragma once
 
+#include <spdlog/sinks/ostream_sink.h>
+#include <spdlog/details/null_mutex.h>
+
 #include <iostream>
+#include <memory>
 #include <mutex>
-#include "./ostream_sink.h"
-#include "../details/null_mutex.h"
 
 namespace spdlog
 {

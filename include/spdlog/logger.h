@@ -12,18 +12,17 @@
 // 2. Format the message using the formatter function
 // 3. Pass the formatted message to its sinks to performa the actual logging
 
-#include<vector>
-#include<memory>
-#include "sinks/base_sink.h"
-#include "common.h"
+#include <spdlog/sinks/base_sink.h>
+#include <spdlog/common.h>
+#include <spdlog/details/line_logger_fwd.h>
+
+#include <vector>
+#include <memory>
+#include <atomic>
+#include <string>
 
 namespace spdlog
 {
-
-namespace details
-{
-class line_logger;
-}
 
 class logger
 {
@@ -110,4 +109,6 @@ protected:
 };
 }
 
-#include "./details/logger_impl.h"
+#include <spdlog/details/logger_impl.h>
+#include <spdlog/details/line_logger_impl.h>
+

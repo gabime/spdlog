@@ -4,10 +4,11 @@
 //
 
 #pragma once
-#include <mutex>
-#include "./base_sink.h"
-#include "../details/null_mutex.h"
 
+#include <spdlog/sinks/base_sink.h>
+#include <spdlog/details/null_mutex.h>
+
+#include <mutex>
 
 namespace spdlog
 {
