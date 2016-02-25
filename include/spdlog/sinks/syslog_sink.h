@@ -7,13 +7,13 @@
 
 #if defined(__linux__) || defined(__APPLE__)
 
+#include <spdlog/sinks/sink.h>
+#include <spdlog/common.h>
+#include <spdlog/details/log_msg.h>
+
 #include <array>
 #include <string>
 #include <syslog.h>
-
-#include "./sink.h"
-#include "../common.h"
-#include "../details/log_msg.h"
 
 
 namespace spdlog

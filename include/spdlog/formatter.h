@@ -5,7 +5,10 @@
 
 #pragma once
 
-#include "details/log_msg.h"
+#include <spdlog/details/log_msg.h>
+
+#include <vector>
+
 namespace spdlog
 {
 namespace details
@@ -36,5 +39,5 @@ private:
 };
 }
 
-#include "details/pattern_formatter_impl.h"
+#include <spdlog/details/pattern_formatter_impl.h>
 

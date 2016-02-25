@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "tweakme.h"
-#include "common.h"
-#include "logger.h"
+#include <spdlog/tweakme.h>
+#include <spdlog/common.h>
+#include <spdlog/logger.h>
 
 namespace spdlog
 {
@@ -132,4 +132,4 @@ void drop_all();
 }
 
 
-#include "details/spdlog_impl.h"
+#include <spdlog/details/spdlog_impl.h>

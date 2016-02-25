@@ -5,11 +5,12 @@
 
 #pragma once
 
+#include <spdlog/sinks/base_sink.h>
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/details/file_helper.h>
+#include <spdlog/details/format.h>
+
 #include <mutex>
-#include "base_sink.h"
-#include "../details/null_mutex.h"
-#include "../details/file_helper.h"
-#include "../details/format.h"
 
 namespace spdlog
 {

@@ -10,13 +10,12 @@
 // Can be set to auto flush on every line
 // Throw spdlog_ex exception on errors
 
+#include <spdlog/details/os.h>
+#include <spdlog/details/log_msg.h>
+
 #include <string>
 #include <thread>
 #include <chrono>
-#include "os.h"
-#include "log_msg.h"
-
-
 
 namespace spdlog
 {

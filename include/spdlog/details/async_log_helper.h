@@ -14,17 +14,18 @@
 
 #pragma once
 
+#include <spdlog/common.h>
+#include <spdlog/sinks/sink.h>
+#include <spdlog/details/mpmc_bounded_q.h>
+#include <spdlog/details/log_msg.h>
+#include <spdlog/details/format.h>
+#include <spdlog/details/os.h>
+#include <spdlog/formatter.h>
+
 #include <chrono>
 #include <thread>
 #include <functional>
-
-#include "../common.h"
-#include "../sinks/sink.h"
-#include "./mpmc_bounded_q.h"
-#include "./log_msg.h"
-#include "./format.h"
-#include "./os.h"
-
+#include <vector>
 
 namespace spdlog
 {

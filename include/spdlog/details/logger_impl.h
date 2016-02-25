@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "./line_logger.h"
+#include <spdlog/logger.h>
 
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one

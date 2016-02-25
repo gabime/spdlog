@@ -5,9 +5,10 @@
 
 #pragma once
 
+#include <spdlog/common.h>
+#include <spdlog/details/format.h>
+
 #include <thread>
-#include "../common.h"
-#include "./format.h"
 
 namespace spdlog
 {

@@ -8,10 +8,11 @@
 //
 // Global registry functions
 //
-#include "registry.h"
-#include "../sinks/file_sinks.h"
-#include "../sinks/stdout_sinks.h"
-#include "../sinks/syslog_sink.h"
+#include <spdlog/spdlog.h>
+#include <spdlog/details/registry.h>
+#include <spdlog/sinks/file_sinks.h>
+#include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/sinks/syslog_sink.h>
 
 inline void spdlog::register_logger(std::shared_ptr<logger> logger)
 {

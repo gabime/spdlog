@@ -15,12 +15,11 @@
 //    3. will throw spdlog_ex upon log exceptions
 // Upong destruction, logs all remaining messages in the queue before destructing..
 
+#include <spdlog/common.h>
+#include <spdlog/logger.h>
+
 #include <chrono>
 #include <functional>
-#include "common.h"
-#include "logger.h"
-#include "spdlog.h"
-
 
 namespace spdlog
 {
@@ -69,4 +68,5 @@ private:
 }
 
 
-#include "./details/async_logger_impl.h"
+#include <spdlog/details/async_logger_impl.h>
+
