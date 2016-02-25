@@ -23,8 +23,12 @@
 #include <spdlog/formatter.h>
 
 #include <chrono>
-#include <thread>
+#include <exception>
 #include <functional>
+#include <memory>
+#include <string>
+#include <thread>
+#include <utility>
 #include <vector>
 
 namespace spdlog

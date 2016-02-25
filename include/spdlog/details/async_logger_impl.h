@@ -11,6 +11,10 @@
 #include <spdlog/details/async_log_helper.h>
 #include <spdlog/async_logger.h>
 
+#include <string>
+#include <functional>
+#include <chrono>
+#include <memory>
 
 template<class It>
 inline spdlog::async_logger::async_logger(const std::string& logger_name,

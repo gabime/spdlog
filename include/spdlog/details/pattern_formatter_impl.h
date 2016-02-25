@@ -9,12 +9,14 @@
 #include <spdlog/details/log_msg.h>
 #include <spdlog/details/os.h>
 
-#include <string>
 #include <chrono>
+#include <ctime>
 #include <memory>
-#include <vector>
-#include <thread>
 #include <mutex>
+#include <string>
+#include <thread>
+#include <utility>
+#include <vector>
 
 namespace spdlog
 {

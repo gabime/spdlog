@@ -13,9 +13,10 @@
 #include <spdlog/details/os.h>
 #include <spdlog/details/log_msg.h>
 
+#include <chrono>
+#include <cstdio>
 #include <string>
 #include <thread>
-#include <chrono>
 
 namespace spdlog
 {

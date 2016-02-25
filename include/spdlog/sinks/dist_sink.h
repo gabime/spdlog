@@ -13,7 +13,7 @@
 #include <algorithm>
 #include <memory>
 #include <mutex>
-#include <list>
+#include <vector>
 
 namespace spdlog
 {

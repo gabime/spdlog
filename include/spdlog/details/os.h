@@ -6,9 +6,10 @@
 
 #include <spdlog/common.h>
 
-#include <string>
 #include <cstdio>
 #include <ctime>
+#include <functional>
+#include <string>
 
 #ifdef _WIN32
 # ifndef WIN32_LEAN_AND_MEAN
@@ -24,6 +25,7 @@
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
 #include <sys/stat.h>
 #include <unistd.h>
+#include <chrono>
 #else
 #include <thread>
 #endif

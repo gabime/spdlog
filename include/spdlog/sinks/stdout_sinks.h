@@ -9,6 +9,7 @@
 #include <spdlog/details/null_mutex.h>
 
 #include <iostream>
+#include <memory>
 #include <mutex>
 
 namespace spdlog

@@ -14,6 +14,11 @@
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/sinks/syslog_sink.h>
 
+#include <chrono>
+#include <functional>
+#include <memory>
+#include <string>
+
 inline void spdlog::register_logger(std::shared_ptr<logger> logger)
 {
     return details::registry::instance().register_logger(logger);

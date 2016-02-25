@@ -9,6 +9,9 @@
 #include <spdlog/common.h>
 #include <spdlog/logger.h>
 
+#include <string>
+#include <utility>
+
 // Line logger class - aggregates operator<< calls to fast ostream
 // and logs upon destruction
 

@@ -10,7 +10,12 @@
 #include <spdlog/details/file_helper.h>
 #include <spdlog/details/format.h>
 
+#include <algorithm>
+#include <chrono>
+#include <cstdio>
+#include <ctime>
 #include <mutex>
+#include <string>
 
 namespace spdlog
 {

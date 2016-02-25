@@ -46,6 +46,7 @@ Distributed under the MIT License (http://opensource.org/licenses/MIT)
 #include <spdlog/common.h>
 
 #include <atomic>
+#include <utility>
 
 namespace spdlog
 {

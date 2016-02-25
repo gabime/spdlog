@@ -8,6 +8,8 @@
 #include <spdlog/details/log_msg.h>
 
 #include <vector>
+#include <string>
+#include <memory>
 
 namespace spdlog
 {

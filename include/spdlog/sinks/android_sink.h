@@ -13,6 +13,7 @@
 #include <android/log.h>
 
 #include <mutex>
+#include <string>
 
 namespace spdlog
 {

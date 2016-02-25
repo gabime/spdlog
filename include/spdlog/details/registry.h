@@ -15,10 +15,12 @@
 #include <spdlog/async_logger.h>
 #include <spdlog/common.h>
 
-#include <string>
-#include <mutex>
-#include <unordered_map>
+#include <chrono>
 #include <functional>
+#include <memory>
+#include <mutex>
+#include <string>
+#include <unordered_map>
 
 namespace spdlog
 {

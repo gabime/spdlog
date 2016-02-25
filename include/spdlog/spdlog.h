@@ -12,6 +12,11 @@
 #include <spdlog/common.h>
 #include <spdlog/logger.h>
 
+#include <memory>
+#include <functional>
+#include <chrono>
+#include <string>
+
 namespace spdlog
 {
 // Return an existing logger or nullptr if a logger with such name doesn't exist.

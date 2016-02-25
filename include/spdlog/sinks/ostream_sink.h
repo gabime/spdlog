@@ -10,7 +10,6 @@
 
 #include <ostream>
 #include <mutex>
-#include <memory>
 
 namespace spdlog
 {

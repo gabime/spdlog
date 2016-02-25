@@ -20,6 +20,8 @@
 
 #include <chrono>
 #include <functional>
+#include <string>
+#include <memory>
 
 namespace spdlog
 {

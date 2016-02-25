@@ -8,7 +8,8 @@
 #include <spdlog/common.h>
 #include <spdlog/details/format.h>
 
-#include <thread>
+#include <string>
+#include <utility>
 
 namespace spdlog
 {
