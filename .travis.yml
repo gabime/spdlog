@@ -84,7 +84,7 @@ install:
   - sed -i 's/march=native/msse4.2/' example/Makefile
 
   - if [ ! -d build ]; then mkdir build; fi
-  - export CXX_FLAGS=""
+  - export CXX_FLAGS="-I${CHECKOUT_PATH}/include"
   - export CXX_LINKER_FLAGS=""
   - if [ -z "$BUILD_TYPE" ]; then export BUILD_TYPE=Release; fi
   - if [ "$ASAN" == "On"]; then export CXX_FLAGS="${CXX_FLAGS} -fsanitize=address,undefined,integer -fno-omit-frame-pointer -fno-sanitize=unsigned-integer-overflow"; fi

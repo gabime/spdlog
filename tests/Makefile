@@ -1,5 +1,5 @@
 CXX	?= g++
-CXXFLAGS	=  -Wall  -pedantic -std=c++11 -pthread -O2
+CXXFLAGS	=  -Wall  -pedantic -std=c++11 -pthread -O2 -I../include
 LDPFALGS = -pthread
 
 CPP_FILES := $(wildcard *.cpp)
