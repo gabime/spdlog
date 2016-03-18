@@ -67,28 +67,26 @@ public:
 
 protected:
     sink_ptr sink_;
-    std::map<level::level_enum, std::string> colors_ {
-        { level::trace, grey },
-        { level::debug, white },
-        { level::info, green },
-        { level::notice, yellow },
-        { level::warn, bold + yellow },
-        { level::err, red },
-        { level::critical, bold + red },
-        { level::alert, bold + white + on_red },
-        { level::emerg, bold + yellow + on_red },
-        { level::off, reset }
-    };
+    std::map<level::level_enum, std::string> colors_;
 };
 
 inline ansicolor_sink::ansicolor_sink(sink_ptr sink) : sink_(sink)
 {
-    // do nothing
+    colors_[level::trace]    = grey;
+    colors_[level::debug]    = grey;
+    colors_[level::info]     = white;
+    colors_[level::notice]   = yellow;
+    colors_[level::warn]     = bold + yellow;
+    colors_[level::err]      = red;
+    colors_[level::critical] = bold + red;
+    colors_[level::alert]    = bold + white + on_red;
+    colors_[level::emerg]    = bold + yellow + on_red;
+    colors_[level::off]      = reset;
 }
 
 inline ansicolor_sink::~ansicolor_sink()
 {
-    // do nothing
+    flush();
 }
 
 inline void ansicolor_sink::log(const details::log_msg& msg)
