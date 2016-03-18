@@ -24,6 +24,9 @@ public:
     ansicolor_sink(sink_ptr sink);
     virtual ~ansicolor_sink();
 
+    ansicolor_sink(const ansicolor_sink& other);
+    ansicolor_sink& operator=(const ansicolor_sink& other);
+
     virtual void log(const details::log_msg& msg) override;
     virtual void flush() override;
 
@@ -72,10 +75,10 @@ protected:
 
 inline ansicolor_sink::ansicolor_sink(sink_ptr sink) : sink_(sink)
 {
-    colors_[level::trace]    = grey;
-    colors_[level::debug]    = grey;
+    colors_[level::trace]    = white;
+    colors_[level::debug]    = white;
     colors_[level::info]     = white;
-    colors_[level::notice]   = yellow;
+    colors_[level::notice]   = bold + white;
     colors_[level::warn]     = bold + yellow;
     colors_[level::err]      = red;
     colors_[level::critical] = bold + red;
@@ -87,6 +90,22 @@ inline ansicolor_sink::ansicolor_sink(sink_ptr sink) : sink_(sink)
 inline ansicolor_sink::~ansicolor_sink()
 {
     flush();
+}
+
+inline ansicolor_sink::ansicolor_sink(const ansicolor_sink& other) : sink_(other.sink_), colors_(other.colors_)
+{
+    // do nothing
+}
+
+
+inline ansicolor_sink& ansicolor_sink::operator=(const ansicolor_sink& other)
+{
+    if (this == &other)
+        return *this;
+
+    sink_ = other.sink_;
+    colors_ = other.colors_;
+    return *this;
 }
 
 inline void ansicolor_sink::log(const details::log_msg& msg)
