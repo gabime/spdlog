@@ -1,58 +1,8 @@
 #pragma once
-#include <spdlog\sinks\sink.h>
-#include <spdlog/details/log_msg.h>
-#include <spdlog/common.h>
-#include <vector>
+#include "spdlog\sinks\sink.h"
+#include "spdlog/details/log_msg.h"
+#include "spdlog/common.h"
 #include <sqlite3.h>
-
-struct Column
-{
-	enum TableColumn
-	{
-		TimeStamp,
-		Level,
-		Message,
-		LoggerName,
-		ThreadId
-	};
-
-	Column(std::string columnName, TableColumn columnMap)
-	{
-		ColumnName = columnName;
-		ColumnMap = columnMap;
-	}
-
-	std::string ColumnName;
-	TableColumn ColumnMap;
-	std::string Value;
-};
-
-struct database_schema
-{
-	std::string TableName;
-
-	std::vector<Column> Columns;
-
-	database_schema(const std::string& tableName, const std::vector<Column>& columns)
-	{
-		TableName = tableName;
-		Columns = columns;
-	}
-
-	database_schema()
-	{
-		TableName = "Logs";
-
-		Columns =
-		{
-			Column("TimeStamp", Column::TimeStamp),
-			Column("Level", Column::Level),
-			Column("Message", Column::Message),
-			Column("LoggerName", Column::LoggerName),
-			Column("ThreadId", Column::ThreadId)
-		};
-	}
-};
 
 namespace spdlog
 {
@@ -62,83 +12,9 @@ namespace spdlog
 			public sink
 		{
 		public:
-			void flush() override
-			{
-				sqlite3_close(_database);
-			}
-
-			void log(const details::log_msg& msg) override
-			{
-
-				for (auto& column : _schema.Columns)
-				{
-					switch (column.ColumnMap)
-					{
-					case Column::TimeStamp:
-					{
-						auto time = std::chrono::system_clock::to_time_t(msg.time);
-						char str[26];
-						ctime_s(str, sizeof(str), &time);
-						column.Value = str;
-						break;
-					}
-
-					case Column::Level:
-					{
-						column.Value = level::to_str(msg.level);
-						break;
-					}
-					case Column::Message:
-					{
-						column.Value = msg.raw.str();
-						break;
-					}
-					case Column::LoggerName:
-					{
-						column.Value = msg.logger_name;
-						break;
-					}
-					case Column::ThreadId:
-					{
-						column.Value = std::to_string(msg.thread_id);
-						break;
-					}
-					}
-				}
-
-				auto query = fmt::format("INSERT INTO {0} ({1},{3},{5},{7},{9}) VALUES ('{2}','{4}','{6}','{8}',{10})",
-					_schema.TableName,
-					_schema.Columns[0].ColumnName,
-					_schema.Columns[0].Value,
-					_schema.Columns[1].ColumnName,
-					_schema.Columns[1].Value,
-					_schema.Columns[2].ColumnName,
-					_schema.Columns[2].Value,
-					_schema.Columns[3].ColumnName,
-					_schema.Columns[3].Value,
-					_schema.Columns[4].ColumnName,
-					_schema.Columns[4].Value);
-
-				char *errorMessage = nullptr;
-
-				if (sqlite3_exec(_database, query.c_str(), nullptr, nullptr, &errorMessage) != SQLITE_OK)
-				{
-					throw spdlog_ex(errorMessage);
-				}
-
-
-			}
 
 			explicit database_logger_sink(const std::string& databaseName)
 			{
-				if (sqlite3_open(databaseName.c_str(), &_database))
-					throw spdlog_ex("Error opening database");
-			}
-
-			explicit database_logger_sink(const std::string& databaseName, const database_schema& databaseSchema)
-			{
-				_schema = databaseSchema;
-
 				if (sqlite3_open(databaseName.c_str(), &_database))
 					throw spdlog_ex("Error opening database");
 			}
@@ -148,8 +24,47 @@ namespace spdlog
 				sqlite3_close(_database);
 			}
 
+			void flush() override
+			{
+				sqlite3_close(_database);
+			}
+
+			sqlite3_stmt * prepare_query(const details::log_msg& msg) const
+			{
+				auto time = std::chrono::system_clock::to_time_t(msg.time);
+
+				char time_str[26];
+
+				ctime_s(time_str, sizeof(time_str), &time);
+
+				sqlite3_stmt * query_stmt;
+
+				if (sqlite3_prepare_v2(_database, "INSERT INTO Logs (TimeStamp,Level,Message,LoggerName,ThreadId) VALUES (?,?,?,?,?)", -1, &query_stmt, nullptr) != SQLITE_OK)
+					throw spdlog_ex(sqlite3_errmsg(_database));
+
+				if (sqlite3_bind_text(query_stmt, 1, time_str, -1, SQLITE_STATIC) != SQLITE_OK ||
+					sqlite3_bind_text(query_stmt, 2, to_str(msg.level), -1, SQLITE_STATIC) != SQLITE_OK ||
+					sqlite3_bind_text(query_stmt, 3, msg.raw.c_str(), -1, nullptr) != SQLITE_OK ||
+					sqlite3_bind_text(query_stmt, 4, "'''''''''''", -1, SQLITE_STATIC) != SQLITE_OK ||
+					sqlite3_bind_int(query_stmt, 5, msg.thread_id) != SQLITE_OK)
+					throw spdlog_ex(sqlite3_errmsg(_database));
+
+				return query_stmt;
+			}
+
+			void log(const details::log_msg& msg) override
+			{
+				auto query_stmt = prepare_query(msg);
+
+				if (sqlite3_step(query_stmt) != SQLITE_DONE)
+				{
+					throw spdlog_ex(sqlite3_errmsg(_database));
+				}
+
+				sqlite3_finalize(query_stmt);
+			}
+
 		private:
-			database_schema _schema;
 			sqlite3 *_database;
 		};
 	}
