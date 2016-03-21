@@ -4,9 +4,9 @@ void prepare_logdir()
 {
     spdlog::drop_all();
 #ifdef _WIN32
-    auto rv = system("del /F /Q logs\\*");
+    system("del /F /Q logs\\*");
 #else
-    auto rv = system("rm -f logs/*");
+    system("rm -f logs/*");
 #endif
 }
 
