@@ -32,6 +32,9 @@ namespace spdlog
 				sqlite3_close(_database);
 
 				sqlite3_finalize(_query_stmt);
+
+				_database = nullptr;
+				_query_stmt = nullptr;
 			}
 
 			void bind_to_statement(const details::log_msg& msg) const
