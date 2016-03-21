@@ -18,7 +18,6 @@
 #include <spdlog/sinks/sink.h>
 #include <spdlog/details/mpmc_bounded_q.h>
 #include <spdlog/details/log_msg.h>
-#include <spdlog/details/format.h>
 #include <spdlog/details/os.h>
 #include <spdlog/formatter.h>
 

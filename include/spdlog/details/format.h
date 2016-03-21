@@ -28,7 +28,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef FMT_FORMAT_H_
 #define FMT_FORMAT_H_
 
-#define FMT_HEADER_ONLY //Added by spdlog for header only usage
+//Added to spdlog version for header only usage
+#define FMT_HEADER_ONLY
+
+//Added to spdlog version in order to avoid including windows.h
+#if !defined (FMT_USE_WINDOWS_H)
+#define FMT_USE_WINDOWS_H 0
+#endif
 
 #if defined _MSC_VER && _MSC_VER <= 1500
 typedef unsigned int       uint32_t;
@@ -3155,7 +3161,7 @@ void BasicWriter<Char>::write_double(
         // MSVC's printf doesn't support 'F'.
         type = 'f';
 #endif
-        // Fall through.
+    // Fall through.
     case 'E':
     case 'G':
     case 'A':
