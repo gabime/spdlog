@@ -44,7 +44,7 @@ namespace spdlog
 
 				if (sqlite3_bind_text(_query_stmt, 1, time_str, -1, SQLITE_STATIC) != SQLITE_OK ||
 					sqlite3_bind_text(_query_stmt, 2, to_str(msg.level), -1, SQLITE_STATIC) != SQLITE_OK ||
-					sqlite3_bind_text(_query_stmt, 3, msg.raw.c_str(), -1, nullptr) != SQLITE_OK ||
+					sqlite3_bind_text(_query_stmt, 3, msg.raw.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
 					sqlite3_bind_text(_query_stmt, 4, msg.logger_name.c_str(), -1, SQLITE_STATIC) != SQLITE_OK ||
 					sqlite3_bind_int(_query_stmt, 5, msg.thread_id) != SQLITE_OK)
 					throw spdlog_ex(sqlite3_errmsg(_database));
