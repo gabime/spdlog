@@ -23,10 +23,10 @@ namespace sinks
 * MSVC sink (logging using OutputDebugStringA)
 */
 template<class Mutex>
-class base_msvc_sink : public base_sink < Mutex >
+class msvc_sink : public base_sink < Mutex >
 {
 public:
-	explicit base_msvc_sink()
+	explicit msvc_sink()
     {
     }
 
@@ -41,8 +41,8 @@ protected:
     }
 };
 
-typedef base_msvc_sink<std::mutex> msvc_sink_mt;
-typedef base_msvc_sink<details::null_mutex> msvc_sink_st;
+typedef msvc_sink<std::mutex> msvc_sink_mt;
+typedef msvc_sink<details::null_mutex> msvc_sink_st;
 
 }
 }
