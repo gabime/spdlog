@@ -21,7 +21,7 @@ namespace sinks {
  */
 class ansicolor_sink : public sink {
 public:
-    ansicolor_sink(sink_ptr sink);
+    ansicolor_sink(sink_ptr wrapped_sink);
     virtual ~ansicolor_sink();
 
     ansicolor_sink(const ansicolor_sink& other);
@@ -73,7 +73,7 @@ protected:
     std::map<level::level_enum, std::string> colors_;
 };
 
-inline ansicolor_sink::ansicolor_sink(sink_ptr sink) : sink_(sink)
+inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
 {
     colors_[level::trace]    = white;
     colors_[level::debug]    = white;
@@ -115,7 +115,7 @@ inline void ansicolor_sink::log(const details::log_msg& msg)
     const std::string s = msg.formatted.str();
     const std::string suffix = reset;
     details::log_msg m;
-    m.formatted.write(prefix + s + suffix);
+    m.formatted << prefix  << s << suffix;
     sink_->log(m);
 }
 
