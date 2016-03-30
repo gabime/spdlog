@@ -1,15 +1,19 @@
+//
+// Copyright(c) 2015 spdlog.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
+//
 #pragma once
-#include "spdlog\sinks\sink.h"
-#include "spdlog/details/log_msg.h"
-#include "spdlog/common.h"
+#include <spdlog/sinks/sink.h>
+#include <spdlog/details/log_msg.h>
+#include <spdlog/common.h>
+
 #include <sqlite3.h>
 
 namespace spdlog
 {
 	namespace sinks
 	{
-		class sqlite_sink :
-			public sink
+		class sqlite_sink: public sink
 		{
 		public:
 
@@ -24,17 +28,12 @@ namespace spdlog
 
 			~sqlite_sink()
 			{
-				sqlite_sink::flush();
+				sqlite3_finalize(_query_stmt);				
+				sqlite3_close(_database);				
 			}
 
 			void flush() override
-			{
-				sqlite3_close(_database);
-
-				sqlite3_finalize(_query_stmt);
-
-				_database = nullptr;
-				_query_stmt = nullptr;
+			{				
 			}
 
 			void bind_to_statement(const details::log_msg& msg) const
@@ -57,8 +56,7 @@ namespace spdlog
 			{
 				bind_to_statement(msg);
 
-				if (sqlite3_step(_query_stmt) != SQLITE_DONE)
-				{
+				if (sqlite3_step(_query_stmt) != SQLITE_DONE) {
 					throw spdlog_ex(sqlite3_errmsg(_database));
 				}
 
@@ -68,7 +66,6 @@ namespace spdlog
 
 		private:
 			sqlite3 *_database;
-
 			sqlite3_stmt * _query_stmt;
 		};
 	}
