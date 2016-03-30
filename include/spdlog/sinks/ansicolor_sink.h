@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2016 Kevin M. Godby.
+// Copyright(c) 2016 Kevin M. Godby (modified version by spdlog).
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
@@ -21,7 +21,7 @@ namespace sinks {
  */
 class ansicolor_sink : public sink {
 public:
-    ansicolor_sink(sink_ptr sink);
+    ansicolor_sink(sink_ptr wrapped_sink);
     virtual ~ansicolor_sink();
 
     ansicolor_sink(const ansicolor_sink& other);
@@ -30,7 +30,7 @@ public:
     virtual void log(const details::log_msg& msg) override;
     virtual void flush() override;
 
-    void setColor(level::level_enum level, const std::string& color);
+    void set_color(level::level_enum level, const std::string& color);
 
     /// \name Formatting codes
     //@{
@@ -73,7 +73,7 @@ protected:
     std::map<level::level_enum, std::string> colors_;
 };
 
-inline ansicolor_sink::ansicolor_sink(sink_ptr sink) : sink_(sink)
+inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
 {
     colors_[level::trace]    = white;
     colors_[level::debug]    = white;
@@ -115,7 +115,7 @@ inline void ansicolor_sink::log(const details::log_msg& msg)
     const std::string s = msg.formatted.str();
     const std::string suffix = reset;
     details::log_msg m;
-    m.formatted.write(prefix + s + suffix);
+    m.formatted << prefix  << s << suffix;
     sink_->log(m);
 }
 
@@ -124,7 +124,7 @@ inline void ansicolor_sink::flush()
     sink_->flush();
 }
 
-inline void ansicolor_sink::setColor(level::level_enum level, const std::string& color)
+inline void ansicolor_sink::set_color(level::level_enum level, const std::string& color)
 {
     colors_[level] = color;
 }

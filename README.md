@@ -22,7 +22,7 @@ Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/inclu
 * Various log targets:
     * Rotating log files.
     * Daily log files.
-    * Console logging.
+    * Console logging (including colors).
     * Linux syslog.
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Severity based filtering - threshold levels can be modified in runtime as well as in compile time.
@@ -133,6 +133,13 @@ int main(int, char* [])
         auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
         syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
         #endif
+        
+        //colored console sink example 
+        auto console_out = spdlog::sinks::stderr_sink_st::instance();
+        auto color_sink = std::make_shared<spd::sinks::ansicolor_sink>(console_out);  // wraps around another sink
+        auto color_logger = spd::details::registry::instance().create("Color", color_sink);
+        color_sink->set_color(spd::level::info, color_sink->bold + color_sink->green);
+        color_logger->info("Testing color logger...");
     }
     catch (const spd::spdlog_ex& ex)
     {
