@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2016 Kevin M. Godby.
+// Copyright(c) 2016 Kevin M. Godby (modified version by spdlog).
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
