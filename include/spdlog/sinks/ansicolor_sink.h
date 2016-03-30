@@ -30,7 +30,7 @@ public:
     virtual void log(const details::log_msg& msg) override;
     virtual void flush() override;
 
-    void setColor(level::level_enum level, const std::string& color);
+    void set_color(level::level_enum level, const std::string& color);
 
     /// \name Formatting codes
     //@{
@@ -124,7 +124,7 @@ inline void ansicolor_sink::flush()
     sink_->flush();
 }
 
-inline void ansicolor_sink::setColor(level::level_enum level, const std::string& color)
+inline void ansicolor_sink::set_color(level::level_enum level, const std::string& color)
 {
     colors_[level] = color;
 }

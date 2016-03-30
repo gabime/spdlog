@@ -113,7 +113,7 @@ void color_example()
 	auto color_sink = std::make_shared<spd::sinks::ansicolor_sink>(console_out);  // wraps around another sink
 	auto color_logger = spd::details::registry::instance().create("Color", color_sink);
 	color_logger->set_level(spd::level::trace);
-	color_sink->setColor(spd::level::info, color_sink->bold + color_sink->green);
+	color_sink->set_color(spd::level::info, color_sink->bold + color_sink->green);
 	color_logger->info("Testing color logger...");
 	color_logger->trace("Trace");
 	color_logger->debug("Debug");
