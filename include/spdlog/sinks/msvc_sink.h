@@ -26,7 +26,7 @@ template<class Mutex>
 class msvc_sink : public base_sink < Mutex >
 {
 public:
-	explicit msvc_sink()
+    explicit msvc_sink()
     {
     }
 
@@ -37,7 +37,7 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-		OutputDebugStringA(msg.formatted.c_str());
+        OutputDebugStringA(msg.formatted.c_str());
     }
 };
 

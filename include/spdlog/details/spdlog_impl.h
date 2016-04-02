@@ -59,29 +59,29 @@ inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string
 // Create stdout/stderr loggers (with optinal color support)
 inline std::shared_ptr<spdlog::logger> create_console_logger(const std::string& logger_name, spdlog::sink_ptr sink, bool color)
 {
-	if (color) //use color wrapper sink
-		sink = std::make_shared<spdlog::sinks::ansicolor_sink>(sink);
-	return spdlog::details::registry::instance().create(logger_name, sink);
+    if (color) //use color wrapper sink
+        sink = std::make_shared<spdlog::sinks::ansicolor_sink>(sink);
+    return spdlog::details::registry::instance().create(logger_name, sink);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt(const std::string& logger_name, bool color)
 {
-	return create_console_logger(logger_name, sinks::stdout_sink_mt::instance(), color);
+    return create_console_logger(logger_name, sinks::stdout_sink_mt::instance(), color);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st(const std::string& logger_name, bool color)
 {
-	return create_console_logger(logger_name, sinks::stdout_sink_st::instance(), color);
+    return create_console_logger(logger_name, sinks::stdout_sink_st::instance(), color);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt(const std::string& logger_name, bool color)
 {
-	return create_console_logger(logger_name, sinks::stderr_sink_mt::instance(), color);
+    return create_console_logger(logger_name, sinks::stderr_sink_mt::instance(), color);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::string& logger_name, bool color)
 {
-	return create_console_logger(logger_name, sinks::stderr_sink_st::instance(), color);
+    return create_console_logger(logger_name, sinks::stderr_sink_st::instance(), color);
 }
 
 #if defined(__linux__) || defined(__APPLE__)

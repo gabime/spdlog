@@ -15,7 +15,7 @@
 
 #ifndef NOMINMAX
 #define NOMINMAX //prevent windows redefining min/max
-#endif 
+#endif
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN

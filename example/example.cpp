@@ -16,10 +16,10 @@ void syslog_example();
 
 namespace spd = spdlog;
 int main(int, char*[])
-{    
+{
     try
     {
-        // Multithreaded color console 
+        // Multithreaded color console
         auto console = spd::stdout_logger_mt("console", true);
         console->info("Welcome to spdlog!");
         console->info("An info message example {}..", 1);
@@ -35,7 +35,7 @@ int main(int, char*[])
         console->info("{:>30}", "right aligned");
         console->info("{:^30}", "centered");
 
-		spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
+        spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
 
         // Runtime log levels
         spd::set_level(spd::level::info); //Set global log level to info
@@ -54,7 +54,7 @@ int main(int, char*[])
         // Customize msg format for all messages
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
-        
+
 
         // Compile time debug or trace macros.
         // Enabled #ifdef SPDLOG_DEBUG_ON or #ifdef SPDLOG_TRACE_ON
@@ -63,10 +63,10 @@ int main(int, char*[])
 
         // Asynchronous logging is very fast..
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
-		async_example();
+        async_example();
 
         // syslog example. linux/osx only..
-		syslog_example();
+        syslog_example();
 
 
         // Release and close all loggers
@@ -84,20 +84,20 @@ int main(int, char*[])
 
 void async_example()
 {
-	size_t q_size = 4096; //queue size must be power of 2
-	spdlog::set_async_mode(q_size);
-	auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
-	for (int i = 0; i < 100; ++i)
-		async_file->info("Async message #{}", i);
+    size_t q_size = 4096; //queue size must be power of 2
+    spdlog::set_async_mode(q_size);
+    auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
+    for (int i = 0; i < 100; ++i)
+        async_file->info("Async message #{}", i);
 }
 
 //syslog example (linux/osx only)
 void syslog_example()
 {
 #if defined (__linux__) || defined(__APPLE__)
-	std::string ident = "spdlog-example";
-	auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
-	syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
+    std::string ident = "spdlog-example";
+    auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
+    syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
 #endif
 }
 

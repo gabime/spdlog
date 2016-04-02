@@ -11,15 +11,18 @@
 #include <string>
 #include <map>
 
-namespace spdlog {
-namespace sinks {
+namespace spdlog
+{
+namespace sinks
+{
 
 /**
  * @brief The ansi_color_sink is a decorator around another sink and prefixes
  * the output with an ANSI escape sequence color code depending on the severity
  * of the message.
  */
-class ansicolor_sink : public sink {
+class ansicolor_sink : public sink
+{
 public:
     ansicolor_sink(sink_ptr wrapped_sink);
     virtual ~ansicolor_sink();
@@ -32,7 +35,7 @@ public:
 
     void set_color(level::level_enum level, const std::string& color);
 
-    /// Formatting codes    
+    /// Formatting codes
     const std::string reset      = "\033[00m";
     const std::string bold       = "\033[1m";
     const std::string dark       = "\033[2m";
@@ -40,8 +43,8 @@ public:
     const std::string blink      = "\033[5m";
     const std::string reverse    = "\033[7m";
     const std::string concealed  = "\033[8m";
-    
-    // Foreground colors    
+
+    // Foreground colors
     const std::string grey       = "\033[30m";
     const std::string red        = "\033[31m";
     const std::string green      = "\033[32m";
@@ -50,8 +53,8 @@ public:
     const std::string magenta    = "\033[35m";
     const std::string cyan       = "\033[36m";
     const std::string white      = "\033[37m";
-    
-    /// Background colors    
+
+    /// Background colors
     const std::string on_grey    = "\033[40m";
     const std::string on_red     = "\033[41m";
     const std::string on_green   = "\033[42m";
@@ -60,7 +63,7 @@ public:
     const std::string on_magenta = "\033[45m";
     const std::string on_cyan    = "\033[46m";
     const std::string on_white   = "\033[47m";
-    
+
 
 protected:
     sink_ptr sink_;
@@ -104,7 +107,7 @@ inline void ansicolor_sink::set_color(level::level_enum level, const std::string
 
 inline ansicolor_sink::~ansicolor_sink()
 {
-	flush();
+    flush();
 }
 
 } // namespace sinks
