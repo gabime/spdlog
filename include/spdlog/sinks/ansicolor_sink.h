@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2016 Kevin M. Godby (modified version by spdlog).
+// Copyright(c) 2016 Kevin M. Godby (a modified version by spdlog).
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
@@ -24,16 +24,15 @@ public:
     ansicolor_sink(sink_ptr wrapped_sink);
     virtual ~ansicolor_sink();
 
-    ansicolor_sink(const ansicolor_sink& other);
-    ansicolor_sink& operator=(const ansicolor_sink& other);
+    ansicolor_sink(const ansicolor_sink& other) = delete;
+    ansicolor_sink& operator=(const ansicolor_sink& other) = delete;
 
     virtual void log(const details::log_msg& msg) override;
     virtual void flush() override;
 
     void set_color(level::level_enum level, const std::string& color);
 
-    /// \name Formatting codes
-    //@{
+    /// Formatting codes    
     const std::string reset      = "\033[00m";
     const std::string bold       = "\033[1m";
     const std::string dark       = "\033[2m";
@@ -41,10 +40,8 @@ public:
     const std::string blink      = "\033[5m";
     const std::string reverse    = "\033[7m";
     const std::string concealed  = "\033[8m";
-    //@}
-
-    /// \name Foreground colors
-    //@{
+    
+    // Foreground colors    
     const std::string grey       = "\033[30m";
     const std::string red        = "\033[31m";
     const std::string green      = "\033[32m";
@@ -53,10 +50,8 @@ public:
     const std::string magenta    = "\033[35m";
     const std::string cyan       = "\033[36m";
     const std::string white      = "\033[37m";
-    //@}
-
-    /// \name Background colors
-    //@{
+    
+    /// Background colors    
     const std::string on_grey    = "\033[40m";
     const std::string on_red     = "\033[41m";
     const std::string on_green   = "\033[42m";
@@ -65,8 +60,7 @@ public:
     const std::string on_magenta = "\033[45m";
     const std::string on_cyan    = "\033[46m";
     const std::string on_white   = "\033[47m";
-    //@}
-
+    
 
 protected:
     sink_ptr sink_;
@@ -75,8 +69,8 @@ protected:
 
 inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
 {
-    colors_[level::trace]    = white;
-    colors_[level::debug]    = white;
+    colors_[level::trace]    = cyan;
+    colors_[level::debug]    = cyan;
     colors_[level::info]     = white;
     colors_[level::notice]   = bold + white;
     colors_[level::warn]     = bold + yellow;
@@ -87,33 +81,12 @@ inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sin
     colors_[level::off]      = reset;
 }
 
-inline ansicolor_sink::~ansicolor_sink()
-{
-    flush();
-}
-
-inline ansicolor_sink::ansicolor_sink(const ansicolor_sink& other) : sink_(other.sink_), colors_(other.colors_)
-{
-    // do nothing
-}
-
-
-inline ansicolor_sink& ansicolor_sink::operator=(const ansicolor_sink& other)
-{
-    if (this == &other)
-        return *this;
-
-    sink_ = other.sink_;
-    colors_ = other.colors_;
-    return *this;
-}
-
 inline void ansicolor_sink::log(const details::log_msg& msg)
 {
     // Wrap the originally formatted message in color codes
-    const std::string prefix = colors_[msg.level];
-    const std::string s = msg.formatted.str();
-    const std::string suffix = reset;
+    const std::string& prefix = colors_[msg.level];
+    const std::string& s = msg.formatted.str();
+    const std::string& suffix = reset;
     details::log_msg m;
     m.formatted << prefix  << s << suffix;
     sink_->log(m);
@@ -127,6 +100,11 @@ inline void ansicolor_sink::flush()
 inline void ansicolor_sink::set_color(level::level_enum level, const std::string& color)
 {
     colors_[level] = color;
+}
+
+inline ansicolor_sink::~ansicolor_sink()
+{
+	flush();
 }
 
 } // namespace sinks

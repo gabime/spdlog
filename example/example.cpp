@@ -13,20 +13,19 @@
 
 void async_example();
 void syslog_example();
-void color_example();
 
 namespace spd = spdlog;
 int main(int, char*[])
 {    
     try
     {
-        //Create console, multithreaded logger
-        auto console = spd::stdout_logger_mt("console");
+        // Multithreaded color console 
+        auto console = spd::stdout_logger_mt("console", true);
         console->info("Welcome to spdlog!");
         console->info("An info message example {}..", 1);
         console->info() << "Streams are supported too  " << 1;
 
-        //Formatting examples
+        // Formatting examples
         console->info("Easy padding in numbers like {:08d}", 12);
         console->info("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
         console->info("Support for floats {:03.2f}", 1.23456);
@@ -69,8 +68,6 @@ int main(int, char*[])
         // syslog example. linux/osx only..
 		syslog_example();
 
-		// terminal color example (works under linux/osx. windows: only if ansi.sys is loaded)
-		color_example();
 
         // Release and close all loggers
         spdlog::drop_all();
@@ -102,28 +99,6 @@ void syslog_example()
 	auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
 	syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
 #endif
-}
-
-// terminal color example (works under linux/osx. windows: only if ansi.sys is loaded)
-#include "spdlog/sinks/ansicolor_sink.h"
-void color_example()
-{	
-	// Create a sink to add colors to.
-	auto console_out = spdlog::sinks::stderr_sink_st::instance();
-	auto color_sink = std::make_shared<spd::sinks::ansicolor_sink>(console_out);  // wraps around another sink
-	auto color_logger = spd::details::registry::instance().create("Color", color_sink);
-	color_logger->set_level(spd::level::trace);
-	color_sink->set_color(spd::level::info, color_sink->bold + color_sink->green);
-	color_logger->info("Testing color logger...");
-	color_logger->trace("Trace");
-	color_logger->debug("Debug");
-	color_logger->info("Info");
-	color_logger->notice("Notice");
-	color_logger->warn("Warning");
-	color_logger->error("Error");
-	color_logger->critical("Critical");
-	color_logger->alert("Alert");
-	color_logger->emerg("Emergency");
 }
 
 

@@ -74,10 +74,10 @@ std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const st
 //
 // Create and register stdout/stderr loggers
 //
-std::shared_ptr<logger> stdout_logger_mt(const std::string& logger_name);
-std::shared_ptr<logger> stdout_logger_st(const std::string& logger_name);
-std::shared_ptr<logger> stderr_logger_mt(const std::string& logger_name);
-std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name);
+std::shared_ptr<logger> stdout_logger_mt(const std::string& logger_name, bool color = false);
+std::shared_ptr<logger> stdout_logger_st(const std::string& logger_name, bool color = false);
+std::shared_ptr<logger> stderr_logger_mt(const std::string& logger_name, bool color = false);
+std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name, bool color = false);
 
 
 //
