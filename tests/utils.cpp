@@ -4,10 +4,11 @@ void prepare_logdir()
 {
     spdlog::drop_all();
 #ifdef _WIN32
-    system("del /F /Q logs\\*");
+    auto rv = system("del /F /Q logs\\*");
 #else
-    system("rm -f logs/*");
+    auto rv = system("rm -f logs/*");
 #endif
+    (void)rv;
 }
 
 
@@ -42,4 +43,3 @@ std::size_t get_filesize(const std::string& filename)
 
     return ifs.tellg();
 }
-
