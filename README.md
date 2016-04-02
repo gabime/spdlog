@@ -65,7 +65,7 @@ int main(int, char* [])
     namespace spd = spdlog;
     try
     {
-        // Colored console logger 
+        // console logger (multithreaded and with color)
         auto console = spd::stdout_logger_mt("console", true);
         console->info("Welcome to spdlog!") ;
         console->info("An info message example {}..", 1);
