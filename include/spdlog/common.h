@@ -11,7 +11,7 @@
 #include <memory>
 #include <exception>
 
-#if defined(_WIN32) && defined(SPDLOG_USE_WCHAR)
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 #include <codecvt>
 #include <locale>
 #endif
@@ -100,22 +100,22 @@ private:
 
 };
 
-#if defined(_WIN32) && defined(SPDLOG_USE_WCHAR)
+//
+// wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
+//
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
     #define SPDLOG_FILENAME_T(s) L ## s
-    typedef std::wstring filename_str_t;
-    typedef wchar_t filename_char_t;
-
-    inline std::string filename_to_bytes(const filename_str_t& filename)
+	using filename_t = std::wstring;    
+    inline std::string filename_to_str(const filename_t& filename)
     {
         std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
         return c.to_bytes(filename);
     }
 #else
     #define SPDLOG_FILENAME_T(s) s
-    typedef std::string filename_str_t;
-    typedef char filename_char_t;
+	using filename_t = std::string;
 
-    inline std::string filename_to_bytes(const filename_str_t& filename)
+    inline std::string filename_to_str(const filename_t& filename)
     {
         return filename;
     }
