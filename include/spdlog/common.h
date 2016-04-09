@@ -11,6 +11,11 @@
 #include <memory>
 #include <exception>
 
+#if defined(_WIN32) && defined(SPDLOG_USE_WCHAR)
+#include <codecvt>
+#include <locale>
+#endif
+
 //visual studio does not support noexcept yet
 #ifndef _MSC_VER
 #define SPDLOG_NOEXCEPT noexcept
@@ -94,5 +99,26 @@ private:
     std::string _msg;
 
 };
+
+#if defined(_WIN32) && defined(SPDLOG_USE_WCHAR)
+    #define SPDLOG_FILENAME_T(s) L ## s
+    typedef std::wstring filename_str_t;
+    typedef wchar_t filename_char_t;
+
+    inline std::string filename_to_bytes(const filename_str_t& filename)
+    {
+        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
+        return c.to_bytes(filename);
+    }
+#else
+    #define SPDLOG_FILENAME_T(s) s
+    typedef std::string filename_str_t;
+    typedef char filename_char_t;
+
+    inline std::string filename_to_bytes(const filename_str_t& filename)
+    {
+        return filename;
+    }
+#endif
 
 } //spdlog
