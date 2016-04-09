@@ -5,16 +5,19 @@
 
 #pragma once
 
+
 #include <string>
 #include <initializer_list>
 #include <chrono>
 #include <memory>
+#include <atomic>
 #include <exception>
-
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 #include <codecvt>
 #include <locale>
 #endif
+
+#include <spdlog/details/null_mutex.h>
 
 //visual studio does not support noexcept yet
 #ifndef _MSC_VER
@@ -22,7 +25,6 @@
 #else
 #define SPDLOG_NOEXCEPT throw()
 #endif
-
 
 namespace spdlog
 {
@@ -39,7 +41,11 @@ using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr < sinks::sink >;
 using sinks_init_list = std::initializer_list < sink_ptr >;
 using formatter_ptr = std::shared_ptr<spdlog::formatter>;
-
+#if defined(SPDLOG_NO_ATOMIC_LEVELS)
+using atomic_level = details::null_atomic_int;
+#else
+using atomic_level = std::atomic_int;
+#endif
 
 //Log level enum
 namespace level

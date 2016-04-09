@@ -18,7 +18,6 @@
 
 #include <vector>
 #include <memory>
-#include <atomic>
 #include <string>
 
 namespace spdlog
@@ -103,9 +102,8 @@ protected:
     friend details::line_logger;
     std::string _name;
     std::vector<sink_ptr> _sinks;
-    formatter_ptr _formatter;
-    std::atomic_int _level;
-
+    formatter_ptr _formatter;	
+	spdlog::atomic_level _level;
 };
 }
 

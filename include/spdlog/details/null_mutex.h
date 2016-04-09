@@ -5,7 +5,8 @@
 
 #pragma once
 
-// null, no cost mutex
+#include <atomic>
+// null, no cost dummy "mutex" and dummy "atomic" int
 
 namespace spdlog
 {
@@ -20,5 +21,25 @@ struct null_mutex
         return true;
     }
 };
+
+struct null_atomic_int
+{
+	int value;
+	null_atomic_int() = default;
+
+	null_atomic_int(int val):value(val)
+	{}
+
+	int load(std::memory_order) const
+	{
+		return value;
+	}
+
+	void store(int val)
+	{
+		value = val;
+	}						
+};
+
 }
 }

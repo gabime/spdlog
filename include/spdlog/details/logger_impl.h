@@ -7,7 +7,6 @@
 
 #include <spdlog/logger.h>
 
-#include <atomic>
 #include <memory>
 #include <string>
 
