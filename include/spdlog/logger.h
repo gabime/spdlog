@@ -103,7 +103,7 @@ protected:
     std::string _name;
     std::vector<sink_ptr> _sinks;
     formatter_ptr _formatter;	
-	spdlog::atomic_level _level;
+	spdlog::level_t _level;
 };
 }
 

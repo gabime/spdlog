@@ -42,9 +42,9 @@ using sink_ptr = std::shared_ptr < sinks::sink >;
 using sinks_init_list = std::initializer_list < sink_ptr >;
 using formatter_ptr = std::shared_ptr<spdlog::formatter>;
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
-using atomic_level = details::null_atomic_int;
+using level_t = details::null_atomic_int;
 #else
-using atomic_level = std::atomic_int;
+using level_t = std::atomic_int;
 #endif
 
 //Log level enum
