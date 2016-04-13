@@ -110,28 +110,24 @@ protected:
 
 inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
 {
-#ifdef _WIN32
     colors_[level::trace]    = cyan;
     colors_[level::debug]    = cyan;
     colors_[level::info]     = white;
+    colors_[level::err]      = red;
+    colors_[level::off]      = reset;
+    
+#ifdef _WIN32
     colors_[level::notice]   = bold | white;
     colors_[level::warn]     = bold | yellow;
-    colors_[level::err]      = red;
     colors_[level::critical] = bold | red;
     colors_[level::alert]    = bold | white | on_red;
     colors_[level::emerg]    = bold | yellow | on_red;
-    colors_[level::off]      = reset;
 #else
-    colors_[level::trace]    = cyan;
-    colors_[level::debug]    = cyan;
-    colors_[level::info]     = white;
     colors_[level::notice]   = bold + white;
     colors_[level::warn]     = bold + yellow;
-    colors_[level::err]      = red;
     colors_[level::critical] = bold + red;
     colors_[level::alert]    = bold + white + on_red;
     colors_[level::emerg]    = bold + yellow + on_red;
-    colors_[level::off]      = reset;
 #endif
 }
 
