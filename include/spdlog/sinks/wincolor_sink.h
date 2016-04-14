@@ -16,23 +16,13 @@ namespace spdlog
 namespace sinks
 {
 
-#ifndef _WIN32
-#define FOREGROUND_INTENSITY 0
-#define FOREGROUND_RED 0
-#define FOREGROUND_GREEN 0
-#define FOREGROUND_BLUE 0
-#define BACKGROUND_INTENSITY 0
-#define BACKGROUND_RED 0
-#define BACKGROUND_GREEN 0
-#define BACKGROUND_BLUE 0
-#endif
-
 /**
  * @brief The wincolor_sink is a decorator around another sink and uses
  * the windows api to set the color depending on the severity
  * of the message.
  */
-class wincolor_sink : public sink
+template<class Mutex>
+class wincolor_sink : public base_sink<Mutex>
 {
 public:
     wincolor_sink(sink_ptr wrapped_sink);
@@ -41,7 +31,6 @@ public:
     wincolor_sink(const wincolor_sink& other) = delete;
     wincolor_sink& operator=(const wincolor_sink& other) = delete;
 
-    virtual void log(const details::log_msg& msg) override;
     virtual void flush() override;
 
     // Formatting codes
@@ -79,9 +68,15 @@ public:
     sink_ptr& wrapped_sink();
 
 protected:
+    virtual void _sink_it(const details::log_msg& msg) override;
+
     sink_ptr sink_;
     std::map<level::level_enum, short> colors_;
 };
+
+typedef wincolor_sink<details::null_mutex> wincolor_sink_st;
+typedef wincolor_sink<std::mutex> wincolor_sink_mt;
+
 
 inline wincolor_sink::wincolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
 {
@@ -98,20 +93,14 @@ inline wincolor_sink::wincolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
     colors_[level::emerg]    = bold | yellow | on_red;
 }
 
-inline void wincolor_sink::log(const details::log_msg& msg)
+inline void wincolor_sink::_sink_it(const details::log_msg& msg)
 {
     // Wrap the originally formatted message in color codes
-#ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle( STD_OUTPUT_HANDLE ), colors_[msg.level]);
     SetConsoleTextAttribute(GetStdHandle( STD_ERROR_HANDLE ), colors_[msg.level]);
-#endif
-
     sink_->log( msg );
-
-#ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle( STD_ERROR_HANDLE ), reset);
     SetConsoleTextAttribute(GetStdHandle( STD_OUTPUT_HANDLE ), reset);
-#endif
 }
 
 inline void wincolor_sink::flush()
