@@ -33,40 +33,6 @@ public:
     virtual void log(const details::log_msg& msg) override;
     virtual void flush() override;
 
-#ifdef _WIN32
-    void set_color(level::level_enum level, const short& color);
-
-	/// Formatting codes
-    const short reset      = 0;
-    const short bold       = FOREGROUND_INTENSITY;
-    const short dark       = reset; // Not implemented in windows
-    const short underline  = reset; // Not implemented in windows
-    const short blink      = reset; // Not implemented in windows
-    const short reverse    = FOREGROUND_RED | FOREGROUND_GREEN |
-                                FOREGROUND_BLUE | BACKGROUND_RED |
-                                BACKGROUND_GREEN | BACKGROUND_BLUE; // XOR to use this
-    const short concealed  = reset; // Not implemented in windows
-
-    // Foreground colors
-    const short grey       = bold;
-    const short red        = FOREGROUND_RED;
-    const short green      = FOREGROUND_GREEN;
-    const short yellow     = FOREGROUND_RED | FOREGROUND_GREEN;
-    const short blue       = FOREGROUND_BLUE;
-    const short magenta    = FOREGROUND_RED | FOREGROUND_BLUE;
-    const short cyan       = FOREGROUND_GREEN | FOREGROUND_BLUE;
-    const short white      = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
-
-    /// Background colors
-    const short on_grey    = BACKGROUND_INTENSITY;
-    const short on_red     = BACKGROUND_RED;
-    const short on_green   = BACKGROUND_GREEN;
-    const short on_yellow  = BACKGROUND_RED | BACKGROUND_GREEN;
-    const short on_blue    = BACKGROUND_BLUE;
-    const short on_magenta = BACKGROUND_RED | BACKGROUND_BLUE;
-    const short on_cyan    = BACKGROUND_GREEN | BACKGROUND_BLUE;
-    const short on_white   = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
-#else
     void set_color(level::level_enum level, const std::string& color);
 
     /// Formatting codes
@@ -97,15 +63,10 @@ public:
     const std::string on_magenta = "\033[45m";
     const std::string on_cyan    = "\033[46m";
     const std::string on_white   = "\033[47m";
-#endif
 
 protected:
     sink_ptr sink_;
-#ifdef _WIN32
-    std::map<level::level_enum, short> colors_;
-#else
     std::map<level::level_enum, std::string> colors_;
-#endif
 };
 
 inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
@@ -113,53 +74,32 @@ inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sin
     colors_[level::trace]    = cyan;
     colors_[level::debug]    = cyan;
     colors_[level::info]     = white;
-    colors_[level::err]      = red;
-    colors_[level::off]      = reset;
-    
-#ifdef _WIN32
-    colors_[level::notice]   = bold | white;
-    colors_[level::warn]     = bold | yellow;
-    colors_[level::critical] = bold | red;
-    colors_[level::alert]    = bold | white | on_red;
-    colors_[level::emerg]    = bold | yellow | on_red;
-#else
     colors_[level::notice]   = bold + white;
     colors_[level::warn]     = bold + yellow;
+    colors_[level::err]      = red;
     colors_[level::critical] = bold + red;
     colors_[level::alert]    = bold + white + on_red;
     colors_[level::emerg]    = bold + yellow + on_red;
-#endif
+    colors_[level::off]      = reset;
 }
 
 inline void ansicolor_sink::log(const details::log_msg& msg)
 {
     // Wrap the originally formatted message in color codes
-    const std::string& s = msg.formatted.str();
-    details::log_msg m;
-#ifdef _WIN32
-    m.formatted << s;
-
-    SetConsoleTextAttribute(GetStdHandle( STD_OUTPUT_HANDLE ), colors_[msg.level]);
-    sink_->log( m );
-    SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), reset );
-#else
     const std::string& prefix = colors_[msg.level];
+    const std::string& s = msg.formatted.str();
     const std::string& suffix = reset;
+    details::log_msg m;
     m.formatted << prefix  << s << suffix;
-
-    sink_->log( m );
-#endif
+    sink_->log(m);
 }
 
 inline void ansicolor_sink::flush()
 {
     sink_->flush();
 }
-#ifdef _WIN32
-inline void ansicolor_sink::set_color(level::level_enum level, const short& color)
-#else
+
 inline void ansicolor_sink::set_color(level::level_enum level, const std::string& color)
-#endif
 {
     colors_[level] = color;
 }
