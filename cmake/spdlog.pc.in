@@ -1,0 +1,6 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+includedir=${prefix}/include
+
+Name: @PROJECT_NAME@
+Description: Super fast C++ logging library. 
+Version: @PROJECT_VERSION@

@@ -33,4 +33,13 @@ example/*
 !example/makefile
 !example/makefile.clang
 
+# generated files
+generated
 
+# Cmake
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
