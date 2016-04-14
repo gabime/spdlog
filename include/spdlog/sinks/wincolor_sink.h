@@ -103,12 +103,14 @@ inline void wincolor_sink::log(const details::log_msg& msg)
     // Wrap the originally formatted message in color codes
 #ifdef _WIN32
     SetConsoleTextAttribute(GetStdHandle( STD_OUTPUT_HANDLE ), colors_[msg.level]);
+    SetConsoleTextAttribute(GetStdHandle( STD_ERROR_HANDLE ), colors_[msg.level]);
 #endif
 
     sink_->log( msg );
 
 #ifdef _WIN32
-    SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), reset );
+    SetConsoleTextAttribute(GetStdHandle( STD_ERROR_HANDLE ), reset);
+    SetConsoleTextAttribute(GetStdHandle( STD_OUTPUT_HANDLE ), reset);
 #endif
 }
 
