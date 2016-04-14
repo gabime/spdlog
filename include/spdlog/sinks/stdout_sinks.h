@@ -5,10 +5,9 @@
 
 #pragma once
 
-#include <spdlog/sinks/ostream_sink.h>
 #include <spdlog/details/null_mutex.h>
 
-#include <iostream>
+#include <cstdio>
 #include <memory>
 #include <mutex>
 
@@ -18,15 +17,26 @@ namespace sinks
 {
 
 template <class Mutex>
-class stdout_sink : public ostream_sink<Mutex>
+class stdout_sink : public base_sink<Mutex>
 {
     using MyType = stdout_sink<Mutex>;
 public:
-    stdout_sink() : ostream_sink<Mutex>(std::cout, true) {}
+    stdout_sink() {}
     static std::shared_ptr<MyType> instance()
     {
         static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
         return instance;
+    }
+
+    void _sink_it(const details::log_msg& msg) override
+    {
+        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stdout);
+        flush();
+    }
+
+    void flush() override
+    {
+        fflush(stdout);
     }
 };
 
@@ -35,17 +45,27 @@ typedef stdout_sink<std::mutex> stdout_sink_mt;
 
 
 template <class Mutex>
-class stderr_sink : public ostream_sink<Mutex>
+class stderr_sink : public base_sink<Mutex>
 {
     using MyType = stderr_sink<Mutex>;
 public:
-    stderr_sink() : ostream_sink<Mutex>(std::cerr, true) {}
+    stderr_sink() {}
     static std::shared_ptr<MyType> instance()
     {
         static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
         return instance;
     }
+    
+    void _sink_it(const details::log_msg& msg) override
+    {
+        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);
+        flush();
+    }
 
+    void flush() override
+    {
+        fflush(stderr);
+    }
 };
 
 typedef stderr_sink<std::mutex> stderr_sink_mt;
