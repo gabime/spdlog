@@ -21,6 +21,7 @@ namespace sinks
 #define FOREGROUND_RED 0
 #define FOREGROUND_GREEN 0
 #define FOREGROUND_BLUE 0
+#define BACKGROUND_INTENSITY 0
 #define BACKGROUND_RED 0
 #define BACKGROUND_GREEN 0
 #define BACKGROUND_BLUE 0
@@ -126,7 +127,7 @@ inline sink_ptr& wincolor_sink::wrapped_sink()
     return sink_;
 }
 
-inline wincolor_sink::~ansicolor_sink()
+inline wincolor_sink::~wincolor_sink()
 {
     flush();
 }
