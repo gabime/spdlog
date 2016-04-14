@@ -14,6 +14,7 @@
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/sinks/syslog_sink.h>
 #include <spdlog/sinks/ansicolor_sink.h>
+#include <spdlog/sinks/wincolor_sink.h>
 
 #include <chrono>
 #include <functional>
@@ -61,7 +62,11 @@ inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string
 inline std::shared_ptr<spdlog::logger> create_console_logger(const std::string& logger_name, spdlog::sink_ptr sink, bool color)
 {
     if (color) //use color wrapper sink
+#ifdef _WIN32
+        sink = std::make_shared<spdlog::sinks::wincolor_sink>(sink);
+#else
         sink = std::make_shared<spdlog::sinks::ansicolor_sink>(sink);
+#endif
     return spdlog::details::registry::instance().create(logger_name, sink);
 }
 
