@@ -64,7 +64,7 @@ public:
     const short on_cyan    = BACKGROUND_GREEN | BACKGROUND_BLUE;
     const short on_white   = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
 
-    void set_color(level::level_enum level, const short& color);
+    void set_color( level::level_enum level, const short& color );
     sink_ptr& wrapped_sink();
 
 protected:
@@ -77,8 +77,8 @@ protected:
 typedef wincolor_sink<details::null_mutex> wincolor_sink_st;
 typedef wincolor_sink<std::mutex> wincolor_sink_mt;
 
-
-inline wincolor_sink::wincolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
+template<class Mutex>
+inline wincolor_sink<Mutex>::wincolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
 {
     colors_[level::trace]    = cyan;
     colors_[level::debug]    = cyan;
@@ -93,7 +93,8 @@ inline wincolor_sink::wincolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
     colors_[level::emerg]    = bold | yellow | on_red;
 }
 
-inline void wincolor_sink::_sink_it(const details::log_msg& msg)
+template<class Mutex>
+inline void wincolor_sink<Mutex>::_sink_it( const details::log_msg& msg )
 {
     // Wrap the originally formatted message in color codes
     SetConsoleTextAttribute(GetStdHandle( STD_OUTPUT_HANDLE ), colors_[msg.level]);
@@ -103,22 +104,26 @@ inline void wincolor_sink::_sink_it(const details::log_msg& msg)
     SetConsoleTextAttribute(GetStdHandle( STD_OUTPUT_HANDLE ), reset);
 }
 
-inline void wincolor_sink::flush()
+template<class Mutex>
+inline void wincolor_sink<Mutex>::flush()
 {
     sink_->flush();
 }
 
-inline void wincolor_sink::set_color(level::level_enum level, const short& color)
+template<class Mutex>
+inline void wincolor_sink<Mutex>::set_color( level::level_enum level, const short& color )
 {
     colors_[level] = color;
 }
 
-inline sink_ptr& wincolor_sink::wrapped_sink()
+template<class Mutex>
+inline sink_ptr& wincolor_sink<Mutex>::wrapped_sink()
 {
     return sink_;
 }
 
-inline wincolor_sink::~wincolor_sink()
+template<class Mutex>
+inline wincolor_sink<Mutex>::~wincolor_sink()
 {
     flush();
 }
