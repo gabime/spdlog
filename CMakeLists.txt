@@ -31,9 +31,11 @@ set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
 set(config_install_dir "lib/cmake/${PROJECT_NAME}")
 set(include_install_dir "include")
+set(pkgconfig_install_dir "lib/pkgconfig")
 
 set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
 set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
+set(pkg_config "${generated_dir}/${PROJECT_NAME}.pc")
 set(targets_export_name "${PROJECT_NAME}Targets")
 set(namespace "${PROJECT_NAME}::")
 
@@ -44,6 +46,7 @@ write_basic_package_version_file(
 
 # Note: use 'targets_export_name'
 configure_file("cmake/Config.cmake.in" "${project_config}" @ONLY)
+configure_file("cmake/spdlog.pc.in" "${pkg_config}" @ONLY)
 
 install(
     TARGETS spdlog
@@ -56,6 +59,11 @@ install(DIRECTORY "include/spdlog" DESTINATION "${include_install_dir}")
 install(
     FILES "${project_config}" "${version_config}"
     DESTINATION "${config_install_dir}"
+)
+
+install(
+    FILES "${pkg_config}"
+    DESTINATION "${pkgconfig_install_dir}"
 )
 
 install(
