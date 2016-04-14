@@ -64,7 +64,6 @@ public:
     const std::string on_cyan    = "\033[46m";
     const std::string on_white   = "\033[47m";
 
-
 protected:
     sink_ptr sink_;
     std::map<level::level_enum, std::string> colors_;
