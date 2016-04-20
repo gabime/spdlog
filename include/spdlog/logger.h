@@ -102,8 +102,8 @@ protected:
     friend details::line_logger;
     std::string _name;
     std::vector<sink_ptr> _sinks;
-    formatter_ptr _formatter;	
-	spdlog::level_t _level;
+    formatter_ptr _formatter;
+    spdlog::level_t _level;
 };
 }
 

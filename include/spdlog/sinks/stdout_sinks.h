@@ -55,7 +55,7 @@ public:
         static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
         return instance;
     }
-    
+
     void _sink_it(const details::log_msg& msg) override
     {
         fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);

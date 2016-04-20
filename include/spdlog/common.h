@@ -110,21 +110,21 @@ private:
 // wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
 //
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
-    #define SPDLOG_FILENAME_T(s) L ## s
-	using filename_t = std::wstring;    
-    inline std::string filename_to_str(const filename_t& filename)
-    {
-        std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
-        return c.to_bytes(filename);
-    }
+#define SPDLOG_FILENAME_T(s) L ## s
+using filename_t = std::wstring;
+inline std::string filename_to_str(const filename_t& filename)
+{
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
+    return c.to_bytes(filename);
+}
 #else
-    #define SPDLOG_FILENAME_T(s) s
-	using filename_t = std::string;
+#define SPDLOG_FILENAME_T(s) s
+using filename_t = std::string;
 
-    inline std::string filename_to_str(const filename_t& filename)
-    {
-        return filename;
-    }
+inline std::string filename_to_str(const filename_t& filename)
+{
+    return filename;
+}
 #endif
 
 } //spdlog

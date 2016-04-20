@@ -24,21 +24,21 @@ struct null_mutex
 
 struct null_atomic_int
 {
-	int value;
-	null_atomic_int() = default;
+    int value;
+    null_atomic_int() = default;
 
-	null_atomic_int(int val):value(val)
-	{}
+    null_atomic_int(int val):value(val)
+    {}
 
-	int load(std::memory_order) const
-	{
-		return value;
-	}
+    int load(std::memory_order) const
+    {
+        return value;
+    }
 
-	void store(int val)
-	{
-		value = val;
-	}						
+    void store(int val)
+    {
+        value = val;
+    }
 };
 
 }
