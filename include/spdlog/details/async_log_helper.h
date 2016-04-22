@@ -161,8 +161,8 @@ private:
     std::thread _worker_thread;
 
     void push_msg(async_msg&& new_msg);
-    // throw last worker thread exception or if worker thread is not active
 
+    // throw last worker thread exception or if worker thread is not active
     void throw_if_bad_worker();
 
     // worker thread main loop
@@ -216,7 +216,7 @@ inline spdlog::details::async_log_helper::~async_log_helper()
 }
 
 
-//Try to push and block until succeeded
+//Try to push and block until succeeded (if the policy is not to discard when the queue is full)
 inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 {
     push_msg(async_msg(msg));
@@ -224,7 +224,6 @@ inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 
 }
 
-//Try to push and block until succeeded
 inline void spdlog::details::async_log_helper::push_msg(details::async_log_helper::async_msg&& new_msg)
 {
     throw_if_bad_worker();
@@ -267,7 +266,7 @@ inline void spdlog::details::async_log_helper::worker_loop()
 }
 
 // process next message in the queue
-// return true if this thread should still be active (no msg with level::off was received)
+// return true if this thread should still be active (while no terminate msg was received)
 inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_point& last_pop, log_clock::time_point& last_flush)
 {
 
