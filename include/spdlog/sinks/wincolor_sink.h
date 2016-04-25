@@ -25,7 +25,7 @@ template<class Mutex>
 class wincolor_sink : public base_sink<Mutex>
 {
 public:
-    wincolor_sink(sink_ptr wrapped_sink);
+    wincolor_sink(std::ostream& os, bool force_flush=false);
     virtual ~wincolor_sink();
 
     wincolor_sink(const wincolor_sink& other) = delete;
@@ -34,7 +34,7 @@ public:
     virtual void flush() override;
 
     // Formatting codes
-    const short reset      = 0;
+    const short reset      = FOREGROUND_INTENSITY;
     const short bold       = FOREGROUND_INTENSITY;
     const short dark       = reset; // Not implemented in windows
     const short underline  = reset; // Not implemented in windows
@@ -45,6 +45,7 @@ public:
     const short concealed  = reset; // Not implemented in windows
 
     // Foreground colors
+    const short black      = 0;
     const short grey       = bold;
     const short red        = FOREGROUND_RED;
     const short green      = FOREGROUND_GREEN;
@@ -65,20 +66,23 @@ public:
     const short on_white   = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
 
     void set_color( level::level_enum level, const short& color );
-    sink_ptr& wrapped_sink();
 
 protected:
     virtual void _sink_it(const details::log_msg& msg) override;
 
-    sink_ptr sink_;
+    void SetConsoleColor( WORD* Attributes, DWORD Color );
+    void ResetConsoleColor( WORD Attributes );
+
     std::map<level::level_enum, short> colors_;
+    std::ostream& _ostream;
+    bool _force_flush;
 };
 
 typedef wincolor_sink<details::null_mutex> wincolor_sink_st;
 typedef wincolor_sink<std::mutex> wincolor_sink_mt;
 
 template<class Mutex>
-inline wincolor_sink<Mutex>::wincolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
+inline wincolor_sink<Mutex>::wincolor_sink(std::ostream& os, bool force_flush=false) :_ostream(os), _force_flush(force_flush)
 {
     colors_[level::trace]    = cyan;
     colors_[level::debug]    = cyan;
@@ -97,17 +101,18 @@ template<class Mutex>
 inline void wincolor_sink<Mutex>::_sink_it( const details::log_msg& msg )
 {
     // Wrap the originally formatted message in color codes
-    SetConsoleTextAttribute(GetStdHandle( STD_OUTPUT_HANDLE ), colors_[msg.level]);
-    SetConsoleTextAttribute(GetStdHandle( STD_ERROR_HANDLE ), colors_[msg.level]);
-    sink_->log( msg );
-    SetConsoleTextAttribute(GetStdHandle( STD_ERROR_HANDLE ), reset);
-    SetConsoleTextAttribute(GetStdHandle( STD_OUTPUT_HANDLE ), reset);
+    WORD Attributes = 0;
+    SetConsoleColor(&Attributes, colors_[msg.level]);
+    _ostream.write( msg.formatted.data(), msg.formatted.size() );
+    if (_force_flush)
+      _ostream.flush();
+    ResetConsoleColor(Attributes);
 }
 
 template<class Mutex>
 inline void wincolor_sink<Mutex>::flush()
 {
-    sink_->flush();
+    _ostream.flush();
 }
 
 template<class Mutex>
@@ -117,16 +122,29 @@ inline void wincolor_sink<Mutex>::set_color( level::level_enum level, const shor
 }
 
 template<class Mutex>
-inline sink_ptr& wincolor_sink<Mutex>::wrapped_sink()
-{
-    return sink_;
-}
-
-template<class Mutex>
 inline wincolor_sink<Mutex>::~wincolor_sink()
 {
     flush();
 }
+
+template<class Mutex>
+void wincolor_sink<Mutex>::SetConsoleColor( WORD* Attributes, DWORD Color )
+{
+  CONSOLE_SCREEN_BUFFER_INFO Info;
+  HANDLE hStdout = GetStdHandle( STD_OUTPUT_HANDLE );
+  GetConsoleScreenBufferInfo( hStdout, &Info );
+  *Attributes = Info.wAttributes;
+  SetConsoleTextAttribute( hStdout, Color );
+  SetConsoleTextAttribute( GetStdHandle(STD_ERROR_HANDLE), Color );
+}
+
+template<class Mutex>
+void wincolor_sink<Mutex>::ResetConsoleColor( WORD Attributes )
+{
+  SetConsoleTextAttribute( GetStdHandle( STD_OUTPUT_HANDLE ), Attributes );
+  SetConsoleTextAttribute( GetStdHandle( STD_ERROR_HANDLE ), Attributes );
+}
+
 
 } // namespace sinks
 } // namespace spdlog
