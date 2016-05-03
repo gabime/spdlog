@@ -290,6 +290,10 @@ inline void spdlog::logger::_log_msg(details::log_msg& msg)
     _formatter->format(msg);
     for (auto &sink : _sinks)
         sink->log(msg);
+
+    const auto flush_level = _flush_level.load(std::memory_order_relaxed);
+    if (msg.level >= flush_level)
+        flush();
 }
 
 inline void spdlog::logger::_set_pattern(const std::string& pattern)

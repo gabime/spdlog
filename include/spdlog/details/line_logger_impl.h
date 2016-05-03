@@ -46,11 +46,6 @@ inline spdlog::details::line_logger::~line_logger()
 #endif
         _callback_logger->_log_msg(_log_msg);
     }
-
-    if (_log_msg.level >= _callback_logger->_flush_level)
-    {
-        _callback_logger->flush();
-    }
 }
 
 //
