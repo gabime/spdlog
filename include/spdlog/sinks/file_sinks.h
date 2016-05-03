@@ -140,9 +140,39 @@ typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
 typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
 
 /*
+* Default generator of daily log file names.
+*/
+struct default_daily_file_name_calculator
+{
+    //Create filename for the form basename.YYYY-MM-DD_hh-mm.extension
+    static filename_t calc_filename(const filename_t& basename, const filename_t& extension)
+    {
+        std::tm tm = spdlog::details::os::localtime();
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, extension);
+        return w.str();
+    }
+};
+
+/*
+* Generator of daily log file names in format basename.YYYY-MM-DD.extension
+*/
+struct dateonly_daily_file_name_calculator
+{
+    //Create filename for the form basename.YYYY-MM-DD.extension
+    static filename_t calc_filename(const filename_t& basename, const filename_t& extension)
+    {
+        std::tm tm = spdlog::details::os::localtime();
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}.{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, extension);
+        return w.str();
+    }
+};
+
+/*
 * Rotating file sink based on date. rotates at midnight
 */
-template<class Mutex>
+template<class Mutex, class FileNameCalc = default_daily_file_name_calculator>
 class daily_file_sink :public base_sink < Mutex >
 {
 public:
@@ -161,7 +191,7 @@ public:
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         _rotation_tp = _next_rotation_tp();
-        _file_helper.open(calc_filename(_base_filename, _extension));
+        _file_helper.open(FileNameCalc::calc_filename(_base_filename, _extension));
     }
 
     void flush() override
@@ -174,7 +204,7 @@ protected:
     {
         if (std::chrono::system_clock::now() >= _rotation_tp)
         {
-            _file_helper.open(calc_filename(_base_filename, _extension));
+            _file_helper.open(FileNameCalc::calc_filename(_base_filename, _extension));
             _rotation_tp = _next_rotation_tp();
         }
         _file_helper.write(msg);
@@ -195,15 +225,6 @@ private:
             return rotation_time;
         else
             return system_clock::time_point(rotation_time + hours(24));
-    }
-
-    //Create filename for the form basename.YYYY-MM-DD.extension
-    static filename_t calc_filename(const filename_t& basename, const filename_t& extension)
-    {
-        std::tm tm = spdlog::details::os::localtime();
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
-        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, extension);
-        return w.str();
     }
 
     filename_t _base_filename;
