@@ -21,6 +21,7 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
 
     // no support under vs2013 for member initialization for std::atomic
     _level = level::info;
+    _flush_level = level::off;
 }
 
 // ctor with sinks as init list
@@ -266,6 +267,11 @@ inline void spdlog::logger::set_level(spdlog::level::level_enum log_level)
     _level.store(log_level);
 }
 
+inline void spdlog::logger::flush_on(level::level_enum log_level)
+{
+    _flush_level.store(log_level);
+}
+
 inline spdlog::level::level_enum spdlog::logger::level() const
 {
     return static_cast<spdlog::level::level_enum>(_level.load(std::memory_order_relaxed));
@@ -284,6 +290,10 @@ inline void spdlog::logger::_log_msg(details::log_msg& msg)
     _formatter->format(msg);
     for (auto &sink : _sinks)
         sink->log(msg);
+
+    const auto flush_level = _flush_level.load(std::memory_order_relaxed);
+    if (msg.level >= flush_level)
+        flush();
 }
 
 inline void spdlog::logger::_set_pattern(const std::string& pattern)
