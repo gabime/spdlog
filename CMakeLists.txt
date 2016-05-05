@@ -13,6 +13,7 @@ add_library(spdlog INTERFACE)
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
 option(SPDLOG_BUILD_TESTS "Build tests" OFF)
+option(SPDLOG_BUILD_BENCHMARKS "Build comparison benchmarks for various logging libraries" OFF)
 
 target_include_directories(
     spdlog
@@ -30,6 +31,11 @@ endif()
 
 if(SPDLOG_BUILD_TESTS)
     add_subdirectory(tests)
+endif()
+
+if(SPDLOG_BUILD_BENCHMARKS)
+    add_subdirectory(vendor)
+    add_subdirectory(bench)
 endif()
 
 ### Install ###
