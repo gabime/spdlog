@@ -5,16 +5,14 @@
 enable_testing()
 
 # Build Catch unit tests
-#function(add_catch_test _testname)
-#	add_executable(${_testname} ${_testname}.cpp)
-#	target_link_libraries(${_testname} Catch)
-#	add_test(NAME test_${_testname} COMMAND ${_testname})
-#endfunction()
-#
-#file(GLOB catch_tests LIST_DIRECTORIES false *.cpp)
-#foreach(catch_test IN LIST catch_tests)
-#	add_catch_test(${catch_test})
-#endforeach()
+add_library(catch INTERFACE)
+target_include_directories(catch INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+
+file(GLOB catch_tests LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+add_executable(catch_tests ${catch_tests})
+target_link_libraries(catch_tests spdlog)
+add_test(NAME catch_tests COMMAND catch_tests)
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 
 # Ensure headers include their own dependencies
 add_subdirectory(header_dependencies)
