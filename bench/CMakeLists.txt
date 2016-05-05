@@ -55,19 +55,13 @@ if(Boost_FOUND)
     add_benchmark(boost-bench-mt LIBS ${Boost_LIBRARIES} INCLUDES ${Boost_INCLUDE_DIRS} DEFINITIONS ${BOOST_DEFS})
 endif()
 
-find_package(glog QUIET)
 if(TARGET glog)
     add_benchmark(glog-bench LIBS glog)
     add_benchmark(glog-bench-mt LIBS glog)
 endif()
 
-# TODO make g2log find script
-# TODO use g2log git submodule
-find_package(g2log QUIET)
-if(g2log-FOUND)
-    set(G2LOG_LIBRARIES lib_g2logger)
-    set(G2LOG_INCLUDE_DIRS /home/gabi/devel/g2log/g2log/src)
-    add_benchmark(g2log-async LIBS ${G2LOG_LIBRARIES} INCLUDES ${G2LOG_INCLUDE_DIRS})
+if(TARGET g3logger)
+    add_benchmark(g3log-async LIBS g3logger INCLUDES "${g3log_SOURCE_DIR}/src")
 endif()
 
 if(TARGET easylogging)

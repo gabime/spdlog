@@ -7,3 +7,6 @@
 [submodule "vendor/easyloggingpp"]
 	path = vendor/easyloggingpp
 	url = https://github.com/easylogging/easyloggingpp.git
+[submodule "vendor/g3log"]
+	path = vendor/g3log
+	url = https://github.com/KjellKod/g3log.git
