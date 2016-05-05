@@ -5,20 +5,21 @@
 # Most of these libraries are used for running comparison benchmarks against
 # other logging libraries.
 
-add_subdirectory(zf_log)
+if(IS_DIRECTORY zf_log)
+    add_subdirectory(zf_log)
+endif()
 
-add_subdirectory(glog)
+if(IS_DIRECTORY glog)
+    add_subdirectory(glog)
+endif()
 
-add_library(easylogging INTERFACE)
-set(SPDLOG_VENDORED_EASYLOGGING_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/easyloggingpp" CACHE INTERNAL "" FORCE)
-target_include_directories(easylogging INTERFACE "${SPDLOG_VENDORED_EASYLOGGING_ROOT}/src")
+if(IS_DIRECTORY easyloggingpp)
+    add_library(easylogging INTERFACE)
+    set(SPDLOG_VENDORED_EASYLOGGING_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/easyloggingpp" CACHE INTERNAL "" FORCE)
+    target_include_directories(easylogging INTERFACE "${SPDLOG_VENDORED_EASYLOGGING_ROOT}/src")
+endif()
 
-add_subdirectory(g3log)
-
-
-#add_library(zflog INTERFACE)
-#set(SPDLOG_VENDORED_ZFLOG_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/zf_log" CACHE INTERNAL "" FORCE)
-#target_include_directories(zflog INTERFACE "${SPDLOG_VENDORED_ZFLOG_ROOT}/zf_log")
-##target_compile_definitions(zflog INTERFACE ZFLOG_DEFINITIONS)
-
+if(IS_DIRECTORY g3log)
+    add_subdirectory(g3log)
+endif()
 
