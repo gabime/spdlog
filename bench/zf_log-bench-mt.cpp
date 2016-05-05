@@ -9,7 +9,7 @@
 const char g_path[] = "logs/zf_log.txt";
 int g_fd;
 
-static void output_callback(const zf_log_message* msg, void* arg)
+static void output_callback(zf_log_message *msg)
 {
     *msg->p = '\n';
     write(g_fd, msg->buf, msg->p - msg->buf + 1);
@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
         ZF_LOGE_AUX(ZF_LOG_STDERR, "Failed to open log file: %s", g_path);
         return -1;
     }
-    ZF_LOG_DEFINE_GLOBAL_OUTPUT = {ZF_LOG_PUT_STD, nullptr, &output_callback};
+    zf_log_set_output_callback(ZF_LOG_PUT_STD, output_callback);
 
     int thread_count = 10;
     if(argc > 1)

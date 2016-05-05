@@ -6,7 +6,7 @@
 
 #include "easylogging++.h"
 
-INITIALIZE_EASYLOGGINGPP
+_INITIALIZE_EASYLOGGINGPP
 
 int main(int, char* [])
 {
