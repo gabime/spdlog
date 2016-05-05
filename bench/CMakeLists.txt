@@ -32,7 +32,7 @@ function(add_benchmark _target)
     )
 
     if(_benchmark_DEFINITIONS)
-        target_compile_definitions(${_target} ${_benchmark_DEFINITIONS})
+        target_compile_definitions(${_target} PUBLIC ${_benchmark_DEFINITIONS})
     endif()
 
     add_test(NAME test_benchmark_${_target} COMMAND ${_target})
@@ -50,8 +50,9 @@ endif()
 
 find_package(Boost QUIET COMPONENTS log)
 if(Boost_FOUND)
-    add_benchmark(boost-bench LIBS ${Boost_LIBRARIES} INCLUDES ${Boost_INCLUDE_DIRS})
-    add_benchmark(boost-bench-mt LIBS ${Boost_LIBRARIES} INCLUDES ${Boost_INCLUDE_DIRS})
+    set(BOOST_DEFS "-DBOOST_LOG_DYN_LINK=1")
+    add_benchmark(boost-bench LIBS ${Boost_LIBRARIES} INCLUDES ${Boost_INCLUDE_DIRS} DEFINITIONS ${BOOST_DEFS})
+    add_benchmark(boost-bench-mt LIBS ${Boost_LIBRARIES} INCLUDES ${Boost_INCLUDE_DIRS} DEFINITIONS ${BOOST_DEFS})
 endif()
 
 find_package(glog QUIET)
