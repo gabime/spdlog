@@ -9,7 +9,7 @@
 
 #define _ELPP_THREAD_SAFE
 #include "easylogging++.h"
-INITIALIZE_EASYLOGGINGPP
+_INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 
