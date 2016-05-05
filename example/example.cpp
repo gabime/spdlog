@@ -6,6 +6,7 @@
 // spdlog usage example
 //
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/callback_sink.h"
 
 #include <cstdlib> // EXIT_FAILURE
 #include <iostream>
@@ -13,6 +14,7 @@
 
 void async_example();
 void syslog_example();
+void callback_example();
 
 namespace spd = spdlog;
 int main(int, char*[])
@@ -68,6 +70,8 @@ int main(int, char*[])
         // syslog example. linux/osx only..
         syslog_example();
 
+        // Callback example.
+        callback_example();
 
         // Release and close all loggers
         spdlog::drop_all();
@@ -114,5 +118,30 @@ void custom_class_example()
     some_class c;
     spdlog::get("console")->info("custom class with operator<<: {}..", c);
     spdlog::get("console")->info() << "custom class with operator<<: " << c << "..";
+}
+
+// Example of callback sink
+void callback_function(void* /*userdata*/,
+                       const char* logger_name,
+                       int level,
+                       size_t thread_id,
+                       const char* msg)
+{
+    // Normally this callback function would be used to redirect the log output
+    // to some other location (e.g., another logging system that isn't yet
+    // directly supported by spdlog).
+    std::cout << "--------------------" << std::endl;
+    std::cout << "Logger name: " << logger_name << std::endl;
+    std::cout << "Level: "       << level       << std::endl;
+    std::cout << "Thread ID: "   << thread_id   << std::endl;
+    std::cout << "Message: "     << msg;
+    std::cout << "--------------------" << std::endl;
+}
+
+void callback_example()
+{
+    auto callback_logger = spdlog::create<spdlog::sinks::callback_sink_mt>("callback_logger", &callback_function);
+    callback_logger->info("info sent to callback sink");
+    callback_logger->error("error sent to callback sink");
 }
 
