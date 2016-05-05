@@ -12,6 +12,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(spdlog INTERFACE)
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
+option(SPDLOG_BUILD_TESTS "Build tests" OFF)
+option(SPDLOG_BUILD_BENCHMARKS "Build comparison benchmarks for various logging libraries" OFF)
 
 target_include_directories(
     spdlog
@@ -20,9 +22,20 @@ target_include_directories(
     "$<INSTALL_INTERFACE:include>"
 )
 
+set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+include(CTest)
 if(SPDLOG_BUILD_EXAMPLES)
-  enable_testing()
-  add_subdirectory(example)
+    add_subdirectory(example)
+endif()
+
+if(SPDLOG_BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
+
+if(SPDLOG_BUILD_BENCHMARKS)
+    add_subdirectory(vendor)
+    add_subdirectory(bench)
 endif()
 
 ### Install ###
