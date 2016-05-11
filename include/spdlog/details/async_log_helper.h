@@ -121,7 +121,8 @@ public:
                      size_t queue_size,
                      const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
                      const std::function<void()>& worker_warmup_cb = nullptr,
-                     const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero());
+                     const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
+                     const std::function<void()>& worker_teardown_cb = nullptr);
 
     void log(const details::log_msg& msg);
 
@@ -157,6 +158,9 @@ private:
     // auto periodic sink flush parameter
     const std::chrono::milliseconds _flush_interval_ms;
 
+    // worker thread teardown callback
+    const std::function<void()> _worker_teardown_cb;
+
     // worker thread
     std::thread _worker_thread;
 
@@ -190,7 +194,8 @@ inline spdlog::details::async_log_helper::async_log_helper(
     size_t queue_size,
     const async_overflow_policy overflow_policy,
     const std::function<void()>& worker_warmup_cb,
-    const std::chrono::milliseconds& flush_interval_ms):
+    const std::chrono::milliseconds& flush_interval_ms,
+    const std::function<void()>& worker_teardown_cb):
     _formatter(formatter),
     _sinks(sinks),
     _q(queue_size),
@@ -199,6 +204,7 @@ inline spdlog::details::async_log_helper::async_log_helper(
     _overflow_policy(overflow_policy),
     _worker_warmup_cb(worker_warmup_cb),
     _flush_interval_ms(flush_interval_ms),
+    _worker_teardown_cb(worker_teardown_cb),
     _worker_thread(&async_log_helper::worker_loop, this)
 {}
 
@@ -254,6 +260,7 @@ inline void spdlog::details::async_log_helper::worker_loop()
         auto last_pop = details::os::now();
         auto last_flush = last_pop;
         while(process_next_msg(last_pop, last_flush));
+        if (_worker_teardown_cb) _worker_teardown_cb();
     }
     catch (const std::exception& ex)
     {

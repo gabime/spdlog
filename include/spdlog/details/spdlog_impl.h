@@ -132,9 +132,9 @@ inline void spdlog::set_level(level::level_enum log_level)
 }
 
 
-inline void spdlog::set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms)
+inline void spdlog::set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb)
 {
-    details::registry::instance().set_async_mode(queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms);
+    details::registry::instance().set_async_mode(queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb);
 }
 
 inline void spdlog::set_sync_mode()
@@ -146,4 +146,3 @@ inline void spdlog::drop_all()
 {
     details::registry::instance().drop_all();
 }
-
