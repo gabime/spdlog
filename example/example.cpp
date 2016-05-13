@@ -55,6 +55,10 @@ int main(int, char*[])
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         file_logger->info("This is another message with custom format");
 
+        auto formatter = std::make_shared<spd::pattern_formatter>("%k: %v");
+        formatter->add_customer_formatter('k', [](spd::details::log_msg &msg){ msg.formatted << "Channel 1"; });
+        file_logger->set_formatter(formatter);
+        file_logger->info("This is another message with another custom format using a custom flag");
 
         // Compile time debug or trace macros.
         // Enabled #ifdef SPDLOG_DEBUG_ON or #ifdef SPDLOG_TRACE_ON

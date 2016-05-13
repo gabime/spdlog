@@ -377,6 +377,18 @@ private:
     char _ch;
 };
 
+class flag_custom_formatter : public flag_formatter
+{
+private:
+    custom_flag_formatter _formatter;
+public:
+    explicit flag_custom_formatter(custom_flag_formatter formatter) : _formatter(formatter) { };
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        _formatter(msg);
+    }
+};
+
 
 //aggregate user chars to display as is
 class aggregate_formatter :public flag_formatter
@@ -448,7 +460,7 @@ class full_formatter :public flag_formatter
 ///////////////////////////////////////////////////////////////////////////////
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern)
+inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern) : _pattern(pattern)
 {
     compile_pattern(pattern);
 }
@@ -457,6 +469,7 @@ inline void spdlog::pattern_formatter::compile_pattern(const std::string& patter
 {
     auto end = pattern.end();
     std::unique_ptr<details::aggregate_formatter> user_chars;
+    _formatters.clear();
     for (auto it = pattern.begin(); it != end; ++it)
     {
         if (*it == '%')
@@ -480,8 +493,8 @@ inline void spdlog::pattern_formatter::compile_pattern(const std::string& patter
     {
         _formatters.push_back(std::move(user_chars));
     }
-
 }
+
 inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
@@ -602,12 +615,61 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
         break;
 
     default: //Unkown flag appears as is
-        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter('%')));
-        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter(flag)));
+        auto it = _custom_formatters.find(flag);
+        if(it == _custom_formatters.end())
+        {
+            _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter('%')));
+            _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter(flag)));
+        }
+        else
+        {
+            _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::flag_custom_formatter(it->second)));
+        }
         break;
     }
 }
 
+inline void spdlog::pattern_formatter::add_customer_formatter(char flag, custom_flag_formatter formatter)
+{
+    switch (flag)
+    {//these flags are already in use.
+    case('a') :
+    case('A') :
+    case('b') :
+    case('B') :
+    case('c') :
+    case('C') :
+    case('d') :
+    case('D') :
+    case('e') :
+    case('f') :
+    case('F') :
+    case('h') :
+    case('H') :
+    case('I') :
+    case('n'):
+    case('l'):
+    case('L'):
+    case('m') :
+    case('M') :
+    case('p') :
+    case('r') :
+    case('R') :
+    case('S') :
+    case('t') :
+    case('T') :
+    case('v') :
+    case('x') :
+    case('X') :
+    case('Y') :
+    case('z') :
+    case ('+'):
+       throw spdlog::spdlog_ex(std::string("Can't add custom pattern formatter with non unique signature"));
+    default: //Unkown flag appears as is
+        _custom_formatters.emplace(flag, formatter);
+        compile_pattern(_pattern);
+    }
+}
 
 inline void spdlog::pattern_formatter::format(details::log_msg& msg)
 {
