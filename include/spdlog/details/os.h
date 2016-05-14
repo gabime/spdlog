@@ -235,14 +235,14 @@ inline size_t thread_id()
 #define SPDLOG_FILENAME_T(s) L ## s
 inline std::string filename_to_str(const filename_t& filename)
 {
-	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
-	return c.to_bytes(filename);
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
+    return c.to_bytes(filename);
 }
 #else
 #define SPDLOG_FILENAME_T(s) s
 inline std::string filename_to_str(const filename_t& filename)
 {
-	return filename;
+    return filename;
 }
 #endif
 

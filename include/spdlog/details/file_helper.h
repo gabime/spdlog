@@ -25,7 +25,7 @@ namespace details
 
 class file_helper
 {
-	
+
 public:
     const int open_tries = 5;
     const int open_interval = 10;
@@ -128,7 +128,7 @@ public:
 
 private:
     FILE* _fd;
-	filename_t _filename;
+    filename_t _filename;
     bool _force_flush;
 };
 }

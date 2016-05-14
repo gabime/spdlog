@@ -20,7 +20,7 @@
 namespace spdlog
 {
 namespace sinks
-{	
+{
 /*
 * Trivial file sink with single file as target
 */
@@ -108,7 +108,7 @@ private:
 
     void _rotate()
     {
-		using details::os::filename_to_str;
+        using details::os::filename_to_str;
         _file_helper.close();
         for (auto i = _max_files; i > 0; --i)
         {

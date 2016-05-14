@@ -19,7 +19,7 @@
 
 namespace spdlog
 {
-	
+
 // Return an existing logger or nullptr if a logger with such name doesn't exist.
 // Examples:
 //
