@@ -20,11 +20,13 @@
 #include <spdlog/details/null_mutex.h>
 
 
-//visual studio upto 2013 does not support noexcept
+//visual studio upto 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #define SPDLOG_NOEXCEPT throw()
+#define SPDLOG_CONSTEXPR
 #else
 #define SPDLOG_NOEXCEPT noexcept
+#define SPDLOG_CONSTEXPR constexpr
 #endif
 
 

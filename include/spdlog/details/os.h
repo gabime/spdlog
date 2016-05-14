@@ -112,29 +112,18 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
     return !(tm1 == tm2);
 }
 
+// eol at end of each log line
+#if !defined (SPDLOG_EOL)
 #ifdef _WIN32
-inline const char* eol()
-{
-    return "\r\n";
-}
+#define SPDLOG_EOL "\r\n"
 #else
-constexpr inline const char* eol()
-{
-    return "\n";
-}
+#define SPDLOG_EOL "\n"
+#endif
 #endif
 
-#ifdef _WIN32
-inline unsigned short eol_size()
-{
-    return 2;
-}
-#else
-constexpr inline unsigned short eol_size()
-{
-    return 1;
-}
-#endif
+SPDLOG_CONSTEXPR static const char* eol = SPDLOG_EOL;
+SPDLOG_CONSTEXPR static int eol_size = sizeof(SPDLOG_EOL) - 1;
+
 
 //fopen_s on non windows for writing
 inline int fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode)

@@ -619,11 +619,7 @@ inline void spdlog::pattern_formatter::format(details::log_msg& msg)
             f->format(msg, tm_time);
         }
         //write eol
-#if defined(SPDLOG_EOL)
-        msg.formatted << SPDLOG_EOL;
-#else
-        msg.formatted.write(details::os::eol(), details::os::eol_size());
-#endif
+		msg.formatted.write(details::os::eol, details::os::eol_size);
     }
     catch(const fmt::FormatError& e)
     {
