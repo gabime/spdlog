@@ -12,7 +12,7 @@ std::string log_info(const T& what, spdlog::level::level_enum logger_level = spd
     oss_logger.set_level(logger_level);
     oss_logger.set_pattern("%v");
     oss_logger.info() << what;
-    
+
     return oss.str().substr(0, oss.str().length() - spdlog::details::os::eol_size);
 }
 
