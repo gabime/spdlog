@@ -622,7 +622,7 @@ inline void spdlog::pattern_formatter::format(details::log_msg& msg)
 #if defined(SPDLOG_EOL)
         msg.formatted << SPDLOG_EOL;
 #else
-        msg.formatted << details::os::eol();
+        msg.formatted.write(details::os::eol(), details::os::eol_size());
 #endif
     }
     catch(const fmt::FormatError& e)
