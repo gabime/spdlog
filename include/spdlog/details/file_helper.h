@@ -25,6 +25,7 @@ namespace details
 
 class file_helper
 {
+	
 public:
     const int open_tries = 5;
     const int open_interval = 10;
@@ -57,7 +58,7 @@ public:
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
         }
 
-        throw spdlog_ex("Failed opening file " + filename_to_str(_filename) + " for writing");
+        throw spdlog_ex("Failed opening file " + os::filename_to_str(_filename) + " for writing");
     }
 
     void reopen(bool truncate)
@@ -88,34 +89,30 @@ public:
         size_t msg_size = msg.formatted.size();
         auto data = msg.formatted.data();
         if (std::fwrite(data, 1, msg_size, _fd) != msg_size)
-            throw spdlog_ex("Failed writing to file " + filename_to_str(_filename));
+            throw spdlog_ex("Failed writing to file " + os::filename_to_str(_filename));
 
         if (_force_flush)
             std::fflush(_fd);
-
     }
 
     long size()
     {
         if (!_fd)
-            throw spdlog_ex("Cannot use size() on closed file " + filename_to_str(_filename));
+            throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
 
         auto pos = ftell(_fd);
         if (fseek(_fd, 0, SEEK_END) != 0)
-            throw spdlog_ex("fseek failed on file " + filename_to_str(_filename));
+            throw spdlog_ex("fseek failed on file " + os::filename_to_str(_filename));
 
         auto file_size = ftell(_fd);
 
         if(fseek(_fd, pos, SEEK_SET) !=0)
-            throw spdlog_ex("fseek failed on file " + filename_to_str(_filename));
+            throw spdlog_ex("fseek failed on file " + os::filename_to_str(_filename));
 
         if (file_size == -1)
-            throw spdlog_ex("ftell failed on file " + filename_to_str(_filename));
-
+            throw spdlog_ex("ftell failed on file " + os::filename_to_str(_filename));
 
         return file_size;
-
-
     }
 
     const filename_t& filename() const
@@ -129,14 +126,10 @@ public:
         return os::file_exists(name);
     }
 
-
-
 private:
     FILE* _fd;
-    filename_t _filename;
+	filename_t _filename;
     bool _force_flush;
-
-
 };
 }
 }
