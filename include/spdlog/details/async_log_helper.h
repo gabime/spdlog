@@ -340,13 +340,13 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_
     using namespace std::this_thread;
     using std::chrono::milliseconds;
     using std::chrono::microseconds;
-       
+
     auto time_since_op = now - last_op_time;
-    
+
     // spin upto 50 micros
     if (time_since_op <= microseconds(50))
         return;
-        
+
     // yield upto 150 micros
     if (time_since_op <= microseconds(100))
         return yield();
@@ -356,7 +356,7 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_
     if (time_since_op <= milliseconds(200))
         return sleep_for(milliseconds(20));
 
-    // sleep for 200 ms 
+    // sleep for 200 ms
     return sleep_for(milliseconds(200));
 }
 
