@@ -120,7 +120,7 @@ int main(int, char* [])
         // Asynchronous logging is very fast..
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
         //
-        size_t q_size = 1048576; //queue size must be power of 2
+        size_t q_size = 8192; //queue size must be power of 2
         spdlog::set_async_mode(q_size);
         auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
         async_file->info() << "This is async log.." << "Should be very fast!";
