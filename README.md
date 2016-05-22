@@ -14,7 +14,7 @@ Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/inclu
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
 * Headers only.
 * No dependencies - just copy and use.
-* Feature rich [call style](#usage-example) using the excellent [cppformat](http://cppformat.github.io/) library.
+* Feature rich [call style](#usage-example) using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * ostream call style is supported too.
 * Extremely fast asynchronous mode (optional) - using lockfree queues and other tricks to reach millions of calls/sec.
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
