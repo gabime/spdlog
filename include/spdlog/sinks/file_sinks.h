@@ -282,6 +282,7 @@ private:
 		now += hours(1);
 		time_t tnow = std::chrono::system_clock::to_time_t(now);
 		tm date = spdlog::details::os::localtime(tnow);
+		date.tm_min = 0;
 		date.tm_sec = 0;
 		auto rotation_time = std::chrono::system_clock::from_time_t(std::mktime(&date));
 		return rotation_time;
