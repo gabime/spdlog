@@ -57,6 +57,17 @@ inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string
     return create<spdlog::sinks::daily_file_sink_st>(logger_name, filename, SPDLOG_FILENAME_T("txt"), hour, minute, force_flush);
 }
 
+// Create file logger which creates new file every hour):
+inline std::shared_ptr<spdlog::logger> spdlog::hourly_logger_mt(const std::string& logger_name, const filename_t& filename, bool force_flush)
+{
+	return create<spdlog::sinks::hourly_file_sink_mt>(logger_name, filename, SPDLOG_FILENAME_T("txt"), force_flush);
+}
+
+inline std::shared_ptr<spdlog::logger> spdlog::hourly_logger_st(const std::string& logger_name, const filename_t& filename, bool force_flush)
+{
+	return create<spdlog::sinks::hourly_file_sink_st>(logger_name, filename, SPDLOG_FILENAME_T("txt"), force_flush);
+}
+
 // Create stdout/stderr loggers (with optinal color support)
 inline std::shared_ptr<spdlog::logger> create_console_logger(const std::string& logger_name, spdlog::sink_ptr sink, bool color)
 {
