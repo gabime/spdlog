@@ -13,6 +13,7 @@
 
 void async_example();
 void syslog_example();
+void test_custom_error_handler();
 
 namespace spd = spdlog;
 int main(int, char*[])
@@ -68,6 +69,7 @@ int main(int, char*[])
         // syslog example. linux/osx only..
         syslog_example();
 
+        test_custom_error_handler();
 
         // Release and close all loggers
         spdlog::drop_all();
@@ -99,6 +101,31 @@ void syslog_example()
     auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
     syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
 #endif
+}
+
+// Example of user-provided error handler
+void test_custom_error_handler()
+{
+    // Trigger default error handler
+    try {
+        spd::error("test default error handler (throw an exception)");
+    } catch (const spd::spdlog_ex& e) {
+        std::cerr << "caught spdlog_ex: " << e.what() << std::endl;
+    }
+
+    // Set custom error handler
+    spd::set_error_handler(
+        [](const std::string& message) {
+            std::cerr << "SPDLOG ERROR " << message << std::endl;
+        }
+    );
+
+    // Trigger custom error handler
+    try {
+        spd::error("test custom error handler");
+    } catch (const spd::spdlog_ex& e) {
+        std::cerr << "caught spdlog_ex: " << e.what() << std::endl;
+    }
 }
 
 

@@ -146,3 +146,4 @@ inline void spdlog::drop_all()
 {
     details::registry::instance().drop_all();
 }
+

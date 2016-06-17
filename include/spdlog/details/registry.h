@@ -34,7 +34,7 @@ public:
     {
         std::lock_guard<Mutex> lock(_mutex);
         auto logger_name = logger->name();
-        throw_if_exists(logger_name);
+        error_if_exists(logger_name);
         _loggers[logger_name] = logger;
     }
 
@@ -50,7 +50,7 @@ public:
     std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
     {
         std::lock_guard<Mutex> lock(_mutex);
-        throw_if_exists(logger_name);
+        error_if_exists(logger_name);
         std::shared_ptr<logger> new_logger;
         if (_async_mode)
             new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _overflow_policy, _worker_warmup_cb, _flush_interval_ms, _worker_teardown_cb);
@@ -140,10 +140,10 @@ private:
     registry_t<Mutex>(const registry_t<Mutex>&) = delete;
     registry_t<Mutex>& operator=(const registry_t<Mutex>&) = delete;
 
-    void throw_if_exists(const std::string &logger_name)
+    void error_if_exists(const std::string &logger_name)
     {
         if (_loggers.find(logger_name) != _loggers.end())
-            throw spdlog_ex("logger with name '" + logger_name + "' already exists");
+            error("logger with name '" + logger_name + "' already exists");
     }
     Mutex _mutex;
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
@@ -155,6 +155,7 @@ private:
     std::function<void()> _worker_warmup_cb = nullptr;
     std::chrono::milliseconds _flush_interval_ms;
     std::function<void()> _worker_teardown_cb = nullptr;
+    std::function<void(std::string)> _error_handler = [](const std::string& message) { throw spdlog_ex(message); };
 };
 #ifdef SPDLOG_NO_REGISTRY_MUTEX
 typedef registry_t<spdlog::details::null_mutex> registry;

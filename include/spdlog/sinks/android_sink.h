@@ -9,6 +9,7 @@
 
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/null_mutex.h>
+#include <spdlog/common.h>
 
 #include <android/log.h>
 
@@ -48,7 +49,7 @@ protected:
         }
         else
         {
-            throw spdlog_ex("Send to Android logcat failed");
+            error("Send to Android logcat failed");
         }
     }
 
@@ -76,7 +77,8 @@ private:
         case spdlog::level::emerg:
             return ANDROID_LOG_FATAL;
         default:
-            throw spdlog_ex("Incorrect level value");
+            error("Incorrect level value");
+            return ANDROID_LOG_INFO;
         }
     }
 

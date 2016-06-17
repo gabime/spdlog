@@ -12,7 +12,7 @@
 // Upon each log write the logger:
 //    1. Checks if its log level is enough to log the message
 //    2. Push a new copy of the message to a queue (or block the caller until space is available in the queue)
-//    3. will throw spdlog_ex upon log exceptions
+//    3. will call error handler upon log exceptions (which, by default, will throw spdlog_ex exception)
 // Upon destruction, logs all remaining messages in the queue before destructing..
 
 #include <spdlog/common.h>

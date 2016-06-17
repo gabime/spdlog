@@ -15,6 +15,7 @@
 #include <codecvt>
 #include <locale>
 #endif
+#include <functional>
 
 #include <spdlog/details/null_mutex.h>
 
@@ -106,6 +107,32 @@ private:
     std::string _msg;
 
 };
+
+// Function pointer to error handler. Defaults to throwing a spdlog_ex
+// exception. May be overridden by the user with set_error_handler().
+static std::function<void(const std::string&)> error_handler = [](const std::string& message) {
+    throw spdlog_ex(message);
+};
+
+// Call the user-provided error handler  when an internal spdlog error occurs.
+inline void error(const std::string& message)
+{
+    error_handler(message);
+}
+
+// Set an error handler to be called in case of errors during logging (e.g.,
+// can't write to file because the disk is full). Defaults to an error handler
+// which logs the errors to the console.
+//
+// Function must have the following signature (but can be named whatever you
+// like):
+//
+//   void error_handler(const std::string &message);
+//
+inline void set_error_handler(std::function<void(const std::string&)> func)
+{
+    error_handler = func;
+}
 
 //
 // wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)

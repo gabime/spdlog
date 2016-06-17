@@ -8,10 +8,11 @@
 // Helper class for file sink
 // When failing to open a file, retry several times(5) with small delay between the tries(10 ms)
 // Can be set to auto flush on every line
-// Throw spdlog_ex exception on errors
+// Call error handler on errors (default: throw spdlog_ex)
 
 #include <spdlog/details/os.h>
 #include <spdlog/details/log_msg.h>
+#include <spdlog/common.h>
 
 #include <chrono>
 #include <cstdio>
@@ -58,13 +59,15 @@ public:
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
         }
 
-        throw spdlog_ex("Failed opening file " + os::filename_to_str(_filename) + " for writing");
+        error("Failed opening file " + os::filename_to_str(_filename) + " for writing");
     }
 
     void reopen(bool truncate)
     {
-        if (_filename.empty())
-            throw spdlog_ex("Failed re opening file - was not opened before");
+        if (_filename.empty()) {
+            error("Failed re opening file - was not opened before");
+            return;
+        }
         open(_filename, truncate);
 
     }
@@ -88,8 +91,10 @@ public:
 
         size_t msg_size = msg.formatted.size();
         auto data = msg.formatted.data();
-        if (std::fwrite(data, 1, msg_size, _fd) != msg_size)
-            throw spdlog_ex("Failed writing to file " + os::filename_to_str(_filename));
+        if (std::fwrite(data, 1, msg_size, _fd) != msg_size) {
+            error("Failed writing to file " + os::filename_to_str(_filename));
+            return;
+        }
 
         if (_force_flush)
             std::fflush(_fd);
@@ -97,20 +102,26 @@ public:
 
     long size()
     {
-        if (!_fd)
-            throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
+        if (!_fd) {
+            error("Cannot use size() on closed file " + os::filename_to_str(_filename));
+            return -1;
+        }
 
         auto pos = ftell(_fd);
         if (fseek(_fd, 0, SEEK_END) != 0)
-            throw spdlog_ex("fseek failed on file " + os::filename_to_str(_filename));
+            error("fseek failed on file " + os::filename_to_str(_filename));
 
         auto file_size = ftell(_fd);
 
-        if(fseek(_fd, pos, SEEK_SET) !=0)
-            throw spdlog_ex("fseek failed on file " + os::filename_to_str(_filename));
+        if(fseek(_fd, pos, SEEK_SET) !=0) {
+            error("fseek failed on file " + os::filename_to_str(_filename));
+            return -1;
+        }
 
-        if (file_size == -1)
-            throw spdlog_ex("ftell failed on file " + os::filename_to_str(_filename));
+        if (file_size == -1) {
+            error("ftell failed on file " + os::filename_to_str(_filename));
+            return -1;
+        }
 
         return file_size;
     }

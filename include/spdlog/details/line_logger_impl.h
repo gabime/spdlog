@@ -70,7 +70,7 @@ inline void spdlog::details::line_logger::write(const char* fmt, const Args&... 
     }
     catch (const fmt::FormatError& e)
     {
-        throw spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
+        error(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
     }
 }
 
