@@ -91,6 +91,9 @@ std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std:
 #endif
 
 
+// Create and register a logger a single sink
+std::shared_ptr<logger> create(const std::string& logger_name, const sink_ptr& sink);
+
 // Create and register a logger with multiple sinks
 std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
 template<class It>
