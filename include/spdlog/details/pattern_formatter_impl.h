@@ -9,6 +9,7 @@
 #include <spdlog/details/log_msg.h>
 #include <spdlog/details/os.h>
 #include <spdlog/details/format.h>
+#include <spdlog/common.h>
 
 #include <chrono>
 #include <ctime>
@@ -623,6 +624,6 @@ inline void spdlog::pattern_formatter::format(details::log_msg& msg)
     }
     catch(const fmt::FormatError& e)
     {
-        throw spdlog_ex(fmt::format("formatting error while processing format string: {}", e.what()));
+        error(fmt::format("formatting error while processing format string: {}", e.what()));
     }
 }

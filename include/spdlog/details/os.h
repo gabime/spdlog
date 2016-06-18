@@ -198,8 +198,10 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
     DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
     auto rv = GetDynamicTimeZoneInformation(&tzinfo);
 #endif
-    if (rv == TIME_ZONE_ID_INVALID)
-        throw spdlog::spdlog_ex("Failed getting timezone info. Last error: " + std::to_string(GetLastError()));
+    if (rv == TIME_ZONE_ID_INVALID) {
+        error("Failed getting timezone info. Last error: " + std::to_string(GetLastError()));
+        return 0;
+    }
 
     int offset = -tzinfo.Bias;
     if (tm.tm_isdst)

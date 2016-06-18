@@ -64,8 +64,11 @@ public:
           buffer_mask_(buffer_size - 1)
     {
         //queue size must be power of two
-        if(!((buffer_size >= 2) && ((buffer_size & (buffer_size - 1)) == 0)))
+        if(!((buffer_size >= 2) && ((buffer_size & (buffer_size - 1)) == 0))) {
+            // FIXME: call error() instead
+            // FIXME: can we just round buffer_size down to the next power of two and skip the error altogether?
             throw spdlog_ex("async logger queue size must be power of two");
+        }
 
         for (size_t i = 0; i != buffer_size; i += 1)
             buffer_[i].sequence_.store(i, std::memory_order_relaxed);

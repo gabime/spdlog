@@ -115,7 +115,6 @@ void drop(const std::string &name);
 // Drop all references
 void drop_all();
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Macros to be display source file & line

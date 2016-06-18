@@ -9,6 +9,7 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/details/file_helper.h>
 #include <spdlog/details/format.h>
+#include <spdlog/common.h>
 
 #include <algorithm>
 #include <chrono>
@@ -119,12 +120,14 @@ private:
             {
                 if (details::os::remove(target) != 0)
                 {
-                    throw spdlog_ex("rotating_file_sink: failed removing " + filename_to_str(target));
+                    error("rotating_file_sink: failed removing " + filename_to_str(target));
+                    return;
                 }
             }
             if (details::file_helper::file_exists(src) && details::os::rename(src, target))
             {
-                throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target));
+                error("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target));
+                return;
             }
         }
         _file_helper.reopen(true);
@@ -189,8 +192,16 @@ public:
         _rotation_m(rotation_minute),
         _file_helper(force_flush)
     {
-        if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
-            throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
+        if (rotation_hour < 0 || rotation_hour > 23) {
+            error("daily_file_sink: Invalid rotation hour (" + std::to_string(rotation_hour) + "). Must be between 0 and 23.");
+            rotation_hour = 0;
+        }
+
+        if (rotation_minute < 0 || rotation_minute > 59) {
+            error("daily_file_sink: Invalid rotation minute (" + std::to_string(rotation_minute) + "). Must be between 0 and 59.");
+            rotation_minute = 0;
+        }
+
         _rotation_tp = _next_rotation_tp();
         _file_helper.open(FileNameCalc::calc_filename(_base_filename, _extension));
     }
