@@ -15,25 +15,7 @@ language: cpp
 #
 matrix:
   include:
-    # Test clang-3.5: C++11/C++14, Buidd=Debug/Release, ASAN=On/Off
-    - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=11 ASAN=On LIBCXX=On
-      os: linux
-      addons: &clang35
-        apt:
-          packages:
-            - clang-3.5
-            - valgrind
-          sources:
-            - ubuntu-toolchain-r-test
-            - llvm-toolchain-precise-3.5
-
- 
-    - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=11 ASAN=Off LIBCXX=On
-      os: linux
-      addons: *clang35
-    
-
-
+   
 # Test gcc-4.8: C++11, Build=Debug/Release, ASAN=Off
     - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11 ASAN=Off LIBCXX=Off
       os: linux
