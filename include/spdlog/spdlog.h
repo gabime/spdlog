@@ -62,6 +62,13 @@ void set_async_mode(size_t queue_size, const async_overflow_policy overflow_poli
 // Turn off async mode
 void set_sync_mode();
 
+
+//
+// Create and register multi/single basic file logger
+//
+std::shared_ptr<logger> basic_logger_mt(const std::string& logger_name, const filename_t& filename,bool force_flush = false);
+std::shared_ptr<logger> basic_logger_st(const std::string& logger_name, const filename_t& filename, bool force_flush = false);
+
 //
 // Create and register multi/single threaded rotating file logger
 //

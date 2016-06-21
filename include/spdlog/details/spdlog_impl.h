@@ -35,6 +35,17 @@ inline void spdlog::drop(const std::string &name)
     details::registry::instance().drop(name);
 }
 
+// Create multi/single threaded simple file logger
+inline std::shared_ptr<spdlog::logger> spdlog::basic_logger_mt(const std::string& logger_name, const filename_t& filename, bool force_flush)
+{
+    return create<spdlog::sinks::simple_file_sink_mt>(logger_name, filename, force_flush);
+}
+
+inline std::shared_ptr<spdlog::logger> spdlog::basic_logger_st(const std::string& logger_name, const filename_t& filename, bool force_flush)
+{
+    return create<spdlog::sinks::simple_file_sink_st>(logger_name, filename, force_flush);
+}
+
 // Create multi/single threaded rotating file logger
 inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_mt(const std::string& logger_name, const filename_t& filename, size_t max_file_size, size_t max_files, bool force_flush)
 {

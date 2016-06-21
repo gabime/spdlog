@@ -88,6 +88,13 @@ int main(int, char* [])
         console->debug("This message shold not be displayed!");
         console->set_level(spd::level::debug); // Set specific logger's log level
         console->debug("Now it should..");
+        
+        //
+        // Create a basic file logger (multithreaded, use "file_logger_st" for single threaded logger)
+        //
+        auto simple_logger = spd::file_logger_mt("basic_logger", "logs/simple.txt");
+        simple_logger->info("Some log message");
+
 
         //
         // Create a file rotating logger with 5mb size max and 3 rotated files

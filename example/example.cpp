@@ -43,6 +43,11 @@ int main(int, char*[])
         console->set_level(spd::level::debug); // Set specific logger's log level
         console->debug("This message shold be displayed..");
 
+        // Create basic file logger (not rotated)
+        auto simple_logger = spd::basic_logger_mt("basic_logger", "logs/simple.txt");
+        simple_logger->info("Some log message");
+
+
         // Create a file rotating logger with 5mb size max and 3 rotated files
         auto file_logger = spd::rotating_logger_mt("file_logger", "logs/mylogfile", 1048576 * 5, 3);
         for (int i = 0; i < 10; ++i)
