@@ -92,15 +92,15 @@ int main(int, char* [])
         //
         // Create a basic multithreaded file logger (use "file_logger_st" for the single threaded version)
         //
-        auto simple_logger = spd::file_logger_mt("basic_logger", "logs/simple.txt");
-        simple_logger->info("Some log message");
+        auto my_logger = spd::file_logger_mt("basic_logger", "logs/basic.txt");
+        my_logger->info("Some log message");
 
         //
         // Create a file rotating logger with 5mb size max and 3 rotated files
         //
-        auto file_logger = spd::rotating_logger_mt("file_logger", "logs/mylogfile", 1048576 * 5, 3);
+        auto rotating_logger = spd::rotating_logger_mt("some_logger_name", "logs/mylogfile", 1048576 * 5, 3);
         for(int i = 0; i < 10; ++i)
-		      file_logger->info("{} * {} equals {:>10}", i, i, i*i);
+		      rotating_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
         //
         // Create a daily logger - a new file is created every day on 2:30am
@@ -111,7 +111,7 @@ int main(int, char* [])
         // Customize msg format for all messages
         //
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
-        file_logger->info("This is another message with custom format");
+        rotating_logger->info("This is another message with custom format");
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
 
