@@ -90,11 +90,10 @@ int main(int, char* [])
         console->debug("Now it should..");
         
         //
-        // Create a basic file logger (multithreaded, use "file_logger_st" for single threaded logger)
+        // Create a basic multithreaded file logger (use "file_logger_st" for the single threaded version)
         //
         auto simple_logger = spd::file_logger_mt("basic_logger", "logs/simple.txt");
         simple_logger->info("Some log message");
-
 
         //
         // Create a file rotating logger with 5mb size max and 3 rotated files
