@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
             {
                 int counter = ++msg_counter;
                 if (counter > howmany) break;
-                logger->info() << "spdlog message #" << counter << ": This is some text for your pleasure";
+                logger->info("spdlog message #{}: This is some text for your pleasure", counter);
             }
         }));
     }

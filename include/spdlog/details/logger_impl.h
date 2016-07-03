@@ -74,7 +74,7 @@ inline spdlog::details::line_logger spdlog::logger::_log_if_enabled(level::level
 {
     bool msg_enabled = should_log(lvl);
     details::line_logger l(this, lvl, msg_enabled);
-    l << msg;
+    l.write("{}", msg);
     return l;
 }
 

@@ -49,21 +49,21 @@ public:
     //
     // Support for operator<<
     //
-    line_logger& operator<<(const char* what);
-    line_logger& operator<<(const std::string& what);
-    line_logger& operator<<(int what);
-    line_logger& operator<<(unsigned int what);
-    line_logger& operator<<(long what);
-    line_logger& operator<<(unsigned long what);
-    line_logger& operator<<(long long what);
-    line_logger& operator<<(unsigned long long what);
-    line_logger& operator<<(double what);
-    line_logger& operator<<(long double what);
-    line_logger& operator<<(float what);
-    line_logger& operator<<(char what);
+    DEPRECATED line_logger& operator<<(const char* what);
+    DEPRECATED line_logger& operator<<(const std::string& what);
+    DEPRECATED line_logger& operator<<(int what);
+    DEPRECATED line_logger& operator<<(unsigned int what);
+    DEPRECATED line_logger& operator<<(long what);
+    DEPRECATED line_logger& operator<<(unsigned long what);
+    DEPRECATED line_logger& operator<<(long long what);
+    DEPRECATED line_logger& operator<<(unsigned long long what);
+    DEPRECATED line_logger& operator<<(double what);
+    DEPRECATED line_logger& operator<<(long double what);
+    DEPRECATED line_logger& operator<<(float what);
+    DEPRECATED line_logger& operator<<(char what);
     //Support user types which implements operator<<
     template<typename T>
-    line_logger& operator<<(const T& what);
+    DEPRECATED line_logger& operator<<(const T& what);
 
     void disable();
     bool is_enabled() const;

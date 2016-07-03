@@ -68,8 +68,7 @@ int main(int, char* [])
         // console logger (multithreaded and with color)
         auto console = spd::stdout_logger_mt("console", true);
         console->info("Welcome to spdlog!") ;
-        console->info("An info message example {}..", 1);
-        console->info() << "Streams are supported too  " << 1;
+        console->info("An info message example {}..", 1);        
 
         //Formatting examples
         console->info("Easy padding in numbers like {:08d}", 12);
@@ -129,7 +128,7 @@ int main(int, char* [])
         size_t q_size = 8192; //queue size must be power of 2
         spdlog::set_async_mode(q_size);
         auto async_file= spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
-        async_file->info() << "This is async log.." << "Should be very fast!";
+        async_file->info("This is async log..Should be very fast!");
 
         //
         // syslog example. linux only..
@@ -148,16 +147,6 @@ int main(int, char* [])
 }
 
 
-// Example of user defined class with operator<<
-class some_class {};
-std::ostream& operator<<(std::ostream& os, const some_class& c) { return os << "some_class"; }
-
-void custom_class_example()
-{
-    some_class c;
-    spdlog::get("console")->info("custom class with operator<<: {}..", c);
-    spdlog::get("console")->info() << "custom class with operator<<: " << c << "..";
-}
 ```
 
 ## Documentation

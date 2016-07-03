@@ -23,7 +23,6 @@ int main(int, char*[])
         auto console = spd::stdout_logger_mt("console", true);
         console->info("Welcome to spdlog!");
         console->info("An info message example {}..", 1);
-        console->info() << "Streams are supported too  " << 1;
 
         // Formatting examples
         console->info("Easy padding in numbers like {:08d}", 12);
@@ -55,6 +54,7 @@ int main(int, char*[])
 
         // Create a daily logger - a new file is created every day on 2:30am
         auto daily_logger = spd::daily_logger_mt("daily_logger", "logs/daily", 2, 30);
+        daily_logger->info(123.44);
 
         // Customize msg format for all messages
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
@@ -106,18 +106,4 @@ void syslog_example()
 #endif
 }
 
-
-// Example of user defined class with operator<<
-class some_class {};
-std::ostream& operator<<(std::ostream& os, const some_class&)
-{
-    return os << "some_class";
-}
-
-void custom_class_example()
-{
-    some_class c;
-    spdlog::get("console")->info("custom class with operator<<: {}..", c);
-    spdlog::get("console")->info() << "custom class with operator<<: " << c << "..";
-}
 
