@@ -89,9 +89,9 @@ int main(int, char* [])
         console->debug("Now it should..");
         
         //
-        // Create a basic multithreaded file logger (use "file_logger_st" for the single threaded version)
+        // Create a basic multithreaded file logger (or "basic_logger_st" for single threaded logger)
         //
-        auto my_logger = spd::file_logger_mt("basic_logger", "logs/basic.txt");
+        auto my_logger = spd::basic_logger_mt("basic_logger", "logs/basic.txt");
         my_logger->info("Some log message");
 
         //
