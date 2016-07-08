@@ -63,7 +63,7 @@ public:
 
     void flush() override;
 protected:
-    void _log_msg(details::log_msg& msg) override;
+    void _sink_it(details::log_msg& msg) override;
     void _set_formatter(spdlog::formatter_ptr msg_formatter) override;
     void _set_pattern(const std::string& pattern) override;
 

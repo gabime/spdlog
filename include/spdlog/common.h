@@ -56,26 +56,32 @@ using level_t = details::null_atomic_int;
 using level_t = std::atomic_int;
 #endif
 
+
+#define SPDLOG_LEVEL_TRACE 0
+#define SPDLOG_LEVEL_DEBUG 1
+#define SPDLOG_LEVEL_INFO 2
+#define SPDLOG_LEVEL_WARN 3
+#define SPDLOG_LEVEL_ERR 4
+#define SPDLOG_LEVEL_CRIT 5
+#define SPDLOG_LEVEL_OFF 6
+
 //Log level enum
 namespace level
 {
 typedef enum
 {
-    trace = 0,
-    debug = 1,
-    info = 2,
-    notice = 3,
-    warn = 4,
-    err = 5,
-    critical = 6,
-    alert = 7,
-    emerg = 8,
-    off = 9
+    trace = SPDLOG_LEVEL_TRACE,
+    debug = SPDLOG_LEVEL_DEBUG,
+    info = SPDLOG_LEVEL_INFO,
+    warn = SPDLOG_LEVEL_WARN,
+    err = SPDLOG_LEVEL_ERR,
+    critical = SPDLOG_LEVEL_CRIT,
+    off = SPDLOG_LEVEL_OFF
 } level_enum;
 
-static const char* level_names[] { "trace", "debug", "info", "notice", "warning", "error", "critical", "alert", "emerg", "off"};
+static const char* level_names[] { "trace", "debug", "info",  "warning", "error", "critical", "off"};
 
-static const char* short_level_names[] { "T", "D", "I", "N", "W", "E", "C", "A", "M", "O"};
+static const char* short_level_names[] { "T", "D", "I", "W", "E", "C", "O"};
 
 inline const char* to_str(spdlog::level::level_enum l)
 {
@@ -124,5 +130,7 @@ using filename_t = std::wstring;
 using filename_t = std::string;
 #endif
 
+#define SDLOG_STR_HELPER(x) #x
+#define SPDLOG_STR(x) SDLOG_STR_HELPER(x)
 
 } //spdlog

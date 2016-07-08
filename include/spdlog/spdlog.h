@@ -134,14 +134,15 @@ void drop_all();
 // SPDLOG_DEBUG(my_logger, "Some debug message {} {}", 1, 3.2);
 ///////////////////////////////////////////////////////////////////////////////
 
+
 #ifdef SPDLOG_TRACE_ON
-#define SPDLOG_TRACE(logger, ...) logger->trace(__VA_ARGS__) << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_TRACE(logger, ...)  logger->trace(__FILE__ ## " line " ## SPDLOG_STR(__LINE__) ## ": " ## __VA_ARGS__);
 #else
 #define SPDLOG_TRACE(logger, ...)
 #endif
 
 #ifdef SPDLOG_DEBUG_ON
-#define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)  << " (" << __FILE__ << " #" << __LINE__ <<")";
+#define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)
 #else
 #define SPDLOG_DEBUG(logger, ...)
 #endif
