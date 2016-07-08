@@ -106,4 +106,3 @@ void syslog_example()
 #endif
 }
 
-

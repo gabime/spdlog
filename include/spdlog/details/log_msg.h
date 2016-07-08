@@ -7,6 +7,7 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/format.h>
+#include <spdlog/details/os.h>
 
 #include <string>
 #include <utility>
@@ -18,59 +19,23 @@ namespace details
 struct log_msg
 {
     log_msg() = default;
-    log_msg(level::level_enum l):
-        logger_name(),
-        level(l),
-        raw(),
-        formatted() {}
-
-
-    log_msg(const log_msg& other) :
-        logger_name(other.logger_name),
-        level(other.level),
-        time(other.time),
-        thread_id(other.thread_id)
+    log_msg(std::string *loggers_name, level::level_enum lvl) : logger_name(loggers_name), level(lvl)
     {
-        if (other.raw.size())
-            raw << fmt::BasicStringRef<char>(other.raw.data(), other.raw.size());
-        if (other.formatted.size())
-            formatted << fmt::BasicStringRef<char>(other.formatted.data(), other.formatted.size());
+#ifndef SPDLOG_NO_DATETIME
+        time = os::now();
+#endif
+
+#ifndef SPDLOG_NO_THREAD_ID
+        thread_id = os::thread_id();
+#endif
     }
 
-    log_msg(log_msg&& other) :
-        logger_name(std::move(other.logger_name)),
-        level(other.level),
-        time(std::move(other.time)),
-        thread_id(other.thread_id),
-        raw(std::move(other.raw)),
-        formatted(std::move(other.formatted))
-    {
-        other.clear();
-    }
+    log_msg(const log_msg& other)  = delete;
+    log_msg& operator=(log_msg&& other) = delete;
+    log_msg(log_msg&& other) = delete;
 
-    log_msg& operator=(log_msg&& other)
-    {
-        if (this == &other)
-            return *this;
 
-        logger_name = std::move(other.logger_name);
-        level = other.level;
-        time = std::move(other.time);
-        thread_id = other.thread_id;
-        raw = std::move(other.raw);
-        formatted = std::move(other.formatted);
-        other.clear();
-        return *this;
-    }
-
-    void clear()
-    {
-        level = level::off;
-        raw.clear();
-        formatted.clear();
-    }
-
-    std::string logger_name;
+    std::string *logger_name;
     level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;

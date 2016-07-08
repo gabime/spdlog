@@ -91,6 +91,10 @@ inline void ansicolor_sink::log(const details::log_msg& msg)
     const std::string& s = msg.formatted.str();
     const std::string& suffix = reset;
     details::log_msg m;
+    m.level = msg.level;
+    m.logger_name = msg.logger_name;
+    m.time = msg.time;
+    m.thread_id = msg.thread_id;
     m.formatted << prefix  << s << suffix;
     sink_->log(m);
 }

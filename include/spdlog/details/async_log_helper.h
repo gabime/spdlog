@@ -86,21 +86,22 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
 
         // construct from log_msg
         async_msg(const details::log_msg& m) :
-            logger_name(m.logger_name),
             level(m.level),
             time(m.time),
             thread_id(m.thread_id),
             txt(m.raw.data(), m.raw.size()),
             msg_type(async_msg_type::log)
-        {}
-
+        {
+#ifndef SPDLOG_NO_NAME
+            logger_name = *m.logger_name;
+#endif
+        }
 
 
         // copy into log_msg
         void fill_log_msg(log_msg &msg)
         {
-            msg.clear();
-            msg.logger_name = logger_name;
+            msg.logger_name = &logger_name;
             msg.level = level;
             msg.time = time;
             msg.thread_id = thread_id;
@@ -278,7 +279,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
 {
 
     async_msg incoming_async_msg;
-    log_msg incoming_log_msg;
+
 
     if (_q.dequeue(incoming_async_msg))
     {
@@ -295,6 +296,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
             break;
 
         default:
+            log_msg incoming_log_msg;
             incoming_async_msg.fill_log_msg(incoming_log_msg);
             _formatter->format(incoming_log_msg);
             for (auto &s : _sinks)
