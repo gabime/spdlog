@@ -35,30 +35,24 @@ public:
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
 
+
     template <typename... Args> void log(level::level_enum lvl, const char* fmt, const Args&... args);
     template <typename... Args> void log(level::level_enum lvl, const char* msg);
-
-    template <typename T> void log(level::level_enum lvl, const T&);
     template <typename... Args> void trace(const char* fmt, const Args&... args);
     template <typename... Args> void debug(const char* fmt, const Args&... args);
     template <typename... Args> void info(const char* fmt, const Args&... args);
-    template <typename... Args> void notice(const char* fmt, const Args&... args);
     template <typename... Args> void warn(const char* fmt, const Args&... args);
     template <typename... Args> void error(const char* fmt, const Args&... args);
     template <typename... Args> void critical(const char* fmt, const Args&... args);
-    template <typename... Args> void alert(const char* fmt, const Args&... args);
-    template <typename... Args> void emerg(const char* fmt, const Args&... args);
 
-
+    template <typename T> void log(level::level_enum lvl, const T&);
     template <typename T> void trace(const T&);
     template <typename T> void debug(const T&);
     template <typename T> void info(const T&);
-    template <typename T> void notice(const T&);
     template <typename T> void warn(const T&);
     template <typename T> void error(const T&);
     template <typename T> void critical(const T&);
-    template <typename T> void alert(const T&);
-    template <typename T> void emerg(const T&);
+
 
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
@@ -76,7 +70,7 @@ protected:
     virtual void _set_pattern(const std::string&);
     virtual void _set_formatter(formatter_ptr);
 
-    std::string _name;
+    const std::string _name;
     std::vector<sink_ptr> _sinks;
     formatter_ptr _formatter;
     spdlog::level_t _level;

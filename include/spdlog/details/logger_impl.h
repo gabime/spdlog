@@ -31,8 +31,7 @@ inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list si
 
 // ctor with single sink
 inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink) :
-    logger(logger_name,
-{
+    logger(logger_name, {
     single_sink
 }) {}
 
@@ -54,8 +53,7 @@ inline void spdlog::logger::set_pattern(const std::string& pattern)
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Args&... args)
 {
-    if (!should_log(lvl))
-        return;
+    if (!should_log(lvl)) return;
 
     details::log_msg log_msg(&_name, lvl);
     try
@@ -75,9 +73,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
 {
-
-    if (!should_log(lvl))
-        return;
+    if (!should_log(lvl)) return;
 
     details::log_msg log_msg(&_name, lvl);
     log_msg.raw << msg;
@@ -89,10 +85,9 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
 template<typename T>
 inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
 {
-    if (!should_log(lvl))
-        return;
-    details::log_msg log_msg(&_name, lvl);
+    if (!should_log(lvl)) return;
 
+    details::log_msg log_msg(&_name, lvl);
     log_msg.raw << msg;
     _formatter->format(log_msg);
     _sink_it(log_msg);
@@ -118,11 +113,6 @@ inline void spdlog::logger::info(const char* fmt, const Args&... args)
     log(level::info, fmt, args...);
 }
 
-template <typename... Args>
-inline void spdlog::logger::notice(const char* fmt, const Args&... args)
-{
-    log(level::notice, fmt, args...);
-}
 
 template <typename... Args>
 inline void spdlog::logger::warn(const char* fmt, const Args&... args)
@@ -141,19 +131,6 @@ inline void spdlog::logger::critical(const char* fmt, const Args&... args)
 {
     log(level::critical, fmt, args...);
 }
-
-template <typename... Args>
-inline void spdlog::logger::alert(const char* fmt, const Args&... args)
-{
-    log(level::alert, fmt, args...);
-}
-
-template <typename... Args>
-inline void spdlog::logger::emerg(const char* fmt, const Args&... args)
-{
-    log(level::emerg, fmt, args...);
-}
-
 
 
 template<typename T>
@@ -175,11 +152,6 @@ inline void spdlog::logger::info(const T& msg)
     log(level::info, msg);
 }
 
-template<typename T>
-inline void spdlog::logger::notice(const T& msg)
-{
-    log(level::notice, msg);
-}
 
 template<typename T>
 inline void spdlog::logger::warn(const T& msg)
@@ -199,17 +171,6 @@ inline void spdlog::logger::critical(const T& msg)
     log(level::critical, msg);
 }
 
-template<typename T>
-inline void spdlog::logger::alert(const T& msg)
-{
-    log(level::alert, msg);
-}
-
-template<typename T>
-inline void spdlog::logger::emerg(const T& msg)
-{
-    log(level::emerg, msg);
-}
 
 
 
