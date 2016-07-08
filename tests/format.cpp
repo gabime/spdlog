@@ -43,7 +43,7 @@ TEST_CASE("basic_logging ", "[basic_logging]")
 TEST_CASE("log_levels", "[log_levels]")
 {
     REQUIRE(log_info("Hello", spdlog::level::err) == "");
-    REQUIRE(log_info("Hello", spdlog::level::critical) == "");    
+    REQUIRE(log_info("Hello", spdlog::level::critical) == "");
     REQUIRE(log_info("Hello", spdlog::level::info) == "Hello");
     REQUIRE(log_info("Hello", spdlog::level::debug) == "Hello");
     REQUIRE(log_info("Hello", spdlog::level::trace) == "Hello");
