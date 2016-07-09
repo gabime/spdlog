@@ -65,8 +65,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
     {
         throw spdlog::spdlog_ex(std::string("format error in \"") + fmt + "\": " + ex.what());
     }
-
-    _formatter->format(log_msg);
+    
     _sink_it(log_msg);
 
 }
@@ -78,7 +77,6 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
 
     details::log_msg log_msg(&_name, lvl);
     log_msg.raw << msg;
-    _formatter->format(log_msg);
     _sink_it(log_msg);
 
 }
@@ -89,8 +87,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
     if (!should_log(lvl)) return;
 
     details::log_msg log_msg(&_name, lvl);
-    log_msg.raw << msg;
-    _formatter->format(log_msg);
+    log_msg.raw << msg;    
     _sink_it(log_msg);
 
 }
@@ -208,6 +205,7 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 //
 inline void spdlog::logger::_sink_it(details::log_msg& msg)
 {
+    _formatter->format(msg);
     for (auto &sink : _sinks)
         sink->log(msg);
 
