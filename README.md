@@ -7,7 +7,9 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/include/spdlog) to your build tree and use a C++11 compiler
 
 ## Platforms
- * Linux (gcc 4.8.1+, clang 3.5+)t
+ * Linux (gcc 4.8.1+, clang 3.5+)
+ * Windows (visual studio 2013+, cygwin/mingw with g++ 4.9.1+)
+ * Mac OSX (clang 3.5+)
 
 ##Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
