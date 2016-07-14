@@ -125,18 +125,21 @@ void drop_all();
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Macros to be display source file & line
 // Trace & Debug can be switched on/off at compile time for zero cost debug statements.
 // Uncomment SPDLOG_DEBUG_ON/SPDLOG_TRACE_ON in teakme.h to enable.
+// SPDLOG_TRACE(..) will also print current file and line.
 //
 // Example:
-// spdlog::set_level(spdlog::level::debug);
-// SPDLOG_DEBUG(my_logger, "Some debug message {} {}", 1, 3.2);
+// spdlog::set_level(spdlog::level::trace); 
+// SPDLOG_TRACE(my_logger, "some trace message");
+// SPDLOG_TRACE(my_logger, "another trace message {} {}", 1, 2);
+// SPDLOG_DEBUG(my_logger, "some debug message {} {}", 3, 4);
 ///////////////////////////////////////////////////////////////////////////////
 
-
 #ifdef SPDLOG_TRACE_ON
-#define SPDLOG_TRACE(logger, ...)  logger->trace(__FILE__ ## " line " ## SPDLOG_STR(__LINE__) ## ": " ## __VA_ARGS__);
+#define SPDLOG_STR_H(x) #x
+#define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x) 
+#define SPDLOG_TRACE(logger, ...) logger->trace("[" __FILE__ " line #" SPDLOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
 #else
 #define SPDLOG_TRACE(logger, ...)
 #endif

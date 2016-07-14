@@ -122,7 +122,4 @@ using filename_t = std::wstring;
 using filename_t = std::string;
 #endif
 
-#define SDLOG_STR_HELPER(x) #x
-#define SPDLOG_STR(x) SDLOG_STR_HELPER(x)
-
 } //spdlog
