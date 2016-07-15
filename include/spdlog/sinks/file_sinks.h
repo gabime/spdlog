@@ -214,9 +214,8 @@ protected:
 
 private:
     std::chrono::system_clock::time_point _next_rotation_tp()
-    {
-        using namespace std::chrono;
-        auto now = system_clock::now();
+    {        
+        auto now = std::chrono::system_clock::now();
         time_t tnow = std::chrono::system_clock::to_time_t(now);
         tm date = spdlog::details::os::localtime(tnow);
         date.tm_hour = _rotation_h;
@@ -226,7 +225,7 @@ private:
         if (rotation_time > now)
             return rotation_time;
         else
-            return system_clock::time_point(rotation_time + hours(24));
+            return std::chrono::system_clock::time_point(rotation_time + std::chrono::hours(24));
     }
 
     filename_t _base_filename;
