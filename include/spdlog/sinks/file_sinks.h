@@ -8,7 +8,7 @@
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/details/file_helper.h>
-#include <spdlog/details/format.h>
+#include <spdlog/fmt/format.h>
 
 #include <algorithm>
 #include <chrono>

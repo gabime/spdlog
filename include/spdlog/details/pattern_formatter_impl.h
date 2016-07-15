@@ -8,7 +8,7 @@
 #include <spdlog/formatter.h>
 #include <spdlog/details/log_msg.h>
 #include <spdlog/details/os.h>
-#include <spdlog/details/format.h>
+#include <spdlog/fmt/format.h>
 
 #include <chrono>
 #include <ctime>
