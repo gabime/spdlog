@@ -1,8 +1,18 @@
-# Compiled Object files
+# Auto generated files 
 *.slo
 *.lo
 *.o
 *.obj
+*.suo
+*.tlog
+*.ilk
+*.log
+*.pdb
+*.idb
+*.iobj
+*.ipdb
+*.opensdf
+*.sdf
 
 # Compiled Dynamic libraries
 *.so
