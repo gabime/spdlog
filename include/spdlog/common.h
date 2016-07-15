@@ -100,10 +100,17 @@ enum class async_overflow_policy
 //
 // Log exception
 //
+namespace details { namespace os {
+	std::string errno_str(int err_num);	
+}}
 class spdlog_ex : public std::exception
 {
 public:
     spdlog_ex(const std::string& msg) :_msg(msg) {}
+	spdlog_ex(const std::string& msg, int last_errno)
+	{
+		_msg = msg + ": " + details::os::errno_str(last_errno);
+	}
     const char* what() const SPDLOG_NOEXCEPT override
     {
         return _msg.c_str();

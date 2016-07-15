@@ -16,6 +16,7 @@
 #include <ctime>
 #include <mutex>
 #include <string>
+#include <cerrno>
 
 namespace spdlog
 {
@@ -119,12 +120,12 @@ private:
             {
                 if (details::os::remove(target) != 0)
                 {
-                    throw spdlog_ex("rotating_file_sink: failed removing " + filename_to_str(target));
+                    throw spdlog_ex("rotating_file_sink: failed removing " + filename_to_str(target), errno);
                 }
             }
             if (details::file_helper::file_exists(src) && details::os::rename(src, target))
             {
-                throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target));
+                throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
             }
         }
         _file_helper.reopen(true);
