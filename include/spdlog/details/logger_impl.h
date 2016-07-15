@@ -65,7 +65,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
     {
         throw spdlog::spdlog_ex(std::string("format error in \"") + fmt + "\": " + ex.what());
     }
-    
+
     _sink_it(log_msg);
 
 }
@@ -87,7 +87,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
     if (!should_log(lvl)) return;
 
     details::log_msg log_msg(&_name, lvl);
-    log_msg.raw << msg;    
+    log_msg.raw << msg;
     _sink_it(log_msg);
 
 }

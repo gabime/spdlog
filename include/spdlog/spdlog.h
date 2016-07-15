@@ -130,7 +130,7 @@ void drop_all();
 // SPDLOG_TRACE(..) will also print current file and line.
 //
 // Example:
-// spdlog::set_level(spdlog::level::trace); 
+// spdlog::set_level(spdlog::level::trace);
 // SPDLOG_TRACE(my_logger, "some trace message");
 // SPDLOG_TRACE(my_logger, "another trace message {} {}", 1, 2);
 // SPDLOG_DEBUG(my_logger, "some debug message {} {}", 3, 4);
@@ -138,7 +138,7 @@ void drop_all();
 
 #ifdef SPDLOG_TRACE_ON
 #define SPDLOG_STR_H(x) #x
-#define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x) 
+#define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
 #define SPDLOG_TRACE(logger, ...) logger->trace("[" __FILE__ " line #" SPDLOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
 #else
 #define SPDLOG_TRACE(logger, ...)

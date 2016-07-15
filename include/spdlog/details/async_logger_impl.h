@@ -72,6 +72,6 @@ inline void spdlog::async_logger::_set_pattern(const std::string& pattern)
 
 
 inline void spdlog::async_logger::_sink_it(details::log_msg& msg)
-{    
+{
     _async_log_helper->log(msg);
 }

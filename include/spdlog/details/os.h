@@ -254,25 +254,25 @@ inline std::string filename_to_str(const filename_t& filename)
 
 // Return errno string (thread safe)
 inline std::string errno_str(int err_num)
-{	
-	char buf[256];	
-	constexpr auto buf_size = sizeof(buf);
-			
-#ifdef _WIN32		
-	if(strerror_s(buf, buf_size, err_num) == 0)
-		return std::string(buf);
-	else
-		return "Unkown error";
+{
+    char buf[256];
+    constexpr auto buf_size = sizeof(buf);
 
-#elif (_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE // posix version		
-	if (strerror_r(err_num, buf, buf_size) == 0)
-		return std::string(buf);
-	else
-		return "Unkown error";
+#ifdef _WIN32
+    if(strerror_s(buf, buf_size, err_num) == 0)
+        return std::string(buf);
+    else
+        return "Unkown error";
+
+#elif (_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE // posix version        
+    if (strerror_r(err_num, buf, buf_size) == 0)
+        return std::string(buf);
+    else
+        return "Unkown error";
 
 #else  // gnu version (might not use the given buf, so its retval pointer must be used)
-	return std::string(strerror_r(err_num, buf, buf_size));
-#endif		
+    return std::string(strerror_r(err_num, buf, buf_size));
+#endif
 }
 
 } //os
