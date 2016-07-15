@@ -29,12 +29,12 @@ TEST_CASE("file_helper_filename", "[file_helper::filename()]]")
 TEST_CASE("file_helper_size", "[file_helper::size()]]")
 {
     prepare_logdir();
-    auto expected_size = 123;
+    size_t expected_size = 123;
     {
         file_helper helper(true);
         helper.open(target_filename);
         write_with_helper(helper, expected_size);
-        REQUIRE(helper.size() == expected_size);
+        REQUIRE(static_cast<size_t>(helper.size()) == expected_size);
     }
     REQUIRE(get_filesize(target_filename) == expected_size);
 }

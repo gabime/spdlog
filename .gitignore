@@ -56,3 +56,5 @@ CMakeScripts
 Makefile
 cmake_install.cmake
 install_manifest.txt
+/tests/tests.VC.VC.opendb
+/tests/tests.VC.db
