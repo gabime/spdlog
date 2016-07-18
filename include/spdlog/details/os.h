@@ -264,7 +264,7 @@ inline std::string errno_str(int err_num)
     else
         return "Unkown error";
 
-#elif (_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE // posix version        
+#elif defined(__APPLE__) || ((_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE) // posix version        
     if (strerror_r(err_num, buf, buf_size) == 0)
         return std::string(buf);
     else
