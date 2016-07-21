@@ -256,7 +256,7 @@ inline std::string filename_to_str(const filename_t& filename)
 inline std::string errno_str(int err_num)
 {
     char buf[256];
-    constexpr auto buf_size = sizeof(buf);
+    SPDLOG_CONSTEXPR auto buf_size = sizeof(buf);
 
 #ifdef _WIN32
     if(strerror_s(buf, buf_size, err_num) == 0)
