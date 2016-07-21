@@ -32,7 +32,6 @@
 #elif defined(_MSC_VER)
 #define DEPRECATED __declspec(deprecated)
 #else
-#pragma message("DEPRECATED")
 #define DEPRECATED
 #endif
 
