@@ -58,3 +58,5 @@ cmake_install.cmake
 install_manifest.txt
 /tests/tests.VC.VC.opendb
 /tests/tests.VC.db
+/tests/tests
+/tests/logs/file_helper_test.txt

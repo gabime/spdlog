@@ -11,8 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\spdlog\fmt\fmtlib\format.cc" />
-    <ClInclude Include="..\include\spdlog\fmt\fmtlib\ostream.cc" />
     <ClCompile Include="example.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -30,9 +28,6 @@
     <ClInclude Include="..\include\spdlog\details\registry.h" />
     <ClInclude Include="..\include\spdlog\details\spdlog_impl.h" />
     <ClInclude Include="..\include\spdlog\fmt\fmt.h" />
-    <ClInclude Include="..\include\spdlog\fmt\fmtlib\format.h" />
-    <ClInclude Include="..\include\spdlog\fmt\fmtlib\ostream.h" />
-    <ClInclude Include="..\include\spdlog\fmt\fmtlib\printf.h" />
     <ClInclude Include="..\include\spdlog\fmt\ostr.h" />
     <ClInclude Include="..\include\spdlog\formatter.h" />
     <ClInclude Include="..\include\spdlog\logger.h" />
