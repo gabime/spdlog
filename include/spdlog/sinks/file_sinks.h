@@ -214,7 +214,7 @@ protected:
 
 private:
     std::chrono::system_clock::time_point _next_rotation_tp()
-    {        
+    {
         auto now = std::chrono::system_clock::now();
         time_t tnow = std::chrono::system_clock::to_time_t(now);
         tm date = spdlog::details::os::localtime(tnow);
