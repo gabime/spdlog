@@ -35,6 +35,9 @@
 #define DEPRECATED
 #endif
 
+
+#include <spdlog/fmt/fmt.h>
+
 namespace spdlog
 {
 
@@ -70,9 +73,9 @@ typedef enum
     off = 6
 } level_enum;
 
-static const char* level_names[] { "trace", "debug", "info",  "warning", "error", "critical", "off"};
+static const char* level_names[] { "trace", "debug", "info",  "warning", "error", "critical", "off" };
 
-static const char* short_level_names[] { "T", "D", "I", "W", "E", "C", "O"};
+static const char* short_level_names[] { "T", "D", "I", "W", "E", "C", "O" };
 
 inline const char* to_str(spdlog::level::level_enum l)
 {
@@ -106,10 +109,11 @@ namespace os
 std::string errno_str(int err_num);
 }
 }
-class spdlog_ex : public std::exception
+class spdlog_ex: public std::exception
 {
 public:
-    spdlog_ex(const std::string& msg) :_msg(msg) {}
+    spdlog_ex(const std::string& msg):_msg(msg)
+    {}
     spdlog_ex(const std::string& msg, int last_errno)
     {
         _msg = msg + ": " + details::os::errno_str(last_errno);
@@ -131,5 +135,6 @@ using filename_t = std::wstring;
 #else
 using filename_t = std::string;
 #endif
+
 
 } //spdlog

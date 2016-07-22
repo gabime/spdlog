@@ -25,9 +25,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// The next 2 lines where commented out by spdlog
-//#include "fmt/format.h"
-//#include "fmt/printf.h"
+ // Commented out by spdlog to use header only
+ // #include "fmt/format.h"
+ // #include "fmt/printf.h"
 
 #include <string.h>
 
@@ -522,8 +522,7 @@ template void internal::FixedBuffer<char>::grow(std::size_t);
 
 template void internal::ArgMap<char>::init(const ArgList &args);
 
-template void internal::PrintfFormatter<char>::format(
-  BasicWriter<char> &writer, CStringRef format);
+template void PrintfFormatter<char>::format(CStringRef format);
 
 template int internal::CharTraits<char>::format_float(
     char *buffer, std::size_t size, const char *format,
@@ -539,8 +538,7 @@ template void internal::FixedBuffer<wchar_t>::grow(std::size_t);
 
 template void internal::ArgMap<wchar_t>::init(const ArgList &args);
 
-template void internal::PrintfFormatter<wchar_t>::format(
-    BasicWriter<wchar_t> &writer, WCStringRef format);
+template void PrintfFormatter<wchar_t>::format(WCStringRef format);
 
 template int internal::CharTraits<wchar_t>::format_float(
     wchar_t *buffer, std::size_t size, const wchar_t *format,
