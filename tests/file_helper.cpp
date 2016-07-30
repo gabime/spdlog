@@ -63,7 +63,7 @@ TEST_CASE("file_helper_reopen", "[file_helper::reopen()]]")
 TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]]")
 {
     prepare_logdir();
-    auto expected_size = 14;
+    size_t expected_size = 14;
     file_helper helper(true);
     helper.open(target_filename);
     write_with_helper(helper, expected_size);

@@ -96,24 +96,13 @@ public:
             std::fflush(_fd);
     }
 
-    long size()
+    size_t size()
     {
         if (!_fd)
             throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
 
-        auto pos = ftell(_fd);
-        if (fseek(_fd, 0, SEEK_END) != 0)
-            throw spdlog_ex("fseek failed on file " + os::filename_to_str(_filename), errno);
-
-        auto file_size = ftell(_fd);
-
-        if(fseek(_fd, pos, SEEK_SET) !=0)
-            throw spdlog_ex("fseek failed on file " + os::filename_to_str(_filename), errno);
-
-        if (file_size == -1)
-            throw spdlog_ex("ftell failed on file " + os::filename_to_str(_filename), errno);
-
-        return file_size;
+		return os::filesize(_fd);
+        
     }
 
     const filename_t& filename() const

@@ -10,7 +10,10 @@
 #include <ctime>
 #include <functional>
 #include <string>
+#include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
+
 
 #ifdef _WIN32
 
@@ -27,10 +30,11 @@
 #include <share.h>
 #endif
 
+#include <sys/types.h>
+
 #elif __linux__
 
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
-#include <sys/stat.h>
 #include <unistd.h>
 #include <chrono>
 
@@ -181,6 +185,48 @@ inline bool file_exists(const filename_t& filename)
     return (stat (filename.c_str(), &buffer) == 0);
 #endif
 }
+
+//Return file size according to open FILE* object
+inline size_t filesize(FILE *f)
+{
+#ifdef _WIN32
+#if _WIN64 //64 bits
+	int fd = _fileno(f);
+	struct _stat64 st;	
+	if (_fstat64(fd, &st) == 0)
+		return st.st_size;
+	else
+		throw spdlog_ex("Failed getting file size from fd", errno);
+#else //windows 32 bits
+	int fd = _fileno(f);
+	struct _stat st;
+	if (_fstat(fd, &st) == 0)
+		return st.st_size;
+	else
+		throw spdlog_ex("Failed getting file size from fd", errno);
+#endif
+
+#else// common unix
+	#if __x86_64__ || __ppc64__ //64 bits
+	int fd = fileno(f)
+	struct stat64 st;
+	if (fstat64(fd, &st) == 0)
+		return st.st_size;
+	else
+		throw spdlog_ex("Failed getting file size from fd", errno);
+#else //unix 32 bits
+	int fd = fileno(f)
+		struct stat st;
+	if (fstat(fd, &st) == 0)
+		return st.st_size;
+	else
+		throw spdlog_ex("Failed getting file size from fd", errno);
+#endif
+#endif
+}
+
+
+
 
 //Return utc offset in minutes or throw spdlog_ex on failure
 inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
