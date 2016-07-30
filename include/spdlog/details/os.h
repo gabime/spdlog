@@ -176,18 +176,9 @@ inline bool file_exists(const filename_t& filename)
     auto attribs = GetFileAttributesA(filename.c_str());
 #endif
     return (attribs != INVALID_FILE_ATTRIBUTES && !(attribs & FILE_ATTRIBUTE_DIRECTORY));
-#elif __linux__
+#else //common linux/unix all have the stat system call
     struct stat buffer;
     return (stat (filename.c_str(), &buffer) == 0);
-#else
-    auto *file = fopen(filename.c_str(), "r");
-    if (file != nullptr)
-    {
-        fclose(file);
-        return true;
-    }
-    return false;
-
 #endif
 }
 
