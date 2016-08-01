@@ -210,7 +210,7 @@ inline size_t filesize(FILE *f)
 #else // unix
 	int fd = fileno(f);
 	//64 bits(but not in osx, where fstat64 is deprecated)
-	#if !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__)) 
+	#if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__))
 	struct stat64 st;
 	if (fstat64(fd, &st) == 0)
 		return st.st_size;	
@@ -299,7 +299,7 @@ inline std::string errno_str(int err_num)
     else
         return "Unkown error";
 
-#elif defined(__APPLE__) || ((_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE) // posix version        
+#elif defined(__FreeBSD__) || defined(__APPLE__) || ((_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE) // posix version
     if (strerror_r(err_num, buf, buf_size) == 0)
         return std::string(buf);
     else
