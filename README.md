@@ -102,7 +102,7 @@ int main(int, char* [])
 		      rotating_logger->info("{} * {} equals {:>10}", i, i, i*i);
 
         //
-        // Create a daily logger - a new file is created every day on 2:30am
+        // Create a daily logger - a new file is created every day at 2:30am
         //
         auto daily_logger = spd::daily_logger_mt("daily_logger", "logs/daily", 2, 30);
 
