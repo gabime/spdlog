@@ -192,11 +192,11 @@ void user_defined_example()
 //
 void err_handler_example()
 {	
-	//can be set globaly or per logger (logger->set_error_handler(..))
+	
 	spdlog::set_error_handler([](const std::string& msg) {
 		std::cerr << "my err handler: " << msg << std::endl;
-	});
-	spd::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
+	}); 
+	// (or logger->set_error_handler(..) to set for specific logger)
 }
 
 ```
