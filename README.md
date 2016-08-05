@@ -192,7 +192,6 @@ void user_defined_example()
 //
 void err_handler_example()
 {	
-	
 	spdlog::set_error_handler([](const std::string& msg) {
 		std::cerr << "my err handler: " << msg << std::endl;
 	}); 
