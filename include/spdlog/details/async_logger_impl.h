@@ -73,14 +73,16 @@ inline void spdlog::async_logger::_set_pattern(const std::string& pattern)
 
 inline void spdlog::async_logger::_sink_it(details::log_msg& msg)
 {
-	try 
-	{
-		_async_log_helper->log(msg);
-	}
-	catch (const std::exception &ex) {
-		_err_handler(ex.what());
-	}
-	catch (...) {
-		_err_handler("Unknown exception");
-	}
+    try
+    {
+        _async_log_helper->log(msg);
+    }
+    catch (const std::exception &ex)
+    {
+        _err_handler(ex.what());
+    }
+    catch (...)
+    {
+        _err_handler("Unknown exception");
+    }
 }

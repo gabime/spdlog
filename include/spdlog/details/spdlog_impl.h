@@ -149,7 +149,7 @@ inline void spdlog::set_level(level::level_enum log_level)
 
 inline void spdlog::set_error_handler(log_err_handler handler)
 {
-	return details::registry::instance().set_error_handler(handler);
+    return details::registry::instance().set_error_handler(handler);
 }
 
 

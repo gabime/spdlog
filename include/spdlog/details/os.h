@@ -192,35 +192,35 @@ inline bool file_exists(const filename_t& filename)
 //Return file size according to open FILE* object
 inline size_t filesize(FILE *f)
 {
-	if (f == nullptr)
-		throw spdlog_ex("Failed getting file size. fd is null");
+    if (f == nullptr)
+        throw spdlog_ex("Failed getting file size. fd is null");
 #ifdef _WIN32
-	int fd = _fileno(f);
-#if _WIN64 //64 bits		
-	struct _stat64 st;	
-	if (_fstat64(fd, &st) == 0)
-		return st.st_size;
-			
-#else //windows 32 bits		
-	struct _stat st;
-	if (_fstat(fd, &st) == 0)
-		return st.st_size;
+    int fd = _fileno(f);
+#if _WIN64 //64 bits        
+    struct _stat64 st;
+    if (_fstat64(fd, &st) == 0)
+        return st.st_size;
+
+#else //windows 32 bits     
+    struct _stat st;
+    if (_fstat(fd, &st) == 0)
+        return st.st_size;
 #endif
 
 #else // unix
-	int fd = fileno(f);
-	//64 bits(but not in osx, where fstat64 is deprecated)
-	#if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__))
-	struct stat64 st;
-	if (fstat64(fd, &st) == 0)
-		return st.st_size;	
-#else // unix 32 bits or osx	
-	struct stat st;
-	if (fstat(fd, &st) == 0)
-		return st.st_size;	
+    int fd = fileno(f);
+    //64 bits(but not in osx, where fstat64 is deprecated)
+#if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__))
+    struct stat64 st;
+    if (fstat64(fd, &st) == 0)
+        return st.st_size;
+#else // unix 32 bits or osx    
+    struct stat st;
+    if (fstat(fd, &st) == 0)
+        return st.st_size;
 #endif
 #endif
-	throw spdlog_ex("Failed getting file size from fd", errno);
+    throw spdlog_ex("Failed getting file size from fd", errno);
 }
 
 

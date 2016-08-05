@@ -65,7 +65,7 @@ int main(int, char*[])
         // Enabled #ifdef SPDLOG_DEBUG_ON or #ifdef SPDLOG_TRACE_ON
         SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
         SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
-		
+
         // Asynchronous logging is very fast..
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
         async_example();
@@ -76,20 +76,20 @@ int main(int, char*[])
         // log user-defined types example..
         user_defined_example();
 
-		// Change default log error handler
-		err_handler_example();
+        // Change default log error handler
+        err_handler_example();
 
-		console->info("End of example. bye..");
+        console->info("End of example. bye..");
 
         // Release and close all loggers
         spdlog::drop_all();
     }
-	// Exceptions will only be thrown upon failed logger or sink construction (not during logging)
+    // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
     catch (const spd::spdlog_ex& ex)
     {
         std::cout << "Log init failed: " << ex.what() << std::endl;
         return 1;
-    }    
+    }
 }
 
 void async_example()
@@ -132,11 +132,12 @@ void user_defined_example()
 //custom error handler
 //
 void err_handler_example()
-{	
-	//can be set globaly or per logger(logger->set_error_handler(..))
-	spdlog::set_error_handler([](const std::string& msg) {
-		std::cerr << "my err handler: " << msg << std::endl;
-	});
-	spd::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
+{
+    //can be set globaly or per logger(logger->set_error_handler(..))
+    spdlog::set_error_handler([](const std::string& msg)
+    {
+        std::cerr << "my err handler: " << msg << std::endl;
+    });
+    spd::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
 }
 

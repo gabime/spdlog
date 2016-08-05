@@ -100,7 +100,7 @@ public:
     {
         if (!_fd)
             throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
-		return os::filesize(_fd); 
+        return os::filesize(_fd);
     }
 
     const filename_t& filename() const
