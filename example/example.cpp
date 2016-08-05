@@ -7,13 +7,13 @@
 //
 #include "spdlog/spdlog.h"
 
-#include <cstdlib> // EXIT_FAILURE
 #include <iostream>
 #include <memory>
 
 void async_example();
 void syslog_example();
 void user_defined_example();
+void err_handler_example();
 
 namespace spd = spdlog;
 int main(int, char*[])
@@ -61,12 +61,11 @@ int main(int, char*[])
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         rotating_logger->info("This is another message with custom format");
 
-
         // Compile time debug or trace macros.
         // Enabled #ifdef SPDLOG_DEBUG_ON or #ifdef SPDLOG_TRACE_ON
         SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
         SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
-
+		
         // Asynchronous logging is very fast..
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
         async_example();
@@ -77,19 +76,21 @@ int main(int, char*[])
         // log user-defined types example..
         user_defined_example();
 
+		// Change default log error handler
+		err_handler_example();
+
+		console->info("End of example. bye..");
 
         // Release and close all loggers
         spdlog::drop_all();
     }
-
+	// Exceptions will only be thrown upon failed logger or sink construction (not during logging)
     catch (const spd::spdlog_ex& ex)
     {
-        std::cout << "Log failed: " << ex.what() << std::endl;
-        return EXIT_FAILURE;
-    }
-    return EXIT_SUCCESS;
+        std::cout << "Log init failed: " << ex.what() << std::endl;
+        return 1;
+    }    
 }
-
 
 void async_example()
 {
@@ -97,7 +98,7 @@ void async_example()
     spdlog::set_async_mode(q_size);
     auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
     for (int i = 0; i < 100; ++i)
-        async_file->info("Async message #{}", i);
+        async_file->info("Async message #{}{}", i);
 }
 
 //syslog example (linux/osx only)
@@ -125,5 +126,17 @@ struct my_type
 void user_defined_example()
 {
     spd::get("console")->info("user defined type: {}", my_type { 14 });
+}
+
+//
+//custom error handler
+//
+void err_handler_example()
+{	
+	//can be set globaly or per logger(logger->set_error_handler(..))
+	spdlog::set_error_handler([](const std::string& msg) {
+		std::cerr << "my err handler: " << msg << std::endl;
+	});
+	spd::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
 }
 

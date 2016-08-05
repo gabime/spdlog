@@ -49,24 +49,7 @@ TEST_CASE("log_levels", "[log_levels]")
     REQUIRE(log_info("Hello", spdlog::level::trace) == "Hello");
 }
 
-TEST_CASE("invalid_format", "[format]")
-{
 
-    using namespace spdlog::sinks;
-    spdlog::logger null_logger("null_logger", std::make_shared<null_sink_st>());
-    REQUIRE_THROWS_AS(
-        null_logger.info("{} {}", "first"),
-        spdlog::spdlog_ex);
-
-    REQUIRE_THROWS_AS(
-        null_logger.info("{0:f}", "aads"),
-        spdlog::spdlog_ex);
-
-    REQUIRE_THROWS_AS(
-        null_logger.info("{0:kk}", 123),
-        spdlog::spdlog_ex);
-
-}
 
 
 

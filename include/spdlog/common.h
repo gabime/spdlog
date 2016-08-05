@@ -11,6 +11,8 @@
 #include <memory>
 #include <atomic>
 #include <exception>
+#include<functional>
+
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 #include <codecvt>
 #include <locale>
@@ -58,6 +60,7 @@ using level_t = details::null_atomic_int;
 using level_t = std::atomic_int;
 #endif
 
+using log_err_handler = std::function<void(const std::string &err_msg)>;
 
 //Log level enum
 namespace level

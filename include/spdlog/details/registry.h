@@ -60,7 +60,12 @@ public:
         if (_formatter)
             new_logger->set_formatter(_formatter);
 
+		if (_err_handler)
+			new_logger->set_error_handler(_err_handler);
+
         new_logger->set_level(_level);
+
+
         //Add to registry
         _loggers[logger_name] = new_logger;
         return new_logger;
@@ -112,6 +117,13 @@ public:
         _level = log_level;
     }
 
+	void set_error_handler(log_err_handler handler)
+	{
+		for (auto& l : _loggers)
+			l.second->set_error_handler(handler);
+		_err_handler = handler;
+	}
+
     void set_async_mode(size_t q_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb)
     {
         std::lock_guard<Mutex> lock(_mutex);
@@ -149,6 +161,7 @@ private:
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
     formatter_ptr _formatter;
     level::level_enum _level = level::info;
+	log_err_handler _err_handler;
     bool _async_mode = false;
     size_t _async_q_size = 0;
     async_overflow_policy _overflow_policy = async_overflow_policy::block_retry;

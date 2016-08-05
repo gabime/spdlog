@@ -42,6 +42,11 @@ void set_formatter(formatter_ptr f);
 void set_level(level::level_enum log_level);
 
 //
+// Set global error handler
+//
+void set_error_handler(log_err_handler);
+
+//
 // Turn on async mode (off by default) and set the queue size for each async_logger.
 // effective only for loggers created after this call.
 // queue_size: size of queue (must be power of 2):

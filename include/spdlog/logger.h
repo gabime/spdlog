@@ -19,7 +19,6 @@
 #include <memory>
 #include <string>
 
-
 namespace spdlog
 {
 
@@ -52,14 +51,17 @@ public:
     template <typename T> void warn(const T&);
     template <typename T> void error(const T&);
     template <typename T> void critical(const T&);
-
-
+	
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
     level::level_enum level() const;
     const std::string& name() const;
     void set_pattern(const std::string&);
-    void set_formatter(formatter_ptr);
+    void set_formatter(formatter_ptr);	
+
+	// error handler
+	void set_error_handler(log_err_handler);
+	log_err_handler error_handler();
 
     // automatically call flush() if message level >= log_level
     void flush_on(level::level_enum log_level);
@@ -70,11 +72,16 @@ protected:
     virtual void _set_pattern(const std::string&);
     virtual void _set_formatter(formatter_ptr);
 
+	// default error handler: print the error to stderr with the max rate of 1 message/minute
+	virtual void _default_err_handler(const std::string &msg);
+	
     const std::string _name;
     std::vector<sink_ptr> _sinks;
     formatter_ptr _formatter;
     spdlog::level_t _level;
     spdlog::level_t _flush_level;
+	log_err_handler _err_handler;	
+	std::atomic<time_t> _last_err_time;
 };
 }
 
