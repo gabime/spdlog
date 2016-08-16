@@ -80,6 +80,19 @@ static const char* level_names[] { "trace", "debug", "info",  "warning", "error"
 
 static const char* short_level_names[] { "T", "D", "I", "W", "E", "C", "O" };
 
+static const char* level_color[] {
+    "\e[34m",   // trace -> Blue
+    "\e[34m",   // debug -> Blue
+    "\e[96m",   // info -> Light cyan
+    "\e[96m",   // notice -> Light cyan
+    "\e[43m",   // warning -> Yellow
+    "\e[91m",   // error -> Light red
+    "\e[91m",   // critical -> Light red
+    "\e[91m",   // alert -> Light red
+    "\e[91m",   // emerg -> Light red
+    ""
+};
+
 inline const char* to_str(spdlog::level::level_enum l)
 {
     return level_names[l];
@@ -88,6 +101,11 @@ inline const char* to_str(spdlog::level::level_enum l)
 inline const char* to_short_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
+}
+
+inline const char* get_color(spdlog::level::level_enum l)
+{
+    return level_color[l];
 }
 } //level
 
