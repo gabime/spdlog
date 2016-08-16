@@ -62,6 +62,7 @@ public:
     rotating_file_sink(const filename_t &base_filename, const filename_t &extension,
                        std::size_t max_size, std::size_t max_files,
                        bool force_flush = false) :
+        _current_directory(details::os::get_cwd()),
         _base_filename(base_filename),
         _extension(extension),
         _max_size(max_size),
@@ -69,7 +70,7 @@ public:
         _current_size(0),
         _file_helper(force_flush)
     {
-        _file_helper.open(calc_filename(_base_filename, 0, _extension));
+        _file_helper.open(calc_filename(_current_directory, _base_filename, 0, _extension));
         _current_size = _file_helper.size(); //expensive. called only once
     }
 
@@ -91,13 +92,13 @@ protected:
     }
 
 private:
-    static filename_t calc_filename(const filename_t& filename, std::size_t index, const filename_t& extension)
+    static filename_t calc_filename(const filename_t directory,const filename_t& filename, std::size_t index, const filename_t& extension)
     {
         std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
         if (index)
-            w.write(SPDLOG_FILENAME_T("{}.{}.{}"), filename, index, extension);
+            w.write(SPDLOG_FILENAME_T("{}/{}.{}.{}"), directory, filename, index, extension);
         else
-            w.write(SPDLOG_FILENAME_T("{}.{}"), filename, extension);
+            w.write(SPDLOG_FILENAME_T("{}/{}.{}"), directory, filename, extension);
         return w.str();
     }
 
@@ -113,8 +114,8 @@ private:
         _file_helper.close();
         for (auto i = _max_files; i > 0; --i)
         {
-            filename_t src = calc_filename(_base_filename, i - 1, _extension);
-            filename_t target = calc_filename(_base_filename, i, _extension);
+            filename_t src = calc_filename(_current_directory, _base_filename, i - 1, _extension);
+            filename_t target = calc_filename(_current_directory, _base_filename, i, _extension);
 
             if (details::file_helper::file_exists(target))
             {
@@ -130,6 +131,7 @@ private:
         }
         _file_helper.reopen(true);
     }
+    filename_t _current_directory;
     filename_t _base_filename;
     filename_t _extension;
     std::size_t _max_size;

@@ -187,7 +187,25 @@ inline bool file_exists(const filename_t& filename)
 }
 
 
-
+inline filename_t get_cwd()
+{
+#ifdef _WIN32
+#ifdef SPDLOG_WCHAR_FILENAMES
+    wchar_t cwd[FILENAME_MAX];
+    if (!GetCurrentDirectoryW(FILENAME_MAX, cwd))
+        throw spdlog_ex("Failed GetCurrentDirectoryW", GetLastError());
+#else
+    char cwd[FILENAME_MAX];
+    if (!GetCurrentDirectoryA(FILENAME_MAX, cwd))
+        throw spdlog_ex("Failed GetCurrentDirectoryA", GetLastError());
+#endif
+#else
+    char cwd[FILENAME_MAX];
+    if (!getcwd(cwd, FILENAME_MAX))
+        throw spdlog_ex("Failed getcwd", errno);
+#endif
+    return cwd;
+}
 
 //Return file size according to open FILE* object
 inline size_t filesize(FILE *f)
