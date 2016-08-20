@@ -98,7 +98,7 @@ void async_example()
     spdlog::set_async_mode(q_size);
     auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
     for (int i = 0; i < 100; ++i)
-        async_file->info("Async message #{}{}", i);
+        async_file->info("Async message #{}", i);
 }
 
 //syslog example (linux/osx only)
