@@ -11,6 +11,7 @@
 #include <spdlog/sinks/sink.h>
 
 #include <algorithm>
+#include <mutex>
 #include <memory>
 #include <vector>
 
@@ -23,7 +24,7 @@ namespace sinks
 template<class Mutex>
 class dist_sink: public base_sink<Mutex>
 {
-public:
+public:    
     explicit dist_sink() :_sinks() {}
     dist_sink(const dist_sink&) = delete;
     dist_sink& operator=(const dist_sink&) = delete;
@@ -42,20 +43,20 @@ protected:
 public:
     void flush() override
     {
-        std::lock_guard<Mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         for (auto &sink : _sinks)
             sink->flush();
     }
 
     void add_sink(std::shared_ptr<sink> sink)
     {
-        std::lock_guard<Mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         _sinks.push_back(sink);
     }
 
     void remove_sink(std::shared_ptr<sink> sink)
     {
-        std::lock_guard<Mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
     }
 };
