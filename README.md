@@ -132,14 +132,15 @@ int main(int, char*[])
         // syslog example. linux/osx only..
         syslog_example();
 
-        // log user-defined types example..
+        // Log user-defined types example..
         user_defined_example();
 
-		// Change default log error handler
-		err_handler_example();
+	// Change default log error handler
+	err_handler_example();
 
-		console->info("End of example. bye..");
-
+	// Apply a function on all registered loggers
+	spd::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->info("End of example."); });
+	
         // Release and close all loggers
         spdlog::drop_all();
     }
@@ -157,7 +158,7 @@ void async_example()
     spdlog::set_async_mode(q_size);
     auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
     for (int i = 0; i < 100; ++i)
-        async_file->info("Async message #{}{}", i);
+        async_file->info("Async message #{}", i);
 }
 
 //syslog example (linux/osx only)
