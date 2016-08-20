@@ -113,7 +113,7 @@ std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_b
 
 
 // Create and register a logger with templated sink type
-// Example: 
+// Example:
 // spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename", "txt");
 template <typename Sink, typename... Args>
 std::shared_ptr<spdlog::logger> create(const std::string& logger_name, Args...);
@@ -123,7 +123,7 @@ std::shared_ptr<spdlog::logger> create(const std::string& logger_name, Args...);
 void register_logger(std::shared_ptr<logger> logger);
 
 // Apply a user defined function on all registered loggers
-// Example: 
+// Example:
 // spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->flush();});
 void apply_all(std::function<void(std::shared_ptr<logger>)> fun);
 
