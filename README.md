@@ -133,13 +133,13 @@ int main(int, char*[])
         syslog_example();
 
         // Log user-defined types example..
-        user_defined_example();
+       	user_defined_example();
 
 	// Change default log error handler
 	err_handler_example();
 
 	// Apply a function on all registered loggers
-	spd::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->info("End of example."); });
+        spd::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->info("End of example."); });
 	
         // Release and close all loggers
         spdlog::drop_all();
