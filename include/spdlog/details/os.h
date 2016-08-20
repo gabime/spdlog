@@ -38,8 +38,10 @@
 #include <unistd.h>
 #include <chrono>
 
-#else
+#elif __FreeBSD__
+#include <sys/thr.h> //Use thr_self() syscall under FreeBSD to get thread id
 
+#else
 #include <thread>
 
 #endif
@@ -263,9 +265,14 @@ inline size_t thread_id()
 #  define SYS_gettid __NR_gettid
 # endif
     return  static_cast<size_t>(syscall(SYS_gettid));
-#else //Default to standard C++11 (OSX and other Unix)
+#elif __FreeBSD__
+    long tid;
+    thr_self(&tid);
+    return static_cast<size_t>(tid);
+#else //Default to standard C++11 (OSX and other Unix)	
     return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
 #endif
+
 
 }
 
