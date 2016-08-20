@@ -105,13 +105,13 @@ void async_example()
         async_file->info("Async message #{}", i);
 }
 
-//syslog example (linux/osx only)
+//syslog example (linux/osx/freebsd)
 void syslog_example()
 {
 #if defined (__linux__) || defined(__APPLE__)  || defined(__FreeBSD__)
     std::string ident = "spdlog-example";
     auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
-    syslog_logger->warn("This is warning that will end up in syslog. This is Linux only!");
+    syslog_logger->warn("This is warning that will end up in syslog.");
 #endif
 }
 
