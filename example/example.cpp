@@ -70,18 +70,19 @@ int main(int, char*[])
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
         async_example();
 
-        // syslog example. linux/osx only..
+        // syslog example. linux/osx only
         syslog_example();
 
-        // log user-defined types example..
+        // Log user-defined types example
         user_defined_example();
 
         // Change default log error handler
         err_handler_example();
+        
+		// Apply a function on all registered loggers
+		spd::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->info("End of example."); });
 
-        console->info("End of example. bye..");
-
-        // Release and close all loggers
+        // Release and close all loggers		
         spdlog::drop_all();
     }
     // Exceptions will only be thrown upon failed logger or sink construction (not during logging)

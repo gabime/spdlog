@@ -71,6 +71,13 @@ public:
         return new_logger;
     }
 
+	void apply_all(std::function<void(std::shared_ptr<logger>)> fun)
+	{
+		std::lock_guard<Mutex> lock(_mutex);
+		for (auto &l : _loggers)
+			fun(l.second);			
+	}
+
     void drop(const std::string& logger_name)
     {
         std::lock_guard<Mutex> lock(_mutex);
