@@ -78,11 +78,14 @@ int main(int, char*[])
 
         // Change default log error handler
         err_handler_example();
-        
-		// Apply a function on all registered loggers
-		spd::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->info("End of example."); });
 
-        // Release and close all loggers		
+        // Apply a function on all registered loggers
+        spd::apply_all([&](std::shared_ptr<spdlog::logger> l)
+        {
+            l->info("End of example.");
+        });
+
+        // Release and close all loggers
         spdlog::drop_all();
     }
     // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
