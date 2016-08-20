@@ -30,33 +30,33 @@ public:
     virtual ~dist_sink() = default;
 
 protected:
-	std::vector<std::shared_ptr<sink>> _sinks;
+    std::vector<std::shared_ptr<sink>> _sinks;
 
     void _sink_it(const details::log_msg& msg) override
     {
-		for (auto &sink : _sinks)
-			sink->log(msg);		
+        for (auto &sink : _sinks)
+            sink->log(msg);
     }
-    
+
 
 public:
     void flush() override
     {
         std::lock_guard<Mutex> lock(_mutex);
-		for (auto &sink : _sinks)
-			sink->flush();
+        for (auto &sink : _sinks)
+            sink->flush();
     }
 
     void add_sink(std::shared_ptr<sink> sink)
-    {		
-        std::lock_guard<Mutex> lock(_mutex);        
-        _sinks.push_back(sink);        
+    {
+        std::lock_guard<Mutex> lock(_mutex);
+        _sinks.push_back(sink);
     }
 
     void remove_sink(std::shared_ptr<sink> sink)
     {
         std::lock_guard<Mutex> lock(_mutex);
-		_sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());        
+        _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
     }
 };
 
