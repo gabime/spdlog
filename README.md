@@ -136,7 +136,7 @@ int main(int, char*[])
         user_defined_example();
 
         // Change default log error handler
-	err_handler_example();
+        err_handler_example();
 
         // Apply a function on all registered loggers
         spd::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->info("End of example."); });
