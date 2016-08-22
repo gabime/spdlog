@@ -96,7 +96,7 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::strin
     return create_console_logger(logger_name, sinks::stderr_sink_st::instance(), color);
 }
 
-#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
+#ifdef SPDLOG_ENABLE_SYSLOG
 // Create syslog logger
 inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& logger_name, const std::string& syslog_ident, int syslog_option)
 {

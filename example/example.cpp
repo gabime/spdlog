@@ -108,7 +108,7 @@ void async_example()
 //syslog example (linux/osx/freebsd)
 void syslog_example()
 {
-#if defined (__linux__) || defined(__APPLE__)  || defined(__FreeBSD__)
+#ifdef SPDLOG_ENABLE_SYSLOG
     std::string ident = "spdlog-example";
     auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
     syslog_logger->warn("This is warning that will end up in syslog.");

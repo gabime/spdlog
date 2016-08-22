@@ -5,10 +5,11 @@
 
 #pragma once
 
-#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
+#include <spdlog/common.h>
+
+#ifdef SPDLOG_ENABLE_SYSLOG
 
 #include <spdlog/sinks/sink.h>
-#include <spdlog/common.h>
 #include <spdlog/details/log_msg.h>
 
 #include <array>
