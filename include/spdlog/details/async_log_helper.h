@@ -77,8 +77,8 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
             thread_id = other.thread_id;
             txt = std::move(other.txt);
             msg_type = other.msg_type;
-            return *this;
-        }
+            return *this;			
+		}
 
         // never copy or assign. should only be moved..
         async_msg(const async_msg&) = delete;
@@ -179,6 +179,9 @@ private:
     // sleep,yield or return immediatly using the time passed since last message as a hint
     static void sleep_or_yield(const spdlog::log_clock::time_point& now, const log_clock::time_point& last_op_time);
 
+	// wait until the queue is empty
+	void wait_empty_q();
+
 };
 }
 }
@@ -249,12 +252,9 @@ inline void spdlog::details::async_log_helper::push_msg(details::async_log_helpe
 //wait for the queue be empty and request flush from its sinks
 inline void spdlog::details::async_log_helper::flush()
 {
-	auto last_op = details::os::now();
-	while (_q.approx_size() > 0)
-	{
-		sleep_or_yield(details::os::now(), last_op);
-	}
+	wait_empty_q();
     push_msg(async_msg(async_msg_type::flush));
+	wait_empty_q(); //make sure the above flush message was processed
 }
 
 inline void spdlog::details::async_log_helper::worker_loop()
@@ -304,7 +304,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
             incoming_async_msg.fill_log_msg(incoming_log_msg);
             _formatter->format(incoming_log_msg);
             for (auto &s : _sinks)
-                s->log(incoming_log_msg);
+                s->log(incoming_log_msg);			
         }
         return true;
     }
@@ -364,6 +364,16 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_
 
     // sleep for 200 ms
     return sleep_for(milliseconds(200));
+}
+
+// wait for the queue to be empty
+inline void spdlog::details::async_log_helper::wait_empty_q()
+{
+	auto last_op = details::os::now();
+	while (_q.approx_size() > 0) {
+		sleep_or_yield(details::os::now(), last_op);
+	}
+	
 }
 
 
