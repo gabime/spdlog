@@ -30,10 +30,11 @@ class simple_file_sink : public base_sink < Mutex >
 {
 public:
     explicit simple_file_sink(const filename_t &filename,
-                              bool force_flush = false) :
+                              bool force_flush = false,
+                              bool truncate = false) :
         _file_helper(force_flush)
     {
-        _file_helper.open(filename);
+        _file_helper.open(filename, truncate);
     }
     void flush() override
     {
