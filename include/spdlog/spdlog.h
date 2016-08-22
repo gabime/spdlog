@@ -71,8 +71,8 @@ void set_sync_mode();
 //
 // Create and register multi/single basic file logger
 //
-std::shared_ptr<logger> basic_logger_mt(const std::string& logger_name, const filename_t& filename,bool force_flush = false);
-std::shared_ptr<logger> basic_logger_st(const std::string& logger_name, const filename_t& filename, bool force_flush = false);
+std::shared_ptr<logger> basic_logger_mt(const std::string& logger_name, const filename_t& filename,bool force_flush = false, bool truncate = false);
+std::shared_ptr<logger> basic_logger_st(const std::string& logger_name, const filename_t& filename, bool force_flush = false, bool truncate = false);
 
 //
 // Create and register multi/single threaded rotating file logger
