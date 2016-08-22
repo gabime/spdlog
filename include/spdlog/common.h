@@ -37,6 +37,16 @@
 #define DEPRECATED
 #endif
 
+#include <spdlog/tweakme.h>
+
+#ifndef SPDLOG_ENABLE_SYSLOG
+#if defined (__linux__) || defined(__APPLE__)  || defined(__FreeBSD__)
+#define SPDLOG_ENABLE_SYSLOG
+#elif defined(sun) || defined(__sun)
+#define SPDLOG_ENABLE_SYSLOG
+#endif
+#endif
+
 
 #include <spdlog/fmt/fmt.h>
 

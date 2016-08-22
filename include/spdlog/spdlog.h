@@ -98,7 +98,7 @@ std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name, bool co
 //
 // Create and register a syslog logger
 //
-#if defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__)
+#ifdef SPDLOG_ENABLE_SYSLOG
 std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0);
 #endif
 
