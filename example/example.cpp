@@ -5,6 +5,7 @@
 //
 // spdlog usage example
 //
+//
 #include "spdlog/spdlog.h"
 
 #include <iostream>

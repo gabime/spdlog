@@ -250,8 +250,7 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
         offset -= tzinfo.StandardBias;
     return offset;
 #else
-    long int offset_seconds;
-
+    
 #if defined(sun) || defined(__sun)
     // 'tm_gmtoff' field is BSD extension and it's missing on SunOS/Solaris
     struct helper {
@@ -280,9 +279,9 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
         }
     };
 
-    offset_seconds = helper::calculate_gmt_offset(tm);
+    long int offset_seconds = helper::calculate_gmt_offset(tm);
 #else
-    offset_seconds = tm.tm_gmtoff;
+    long int offset_seconds = tm.tm_gmtoff;
 #endif
 
     return static_cast<int>(offset_seconds / 60);
