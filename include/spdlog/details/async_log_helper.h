@@ -246,8 +246,14 @@ inline void spdlog::details::async_log_helper::push_msg(details::async_log_helpe
 
 }
 
+//wait for the queue be empty and request flush from its sinks
 inline void spdlog::details::async_log_helper::flush()
 {
+	auto last_op = details::os::now();
+	while (_q.approx_size() > 0)
+	{
+		sleep_or_yield(details::os::now(), last_op);
+	}
     push_msg(async_msg(async_msg_type::flush));
 }
 
