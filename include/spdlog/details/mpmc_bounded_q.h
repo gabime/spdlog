@@ -60,9 +60,9 @@ public:
 
     using item_type = T;
     mpmc_bounded_queue(size_t buffer_size)
-		:max_size_(buffer_size),
-        buffer_(new cell_t [buffer_size]),
-          buffer_mask_(buffer_size - 1)
+        :max_size_(buffer_size),
+         buffer_(new cell_t [buffer_size]),
+         buffer_mask_(buffer_size - 1)
     {
         //queue size must be power of two
         if(!((buffer_size >= 2) && ((buffer_size & (buffer_size - 1)) == 0)))
@@ -133,15 +133,15 @@ public:
         return true;
     }
 
-	size_t approx_size()
-	{
-		size_t first_pos = dequeue_pos_.load(std::memory_order_relaxed);
-		size_t last_pos = enqueue_pos_.load(std::memory_order_relaxed);
-		if (last_pos <= first_pos) 
-			return 0;
-		auto size = last_pos - first_pos;
-		return size < max_size_ ? size : max_size_;
-	}
+    size_t approx_size()
+    {
+        size_t first_pos = dequeue_pos_.load(std::memory_order_relaxed);
+        size_t last_pos = enqueue_pos_.load(std::memory_order_relaxed);
+        if (last_pos <= first_pos)
+            return 0;
+        auto size = last_pos - first_pos;
+        return size < max_size_ ? size : max_size_;
+    }
 
 private:
     struct cell_t
@@ -150,7 +150,7 @@ private:
         T                     data_;
     };
 
-	size_t const max_size_;
+    size_t const max_size_;
 
     static size_t const     cacheline_size = 64;
     typedef char            cacheline_pad_t [cacheline_size];
@@ -165,7 +165,7 @@ private:
     cacheline_pad_t         pad3_;
 
     mpmc_bounded_queue(mpmc_bounded_queue const&) = delete;
-    void operator= (mpmc_bounded_queue const&) = delete;	
+    void operator= (mpmc_bounded_queue const&) = delete;
 };
 
 } // ns details

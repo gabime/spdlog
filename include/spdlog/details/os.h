@@ -250,26 +250,28 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
         offset -= tzinfo.StandardBias;
     return offset;
 #else
-    
+
 #if defined(sun) || defined(__sun)
     // 'tm_gmtoff' field is BSD extension and it's missing on SunOS/Solaris
-    struct helper {
-        static long int calculate_gmt_offset(const std::tm & localtm = details::os::localtime(), const std::tm & gmtm = details::os::gmtime()) {
+    struct helper
+    {
+        static long int calculate_gmt_offset(const std::tm & localtm = details::os::localtime(), const std::tm & gmtm = details::os::gmtime())
+        {
             int local_year = localtm.tm_year + (1900 - 1);
             int gmt_year = gmtm.tm_year + (1900 - 1);
 
             long int days = (
-                // difference in day of year
-                localtm.tm_yday - gmtm.tm_yday
+                                // difference in day of year
+                                localtm.tm_yday - gmtm.tm_yday
 
-                // + intervening leap days
-                + ((local_year >> 2) - (gmt_year >> 2))
-                - (local_year / 100 - gmt_year / 100)
-                + ((local_year / 100 >> 2) - (gmt_year / 100 >> 2))
+                                // + intervening leap days
+                                + ((local_year >> 2) - (gmt_year >> 2))
+                                - (local_year / 100 - gmt_year / 100)
+                                + ((local_year / 100 >> 2) - (gmt_year / 100 >> 2))
 
-                // + difference in years * 365 */
-                + (long int)(local_year - gmt_year) * 365
-            );
+                                // + difference in years * 365 */
+                                + (long int)(local_year - gmt_year) * 365
+                            );
 
             long int hours = (24 * days) + (localtm.tm_hour - gmtm.tm_hour);
             long int mins = (60 * hours) + (localtm.tm_min - gmtm.tm_min);

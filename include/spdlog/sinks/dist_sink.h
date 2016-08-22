@@ -24,7 +24,7 @@ namespace sinks
 template<class Mutex>
 class dist_sink: public base_sink<Mutex>
 {
-public:    
+public:
     explicit dist_sink() :_sinks() {}
     dist_sink(const dist_sink&) = delete;
     dist_sink& operator=(const dist_sink&) = delete;
