@@ -23,7 +23,7 @@ Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/inclu
     * Rotating log files.
     * Daily log files.
     * Console logging (colors supported).
-    * Linux syslog.
+    * syslog.
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Severity based filtering - threshold levels can be modified in runtime as well as in compile time.
 
