@@ -76,7 +76,7 @@ int main(int, char*[])
         // Multithreaded color console
         auto console = spd::stdout_logger_mt("console", true);
         console->info("Welcome to spdlog!");
-        console->error("An info message example {}..", 1);
+        console->info("An info message example {}..", 1);
 
         // Formatting examples
         console->warn("Easy padding in numbers like {:08d}", 12);
