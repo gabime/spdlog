@@ -57,13 +57,7 @@ Time needed to log 1,000,000 lines in asynchronous mode, i.e. the time it takes 
 
 ## Usage Example
 ```c++
-//
-// Copyright(c) 2015 Gabi Melman.
-// Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
-//
-// spdlog usage example
-//
+
 #include "spdlog/spdlog.h"
 
 #include <iostream>
