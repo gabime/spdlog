@@ -54,7 +54,7 @@ inline spdlog::async_logger::async_logger(const std::string& logger_name,
 
 inline void spdlog::async_logger::flush()
 {
-    _async_log_helper->flush();
+    _async_log_helper->flush(true);
 }
 
 inline void spdlog::async_logger::_set_formatter(spdlog::formatter_ptr msg_formatter)
@@ -76,7 +76,7 @@ inline void spdlog::async_logger::_sink_it(details::log_msg& msg)
     {
         _async_log_helper->log(msg);
         if (_should_flush_on(msg))
-            flush();
+            _async_log_helper->flush(false); // do async flush
     }
     catch (const std::exception &ex)
     {
