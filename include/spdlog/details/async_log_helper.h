@@ -133,7 +133,7 @@ public:
 
     void set_formatter(formatter_ptr);
 
-    void flush();
+    void flush(bool wait_for_q);
 
 
 private:
@@ -249,12 +249,12 @@ inline void spdlog::details::async_log_helper::push_msg(details::async_log_helpe
 
 }
 
-//wait for the queue be empty and request flush from its sinks
-inline void spdlog::details::async_log_helper::flush()
+// optionally wait for the queue be empty and request flush from the sinks
+inline void spdlog::details::async_log_helper::flush(bool wait_for_q)
 {
-    wait_empty_q();
     push_msg(async_msg(async_msg_type::flush));
-    wait_empty_q(); //make sure the above flush message was processed
+    if(wait_for_q) 
+        wait_empty_q(); //return only make after the above flush message was processed
 }
 
 inline void spdlog::details::async_log_helper::worker_loop()
