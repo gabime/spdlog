@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     logger->set_pattern("[%Y-%b-%d %T.%e]: %v");
 
     std::atomic<int > msg_counter {0};
-    vector<thread> threads;
+    std::vector<thread> threads;
 
     for (int t = 0; t < thread_count; ++t)
     {
