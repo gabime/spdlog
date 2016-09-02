@@ -25,7 +25,8 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 {
     prepare_logdir();
     std::string basename = "logs/rotating_log";
-    auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 0, true);
+    auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 0);
+	logger->flush_on(spdlog::level::info);
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
 
@@ -41,7 +42,7 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 {
     prepare_logdir();
     std::string basename = "logs/rotating_log";
-    auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 1, false);
+    auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 1);
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
 
@@ -68,7 +69,8 @@ TEST_CASE("daily_logger", "[daily_logger]]")
     fmt::MemoryWriter w;
     w.write("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.txt", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
 
-    auto logger = spdlog::daily_logger_mt("logger", basename, 0, 0, true);
+    auto logger = spdlog::daily_logger_mt("logger", basename, 0, 0);
+	logger->flush_on(spdlog::level::info);
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
 
