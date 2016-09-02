@@ -76,9 +76,9 @@ protected:
     // default error handler: print the error to stderr with the max rate of 1 message/minute
     virtual void _default_err_handler(const std::string &msg);
 
-	// return true if the given message level should trigger a flush
-	bool _should_flush_on(const details::log_msg&);
-	
+    // return true if the given message level should trigger a flush
+    bool _should_flush_on(const details::log_msg&);
+
     const std::string _name;
     std::vector<sink_ptr> _sinks;
     formatter_ptr _formatter;

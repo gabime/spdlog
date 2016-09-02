@@ -25,7 +25,7 @@ int main(int, char*[])
         auto console = spd::stdout_logger_mt("console", true);
         console->info("Welcome to spdlog!");
         console->error("An error message example {}..", 1);
-		
+
         // Formatting examples
         console->warn("Easy padding in numbers like {:08d}", 12);
         console->critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
@@ -56,8 +56,8 @@ int main(int, char*[])
 
         // Create a daily logger - a new file is created every day on 2:30am
         auto daily_logger = spd::daily_logger_mt("daily_logger", "logs/daily", 2, 30);
-		// trigger flush if the log severity is error or higher
-		daily_logger->flush_on(spd::level::err);
+        // trigger flush if the log severity is error or higher
+        daily_logger->flush_on(spd::level::err);
         daily_logger->info(123.44);
 
         // Customize msg format for all messages
@@ -104,7 +104,7 @@ void async_example()
     size_t q_size = 4096; //queue size must be power of 2
     spdlog::set_async_mode(q_size);
     auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
-	
+
     for (int i = 0; i < 100; ++i)
         async_file->info("Async message #{}", i);
 }

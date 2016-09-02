@@ -75,8 +75,8 @@ inline void spdlog::async_logger::_sink_it(details::log_msg& msg)
     try
     {
         _async_log_helper->log(msg);
-		if (_should_flush_on(msg))
-			flush();
+        if (_should_flush_on(msg))
+            flush();
     }
     catch (const std::exception &ex)
     {

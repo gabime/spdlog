@@ -283,6 +283,6 @@ inline void spdlog::logger::_default_err_handler(const std::string &msg)
 
 inline bool spdlog::logger::_should_flush_on(const details::log_msg &msg)
 {
-	const auto flush_level = _flush_level.load(std::memory_order_relaxed);
-	return (msg.level >= flush_level) && (msg.level != level::off);
+    const auto flush_level = _flush_level.load(std::memory_order_relaxed);
+    return (msg.level >= flush_level) && (msg.level != level::off);
 }
