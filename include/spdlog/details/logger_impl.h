@@ -244,13 +244,11 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 //
 inline void spdlog::logger::_sink_it(details::log_msg& msg)
 {
-
     _formatter->format(msg);
     for (auto &sink : _sinks)
         sink->log(msg);
 
-    const auto flush_level = _flush_level.load(std::memory_order_relaxed);
-    if (msg.level >= flush_level)
+    if(_should_flush_on(msg))
         flush();
 }
 
@@ -281,4 +279,10 @@ inline void spdlog::logger::_default_err_handler(const std::string &msg)
     err_msg.formatted.write("[*** LOG ERROR ***] [{}] [{}] [{}]{}", name(), msg, date_buf, details::os::eol);
     sinks::stderr_sink_mt::instance()->log(err_msg);
     _last_err_time = now;
+}
+
+inline bool spdlog::logger::_should_flush_on(const details::log_msg &msg)
+{
+	const auto flush_level = _flush_level.load(std::memory_order_relaxed);
+	return (msg.level >= flush_level) && (msg.level != level::off);
 }

@@ -102,6 +102,10 @@ void async_example()
     size_t q_size = 4096; //queue size must be power of 2
     spdlog::set_async_mode(q_size);
     auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
+
+	// auto flush if the log severity is error or higher
+	async_file->flush_on(spd::level::err); 
+
     for (int i = 0; i < 100; ++i)
         async_file->info("Async message #{}", i);
 }
