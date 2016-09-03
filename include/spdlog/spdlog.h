@@ -67,7 +67,8 @@ void set_sync_mode();
 
 
 //
-// Create and register multi/single basic file logger
+// Create and register multi/single threaded basic file logger. 
+// Basic logger simply writes to given file without any limitatons or rotations.
 //
 std::shared_ptr<logger> basic_logger_mt(const std::string& logger_name, const filename_t& filename, bool truncate = false);
 std::shared_ptr<logger> basic_logger_st(const std::string& logger_name, const filename_t& filename, bool truncate = false);
