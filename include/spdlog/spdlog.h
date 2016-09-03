@@ -20,14 +20,12 @@
 namespace spdlog
 {
 
+// 
 // Return an existing logger or nullptr if a logger with such name doesn't exist.
-// Examples:
+// example: spdlog::get("my_logger")->info("hello {}", "world");
 //
-// spdlog::get("mylog")->info("Hello");
-// auto logger = spdlog::get("mylog");
-// logger.info("This is another message" , x, y, z);
-// logger.info() << "This is another message" << x << y << z;
 std::shared_ptr<logger> get(const std::string& name);
+
 
 //
 // Set global formatting
