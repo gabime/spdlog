@@ -58,7 +58,6 @@ class async_log_helper
         async_msg() = default;
         ~async_msg() = default;
 
-
         async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
             logger_name(std::move(other.logger_name)),
             level(std::move(other.level)),
@@ -81,7 +80,6 @@ class async_log_helper
             return *this;
         }
 
-        // never copy or assign. should only be moved..
         async_msg(const async_msg&) = default;
         async_msg& operator=(async_msg& other) = default;
 
