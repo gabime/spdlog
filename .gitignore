@@ -45,6 +45,7 @@ example/*
 !example/example.sln
 !example/example.vcxproj
 !example/CMakeLists.txt
+!example/multisink.cpp
 
 # generated files
 generated
