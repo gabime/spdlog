@@ -90,7 +90,8 @@ inline thread_pool::thread_pool(size_t num_threads,
                         // if the weak pointer points to a delated handle, remove it
                         if(!handle ){
                             _loop_handles.erase(handle_it);
-                            _index  = (_index) % _loop_handles.size();
+                            if(  _loop_handles.empty() ==false)
+                                _index  = (_index) % _loop_handles.size();
                         }
                         else{
                             // mark as busy
