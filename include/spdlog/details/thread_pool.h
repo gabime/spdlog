@@ -33,9 +33,8 @@ public:
 private:
     // need to keep track of threads so we can join them
     std::vector< std::thread > _workers;
+
     // the task queue
-
-
     std::deque<std::pair<bool, weak_function_ptr> > _loop_handles;
 
     // synchronization
@@ -69,7 +68,6 @@ inline thread_pool::thread_pool(size_t num_threads,
             if( _worker_warmup_cb) _worker_warmup_cb();
             while( !_stop)
             {
-
                 shared_function_ptr handle;
                 auto handle_it = _loop_handles.begin();
                 bool is_busy = false;
@@ -104,14 +102,12 @@ inline thread_pool::thread_pool(size_t num_threads,
                 if(handle && !is_busy)
                 {
                     bool continue_loop = (*handle)();
-                    if(!continue_loop){
+
+                    {
                         std::unique_lock<std::mutex> lock(_mutex);
                         handle_it->first = false;
-                        _loop_handles.erase(handle_it);
-                    }
-                    else{
-                        std::unique_lock<std::mutex> lock(_mutex);
-                        handle_it->first = false;
+                        if(!continue_loop)
+                            _loop_handles.erase(handle_it);
                     }
                     // not busy anymore. notify to other threads
                     _condition.notify_one();
