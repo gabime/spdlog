@@ -303,8 +303,11 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
             log_msg incoming_log_msg;
             incoming_async_msg.fill_log_msg(incoming_log_msg);
             _formatter->format(incoming_log_msg);
-            for (auto &s : _sinks)
-                s->log(incoming_log_msg);
+            for (auto &s : _sinks){
+                if(s->should_log( incoming_log_msg.level)){
+                    s->log(incoming_log_msg);
+                }
+            }
         }
         return true;
     }
@@ -317,7 +320,6 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
         handle_flush_interval(now, last_flush);
         sleep_or_yield(now, last_pop);
         return !_terminate_requested;
-
     }
 }
 

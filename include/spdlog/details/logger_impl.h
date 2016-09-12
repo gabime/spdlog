@@ -245,8 +245,11 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 inline void spdlog::logger::_sink_it(details::log_msg& msg)
 {
     _formatter->format(msg);
-    for (auto &sink : _sinks)
-        sink->log(msg);
+    for (auto &sink : _sinks){
+        if( sink->should_log( msg.level)){
+            sink->log(msg);
+        }
+    }
 
     if(_should_flush_on(msg))
         flush();
