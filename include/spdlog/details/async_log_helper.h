@@ -204,7 +204,7 @@ inline spdlog::details::async_log_helper::async_log_helper(
     _terminated(false),
     _overflow_policy(overflow_policy),
     _flush_interval_ms(flush_interval_ms),
-    _thread_loop_handle( new Func( [this](){ return this->process_next_msg();} ) )
+    _thread_loop_handle( new Func( [this](){ return this->worker_loop();} ) )
 {
     th_pool->subscribe_handle(_thread_loop_handle);
 }
@@ -270,7 +270,7 @@ inline bool spdlog::details::async_log_helper::worker_loop()
     {
         _err_handler("Unknown exception");
     }
-    return true;
+    return false;
 }
 
 // process next message in the queue
