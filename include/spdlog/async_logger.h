@@ -15,6 +15,7 @@
 //    3. will throw spdlog_ex upon log exceptions
 // Upon destruction, logs all remaining messages in the queue before destructing..
 
+#include <spdlog/details/thread_pool.h>
 #include <spdlog/common.h>
 #include <spdlog/logger.h>
 
@@ -39,26 +40,23 @@ public:
                  const It& begin,
                  const It& end,
                  size_t queue_size,
+                 details::thread_pool* th_pool,
                  const async_overflow_policy overflow_policy =  async_overflow_policy::block_retry,
-                 const std::function<void()>& worker_warmup_cb = nullptr,
-                 const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
-                 const std::function<void()>& worker_teardown_cb = nullptr);
+                 const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero());
 
     async_logger(const std::string& logger_name,
                  sinks_init_list sinks,
                  size_t queue_size,
+                 details::thread_pool* th_pool,
                  const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-                 const std::function<void()>& worker_warmup_cb = nullptr,
-                 const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
-                 const std::function<void()>& worker_teardown_cb = nullptr);
+                 const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero());
 
     async_logger(const std::string& logger_name,
                  sink_ptr single_sink,
                  size_t queue_size,
+                 details::thread_pool* th_pool,
                  const async_overflow_policy overflow_policy =  async_overflow_policy::block_retry,
-                 const std::function<void()>& worker_warmup_cb = nullptr,
-                 const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
-                 const std::function<void()>& worker_teardown_cb = nullptr);
+                 const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero());
 
     //Wait for the queue to be empty, and flush synchronously
     //Warning: this can potentialy last forever as we wait it to complete

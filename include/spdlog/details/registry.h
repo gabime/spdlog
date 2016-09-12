@@ -26,6 +26,8 @@ namespace spdlog
 {
 namespace details
 {
+
+
 template <class Mutex> class registry_t
 {
 public:
@@ -53,7 +55,8 @@ public:
         throw_if_exists(logger_name);
         std::shared_ptr<logger> new_logger;
         if (_async_mode)
-            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _overflow_policy, _worker_warmup_cb, _flush_interval_ms, _worker_teardown_cb);
+            new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end,
+                                                        _async_q_size, _thread_poll.get(), _overflow_policy, _flush_interval_ms);
         else
             new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
 
@@ -131,15 +134,23 @@ public:
         _err_handler = handler;
     }
 
-    void set_async_mode(size_t q_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb)
+    void set_async_mode(size_t queue_size,
+                        size_t thread_pool_size,
+                        const async_overflow_policy overflow_policy,
+                        const std::function<void()>& worker_warmup_cb,
+                        const std::chrono::milliseconds& flush_interval_ms,
+                        const std::function<void()>& worker_teardown_cb)
     {
         std::lock_guard<Mutex> lock(_mutex);
         _async_mode = true;
-        _async_q_size = q_size;
+        _async_q_size = queue_size;
+        _threadpool_size = thread_pool_size;
         _overflow_policy = overflow_policy;
         _worker_warmup_cb = worker_warmup_cb;
         _flush_interval_ms = flush_interval_ms;
         _worker_teardown_cb = worker_teardown_cb;
+
+        _thread_poll.reset( new thread_pool(thread_pool_size,_worker_warmup_cb,_worker_teardown_cb ));
     }
 
     void set_sync_mode()
@@ -171,10 +182,13 @@ private:
     log_err_handler _err_handler;
     bool _async_mode = false;
     size_t _async_q_size = 0;
+    size_t _threadpool_size = 1;
     async_overflow_policy _overflow_policy = async_overflow_policy::block_retry;
     std::function<void()> _worker_warmup_cb = nullptr;
     std::chrono::milliseconds _flush_interval_ms;
     std::function<void()> _worker_teardown_cb = nullptr;
+    std::unique_ptr<thread_pool> _thread_poll;
+
 };
 #ifdef SPDLOG_NO_REGISTRY_MUTEX
 typedef registry_t<spdlog::details::null_mutex> registry;

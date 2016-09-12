@@ -60,7 +60,12 @@ void set_error_handler(log_err_handler);
 // worker_teardown_cb (optional):
 //     callback function that will be called in worker thread upon exit
 //
-void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);
+void set_async_mode(size_t queue_size,
+                    const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
+                    const std::function<void()>& worker_warmup_cb = nullptr,
+                    const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
+                    const std::function<void()>& worker_teardown_cb = nullptr,
+                    size_t num_thread_in_pool = 1);
 
 // Turn off async mode
 void set_sync_mode();
