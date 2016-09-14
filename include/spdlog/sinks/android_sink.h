@@ -32,10 +32,11 @@ public:
         const android_LogPriority priority = convert_to_android(msg.level);
         // See system/core/liblog/logger_write.c for explanation of return value
         const int ret = __android_log_write(
-                             priority, _tag.c_str(), msg.formatted.c_str()
-                         );
-        if (ret < 0) {
-          throw spdlog_ex("__android_log_write() failed", ret);
+                            priority, _tag.c_str(), msg.formatted.c_str()
+                        );
+        if (ret < 0)
+        {
+            throw spdlog_ex("__android_log_write() failed", ret);
         }
     }
 

@@ -253,7 +253,7 @@ inline void spdlog::details::async_log_helper::push_msg(details::async_log_helpe
 inline void spdlog::details::async_log_helper::flush(bool wait_for_q)
 {
     push_msg(async_msg(async_msg_type::flush));
-    if(wait_for_q) 
+    if(wait_for_q)
         wait_empty_q(); //return only make after the above flush message was processed
 }
 
@@ -303,8 +303,10 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
             log_msg incoming_log_msg;
             incoming_async_msg.fill_log_msg(incoming_log_msg);
             _formatter->format(incoming_log_msg);
-            for (auto &s : _sinks){
-                if(s->should_log( incoming_log_msg.level)){
+            for (auto &s : _sinks)
+            {
+                if(s->should_log( incoming_log_msg.level))
+                {
                     s->log(incoming_log_msg);
                 }
             }

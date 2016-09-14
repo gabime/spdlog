@@ -108,7 +108,7 @@ inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& 
 #if defined(__ANDROID__)
 inline std::shared_ptr<spdlog::logger> spdlog::android_logger(const std::string& logger_name, const std::string& tag)
 {
-  return create<spdlog::sinks::android_sink>(logger_name, tag);
+    return create<spdlog::sinks::android_sink>(logger_name, tag);
 }
 #endif
 

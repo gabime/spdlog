@@ -30,15 +30,18 @@ private:
 
 };
 
-inline bool sink::should_log(level::level_enum msg_level) const {
+inline bool sink::should_log(level::level_enum msg_level) const
+{
     return msg_level >= _level.load(std::memory_order_relaxed);
 }
 
-inline void sink::set_level(level::level_enum log_level) {
+inline void sink::set_level(level::level_enum log_level)
+{
     _level.store(log_level);
 }
 
-inline level::level_enum sink::level() const {
+inline level::level_enum sink::level() const
+{
     return static_cast<spdlog::level::level_enum>(_level.load(std::memory_order_relaxed));
 }
 
