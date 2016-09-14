@@ -14,6 +14,7 @@
 #include <spdlog/sinks/stdout_sinks.h>
 #include <spdlog/sinks/syslog_sink.h>
 #include <spdlog/sinks/ansicolor_sink.h>
+#include <spdlog/sinks/android_sink.h>
 
 #include <chrono>
 #include <functional>
@@ -101,6 +102,13 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::strin
 inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& logger_name, const std::string& syslog_ident, int syslog_option)
 {
     return create<spdlog::sinks::syslog_sink>(logger_name, syslog_ident, syslog_option);
+}
+#endif
+
+#if defined(__ANDROID__)
+inline std::shared_ptr<spdlog::logger> spdlog::android_logger(const std::string& logger_name, const std::string& tag)
+{
+  return create<spdlog::sinks::android_sink>(logger_name, tag);
 }
 #endif
 

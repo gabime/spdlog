@@ -101,6 +101,9 @@ std::shared_ptr<logger> stderr_logger_st(const std::string& logger_name, bool co
 std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0);
 #endif
 
+#if defined(__ANDROID__)
+std::shared_ptr<logger> android_logger(const std::string& logger_name, const std::string& tag = "spdlog");
+#endif
 
 // Create and register a logger a single sink
 std::shared_ptr<logger> create(const std::string& logger_name, const sink_ptr& sink);
