@@ -25,9 +25,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
- // Commented out by spdlog to use header only
- // #include "fmt/format.h"
- // #include "fmt/printf.h"
+// Commented out by spdlog to use header only
+// #include "fmt/format.h"
+// #include "fmt/printf.h"
 
 #include <string.h>
 
