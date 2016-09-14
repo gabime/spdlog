@@ -13,6 +13,7 @@
 
 void async_example();
 void syslog_example();
+void android_example();
 void user_defined_example();
 void err_handler_example();
 
@@ -48,7 +49,6 @@ int main(int, char*[])
         auto my_logger = spd::basic_logger_mt("basic_logger", "logs/basic.txt");
         my_logger->info("Some log message");
 
-
         // Create a file rotating logger with 5mb size max and 3 rotated files
         auto rotating_logger = spd::rotating_logger_mt("some_logger_name", "logs/mylogfile", 1048576 * 5, 3);
         for (int i = 0; i < 10; ++i)
@@ -75,6 +75,9 @@ int main(int, char*[])
 
         // syslog example. linux/osx only
         syslog_example();
+
+        // android example. compile with NDK
+        android_example();
 
         // Log user-defined types example
         user_defined_example();
@@ -119,6 +122,16 @@ void syslog_example()
 #endif
 }
 
+// Android example
+void android_example()
+{
+#if defined(__ANDROID__)
+    std::string tag = "spdlog-android";
+    auto android_logger = spd::android_logger("android", tag);
+    android_logger->critical("Use \"adb shell logcat\" to view this message.");
+#endif
+}
+
 // user defined types logging by implementing operator<<
 struct my_type
 {
@@ -148,4 +161,3 @@ void err_handler_example()
     });
     spd::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
 }
-
