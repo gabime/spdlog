@@ -23,16 +23,13 @@ namespace spdlog
 namespace sinks
 {
 /*
-* Trivial file sink with single file as target
-*/
+ * Trivial file sink with single file as target
+ */
 template<class Mutex>
 class simple_file_sink : public base_sink < Mutex >
 {
 public:
-    explicit simple_file_sink(const filename_t &filename,
-                              bool force_flush = false,
-                              bool truncate = false) :
-        _file_helper(force_flush)
+    explicit simple_file_sink(const filename_t &filename, bool truncate = false)  
     {
         _file_helper.open(filename, truncate);
     }
@@ -54,21 +51,20 @@ typedef simple_file_sink<std::mutex> simple_file_sink_mt;
 typedef simple_file_sink<details::null_mutex> simple_file_sink_st;
 
 /*
-* Rotating file sink based on size
-*/
+ * Rotating file sink based on size
+ */
 template<class Mutex>
 class rotating_file_sink : public base_sink < Mutex >
 {
 public:
     rotating_file_sink(const filename_t &base_filename, const filename_t &extension,
-                       std::size_t max_size, std::size_t max_files,
-                       bool force_flush = false) :
+                       std::size_t max_size, std::size_t max_files                       ) :
         _base_filename(base_filename),
         _extension(extension),
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
-        _file_helper(force_flush)
+        _file_helper()
     {
         _file_helper.open(calc_filename(_base_filename, 0, _extension));
         _current_size = _file_helper.size(); //expensive. called only once
@@ -143,11 +139,11 @@ typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
 typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
 
 /*
-* Default generator of daily log file names.
-*/
+ * Default generator of daily log file names.
+ */
 struct default_daily_file_name_calculator
 {
-    //Create filename for the form basename.YYYY-MM-DD_hh-mm.extension
+    // Create filename for the form basename.YYYY-MM-DD_hh-mm.extension
     static filename_t calc_filename(const filename_t& basename, const filename_t& extension)
     {
         std::tm tm = spdlog::details::os::localtime();
@@ -158,11 +154,11 @@ struct default_daily_file_name_calculator
 };
 
 /*
-* Generator of daily log file names in format basename.YYYY-MM-DD.extension
-*/
+ * Generator of daily log file names in format basename.YYYY-MM-DD.extension
+ */
 struct dateonly_daily_file_name_calculator
 {
-    //Create filename for the form basename.YYYY-MM-DD.extension
+    // Create filename for the form basename.YYYY-MM-DD.extension
     static filename_t calc_filename(const filename_t& basename, const filename_t& extension)
     {
         std::tm tm = spdlog::details::os::localtime();
@@ -173,8 +169,8 @@ struct dateonly_daily_file_name_calculator
 };
 
 /*
-* Rotating file sink based on date. rotates at midnight
-*/
+ * Rotating file sink based on date. rotates at midnight
+ */
 template<class Mutex, class FileNameCalc = default_daily_file_name_calculator>
 class daily_file_sink :public base_sink < Mutex >
 {
@@ -184,12 +180,10 @@ public:
         const filename_t& base_filename,
         const filename_t& extension,
         int rotation_hour,
-        int rotation_minute,
-        bool force_flush = false) : _base_filename(base_filename),
+        int rotation_minute) : _base_filename(base_filename),
         _extension(extension),
         _rotation_h(rotation_hour),
-        _rotation_m(rotation_minute),
-        _file_helper(force_flush)
+        _rotation_m(rotation_minute)        
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");

@@ -39,12 +39,12 @@ inline void spdlog::drop(const std::string &name)
 // Create multi/single threaded simple file logger
 inline std::shared_ptr<spdlog::logger> spdlog::basic_logger_mt(const std::string& logger_name, const filename_t& filename, bool truncate)
 {
-    return create<spdlog::sinks::simple_file_sink_mt>(logger_name, filename, false, truncate);
+    return create<spdlog::sinks::simple_file_sink_mt>(logger_name, filename, truncate);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::basic_logger_st(const std::string& logger_name, const filename_t& filename, bool truncate)
 {
-    return create<spdlog::sinks::simple_file_sink_st>(logger_name, filename, false, truncate);
+    return create<spdlog::sinks::simple_file_sink_st>(logger_name, filename, truncate);
 }
 
 // Create multi/single threaded rotating file logger
