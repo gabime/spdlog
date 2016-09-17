@@ -3,7 +3,7 @@ CXXFLAGS	= -march=native -Wall -Wextra -pedantic -std=c++11 -pthread -Wl,--no-as
 CXX_RELEASE_FLAGS = -O3 -flto -DNDEBUG
 
 
-binaries=spdlog-bench spdlog-bench-mt spdlog-async boost-bench boost-bench-mt glog-bench glog-bench-mt g2log-async easylogging-bench easylogging-bench-mt
+binaries=spdlog-bench spdlog-bench-mt spdlog-async spdlog-null-async boost-bench boost-bench-mt glog-bench glog-bench-mt g2log-async easylogging-bench easylogging-bench-mt
 
 all: $(binaries)
 
@@ -17,6 +17,11 @@ spdlog-async: spdlog-async.cpp
 	$(CXX) spdlog-async.cpp -o spdlog-async  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 
 
+spdlog-null-async: spdlog-null-async.cpp
+	$(CXX) spdlog-null-async.cpp -o spdlog-null-async $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+
+	
+	
 BOOST_FLAGS	= -DBOOST_LOG_DYN_LINK  -I/usr/include -lboost_log  -lboost_log_setup -lboost_filesystem -lboost_system -lboost_thread -lboost_regex -lboost_date_time -lboost_chrono
 
 boost-bench: boost-bench.cpp
