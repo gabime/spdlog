@@ -68,6 +68,9 @@ public:
 
     virtual void flush();
 
+    // expose sinks
+    std::vector<sink_ptr> get_sinks() const;
+
 protected:
     virtual void _sink_it(details::log_msg&);
     virtual void _set_pattern(const std::string&);
