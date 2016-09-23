@@ -7,6 +7,16 @@ using namespace spdlog::details;
 
 static const std::string target_filename = "logs/file_helper_test.txt";
 
+static unsigned long calculate_file_size(unsigned long nChars)
+{
+#if defined(SPDLOG_WCHAR_LOGGING)
+	// Written chars + BOM
+	return (nChars + 1) * sizeof(wchar_t);
+#else
+	return nChars;
+#endif
+}
+
 static void write_with_helper(file_helper &helper, size_t howmany)
 {
     log_msg msg;

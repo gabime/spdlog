@@ -3,76 +3,74 @@
  */
 #include "includes.h"
 
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
+#define  count_lines_t	wcount_lines
+#else
+#define  count_lines_t	count_lines
+#endif
 
 TEST_CASE("simple_file_logger", "[simple_logger]]")
 {
     prepare_logdir();
-    std::string filename = "logs/simple_log.txt";
+	spdlog::filename_t filename = _SFT("logs/simple_log.txt");
 
     auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
-    logger->set_pattern("%v");
+    logger->set_pattern(_SLT("%v"));
 
 
-    logger->info("Test message {}", 1);
-    logger->info("Test message {}", 2);
+    logger->info(_SLT("Test message {}"), 1);
+    logger->info(_SLT("Test message {}"), 2);
     logger->flush();
-    REQUIRE(file_contents(filename) == std::string("Test message 1\nTest message 2\n"));
-    REQUIRE(count_lines(filename) == 2);
-}
+#if defined(_WIN32)
+#if defined(SPDLOG_WCHAR_LOGGING)
+	REQUIRE(wfile_contents(filename) == /*spdlog::log_string_t*/(L"Test message 1\r\nTest message 2\r\n"));
+	REQUIRE(wcount_lines(filename) == 2);
+#else // SPDLOG_WCHAR_LOGGING
+	REQUIRE(file_contents(filename) == /*spdlog::log_string_t*/("Test message 1\r\nTest message 2\r\n"));
+	REQUIRE(count_lines(filename) == 2);
+#endif // SPDLOG_WCHAR_LOGGING
+#else // WIN32
+	REQUIRE(file_contents(filename) == /*spdlog::log_string_t*/("Test message 1\nTest message 2\n"));
+	REQUIRE(count_lines(filename) == 2);
+#endif
 
-
-TEST_CASE("flush_on", "[flush_on]]")
-{
-	prepare_logdir();
-	std::string filename = "logs/simple_log.txt";
-
-	auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
-	logger->set_pattern("%v");
-	logger->set_level(spdlog::level::trace);
-	logger->flush_on(spdlog::level::info);
-	logger->trace("Should not be flushed");
-	REQUIRE(count_lines(filename) == 0);
-
-	logger->info("Test message {}", 1);
-	logger->info("Test message {}", 2);
-	logger->flush();
-	REQUIRE(file_contents(filename) == std::string("Should not be flushed\nTest message 1\nTest message 2\n"));
-	REQUIRE(count_lines(filename) == 3);
 }
 
 TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 {
     prepare_logdir();
-    std::string basename = "logs/rotating_log";
+	spdlog::filename_t basename = _SFT("logs/rotating_log");
     auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 0);
-    
-    for (int i = 0; i < 10; ++i)
-        logger->info("Test message {}", i);
+	logger->flush_on(spdlog::level::info);
+	for (int i = 0; i < 10; ++i)
+        logger->info(_SLT("Test message {}"), i);
 
-	logger->flush();
-    auto filename = basename + ".txt";
-    REQUIRE(count_lines(filename) == 10);
+    auto filename = basename + _SFT(".txt");
+    REQUIRE(count_lines_t(filename) == 10);
+    for (int i = 0; i < 1000; i++)
+        logger->info(_SLT("Test message {}"), i);
+
 }
 
 
 TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 {
     prepare_logdir();
-    std::string basename = "logs/rotating_log";
+	spdlog::filename_t basename = _SFT("logs/rotating_log");
     auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 1);
     for (int i = 0; i < 10; ++i)
-        logger->info("Test message {}", i);
+        logger->info(_SLT("Test message {}"), i);
 
     logger->flush();
-    auto filename = basename + ".txt";
-    REQUIRE(count_lines(filename) == 10);
+    auto filename = basename + _SFT(".txt");
+    REQUIRE(count_lines_t(filename) == 10);
     for (int i = 0; i < 1000; i++)
-        logger->info("Test message {}", i);
+        logger->info(_SLT("Test message {}"), i);
 
     logger->flush();
-    REQUIRE(get_filesize(filename) <= 1024);
-    auto filename1 = basename + ".1.txt";
-    REQUIRE(get_filesize(filename1) <= 1024);
+    REQUIRE(get_filesize(filename) <= estimated_file_size(1024));
+    auto filename1 = basename + _SFT(".1.txt");
+    REQUIRE(get_filesize(filename1) <= estimated_file_size(1024));
 }
 
 
@@ -80,18 +78,18 @@ TEST_CASE("daily_logger", "[daily_logger]]")
 {
     prepare_logdir();
     //calculate filename (time based)
-    std::string basename = "logs/daily_log";
+	spdlog::filename_t basename = _SFT("logs/daily_log");
     std::tm tm = spdlog::details::os::localtime();
-    fmt::MemoryWriter w;
-    w.write("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.txt", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
+	spdlog::fmt_memory_writer_t w;
+    w.write(_SLT("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}.txt"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
 
     auto logger = spdlog::daily_logger_mt("logger", basename, 0, 0);
-    logger->flush_on(spdlog::level::info);
-    for (int i = 0; i < 10; ++i)
-        logger->info("Test message {}", i);
+	logger->flush_on(spdlog::level::info);
+	for (int i = 0; i < 10; ++i)
+        logger->info(_SLT("Test message {}"), i);
 
     auto filename = w.str();
-    REQUIRE(count_lines(filename) == 10);
+    REQUIRE(count_lines_t(filename) == 10);
 }
 
 
@@ -103,17 +101,17 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
 
     prepare_logdir();
     //calculate filename (time based)
-    std::string basename = "logs/daily_dateonly";
+	spdlog::filename_t basename = _SFT("logs/daily_dateonly");
     std::tm tm = spdlog::details::os::localtime();
-    fmt::MemoryWriter w;
-    w.write("{}_{:04d}-{:02d}-{:02d}.txt", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+	spdlog::fmt_memory_writer_t w;
+    w.write(_SLT("{}_{:04d}-{:02d}-{:02d}.txt"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
-    auto logger = spdlog::create<sink_type>("logger", basename, "txt", 0, 0);
+    auto logger = spdlog::create<sink_type>("logger", basename, _SFT("txt"), 0, 0, true);
     for (int i = 0; i < 10; ++i)
-        logger->info("Test message {}", i);
-	logger->flush();
+        logger->info(_SLT("Test message {}"), i);
+
     auto filename = w.str();
-    REQUIRE(count_lines(filename) == 10);
+    REQUIRE(count_lines_t(filename) == 10);
 }
 
 struct custom_daily_file_name_calculator
@@ -121,8 +119,8 @@ struct custom_daily_file_name_calculator
     static spdlog::filename_t calc_filename(const spdlog::filename_t& basename, const spdlog::filename_t& extension)
     {
         std::tm tm = spdlog::details::os::localtime();
-        fmt::MemoryWriter w;
-        w.write("{}{:04d}{:02d}{:02d}.{}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, extension);
+		spdlog::fmt_memory_writer_t w;
+        w.write(_SLT("{}{:04d}{:02d}{:02d}.{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, extension);
         return w.str();
     }
 };
@@ -135,17 +133,16 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
 
     prepare_logdir();
     //calculate filename (time based)
-    std::string basename = "logs/daily_dateonly";
+	spdlog::filename_t  basename = _SFT("logs/daily_dateonly");
     std::tm tm = spdlog::details::os::localtime();
-    fmt::MemoryWriter w;
-    w.write("{}{:04d}{:02d}{:02d}.txt", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+	spdlog::fmt_memory_writer_t w;
+    w.write(_SLT("{}{:04d}{:02d}{:02d}.txt"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
-    auto logger = spdlog::create<sink_type>("logger", basename, "txt", 0, 0);
+    auto logger = spdlog::create<sink_type>("logger", basename, _SFT("txt"), 0, 0, true);
     for (int i = 0; i < 10; ++i)
-        logger->info("Test message {}", i);
+        logger->info(_SLT("Test message {}"), i);
 
-	logger->flush();
-    auto filename = w.str();	
-    REQUIRE(count_lines(filename) == 10);
+    auto filename = w.str();
+    REQUIRE(count_lines_t(filename) == 10);
 }
 

@@ -48,6 +48,20 @@ example/*
 !example/multisink.cpp
 !example/jni
 
+# Build-Folders library and test
+spdloglb/DebugAL/*
+spdloglb/DebugWL/*
+spdloglb/ReleaseAL/*
+spdloglb/ReleaseWL/*
+spdloglb/.vs/*
+spdlogLbTest/Debug/*
+spdlogLbTest/Release/*
+spdlogLbTest/ipch/*
+spdlogLbTest/logs/*
+SpeedTest/Debug/*
+SpeedTest/Release/*
+
+
 # generated files
 generated
 

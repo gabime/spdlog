@@ -19,7 +19,7 @@ template<class Mutex>
 class ostream_sink: public base_sink<Mutex>
 {
 public:
-    explicit ostream_sink(std::ostream& os, bool force_flush=false) :_ostream(os), _force_flush(force_flush) {}
+    explicit ostream_sink(std_ostream_t& os, bool force_flush=false) :_ostream(os), _force_flush(force_flush) {}
     ostream_sink(const ostream_sink&) = delete;
     ostream_sink& operator=(const ostream_sink&) = delete;
     virtual ~ostream_sink() = default;
@@ -36,8 +36,8 @@ protected:
     {
         _ostream.flush();
     }
-
-    std::ostream& _ostream;
+	
+	std_ostream_t& _ostream;
     bool _force_flush;
 };
 

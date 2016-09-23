@@ -18,6 +18,9 @@
 #include <locale>
 #endif
 
+// include the seperated types moved to this file to provide types for the DLL interface
+#include "common_types.h"
+
 #include <spdlog/details/null_mutex.h>
 
 //visual studio upto 2013 does not support noexcept nor constexpr
@@ -60,21 +63,54 @@ using level_t = details::null_atomic_int;
 using level_t = std::atomic_int;
 #endif
 
-using log_err_handler = std::function<void(const std::string &err_msg)>;
 
-//Log level enum
+// Moved to common_types.h: required for DLL interface
+//using log_err_handler = std::function<void(const std::string &err_msg)>;
+
+
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
+//using log_char_t			= wchar_t;
+using log_string_t			= std::wstring;
+using fmt_memory_writer_t	= fmt::WMemoryWriter;
+//using std_ostream_t			= std::wostream;
+using fmt_basicstringref_t	= fmt::WStringRef;
+using fmt_formatstring_t	= std::wstring;
+//using fmt_formatchar_t		= wchar_t;
+//// SFS is for formatstrings, SLT for log strings
+//// It does not matter, there is no support for the case that
+//// format strings and log strings are using different character
+//// encodings. Just historical...
+//#define _SFS(x)				L ## x
+//#define _SLT(x)				L ## x
+#define SPDLOG_FT_STRFTIME			std::wcsftime
+#else
+//using log_char_t			= char;
+using log_string_t			= std::string;
+using fmt_memory_writer_t	= fmt::MemoryWriter;
+using std_ostream_t			= std::ostream;
+using fmt_basicstringref_t = fmt::StringRef;
+using fmt_formatstring_t	= std::string;
+//using fmt_formatchar_t		= char;
+//#define _SFS(x)				x
+//#define SPDLOG_FT_STRFTIME			std::strftime
+//#define _SLT(x)		x
+#endif
+
+
+
+////Log level enum
 namespace level
 {
-typedef enum
-{
-    trace = 0,
-    debug = 1,
-    info = 2,
-    warn = 3,
-    err = 4,
-    critical = 5,
-    off = 6
-} level_enum;
+//typedef enum
+//{
+//    trace = 0,
+//    debug = 1,
+//    info = 2,
+//    warn = 3,
+//    err = 4,
+//    critical = 5,
+//    off = 6
+//} level_enum;
 
 static const char* level_names[] { "trace", "debug", "info",  "warning", "error", "critical", "off" };
 
@@ -92,14 +128,15 @@ inline const char* to_short_str(spdlog::level::level_enum l)
 } //level
 
 
-//
-// Async overflow policy - block by default.
-//
-enum class async_overflow_policy
-{
-    block_retry, // Block / yield / sleep until message can be enqueued
-    discard_log_msg // Discard the message it enqueue fails
-};
+////
+//// Async overflow policy - block by default.
+////
+//enum class async_overflow_policy
+//{
+//    block_retry, // Block / yield / sleep until message can be enqueued
+//    discard_log_msg // Discard the message it enqueue fails
+//};
+
 
 
 //

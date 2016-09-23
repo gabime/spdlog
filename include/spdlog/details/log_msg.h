@@ -39,8 +39,8 @@ struct log_msg
     level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;
-    fmt::MemoryWriter raw;
-    fmt::MemoryWriter formatted;
+	fmt_memory_writer_t raw;
+	fmt_memory_writer_t formatted;
 };
 }
 }

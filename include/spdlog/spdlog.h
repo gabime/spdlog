@@ -31,7 +31,7 @@ std::shared_ptr<logger> get(const std::string& name);
 // Set global formatting
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 //
-void set_pattern(const std::string& format_string);
+void set_pattern(const fmt_formatstring_t& format_string);
 void set_formatter(formatter_ptr f);
 
 //
@@ -128,6 +128,10 @@ void register_logger(std::shared_ptr<logger> logger);
 // Example:
 // spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->flush();});
 void apply_all(std::function<void(std::shared_ptr<logger>)> fun);
+
+
+// Register the given logger with the given name
+void register_logger(std::shared_ptr<logger> logger);
 
 // Drop the reference to the given logger
 void drop(const std::string &name);

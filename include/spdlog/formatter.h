@@ -29,15 +29,15 @@ class pattern_formatter : public formatter
 {
 
 public:
-    explicit pattern_formatter(const std::string& pattern);
+    explicit pattern_formatter(const fmt_formatstring_t& pattern);
     pattern_formatter(const pattern_formatter&) = delete;
     pattern_formatter& operator=(const pattern_formatter&) = delete;
     void format(details::log_msg& msg) override;
 private:
-    const std::string _pattern;
+    const fmt_formatstring_t _pattern;
     std::vector<std::unique_ptr<details::flag_formatter>> _formatters;
-    void handle_flag(char flag);
-    void compile_pattern(const std::string& pattern);
+    void handle_flag(fmt_formatchar_t flag);
+    void compile_pattern(const fmt_formatstring_t& pattern);
 };
 }
 

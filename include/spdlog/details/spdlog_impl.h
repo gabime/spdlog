@@ -145,7 +145,7 @@ inline void spdlog::set_formatter(spdlog::formatter_ptr f)
     details::registry::instance().formatter(f);
 }
 
-inline void spdlog::set_pattern(const std::string& format_string)
+inline void spdlog::set_pattern(const fmt_formatstring_t& format_string)
 {
     return details::registry::instance().set_pattern(format_string);
 }

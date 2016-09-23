@@ -1,0 +1,57 @@
+16.09.2016
+==========
+
+FIX:	spdloglb.cpp: printf style functions throw error instead of just truncating text.
+
+15.09.2016
+==========
+
+FIX:	spdlog_vararg.h: wrong definition of constant DEFAULT_ARGUMENT_COUNT
+
+IMP:	Exported additional functions to query logger states 
+		(level, bitmask, automatic flush)
+
+IMP:	Exported vPrintf style functions
+
+14.09.2016
+==========
+
+CODE: Reorganized code tree, moved library header files to "../include/spdlog"	
+
+IMP:  Build variants to choose building of ansi and wide character variant.
+      The Library is named "spdloglb3a" for ANSI and "spdloglb3w" for wchar_t 
+      build. For 64-Bit-Environment the names "spdloglb6<n>" are reserved. 
+
+FIX: Problem in "vararglist.h": fails to build ansi version
+
+NEW: Formatting the Thread-ID:
+
+Now the thread ID is formatted with the width of 10 filled uip with "0".
+Alternatively it is formated hexadecimal with a width of 8, if you set 
+"SPDLOG_FMT_THREADID_HEX" in "tweakme.h".
+
+
+12.09.2016
+
+Initial Version. Done the following:
+
+ 
+•	Added a bitmask to filter the logs. Now it is possible to use the bitmask and/or the loglevel to filter messages. You can disable this feature with the switch “SPDLOG_BITMASK_LOG_FILTER” in “tweakme.h”.
+•	Support for widechar format strings and logfiles, activated by  setting “SPDLOG_WCHAR_LOGGING” in “tweakme.h”. This selects the format of the format strings and of the logfiles. For Unicode logfiles a correct BOM is written as first character of the file. 
+•	Created a DLL with a C-Syle call interface “spdloglb.dll”. To do so, I’ve done the following:
+•	Created the folder “include\spdlog\cstyle” with “logger_handle.h”, “sink_handle.h”
+•	Created c-style interface under “spdloglb”, “spdloglb.cpp/h”
+•	Interface to format strings using an object and stream operators: “spdloglb_vararg.cpp/h”, “vararg_list.h”, “vararg_listitem.h” under “include\spdlog\cstyle”
+•	Taking out essential types from “common.h” to “common_types.h”: minimize informations required for the DLL interface.
+ 
+There are some additional, more detailed points:
+ 
+•	C-style-interface with variable parameters: I found it really hard to find a typesafe and easy way to pass the parameter list. I have build also alternative functions that use the printf style parameter ( not typesafe at all). The easiest way I found was creating an object in the client code that is building a parameter list and hand it over to the DLL itself. You stream first the parameters to this object, then you stream the appropriate function object with its parameters (format string, loglevel) to this object to write to the log. The parameter list is automatically cleared on each logging operation. Maybe there is a better way to do this, but I’ve not found it...
+•	I have checked the possibility to use a clock with better resolution. I created “hires_clock.h” that uses a reference time point from the steady clock and the value std::chrono::high_resolution_clock as a increment to the reference time. It works, but I’ve seen that some functions I have to use are not threadsafe. So I do not see any sense to integrate this clock because it will need a synchronization object that would slow down the whole logging functionality. The only way would be to find/write threadsafe functions for building the clock time. Anyway, I’ve put these into the sources and have used it in “SpeedTest”.
+•	I have tried to use the printf style functionality of the format library and found that it is not working in the integrated library code. Trying the last version of the library, I’ve found that it is working there. I skipped the idea to update the project to the new version of the format library to avoid a dangerous upgrade of things I do not fully understand. For the DLL it is not very helpful at all, it require also typesafe parameter transfer. So the only benefit would be that the printf format string syntax (“%<x>” instead of “{}”) is available, that is for me not essential. 
+•	“Spdloglb” contains the project and wrapper codefiles for the DLL, the core itself is taken from “include\spdlog”.
+•	“SpdLogLbTest” contains the solution file for testing “spdloglb.dll” and the project file for “tests” that is an modified version of your tests project.
+•	“SpeedTest” contains my profiling project, integrated in the “spdlogLbTest”-solution, building into “SpdLogLb\<config>”.
+ 
+
+
