@@ -31,7 +31,12 @@ public:
 
     void _sink_it(const details::log_msg& msg) override
     {
-        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stdout);
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
+		std::string st = spdlog::details::os::wide_string_to_ansi_string(msg.formatted.str());
+		fwrite(st.data(), sizeof(char), st.size(), stdout);
+#else
+		fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stdout);
+#endif
         flush();
     }
 
@@ -59,7 +64,12 @@ public:
 
     void _sink_it(const details::log_msg& msg) override
     {
-        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
+		std::string st = spdlog::details::os::wide_string_to_ansi_string(msg.formatted.str());
+		fwrite(st.data(), sizeof(char), st.size(), stderr);
+#else
+		fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);
+#endif
         flush();
     }
 

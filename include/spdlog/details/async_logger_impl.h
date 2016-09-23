@@ -63,7 +63,7 @@ inline void spdlog::async_logger::_set_formatter(spdlog::formatter_ptr msg_forma
     _async_log_helper->set_formatter(_formatter);
 }
 
-inline void spdlog::async_logger::_set_pattern(const std::string& pattern)
+inline void spdlog::async_logger::_set_pattern(const fmt_formatstring_t& pattern)
 {
     _formatter = std::make_shared<pattern_formatter>(pattern);
     _async_log_helper->set_formatter(_formatter);

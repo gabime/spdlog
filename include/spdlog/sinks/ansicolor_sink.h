@@ -33,41 +33,41 @@ public:
     virtual void log(const details::log_msg& msg) override;
     virtual void flush() override;
 
-    void set_color(level::level_enum level, const std::string& color);
+    void set_color(level::level_enum level, const log_string_t& color);
 
     /// Formatting codes
-    const std::string reset      = "\033[00m";
-    const std::string bold       = "\033[1m";
-    const std::string dark       = "\033[2m";
-    const std::string underline  = "\033[4m";
-    const std::string blink      = "\033[5m";
-    const std::string reverse    = "\033[7m";
-    const std::string concealed  = "\033[8m";
+    const log_string_t reset      = _SLT("\033[00m");
+    const log_string_t bold       = _SLT("\033[1m");
+    const log_string_t dark       = _SLT("\033[2m");
+    const log_string_t underline  = _SLT("\033[4m");
+    const log_string_t blink      = _SLT("\033[5m");
+    const log_string_t reverse    = _SLT("\033[7m");
+    const log_string_t concealed  = _SLT("\033[8m");
 
     // Foreground colors
-    const std::string grey       = "\033[30m";
-    const std::string red        = "\033[31m";
-    const std::string green      = "\033[32m";
-    const std::string yellow     = "\033[33m";
-    const std::string blue       = "\033[34m";
-    const std::string magenta    = "\033[35m";
-    const std::string cyan       = "\033[36m";
-    const std::string white      = "\033[37m";
+    const log_string_t grey       = _SLT("\033[30m");
+    const log_string_t red        = _SLT("\033[31m");
+    const log_string_t green      = _SLT("\033[32m");
+    const log_string_t yellow     = _SLT("\033[33m");
+    const log_string_t blue       = _SLT("\033[34m");
+    const log_string_t magenta    = _SLT("\033[35m");
+    const log_string_t cyan       = _SLT("\033[36m");
+    const log_string_t white      = _SLT("\033[37m");
 
     /// Background colors
-    const std::string on_grey    = "\033[40m";
-    const std::string on_red     = "\033[41m";
-    const std::string on_green   = "\033[42m";
-    const std::string on_yellow  = "\033[43m";
-    const std::string on_blue    = "\033[44m";
-    const std::string on_magenta = "\033[45m";
-    const std::string on_cyan    = "\033[46m";
-    const std::string on_white   = "\033[47m";
+    const log_string_t on_grey    = _SLT("\033[40m");
+    const log_string_t on_red     = _SLT("\033[41m");
+    const log_string_t on_green   = _SLT("\033[42m");
+    const log_string_t on_yellow  = _SLT("\033[43m");
+    const log_string_t on_blue    = _SLT("\033[44m");
+    const log_string_t on_magenta = _SLT("\033[45m");
+    const log_string_t on_cyan    = _SLT("\033[46m");
+    const log_string_t on_white   = _SLT("\033[47m");
 
 
 protected:
     sink_ptr sink_;
-    std::map<level::level_enum, std::string> colors_;
+    std::map<level::level_enum, log_string_t> colors_;
 };
 
 inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sink)
@@ -84,9 +84,9 @@ inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sin
 inline void ansicolor_sink::log(const details::log_msg& msg)
 {
     // Wrap the originally formatted message in color codes
-    const std::string& prefix = colors_[msg.level];
-    const std::string& s = msg.formatted.str();
-    const std::string& suffix = reset;
+    const log_string_t& prefix = colors_[msg.level];
+    const log_string_t& s = msg.formatted.str();
+    const log_string_t& suffix = reset;
     details::log_msg m;
     m.level = msg.level;
     m.logger_name = msg.logger_name;
@@ -101,7 +101,7 @@ inline void ansicolor_sink::flush()
     sink_->flush();
 }
 
-inline void ansicolor_sink::set_color(level::level_enum level, const std::string& color)
+inline void ansicolor_sink::set_color(level::level_enum level, const log_string_t& color)
 {
     colors_[level] = color;
 }

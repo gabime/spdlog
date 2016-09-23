@@ -66,7 +66,7 @@ public:
 protected:
     void _sink_it(details::log_msg& msg) override;
     void _set_formatter(spdlog::formatter_ptr msg_formatter) override;
-    void _set_pattern(const std::string& pattern) override;
+    void _set_pattern(const fmt_formatstring_t& pattern) override;
 
 private:
     std::unique_ptr<details::async_log_helper> _async_log_helper;

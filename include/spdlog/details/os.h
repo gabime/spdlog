@@ -128,13 +128,20 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
 #if !defined (SPDLOG_EOL)
 #ifdef _WIN32
 #define SPDLOG_EOL "\r\n"
+#define WSPDLOG_EOL L"\r\n"
 #else
 #define SPDLOG_EOL "\n"
 #endif
 #endif
 
+
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
+SPDLOG_CONSTEXPR static const wchar_t* eol = WSPDLOG_EOL;
+SPDLOG_CONSTEXPR static int eol_size = (sizeof(WSPDLOG_EOL) / sizeof(wchar_t)) - 1;
+#else
 SPDLOG_CONSTEXPR static const char* eol = SPDLOG_EOL;
 SPDLOG_CONSTEXPR static int eol_size = sizeof(SPDLOG_EOL) - 1;
+#endif
 
 
 
@@ -310,9 +317,60 @@ inline size_t thread_id()
     return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
 #endif
 
-
 }
 
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
+
+inline std::wstring ansi_string_to_wide_string(const std::string val)
+{
+	std::wstring rv;
+
+	DWORD tmplen = MultiByteToWideChar(CP_ACP,			// Code-Page
+		0,					// Flags : keine
+		val.data(),					// zu übersetzender Str.
+		val.size(),					// Zeichen-Zahl
+		NULL,				// Umwandlungs-Puffer
+		0);					// Puffer Länge 0: Länge erm.
+
+	rv.resize(tmplen);
+
+	tmplen = MultiByteToWideChar(CP_ACP,			// Code-Page
+		0,					// Flags : keine
+		val.data(),					// zu übersetzender Str.
+		val.size(),					// Zeichen-Zahl
+		(LPWSTR)rv.data(),				// Umwandlungs-Puffer
+		rv.size());					// Puffer Länge 0: Länge erm.
+
+	return rv;
+}
+
+inline std::string wide_string_to_ansi_string(const std::wstring val)
+{
+	std::string rv;
+
+	DWORD tmpLen = WideCharToMultiByte(CP_ACP,
+		0,
+		val.data(),
+		val.size(),
+		NULL,
+		0,
+		NULL,
+		NULL);
+
+	rv.resize(tmpLen);
+
+	tmpLen = WideCharToMultiByte(CP_ACP,
+		0,
+		val.data(),
+		val.size(),
+		(LPSTR)rv.data(),
+		rv.size(),
+		NULL,
+		NULL);
+
+	return rv;
+}
+#endif
 
 // wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)

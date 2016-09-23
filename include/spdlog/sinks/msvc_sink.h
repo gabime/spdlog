@@ -37,7 +37,11 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        OutputDebugStringA(msg.formatted.c_str());
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
+		OutputDebugStringW(msg.formatted.c_str());
+#else
+		OutputDebugStringA(msg.formatted.c_str());
+#endif
     }
 };
 

@@ -51,7 +51,7 @@ class async_log_helper
         level::level_enum level;
         log_clock::time_point time;
         size_t thread_id;
-        std::string txt;
+		log_string_t txt;
         async_msg_type msg_type;
 
         async_msg() = default;

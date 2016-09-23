@@ -52,8 +52,18 @@ public:
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
-            if (!os::fopen_s(&_fd, fname, mode))
-                return;
+			if (!os::fopen_s(&_fd, fname, mode))
+			{
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
+				// Unicode log output: need to start with a BOM
+				if (size() == 0)
+				{
+					const wchar_t FileStart = 0x0FEFF;
+					std::fwrite(&FileStart, sizeof(wchar_t), 1, _fd);
+				}
+#endif
+				return;
+			}
 
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
         }
@@ -86,7 +96,7 @@ public:
     void write(const log_msg& msg)
     {
 
-        size_t msg_size = msg.formatted.size();
+        size_t msg_size = msg.formatted.size() * sizeof(log_char_t);
         auto data = msg.formatted.data();
         if (std::fwrite(data, 1, msg_size, _fd) != msg_size)
             throw spdlog_ex("Failed writing to file " + os::filename_to_str(_filename), errno);        
@@ -96,7 +106,15 @@ public:
     {
         if (!_fd)
             throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
-        return os::filesize(_fd);
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
+		// must return the effective size in characters. For wchar_t, we have to divide the size of wchar_t and 
+		// substract the size of the BOM
+		DWORD dwRes = os::filesize(_fd) / sizeof(wchar_t);
+		if (dwRes > 0) dwRes--;
+		return dwRes;
+#else
+		return os::filesize(_fd);
+#endif
     }
 
     const filename_t& filename() const

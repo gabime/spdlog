@@ -108,7 +108,7 @@ public:
             l.second->set_formatter(_formatter);
     }
 
-    void set_pattern(const std::string& pattern)
+    void set_pattern(const fmt_formatstring_t& pattern)
     {
         std::lock_guard<Mutex> lock(_mutex);
         _formatter = std::make_shared<pattern_formatter>(pattern);
@@ -130,6 +130,14 @@ public:
             l.second->set_error_handler(handler);
         _err_handler = handler;
     }
+
+	#ifdef SPDLOG_BITMASK_LOG_FILTER
+	void set_enable_bit_mask(unsigned long BitMask)
+	{
+		for (auto& l : _loggers)
+			l.second->set_enable_bit_mask(BitMask);
+	}
+	#endif
 
     void set_async_mode(size_t q_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb)
     {

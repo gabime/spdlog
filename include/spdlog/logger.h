@@ -34,15 +34,19 @@ public:
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
 
+	// Have problems to make it work with the current buildin version of the format library. Seems to work 
+	// with the latest version. Cancelt at the moment.
+//	template <typename... Args> void printf(level::level_enum lvl, const fmt_formatchar_t* fmt, fmt::ArgList& argList);
 
-    template <typename... Args> void log(level::level_enum lvl, const char* fmt, const Args&... args);
-    template <typename... Args> void log(level::level_enum lvl, const char* msg);
-    template <typename... Args> void trace(const char* fmt, const Args&... args);
-    template <typename... Args> void debug(const char* fmt, const Args&... args);
-    template <typename... Args> void info(const char* fmt, const Args&... args);
-    template <typename... Args> void warn(const char* fmt, const Args&... args);
-    template <typename... Args> void error(const char* fmt, const Args&... args);
-    template <typename... Args> void critical(const char* fmt, const Args&... args);
+    template <typename... Args> void log(level::level_enum lvl, const fmt_formatchar_t* fmt, const Args&... args);
+	template <typename... Args> void log(level::level_enum lvl, const fmt_formatchar_t* fmt, fmt::ArgList& argList);
+	template <typename... Args> void log(level::level_enum lvl, const log_char_t* msg);
+    template <typename... Args> void trace(const fmt_formatchar_t* fmt, const Args&... args);
+    template <typename... Args> void debug(const fmt_formatchar_t* fmt, const Args&... args);
+    template <typename... Args> void info(const fmt_formatchar_t* fmt, const Args&... args);
+    template <typename... Args> void warn(const fmt_formatchar_t* fmt, const Args&... args);
+    template <typename... Args> void error(const fmt_formatchar_t* fmt, const Args&... args);
+    template <typename... Args> void critical(const fmt_formatchar_t* fmt, const Args&... args);
 
     template <typename T> void log(level::level_enum lvl, const T&);
     template <typename T> void trace(const T&);
@@ -54,9 +58,10 @@ public:
 
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
+	level::level_enum get_level(void) const;
     level::level_enum level() const;
     const std::string& name() const;
-    void set_pattern(const std::string&);
+    void set_pattern(const fmt_formatstring_t&);
     void set_formatter(formatter_ptr);
 
     // error handler
@@ -65,12 +70,30 @@ public:
 
     // automatically call flush() if message level >= log_level
     void flush_on(level::level_enum log_level);
+	level::level_enum get_flush_on(void) const;
 
     virtual void flush();
 
+#ifdef SPDLOG_BITMASK_LOG_FILTER
+	void set_enable_bit_mask(unsigned long mask);
+	unsigned long get_enable_bit_mask();
+	bool should_log_b(unsigned long BitFlag);
+	bool should_log_bl(unsigned long BitFlag, level::level_enum level);
+	//template <typename... Args> void printf(level::level_enum lvl, unsigned long BitFlag, const fmt_formatchar_t* fmt, fmt::ArgList& argList);
+	//template <typename... Args> void printf(unsigned long BitFlag, const fmt_formatchar_t* fmt, fmt::ArgList& argList);
+	template <typename... Args> void log(level::level_enum lvl, unsigned long BitFlag, const fmt_formatchar_t* fmt, const Args&... args);
+	template <typename... Args> void log(level::level_enum lvl, unsigned long BitFlag, const fmt_formatchar_t* fmt, fmt::ArgList& argList);
+	template <typename... Args> void log(level::level_enum lvl, unsigned long BitFlag, const log_char_t* msg);
+	template <typename T> void log(level::level_enum lvl, unsigned long BitFlag, const T&);
+	template <typename... Args> void log(unsigned long BitFlag, const fmt_formatchar_t* fmt, const Args&... args);
+	template <typename... Args> void log(unsigned long BitFlag, const fmt_formatchar_t* fmt, fmt::ArgList& argList);
+	template <typename... Args> void log(unsigned long BitFlag, const log_char_t* msg);
+	template <typename T> void log(unsigned long BitFlag, const T&);
+#endif
+
 protected:
     virtual void _sink_it(details::log_msg&);
-    virtual void _set_pattern(const std::string&);
+    virtual void _set_pattern(const fmt_formatstring_t&);
     virtual void _set_formatter(formatter_ptr);
 
     // default error handler: print the error to stderr with the max rate of 1 message/minute
@@ -86,6 +109,11 @@ protected:
     spdlog::level_t _flush_level;
     log_err_handler _err_handler;
     std::atomic<time_t> _last_err_time;
+
+	#ifdef SPDLOG_BITMASK_LOG_FILTER
+	unsigned long _log_enable_bit_mask;
+	#endif
+
 };
 }
 
