@@ -291,3 +291,8 @@ inline bool spdlog::logger::_should_flush_on(const details::log_msg &msg)
     const auto flush_level = _flush_level.load(std::memory_order_relaxed);
     return (msg.level >= flush_level) && (msg.level != level::off);
 }
+
+inline const std::vector<spdlog::sink_ptr>& spdlog::logger::sinks() const
+{
+    return _sinks;
+}

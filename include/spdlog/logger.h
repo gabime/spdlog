@@ -68,6 +68,8 @@ public:
 
     virtual void flush();
 
+    const std::vector<sink_ptr>& sinks() const;
+
 protected:
     virtual void _sink_it(details::log_msg&);
     virtual void _set_pattern(const std::string&);
@@ -90,5 +92,3 @@ protected:
 }
 
 #include <spdlog/details/logger_impl.h>
-
-
