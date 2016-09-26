@@ -54,6 +54,8 @@ spdloglb/DebugWL/*
 spdloglb/ReleaseAL/*
 spdloglb/ReleaseWL/*
 spdloglb/.vs/*
+spdloglb/*.db
+spdlogLbTest/*.db
 spdlogLbTest/Debug/*
 spdlogLbTest/Release/*
 spdlogLbTest/ipch/*

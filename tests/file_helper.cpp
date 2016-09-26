@@ -5,7 +5,11 @@
 
 using namespace spdlog::details;
 
+#ifdef SPDLOG_WCHAR_FILENAMES
+static const std::wstring target_filename = L"logs/file_helper_test.txt";
+#else
 static const std::string target_filename = "logs/file_helper_test.txt";
+#endif
 
 static unsigned long calculate_file_size(unsigned long nChars)
 {

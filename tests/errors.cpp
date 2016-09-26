@@ -9,9 +9,13 @@
 TEST_CASE("default_error_handler", "[errors]]")
 {
     prepare_logdir();
-	spdlog::filename_t filename = _SFT("logs/simple_log.txt");
+	#ifdef SPDLOG_WCHAR_FILENAMES
+	spdlog::filename_t filename = L"logs/simple_log.txt";
+	#else
+	spdlog::filename_t filename = "logs/simple_log.txt";
+	#endif
 
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename, true);
+	auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename, true);
     logger->set_pattern(_SLT("%v"));
     logger->info(_SLT("Test message {} {}"), 1);
     logger->info(_SLT("Test message {}"), 2);
@@ -21,7 +25,8 @@ TEST_CASE("default_error_handler", "[errors]]")
 #if defined(SPDLOG_WCHAR_LOGGING)
 	REQUIRE(wfile_contents(filename) == spdlog::log_string_t(_SLT("Test message 2\r\n")));
 #else
-	REQUIRE(file_contents(filename) == std::string("Test message 2\r\n"));
+	// \r is removed by the file_contents routine !!!!
+	REQUIRE(file_contents(filename) == std::string("Test message 2\n"));
 #endif
 #else
 	REQUIRE(file_contents(filename) == std::string("Test message 2\n"));
@@ -85,6 +90,11 @@ TEST_CASE("async_error_handler", "[errors]]")
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_LOGGING)
 	REQUIRE(wfile_contents(_SFT("logs/custom_err.txt")) == err_msg);
 #else
+	#ifdef SPDLOG_WCHAR_FILENAMES
+	REQUIRE(file_contents(L"logs/custom_err.txt") == err_msg);
+	#else
 	REQUIRE(file_contents("logs/custom_err.txt") == err_msg);
+	#endif
+
 #endif
 }
