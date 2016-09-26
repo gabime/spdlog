@@ -62,6 +62,8 @@ spdlogLbTest/ipch/*
 spdlogLbTest/logs/*
 SpeedTest/Debug/*
 SpeedTest/Release/*
+tests/Debug/*
+tests/Release/*
 
 
 # generated files
