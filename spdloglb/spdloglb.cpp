@@ -45,7 +45,7 @@ namespace spdlog
 		}
 		void free(void)
 		{
-			spdlog::set_error_handler(NULL);
+			spdlog::set_error_handler(nullptr);
 		}
 
 		void on_error(const char* lpMsg)
@@ -106,7 +106,7 @@ namespace spdlog
 
 
 			if (AsyncMode)
-				spdlog::details::registry::instance().set_async_mode(QueueSize, opc, NULL, fims, NULL);
+				spdlog::details::registry::instance().set_async_mode(QueueSize, opc, nullptr, fims, nullptr);
 			else
 				spdlog::details::registry::instance().set_sync_mode();
 
