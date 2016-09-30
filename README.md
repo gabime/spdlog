@@ -11,6 +11,7 @@ Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/inclu
  * Windows (visual studio 2013+, cygwin/mingw with g++ 4.9.1+)
  * Mac OSX (clang 3.5+)
  * Solaris (gcc 5.2.0+)
+ * Android
 
 ##Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).

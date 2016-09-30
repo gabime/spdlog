@@ -12,9 +12,14 @@
 #include <spdlog/details/registry.h>
 #include <spdlog/sinks/file_sinks.h>
 #include <spdlog/sinks/stdout_sinks.h>
+#ifdef SPDLOG_ENABLE_SYSLOG
 #include <spdlog/sinks/syslog_sink.h>
+#endif
 #include <spdlog/sinks/ansicolor_sink.h>
+
+#ifdef __ANDROID__
 #include <spdlog/sinks/android_sink.h>
+#endif
 
 #include <chrono>
 #include <functional>
@@ -105,7 +110,7 @@ inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& 
 }
 #endif
 
-#if defined(__ANDROID__)
+#ifdef __ANDROID__
 inline std::shared_ptr<spdlog::logger> spdlog::android_logger(const std::string& logger_name, const std::string& tag)
 {
     return create<spdlog::sinks::android_sink>(logger_name, tag);

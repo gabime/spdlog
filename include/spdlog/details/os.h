@@ -31,6 +31,7 @@
 #endif
 
 #include <sys/types.h>
+#include <io.h>
 
 #elif __linux__
 
@@ -204,9 +205,9 @@ inline size_t filesize(FILE *f)
         return st.st_size;
 
 #else //windows 32 bits
-    struct _stat st;
-    if (_fstat(fd, &st) == 0)
-        return st.st_size;
+    long ret = _filelength(fd);
+    if (ret >= 0)
+        return static_cast<size_t>(ret);
 #endif
 
 #else // unix
