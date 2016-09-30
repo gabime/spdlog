@@ -33,7 +33,7 @@ public:
     virtual void log(const details::log_msg& msg) override;
     virtual void flush() override;
 
-    void set_color(level::level_enum level, const std::string& color);
+    void set_color(level::level_enum color_level, const std::string& color);
 
     /// Formatting codes
     const std::string reset      = "\033[00m";
@@ -101,9 +101,9 @@ inline void ansicolor_sink::flush()
     sink_->flush();
 }
 
-inline void ansicolor_sink::set_color(level::level_enum level, const std::string& color)
+inline void ansicolor_sink::set_color(level::level_enum color_level, const std::string& color)
 {
-    colors_[level] = color;
+    colors_[color_level] = color;
 }
 
 inline ansicolor_sink::~ansicolor_sink()
