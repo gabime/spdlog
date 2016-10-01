@@ -29,7 +29,7 @@ template<class Mutex>
 class simple_file_sink : public base_sink < Mutex >
 {
 public:
-    explicit simple_file_sink(const filename_t &filename, bool truncate = false)  
+    explicit simple_file_sink(const filename_t &filename, bool truncate = false):_force_flush(false)
     {
         _file_helper.open(filename, truncate);
     }
@@ -37,14 +37,21 @@ public:
     {
         _file_helper.flush();
     }
+	void set_force_flush(bool force_flush)
+	{
+		_force_flush = force_flush;
+	}
 
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        _file_helper.write(msg);
+        _file_helper.write(msg);		
+		 if(_force_flush)
+			_file_helper.flush();
     }
 private:
     details::file_helper _file_helper;
+	bool _force_flush;
 };
 
 typedef simple_file_sink<std::mutex> simple_file_sink_mt;
