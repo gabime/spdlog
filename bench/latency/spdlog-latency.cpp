@@ -1,16 +1,3 @@
-//// to compile:   c++ bench.cpp -o bench -Wall -Wshadow -Wextra -pedantic -std=c++11 -pthread -I../include -O3 -fPIC -Ofast -m64 -march=native
-
-// Alternative:   c++ bench.cpp -o bench -Wall -Wshadow -Wextra -pedantic -std=c++11 -pthread -I../include -O3  -march=native
-
-
-// the test code itself is Public domain @ref: Unlicense.org
-// made by KjellKod, 2015, first published for testing of g3log at github.com/kjellkod/g3log
-// Feel free to share, modify etc with no obligations but also with no guarantees from my part either
-// enjoy - Kjell Hedstrom (aka KjellKod)
-//
-//
-// spdlog follows however another license. See the bottow of this file
-//
 
 #include <thread>
 #include <vector>
@@ -40,7 +27,7 @@ std::atomic<size_t> g_counter = {0};
 
 void MeasurePeakDuringLogWrites(const size_t id, std::vector<uint64_t>& result)
 {
-	auto logger = spd::get("file_logger");
+    auto logger = spd::get("file_logger");
     while (true)
     {
         const size_t value_now = ++g_counter;
@@ -70,13 +57,13 @@ void PrintResults(const std::map<size_t, std::vector<uint64_t>>& threads_result,
 
     // calc worst latenct
     auto worst = *std::max_element(all_measurements.begin(), all_measurements.end());
-    
+
     // calc avg
     auto total = accumulate(begin(all_measurements), end(all_measurements), 0, std::plus<uint64_t>());
     auto avg = double(total)/all_measurements.size();
-	
-    std::cout << "[spdlog] worst: " <<  std::setw(10) << std::right << worst << "\tAvg: "  << avg << "\tTotal: "  <<  utils::format(total_us) << " us" << std::endl;	
-  
+
+    std::cout << "[spdlog] worst: " <<  std::setw(10) << std::right << worst << "\tAvg: "  << avg << "\tTotal: "  <<  utils::format(total_us) << " us" << std::endl;
+
 }
 }// anonymous
 
@@ -114,13 +101,13 @@ int main(int argc, char** argv)
     }
 
     int queue_size = 1048576; // 2 ^ 20
-    spdlog::set_async_mode(queue_size); 	
-    auto logger = spdlog::create<spd::sinks::simple_file_sink_mt>("file_logger", "spdlog.log", true);	
-	
-	//force flush on every call to compare with g3log
-	auto s = (spd::sinks::simple_file_sink_mt*)logger->sinks()[0].get();
-	s->set_force_flush(true);
-	
+    spdlog::set_async_mode(queue_size);
+    auto logger = spdlog::create<spd::sinks::simple_file_sink_mt>("file_logger", "spdlog.log", true);
+
+    //force flush on every call to compare with g3log
+    auto s = (spd::sinks::simple_file_sink_mt*)logger->sinks()[0].get();
+    s->set_force_flush(true);
+
     auto start_time_application_total = std::chrono::high_resolution_clock::now();
     for (uint64_t idx = 0; idx < number_of_threads; ++idx)
     {
