@@ -57,7 +57,7 @@ using formatter_ptr = std::shared_ptr<spdlog::formatter>;
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
 #else
-using level_t = std::atomic_int;
+using level_t = std::atomic<int>
 #endif
 
 using log_err_handler = std::function<void(const std::string &err_msg)>;
