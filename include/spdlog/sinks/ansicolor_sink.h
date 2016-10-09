@@ -81,19 +81,102 @@ inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sin
     colors_[level::off]      = reset;
 }
 
+//Windows-specific console coloring:
+#ifdef _WIN32
+#include <windows.h>
+/** To restore original console colors after a message is printed.*/
+class OriginalColorsKeeper
+{
+public:
+    OriginalColorsKeeper()
+    {
+        HANDLE hConsoleHandle = GetStdHandle( STD_OUTPUT_HANDLE );
+        CONSOLE_SCREEN_BUFFER_INFO ConsoleInfo;
+        GetConsoleScreenBufferInfo( hConsoleHandle, & ConsoleInfo );
+        OriginalColors = ConsoleInfo.wAttributes;
+    }
+
+    void ResetToOriginals()
+    {
+        HANDLE hConsoleHandle = GetStdHandle( STD_OUTPUT_HANDLE );
+        SetConsoleTextAttribute( hConsoleHandle, OriginalColors );
+    }
+
+private:
+    WORD OriginalColors;
+};
+//TODO: get rid of static declaration:
+static OriginalColorsKeeper originalColorsKeeper;
+
+inline void SetColor( const int attributes )
+{
+    WORD wColor;
+    //We will need this handle to get the current background attribute
+    HANDLE hStdOut = GetStdHandle( STD_OUTPUT_HANDLE );
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+    //We use csbi for the wAttributes word.
+    if ( GetConsoleScreenBufferInfo( hStdOut, & csbi ) )
+    {
+        //Mask out all but the background attribute, and add in the foreground color
+        wColor = (csbi.wAttributes & 0xF0) | attributes;
+        SetConsoleTextAttribute( hStdOut, wColor );
+    }
+}
+#endif//#ifdef _WIN32
+
 inline void ansicolor_sink::log(const details::log_msg& msg)
 {
+    details::log_msg m;
+
+#ifdef _WIN32
+    //TODO: lock mutex here to ensure SetColor()/ResetToOriginals() calls are always sequenced ...
+    switch ( msg.level )
+    {
+    case level::trace:
+        SetColor( FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
+        break;
+
+    case level::debug:
+        SetColor( FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
+        break;
+
+    case level::info:
+        SetColor( FOREGROUND_GREEN | FOREGROUND_INTENSITY );
+        break;
+
+    case level::warn:
+        SetColor( FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_INTENSITY );
+        break;
+
+    case level::err:
+        SetColor( FOREGROUND_RED | FOREGROUND_INTENSITY );
+        break;
+
+    case level::critical:
+        SetColor( FOREGROUND_RED | FOREGROUND_INTENSITY | BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_INTENSITY );
+        break;
+    }
+    m.formatted << msg.formatted.str();
+#else
     // Wrap the originally formatted message in color codes
     const std::string& prefix = colors_[msg.level];
     const std::string& s = msg.formatted.str();
     const std::string& suffix = reset;
-    details::log_msg m;
+    m.formatted << prefix << s << suffix;
+#endif//#ifdef _WIN32
+
     m.level = msg.level;
     m.logger_name = msg.logger_name;
     m.time = msg.time;
     m.thread_id = msg.thread_id;
-    m.formatted << prefix  << s << suffix;
-    sink_->log(m);
+    sink_->log( m );
+
+    //recover console colors:
+#ifdef _WIN32
+    originalColorsKeeper.ResetToOriginals();
+    //TODO: unlock mutex from line 133 here ...
+#endif//#ifdef _WIN32
 }
 
 inline void ansicolor_sink::flush()
