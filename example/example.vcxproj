@@ -42,6 +42,7 @@
     <ClInclude Include="..\include\spdlog\sinks\sink.h" />
     <ClInclude Include="..\include\spdlog\sinks\stdout_sinks.h" />
     <ClInclude Include="..\include\spdlog\sinks\syslog_sink.h" />
+    <ClInclude Include="..\include\spdlog\sinks\wincolor_sink.h" />
     <ClInclude Include="..\include\spdlog\spdlog.h" />
     <ClInclude Include="..\include\spdlog\tweakme.h" />
   </ItemGroup>
