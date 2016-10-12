@@ -5,10 +5,10 @@
 
 void CrusherLoop()
 {
-	size_t counter = 0;
+    size_t counter = 0;
     while (true)
     {
-        LOGF(INFO, "Some text to crush you machine. thread:");        
+        LOGF(INFO, "Some text to crush you machine. thread:");
         if(++counter % 1000000 == 0)
         {
             std::cout << "Wrote " << counter << " entries" << std::endl;
@@ -24,13 +24,13 @@ int main(int argc, char** argv)
     char c;
     std::cin >> c;
     if (toupper( c ) != 'Y')
-		return 0;
-		
-	auto worker = g3::LogWorker::createLogWorker();
+        return 0;
+
+    auto worker = g3::LogWorker::createLogWorker();
     auto handle= worker->addDefaultLogger(argv[0], "g3log.txt");
-    g3::initializeLogging(worker.get());		
-	CrusherLoop();
-	
+    g3::initializeLogging(worker.get());
+    CrusherLoop();
+
     return 0;
 }
 

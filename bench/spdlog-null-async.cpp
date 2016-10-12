@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
         if (argc > 3)
             queue_size = atoi(argv[3]);
 
-       
+
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " messages " << endl;
         cout << "*******************************************************************************\n";
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
         }
         std::cout << endl;
         std::cout << "Avg rate: " << format(total_rate/iters)    << "/sec" <<std::endl;
-        
+
     }
     catch (std::exception &ex)
     {

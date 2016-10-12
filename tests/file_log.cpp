@@ -23,21 +23,21 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
 
 TEST_CASE("flush_on", "[flush_on]]")
 {
-	prepare_logdir();
-	std::string filename = "logs/simple_log.txt";
+    prepare_logdir();
+    std::string filename = "logs/simple_log.txt";
 
-	auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
-	logger->set_pattern("%v");
-	logger->set_level(spdlog::level::trace);
-	logger->flush_on(spdlog::level::info);
-	logger->trace("Should not be flushed");
-	REQUIRE(count_lines(filename) == 0);
+    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
+    logger->set_pattern("%v");
+    logger->set_level(spdlog::level::trace);
+    logger->flush_on(spdlog::level::info);
+    logger->trace("Should not be flushed");
+    REQUIRE(count_lines(filename) == 0);
 
-	logger->info("Test message {}", 1);
-	logger->info("Test message {}", 2);
-	logger->flush();
-	REQUIRE(file_contents(filename) == std::string("Should not be flushed\nTest message 1\nTest message 2\n"));
-	REQUIRE(count_lines(filename) == 3);
+    logger->info("Test message {}", 1);
+    logger->info("Test message {}", 2);
+    logger->flush();
+    REQUIRE(file_contents(filename) == std::string("Should not be flushed\nTest message 1\nTest message 2\n"));
+    REQUIRE(count_lines(filename) == 3);
 }
 
 TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
@@ -45,11 +45,11 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
     prepare_logdir();
     std::string basename = "logs/rotating_log";
     auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 0);
-    
+
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
 
-	logger->flush();
+    logger->flush();
     auto filename = basename + ".txt";
     REQUIRE(count_lines(filename) == 10);
 }
@@ -111,7 +111,7 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
     auto logger = spdlog::create<sink_type>("logger", basename, "txt", 0, 0);
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
-	logger->flush();
+    logger->flush();
     auto filename = w.str();
     REQUIRE(count_lines(filename) == 10);
 }
@@ -144,8 +144,8 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
 
-	logger->flush();
-    auto filename = w.str();	
+    logger->flush();
+    auto filename = w.str();
     REQUIRE(count_lines(filename) == 10);
 }
 

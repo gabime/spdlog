@@ -37,21 +37,21 @@ public:
     {
         _file_helper.flush();
     }
-	void set_force_flush(bool force_flush)
-	{
-		_force_flush = force_flush;
-	}
+    void set_force_flush(bool force_flush)
+    {
+        _force_flush = force_flush;
+    }
 
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        _file_helper.write(msg);		
-		 if(_force_flush)
-			_file_helper.flush();
+        _file_helper.write(msg);
+        if(_force_flush)
+            _file_helper.flush();
     }
 private:
     details::file_helper _file_helper;
-	bool _force_flush;
+    bool _force_flush;
 };
 
 typedef simple_file_sink<std::mutex> simple_file_sink_mt;
@@ -190,7 +190,7 @@ public:
         int rotation_minute) : _base_filename(base_filename),
         _extension(extension),
         _rotation_h(rotation_hour),
-        _rotation_m(rotation_minute)        
+        _rotation_m(rotation_minute)
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
