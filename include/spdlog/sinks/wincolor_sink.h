@@ -54,7 +54,7 @@ public:
     {
         auto color = colors_[msg.level];
         auto orig_attribs = set_console_attribs(color);
-        WriteConsoleA(out_handle_, msg.formatted.data(), msg.formatted.size(), nullptr, nullptr);
+        WriteConsoleA(out_handle_, msg.formatted.data(), static_cast<DWORD>(msg.formatted.size()), nullptr, nullptr);
         SetConsoleTextAttribute(out_handle_, orig_attribs); //reset to orig colors
     }
 
