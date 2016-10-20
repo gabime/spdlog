@@ -1,11 +1,11 @@
 /*
- Formatting library for C++
+Formatting library for C++
 
- Copyright (c) 2012 - 2016, Victor Zverovich
- All rights reserved.
+Copyright (c) 2012 - 2016, Victor Zverovich
+All rights reserved.
 
- For the license information refer to format.h.
- */
+For the license information refer to format.h.
+*/
 
 #ifndef FMT_PRINTF_H_
 #define FMT_PRINTF_H_
@@ -13,56 +13,45 @@
 #include <algorithm>  // std::fill_n
 #include <limits>     // std::numeric_limits
 
-#include "fmt/ostream.h"
+#include "ostream.h"
 
-namespace fmt
-{
-namespace internal
-{
+namespace fmt {
+namespace internal {
 
 // Checks if a value fits in int - used to avoid warnings about comparing
 // signed and unsigned integers.
 template <bool IsSigned>
-struct IntChecker
-{
+struct IntChecker {
     template <typename T>
-    static bool fits_in_int(T value)
-    {
+    static bool fits_in_int(T value) {
         unsigned max = std::numeric_limits<int>::max();
         return value <= max;
     }
-    static bool fits_in_int(bool)
-    {
+    static bool fits_in_int(bool) {
         return true;
     }
 };
 
 template <>
-struct IntChecker<true>
-{
+struct IntChecker<true> {
     template <typename T>
-    static bool fits_in_int(T value)
-    {
+    static bool fits_in_int(T value) {
         return value >= std::numeric_limits<int>::min() &&
                value <= std::numeric_limits<int>::max();
     }
-    static bool fits_in_int(int)
-    {
+    static bool fits_in_int(int) {
         return true;
     }
 };
 
-class PrecisionHandler : public ArgVisitor<PrecisionHandler, int>
-{
+class PrecisionHandler : public ArgVisitor<PrecisionHandler, int> {
 public:
-    void report_unhandled_arg()
-    {
+    void report_unhandled_arg() {
         FMT_THROW(FormatError("precision is not integer"));
     }
 
     template <typename T>
-    int visit_any_int(T value)
-    {
+    int visit_any_int(T value) {
         if (!IntChecker<std::numeric_limits<T>::is_signed>::fits_in_int(value))
             FMT_THROW(FormatError("number is too big"));
         return static_cast<int>(value);
@@ -70,25 +59,21 @@ public:
 };
 
 // IsZeroInt::visit(arg) returns true iff arg is a zero integer.
-class IsZeroInt : public ArgVisitor<IsZeroInt, bool>
-{
+class IsZeroInt : public ArgVisitor<IsZeroInt, bool> {
 public:
     template <typename T>
-    bool visit_any_int(T value)
-    {
+    bool visit_any_int(T value) {
         return value == 0;
     }
 };
 
 template <typename T, typename U>
-struct is_same
-{
+struct is_same {
     enum { value = 0 };
 };
 
 template <typename T>
-struct is_same<T, T>
-{
+struct is_same<T, T> {
     enum { value = 1 };
 };
 
@@ -97,8 +82,7 @@ struct is_same<T, T>
 // corresponding signed or unsigned type depending on the type specifier:
 // 'd' and 'i' - signed, other - unsigned)
 template <typename T = void>
-class ArgConverter : public ArgVisitor<ArgConverter<T>, void>
-{
+class ArgConverter : public ArgVisitor<ArgConverter<T>, void> {
 private:
     internal::Arg &arg_;
     wchar_t type_;
@@ -109,46 +93,38 @@ public:
     ArgConverter(internal::Arg &arg, wchar_t type)
         : arg_(arg), type_(type) {}
 
-    void visit_bool(bool value)
-    {
+    void visit_bool(bool value) {
         if (type_ != 's')
             visit_any_int(value);
     }
 
     template <typename U>
-    void visit_any_int(U value)
-    {
+    void visit_any_int(U value) {
         bool is_signed = type_ == 'd' || type_ == 'i';
         using internal::Arg;
         typedef typename internal::Conditional<
         is_same<T, void>::value, U, T>::type TargetType;
-        if (sizeof(TargetType) <= sizeof(int))
-        {
+        if (sizeof(TargetType) <= sizeof(int)) {
             // Extra casts are used to silence warnings.
-            if (is_signed)
-            {
+            if (is_signed) {
                 arg_.type = Arg::INT;
                 arg_.int_value = static_cast<int>(static_cast<TargetType>(value));
             }
-            else
-            {
+            else {
                 arg_.type = Arg::UINT;
                 typedef typename internal::MakeUnsigned<TargetType>::Type Unsigned;
                 arg_.uint_value = static_cast<unsigned>(static_cast<Unsigned>(value));
             }
         }
-        else
-        {
-            if (is_signed)
-            {
+        else {
+            if (is_signed) {
                 arg_.type = Arg::LONG_LONG;
                 // glibc's printf doesn't sign extend arguments of smaller types:
                 //   std::printf("%lld", -42);  // prints "4294967254"
                 // but we don't have to do the same because it's a UB.
                 arg_.long_long_value = static_cast<LongLong>(value);
             }
-            else
-            {
+            else {
                 arg_.type = Arg::ULONG_LONG;
                 arg_.ulong_long_value =
                     static_cast<typename internal::MakeUnsigned<U>::Type>(value);
@@ -158,8 +134,7 @@ public:
 };
 
 // Converts an integer argument to char for printf.
-class CharConverter : public ArgVisitor<CharConverter, void>
-{
+class CharConverter : public ArgVisitor<CharConverter, void> {
 private:
     internal::Arg &arg_;
 
@@ -169,8 +144,7 @@ public:
     explicit CharConverter(internal::Arg &arg) : arg_(arg) {}
 
     template <typename T>
-    void visit_any_int(T value)
-    {
+    void visit_any_int(T value) {
         arg_.type = internal::Arg::CHAR;
         arg_.int_value = static_cast<char>(value);
     }
@@ -178,8 +152,7 @@ public:
 
 // Checks if an argument is a valid printf width specifier and sets
 // left alignment if it is negative.
-class WidthHandler : public ArgVisitor<WidthHandler, unsigned>
-{
+class WidthHandler : public ArgVisitor<WidthHandler, unsigned> {
 private:
     FormatSpec &spec_;
 
@@ -188,18 +161,15 @@ private:
 public:
     explicit WidthHandler(FormatSpec &spec) : spec_(spec) {}
 
-    void report_unhandled_arg()
-    {
+    void report_unhandled_arg() {
         FMT_THROW(FormatError("width is not integer"));
     }
 
     template <typename T>
-    unsigned visit_any_int(T value)
-    {
+    unsigned visit_any_int(T value) {
         typedef typename internal::IntTraits<T>::MainType UnsignedType;
         UnsignedType width = static_cast<UnsignedType>(value);
-        if (internal::is_negative(value))
-        {
+        if (internal::is_negative(value)) {
             spec_.align_ = ALIGN_LEFT;
             width = 0 - width;
         }
@@ -212,28 +182,26 @@ public:
 }  // namespace internal
 
 /**
-  \rst
-  A ``printf`` argument formatter based on the `curiously recurring template
-  pattern <http://en.wikipedia.org/wiki/Curiously_recurring_template_pattern>`_.
+\rst
+A ``printf`` argument formatter based on the `curiously recurring template
+pattern <http://en.wikipedia.org/wiki/Curiously_recurring_template_pattern>`_.
 
-  To use `~fmt::BasicPrintfArgFormatter` define a subclass that implements some
-  or all of the visit methods with the same signatures as the methods in
-  `~fmt::ArgVisitor`, for example, `~fmt::ArgVisitor::visit_int()`.
-  Pass the subclass as the *Impl* template parameter. When a formatting
-  function processes an argument, it will dispatch to a visit method
-  specific to the argument type. For example, if the argument type is
-  ``double`` then the `~fmt::ArgVisitor::visit_double()` method of a subclass
-  will be called. If the subclass doesn't contain a method with this signature,
-  then a corresponding method of `~fmt::BasicPrintfArgFormatter` or its
-  superclass will be called.
-  \endrst
- */
+To use `~fmt::BasicPrintfArgFormatter` define a subclass that implements some
+or all of the visit methods with the same signatures as the methods in
+`~fmt::ArgVisitor`, for example, `~fmt::ArgVisitor::visit_int()`.
+Pass the subclass as the *Impl* template parameter. When a formatting
+function processes an argument, it will dispatch to a visit method
+specific to the argument type. For example, if the argument type is
+``double`` then the `~fmt::ArgVisitor::visit_double()` method of a subclass
+will be called. If the subclass doesn't contain a method with this signature,
+then a corresponding method of `~fmt::BasicPrintfArgFormatter` or its
+superclass will be called.
+\endrst
+*/
 template <typename Impl, typename Char>
-class BasicPrintfArgFormatter : public internal::ArgFormatterBase<Impl, Char>
-{
+class BasicPrintfArgFormatter : public internal::ArgFormatterBase<Impl, Char> {
 private:
-    void write_null_pointer()
-    {
+    void write_null_pointer() {
         this->spec().type_ = 0;
         this->write("(nil)");
     }
@@ -242,18 +210,17 @@ private:
 
 public:
     /**
-      \rst
-      Constructs an argument formatter object.
-      *writer* is a reference to the output writer and *spec* contains format
-      specifier information for standard argument types.
-      \endrst
-     */
+    \rst
+    Constructs an argument formatter object.
+    *writer* is a reference to the output writer and *spec* contains format
+    specifier information for standard argument types.
+    \endrst
+    */
     BasicPrintfArgFormatter(BasicWriter<Char> &writer, FormatSpec &spec)
         : internal::ArgFormatterBase<Impl, Char>(writer, spec) {}
 
     /** Formats an argument of type ``bool``. */
-    void visit_bool(bool value)
-    {
+    void visit_bool(bool value) {
         FormatSpec &fmt_spec = this->spec();
         if (fmt_spec.type_ != 's')
             return this->visit_any_int(value);
@@ -262,38 +229,32 @@ public:
     }
 
     /** Formats a character. */
-    void visit_char(int value)
-    {
+    void visit_char(int value) {
         const FormatSpec &fmt_spec = this->spec();
         BasicWriter<Char> &w = this->writer();
         if (fmt_spec.type_ && fmt_spec.type_ != 'c')
             w.write_int(value, fmt_spec);
         typedef typename BasicWriter<Char>::CharPtr CharPtr;
         CharPtr out = CharPtr();
-        if (fmt_spec.width_ > 1)
-        {
+        if (fmt_spec.width_ > 1) {
             Char fill = ' ';
             out = w.grow_buffer(fmt_spec.width_);
-            if (fmt_spec.align_ != ALIGN_LEFT)
-            {
+            if (fmt_spec.align_ != ALIGN_LEFT) {
                 std::fill_n(out, fmt_spec.width_ - 1, fill);
                 out += fmt_spec.width_ - 1;
             }
-            else
-            {
+            else {
                 std::fill_n(out + 1, fmt_spec.width_ - 1, fill);
             }
         }
-        else
-        {
+        else {
             out = w.grow_buffer(1);
         }
         *out = static_cast<Char>(value);
     }
 
     /** Formats a null-terminated C string. */
-    void visit_cstring(const char *value)
-    {
+    void visit_cstring(const char *value) {
         if (value)
             Base::visit_cstring(value);
         else if (this->spec().type_ == 'p')
@@ -303,8 +264,7 @@ public:
     }
 
     /** Formats a pointer. */
-    void visit_pointer(const void *value)
-    {
+    void visit_pointer(const void *value) {
         if (value)
             return Base::visit_pointer(value);
         this->spec().type_ = 0;
@@ -312,10 +272,9 @@ public:
     }
 
     /** Formats an argument of a custom (user-defined) type. */
-    void visit_custom(internal::Arg::CustomValue c)
-    {
+    void visit_custom(internal::Arg::CustomValue c) {
         BasicFormatter<Char> formatter(ArgList(), this->writer());
-        const Char format_str[] = {'}', 0};
+        const Char format_str[] = { '}', 0 };
         const Char *format = format_str;
         c.format(&formatter, c.value, &format);
     }
@@ -324,8 +283,7 @@ public:
 /** The default printf argument formatter. */
 template <typename Char>
 class PrintfArgFormatter
-    : public BasicPrintfArgFormatter<PrintfArgFormatter<Char>, Char>
-{
+    : public BasicPrintfArgFormatter<PrintfArgFormatter<Char>, Char> {
 public:
     /** Constructs an argument formatter object. */
     PrintfArgFormatter(BasicWriter<Char> &w, FormatSpec &s)
@@ -334,8 +292,7 @@ public:
 
 /** This template formats data and writes the output to a writer. */
 template <typename Char, typename ArgFormatter = PrintfArgFormatter<Char> >
-class PrintfFormatter : private internal::FormatterBase
-{
+class PrintfFormatter : private internal::FormatterBase {
 private:
     BasicWriter<Char> &writer_;
 
@@ -352,12 +309,12 @@ private:
 
 public:
     /**
-     \rst
-     Constructs a ``PrintfFormatter`` object. References to the arguments and
-     the writer are stored in the formatter object so make sure they have
-     appropriate lifetimes.
-     \endrst
-     */
+    \rst
+    Constructs a ``PrintfFormatter`` object. References to the arguments and
+    the writer are stored in the formatter object so make sure they have
+    appropriate lifetimes.
+    \endrst
+    */
     explicit PrintfFormatter(const ArgList &args, BasicWriter<Char> &w)
         : FormatterBase(args), writer_(w) {}
 
@@ -366,12 +323,9 @@ public:
 };
 
 template <typename Char, typename AF>
-void PrintfFormatter<Char, AF>::parse_flags(FormatSpec &spec, const Char *&s)
-{
-    for (;;)
-    {
-        switch (*s++)
-        {
+void PrintfFormatter<Char, AF>::parse_flags(FormatSpec &spec, const Char *&s) {
+    for (;;) {
+        switch (*s++) {
         case '-':
             spec.align_ = ALIGN_LEFT;
             break;
@@ -396,8 +350,7 @@ void PrintfFormatter<Char, AF>::parse_flags(FormatSpec &spec, const Char *&s)
 
 template <typename Char, typename AF>
 internal::Arg PrintfFormatter<Char, AF>::get_arg(const Char *s,
-        unsigned arg_index)
-{
+        unsigned arg_index) {
     (void)s;
     const char *error = 0;
     internal::Arg arg = arg_index == std::numeric_limits<unsigned>::max() ?
@@ -409,26 +362,21 @@ internal::Arg PrintfFormatter<Char, AF>::get_arg(const Char *s,
 
 template <typename Char, typename AF>
 unsigned PrintfFormatter<Char, AF>::parse_header(
-    const Char *&s, FormatSpec &spec)
-{
+    const Char *&s, FormatSpec &spec) {
     unsigned arg_index = std::numeric_limits<unsigned>::max();
     Char c = *s;
-    if (c >= '0' && c <= '9')
-    {
+    if (c >= '0' && c <= '9') {
         // Parse an argument index (if followed by '$') or a width possibly
         // preceded with '0' flag(s).
         unsigned value = internal::parse_nonnegative_int(s);
-        if (*s == '$')    // value is an argument index
-        {
+        if (*s == '$') {  // value is an argument index
             ++s;
             arg_index = value;
         }
-        else
-        {
+        else {
             if (c == '0')
                 spec.fill_ = '0';
-            if (value != 0)
-            {
+            if (value != 0) {
                 // Nonzero value means that we parsed width and don't need to
                 // parse it or flags again, so return now.
                 spec.width_ = value;
@@ -438,12 +386,10 @@ unsigned PrintfFormatter<Char, AF>::parse_header(
     }
     parse_flags(spec, s);
     // Parse width.
-    if (*s >= '0' && *s <= '9')
-    {
+    if (*s >= '0' && *s <= '9') {
         spec.width_ = internal::parse_nonnegative_int(s);
     }
-    else if (*s == '*')
-    {
+    else if (*s == '*') {
         ++s;
         spec.width_ = internal::WidthHandler(spec).visit(get_arg(s));
     }
@@ -451,16 +397,13 @@ unsigned PrintfFormatter<Char, AF>::parse_header(
 }
 
 template <typename Char, typename AF>
-void PrintfFormatter<Char, AF>::format(BasicCStringRef<Char> format_str)
-{
+void PrintfFormatter<Char, AF>::format(BasicCStringRef<Char> format_str) {
     const Char *start = format_str.c_str();
     const Char *s = start;
-    while (*s)
-    {
+    while (*s) {
         Char c = *s++;
         if (c != '%') continue;
-        if (*s == c)
-        {
+        if (*s == c) {
             write(writer_, start, s);
             start = ++s;
             continue;
@@ -474,15 +417,12 @@ void PrintfFormatter<Char, AF>::format(BasicCStringRef<Char> format_str)
         unsigned arg_index = parse_header(s, spec);
 
         // Parse precision.
-        if (*s == '.')
-        {
+        if (*s == '.') {
             ++s;
-            if ('0' <= *s && *s <= '9')
-            {
+            if ('0' <= *s && *s <= '9') {
                 spec.precision_ = static_cast<int>(internal::parse_nonnegative_int(s));
             }
-            else if (*s == '*')
-            {
+            else if (*s == '*') {
                 ++s;
                 spec.precision_ = internal::PrecisionHandler().visit(get_arg(s));
             }
@@ -492,8 +432,7 @@ void PrintfFormatter<Char, AF>::format(BasicCStringRef<Char> format_str)
         Arg arg = get_arg(s, arg_index);
         if (spec.flag(HASH_FLAG) && internal::IsZeroInt().visit(arg))
             spec.flags_ &= ~internal::to_unsigned<int>(HASH_FLAG);
-        if (spec.fill_ == '0')
-        {
+        if (spec.fill_ == '0') {
             if (arg.type <= Arg::LAST_NUMERIC_TYPE)
                 spec.align_ = ALIGN_NUMERIC;
             else
@@ -502,8 +441,7 @@ void PrintfFormatter<Char, AF>::format(BasicCStringRef<Char> format_str)
 
         // Parse length and convert the argument to the required type.
         using internal::ArgConverter;
-        switch (*s++)
-        {
+        switch (*s++) {
         case 'h':
             if (*s == 'h')
                 ArgConverter<signed char>(arg, *++s).visit(arg);
@@ -538,11 +476,9 @@ void PrintfFormatter<Char, AF>::format(BasicCStringRef<Char> format_str)
         if (!*s)
             FMT_THROW(FormatError("invalid format string"));
         spec.type_ = static_cast<char>(*s++);
-        if (arg.type <= Arg::LAST_INTEGER_TYPE)
-        {
+        if (arg.type <= Arg::LAST_INTEGER_TYPE) {
             // Normalize type.
-            switch (spec.type_)
-            {
+            switch (spec.type_) {
             case 'i':
             case 'u':
                 spec.type_ = 'd';
@@ -563,30 +499,27 @@ void PrintfFormatter<Char, AF>::format(BasicCStringRef<Char> format_str)
 }
 
 template <typename Char>
-void printf(BasicWriter<Char> &w, BasicCStringRef<Char> format, ArgList args)
-{
+void printf(BasicWriter<Char> &w, BasicCStringRef<Char> format, ArgList args) {
     PrintfFormatter<Char>(args, w).format(format);
 }
 
 /**
-  \rst
-  Formats arguments and returns the result as a string.
+\rst
+Formats arguments and returns the result as a string.
 
-  **Example**::
+**Example**::
 
-    std::string message = fmt::sprintf("The answer is %d", 42);
-  \endrst
+std::string message = fmt::sprintf("The answer is %d", 42);
+\endrst
 */
-inline std::string sprintf(CStringRef format, ArgList args)
-{
+inline std::string sprintf(CStringRef format, ArgList args) {
     MemoryWriter w;
     printf(w, format, args);
     return w.str();
 }
 FMT_VARIADIC(std::string, sprintf, CStringRef)
 
-inline std::wstring sprintf(WCStringRef format, ArgList args)
-{
+inline std::wstring sprintf(WCStringRef format, ArgList args) {
     WMemoryWriter w;
     printf(w, format, args);
     return w.str();
@@ -594,43 +527,41 @@ inline std::wstring sprintf(WCStringRef format, ArgList args)
 FMT_VARIADIC_W(std::wstring, sprintf, WCStringRef)
 
 /**
-  \rst
-  Prints formatted data to the file *f*.
+\rst
+Prints formatted data to the file *f*.
 
-  **Example**::
+**Example**::
 
-    fmt::fprintf(stderr, "Don't %s!", "panic");
-  \endrst
- */
+fmt::fprintf(stderr, "Don't %s!", "panic");
+\endrst
+*/
 FMT_API int fprintf(std::FILE *f, CStringRef format, ArgList args);
 FMT_VARIADIC(int, fprintf, std::FILE *, CStringRef)
 
 /**
-  \rst
-  Prints formatted data to ``stdout``.
+\rst
+Prints formatted data to ``stdout``.
 
-  **Example**::
+**Example**::
 
-    fmt::printf("Elapsed time: %.2f seconds", 1.23);
-  \endrst
- */
-inline int printf(CStringRef format, ArgList args)
-{
+fmt::printf("Elapsed time: %.2f seconds", 1.23);
+\endrst
+*/
+inline int printf(CStringRef format, ArgList args) {
     return fprintf(stdout, format, args);
 }
 FMT_VARIADIC(int, printf, CStringRef)
 
 /**
-  \rst
-  Prints formatted data to the stream *os*.
+\rst
+Prints formatted data to the stream *os*.
 
-  **Example**::
+**Example**::
 
-    fprintf(cerr, "Don't %s!", "panic");
-  \endrst
- */
-inline int fprintf(std::ostream &os, CStringRef format_str, ArgList args)
-{
+fprintf(cerr, "Don't %s!", "panic");
+\endrst
+*/
+inline int fprintf(std::ostream &os, CStringRef format_str, ArgList args) {
     MemoryWriter w;
     printf(w, format_str, args);
     internal::write(os, w);
