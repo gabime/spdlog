@@ -14,12 +14,15 @@ For the license information refer to format.h.
 //#include "format.h"
 #include <ostream>
 
-namespace fmt {
+namespace fmt
+{
 
-namespace internal {
+namespace internal
+{
 
 template <class Char>
-class FormatBuf : public std::basic_streambuf<Char> {
+class FormatBuf : public std::basic_streambuf<Char>
+{
 private:
     typedef typename std::basic_streambuf<Char>::int_type int_type;
     typedef typename std::basic_streambuf<Char>::traits_type traits_type;
@@ -28,12 +31,15 @@ private:
     Char *start_;
 
 public:
-    FormatBuf(Buffer<Char> &buffer) : buffer_(buffer), start_(&buffer[0]) {
+    FormatBuf(Buffer<Char> &buffer) : buffer_(buffer), start_(&buffer[0])
+    {
         this->setp(start_, start_ + buffer_.capacity());
     }
 
-    int_type overflow(int_type ch = traits_type::eof()) {
-        if (!traits_type::eq_int_type(ch, traits_type::eof())) {
+    int_type overflow(int_type ch = traits_type::eof())
+    {
+        if (!traits_type::eq_int_type(ch, traits_type::eof()))
+        {
             size_t buf_size = size();
             buffer_.resize(buf_size);
             buffer_.reserve(buf_size * 2);
@@ -45,14 +51,16 @@ public:
         return ch;
     }
 
-    size_t size() const {
+    size_t size() const
+    {
         return to_unsigned(this->pptr() - start_);
     }
 };
 
 Yes &convert(std::ostream &);
 
-struct DummyStream : std::ostream {
+struct DummyStream : std::ostream
+{
     DummyStream();  // Suppress a bogus warning in MSVC.
     // Hide all operator<< overloads from std::ostream.
     void operator<<(Null<>);
@@ -61,9 +69,11 @@ struct DummyStream : std::ostream {
 No &operator<<(std::ostream &, int);
 
 template<typename T>
-struct ConvertToIntImpl<T, true> {
+struct ConvertToIntImpl<T, true>
+{
     // Convert to int only if T doesn't have an overloaded operator<<.
-    enum {
+    enum
+    {
         value = sizeof(convert(get<DummyStream>() << get<T>())) == sizeof(No)
     };
 };
@@ -75,7 +85,8 @@ void write(std::ostream &os, Writer &w);
 // Formats a value.
 template <typename Char, typename ArgFormatter, typename T>
 void format_arg(BasicFormatter<Char, ArgFormatter> &f,
-                const Char *&format_str, const T &value) {
+                const Char *&format_str, const T &value)
+{
     internal::MemoryBuffer<Char, internal::INLINE_BUFFER_SIZE> buffer;
 
     internal::FormatBuf<Char> format_buf(buffer);
