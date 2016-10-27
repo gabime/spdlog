@@ -25,7 +25,7 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
-
+#include <io.h>
 #ifdef __MINGW32__
 #include <share.h>
 #endif
@@ -147,6 +147,13 @@ inline int fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode
 #else
     *fp = _fsopen((filename.c_str()), mode.c_str(), _SH_DENYWR);
 #endif
+    //don't let the handle be inherited by the child process
+    if (*fp != nullptr) {
+        HANDLE hFile = (HANDLE)_get_osfhandle(_fileno(*fp));
+        if (hFile) {
+            SetHandleInformation(hFile, HANDLE_FLAG_INHERIT, 0);
+        }
+    }
     return *fp == nullptr;
 #else
     *fp = fopen((filename.c_str()), mode.c_str());
