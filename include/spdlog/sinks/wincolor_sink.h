@@ -66,14 +66,13 @@ public:
     // change the  color for the given level
     void set_color(level::level_enum level, WORD color)
     {
-        std::lock_guard<Mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         colors_[level] = color;
     }
 
 private:
     HANDLE out_handle_;
     std::map<level::level_enum, WORD> colors_;
-    Mutex _mutex;
 
     // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs)
