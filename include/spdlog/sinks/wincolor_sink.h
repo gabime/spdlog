@@ -73,6 +73,7 @@ public:
 private:
     HANDLE out_handle_;
     std::map<level::level_enum, WORD> colors_;
+    Mutex _mutex;
 
     // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs)
@@ -91,7 +92,7 @@ template<class Mutex>
 class wincolor_stdout_sink: public wincolor_sink<Mutex>
 {
 public:
-    wincolor_stdout_sink():wincolor_sink(GetStdHandle(STD_OUTPUT_HANDLE))
+    wincolor_stdout_sink(): wincolor_sink<Mutex>(GetStdHandle(STD_OUTPUT_HANDLE))
     {}
 };
 
@@ -105,7 +106,7 @@ template<class Mutex>
 class wincolor_stderr_sink: public wincolor_sink<Mutex>
 {
 public:
-    wincolor_stderr_sink():wincolor_sink(GetStdHandle(STD_ERROR_HANDLE))
+    wincolor_stderr_sink():wincolor_sink<Mutex>(GetStdHandle(STD_ERROR_HANDLE))
     {}
 };
 
