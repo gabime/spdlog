@@ -15,7 +15,7 @@ namespace sinks
 class sink
 {
 public:
-    sink(): _level( level::trace ) {}
+    sink() { _level = (int)level::trace; }
 
     virtual ~sink() {}
     virtual void log(const details::log_msg& msg) = 0;
