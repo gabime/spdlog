@@ -82,7 +82,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
 
         // never copy or assign. should only be moved..
         async_msg(const async_msg&) = delete;
-        async_msg& operator=(async_msg& other) = delete;
+        async_msg& operator=(const async_msg& other) = delete;
 
         // construct from log_msg
         async_msg(const details::log_msg& m) :

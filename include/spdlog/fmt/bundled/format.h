@@ -1098,7 +1098,7 @@ inline void format_decimal(Char *buffer, UInt value, unsigned num_digits,
 template <typename UInt, typename Char>
 inline void format_decimal(Char *buffer, UInt value, unsigned num_digits)
 {
-    return format_decimal(buffer, value, num_digits, NoThousandsSep());
+    format_decimal(buffer, value, num_digits, NoThousandsSep());
 }
 
 #ifndef _WIN32
@@ -2256,7 +2256,7 @@ public:
     void visit_bool(bool value)
     {
         if (spec_.type_)
-            return visit_any_int(value);
+            visit_any_int(value);
         write(value);
     }
 
