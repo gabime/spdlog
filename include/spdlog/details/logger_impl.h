@@ -59,10 +59,8 @@ inline void spdlog::logger::set_pattern(const std::string& pattern)
 
 
 template <typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Args&... args)
+inline void spdlog::logger::log_nofilter(level::level_enum lvl, const char* fmt, const Args&... args)
 {
-    if (!should_log(lvl)) return;
-
     try
     {
         details::log_msg log_msg(&_name, lvl);
@@ -80,9 +78,8 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
 }
 
 template <typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
+inline void spdlog::logger::log_nofilter(level::level_enum lvl, const char* msg)
 {
-    if (!should_log(lvl)) return;
     try
     {
         details::log_msg log_msg(&_name, lvl);
@@ -97,29 +94,44 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
     {
         _err_handler("Unknown exception");
     }
+}
 
+template<typename T>
+inline void spdlog::logger::log_nofilter(level::level_enum lvl, const T& msg)
+{
+    try
+    {
+        details::log_msg log_msg(&_name, lvl);
+        log_msg.raw << msg;
+        _sink_it(log_msg);
+    }
+    catch (const std::exception &ex)
+    {
+        _err_handler(ex.what());
+    }
+    catch (...)
+    {
+        _err_handler("Unknown exception");
+    }
+}
+
+template <typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Args&... args)
+{
+    if (should_log(lvl)) log_nofilter(lvl, fmt, args...);
+}
+
+template <typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
+{
+    if (should_log(lvl)) log_nofilter(lvl, msg);
 }
 
 template<typename T>
 inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
 {
-    if (!should_log(lvl)) return;
-    try
-    {
-        details::log_msg log_msg(&_name, lvl);
-        log_msg.raw << msg;
-        _sink_it(log_msg);
-    }
-    catch (const std::exception &ex)
-    {
-        _err_handler(ex.what());
-    }
-    catch (...)
-    {
-        _err_handler("Unknown exception");
-    }
+    if (should_log(lvl)) log_nofilter(lvl, msg);
 }
-
 
 template <typename... Args>
 inline void spdlog::logger::trace(const char* fmt, const Args&... args)
