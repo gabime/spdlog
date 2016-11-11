@@ -343,7 +343,7 @@ inline std::string errno_str(int err_num)
     else
         return "Unkown error";
 
-#elif defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID) || \
+#elif defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID) || defined(__SUNPRO_CC) || \
       ((_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE) // posix version
 
     if (strerror_r(err_num, buf, buf_size) == 0)

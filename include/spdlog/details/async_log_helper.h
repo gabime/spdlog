@@ -359,7 +359,7 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_
 
     // yield upto 150 micros
     if (time_since_op <= microseconds(100))
-        return yield();
+        return std::this_thread::yield();
 
 
     // sleep for 20 ms upto 200 ms
