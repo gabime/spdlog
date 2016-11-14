@@ -30,11 +30,11 @@
 #endif
 
 #if defined(__GNUC__)  || defined(__clang__)
-#define DEPRECATED __attribute__((deprecated))
+#define SPDLOG_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER)
-#define DEPRECATED __declspec(deprecated)
+#define SPDLOG_DEPRECATED __declspec(deprecated)
 #else
-#define DEPRECATED
+#define SPDLOG_DEPRECATED
 #endif
 
 
