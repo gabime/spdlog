@@ -82,7 +82,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
 
         // never copy or assign. should only be moved..
         async_msg(const async_msg&) = delete;
-        async_msg& operator=(async_msg& other) = delete;
+        async_msg& operator=(const async_msg& other) = delete;
 
         // construct from log_msg
         async_msg(const details::log_msg& m) :
@@ -359,7 +359,7 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_
 
     // yield upto 150 micros
     if (time_since_op <= microseconds(100))
-        return yield();
+        return std::this_thread::yield();
 
 
     // sleep for 20 ms upto 200 ms
