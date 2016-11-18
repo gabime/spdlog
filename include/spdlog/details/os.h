@@ -344,7 +344,7 @@ inline std::string errno_str(int err_num)
         return "Unkown error";
 
 #elif defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID) || defined(__SUNPRO_CC) || \
-      ((_POSIX_C_SOURCE >= 200112L) && ! _GNU_SOURCE) // posix version
+      ((_POSIX_C_SOURCE >= 200112L) && ! defined(_GNU_SOURCE)) // posix version
 
     if (strerror_r(err_num, buf, buf_size) == 0)
         return std::string(buf);
