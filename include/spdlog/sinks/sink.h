@@ -17,7 +17,7 @@ class sink
 public:
     sink()
     {
-         _level = level::trace;
+        _level = level::trace;
     }
 
     virtual ~sink() {}
