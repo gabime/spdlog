@@ -1369,7 +1369,7 @@ struct ConvertToInt
 {
     enum
     {
-        enable_conversion = sizeof(convert(get<T>())) == sizeof(Yes)
+        enable_conversion = sizeof(fmt::internal::convert(get<T>())) == sizeof(Yes)
     };
     enum
     {
