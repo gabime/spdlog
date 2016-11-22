@@ -78,3 +78,6 @@ install(
     NAMESPACE "${namespace}"
     DESTINATION "${config_install_dir}"
 )
+
+file(GLOB_RECURSE spdlog_include_SRCS "${HEADER_BASE}/*.h")
+add_custom_target(spdlog_headers_for_ide SOURCES ${spdlog_include_SRCS})
