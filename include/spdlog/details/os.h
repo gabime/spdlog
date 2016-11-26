@@ -30,6 +30,14 @@
 #include <share.h>
 #endif
 
+#define SPDLOG_SECURE_API
+
+#ifdef __MINGW32__
+#ifndef MINGW_HAS_SECURE_API
+#undef SPDLOG_SECURE_API
+#endif
+#endif
+
 #include <sys/types.h>
 #include <io.h>
 
@@ -334,10 +342,12 @@ inline std::string filename_to_str(const filename_t& filename)
 // Return errno string (thread safe)
 inline std::string errno_str(int err_num)
 {
+#ifdef SPDLOG_SECURE_API
     char buf[256];
     SPDLOG_CONSTEXPR auto buf_size = sizeof(buf);
 
 #ifdef _WIN32
+
     if(strerror_s(buf, buf_size, err_num) == 0)
         return std::string(buf);
     else
@@ -354,8 +364,10 @@ inline std::string errno_str(int err_num)
 #else  // gnu version (might not use the given buf, so its retval pointer must be used)
     return std::string(strerror_r(err_num, buf, buf_size));
 #endif
+#else
+    return std::to_string(err_num);
+#endif    
 }
-
 } //os
 } //details
 } //spdlog
