@@ -356,6 +356,17 @@ inline std::string errno_str(int err_num)
 #endif
 }
 
+inline int pid() 
+{
+
+#ifdef _WIN32
+    return ::_getpid();
+#else
+    return static_cast<int>(::getpid());
+#endif
+
+}
+
 } //os
 } //details
 } //spdlog

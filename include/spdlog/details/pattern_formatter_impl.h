@@ -356,12 +356,21 @@ private:
 
 
 
-//Thread id
+// Thread id
 class t_formatter:public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
         msg.formatted << msg.thread_id;
+    }
+};
+
+// Current pid 
+class pid_formatter:public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        msg.formatted << details::os::pid(); 
     }
 };
 
@@ -452,6 +461,8 @@ class full_formatter:public flag_formatter
         msg.formatted << fmt::StringRef(msg.raw.data(), msg.raw.size());
     }
 };
+
+
 
 }
 }
@@ -609,6 +620,10 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 
     case ('+'):
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::full_formatter()));
+        break;
+
+    case ('P'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::pid_formatter()));
         break;
 
     default: //Unkown flag appears as is
