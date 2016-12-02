@@ -294,7 +294,7 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 
 //Return current thread id as size_t
 //It exists because the std::this_thread::get_id() is much slower(espcially under VS 2013)
-inline size_t thread_id()
+inline size_t _thread_id()
 {
 #ifdef _WIN32
     return  static_cast<size_t>(::GetCurrentThreadId());
@@ -310,9 +310,16 @@ inline size_t thread_id()
 #else //Default to standard C++11 (OSX and other Unix)
     return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
 #endif
-
-
 }
+
+//Return current thread id as size_t (from thread local storage)
+inline size_t thread_id()
+{
+    static thread_local const size_t tid = _thread_id();
+	return tid;
+}
+
+
 
 
 // wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
