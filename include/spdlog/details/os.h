@@ -316,7 +316,7 @@ inline size_t _thread_id()
 inline size_t thread_id()
 {
     static thread_local const size_t tid = _thread_id();
-	return tid;
+    return tid;
 }
 
 
@@ -364,7 +364,7 @@ inline std::string errno_str(int err_num)
 #endif
 }
 
-inline int pid() 
+inline int pid()
 {
 
 #ifdef _WIN32

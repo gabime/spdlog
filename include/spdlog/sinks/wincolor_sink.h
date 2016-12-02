@@ -66,7 +66,7 @@ public:
     // change the  color for the given level
     void set_color(level::level_enum level, WORD color)
     {
-		std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         colors_[level] = color;
     }
 
@@ -91,7 +91,7 @@ template<class Mutex>
 class wincolor_stdout_sink: public wincolor_sink<Mutex>
 {
 public:
-	wincolor_stdout_sink() : wincolor_sink<Mutex>(GetStdHandle(STD_OUTPUT_HANDLE))
+    wincolor_stdout_sink() : wincolor_sink<Mutex>(GetStdHandle(STD_OUTPUT_HANDLE))
     {}
 };
 
@@ -105,7 +105,7 @@ template<class Mutex>
 class wincolor_stderr_sink: public wincolor_sink<Mutex>
 {
 public:
-	wincolor_stderr_sink() : wincolor_sink<Mutex>(GetStdHandle(STD_ERROR_HANDLE))
+    wincolor_stderr_sink() : wincolor_sink<Mutex>(GetStdHandle(STD_ERROR_HANDLE))
     {}
 };
 

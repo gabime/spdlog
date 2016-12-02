@@ -365,12 +365,12 @@ class t_formatter:public flag_formatter
     }
 };
 
-// Current pid 
+// Current pid
 class pid_formatter:public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
-        msg.formatted << details::os::pid(); 
+        msg.formatted << details::os::pid();
     }
 };
 
@@ -507,7 +507,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 {
     switch (flag)
     {
-    // logger name
+        // logger name
     case 'n':
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::name_formatter()));
         break;
