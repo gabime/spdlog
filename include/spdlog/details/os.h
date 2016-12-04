@@ -48,6 +48,10 @@
 
 #endif
 
+#ifndef __has_feature       // Clang - feature checking macros.
+#define __has_feature(x) 0  // Compatibility with non-clang compilers.
+#endif
+
 namespace spdlog
 {
 namespace details
@@ -315,7 +319,7 @@ inline size_t _thread_id()
 //Return current thread id as size_t (from thread local storage)
 inline size_t thread_id()
 {
-#if defined(_MSC_VER) && (_MSC_VER < 1900) || defined(__clang_major__) && (__clang_major__ < 8)
+#if defined(_MSC_VER) && (_MSC_VER < 1900) || defined(__clang__) && !__has_feature(cxx_thread_local)
     return _thread_id();
 #else
     static thread_local const size_t tid = _thread_id();
