@@ -10,6 +10,7 @@
 #include <ctime>
 #include <functional>
 #include <string>
+#include <chrono>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -38,12 +39,13 @@
 
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
 #include <unistd.h>
-#include <chrono>
 
 #elif __FreeBSD__
 #include <sys/thr.h> //Use thr_self() syscall under FreeBSD to get thread id
+#include <unistd.h>
 
 #else
+#include <unistd.h> 
 #include <thread>
 
 #endif
