@@ -11,10 +11,11 @@
 #include <functional>
 #include <string>
 #include <chrono>
+#include <thread>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-
+#include <sys/types.h>
 
 #ifdef _WIN32
 
@@ -26,33 +27,31 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 #include <windows.h>
-#include <process.h>
+#include <process.h> //  _get_pid support
+#include <io.h> // _get_osfhandle support
 
 #ifdef __MINGW32__
 #include <share.h>
 #endif
 
-#include <sys/types.h>
-#include <io.h>
+#else // unix
 
-#elif __linux__
+#include <unistd.h> 
+#include <fcntl.h>
 
+#ifdef __linux__
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
-#include <unistd.h>
 
 #elif __FreeBSD__
 #include <sys/thr.h> //Use thr_self() syscall under FreeBSD to get thread id
-#include <unistd.h>
+#endif 
 
-#else
-#include <unistd.h> 
-#include <thread>
-
-#endif
+#endif //unix
 
 #ifndef __has_feature       // Clang - feature checking macros.
 #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
+
 
 namespace spdlog
 {
@@ -143,6 +142,18 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
 SPDLOG_CONSTEXPR static const char* eol = SPDLOG_EOL;
 SPDLOG_CONSTEXPR static int eol_size = sizeof(SPDLOG_EOL) - 1;
 
+inline void prevent_child_fd(FILE *f)
+{
+#ifdef _WIN32
+	auto file_handle = (HANDLE)_get_osfhandle(_fileno(f));	
+	if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
+			throw spdlog_ex("SetHandleInformation failed", errno);
+#else
+	auto fd = fileno(f);	
+	if(fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
+		throw spdlog_ex("fcntl with FD_CLOEXEC failed", errno);
+#endif	
+}
 
 
 //fopen_s on non windows for writing
@@ -153,13 +164,18 @@ inline int fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode
     *fp = _wfsopen((filename.c_str()), mode.c_str(), _SH_DENYWR);
 #else
     *fp = _fsopen((filename.c_str()), mode.c_str(), _SH_DENYWR);
+#endif	
+#else //unix
+    *fp = fopen((filename.c_str()), mode.c_str());	
+#endif		
+
+#ifdef SPDLOG_PREVENT_CHILD_FD
+	if(*fp != nullptr)
+		prevent_child_fd(*fp);
 #endif
-    return *fp == nullptr;
-#else
-    *fp = fopen((filename.c_str()), mode.c_str());
-    return *fp == nullptr;
-#endif
+	return *fp == nullptr;
 }
+
 
 inline int remove(const filename_t &filename)
 {
