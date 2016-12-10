@@ -36,7 +36,7 @@
 
 #else // unix
 
-#include <unistd.h> 
+#include <unistd.h>
 #include <fcntl.h>
 
 #ifdef __linux__
@@ -44,7 +44,7 @@
 
 #elif __FreeBSD__
 #include <sys/thr.h> //Use thr_self() syscall under FreeBSD to get thread id
-#endif 
+#endif
 
 #endif //unix
 
@@ -145,14 +145,14 @@ SPDLOG_CONSTEXPR static int eol_size = sizeof(SPDLOG_EOL) - 1;
 inline void prevent_child_fd(FILE *f)
 {
 #ifdef _WIN32
-	auto file_handle = (HANDLE)_get_osfhandle(_fileno(f));	
-	if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
-			throw spdlog_ex("SetHandleInformation failed", errno);
+    auto file_handle = (HANDLE)_get_osfhandle(_fileno(f));
+    if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
+        throw spdlog_ex("SetHandleInformation failed", errno);
 #else
-	auto fd = fileno(f);	
-	if(fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
-		throw spdlog_ex("fcntl with FD_CLOEXEC failed", errno);
-#endif	
+    auto fd = fileno(f);
+    if(fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
+        throw spdlog_ex("fcntl with FD_CLOEXEC failed", errno);
+#endif
 }
 
 
@@ -164,16 +164,16 @@ inline int fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode
     *fp = _wfsopen((filename.c_str()), mode.c_str(), _SH_DENYWR);
 #else
     *fp = _fsopen((filename.c_str()), mode.c_str(), _SH_DENYWR);
-#endif	
+#endif
 #else //unix
-    *fp = fopen((filename.c_str()), mode.c_str());	
-#endif		
+    *fp = fopen((filename.c_str()), mode.c_str());
+#endif
 
 #ifdef SPDLOG_PREVENT_CHILD_FD
-	if(*fp != nullptr)
-		prevent_child_fd(*fp);
+    if(*fp != nullptr)
+        prevent_child_fd(*fp);
 #endif
-	return *fp == nullptr;
+    return *fp == nullptr;
 }
 
 

@@ -475,7 +475,7 @@ template <typename Impl, typename Char>
 class BasicPrintfArgFormatter;
 
 template <typename CharType,
-         typename ArgFormatter = fmt::ArgFormatter<CharType> >
+          typename ArgFormatter = fmt::ArgFormatter<CharType> >
 class BasicFormatter;
 
 /**
@@ -2647,15 +2647,15 @@ inline uint64_t make_type(const T &arg)
 }
 
 template <unsigned N, bool/*IsPacked*/ = (N < ArgList::MAX_PACKED_ARGS)>
-struct ArgArray;
+          struct ArgArray;
 
 template <unsigned N>
 struct ArgArray<N, true/*IsPacked*/>
 {
     typedef Value Type[N > 0 ? N : 1];
 
-    template <typename Formatter, typename T>
-    static Value make(const T &value)
+template <typename Formatter, typename T>
+static Value make(const T &value)
 {
 #ifdef __clang__
     Value result = MakeValue<Formatter>(value);
@@ -2667,7 +2667,7 @@ struct ArgArray<N, true/*IsPacked*/>
     return MakeValue<Formatter>(value);
 #endif
 }
-};
+         };
 
 template <unsigned N>
 struct ArgArray<N, false/*IsPacked*/>
@@ -3513,7 +3513,7 @@ void BasicWriter<Char>::write_double(T value, const FormatSpec &spec)
         // MSVC's printf doesn't support 'F'.
         type = 'f';
 #endif
-        // Fall through.
+    // Fall through.
     case 'E':
     case 'G':
     case 'A':
