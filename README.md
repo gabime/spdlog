@@ -8,7 +8,7 @@ Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/inclu
 
 ## Platforms
  * Linux, FreeBSD, Solaris
- * Windows (vc 2013+, cygwin/mingw with g++ 4.9.1+)
+ * Windows (vc 2013+, cygwin/mingw)
  * Mac OSX (clang 3.5+)
  * Android
 
