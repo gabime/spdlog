@@ -17,6 +17,7 @@ endif()
 add_library(spdlog INTERFACE)
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
+option(SPDLOG_BUILD_TESTING "Build spdlog tests" ON)
 
 target_include_directories(
     spdlog
@@ -27,12 +28,11 @@ target_include_directories(
 
 set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-include(CTest)
 if(SPDLOG_BUILD_EXAMPLES)
     add_subdirectory(example)
 endif()
 
-if(BUILD_TESTING)
+if(SPDLOG_BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
