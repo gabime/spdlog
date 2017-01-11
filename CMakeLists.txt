@@ -27,12 +27,12 @@ target_include_directories(
 
 set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-include(CTest)
 if(SPDLOG_BUILD_EXAMPLES)
     add_subdirectory(example)
 endif()
 
-if(BUILD_TESTING)
+if(SPDLOG_BUILD_TESTING)
+    include(CTest)
     add_subdirectory(tests)
 endif()
 
