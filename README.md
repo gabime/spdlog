@@ -7,10 +7,9 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/include/spdlog) to your build tree and use a C++11 compiler
 
 ## Platforms
- * Linux (gcc 4.8.1+, clang 3.5+)
- * Windows (visual studio 2013+, cygwin/mingw with g++ 4.9.1+)
+ * Linux, FreeBSD, Solaris
+ * Windows (vc 2013+, cygwin/mingw)
  * Mac OSX (clang 3.5+)
- * Solaris (gcc 5.2.0+)
  * Android
 
 ##Features
@@ -25,6 +24,7 @@ Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/inclu
     * Daily log files.
     * Console logging (colors supported).
     * syslog.
+    * Windows debugger (```OutputDebugString(..)```)
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Severity based filtering - threshold levels can be modified in runtime as well as in compile time.
 
