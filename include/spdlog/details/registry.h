@@ -111,9 +111,11 @@ public:
     void set_pattern(const std::string& pattern)
     {
         std::lock_guard<Mutex> lock(_mutex);
-        _formatter = std::make_shared<pattern_formatter>(pattern);
         for (auto& l : _loggers)
+        {
+            _formatter = std::make_shared<pattern_formatter>(pattern, l.second->properties());
             l.second->set_formatter(_formatter);
+        }
     }
 
     void set_level(level::level_enum log_level)

@@ -396,6 +396,25 @@ private:
     char _ch;
 };
 
+class property_formatter:public flag_formatter
+{
+public:
+    explicit property_formatter(std::shared_ptr<std::unordered_map<std::string, std::string>> properties, const std::string& property_name)
+    : properties(properties), property_name(property_name)
+    {}
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        auto it = properties->find(property_name);
+        if (it != properties->end())
+            msg.formatted << it->second;
+        else
+            msg.formatted << "null";
+    }
+private:
+    std::shared_ptr<std::unordered_map<std::string, std::string>> properties;
+    std::string property_name;
+};
+
 
 //aggregate user chars to display as is
 class aggregate_formatter:public flag_formatter
@@ -469,7 +488,7 @@ class full_formatter:public flag_formatter
 ///////////////////////////////////////////////////////////////////////////////
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern)
+inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern, std::shared_ptr<std::unordered_map<std::string, std::string>> properties): properties(properties)
 {
     compile_pattern(pattern);
 }
@@ -485,10 +504,29 @@ inline void spdlog::pattern_formatter::compile_pattern(const std::string& patter
             if (user_chars) //append user chars found so far
                 _formatters.push_back(std::move(user_chars));
 
-            if (++it != end)
-                handle_flag(*it);
-            else
+            if (++it == end)
                 break;
+
+            // the right brace must be found and the string consumed up until it
+            if (*it == '{')
+            {
+                auto key_start_pos = it + 1 - pattern.begin();
+                auto key_end_pos = pattern.find('}', key_start_pos);
+
+                // ignoring rest of the pattern
+                if (key_end_pos == pattern.size())
+                    break;
+
+                auto key_length = key_end_pos - key_start_pos;
+                auto key = pattern.substr(key_start_pos, key_length);
+                handle_flag(*it, key);
+
+                it += key_length + 1;
+            }
+            else
+            {
+                handle_flag(*it);
+            }
         }
         else // chars not following the % sign should be displayed as is
         {
@@ -501,9 +539,9 @@ inline void spdlog::pattern_formatter::compile_pattern(const std::string& patter
     {
         _formatters.push_back(std::move(user_chars));
     }
-
 }
-inline void spdlog::pattern_formatter::handle_flag(char flag)
+
+inline void spdlog::pattern_formatter::handle_flag(char flag, const std::string& param)
 {
     switch (flag)
     {
@@ -624,6 +662,9 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 
     case ('P'):
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::pid_formatter()));
+        break;
+    case ('{'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::property_formatter(properties, param)));
         break;
 
     default: //Unkown flag appears as is
