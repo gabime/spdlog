@@ -137,8 +137,6 @@ public:
     {
         size_t first_pos = dequeue_pos_.load(std::memory_order_relaxed);
         size_t last_pos = enqueue_pos_.load(std::memory_order_relaxed);
-        if (last_pos <= first_pos)
-            return 0;
         auto size = last_pos - first_pos;
         return size < max_size_ ? size : max_size_;
     }
