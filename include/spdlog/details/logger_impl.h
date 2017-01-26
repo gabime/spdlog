@@ -197,8 +197,42 @@ inline void spdlog::logger::critical(const T& msg)
     log(level::critical, msg);
 }
 
+inline spdlog::ostream spdlog::logger::log(level::level_enum lvl)
+{
+    if (!should_log(lvl))
 
+    return ostream(this, lvl);
+}
 
+inline spdlog::ostream spdlog::logger::trace()
+{
+   return log(level::trace);
+}
+
+inline spdlog::ostream spdlog::logger::debug()
+{
+   return log(level::debug);
+}
+
+inline spdlog::ostream spdlog::logger::info()
+{
+   return log(level::info);
+}
+
+inline spdlog::ostream spdlog::logger::warn()
+{
+   return log(level::warn);
+}
+
+inline spdlog::ostream spdlog::logger::error()
+{
+   return log(level::err);
+}
+
+inline spdlog::ostream spdlog::logger::critical()
+{
+   return log(level::critical);
+}
 
 //
 // name and level
