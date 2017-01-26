@@ -200,6 +200,7 @@ inline void spdlog::logger::critical(const T& msg)
 inline spdlog::ostream spdlog::logger::log(level::level_enum lvl)
 {
     if (!should_log(lvl))
+        return ostream();
 
     return ostream(this, lvl);
 }
