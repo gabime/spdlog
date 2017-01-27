@@ -22,6 +22,7 @@ spdlog::basic_streambuf<CharT, Traits>::basic_streambuf(basic_streambuf&& rhs) :
     m_plogger(std::move(rhs.m_plogger)),
     m_log_msg(nullptr, rhs.m_log_msg.level)
 {
+    rhs.m_plogger = nullptr;
     if (m_plogger)
     {
         m_log_msg.logger_name = std::move(rhs.m_log_msg.logger_name);
