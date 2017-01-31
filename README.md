@@ -15,7 +15,7 @@ To add spdlog directly to your build tree:
 
 ### Homebrew OS X install
 
-Install from the command line using [Homebrew](brew.sh):
+Install from the command line using [Homebrew](https://brew.sh):
 
     # install homebrew package manager
     ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
