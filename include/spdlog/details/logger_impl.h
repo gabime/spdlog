@@ -250,7 +250,15 @@ inline void spdlog::logger::set_level(spdlog::level::level_enum log_level)
 
 inline void spdlog::logger::set_error_handler(spdlog::log_err_handler err_handler)
 {
-    _err_handler = err_handler;
+    if (!err_handler)
+    {
+        _err_handler = [this](const std::string &msg)
+        {
+            this->_default_err_handler(msg);
+        };
+    }
+    else    
+        _err_handler = err_handler;
 }
 
 inline spdlog::log_err_handler spdlog::logger::error_handler()
