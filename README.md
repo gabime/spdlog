@@ -4,7 +4,24 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 
 
 ## Install
-Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/include/spdlog) to your build tree and use a C++11 compiler
+
+### Header only install
+
+To add spdlog directly to your build tree:
+
+- Copy the include [folder](https://github.com/gabime/spdlog/tree/master/include/spdlog) to your build tree 
+- Add the include folder to your C++ include path
+- Compile with C++11
+
+### Homebrew OS X install
+
+Install from the command line using [Homebrew](brew.sh):
+
+    # install homebrew package manager
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    
+    # install latest release of spdlog
+    brew install spdlog
 
 ## Platforms
  * Linux, FreeBSD, Solaris
