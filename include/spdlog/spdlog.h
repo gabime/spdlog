@@ -8,6 +8,8 @@
 
 #pragma once
 
+#define SPDLOG_VERSION "0.11.0"
+
 #include <spdlog/tweakme.h>
 #include <spdlog/common.h>
 #include <spdlog/logger.h>
