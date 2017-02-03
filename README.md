@@ -9,7 +9,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 ## Other Install Options
 * Ubuntu: `apt-get install libspdlog-dev`
 * Homebrew: `brew install spdlog`
-* FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean` or `pkg install spdlog`
+* FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
 * Fedora: `yum install spdlog`
 * Arch Linux: `pacman -S spdlog-git`
 * vcpkg: `vcpkg install spdlog`
