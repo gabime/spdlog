@@ -5,6 +5,8 @@
 
 #pragma once
 
+#define SPDLOG_VERSION "0.11.0"
+
 #include <string>
 #include <initializer_list>
 #include <chrono>
