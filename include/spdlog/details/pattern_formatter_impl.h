@@ -79,8 +79,9 @@ static int to12h(const tm& t)
 }
 
 //Abbreviated weekday name
-static const auto& days() {
-    static const std::array<std::string, 7> arr{ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+using days_array = std::array<std::string, 7>;
+static const days_array& days() {
+    static const days_array arr{ "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
     return arr;
 }
 class a_formatter:public flag_formatter
@@ -92,8 +93,8 @@ class a_formatter:public flag_formatter
 };
 
 //Full weekday name
-static const auto& full_days() {
-    static const std::array<std::string, 7> arr{ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+static const days_array& full_days() {
+    static const days_array arr{ "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
     return arr;
 }
 class A_formatter:public flag_formatter
@@ -105,8 +106,9 @@ class A_formatter:public flag_formatter
 };
 
 //Abbreviated month
-static const auto& months() {
-    static const std::array<std::string, 12> arr{ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" };
+using months_array = std::array<std::string, 12>;
+static const months_array& months() {
+    static const months_array arr{ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" };
     return arr;
 }
 class b_formatter:public flag_formatter
@@ -118,8 +120,8 @@ class b_formatter:public flag_formatter
 };
 
 //Full month name
-static const auto& full_months() {
-    static const std::array<std::string, 12> arr{ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+static const months_array& full_months() {
+    static const months_array arr{ "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
     return arr;
 }
 class B_formatter:public flag_formatter
