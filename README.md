@@ -4,9 +4,11 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 
 
 ## Install
-* Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/include/spdlog) to your build tree and use a C++11 compiler.
+#### Just copy or clone the headers:
 
-#### Or just use you favourite package manager:
+* Copy the source [folder](https://github.com/gabime/spdlog/tree/master/include/spdlog) to your build tree and use a C++11 compiler.
+
+#### Or use your favourite package manager:
 
 * Ubuntu: `apt-get install libspdlog-dev`
 * Homebrew: `brew install spdlog`
