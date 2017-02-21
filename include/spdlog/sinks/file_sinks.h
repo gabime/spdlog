@@ -238,7 +238,10 @@ private:
     details::file_helper _file_helper;
 };
 
-typedef daily_file_sink<std::mutex> daily_file_sink_mt;
-typedef daily_file_sink<details::null_mutex> daily_file_sink_st;
+template<class FileNameCalc = default_daily_file_name_calculator>
+using daily_file_sink_mt = daily_file_sink<std::mutex, FileNameCalc>;
+
+template<class FileNameCalc = default_daily_file_name_calculator>
+using daily_file_sink_st = daily_file_sink<details::null_mutex, FileNameCalc>;
 }
 }

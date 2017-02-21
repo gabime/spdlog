@@ -72,12 +72,12 @@ inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_st(const std::str
 // Create file logger which creates new file at midnight):
 inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_mt(const std::string& logger_name, const filename_t& filename, int hour, int minute)
 {
-    return create<spdlog::sinks::daily_file_sink_mt>(logger_name, filename, SPDLOG_FILENAME_T("txt"), hour, minute);
+    return create<spdlog::sinks::daily_file_sink_mt<>>(logger_name, filename, SPDLOG_FILENAME_T("txt"), hour, minute);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string& logger_name, const filename_t& filename, int hour, int minute)
 {
-    return create<spdlog::sinks::daily_file_sink_st>(logger_name, filename, SPDLOG_FILENAME_T("txt"), hour, minute);
+    return create<spdlog::sinks::daily_file_sink_st<>>(logger_name, filename, SPDLOG_FILENAME_T("txt"), hour, minute);
 }
 
 
