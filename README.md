@@ -11,6 +11,7 @@ Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/inclu
  * Windows (vc 2013+, cygwin/mingw)
  * Mac OSX (clang 3.5+)
  * Android
+ * VxWorks 7
 
 ##Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
@@ -25,6 +26,7 @@ Just copy the source [folder](https://github.com/gabime/spdlog/tree/master/inclu
     * Console logging (colors supported).
     * syslog.
     * Windows debugger (```OutputDebugString(..)```)
+    * Android output (```__android_log_write(..)```)
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Severity based filtering - threshold levels can be modified in runtime as well as in compile time.
 

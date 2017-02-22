@@ -307,7 +307,11 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 
     long int offset_seconds = helper::calculate_gmt_offset(tm);
 #else
+#ifdef __VXWORKS__
+    long int offset_seconds = 0;
+#else
     long int offset_seconds = tm.tm_gmtoff;
+#endif
 #endif
 
     return static_cast<int>(offset_seconds / 60);
@@ -377,7 +381,7 @@ inline std::string errno_str(int err_num)
     else
         return "Unkown error";
 
-#elif defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID) || defined(__SUNPRO_CC) || \
+#elif defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID) || defined(__SUNPRO_CC) || defined(__VXWORKS__) || \
       ((_POSIX_C_SOURCE >= 200112L) && ! defined(_GNU_SOURCE)) // posix version
 
     if (strerror_r(err_num, buf, buf_size) == 0)
