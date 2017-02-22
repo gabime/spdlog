@@ -2,11 +2,12 @@
 // Copyright(c) 2015 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
-
 // spdlog main header file.
 // see example.cpp for usage example
 
 #pragma once
+
+#define SPDLOG_VERSION "0.12.0"
 
 #include <spdlog/tweakme.h>
 #include <spdlog/common.h>
