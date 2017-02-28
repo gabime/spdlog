@@ -39,7 +39,7 @@ int main(int, char*[])
 
 
         // Create basic file logger (not rotated)
-        auto my_logger = spd::basic_logger_mt("basic_logger", "logs/basic.txt");
+        auto my_logger = spd::basic_logger_mt("basic_logger", "logs/basic");
         my_logger->info("Some log message");
 
         // Create a file rotating logger with 5mb size max and 3 rotated files
@@ -106,7 +106,7 @@ void async_example()
 {
     size_t q_size = 4096; //queue size must be power of 2
     spdlog::set_async_mode(q_size);
-    auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
+    auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log");
 
     for (int i = 0; i < 100; ++i)
         async_file->info("Async message #{}", i);
