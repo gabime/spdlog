@@ -197,8 +197,43 @@ inline void spdlog::logger::critical(const T& msg)
     log(level::critical, msg);
 }
 
+inline spdlog::ostream spdlog::logger::log(level::level_enum lvl)
+{
+    if (!should_log(lvl))
+        return ostream();
 
+    return ostream(this, lvl);
+}
 
+inline spdlog::ostream spdlog::logger::trace()
+{
+   return log(level::trace);
+}
+
+inline spdlog::ostream spdlog::logger::debug()
+{
+   return log(level::debug);
+}
+
+inline spdlog::ostream spdlog::logger::info()
+{
+   return log(level::info);
+}
+
+inline spdlog::ostream spdlog::logger::warn()
+{
+   return log(level::warn);
+}
+
+inline spdlog::ostream spdlog::logger::error()
+{
+   return log(level::err);
+}
+
+inline spdlog::ostream spdlog::logger::critical()
+{
+   return log(level::critical);
+}
 
 //
 // name and level
@@ -215,7 +250,15 @@ inline void spdlog::logger::set_level(spdlog::level::level_enum log_level)
 
 inline void spdlog::logger::set_error_handler(spdlog::log_err_handler err_handler)
 {
-    _err_handler = err_handler;
+    if (!err_handler)
+    {
+        _err_handler = [this](const std::string &msg)
+        {
+            this->_default_err_handler(msg);
+        };
+    }
+    else    
+        _err_handler = err_handler;
 }
 
 inline spdlog::log_err_handler spdlog::logger::error_handler()

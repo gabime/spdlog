@@ -1285,7 +1285,7 @@ struct Value
 
     enum Type
     {
-        NONE, NAMED_ARG,
+        NONE_ARG, NAMED_ARG,
         // Integer types should go first,
         INT, UINT, LONG_LONG, ULONG_LONG, BOOL, CHAR, LAST_INTEGER_TYPE = CHAR,
         // followed by floating-point types.
@@ -1684,7 +1684,7 @@ class MakeArg: public Arg
 public:
     MakeArg()
     {
-        type = Arg::NONE;
+        type = Arg::NONE_ARG;
     }
 
     template <typename T>
@@ -1781,12 +1781,12 @@ public:
     {
         using internal::Arg;
         Arg arg;
-        bool use_values = type(MAX_PACKED_ARGS - 1) == Arg::NONE;
+        bool use_values = type(MAX_PACKED_ARGS - 1) == Arg::NONE_ARG;
         if (index < MAX_PACKED_ARGS)
         {
             Arg::Type arg_type = type(index);
             internal::Value &val = arg;
-            if (arg_type != Arg::NONE)
+            if (arg_type != Arg::NONE_ARG)
                 val = use_values ? values_[index] : args_[index];
             arg.type = arg_type;
             return arg;
@@ -1795,12 +1795,12 @@ public:
         {
             // The index is greater than the number of arguments that can be stored
             // in values, so return a "none" argument.
-            arg.type = Arg::NONE;
+            arg.type = Arg::NONE_ARG;
             return arg;
         }
         for (unsigned i = MAX_PACKED_ARGS; i <= index; ++i)
         {
-            if (args_[i].type == Arg::NONE)
+            if (args_[i].type == Arg::NONE_ARG)
                 return args_[i];
         }
         return args_[index];
@@ -1961,7 +1961,7 @@ public:
     {
         switch (arg.type)
         {
-        case Arg::NONE:
+        case Arg::NONE_ARG:
         case Arg::NAMED_ARG:
             FMT_ASSERT(false, "invalid argument type");
             break;
@@ -2672,7 +2672,7 @@ static Value make(const T &value)
 template <unsigned N>
 struct ArgArray<N, false/*IsPacked*/>
 {
-    typedef Arg Type[N + 1]; // +1 for the list end Arg::NONE
+    typedef Arg Type[N + 1]; // +1 for the list end Arg::NONE_ARG
 
     template <typename Formatter, typename T>
     static Arg make(const T &value)

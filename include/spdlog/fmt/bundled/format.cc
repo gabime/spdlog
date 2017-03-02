@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <cmath>
 #include <cstdarg>
 #include <cstddef>  // for std::ptrdiff_t
+#include <stdio.h>
 
 #if defined(_WIN32) && defined(__MINGW32__)
 # include <cstring>
@@ -444,12 +445,12 @@ namespace fmt {
 		typedef internal::NamedArg<Char> NamedArg;
 		const NamedArg *named_arg = FMT_NULL;
 		bool use_values =
-			args.type(ArgList::MAX_PACKED_ARGS - 1) == internal::Arg::NONE;
+			args.type(ArgList::MAX_PACKED_ARGS - 1) == internal::Arg::NONE_ARG;
 		if (use_values) {
 			for (unsigned i = 0;/*nothing*/; ++i) {
 				internal::Arg::Type arg_type = args.type(i);
 				switch (arg_type) {
-				case internal::Arg::NONE:
+				case internal::Arg::NONE_ARG:
 					return;
 				case internal::Arg::NAMED_ARG:
 					named_arg = static_cast<const NamedArg*>(args.values_[i].pointer);
@@ -470,7 +471,7 @@ namespace fmt {
 		}
 		for (unsigned i = ArgList::MAX_PACKED_ARGS;/*nothing*/; ++i) {
 			switch (args.args_[i].type) {
-			case internal::Arg::NONE:
+			case internal::Arg::NONE_ARG:
 				return;
 			case internal::Arg::NAMED_ARG:
 				named_arg = static_cast<const NamedArg*>(args.args_[i].pointer);
@@ -493,7 +494,7 @@ namespace fmt {
 	{
 		Arg arg = args_[arg_index];
 		switch (arg.type) {
-		case Arg::NONE:
+		case Arg::NONE_ARG:
 			error = "argument index out of range";
 			break;
 		case Arg::NAMED_ARG:

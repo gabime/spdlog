@@ -14,6 +14,7 @@
 
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/common.h>
+#include <spdlog/stream.h>
 
 #include <vector>
 #include <memory>
@@ -52,6 +53,14 @@ public:
     template <typename T> void error(const T&);
     template <typename T> void critical(const T&);
 
+    ostream log(level::level_enum lvl);
+    ostream trace();
+    ostream debug();
+    ostream info();
+    ostream warn();
+    ostream error();
+    ostream critical();
+
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
     level::level_enum level() const;
@@ -71,6 +80,9 @@ public:
     const std::vector<sink_ptr>& sinks() const;
 
 protected:
+    template <class CharT, class Traits>
+    friend class basic_streambuf;
+
     virtual void _sink_it(details::log_msg&);
     virtual void _set_pattern(const std::string&);
     virtual void _set_formatter(formatter_ptr);
@@ -92,3 +104,4 @@ protected:
 }
 
 #include <spdlog/details/logger_impl.h>
+#include <spdlog/details/stream_impl.h>
