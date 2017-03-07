@@ -69,7 +69,16 @@ public:
     virtual void flush();
 
     const std::vector<sink_ptr>& sinks() const;
-
+#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+	template <typename... Args> void log(level::level_enum lvl, const wchar_t* msg);
+	template <typename... Args> void log(level::level_enum lvl, const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void trace(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void debug(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void info(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void warn(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void error(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void critical(const wchar_t* fmt, const Args&... args);
+#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 protected:
     virtual void _sink_it(details::log_msg&);
     virtual void _set_pattern(const std::string&);
