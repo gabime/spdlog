@@ -37,6 +37,7 @@ public:
 
     template <typename... Args> void log(level::level_enum lvl, const char* fmt, const Args&... args);
     template <typename... Args> void log(level::level_enum lvl, const char* msg);
+    template <typename... Args> void color(level::level_enum lvl, color::color_enum color, const char* msg);
     template <typename... Args> void trace(const char* fmt, const Args&... args);
     template <typename... Args> void debug(const char* fmt, const Args&... args);
     template <typename... Args> void info(const char* fmt, const Args&... args);

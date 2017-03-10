@@ -7,6 +7,7 @@
 
 #include <spdlog/logger.h>
 #include <spdlog/sinks/stdout_sinks.h>
+#include <spdlog/sinks/ansicolor_sink.h>
 
 #include <memory>
 #include <string>
@@ -98,6 +99,26 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
         _err_handler("Unknown exception");
     }
 
+}
+
+template <typename... Args>
+inline void spdlog::logger::color(level::level_enum lvl, color::color_enum color, const char* msg)
+{
+    if (!should_log(lvl)) return;
+    try
+    {
+        details::log_msg log_msg(&_name, lvl);
+        log_msg.raw << msg;
+        _sink_it(log_msg, color);
+    }
+    catch (const std::exception &ex)
+    {
+        _err_handler(ex.what());
+    }
+    catch (...)
+    {
+        _err_handler("Unknown exception");
+    }
 }
 
 template<typename T>
@@ -250,6 +271,21 @@ inline void spdlog::logger::_sink_it(details::log_msg& msg)
         if( sink->should_log( msg.level))
         {
             sink->log(msg);
+        }
+    }
+
+    if(_should_flush_on(msg))
+        flush();
+}
+
+inline void spdlog::logger::_sink_it(details::log_msg& msg, color::color_enum color)
+{
+    _formatter->format(msg);
+    for (auto &sink : _sinks)
+    {
+        if( sink->should_log( msg.level))
+        {
+            std::static_pointer_cast<spdlog::sinks::ansicolor_sink>(sink)->log_color(msg, color);
         }
     }
 

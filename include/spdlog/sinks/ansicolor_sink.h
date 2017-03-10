@@ -33,6 +33,8 @@ public:
     virtual void log(const details::log_msg& msg) override;
     virtual void flush() override;
 
+    inline void log_color(const details::log_msg& msg, color::color_enum color);
+
     void set_color(level::level_enum color_level, const std::string& color);
 
     /// Formatting codes
@@ -53,6 +55,15 @@ public:
     const std::string magenta    = "\033[35m";
     const std::string cyan       = "\033[36m";
     const std::string white      = "\033[37m";
+
+    //Light Colors
+    const std::string light_red     = "\033[1;31m";
+    const std::string light_green   = "\033[1;32m";
+    const std::string light_yellow  = "\033[1;33m";
+    const std::string light_blue    = "\033[1;34m";
+    const std::string light_magenta = "\033[1;35m";
+    const std::string light_cyan    = "\033[1;36m";
+    const std::string light_white   = "\033[1;37m";
 
     /// Background colors
     const std::string on_grey    = "\033[40m";
@@ -79,6 +90,52 @@ inline ansicolor_sink::ansicolor_sink(sink_ptr wrapped_sink) : sink_(wrapped_sin
     colors_[level::err]     = red + bold;
     colors_[level::critical] = bold + on_red;
     colors_[level::off]      = reset;
+}
+
+inline void ansicolor_sink::log_color(const details::log_msg& msg, color::color_enum color)
+{
+    std::string prefix;
+    switch (color) {
+        case color::color_enum::grey :
+            prefix = grey; break;
+        case color::color_enum::red :
+            prefix = red; break;
+        case color::color_enum::green :
+            prefix = green; break;
+        case color::color_enum::yellow :
+            prefix = yellow; break;
+        case color::color_enum::blue :
+            prefix = blue; break;
+        case color::color_enum::magenta :
+            prefix = magenta; break;
+        case color::color_enum::cyan :
+            prefix = cyan; break;
+        case color::color_enum::white :
+            prefix = white; break;
+        case color::color_enum::light_red :
+            prefix = light_red; break;
+        case color::color_enum::light_green :
+            prefix = light_green; break;
+        case color::color_enum::light_yellow :
+            prefix = light_yellow; break;
+        case color::color_enum::light_blue :
+            prefix = light_blue; break;
+        case color::color_enum::light_magenta :
+            prefix = light_magenta; break;
+        case color::color_enum::light_cyan :
+            prefix = light_cyan; break;
+        default:
+            prefix = reset;
+    }
+    const std::string& s = msg.formatted.str();
+    const std::string& suffix = reset;
+    details::log_msg m;
+    m.level = msg.level;
+    m.logger_name = msg.logger_name;
+    m.time = msg.time;
+    m.thread_id = msg.thread_id;
+    m.formatted << prefix  << s << suffix;
+    sink_->log(m);
 }
 
 inline void ansicolor_sink::log(const details::log_msg& msg)

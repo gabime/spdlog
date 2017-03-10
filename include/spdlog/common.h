@@ -62,6 +62,27 @@ using level_t = std::atomic<int>;
 
 using log_err_handler = std::function<void(const std::string &err_msg)>;
 
+namespace color
+{
+typedef enum
+{
+    grey = 0,
+    red  = 1,
+    green = 2,
+    yellow = 3,
+    blue = 4,
+    magenta = 5,
+    cyan = 6,
+    white = 7,
+    light_red = 8,
+    light_green = 9,
+    light_yellow = 10,
+    light_blue = 11,
+    light_magenta = 12,
+    light_cyan = 13
+}color_enum;
+}
+
 //Log level enum
 namespace level
 {
