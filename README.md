@@ -24,7 +24,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
  * Mac OSX (clang 3.5+)
  * Android
 
-##Features
+## Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
 * Headers only, just copy and use.
 * Feature rich [call style](#usage-example) using the excellent [fmt](https://github.com/fmtlib/fmt) library.
