@@ -57,6 +57,13 @@ int main(int, char*[])
         spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
         rotating_logger->info("This is another message with custom format");
 
+        // Using a per-logger dynamic property map
+        console->set_pattern("*** [%H:%M:%S %z] [thread %t] [%{property_name}] %v ***");
+        auto properties = console->properties();
+        (*properties)["property_name"] = "some property";
+        console->info("This message has a custom property");
+        (*properties)["property_name"] = "new property";
+        console->info("The property has changed");
 
         // Runtime log levels
         spd::set_level(spd::level::info); //Set global log level to info

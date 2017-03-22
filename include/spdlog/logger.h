@@ -15,9 +15,9 @@
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/common.h>
 
-#include <vector>
 #include <memory>
-#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace spdlog
 {
@@ -59,6 +59,8 @@ public:
     void set_pattern(const std::string&);
     void set_formatter(formatter_ptr);
 
+    std::shared_ptr<std::unordered_map<std::string, std::string>> properties() const;
+
     // error handler
     void set_error_handler(log_err_handler);
     log_err_handler error_handler();
@@ -83,6 +85,7 @@ protected:
 
     const std::string _name;
     std::vector<sink_ptr> _sinks;
+    std::shared_ptr<std::unordered_map<std::string, std::string>> _properties;
     formatter_ptr _formatter;
     spdlog::level_t _level;
     spdlog::level_t _flush_level;

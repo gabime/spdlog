@@ -18,7 +18,8 @@ template<class It>
 inline spdlog::logger::logger(const std::string& logger_name, const It& begin, const It& end):
     _name(logger_name),
     _sinks(begin, end),
-    _formatter(std::make_shared<pattern_formatter>("%+"))
+    _properties(std::make_shared<std::unordered_map<std::string, std::string>>()),
+    _formatter(std::make_shared<pattern_formatter>("%+", _properties))
 {
     _level = level::info;
     _flush_level = level::off;
@@ -55,6 +56,11 @@ inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
 inline void spdlog::logger::set_pattern(const std::string& pattern)
 {
     _set_pattern(pattern);
+}
+
+inline std::shared_ptr<std::unordered_map<std::string, std::string>> spdlog::logger::properties() const
+{
+    return _properties;
 }
 
 
@@ -259,7 +265,7 @@ inline void spdlog::logger::_sink_it(details::log_msg& msg)
 
 inline void spdlog::logger::_set_pattern(const std::string& pattern)
 {
-    _formatter = std::make_shared<pattern_formatter>(pattern);
+    _formatter = std::make_shared<pattern_formatter>(pattern, _properties);
 }
 inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
 {
