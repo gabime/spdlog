@@ -3,15 +3,15 @@
 
 void prepare_logdir()
 {
-    spdlog::drop_all();    
+    spdlog::drop_all();
 #ifdef _WIN32
-	system("if not exist logs mkdir logs");
+    system("if not exist logs mkdir logs");
     system("del /F /Q logs\\*");
 #else
-	auto rv = system("mkdir -p logs");
+    auto rv = system("mkdir -p logs");
     rv = system("rm -f logs/*");
     (void)rv;
-#endif    
+#endif
 }
 
 

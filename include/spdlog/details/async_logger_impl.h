@@ -60,13 +60,13 @@ inline void spdlog::async_logger::flush()
 // Error handler
 inline void spdlog::async_logger::set_error_handler(spdlog::log_err_handler err_handler)
 {
-	_err_handler = err_handler;
-	_async_log_helper->set_error_handler(err_handler);
-	
+    _err_handler = err_handler;
+    _async_log_helper->set_error_handler(err_handler);
+
 }
 inline spdlog::log_err_handler spdlog::async_logger::error_handler()
 {
-	return _err_handler;
+    return _err_handler;
 }
 
 

@@ -64,9 +64,9 @@ public:
     //Warning: this can potentialy last forever as we wait it to complete
     void flush() override;
 
-	// Error handler
-	virtual void set_error_handler(log_err_handler) override;
-	virtual log_err_handler error_handler() override;
+    // Error handler
+    virtual void set_error_handler(log_err_handler) override;
+    virtual log_err_handler error_handler() override;
 
 protected:
     void _sink_it(details::log_msg& msg) override;
