@@ -58,17 +58,17 @@ public:
     const std::string& name() const;
     void set_pattern(const std::string&);
     void set_formatter(formatter_ptr);
-
-    // error handler
-    void set_error_handler(log_err_handler);
-    log_err_handler error_handler();
-
+   
     // automatically call flush() if message level >= log_level
     void flush_on(level::level_enum log_level);
 
     virtual void flush();
 
     const std::vector<sink_ptr>& sinks() const;
+
+	// error handler
+	virtual void set_error_handler(log_err_handler);
+	virtual log_err_handler error_handler();
 
 protected:
     virtual void _sink_it(details::log_msg&);

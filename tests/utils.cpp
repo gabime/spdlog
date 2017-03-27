@@ -4,11 +4,12 @@ void prepare_logdir()
 {
     spdlog::drop_all();
 #ifdef _WIN32
-    auto rv = system("del /F /Q logs\\*");
+	system("if not exist logs mkdir logs");
+    system("del /F /Q logs\\*");
 #else
-    auto rv = system("rm -f logs/*");
-#endif
-    (void)rv;
+	system("mkdir -p logs");
+    system("rm -f logs/*");
+#endif    
 }
 
 
