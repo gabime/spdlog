@@ -149,13 +149,13 @@ int main(int, char*[])
         err_handler_example();
 
         // Apply a function on all registered loggers
-        spd::apply_all([&](std::shared_ptr<spdlog::logger> l)
+        spd::apply_all([&](std::shared_ptr<spd::logger> l)
         {
             l->info("End of example.");
         });
 
         // Release and close all loggers
-        spdlog::drop_all();
+        spd::drop_all();
     }
     // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
     catch (const spd::spdlog_ex& ex)
@@ -168,7 +168,7 @@ int main(int, char*[])
 void async_example()
 {
     size_t q_size = 4096; //queue size must be power of 2
-    spdlog::set_async_mode(q_size);
+    spd::set_async_mode(q_size);
     auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
     for (int i = 0; i < 100; ++i)
         async_file->info("Async message #{}", i);
@@ -206,7 +206,7 @@ void user_defined_example()
 //
 void err_handler_example()
 {	
-	spdlog::set_error_handler([](const std::string& msg) {
+	spd::set_error_handler([](const std::string& msg) {
 		std::cerr << "my err handler: " << msg << std::endl;
 	}); 
 	// (or logger->set_error_handler(..) to set for specific logger)
