@@ -1,14 +1,17 @@
 #include "includes.h"
 
+
 void prepare_logdir()
 {
     spdlog::drop_all();
 #ifdef _WIN32
-    auto rv = system("del /F /Q logs\\*");
+    system("if not exist logs mkdir logs");
+    system("del /F /Q logs\\*");
 #else
-    auto rv = system("rm -f logs/*");
-#endif
+    auto rv = system("mkdir -p logs");
+    rv = system("rm -f logs/*");
     (void)rv;
+#endif
 }
 
 

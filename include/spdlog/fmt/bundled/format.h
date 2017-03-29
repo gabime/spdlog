@@ -1,29 +1,29 @@
 /*
-Formatting library for C++
+ Formatting library for C++
 
-Copyright (c) 2012 - 2016, Victor Zverovich
-All rights reserved.
+ Copyright (c) 2012 - 2016, Victor Zverovich
+ All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions are met:
 
-1. Redistributions of source code must retain the above copyright notice, this
-list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice,
-this list of conditions and the following disclaimer in the documentation
-and/or other materials provided with the distribution.
+ 1. Redistributions of source code must retain the above copyright notice, this
+    list of conditions and the following disclaimer.
+ 2. Redistributions in binary form must reproduce the above copyright notice,
+    this list of conditions and the following disclaimer in the documentation
+    and/or other materials provided with the distribution.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 #ifndef FMT_FORMAT_H_
 #define FMT_FORMAT_H_
@@ -39,9 +39,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string>
 #include <vector>
 #include <utility>
-
-// The fmt library version in the form major * 10000 + minor * 100 + patch.
-#define FMT_VERSION 30002
 
 #ifdef _SECURE_SCL
 # define FMT_SECURE_SCL _SECURE_SCL
@@ -183,32 +180,22 @@ typedef __int64          intmax_t;
 # define FMT_USE_NOEXCEPT 0
 #endif
 
-#if FMT_USE_NOEXCEPT || FMT_HAS_FEATURE(cxx_noexcept) || \
-    (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11) || \
-    FMT_MSC_VER >= 1900
-# define FMT_DETECTED_NOEXCEPT noexcept
-#else
-# define FMT_DETECTED_NOEXCEPT throw()
-#endif
-
 #ifndef FMT_NOEXCEPT
 # if FMT_EXCEPTIONS
-#  define FMT_NOEXCEPT FMT_DETECTED_NOEXCEPT
+#  if FMT_USE_NOEXCEPT || FMT_HAS_FEATURE(cxx_noexcept) || \
+    (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11) || \
+    FMT_MSC_VER >= 1900
+#   define FMT_NOEXCEPT noexcept
+#  else
+#   define FMT_NOEXCEPT throw()
+#  endif
 # else
 #  define FMT_NOEXCEPT
 # endif
 #endif
 
-// This is needed because GCC still uses throw() in its headers when exceptions
-// are disabled.
-#if FMT_GCC_VERSION
-# define FMT_DTOR_NOEXCEPT FMT_DETECTED_NOEXCEPT
-#else
-# define FMT_DTOR_NOEXCEPT FMT_NOEXCEPT
-#endif
-
 #ifndef FMT_OVERRIDE
-# if (defined(FMT_USE_OVERRIDE) && FMT_USE_OVERRIDE) || FMT_HAS_FEATURE(cxx_override) || \
+# if FMT_USE_OVERRIDE || FMT_HAS_FEATURE(cxx_override) || \
    (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11) || \
    FMT_MSC_VER >= 1900
 #  define FMT_OVERRIDE override
@@ -217,15 +204,6 @@ typedef __int64          intmax_t;
 # endif
 #endif
 
-#ifndef FMT_NULL
-# if FMT_HAS_FEATURE(cxx_nullptr) || \
-   (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11) || \
-   FMT_MSC_VER >= 1600
-#  define FMT_NULL nullptr
-# else
-#  define FMT_NULL NULL
-# endif
-#endif
 
 // A macro to disallow the copy constructor and operator= functions
 // This should be used in the private: declarations for a class
@@ -256,21 +234,6 @@ typedef __int64          intmax_t;
    (FMT_HAS_FEATURE(cxx_user_literals) || \
      (FMT_GCC_VERSION >= 407 && FMT_HAS_GXX_CXX11) || FMT_MSC_VER >= 1900) && \
    (!defined(FMT_ICC_VERSION) || FMT_ICC_VERSION >= 1500)
-#endif
-
-#ifndef FMT_USE_EXTERN_TEMPLATES
-// Clang doesn't have a feature check for extern templates so we check
-// for variadic templates which were introduced in the same version.
-// For GCC according to cppreference.com they were introduced in 3.3.
-# define FMT_USE_EXTERN_TEMPLATES \
-    ((__clang__ && FMT_USE_VARIADIC_TEMPLATES) || \
-     (FMT_GCC_VERSION >= 303 && FMT_HAS_GXX_CXX11))
-#endif
-
-#ifdef FMT_HEADER_ONLY
-// If header only do not use extern templates.
-# undef FMT_USE_EXTERN_TEMPLATES
-# define FMT_USE_EXTERN_TEMPLATES 0
 #endif
 
 #ifndef FMT_ASSERT
@@ -399,7 +362,7 @@ namespace std
 // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=48891
 // and the same for isnan and signbit.
 template <>
-class numeric_limits<fmt::internal::DummyInt>:
+class numeric_limits<fmt::internal::DummyInt> :
     public std::numeric_limits<int>
 {
 public:
@@ -435,11 +398,8 @@ public:
     static bool isnegative(double x)
     {
         using namespace fmt::internal;
-        if (const_check(sizeof(signbit(x)) == sizeof(bool) ||
-                        sizeof(signbit(x)) == sizeof(int)))
-        {
+        if (const_check(sizeof(signbit(x)) == sizeof(int)))
             return signbit(x) != 0;
-        }
         if (x < 0) return true;
         if (!isnotanumber(x)) return false;
         int dec = 0, sign = 0;
@@ -471,37 +431,34 @@ typedef BasicWriter<wchar_t> WWriter;
 template <typename Char>
 class ArgFormatter;
 
-template <typename Impl, typename Char>
-class BasicPrintfArgFormatter;
-
 template <typename CharType,
           typename ArgFormatter = fmt::ArgFormatter<CharType> >
 class BasicFormatter;
 
 /**
-\rst
-A string reference. It can be constructed from a C string or ``std::string``.
+  \rst
+  A string reference. It can be constructed from a C string or ``std::string``.
 
-You can use one of the following typedefs for common character types:
+  You can use one of the following typedefs for common character types:
 
-+------------+-------------------------+
-| Type       | Definition              |
-+============+=========================+
-| StringRef  | BasicStringRef<char>    |
-+------------+-------------------------+
-| WStringRef | BasicStringRef<wchar_t> |
-+------------+-------------------------+
+  +------------+-------------------------+
+  | Type       | Definition              |
+  +============+=========================+
+  | StringRef  | BasicStringRef<char>    |
+  +------------+-------------------------+
+  | WStringRef | BasicStringRef<wchar_t> |
+  +------------+-------------------------+
 
-This class is most useful as a parameter type to allow passing
-different types of strings to a function, for example::
+  This class is most useful as a parameter type to allow passing
+  different types of strings to a function, for example::
 
-template <typename... Args>
-std::string format(StringRef format_str, const Args & ... args);
+    template <typename... Args>
+    std::string format(StringRef format_str, const Args & ... args);
 
-format("{}", 42);
-format(std::string("{}"), 42);
-\endrst
-*/
+    format("{}", 42);
+    format(std::string("{}"), 42);
+  \endrst
+ */
 template <typename Char>
 class BasicStringRef
 {
@@ -511,33 +468,30 @@ private:
 
 public:
     /** Constructs a string reference object from a C string and a size. */
-    BasicStringRef(const Char *s, std::size_t size): data_(s), size_(size)
-    {}
+    BasicStringRef(const Char *s, std::size_t size) : data_(s), size_(size) {}
 
     /**
-    \rst
-    Constructs a string reference object from a C string computing
-    the size with ``std::char_traits<Char>::length``.
-    \endrst
-    */
+      \rst
+      Constructs a string reference object from a C string computing
+      the size with ``std::char_traits<Char>::length``.
+      \endrst
+     */
     BasicStringRef(const Char *s)
-        : data_(s), size_(std::char_traits<Char>::length(s))
-    {}
+        : data_(s), size_(std::char_traits<Char>::length(s)) {}
 
     /**
-    \rst
-    Constructs a string reference from an ``std::string`` object.
-    \endrst
-    */
+      \rst
+      Constructs a string reference from an ``std::string`` object.
+      \endrst
+     */
     BasicStringRef(const std::basic_string<Char> &s)
-        : data_(s.c_str()), size_(s.size())
-    {}
+        : data_(s.c_str()), size_(s.size()) {}
 
     /**
-    \rst
-    Converts a string reference to an ``std::string`` object.
-    \endrst
-    */
+      \rst
+      Converts a string reference to an ``std::string`` object.
+      \endrst
+     */
     std::basic_string<Char> to_string() const
     {
         return std::basic_string<Char>(data_, size_);
@@ -595,30 +549,30 @@ typedef BasicStringRef<char> StringRef;
 typedef BasicStringRef<wchar_t> WStringRef;
 
 /**
-\rst
-A reference to a null terminated string. It can be constructed from a C
-string or ``std::string``.
+  \rst
+  A reference to a null terminated string. It can be constructed from a C
+  string or ``std::string``.
 
-You can use one of the following typedefs for common character types:
+  You can use one of the following typedefs for common character types:
 
-+-------------+--------------------------+
-| Type        | Definition               |
-+=============+==========================+
-| CStringRef  | BasicCStringRef<char>    |
-+-------------+--------------------------+
-| WCStringRef | BasicCStringRef<wchar_t> |
-+-------------+--------------------------+
+  +-------------+--------------------------+
+  | Type        | Definition               |
+  +=============+==========================+
+  | CStringRef  | BasicCStringRef<char>    |
+  +-------------+--------------------------+
+  | WCStringRef | BasicCStringRef<wchar_t> |
+  +-------------+--------------------------+
 
-This class is most useful as a parameter type to allow passing
-different types of strings to a function, for example::
+  This class is most useful as a parameter type to allow passing
+  different types of strings to a function, for example::
 
-template <typename... Args>
-std::string format(CStringRef format_str, const Args & ... args);
+    template <typename... Args>
+    std::string format(CStringRef format_str, const Args & ... args);
 
-format("{}", 42);
-format(std::string("{}"), 42);
-\endrst
-*/
+    format("{}", 42);
+    format(std::string("{}"), 42);
+  \endrst
+ */
 template <typename Char>
 class BasicCStringRef
 {
@@ -627,16 +581,14 @@ private:
 
 public:
     /** Constructs a string reference object from a C string. */
-    BasicCStringRef(const Char *s): data_(s)
-    {}
+    BasicCStringRef(const Char *s) : data_(s) {}
 
     /**
-    \rst
-    Constructs a string reference from an ``std::string`` object.
-    \endrst
-    */
-    BasicCStringRef(const std::basic_string<Char> &s): data_(s.c_str())
-    {}
+      \rst
+      Constructs a string reference from an ``std::string`` object.
+      \endrst
+     */
+    BasicCStringRef(const std::basic_string<Char> &s) : data_(s.c_str()) {}
 
     /** Returns the pointer to a C string. */
     const Char *c_str() const
@@ -649,15 +601,12 @@ typedef BasicCStringRef<char> CStringRef;
 typedef BasicCStringRef<wchar_t> WCStringRef;
 
 /** A formatting error such as invalid format string. */
-class FormatError: public std::runtime_error
+class FormatError : public std::runtime_error
 {
 public:
     explicit FormatError(CStringRef message)
-        : std::runtime_error(message.c_str())
-    {}
-    FormatError(const FormatError &ferr): std::runtime_error(ferr)
-    {}
-    ~FormatError() FMT_DTOR_NOEXCEPT;
+        : std::runtime_error(message.c_str()) {}
+    ~FormatError() throw();
 };
 
 namespace internal
@@ -691,10 +640,7 @@ inline typename MakeUnsigned<Int>::Type to_unsigned(Int value)
 
 // The number of characters to store in the MemoryBuffer object itself
 // to avoid dynamic memory allocation.
-enum
-{
-    INLINE_BUFFER_SIZE = 500
-};
+enum { INLINE_BUFFER_SIZE = 500 };
 
 #if FMT_SECURE_SCL
 // Use checked iterator to avoid warnings on MSVC.
@@ -713,10 +659,10 @@ inline T *make_ptr(T *ptr, std::size_t)
 }  // namespace internal
 
 /**
-\rst
-A buffer supporting a subset of ``std::vector``'s operations.
-\endrst
-*/
+  \rst
+  A buffer supporting a subset of ``std::vector``'s operations.
+  \endrst
+ */
 template <typename T>
 class Buffer
 {
@@ -728,21 +674,19 @@ protected:
     std::size_t size_;
     std::size_t capacity_;
 
-    Buffer(T *ptr = FMT_NULL, std::size_t capacity = 0)
-        : ptr_(ptr), size_(0), capacity_(capacity)
-    {}
+    Buffer(T *ptr = 0, std::size_t capacity = 0)
+        : ptr_(ptr), size_(0), capacity_(capacity) {}
 
     /**
-    \rst
-    Increases the buffer capacity to hold at least *size* elements updating
-    ``ptr_`` and ``capacity_``.
-    \endrst
-    */
+      \rst
+      Increases the buffer capacity to hold at least *size* elements updating
+      ``ptr_`` and ``capacity_``.
+      \endrst
+     */
     virtual void grow(std::size_t size) = 0;
 
 public:
-    virtual ~Buffer()
-    {}
+    virtual ~Buffer() {}
 
     /** Returns the size of this buffer. */
     std::size_t size() const
@@ -757,8 +701,8 @@ public:
     }
 
     /**
-    Resizes the buffer. If T is a POD type new elements may not be initialized.
-    */
+      Resizes the buffer. If T is a POD type new elements may not be initialized.
+     */
     void resize(std::size_t new_size)
     {
         if (new_size > capacity_)
@@ -767,20 +711,17 @@ public:
     }
 
     /**
-    \rst
-    Reserves space to store at least *capacity* elements.
-    \endrst
-    */
+      \rst
+      Reserves space to store at least *capacity* elements.
+      \endrst
+     */
     void reserve(std::size_t capacity)
     {
         if (capacity > capacity_)
             grow(capacity);
     }
 
-    void clear() FMT_NOEXCEPT
-    {
-        size_ = 0;
-    }
+    void clear() FMT_NOEXCEPT { size_ = 0; }
 
     void push_back(const T &value)
     {
@@ -821,7 +762,7 @@ namespace internal
 // A memory buffer for trivially copyable/constructible types with the first
 // SIZE elements stored in the object itself.
 template <typename T, std::size_t SIZE, typename Allocator = std::allocator<T> >
-class MemoryBuffer: private Allocator, public Buffer<T>
+class MemoryBuffer : private Allocator, public Buffer<T>
 {
 private:
     T data_[SIZE];
@@ -837,8 +778,7 @@ protected:
 
 public:
     explicit MemoryBuffer(const Allocator &alloc = Allocator())
-        : Allocator(alloc), Buffer<T>(data_, SIZE)
-    {}
+        : Allocator(alloc), Buffer<T>(data_, SIZE) {}
     ~MemoryBuffer()
     {
         deallocate();
@@ -896,7 +836,7 @@ void MemoryBuffer<T, SIZE, Allocator>::grow(std::size_t size)
     std::size_t new_capacity = this->capacity_ + this->capacity_ / 2;
     if (size > new_capacity)
         new_capacity = size;
-    T *new_ptr = this->allocate(new_capacity, FMT_NULL);
+    T *new_ptr = this->allocate(new_capacity);
     // The following code doesn't throw, so the raw pointer above doesn't leak.
     std::uninitialized_copy(this->ptr_, this->ptr_ + this->size_,
                             make_ptr(new_ptr, new_capacity));
@@ -913,14 +853,13 @@ void MemoryBuffer<T, SIZE, Allocator>::grow(std::size_t size)
 
 // A fixed-size buffer.
 template <typename Char>
-class FixedBuffer: public fmt::Buffer<Char>
+class FixedBuffer : public fmt::Buffer<Char>
 {
 public:
-    FixedBuffer(Char *array, std::size_t size): fmt::Buffer<Char>(array, size)
-    {}
+    FixedBuffer(Char *array, std::size_t size) : fmt::Buffer<Char>(array, size) {}
 
 protected:
-    FMT_API void grow(std::size_t size) FMT_OVERRIDE;
+    FMT_API void grow(std::size_t size);
 };
 
 template <typename Char>
@@ -942,7 +881,7 @@ template <typename Char>
 class CharTraits;
 
 template <>
-class CharTraits<char>: public BasicCharTraits<char>
+class CharTraits<char> : public BasicCharTraits<char>
 {
 private:
     // Conversion from wchar_t to char is not allowed.
@@ -960,17 +899,8 @@ public:
                                     const char *format, unsigned width, int precision, T value);
 };
 
-#if FMT_USE_EXTERN_TEMPLATES
-extern template int CharTraits<char>::format_float<double>
-(char *buffer, std::size_t size,
- const char* format, unsigned width, int precision, double value);
-extern template int CharTraits<char>::format_float<long double>
-(char *buffer, std::size_t size,
- const char* format, unsigned width, int precision, long double value);
-#endif
-
 template <>
-class CharTraits<wchar_t>: public BasicCharTraits<wchar_t>
+class CharTraits<wchar_t> : public BasicCharTraits<wchar_t>
 {
 public:
     static wchar_t convert(char value)
@@ -986,15 +916,6 @@ public:
     FMT_API static int format_float(wchar_t *buffer, std::size_t size,
                                     const wchar_t *format, unsigned width, int precision, T value);
 };
-
-#if FMT_USE_EXTERN_TEMPLATES
-extern template int CharTraits<wchar_t>::format_float<double>
-(wchar_t *buffer, std::size_t size,
- const wchar_t* format, unsigned width, int precision, double value);
-extern template int CharTraits<wchar_t>::format_float<long double>
-(wchar_t *buffer, std::size_t size,
- const wchar_t* format, unsigned width, int precision, long double value);
-#endif
 
 // Checks if a number is negative - used to avoid warnings.
 template <bool IsSigned>
@@ -1059,7 +980,13 @@ struct FMT_API BasicData
     static const char DIGITS[];
 };
 
-#if FMT_USE_EXTERN_TEMPLATES
+#ifndef FMT_USE_EXTERN_TEMPLATES
+// Clang doesn't have a feature check for extern templates so we check
+// for variadic templates which were introduced in the same version.
+# define FMT_USE_EXTERN_TEMPLATES (__clang__ && FMT_USE_VARIADIC_TEMPLATES)
+#endif
+
+#if FMT_USE_EXTERN_TEMPLATES && !defined(FMT_HEADER_ONLY)
 extern template struct BasicData<void>;
 #endif
 
@@ -1108,8 +1035,7 @@ inline unsigned count_digits(uint32_t n)
 struct NoThousandsSep
 {
     template <typename Char>
-    void operator()(Char *)
-    {}
+    void operator()(Char *) {}
 };
 
 // A functor that adds a thousands separator.
@@ -1122,8 +1048,7 @@ private:
     unsigned digit_index_;
 
 public:
-    explicit ThousandsSep(fmt::StringRef sep): sep_(sep), digit_index_(0)
-    {}
+    explicit ThousandsSep(fmt::StringRef sep) : sep_(sep), digit_index_(0) {}
 
     template <typename Char>
     void operator()(Char *&buffer)
@@ -1170,8 +1095,7 @@ inline void format_decimal(Char *buffer, UInt value, unsigned num_digits,
 template <typename UInt, typename Char>
 inline void format_decimal(Char *buffer, UInt value, unsigned num_digits)
 {
-    format_decimal(buffer, value, num_digits, NoThousandsSep());
-    return;
+    return format_decimal(buffer, value, num_digits, NoThousandsSep());
 }
 
 #ifndef _WIN32
@@ -1218,8 +1142,7 @@ private:
     MemoryBuffer<char, INLINE_BUFFER_SIZE> buffer_;
 
 public:
-    UTF16ToUTF8()
-    {}
+    UTF16ToUTF8() {}
     FMT_API explicit UTF16ToUTF8(WStringRef s);
     operator StringRef() const
     {
@@ -1248,6 +1171,9 @@ FMT_API void format_windows_error(fmt::Writer &out, int error_code,
                                   fmt::StringRef message) FMT_NOEXCEPT;
 #endif
 
+FMT_API void format_system_error(fmt::Writer &out, int error_code,
+                                 fmt::StringRef message) FMT_NOEXCEPT;
+
 // A formatting argument value.
 struct Value
 {
@@ -1258,7 +1184,7 @@ struct Value
         std::size_t size;
     };
 
-    typedef void(*FormatFunc)(
+    typedef void (*FormatFunc)(
         void *formatter, const void *arg, void *format_str_ptr);
 
     struct CustomValue
@@ -1296,19 +1222,16 @@ struct Value
 
 // A formatting argument. It is a trivially copyable/constructible type to
 // allow storage in internal::MemoryBuffer.
-struct Arg: Value
+struct Arg : Value
 {
     Type type;
 };
 
 template <typename Char>
 struct NamedArg;
-template <typename Char, typename T>
-struct NamedArgWithType;
 
 template <typename T = void>
-struct Null
-{};
+struct Null {};
 
 // A helper class template to enable or disable overloads taking wide
 // characters and strings in MakeValue.
@@ -1339,19 +1262,13 @@ No &convert(...);
 template<typename T, bool ENABLE_CONVERSION>
 struct ConvertToIntImpl
 {
-    enum
-    {
-        value = ENABLE_CONVERSION
-    };
+    enum { value = ENABLE_CONVERSION };
 };
 
 template<typename T, bool ENABLE_CONVERSION>
 struct ConvertToIntImpl2
 {
-    enum
-    {
-        value = false
-    };
+    enum { value = false };
 };
 
 template<typename T>
@@ -1367,14 +1284,8 @@ struct ConvertToIntImpl2<T, true>
 template<typename T>
 struct ConvertToInt
 {
-    enum
-    {
-        enable_conversion = sizeof(fmt::internal::convert(get<T>())) == sizeof(Yes)
-    };
-    enum
-    {
-        value = ConvertToIntImpl2<T, enable_conversion>::value
-    };
+    enum { enable_conversion = sizeof(convert(get<T>())) == sizeof(Yes) };
+    enum { value = ConvertToIntImpl2<T, enable_conversion>::value };
 };
 
 #define FMT_DISABLE_CONVERSION_TO_INT(Type) \
@@ -1387,8 +1298,7 @@ FMT_DISABLE_CONVERSION_TO_INT(double);
 FMT_DISABLE_CONVERSION_TO_INT(long double);
 
 template<bool B, class T = void>
-struct EnableIf
-{};
+struct EnableIf {};
 
 template<class T>
 struct EnableIf<true, T>
@@ -1409,37 +1319,21 @@ struct Conditional<false, T, F>
 };
 
 // For bcc32 which doesn't understand ! in template arguments.
-template <bool>
+template<bool>
 struct Not
 {
-    enum
-    {
-        value = 0
-    };
+    enum { value = 0 };
 };
 
-template <>
+template<>
 struct Not<false>
 {
-    enum
-    {
-        value = 1
-    };
+    enum { value = 1 };
 };
 
-template <typename T>
-struct False
+template<typename T, T> struct LConvCheck
 {
-    enum
-    {
-        value = 0
-    };
-};
-
-template <typename T, T> struct LConvCheck
-{
-    LConvCheck(int)
-    {}
+    LConvCheck(int) {}
 };
 
 // Returns the thousands separator for the current locale.
@@ -1457,39 +1351,9 @@ inline fmt::StringRef thousands_sep(...)
     return "";
 }
 
-#define FMT_CONCAT(a, b) a##b
-
-#if FMT_GCC_VERSION >= 303
-# define FMT_UNUSED __attribute__((unused))
-#else
-# define FMT_UNUSED
-#endif
-
-#ifndef FMT_USE_STATIC_ASSERT
-# define FMT_USE_STATIC_ASSERT 0
-#endif
-
-#if FMT_USE_STATIC_ASSERT || FMT_HAS_FEATURE(cxx_static_assert) || \
-  (FMT_GCC_VERSION >= 403 && FMT_HAS_GXX_CXX11) || _MSC_VER >= 1600
-# define FMT_STATIC_ASSERT(cond, message) static_assert(cond, message)
-#else
-# define FMT_CONCAT_(a, b) FMT_CONCAT(a, b)
-# define FMT_STATIC_ASSERT(cond, message) \
-  typedef int FMT_CONCAT_(Assert, __LINE__)[(cond) ? 1 : -1] FMT_UNUSED
-#endif
-
-template <typename Formatter, typename Char, typename T>
-void format_arg(Formatter &, const Char *, const T &)
-{
-    FMT_STATIC_ASSERT(False<T>::value,
-                      "Cannot format argument. To enable the use of ostream "
-                      "operator<< include fmt/ostream.h. Otherwise provide "
-                      "an overload of format_arg.");
-}
-
 // Makes an Arg object from any type.
 template <typename Formatter>
-class MakeValue: public Arg
+class MakeValue : public Arg
 {
 public:
     typedef typename Formatter::Char Char;
@@ -1534,14 +1398,13 @@ private:
     static void format_custom_arg(
         void *formatter, const void *arg, void *format_str_ptr)
     {
-        format_arg(*static_cast<Formatter*>(formatter),
-                   *static_cast<const Char**>(format_str_ptr),
-                   *static_cast<const T*>(arg));
+        format(*static_cast<Formatter*>(formatter),
+               *static_cast<const Char**>(format_str_ptr),
+               *static_cast<const T*>(arg));
     }
 
 public:
-    MakeValue()
-    {}
+    MakeValue() {}
 
 #define FMT_MAKE_VALUE_(Type, field, TYPE, rhs) \
   MakeValue(Type value) { field = rhs; } \
@@ -1660,26 +1523,16 @@ public:
     {
         pointer = &value;
     }
-    template <typename Char_, typename T>
-    MakeValue(const NamedArgWithType<Char_, T> &value)
-    {
-        pointer = &value;
-    }
 
     template <typename Char_>
     static uint64_t type(const NamedArg<Char_> &)
     {
         return Arg::NAMED_ARG;
     }
-    template <typename Char_, typename T>
-    static uint64_t type(const NamedArgWithType<Char_, T> &)
-    {
-        return Arg::NAMED_ARG;
-    }
 };
 
 template <typename Formatter>
-class MakeArg: public Arg
+class MakeArg : public Arg
 {
 public:
     MakeArg()
@@ -1696,33 +1549,24 @@ public:
 };
 
 template <typename Char>
-struct NamedArg: Arg
+struct NamedArg : Arg
 {
     BasicStringRef<Char> name;
 
     template <typename T>
     NamedArg(BasicStringRef<Char> argname, const T &value)
-        : Arg(MakeArg< BasicFormatter<Char> >(value)), name(argname)
-    {}
+        : Arg(MakeArg< BasicFormatter<Char> >(value)), name(argname) {}
 };
 
-template <typename Char, typename T>
-struct NamedArgWithType: NamedArg<Char>
-{
-    NamedArgWithType(BasicStringRef<Char> argname, const T &value)
-        : NamedArg<Char>(argname, value)
-    {}
-};
-
-class RuntimeError: public std::runtime_error
+class RuntimeError : public std::runtime_error
 {
 protected:
-    RuntimeError(): std::runtime_error("")
-    {}
-    RuntimeError(const RuntimeError &rerr): std::runtime_error(rerr)
-    {}
-    ~RuntimeError() FMT_DTOR_NOEXCEPT;
+    RuntimeError() : std::runtime_error("") {}
+    ~RuntimeError() throw();
 };
+
+template <typename Char>
+class PrintfArgFormatter;
 
 template <typename Char>
 class ArgMap;
@@ -1748,7 +1592,10 @@ private:
 
     internal::Arg::Type type(unsigned index) const
     {
-        return type(types_, index);
+        unsigned shift = index * 4;
+        uint64_t mask = 0xf;
+        return static_cast<internal::Arg::Type>(
+                   (types_ & (mask << shift)) >> shift);
     }
 
     template <typename Char>
@@ -1756,25 +1603,14 @@ private:
 
 public:
     // Maximum number of arguments with packed types.
-    enum
-    {
-        MAX_PACKED_ARGS = 16
-    };
+    enum { MAX_PACKED_ARGS = 16 };
 
-    ArgList(): types_(0)
-    {}
+    ArgList() : types_(0) {}
 
     ArgList(ULongLong types, const internal::Value *values)
-        : types_(types), values_(values)
-    {}
+        : types_(types), values_(values) {}
     ArgList(ULongLong types, const internal::Arg *args)
-        : types_(types), args_(args)
-    {}
-
-    uint64_t types() const
-    {
-        return types_;
-    }
+        : types_(types), args_(args) {}
 
     /** Returns the argument at specified index. */
     internal::Arg operator[](unsigned index) const
@@ -1805,42 +1641,34 @@ public:
         }
         return args_[index];
     }
-
-    static internal::Arg::Type type(uint64_t types, unsigned index)
-    {
-        unsigned shift = index * 4;
-        uint64_t mask = 0xf;
-        return static_cast<internal::Arg::Type>(
-                   (types & (mask << shift)) >> shift);
-    }
 };
 
 #define FMT_DISPATCH(call) static_cast<Impl*>(this)->call
 
 /**
-\rst
-An argument visitor based on the `curiously recurring template pattern
-<http://en.wikipedia.org/wiki/Curiously_recurring_template_pattern>`_.
+  \rst
+  An argument visitor based on the `curiously recurring template pattern
+  <http://en.wikipedia.org/wiki/Curiously_recurring_template_pattern>`_.
 
-To use `~fmt::ArgVisitor` define a subclass that implements some or all of the
-visit methods with the same signatures as the methods in `~fmt::ArgVisitor`,
-for example, `~fmt::ArgVisitor::visit_int()`.
-Pass the subclass as the *Impl* template parameter. Then calling
-`~fmt::ArgVisitor::visit` for some argument will dispatch to a visit method
-specific to the argument type. For example, if the argument type is
-``double`` then the `~fmt::ArgVisitor::visit_double()` method of a subclass
-will be called. If the subclass doesn't contain a method with this signature,
-then a corresponding method of `~fmt::ArgVisitor` will be called.
+  To use `~fmt::ArgVisitor` define a subclass that implements some or all of the
+  visit methods with the same signatures as the methods in `~fmt::ArgVisitor`,
+  for example, `~fmt::ArgVisitor::visit_int()`.
+  Pass the subclass as the *Impl* template parameter. Then calling
+  `~fmt::ArgVisitor::visit` for some argument will dispatch to a visit method
+  specific to the argument type. For example, if the argument type is
+  ``double`` then the `~fmt::ArgVisitor::visit_double()` method of a subclass
+  will be called. If the subclass doesn't contain a method with this signature,
+  then a corresponding method of `~fmt::ArgVisitor` will be called.
 
-**Example**::
+  **Example**::
 
-class MyArgVisitor : public fmt::ArgVisitor<MyArgVisitor, void> {
-public:
-void visit_int(int value) { fmt::print("{}", value); }
-void visit_double(double value) { fmt::print("{}", value ); }
-};
-\endrst
-*/
+    class MyArgVisitor : public fmt::ArgVisitor<MyArgVisitor, void> {
+     public:
+      void visit_int(int value) { fmt::print("{}", value); }
+      void visit_double(double value) { fmt::print("{}", value ); }
+    };
+  \endrst
+ */
 template <typename Impl, typename Result>
 class ArgVisitor
 {
@@ -1848,8 +1676,7 @@ private:
     typedef internal::Arg Arg;
 
 public:
-    void report_unhandled_arg()
-    {}
+    void report_unhandled_arg() {}
 
     Result visit_unhandled_arg()
     {
@@ -1950,13 +1777,13 @@ public:
     }
 
     /**
-    \rst
-    Visits an argument dispatching to the appropriate visit method based on
-    the argument type. For example, if the argument type is ``double`` then
-    the `~fmt::ArgVisitor::visit_double()` method of the *Impl* class will be
-    called.
-    \endrst
-    */
+      \rst
+      Visits an argument dispatching to the appropriate visit method based on
+      the argument type. For example, if the argument type is ``double`` then
+      the `~fmt::ArgVisitor::visit_double()` method of the *Impl* class will be
+      called.
+      \endrst
+     */
     Result visit(const Arg &arg)
     {
         switch (arg.type)
@@ -2009,12 +1836,11 @@ enum
 };
 
 // An empty format specifier.
-struct EmptySpec
-{};
+struct EmptySpec {};
 
 // A type specifier.
 template <char TYPE>
-struct TypeSpec: EmptySpec
+struct TypeSpec : EmptySpec
 {
     Alignment align() const
     {
@@ -2050,8 +1876,7 @@ struct WidthSpec
     // two specialization of WidthSpec and its subclasses.
     wchar_t fill_;
 
-    WidthSpec(unsigned width, wchar_t fill): width_(width), fill_(fill)
-    {}
+    WidthSpec(unsigned width, wchar_t fill) : width_(width), fill_(fill) {}
 
     unsigned width() const
     {
@@ -2064,13 +1889,12 @@ struct WidthSpec
 };
 
 // An alignment specifier.
-struct AlignSpec: WidthSpec
+struct AlignSpec : WidthSpec
 {
     Alignment align_;
 
     AlignSpec(unsigned width, wchar_t fill, Alignment align = ALIGN_DEFAULT)
-        : WidthSpec(width, fill), align_(align)
-    {}
+        : WidthSpec(width, fill), align_(align) {}
 
     Alignment align() const
     {
@@ -2085,10 +1909,9 @@ struct AlignSpec: WidthSpec
 
 // An alignment and type specifier.
 template <char TYPE>
-struct AlignTypeSpec: AlignSpec
+struct AlignTypeSpec : AlignSpec
 {
-    AlignTypeSpec(unsigned width, wchar_t fill): AlignSpec(width, fill)
-    {}
+    AlignTypeSpec(unsigned width, wchar_t fill) : AlignSpec(width, fill) {}
 
     bool flag(unsigned) const
     {
@@ -2101,7 +1924,7 @@ struct AlignTypeSpec: AlignSpec
 };
 
 // A full format specifier.
-struct FormatSpec: AlignSpec
+struct FormatSpec : AlignSpec
 {
     unsigned flags_;
     int precision_;
@@ -2109,8 +1932,7 @@ struct FormatSpec: AlignSpec
 
     FormatSpec(
         unsigned width = 0, char type = 0, wchar_t fill = ' ')
-        : AlignSpec(width, fill), flags_(0), precision_(-1), type_(type)
-    {}
+        : AlignSpec(width, fill), flags_(0), precision_(-1), type_(type) {}
 
     bool flag(unsigned f) const
     {
@@ -2128,15 +1950,14 @@ struct FormatSpec: AlignSpec
 
 // An integer format specifier.
 template <typename T, typename SpecT = TypeSpec<0>, typename Char = char>
-class IntFormatSpec: public SpecT
+class IntFormatSpec : public SpecT
 {
 private:
     T value_;
 
 public:
     IntFormatSpec(T val, const SpecT &spec = SpecT())
-        : SpecT(spec), value_(val)
-    {}
+        : SpecT(spec), value_(val) {}
 
     T value() const
     {
@@ -2146,7 +1967,7 @@ public:
 
 // A string format specifier.
 template <typename Char>
-class StrFormatSpec: public AlignSpec
+class StrFormatSpec : public AlignSpec
 {
 private:
     const Char *str_;
@@ -2166,41 +1987,41 @@ public:
 };
 
 /**
-Returns an integer format specifier to format the value in base 2.
-*/
+  Returns an integer format specifier to format the value in base 2.
+ */
 IntFormatSpec<int, TypeSpec<'b'> > bin(int value);
 
 /**
-Returns an integer format specifier to format the value in base 8.
-*/
+  Returns an integer format specifier to format the value in base 8.
+ */
 IntFormatSpec<int, TypeSpec<'o'> > oct(int value);
 
 /**
-Returns an integer format specifier to format the value in base 16 using
-lower-case letters for the digits above 9.
-*/
+  Returns an integer format specifier to format the value in base 16 using
+  lower-case letters for the digits above 9.
+ */
 IntFormatSpec<int, TypeSpec<'x'> > hex(int value);
 
 /**
-Returns an integer formatter format specifier to format in base 16 using
-upper-case letters for the digits above 9.
-*/
+  Returns an integer formatter format specifier to format in base 16 using
+  upper-case letters for the digits above 9.
+ */
 IntFormatSpec<int, TypeSpec<'X'> > hexu(int value);
 
 /**
-\rst
-Returns an integer format specifier to pad the formatted argument with the
-fill character to the specified width using the default (right) numeric
-alignment.
+  \rst
+  Returns an integer format specifier to pad the formatted argument with the
+  fill character to the specified width using the default (right) numeric
+  alignment.
 
-**Example**::
+  **Example**::
 
-MemoryWriter out;
-out << pad(hex(0xcafe), 8, '0');
-// out.str() == "0000cafe"
+    MemoryWriter out;
+    out << pad(hex(0xcafe), 8, '0');
+    // out.str() == "0000cafe"
 
-\endrst
-*/
+  \endrst
+ */
 template <char TYPE_CODE, typename Char>
 IntFormatSpec<int, AlignTypeSpec<TYPE_CODE>, Char> pad(
     int value, unsigned width, Char fill = ' ');
@@ -2262,17 +2083,17 @@ FMT_DEFINE_INT_FORMATTERS(LongLong)
 FMT_DEFINE_INT_FORMATTERS(ULongLong)
 
 /**
-\rst
-Returns a string formatter that pads the formatted argument with the fill
-character to the specified width using the default (left) string alignment.
+  \rst
+  Returns a string formatter that pads the formatted argument with the fill
+  character to the specified width using the default (left) string alignment.
 
-**Example**::
+  **Example**::
 
-std::string s = str(MemoryWriter() << pad("abc", 8));
-// s == "abc     "
+    std::string s = str(MemoryWriter() << pad("abc", 8));
+    // s == "abc     "
 
-\endrst
-*/
+  \endrst
+ */
 template <typename Char>
 inline StrFormatSpec<Char> pad(
     const Char *str, unsigned width, Char fill = ' ')
@@ -2302,7 +2123,7 @@ private:
 public:
     FMT_API void init(const ArgList &args);
 
-    const internal::Arg *find(const fmt::BasicStringRef<Char> &name) const
+    const internal::Arg* find(const fmt::BasicStringRef<Char> &name) const
     {
         // The list is unsorted, so just return the first matching name.
         for (typename MapType::const_iterator it = map_.begin(), end = map_.end();
@@ -2311,12 +2132,12 @@ public:
             if (it->first == name)
                 return &it->second;
         }
-        return FMT_NULL;
+        return 0;
     }
 };
 
 template <typename Impl, typename Char>
-class ArgFormatterBase: public ArgVisitor<Impl, void>
+class ArgFormatterBase : public ArgVisitor<Impl, void>
 {
 private:
     BasicWriter<Char> &writer_;
@@ -2350,14 +2171,13 @@ protected:
 
     void write(const char *value)
     {
-        Arg::StringValue<char> str = { value, value ? std::strlen(value) : 0 };
+        Arg::StringValue<char> str = {value, value != 0 ? std::strlen(value) : 0};
         writer_.write_str(str, spec_);
     }
 
 public:
     ArgFormatterBase(BasicWriter<Char> &w, FormatSpec &s)
-        : writer_(w), spec_(s)
-    {}
+        : writer_(w), spec_(s) {}
 
     template <typename T>
     void visit_any_int(T value)
@@ -2374,10 +2194,7 @@ public:
     void visit_bool(bool value)
     {
         if (spec_.type_)
-        {
-            visit_any_int(value);
-            return;
-        }
+            return visit_any_int(value);
         write(value);
     }
 
@@ -2503,27 +2320,48 @@ protected:
             w << BasicStringRef<Char>(start, internal::to_unsigned(end - start));
     }
 };
+
+// A printf formatter.
+template <typename Char>
+class PrintfFormatter : private FormatterBase
+{
+private:
+    void parse_flags(FormatSpec &spec, const Char *&s);
+
+    // Returns the argument with specified index or, if arg_index is equal
+    // to the maximum unsigned value, the next argument.
+    Arg get_arg(const Char *s,
+                unsigned arg_index = (std::numeric_limits<unsigned>::max)());
+
+    // Parses argument index, flags and width and returns the argument index.
+    unsigned parse_header(const Char *&s, FormatSpec &spec);
+
+public:
+    explicit PrintfFormatter(const ArgList &args) : FormatterBase(args) {}
+    FMT_API void format(BasicWriter<Char> &writer,
+                        BasicCStringRef<Char> format_str);
+};
 }  // namespace internal
 
 /**
-\rst
-An argument formatter based on the `curiously recurring template pattern
-<http://en.wikipedia.org/wiki/Curiously_recurring_template_pattern>`_.
+  \rst
+  An argument formatter based on the `curiously recurring template pattern
+  <http://en.wikipedia.org/wiki/Curiously_recurring_template_pattern>`_.
 
-To use `~fmt::BasicArgFormatter` define a subclass that implements some or
-all of the visit methods with the same signatures as the methods in
-`~fmt::ArgVisitor`, for example, `~fmt::ArgVisitor::visit_int()`.
-Pass the subclass as the *Impl* template parameter. When a formatting
-function processes an argument, it will dispatch to a visit method
-specific to the argument type. For example, if the argument type is
-``double`` then the `~fmt::ArgVisitor::visit_double()` method of a subclass
-will be called. If the subclass doesn't contain a method with this signature,
-then a corresponding method of `~fmt::BasicArgFormatter` or its superclass
-will be called.
-\endrst
-*/
+  To use `~fmt::BasicArgFormatter` define a subclass that implements some or
+  all of the visit methods with the same signatures as the methods in
+  `~fmt::ArgVisitor`, for example, `~fmt::ArgVisitor::visit_int()`.
+  Pass the subclass as the *Impl* template parameter. When a formatting
+  function processes an argument, it will dispatch to a visit method
+  specific to the argument type. For example, if the argument type is
+  ``double`` then the `~fmt::ArgVisitor::visit_double()` method of a subclass
+  will be called. If the subclass doesn't contain a method with this signature,
+  then a corresponding method of `~fmt::BasicArgFormatter` or its superclass
+  will be called.
+  \endrst
+ */
 template <typename Impl, typename Char>
-class BasicArgFormatter: public internal::ArgFormatterBase<Impl, Char>
+class BasicArgFormatter : public internal::ArgFormatterBase<Impl, Char>
 {
 private:
     BasicFormatter<Char, Impl> &formatter_;
@@ -2531,20 +2369,19 @@ private:
 
 public:
     /**
-    \rst
-    Constructs an argument formatter object.
-    *formatter* is a reference to the main formatter object, *spec* contains
-    format specifier information for standard argument types, and *fmt* points
-    to the part of the format string being parsed for custom argument types.
-    \endrst
-    */
+      \rst
+      Constructs an argument formatter object.
+      *formatter* is a reference to the main formatter object, *spec* contains
+      format specifier information for standard argument types, and *fmt* points
+      to the part of the format string being parsed for custom argument types.
+      \endrst
+     */
     BasicArgFormatter(BasicFormatter<Char, Impl> &formatter,
                       FormatSpec &spec, const Char *fmt)
         : internal::ArgFormatterBase<Impl, Char>(formatter.writer(), spec),
-          formatter_(formatter), format_(fmt)
-    {}
+          formatter_(formatter), format_(fmt) {}
 
-    /** Formats an argument of a custom (user-defined) type. */
+    /** Formats argument of a custom (user-defined) type. */
     void visit_custom(internal::Arg::CustomValue c)
     {
         c.format(&formatter_, c.value, &format_);
@@ -2553,19 +2390,18 @@ public:
 
 /** The default argument formatter. */
 template <typename Char>
-class ArgFormatter: public BasicArgFormatter<ArgFormatter<Char>, Char>
+class ArgFormatter : public BasicArgFormatter<ArgFormatter<Char>, Char>
 {
 public:
     /** Constructs an argument formatter object. */
     ArgFormatter(BasicFormatter<Char> &formatter,
                  FormatSpec &spec, const Char *fmt)
-        : BasicArgFormatter<ArgFormatter<Char>, Char>(formatter, spec, fmt)
-    {}
+        : BasicArgFormatter<ArgFormatter<Char>, Char>(formatter, spec, fmt) {}
 };
 
 /** This template formats data and writes the output to a writer. */
 template <typename CharType, typename ArgFormatter>
-class BasicFormatter: private internal::FormatterBase
+class BasicFormatter : private internal::FormatterBase
 {
 public:
     /** The character type for the output. */
@@ -2591,15 +2427,14 @@ private:
 
 public:
     /**
-    \rst
-    Constructs a ``BasicFormatter`` object. References to the arguments and
-    the writer are stored in the formatter object so make sure they have
-    appropriate lifetimes.
-    \endrst
-    */
+     \rst
+     Constructs a ``BasicFormatter`` object. References to the arguments and
+     the writer are stored in the formatter object so make sure they have
+     appropriate lifetimes.
+     \endrst
+     */
     BasicFormatter(const ArgList &args, BasicWriter<Char> &w)
-        : internal::FormatterBase(args), writer_(w)
-    {}
+        : internal::FormatterBase(args), writer_(w) {}
 
     /** Returns a reference to the writer associated with this formatter. */
     BasicWriter<Char> &writer()
@@ -2646,7 +2481,7 @@ inline uint64_t make_type(const T &arg)
     return MakeValue< BasicFormatter<char> >::type(arg);
 }
 
-template <unsigned N, bool/*IsPacked*/ = (N < ArgList::MAX_PACKED_ARGS)>
+template <unsigned N, bool/*IsPacked*/= (N < ArgList::MAX_PACKED_ARGS)>
           struct ArgArray;
 
 template <unsigned N>
@@ -2694,12 +2529,10 @@ struct ArgType
 {
     uint64_t type;
 
-    ArgType(): type(0)
-    {}
+    ArgType() : type(0) {}
 
     template <typename T>
-    ArgType(const T &arg) : type(make_type(arg))
-    {}
+    ArgType(const T &arg) : type(make_type(arg)) {}
 };
 
 # define FMT_ARG_TYPE_DEFAULT(n) ArgType t##n = ArgType()
@@ -2813,10 +2646,10 @@ inline uint64_t make_type(FMT_GEN15(FMT_ARG_TYPE_DEFAULT))
   FMT_FOR_EACH9(f, x0, x1, x2, x3, x4, x5, x6, x7, x8), f(x9, 9)
 
 /**
-An error returned by an operating system or a language runtime,
-for example a file opening error.
+ An error returned by an operating system or a language runtime,
+ for example a file opening error.
 */
-class SystemError: public internal::RuntimeError
+class SystemError : public internal::RuntimeError
 {
 private:
     void init(int err_code, CStringRef format_str, ArgList args);
@@ -2826,27 +2659,33 @@ protected:
 
     typedef char Char;  // For FMT_VARIADIC_CTOR.
 
-    SystemError()
-    {}
+    SystemError() {}
 
 public:
     /**
-    \rst
-    Constructs a :class:`fmt::SystemError` object with a description
-    formatted with `fmt::format_system_error`. *message* and additional
-    arguments passed into the constructor are formatted similarly to
-    `fmt::format`.
+     \rst
+     Constructs a :class:`fmt::SystemError` object with the description
+     of the form
 
-    **Example**::
+     .. parsed-literal::
+       *<message>*: *<system-message>*
 
-    // This throws a SystemError with the description
-    //   cannot open file 'madeup': No such file or directory
-    // or similar (system message may vary).
-    const char *filename = "madeup";
-    std::FILE *file = std::fopen(filename, "r");
-    if (!file)
-    throw fmt::SystemError(errno, "cannot open file '{}'", filename);
-    \endrst
+     where *<message>* is the formatted message and *<system-message>* is
+     the system message corresponding to the error code.
+     *error_code* is a system error code as given by ``errno``.
+     If *error_code* is not a valid error code such as -1, the system message
+     may look like "Unknown error -1" and is platform-dependent.
+
+     **Example**::
+
+       // This throws a SystemError with the description
+       //   cannot open file 'madeup': No such file or directory
+       // or similar (system message may vary).
+       const char *filename = "madeup";
+       std::FILE *file = std::fopen(filename, "r");
+       if (!file)
+         throw fmt::SystemError(errno, "cannot open file '{}'", filename);
+     \endrst
     */
     SystemError(int error_code, CStringRef message)
     {
@@ -2854,7 +2693,7 @@ public:
     }
     FMT_VARIADIC_CTOR(SystemError, init, int, CStringRef)
 
-    ~SystemError() FMT_DTOR_NOEXCEPT;
+    ~SystemError() throw();
 
     int error_code() const
     {
@@ -2863,42 +2702,23 @@ public:
 };
 
 /**
-\rst
-Formats an error returned by an operating system or a language runtime,
-for example a file opening error, and writes it to *out* in the following
-form:
+  \rst
+  This template provides operations for formatting and writing data into
+  a character stream. The output is stored in a buffer provided by a subclass
+  such as :class:`fmt::BasicMemoryWriter`.
 
-.. parsed-literal::
-*<message>*: *<system-message>*
+  You can use one of the following typedefs for common character types:
 
-where *<message>* is the passed message and *<system-message>* is
-the system message corresponding to the error code.
-*error_code* is a system error code as given by ``errno``.
-If *error_code* is not a valid error code such as -1, the system message
-may look like "Unknown error -1" and is platform-dependent.
-\endrst
-*/
-FMT_API void format_system_error(fmt::Writer &out, int error_code,
-                                 fmt::StringRef message) FMT_NOEXCEPT;
+  +---------+----------------------+
+  | Type    | Definition           |
+  +=========+======================+
+  | Writer  | BasicWriter<char>    |
+  +---------+----------------------+
+  | WWriter | BasicWriter<wchar_t> |
+  +---------+----------------------+
 
-/**
-\rst
-This template provides operations for formatting and writing data into
-a character stream. The output is stored in a buffer provided by a subclass
-such as :class:`fmt::BasicMemoryWriter`.
-
-You can use one of the following typedefs for common character types:
-
-+---------+----------------------+
-| Type    | Definition           |
-+=========+======================+
-| Writer  | BasicWriter<char>    |
-+---------+----------------------+
-| WWriter | BasicWriter<wchar_t> |
-+---------+----------------------+
-
-\endrst
-*/
+  \endrst
+ */
 template <typename Char>
 class BasicWriter
 {
@@ -3010,52 +2830,48 @@ private:
     }
 
     template<typename T>
-    void append_float_length(Char *&, T)
-    {}
+    void append_float_length(Char *&, T) {}
 
     template <typename Impl, typename Char_>
     friend class internal::ArgFormatterBase;
 
-    template <typename Impl, typename Char_>
-    friend class BasicPrintfArgFormatter;
+    friend class internal::PrintfArgFormatter<Char>;
 
 protected:
     /**
-    Constructs a ``BasicWriter`` object.
-    */
-    explicit BasicWriter(Buffer<Char> &b): buffer_(b)
-    {}
+      Constructs a ``BasicWriter`` object.
+     */
+    explicit BasicWriter(Buffer<Char> &b) : buffer_(b) {}
 
 public:
     /**
-    \rst
-    Destroys a ``BasicWriter`` object.
-    \endrst
-    */
-    virtual ~BasicWriter()
-    {}
+      \rst
+      Destroys a ``BasicWriter`` object.
+      \endrst
+     */
+    virtual ~BasicWriter() {}
 
     /**
-    Returns the total number of characters written.
-    */
+      Returns the total number of characters written.
+     */
     std::size_t size() const
     {
         return buffer_.size();
     }
 
     /**
-    Returns a pointer to the output buffer content. No terminating null
-    character is appended.
-    */
+      Returns a pointer to the output buffer content. No terminating null
+      character is appended.
+     */
     const Char *data() const FMT_NOEXCEPT
     {
         return &buffer_[0];
     }
 
     /**
-    Returns a pointer to the output buffer content with terminating null
-    character appended.
-    */
+      Returns a pointer to the output buffer content with terminating null
+      character appended.
+     */
     const Char *c_str() const
     {
         std::size_t size = buffer_.size();
@@ -3065,40 +2881,40 @@ public:
     }
 
     /**
-    \rst
-    Returns the content of the output buffer as an `std::string`.
-    \endrst
-    */
+      \rst
+      Returns the content of the output buffer as an `std::string`.
+      \endrst
+     */
     std::basic_string<Char> str() const
     {
         return std::basic_string<Char>(&buffer_[0], buffer_.size());
     }
 
     /**
-    \rst
-    Writes formatted data.
+      \rst
+      Writes formatted data.
 
-    *args* is an argument list representing arbitrary arguments.
+      *args* is an argument list representing arbitrary arguments.
 
-    **Example**::
+      **Example**::
 
-    MemoryWriter out;
-    out.write("Current point:\n");
-    out.write("({:+f}, {:+f})", -3.14, 3.14);
+         MemoryWriter out;
+         out.write("Current point:\n");
+         out.write("({:+f}, {:+f})", -3.14, 3.14);
 
-    This will write the following output to the ``out`` object:
+      This will write the following output to the ``out`` object:
 
-    .. code-block:: none
+      .. code-block:: none
 
-    Current point:
-    (-3.140000, +3.140000)
+         Current point:
+         (-3.140000, +3.140000)
 
-    The output can be accessed using :func:`data()`, :func:`c_str` or
-    :func:`str` methods.
+      The output can be accessed using :func:`data()`, :func:`c_str` or
+      :func:`str` methods.
 
-    See also :ref:`syntax`.
-    \endrst
-    */
+      See also :ref:`syntax`.
+      \endrst
+     */
     void write(BasicCStringRef<Char> format, ArgList args)
     {
         BasicFormatter<Char>(args, *this).format(format);
@@ -3130,10 +2946,10 @@ public:
     }
 
     /**
-    \rst
-    Formats *value* and writes it to the stream.
-    \endrst
-    */
+      \rst
+      Formats *value* and writes it to the stream.
+      \endrst
+     */
     BasicWriter &operator<<(ULongLong value)
     {
         return *this << IntFormatSpec<ULongLong>(value);
@@ -3146,11 +2962,11 @@ public:
     }
 
     /**
-    \rst
-    Formats *value* using the general format for floating-point numbers
-    (``'g'``) and writes it to the stream.
-    \endrst
-    */
+      \rst
+      Formats *value* using the general format for floating-point numbers
+      (``'g'``) and writes it to the stream.
+      \endrst
+     */
     BasicWriter &operator<<(long double value)
     {
         write_double(value, FormatSpec());
@@ -3158,8 +2974,8 @@ public:
     }
 
     /**
-    Writes a character to the stream.
-    */
+      Writes a character to the stream.
+     */
     BasicWriter &operator<<(char value)
     {
         buffer_.push_back(value);
@@ -3174,10 +2990,10 @@ public:
     }
 
     /**
-    \rst
-    Writes *value* to the stream.
-    \endrst
-    */
+      \rst
+      Writes *value* to the stream.
+      \endrst
+     */
     BasicWriter &operator<<(fmt::BasicStringRef<Char> value)
     {
         const Char *str = value.data();
@@ -3209,15 +3025,9 @@ public:
         return *this;
     }
 
-    void clear() FMT_NOEXCEPT
-    {
-        buffer_.clear();
-    }
+    void clear() FMT_NOEXCEPT { buffer_.clear(); }
 
-    Buffer<Char> &buffer() FMT_NOEXCEPT
-    {
-        return buffer_;
-    }
+    Buffer<Char> &buffer() FMT_NOEXCEPT { return buffer_; }
 };
 
 template <typename Char>
@@ -3582,10 +3392,7 @@ void BasicWriter<Char>::write_double(T value, const FormatSpec &spec)
     }
 
     // Build format string.
-    enum
-    {
-        MAX_FORMAT_SIZE = 10
-    }; // longest format: %#-*.*Lg
+    enum { MAX_FORMAT_SIZE = 10}; // longest format: %#-*.*Lg
     Char format[MAX_FORMAT_SIZE];
     Char *format_ptr = format;
     *format_ptr++ = '%';
@@ -3616,7 +3423,7 @@ void BasicWriter<Char>::write_double(T value, const FormatSpec &spec)
     // Format using snprintf.
     Char fill = internal::CharTraits<Char>::cast(spec.fill());
     unsigned n = 0;
-    Char *start = FMT_NULL;
+    Char *start = 0;
     for (;;)
     {
         std::size_t buffer_size = buffer_.capacity() - offset;
@@ -3680,66 +3487,66 @@ void BasicWriter<Char>::write_double(T value, const FormatSpec &spec)
 }
 
 /**
-\rst
-This class template provides operations for formatting and writing data
-into a character stream. The output is stored in a memory buffer that grows
-dynamically.
+  \rst
+  This class template provides operations for formatting and writing data
+  into a character stream. The output is stored in a memory buffer that grows
+  dynamically.
 
-You can use one of the following typedefs for common character types
-and the standard allocator:
+  You can use one of the following typedefs for common character types
+  and the standard allocator:
 
-+---------------+-----------------------------------------------------+
-| Type          | Definition                                          |
-+===============+=====================================================+
-| MemoryWriter  | BasicMemoryWriter<char, std::allocator<char>>       |
-+---------------+-----------------------------------------------------+
-| WMemoryWriter | BasicMemoryWriter<wchar_t, std::allocator<wchar_t>> |
-+---------------+-----------------------------------------------------+
+  +---------------+-----------------------------------------------------+
+  | Type          | Definition                                          |
+  +===============+=====================================================+
+  | MemoryWriter  | BasicMemoryWriter<char, std::allocator<char>>       |
+  +---------------+-----------------------------------------------------+
+  | WMemoryWriter | BasicMemoryWriter<wchar_t, std::allocator<wchar_t>> |
+  +---------------+-----------------------------------------------------+
 
-**Example**::
+  **Example**::
 
-MemoryWriter out;
-out << "The answer is " << 42 << "\n";
-out.write("({:+f}, {:+f})", -3.14, 3.14);
+     MemoryWriter out;
+     out << "The answer is " << 42 << "\n";
+     out.write("({:+f}, {:+f})", -3.14, 3.14);
 
-This will write the following output to the ``out`` object:
+  This will write the following output to the ``out`` object:
 
-.. code-block:: none
+  .. code-block:: none
 
-The answer is 42
-(-3.140000, +3.140000)
+     The answer is 42
+     (-3.140000, +3.140000)
 
-The output can be converted to an ``std::string`` with ``out.str()`` or
-accessed as a C string with ``out.c_str()``.
-\endrst
-*/
+  The output can be converted to an ``std::string`` with ``out.str()`` or
+  accessed as a C string with ``out.c_str()``.
+  \endrst
+ */
 template <typename Char, typename Allocator = std::allocator<Char> >
-class BasicMemoryWriter: public BasicWriter<Char>
+class BasicMemoryWriter : public BasicWriter<Char>
 {
 private:
     internal::MemoryBuffer<Char, internal::INLINE_BUFFER_SIZE, Allocator> buffer_;
 
 public:
     explicit BasicMemoryWriter(const Allocator& alloc = Allocator())
-        : BasicWriter<Char>(buffer_), buffer_(alloc)
-    {}
+        : BasicWriter<Char>(buffer_), buffer_(alloc) {}
 
 #if FMT_USE_RVALUE_REFERENCES
     /**
-    \rst
-    Constructs a :class:`fmt::BasicMemoryWriter` object moving the content
-    of the other object to it.
-    \endrst
-    */
+      \rst
+      Constructs a :class:`fmt::BasicMemoryWriter` object moving the content
+      of the other object to it.
+      \endrst
+     */
     BasicMemoryWriter(BasicMemoryWriter &&other)
         : BasicWriter<Char>(buffer_), buffer_(std::move(other.buffer_))
-    {}
+    {
+    }
 
     /**
-    \rst
-    Moves the content of the other ``BasicMemoryWriter`` object to this one.
-    \endrst
-    */
+      \rst
+      Moves the content of the other ``BasicMemoryWriter`` object to this one.
+      \endrst
+     */
     BasicMemoryWriter &operator=(BasicMemoryWriter &&other)
     {
         buffer_ = std::move(other.buffer_);
@@ -3752,52 +3559,50 @@ typedef BasicMemoryWriter<char> MemoryWriter;
 typedef BasicMemoryWriter<wchar_t> WMemoryWriter;
 
 /**
-\rst
-This class template provides operations for formatting and writing data
-into a fixed-size array. For writing into a dynamically growing buffer
-use :class:`fmt::BasicMemoryWriter`.
+  \rst
+  This class template provides operations for formatting and writing data
+  into a fixed-size array. For writing into a dynamically growing buffer
+  use :class:`fmt::BasicMemoryWriter`.
 
-Any write method will throw ``std::runtime_error`` if the output doesn't fit
-into the array.
+  Any write method will throw ``std::runtime_error`` if the output doesn't fit
+  into the array.
 
-You can use one of the following typedefs for common character types:
+  You can use one of the following typedefs for common character types:
 
-+--------------+---------------------------+
-| Type         | Definition                |
-+==============+===========================+
-| ArrayWriter  | BasicArrayWriter<char>    |
-+--------------+---------------------------+
-| WArrayWriter | BasicArrayWriter<wchar_t> |
-+--------------+---------------------------+
-\endrst
-*/
+  +--------------+---------------------------+
+  | Type         | Definition                |
+  +==============+===========================+
+  | ArrayWriter  | BasicArrayWriter<char>    |
+  +--------------+---------------------------+
+  | WArrayWriter | BasicArrayWriter<wchar_t> |
+  +--------------+---------------------------+
+  \endrst
+ */
 template <typename Char>
-class BasicArrayWriter: public BasicWriter<Char>
+class BasicArrayWriter : public BasicWriter<Char>
 {
 private:
     internal::FixedBuffer<Char> buffer_;
 
 public:
     /**
-    \rst
-    Constructs a :class:`fmt::BasicArrayWriter` object for *array* of the
-    given size.
-    \endrst
-    */
+     \rst
+     Constructs a :class:`fmt::BasicArrayWriter` object for *array* of the
+     given size.
+     \endrst
+     */
     BasicArrayWriter(Char *array, std::size_t size)
-        : BasicWriter<Char>(buffer_), buffer_(array, size)
-    {}
+        : BasicWriter<Char>(buffer_), buffer_(array, size) {}
 
     /**
-    \rst
-    Constructs a :class:`fmt::BasicArrayWriter` object for *array* of the
-    size known at compile time.
-    \endrst
-    */
+     \rst
+     Constructs a :class:`fmt::BasicArrayWriter` object for *array* of the
+     size known at compile time.
+     \endrst
+     */
     template <std::size_t SIZE>
-    explicit BasicArrayWriter(Char(&array)[SIZE])
-        : BasicWriter<Char>(buffer_), buffer_(array, SIZE)
-    {}
+    explicit BasicArrayWriter(Char (&array)[SIZE])
+        : BasicWriter<Char>(buffer_), buffer_(array, SIZE) {}
 };
 
 typedef BasicArrayWriter<char> ArrayWriter;
@@ -3811,39 +3616,39 @@ FMT_API void report_system_error(int error_code,
 #if FMT_USE_WINDOWS_H
 
 /** A Windows error. */
-class WindowsError: public SystemError
+class WindowsError : public SystemError
 {
 private:
     FMT_API void init(int error_code, CStringRef format_str, ArgList args);
 
 public:
     /**
-    \rst
-    Constructs a :class:`fmt::WindowsError` object with the description
-    of the form
+     \rst
+     Constructs a :class:`fmt::WindowsError` object with the description
+     of the form
 
-    .. parsed-literal::
-    *<message>*: *<system-message>*
+     .. parsed-literal::
+       *<message>*: *<system-message>*
 
-    where *<message>* is the formatted message and *<system-message>* is the
-    system message corresponding to the error code.
-    *error_code* is a Windows error code as given by ``GetLastError``.
-    If *error_code* is not a valid error code such as -1, the system message
-    will look like "error -1".
+     where *<message>* is the formatted message and *<system-message>* is the
+     system message corresponding to the error code.
+     *error_code* is a Windows error code as given by ``GetLastError``.
+     If *error_code* is not a valid error code such as -1, the system message
+     will look like "error -1".
 
-    **Example**::
+     **Example**::
 
-    // This throws a WindowsError with the description
-    //   cannot open file 'madeup': The system cannot find the file specified.
-    // or similar (system message may vary).
-    const char *filename = "madeup";
-    LPOFSTRUCT of = LPOFSTRUCT();
-    HFILE file = OpenFile(filename, &of, OF_READ);
-    if (file == HFILE_ERROR) {
-    throw fmt::WindowsError(GetLastError(),
-    "cannot open file '{}'", filename);
-    }
-    \endrst
+       // This throws a WindowsError with the description
+       //   cannot open file 'madeup': The system cannot find the file specified.
+       // or similar (system message may vary).
+       const char *filename = "madeup";
+       LPOFSTRUCT of = LPOFSTRUCT();
+       HFILE file = OpenFile(filename, &of, OF_READ);
+       if (file == HFILE_ERROR) {
+         throw fmt::WindowsError(GetLastError(),
+                                 "cannot open file '{}'", filename);
+       }
+     \endrst
     */
     WindowsError(int error_code, CStringRef message)
     {
@@ -3859,27 +3664,24 @@ FMT_API void report_windows_error(int error_code,
 
 #endif
 
-enum Color
-{
-    BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE
-};
+enum Color { BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE };
 
 /**
-Formats a string and prints it to stdout using ANSI escape sequences
-to specify color (experimental).
-Example:
-print_colored(fmt::RED, "Elapsed time: {0:.2f} seconds", 1.23);
-*/
+  Formats a string and prints it to stdout using ANSI escape sequences
+  to specify color (experimental).
+  Example:
+    print_colored(fmt::RED, "Elapsed time: {0:.2f} seconds", 1.23);
+ */
 FMT_API void print_colored(Color c, CStringRef format, ArgList args);
 
 /**
-\rst
-Formats arguments and returns the result as a string.
+  \rst
+  Formats arguments and returns the result as a string.
 
-**Example**::
+  **Example**::
 
-std::string message = format("The answer is {}", 42);
-\endrst
+    std::string message = format("The answer is {}", 42);
+  \endrst
 */
 inline std::string format(CStringRef format_str, ArgList args)
 {
@@ -3896,39 +3698,90 @@ inline std::wstring format(WCStringRef format_str, ArgList args)
 }
 
 /**
-\rst
-Prints formatted data to the file *f*.
+  \rst
+  Prints formatted data to the file *f*.
 
-**Example**::
+  **Example**::
 
-print(stderr, "Don't {}!", "panic");
-\endrst
-*/
+    print(stderr, "Don't {}!", "panic");
+  \endrst
+ */
 FMT_API void print(std::FILE *f, CStringRef format_str, ArgList args);
 
 /**
-\rst
-Prints formatted data to ``stdout``.
+  \rst
+  Prints formatted data to ``stdout``.
 
-**Example**::
+  **Example**::
 
-print("Elapsed time: {0:.2f} seconds", 1.23);
-\endrst
-*/
+    print("Elapsed time: {0:.2f} seconds", 1.23);
+  \endrst
+ */
 FMT_API void print(CStringRef format_str, ArgList args);
 
+template <typename Char>
+void printf(BasicWriter<Char> &w, BasicCStringRef<Char> format, ArgList args)
+{
+    internal::PrintfFormatter<Char>(args).format(w, format);
+}
+
 /**
-Fast integer formatter.
+  \rst
+  Formats arguments and returns the result as a string.
+
+  **Example**::
+
+    std::string message = fmt::sprintf("The answer is %d", 42);
+  \endrst
 */
+inline std::string sprintf(CStringRef format, ArgList args)
+{
+    MemoryWriter w;
+    printf(w, format, args);
+    return w.str();
+}
+
+inline std::wstring sprintf(WCStringRef format, ArgList args)
+{
+    WMemoryWriter w;
+    printf(w, format, args);
+    return w.str();
+}
+
+/**
+  \rst
+  Prints formatted data to the file *f*.
+
+  **Example**::
+
+    fmt::fprintf(stderr, "Don't %s!", "panic");
+  \endrst
+ */
+FMT_API int fprintf(std::FILE *f, CStringRef format, ArgList args);
+
+/**
+  \rst
+  Prints formatted data to ``stdout``.
+
+  **Example**::
+
+    fmt::printf("Elapsed time: %.2f seconds", 1.23);
+  \endrst
+ */
+inline int printf(CStringRef format, ArgList args)
+{
+    return fprintf(stdout, format, args);
+}
+
+/**
+  Fast integer formatter.
+ */
 class FormatInt
 {
 private:
     // Buffer should be large enough to hold all digits (digits10 + 1),
     // a sign and a null character.
-    enum
-    {
-        BUFFER_SIZE = std::numeric_limits<ULongLong>::digits10 + 3
-    };
+    enum {BUFFER_SIZE = std::numeric_limits<ULongLong>::digits10 + 3};
     mutable char buffer_[BUFFER_SIZE];
     char *str_;
 
@@ -3981,12 +3834,9 @@ public:
     {
         FormatSigned(value);
     }
-    explicit FormatInt(unsigned value): str_(format_decimal(value))
-    {}
-    explicit FormatInt(unsigned long value): str_(format_decimal(value))
-    {}
-    explicit FormatInt(ULongLong value): str_(format_decimal(value))
-    {}
+    explicit FormatInt(unsigned value) : str_(format_decimal(value)) {}
+    explicit FormatInt(unsigned long value) : str_(format_decimal(value)) {}
+    explicit FormatInt(ULongLong value) : str_(format_decimal(value)) {}
 
     /** Returns the number of characters written to the output buffer. */
     std::size_t size() const
@@ -3995,18 +3845,18 @@ public:
     }
 
     /**
-    Returns a pointer to the output buffer content. No terminating null
-    character is appended.
-    */
+      Returns a pointer to the output buffer content. No terminating null
+      character is appended.
+     */
     const char *data() const
     {
         return str_;
     }
 
     /**
-    Returns a pointer to the output buffer content with terminating null
-    character appended.
-    */
+      Returns a pointer to the output buffer content with terminating null
+      character appended.
+     */
     const char *c_str() const
     {
         buffer_[BUFFER_SIZE - 1] = '\0';
@@ -4014,10 +3864,10 @@ public:
     }
 
     /**
-    \rst
-    Returns the content of the output buffer as an ``std::string``.
-    \endrst
-    */
+      \rst
+      Returns the content of the output buffer as an ``std::string``.
+      \endrst
+     */
     std::string str() const
     {
         return std::string(str_, size());
@@ -4055,25 +3905,25 @@ inline void format_decimal(char *&buffer, T value)
 }
 
 /**
-\rst
-Returns a named argument for formatting functions.
+  \rst
+  Returns a named argument for formatting functions.
 
-**Example**::
+  **Example**::
 
-print("Elapsed time: {s:.2f} seconds", arg("s", 1.23));
+    print("Elapsed time: {s:.2f} seconds", arg("s", 1.23));
 
-\endrst
-*/
+  \endrst
+ */
 template <typename T>
-inline internal::NamedArgWithType<char, T> arg(StringRef name, const T &arg)
+inline internal::NamedArg<char> arg(StringRef name, const T &arg)
 {
-    return internal::NamedArgWithType<char, T>(name, arg);
+    return internal::NamedArg<char>(name, arg);
 }
 
 template <typename T>
-inline internal::NamedArgWithType<wchar_t, T> arg(WStringRef name, const T &arg)
+inline internal::NamedArg<wchar_t> arg(WStringRef name, const T &arg)
 {
-    return internal::NamedArgWithType<wchar_t, T>(name, arg);
+    return internal::NamedArg<wchar_t>(name, arg);
 }
 
 // The following two functions are deleted intentionally to disable
@@ -4102,6 +3952,7 @@ void arg(WStringRef, const internal::NamedArg<Char>&) FMT_DELETED_OR_UNDEFINED;
 #define FMT_ARG_N(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, N, ...) N
 #define FMT_RSEQ_N() 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0
 
+#define FMT_CONCAT(a, b) a##b
 #define FMT_FOR_EACH_(N, f, ...) \
   FMT_EXPAND(FMT_CONCAT(FMT_FOR_EACH, N)(f, __VA_ARGS__))
 #define FMT_FOR_EACH(f, ...) \
@@ -4156,32 +4007,32 @@ void arg(WStringRef, const internal::NamedArg<Char>&) FMT_DELETED_OR_UNDEFINED;
 #endif  // FMT_USE_VARIADIC_TEMPLATES
 
 /**
-\rst
-Defines a variadic function with the specified return type, function name
-and argument types passed as variable arguments to this macro.
+  \rst
+  Defines a variadic function with the specified return type, function name
+  and argument types passed as variable arguments to this macro.
 
-**Example**::
+  **Example**::
 
-void print_error(const char *file, int line, const char *format,
-fmt::ArgList args) {
-fmt::print("{}: {}: ", file, line);
-fmt::print(format, args);
-}
-FMT_VARIADIC(void, print_error, const char *, int, const char *)
+    void print_error(const char *file, int line, const char *format,
+                     fmt::ArgList args) {
+      fmt::print("{}: {}: ", file, line);
+      fmt::print(format, args);
+    }
+    FMT_VARIADIC(void, print_error, const char *, int, const char *)
 
-``FMT_VARIADIC`` is used for compatibility with legacy C++ compilers that
-don't implement variadic templates. You don't have to use this macro if
-you don't need legacy compiler support and can use variadic templates
-directly::
+  ``FMT_VARIADIC`` is used for compatibility with legacy C++ compilers that
+  don't implement variadic templates. You don't have to use this macro if
+  you don't need legacy compiler support and can use variadic templates
+  directly::
 
-template <typename... Args>
-void print_error(const char *file, int line, const char *format,
-const Args & ... args) {
-fmt::print("{}: {}: ", file, line);
-fmt::print(format, args...);
-}
-\endrst
-*/
+    template <typename... Args>
+    void print_error(const char *file, int line, const char *format,
+                     const Args & ... args) {
+      fmt::print("{}: {}: ", file, line);
+      fmt::print(format, args...);
+    }
+  \endrst
+ */
 #define FMT_VARIADIC(ReturnType, func, ...) \
   FMT_VARIADIC_(char, ReturnType, func, return func, __VA_ARGS__)
 
@@ -4193,19 +4044,19 @@ fmt::print(format, args...);
 #define FMT_CAPTURE_ARG_W_(id, index) ::fmt::arg(L###id, id)
 
 /**
-\rst
-Convenient macro to capture the arguments' names and values into several
-``fmt::arg(name, value)``.
+  \rst
+  Convenient macro to capture the arguments' names and values into several
+  ``fmt::arg(name, value)``.
 
-**Example**::
+  **Example**::
 
-int x = 1, y = 2;
-print("point: ({x}, {y})", FMT_CAPTURE(x, y));
-// same as:
-// print("point: ({x}, {y})", arg("x", x), arg("y", y));
+    int x = 1, y = 2;
+    print("point: ({x}, {y})", FMT_CAPTURE(x, y));
+    // same as:
+    // print("point: ({x}, {y})", arg("x", x), arg("y", y));
 
-\endrst
-*/
+  \endrst
+ */
 #define FMT_CAPTURE(...) FMT_FOR_EACH(FMT_CAPTURE_ARG_, __VA_ARGS__)
 
 #define FMT_CAPTURE_W(...) FMT_FOR_EACH(FMT_CAPTURE_ARG_W_, __VA_ARGS__)
@@ -4216,7 +4067,12 @@ FMT_VARIADIC(std::string, format, CStringRef)
 FMT_VARIADIC_W(std::wstring, format, WCStringRef)
 FMT_VARIADIC(void, print, CStringRef)
 FMT_VARIADIC(void, print, std::FILE *, CStringRef)
+
 FMT_VARIADIC(void, print_colored, Color, CStringRef)
+FMT_VARIADIC(std::string, sprintf, CStringRef)
+FMT_VARIADIC_W(std::wstring, sprintf, WCStringRef)
+FMT_VARIADIC(int, printf, CStringRef)
+FMT_VARIADIC(int, fprintf, std::FILE *, CStringRef)
 
 namespace internal
 {
@@ -4294,7 +4150,7 @@ inline internal::Arg BasicFormatter<Char, AF>::get_arg(
 template <typename Char, typename AF>
 inline internal::Arg BasicFormatter<Char, AF>::parse_arg_index(const Char *&s)
 {
-    const char *error = FMT_NULL;
+    const char *error = 0;
     internal::Arg arg = *s < '0' || *s > '9' ?
                         next_arg(error) : get_arg(internal::parse_nonnegative_int(s), error);
     if (error)
@@ -4316,7 +4172,7 @@ inline internal::Arg BasicFormatter<Char, AF>::parse_arg_name(const Char *&s)
         c = *++s;
     }
     while (internal::is_name_start(c) || ('0' <= c && c <= '9'));
-    const char *error = FMT_NULL;
+    const char *error = 0;
     internal::Arg arg = get_arg(BasicStringRef<Char>(start, s - start), error);
     if (error)
         FMT_THROW(FormatError(error));
@@ -4446,7 +4302,7 @@ const Char *BasicFormatter<Char, ArgFormatter>::format(
             default:
                 FMT_THROW(FormatError("width is not integer"));
             }
-            if (value >(std::numeric_limits<int>::max)())
+            if (value > (std::numeric_limits<int>::max)())
                 FMT_THROW(FormatError("number is too big"));
             spec.width_ = static_cast<int>(value);
         }
@@ -4489,7 +4345,7 @@ const Char *BasicFormatter<Char, ArgFormatter>::format(
                 default:
                     FMT_THROW(FormatError("precision is not integer"));
                 }
-                if (value >(std::numeric_limits<int>::max)())
+                if (value > (std::numeric_limits<int>::max)())
                     FMT_THROW(FormatError("number is too big"));
                 spec.precision_ = static_cast<int>(value);
             }
@@ -4569,9 +4425,9 @@ struct UdlArg
     const Char *str;
 
     template <typename T>
-    NamedArgWithType<Char, T> operator=(T &&value) const
+    NamedArg<Char> operator=(T &&value) const
     {
-        return { str, std::forward<T>(value) };
+        return {str, std::forward<T>(value)};
     }
 };
 
@@ -4581,45 +4437,45 @@ inline namespace literals
 {
 
 /**
-\rst
-C++11 literal equivalent of :func:`fmt::format`.
+  \rst
+  C++11 literal equivalent of :func:`fmt::format`.
 
-**Example**::
+  **Example**::
 
-using namespace fmt::literals;
-std::string message = "The answer is {}"_format(42);
-\endrst
-*/
+    using namespace fmt::literals;
+    std::string message = "The answer is {}"_format(42);
+  \endrst
+ */
 inline internal::UdlFormat<char>
 operator"" _format(const char *s, std::size_t)
 {
-    return { s };
+    return {s};
 }
 inline internal::UdlFormat<wchar_t>
 operator"" _format(const wchar_t *s, std::size_t)
 {
-    return { s };
+    return {s};
 }
 
 /**
-\rst
-C++11 literal equivalent of :func:`fmt::arg`.
+  \rst
+  C++11 literal equivalent of :func:`fmt::arg`.
 
-**Example**::
+  **Example**::
 
-using namespace fmt::literals;
-print("Elapsed time: {s:.2f} seconds", "s"_a=1.23);
-\endrst
-*/
+    using namespace fmt::literals;
+    print("Elapsed time: {s:.2f} seconds", "s"_a=1.23);
+  \endrst
+ */
 inline internal::UdlArg<char>
 operator"" _a(const char *s, std::size_t)
 {
-    return { s };
+    return {s};
 }
 inline internal::UdlArg<wchar_t>
 operator"" _a(const wchar_t *s, std::size_t)
 {
-    return { s };
+    return {s};
 }
 
 } // inline namespace literals

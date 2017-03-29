@@ -1,17 +1,16 @@
 /*
-Formatting library for C++ - std::ostream support
+ Formatting library for C++ - std::ostream support
 
-Copyright (c) 2012 - 2016, Victor Zverovich
-All rights reserved.
+ Copyright (c) 2012 - 2016, Victor Zverovich
+ All rights reserved.
 
-For the license information refer to format.h.
-*/
+ For the license information refer to format.h.
+ */
 
 #ifndef FMT_OSTREAM_H_
 #define FMT_OSTREAM_H_
 
-// commented out by spdlog
-// #include "format.h"
+#include "format.h"
 #include <ostream>
 
 namespace fmt
@@ -21,7 +20,7 @@ namespace internal
 {
 
 template <class Char>
-class FormatBuf: public std::basic_streambuf<Char>
+class FormatBuf : public std::basic_streambuf<Char>
 {
 private:
     typedef typename std::basic_streambuf<Char>::int_type int_type;
@@ -31,7 +30,7 @@ private:
     Char *start_;
 
 public:
-    FormatBuf(Buffer<Char> &buffer): buffer_(buffer), start_(&buffer[0])
+    FormatBuf(Buffer<Char> &buffer) : buffer_(buffer), start_(&buffer[0])
     {
         this->setp(start_, start_ + buffer_.capacity());
     }
@@ -46,7 +45,7 @@ public:
 
             start_ = &buffer_[0];
             start_[buf_size] = traits_type::to_char_type(ch);
-            this->setp(start_ + buf_size + 1, start_ + buf_size * 2);
+            this->setp(start_+ buf_size + 1, start_ + buf_size * 2);
         }
         return ch;
     }
@@ -59,7 +58,7 @@ public:
 
 Yes &convert(std::ostream &);
 
-struct DummyStream: std::ostream
+struct DummyStream : std::ostream
 {
     DummyStream();  // Suppress a bogus warning in MSVC.
     // Hide all operator<< overloads from std::ostream.
@@ -77,15 +76,12 @@ struct ConvertToIntImpl<T, true>
         value = sizeof(convert(get<DummyStream>() << get<T>())) == sizeof(No)
     };
 };
-
-// Write the content of w to os.
-void write(std::ostream &os, Writer &w);
 }  // namespace internal
 
 // Formats a value.
 template <typename Char, typename ArgFormatter, typename T>
-void format_arg(BasicFormatter<Char, ArgFormatter> &f,
-                const Char *&format_str, const T &value)
+void format(BasicFormatter<Char, ArgFormatter> &f,
+            const Char *&format_str, const T &value)
 {
     internal::MemoryBuffer<Char, internal::INLINE_BUFFER_SIZE> buffer;
 
@@ -99,16 +95,28 @@ void format_arg(BasicFormatter<Char, ArgFormatter> &f,
 }
 
 /**
-\rst
-Prints formatted data to the stream *os*.
+  \rst
+  Prints formatted data to the stream *os*.
 
-**Example**::
+  **Example**::
 
-print(cerr, "Don't {}!", "panic");
-\endrst
-*/
+    print(cerr, "Don't {}!", "panic");
+  \endrst
+ */
 FMT_API void print(std::ostream &os, CStringRef format_str, ArgList args);
 FMT_VARIADIC(void, print, std::ostream &, CStringRef)
+
+/**
+  \rst
+  Prints formatted data to the stream *os*.
+
+  **Example**::
+
+    fprintf(cerr, "Don't %s!", "panic");
+  \endrst
+ */
+FMT_API int fprintf(std::ostream &os, CStringRef format_str, ArgList args);
+FMT_VARIADIC(int, fprintf, std::ostream &, CStringRef)
 }  // namespace fmt
 
 #ifdef FMT_HEADER_ONLY

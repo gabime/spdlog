@@ -37,12 +37,12 @@ public:
 
     template <typename... Args> void log(level::level_enum lvl, const char* fmt, const Args&... args);
     template <typename... Args> void log(level::level_enum lvl, const char* msg);
-    template <typename... Args> void trace(const char* fmt, const Args&... args);
-    template <typename... Args> void debug(const char* fmt, const Args&... args);
-    template <typename... Args> void info(const char* fmt, const Args&... args);
-    template <typename... Args> void warn(const char* fmt, const Args&... args);
-    template <typename... Args> void error(const char* fmt, const Args&... args);
-    template <typename... Args> void critical(const char* fmt, const Args&... args);
+    template <typename Arg1, typename... Args> void trace(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void debug(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void info(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void warn(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void error(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args> void critical(const char* fmt, const Arg1&, const Args&... args);
 
     template <typename T> void log(level::level_enum lvl, const T&);
     template <typename T> void trace(const T&);
@@ -51,24 +51,7 @@ public:
     template <typename T> void warn(const T&);
     template <typename T> void error(const T&);
     template <typename T> void critical(const T&);
-
-    bool should_log(level::level_enum) const;
-    void set_level(level::level_enum);
-    level::level_enum level() const;
-    const std::string& name() const;
-    void set_pattern(const std::string&);
-    void set_formatter(formatter_ptr);
-
-    // error handler
-    void set_error_handler(log_err_handler);
-    log_err_handler error_handler();
-
-    // automatically call flush() if message level >= log_level
-    void flush_on(level::level_enum log_level);
-
-    virtual void flush();
-
-    const std::vector<sink_ptr>& sinks() const;
+  
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 	template <typename... Args> void log(level::level_enum lvl, const wchar_t* msg);
 	template <typename... Args> void log(level::level_enum lvl, const wchar_t* fmt, const Args&... args);
@@ -79,6 +62,25 @@ public:
 	template <typename... Args> void error(const wchar_t* fmt, const Args&... args);
 	template <typename... Args> void critical(const wchar_t* fmt, const Args&... args);
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
+
+    bool should_log(level::level_enum) const;
+    void set_level(level::level_enum);
+    level::level_enum level() const;
+    const std::string& name() const;
+    void set_pattern(const std::string&);
+    void set_formatter(formatter_ptr);
+
+    // automatically call flush() if message level >= log_level
+    void flush_on(level::level_enum log_level);
+
+    virtual void flush();
+
+    const std::vector<sink_ptr>& sinks() const;
+
+    // error handler
+    virtual void set_error_handler(log_err_handler);
+    virtual log_err_handler error_handler();
+
 protected:
     virtual void _sink_it(details::log_msg&);
     virtual void _set_pattern(const std::string&);

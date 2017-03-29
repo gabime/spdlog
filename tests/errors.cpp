@@ -6,6 +6,19 @@
 #include<iostream>
 
 
+
+
+class failing_sink: public spdlog::sinks::sink
+{
+    void log(const spdlog::details::log_msg& msg) override
+    {
+        throw std::runtime_error("some error happened during log");
+    }
+
+    void flush()
+    {}
+};
+
 TEST_CASE("default_error_handler", "[errors]]")
 {
     prepare_logdir();
@@ -22,7 +35,10 @@ TEST_CASE("default_error_handler", "[errors]]")
 }
 
 
-struct custom_ex {};
+
+
+struct custom_ex
+{};
 TEST_CASE("custom_error_handler", "[errors]]")
 {
     prepare_logdir();
@@ -37,6 +53,17 @@ TEST_CASE("custom_error_handler", "[errors]]")
     REQUIRE_THROWS_AS(logger->info("Bad format msg {} {}", "xxx"), custom_ex);
     logger->info("Good message #2");
     REQUIRE(count_lines(filename) == 2);
+}
+
+TEST_CASE("default_error_handler2", "[errors]]")
+{
+
+    auto logger = spdlog::create<failing_sink>("failed_logger");
+    logger->set_error_handler([=](const std::string& msg)
+    {
+        throw custom_ex();
+    });
+    REQUIRE_THROWS_AS(logger->info("Some message"), custom_ex);
 }
 
 TEST_CASE("async_error_handler", "[errors]]")
@@ -61,4 +88,26 @@ TEST_CASE("async_error_handler", "[errors]]")
     }
     REQUIRE(count_lines(filename) == 2);
     REQUIRE(file_contents("logs/custom_err.txt") == err_msg);
+}
+
+// Make sure async error handler is executed
+TEST_CASE("async_error_handler2", "[errors]]")
+{
+    prepare_logdir();
+    std::string err_msg("This is async handler error message");
+    spdlog::set_async_mode(128);
+    {
+        auto logger = spdlog::create<failing_sink>("failed_logger");
+        logger->set_error_handler([=](const std::string& msg)
+        {
+            std::ofstream ofs("logs/custom_err2.txt");
+            if (!ofs) throw std::runtime_error("Failed open logs/custom_err2.txt");
+            ofs << err_msg;
+        });
+        logger->info("Hello failure");
+        spdlog::drop("failed_logger"); //force logger to drain the queue and shutdown
+        spdlog::set_sync_mode();
+    }
+
+    REQUIRE(file_contents("logs/custom_err2.txt") == err_msg);
 }

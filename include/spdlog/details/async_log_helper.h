@@ -9,8 +9,6 @@
 // If the internal queue of log messages reaches its max size,
 // then the client call will block until there is more room.
 //
-// If the back thread throws during logging, a spdlog::spdlog_ex exception
-// will be thrown in client's thread when tries to log the next message
 
 #pragma once
 
@@ -66,7 +64,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
                     msg_type(std::move(other.msg_type))
         {}
 
-        async_msg(async_msg_type m_type) :msg_type(m_type)
+        async_msg(async_msg_type m_type):msg_type(m_type)
         {}
 
         async_msg& operator=(async_msg&& other) SPDLOG_NOEXCEPT
@@ -85,7 +83,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
         async_msg& operator=(const async_msg& other) = delete;
 
         // construct from log_msg
-        async_msg(const details::log_msg& m) :
+        async_msg(const details::log_msg& m):
             level(m.level),
             time(m.time),
             thread_id(m.thread_id),
@@ -135,6 +133,7 @@ public:
 
     void flush(bool wait_for_q);
 
+    void set_error_handler(spdlog::log_err_handler err_handler);
 
 private:
     formatter_ptr _formatter;
@@ -221,7 +220,8 @@ inline spdlog::details::async_log_helper::~async_log_helper()
         _worker_thread.join();
     }
     catch (...) // don't crash in destructor
-    {}
+    {
+    }
 }
 
 
@@ -250,28 +250,34 @@ inline void spdlog::details::async_log_helper::push_msg(details::async_log_helpe
 inline void spdlog::details::async_log_helper::flush(bool wait_for_q)
 {
     push_msg(async_msg(async_msg_type::flush));
-    if(wait_for_q)
+    if (wait_for_q)
         wait_empty_q(); //return only make after the above flush message was processed
 }
 
 inline void spdlog::details::async_log_helper::worker_loop()
 {
-    try
+    if (_worker_warmup_cb) _worker_warmup_cb();
+    auto last_pop = details::os::now();
+    auto last_flush = last_pop;
+    auto active = true;
+    while (active)
     {
-        if (_worker_warmup_cb) _worker_warmup_cb();
-        auto last_pop = details::os::now();
-        auto last_flush = last_pop;
-        while(process_next_msg(last_pop, last_flush));
-        if (_worker_teardown_cb) _worker_teardown_cb();
+        try
+        {
+            active = process_next_msg(last_pop, last_flush);
+        }
+        catch (const std::exception &ex)
+        {
+            _err_handler(ex.what());
+        }
+        catch (...)
+        {
+            _err_handler("Unknown exception");
+        }
     }
-    catch (const std::exception &ex)
-    {
-        _err_handler(ex.what());
-    }
-    catch (...)
-    {
-        _err_handler("Unknown exception");
-    }
+    if (_worker_teardown_cb) _worker_teardown_cb();
+
+
 }
 
 // process next message in the queue
@@ -300,7 +306,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
             _formatter->format(incoming_log_msg);
             for (auto &s : _sinks)
             {
-                if(s->should_log( incoming_log_msg.level))
+                if (s->should_log(incoming_log_msg.level))
                 {
                     s->log(incoming_log_msg);
                 }
@@ -372,6 +378,11 @@ inline void spdlog::details::async_log_helper::wait_empty_q()
     {
         sleep_or_yield(details::os::now(), last_op);
     }
+}
+
+inline void spdlog::details::async_log_helper::set_error_handler(spdlog::log_err_handler err_handler)
+{
+    _err_handler = err_handler;
 }
 
 
