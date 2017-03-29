@@ -87,7 +87,7 @@ protected:
     spdlog::level_t _level;
     spdlog::level_t _flush_level;
     log_err_handler _err_handler;
-    std::atomic<time_t> _last_err_time {0}; // init atomic value to avoid reads of uninitialised memory
+    std::atomic<time_t> _last_err_time;
 };
 }
 
