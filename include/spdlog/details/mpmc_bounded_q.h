@@ -159,9 +159,9 @@ private:
     cell_t* const           buffer_;
     size_t const            buffer_mask_;
     cacheline_pad_t         pad1_;
-    std::atomic<size_t>     enqueue_pos_ {0};
+    std::atomic<size_t>     enqueue_pos_;
     cacheline_pad_t         pad2_;
-    std::atomic<size_t>     dequeue_pos_ {0};
+    std::atomic<size_t>     dequeue_pos_;
     cacheline_pad_t         pad3_;
 
     mpmc_bounded_queue(mpmc_bounded_queue const&) = delete;
