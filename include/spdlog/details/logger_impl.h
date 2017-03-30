@@ -18,11 +18,11 @@ template<class It>
 inline spdlog::logger::logger(const std::string& logger_name, const It& begin, const It& end):
     _name(logger_name),
     _sinks(begin, end),
-    _formatter(std::make_shared<pattern_formatter>("%+"))
+    _formatter(std::make_shared<pattern_formatter>("%+")),
+	_level(level::info),
+	_flush_level(level::off),
+	_last_err_time(0)
 {
-    _level = level::info;
-    _flush_level = level::off;
-    _last_err_time = 0;
     _err_handler = [this](const std::string &msg)
     {
         this->_default_err_handler(msg);
