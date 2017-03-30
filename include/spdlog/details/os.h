@@ -375,7 +375,7 @@ inline std::string errno_str(int err_num)
     if(strerror_s(buf, buf_size, err_num) == 0)
         return std::string(buf);
     else
-        return "Unknown error";
+        return "Unkown error";
 
 #elif defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID) || defined(__SUNPRO_CC) || \
       ((_POSIX_C_SOURCE >= 200112L) && ! defined(_GNU_SOURCE)) // posix version
@@ -383,7 +383,7 @@ inline std::string errno_str(int err_num)
     if (strerror_r(err_num, buf, buf_size) == 0)
         return std::string(buf);
     else
-        return "Unknown error";
+        return "Unkown error";
 
 #else  // gnu version (might not use the given buf, so its retval pointer must be used)
     return std::string(strerror_r(err_num, buf, buf_size));
