@@ -645,7 +645,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::pid_formatter()));
         break;
 
-    default: //Unkown flag appears as is
+    default: //Unknown flag appears as is
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter('%')));
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter(flag)));
         break;
