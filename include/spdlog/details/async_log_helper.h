@@ -175,7 +175,7 @@ private:
 
     void handle_flush_interval(log_clock::time_point& now, log_clock::time_point& last_flush);
 
-    // sleep,yield or return immediatly using the time passed since last message as a hint
+    // sleep,yield or return immediately using the time passed since last message as a hint
     static void sleep_or_yield(const spdlog::log_clock::time_point& now, const log_clock::time_point& last_op_time);
 
     // wait until the queue is empty
