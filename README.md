@@ -11,12 +11,13 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 #### Or use your favourite package manager:
 
 * Ubuntu: `apt-get install libspdlog-dev`
+	* Same support for Debian9(codename stretch).
 * Homebrew: `brew install spdlog`
 * FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
 * Fedora: `yum install spdlog`
 * Arch Linux: `pacman -S spdlog-git`
 * vcpkg: `vcpkg install spdlog`
- 
+
 
 ## Platforms
  * Linux, FreeBSD, Solaris
@@ -97,10 +98,10 @@ int main(int, char*[])
         console->info("Support for floats {:03.2f}", 1.23456);
         console->info("Positional args are {1} {0}..", "too", "supported");
         console->info("{:<30}", "left aligned");
-        
+
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
-        
+
         // Create basic file logger (not rotated)
         auto my_logger = spd::basic_logger_mt("basic_logger", "logs/basic.txt");
         my_logger->info("Some log message");
@@ -177,7 +178,7 @@ void async_example()
 //syslog example
 void syslog_example()
 {
-#ifdef SPDLOG_ENABLE_SYSLOG 
+#ifdef SPDLOG_ENABLE_SYSLOG
     std::string ident = "spdlog-example";
     auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
     syslog_logger->warn("This is warning that will end up in syslog..");
@@ -205,10 +206,10 @@ void user_defined_example()
 //custom error handler
 //
 void err_handler_example()
-{	
+{
 	spd::set_error_handler([](const std::string& msg) {
 		std::cerr << "my err handler: " << msg << std::endl;
-	}); 
+	});
 	// (or logger->set_error_handler(..) to set for specific logger)
 }
 
