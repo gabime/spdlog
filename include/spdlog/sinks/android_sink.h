@@ -25,14 +25,15 @@ namespace sinks
 class android_sink : public sink
 {
 public:
-    explicit android_sink(const std::string& tag = "spdlog"): _tag(tag) {}
+    explicit android_sink(const std::string& tag = "spdlog", bool use_raw_msg = false): _tag(tag), _use_raw_msg(use_raw_msg){}
 
     void log(const details::log_msg& msg) override
     {
         const android_LogPriority priority = convert_to_android(msg.level);
+        const char *msg_output = (_use_raw_msg ? msg.raw.c_str() : msg.formatted.c_str());
         // See system/core/liblog/logger_write.c for explanation of return value
         const int ret = __android_log_write(
-                            priority, _tag.c_str(), msg.formatted.c_str()
+                            priority, _tag.c_str(), msg_output
                         );
         if (ret < 0)
         {
@@ -67,6 +68,7 @@ private:
     }
 
     std::string _tag;
+    bool _use_raw_msg;
 };
 
 }
