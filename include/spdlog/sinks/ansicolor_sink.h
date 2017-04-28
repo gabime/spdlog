@@ -21,7 +21,7 @@ namespace sinks
  * the output with an ANSI escape sequence color code depending on the severity
  * of the message.
  */
-class ansicolor_sink : public sink
+class ansicolor_sink SPDLOG_FINAL : public sink
 {
 public:
     ansicolor_sink(sink_ptr wrapped_sink);

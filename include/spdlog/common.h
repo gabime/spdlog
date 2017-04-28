@@ -29,6 +29,11 @@
 #define SPDLOG_CONSTEXPR constexpr
 #endif
 
+// See tweakme.h
+#if !defined(SPDLOG_FINAL)
+#define SPDLOG_FINAL
+#endif
+
 #if defined(__GNUC__)  || defined(__clang__)
 #define SPDLOG_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER)
