@@ -26,7 +26,7 @@ namespace sinks
  * Trivial file sink with single file as target
  */
 template<class Mutex>
-class simple_file_sink : public base_sink < Mutex >
+class simple_file_sink SPDLOG_FINAL : public base_sink < Mutex >
 {
 public:
     explicit simple_file_sink(const filename_t &filename, bool truncate = false):_force_flush(false)
@@ -61,7 +61,7 @@ typedef simple_file_sink<details::null_mutex> simple_file_sink_st;
  * Rotating file sink based on size
  */
 template<class Mutex>
-class rotating_file_sink : public base_sink < Mutex >
+class rotating_file_sink SPDLOG_FINAL : public base_sink < Mutex >
 {
 public:
     rotating_file_sink(const filename_t &base_filename,
@@ -177,7 +177,7 @@ struct dateonly_daily_file_name_calculator
  * Rotating file sink based on date. rotates at midnight
  */
 template<class Mutex, class FileNameCalc = default_daily_file_name_calculator>
-class daily_file_sink :public base_sink < Mutex >
+class daily_file_sink SPDLOG_FINAL :public base_sink < Mutex >
 {
 public:
     //create daily file sink which rotates on given time

@@ -31,7 +31,7 @@ public:
     base_sink(const base_sink&) = delete;
     base_sink& operator=(const base_sink&) = delete;
 
-    void log(const details::log_msg& msg) override
+    void log(const details::log_msg& msg) SPDLOG_FINAL override
     {
         std::lock_guard<Mutex> lock(_mutex);
         _sink_it(msg);

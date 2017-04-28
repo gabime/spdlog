@@ -29,6 +29,12 @@
 #define SPDLOG_CONSTEXPR constexpr
 #endif
 
+// If an user of the library is not inheriting from the types provided by it,
+// he can #define SPDLOG_FINAL final to get additional optimizations
+#if !defined(SPDLOG_FINAL)
+#define SPDLOG_FINAL
+#endif
+
 #if defined(__GNUC__)  || defined(__clang__)
 #define SPDLOG_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER)

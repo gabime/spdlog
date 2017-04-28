@@ -18,7 +18,7 @@ namespace sinks
 {
 
 template <class Mutex>
-class stdout_sink: public base_sink<Mutex>
+class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
     using MyType = stdout_sink<Mutex>;
 public:
@@ -47,7 +47,7 @@ typedef stdout_sink<std::mutex> stdout_sink_mt;
 
 
 template <class Mutex>
-class stderr_sink: public base_sink<Mutex>
+class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
     using MyType = stderr_sink<Mutex>;
 public:
