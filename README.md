@@ -121,11 +121,11 @@ int main(int, char*[])
         rotating_logger->info("This is another message with custom format");
 
 
-		// Runtime log levels
-		spd::set_level(spd::level::info); //Set global log level to info
-		console->debug("This message shold not be displayed!");
-		console->set_level(spd::level::debug); // Set specific logger's log level
-		console->debug("This message shold be displayed..");
+        // Runtime log levels
+	spd::set_level(spd::level::info); //Set global log level to info
+	console->debug("This message shold not be displayed!");
+	console->set_level(spd::level::debug); // Set specific logger's log level
+	console->debug("This message shold be displayed..");
 
         // Compile time log levels
         // define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON
