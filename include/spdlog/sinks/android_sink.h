@@ -12,6 +12,12 @@
 #include <mutex>
 #include <string>
 #include <android/log.h>
+#include <thread>
+#include <chrono>
+
+#if !defined(SPDLOG_ANDROID_LOG_NUM_OF_RETRIES)
+define SPDLOG_ANDROID_LOG_NUM_OF_RETRIES 2
+#endif
 
 namespace spdlog
 {
@@ -31,10 +37,17 @@ public:
     {
         const android_LogPriority priority = convert_to_android(msg.level);
         const char *msg_output = (_use_raw_msg ? msg.raw.c_str() : msg.formatted.c_str());
+
         // See system/core/liblog/logger_write.c for explanation of return value
-        const int ret = __android_log_write(
-                            priority, _tag.c_str(), msg_output
-                        );
+        int ret = __android_log_write(priority, _tag.c_str(), msg_output);
+        int retry_count = 1;
+        while ((ret == -11/*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_LOG_NUM_OF_RETRIES))
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            ret = __android_log_write(priority, _tag.c_str(), msg_output);
+            retry_count++;
+        }
+
         if (ret < 0)
         {
             throw spdlog_ex("__android_log_write() failed", ret);
