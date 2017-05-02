@@ -15,7 +15,7 @@
 #include <thread>
 #include <chrono>
 
-#if !defined(SPDLOG_ANDROID_LOG_NUM_OF_RETRIES)
+#if !defined(SPDLOG_ANDROID_RETRIES)
 #define SPDLOG_ANDROID_RETRIES 2
 #endif
 
