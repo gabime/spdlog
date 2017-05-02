@@ -16,7 +16,7 @@
 #include <chrono>
 
 #if !defined(SPDLOG_ANDROID_LOG_NUM_OF_RETRIES)
-define SPDLOG_ANDROID_LOG_NUM_OF_RETRIES 2
+#define SPDLOG_ANDROID_RETRIES 2
 #endif
 
 namespace spdlog
@@ -40,8 +40,8 @@ public:
 
         // See system/core/liblog/logger_write.c for explanation of return value
         int ret = __android_log_write(priority, _tag.c_str(), msg_output);
-        int retry_count = 1;
-        while ((ret == -11/*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_LOG_NUM_OF_RETRIES))
+        int retry_count = 0;
+        while ((ret == -11/*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_RETRIES))
         {
             std::this_thread::sleep_for(std::chrono::milliseconds(5));
             ret = __android_log_write(priority, _tag.c_str(), msg_output);
