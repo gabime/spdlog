@@ -25,7 +25,7 @@ public:
     virtual void format(details::log_msg& msg) = 0;
 };
 
-class pattern_formatter : public formatter
+class pattern_formatter SPDLOG_FINAL : public formatter
 {
 
 public:

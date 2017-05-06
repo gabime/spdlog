@@ -31,7 +31,7 @@ namespace details
 class async_log_helper;
 }
 
-class async_logger :public logger
+class async_logger SPDLOG_FINAL :public logger
 {
 public:
     template<class It>
