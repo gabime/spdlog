@@ -364,6 +364,17 @@ inline std::string filename_to_str(const filename_t& filename)
 }
 #endif
 
+inline std::string errno_to_string(char [256], char* res) {
+    return std::string(res);
+}
+    
+inline std::string errno_to_string(char buf[256], int res) {
+    if (res == 0) {
+        return std::string(buf);
+    } else {
+        return "Unknown error";
+    }
+}
 
 // Return errno string (thread safe)
 inline std::string errno_str(int err_num)
@@ -386,7 +397,8 @@ inline std::string errno_str(int err_num)
         return "Unknown error";
 
 #else  // gnu version (might not use the given buf, so its retval pointer must be used)
-    return std::string(strerror_r(err_num, buf, buf_size));
+    auto err = strerror_r(err_num, buf, buf_size); // let compiler choose type
+    return errno_to_string(buf, err); // use overloading to select correct stringify function
 #endif
 }
 
