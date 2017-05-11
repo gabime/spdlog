@@ -27,6 +27,7 @@
 #include <thread>
 #include <utility>
 #include <vector>
+#include <atomic>
 
 namespace spdlog
 {
@@ -185,6 +186,9 @@ private:
     // wait until the queue is empty
     void wait_empty_q();
 
+    // counter for messages discarded due to queue overflow
+    std::atomic<unsigned int> _discarded_msg_count;
+
 };
 }
 }
@@ -211,7 +215,8 @@ inline spdlog::details::async_log_helper::async_log_helper(
     _worker_warmup_cb(worker_warmup_cb),
     _flush_interval_ms(flush_interval_ms),
     _worker_teardown_cb(worker_teardown_cb),
-    _worker_thread(&async_log_helper::worker_loop, this)
+    _worker_thread(&async_log_helper::worker_loop, this),
+    _discarded_msg_count(0)
 {}
 
 // Send to the worker thread termination message(level=off)
@@ -237,16 +242,24 @@ inline void spdlog::details::async_log_helper::log(const details::log_msg& msg)
 
 inline void spdlog::details::async_log_helper::push_msg(details::async_log_helper::async_msg&& new_msg)
 {
-    if (!_q.enqueue(std::move(new_msg)) && _overflow_policy != async_overflow_policy::discard_log_msg)
+    if (!_q.enqueue(std::move(new_msg)))
     {
-        auto last_op_time = details::os::now();
-        auto now = last_op_time;
-        do
+        if (_overflow_policy != async_overflow_policy::discard_log_msg)
         {
-            now = details::os::now();
-            sleep_or_yield(now, last_op_time);
+            auto last_op_time = details::os::now();
+            auto now = last_op_time;
+            do
+            {
+                now = details::os::now();
+                sleep_or_yield(now, last_op_time);
+            } while (!_q.enqueue(std::move(new_msg)));
         }
-        while (!_q.enqueue(std::move(new_msg)));
+        else
+        {
+#if defined(SPDLOG_ASYNC_COUNT_DISCARDED_MSG)
+            _discarded_msg_count++;
+#endif
+        }
     }
 }
 
@@ -305,6 +318,19 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
             break;
 
         default:
+#if defined(SPDLOG_ASYNC_COUNT_DISCARDED_MSG)
+            unsigned int num_of_discarded_messages = _discarded_msg_count.exchange(0);
+            if (num_of_discarded_messages)
+            {
+                log_msg discarded_warning_msg(&incoming_async_msg.logger_name,  level::warn);
+                discarded_warning_msg.raw << "Dropped " << num_of_discarded_messages << " messages";
+                for (auto &s : _sinks)
+                {
+                    s->log(discarded_warning_msg);
+                }
+            }
+#endif
+
             log_msg incoming_log_msg;
             incoming_async_msg.fill_log_msg(incoming_log_msg);
             _formatter->format(incoming_log_msg);
