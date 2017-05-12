@@ -43,6 +43,16 @@ public:
     template <typename Arg1, typename... Args> void warn(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void error(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void critical(const char* fmt, const Arg1&, const Args&... args);
+#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+	template <typename... Args> void log(level::level_enum lvl, const wchar_t* msg);
+	template <typename... Args> void log(level::level_enum lvl, const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void trace(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void debug(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void info(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void warn(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void error(const wchar_t* fmt, const Args&... args);
+	template <typename... Args> void critical(const wchar_t* fmt, const Args&... args);
+#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     template <typename T> void log(level::level_enum lvl, const T&);
     template <typename T> void trace(const T&);

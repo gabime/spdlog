@@ -195,6 +195,63 @@ inline void spdlog::logger::critical(const T& msg)
     log(level::critical, msg);
 }
 
+#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+#include <codecvt>
+
+template <typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* msg)
+{
+	std::wstring_convert<std::codecvt_utf8<wchar_t> > conv;
+
+	log(lvl, conv.to_bytes(msg));
+}
+
+template <typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* fmt, const Args&... args)
+{
+	fmt::WMemoryWriter wWriter;
+
+	wWriter.write(fmt, args...);
+	log(lvl, wWriter.c_str());
+}
+
+template <typename... Args>
+inline void spdlog::logger::trace(const wchar_t* fmt, const Args&... args)
+{
+	log(level::trace, fmt, args...);
+}
+
+template <typename... Args>
+inline void spdlog::logger::debug(const wchar_t* fmt, const Args&... args)
+{
+	log(level::debug, fmt, args...);
+}
+
+template <typename... Args>
+inline void spdlog::logger::info(const wchar_t* fmt, const Args&... args)
+{
+	log(level::info, fmt, args...);
+}
+
+
+template <typename... Args>
+inline void spdlog::logger::warn(const wchar_t* fmt, const Args&... args)
+{
+	log(level::warn, fmt, args...);
+}
+
+template <typename... Args>
+inline void spdlog::logger::error(const wchar_t* fmt, const Args&... args)
+{
+	log(level::err, fmt, args...);
+}
+
+template <typename... Args>
+inline void spdlog::logger::critical(const wchar_t* fmt, const Args&... args)
+{
+	log(level::critical, fmt, args...);
+}
+#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 
 
