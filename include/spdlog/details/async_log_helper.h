@@ -189,6 +189,9 @@ private:
     // counter for messages discarded due to queue overflow
     std::atomic<unsigned int> _discarded_msg_count;
 
+    // handle discarded messages
+    void handle_discarded_msg(const std::string& logger_name);
+
 };
 }
 }
@@ -319,16 +322,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
 
         default:
 #if defined(SPDLOG_ASYNC_COUNT_DISCARDED_MSG)
-            unsigned int num_of_discarded_messages = _discarded_msg_count.exchange(0);
-            if (num_of_discarded_messages)
-            {
-                log_msg discarded_warning_msg(&incoming_async_msg.logger_name,  level::warn);
-                discarded_warning_msg.raw << "Dropped " << num_of_discarded_messages << " messages";
-                for (auto &s : _sinks)
-                {
-                    s->log(discarded_warning_msg);
-                }
-            }
+            handle_discarded_msg(incoming_async_msg.logger_name);
 #endif
 
             log_msg incoming_log_msg;
@@ -415,5 +409,18 @@ inline void spdlog::details::async_log_helper::set_error_handler(spdlog::log_err
     _err_handler = err_handler;
 }
 
-
+inline void spdlog::details::async_log_helper::handle_discarded_msg(const std::string& logger_name)
+{
+    unsigned int num_of_discarded_messages = _discarded_msg_count.exchange(0);
+    if (num_of_discarded_messages)
+    {
+        log_msg discarded_warning_msg(&logger_name, level::warn);
+        discarded_warning_msg.raw << "Discarded " << num_of_discarded_messages << " messages - logger queue overflow";
+        _formatter->format(discarded_warning_msg);
+        for (auto &s : _sinks)
+        {
+            s->log(discarded_warning_msg);
+        }
+    }
+}
 
