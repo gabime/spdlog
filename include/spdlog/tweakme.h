@@ -119,5 +119,5 @@
 // Uncomment count in print warning message about number of dropped messages.
 // Only relevant for async_logger with async_overflow_policy::discard_log_msg
 //
-#define SPDLOG_ASYNC_COUNT_DISCARDED_MSG
+// #define SPDLOG_ASYNC_COUNT_DISCARDED_MSG
 ///////////////////////////////////////////////////////////////////////////////
