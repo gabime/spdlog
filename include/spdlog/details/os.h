@@ -12,6 +12,7 @@
 #include <string>
 #include <chrono>
 #include <thread>
+#include <algorithm>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
@@ -400,6 +401,32 @@ inline int pid()
 #endif
 
 }
+
+
+// Detrmine if the terminal supports colors
+// Source: https://github.com/agauniyal/rang/
+bool is_color_terminal()
+{
+#ifdef _WIN32
+	return true;
+#else		
+	static constexpr const char* Terms[] = {
+		"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm",
+		"linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"
+	};
+
+	const char *env_p = std::getenv("TERM");
+	if (env_p == nullptr) {
+		return false;
+	}
+
+	static const bool result = std::any_of(
+		std::begin(Terms), std::end(Terms), [&](const char* term) {
+		return std::strstr(env_p, term) != nullptr;
+	});
+#endif 
+}
+
 
 } //os
 } //details
