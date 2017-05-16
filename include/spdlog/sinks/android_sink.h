@@ -31,7 +31,7 @@ namespace sinks
 class android_sink : public sink
 {
 public:
-    explicit android_sink(const std::string& tag = "spdlog", bool use_raw_msg = false): _tag(tag), _use_raw_msg(use_raw_msg){}
+    explicit android_sink(const std::string& tag = "spdlog", bool use_raw_msg = false): _tag(tag), _use_raw_msg(use_raw_msg) {}
 
     void log(const details::log_msg& msg) override
     {

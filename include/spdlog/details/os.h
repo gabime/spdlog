@@ -365,14 +365,19 @@ inline std::string filename_to_str(const filename_t& filename)
 }
 #endif
 
-inline std::string errno_to_string(char [256], char* res) {
+inline std::string errno_to_string(char [256], char* res)
+{
     return std::string(res);
 }
-    
-inline std::string errno_to_string(char buf[256], int res) {
-    if (res == 0) {
+
+inline std::string errno_to_string(char buf[256], int res)
+{
+    if (res == 0)
+    {
         return std::string(buf);
-    } else {
+    }
+    else
+    {
         return "Unknown error";
     }
 }
@@ -420,23 +425,27 @@ inline int pid()
 bool is_color_terminal()
 {
 #ifdef _WIN32
-	return true;
-#else		
-	static constexpr const char* Terms[] = {
-		"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm",
-		"linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"
-	};
+    return true;
+#else
+    static constexpr const char* Terms[] =
+    {
+        "ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm",
+        "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"
+    };
 
-	const char *env_p = std::getenv("TERM");
-	if (env_p == nullptr) {
-		return false;
-	}
+    const char *env_p = std::getenv("TERM");
+    if (env_p == nullptr)
+    {
+        return false;
+    }
 
-	static const bool result = std::any_of(
-		std::begin(Terms), std::end(Terms), [&](const char* term) {
-		return std::strstr(env_p, term) != nullptr;
-	});
-#endif 
+    static const bool result = std::any_of(
+                                   std::begin(Terms), std::end(Terms), [&](const char* term)
+    {
+        return std::strstr(env_p, term) != nullptr;
+    });
+    return result;
+#endif
 }
 
 

@@ -19,9 +19,9 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
     _name(logger_name),
     _sinks(begin, end),
     _formatter(std::make_shared<pattern_formatter>("%+")),
-	_level(level::info),
-	_flush_level(level::off),
-	_last_err_time(0)
+    _level(level::info),
+    _flush_level(level::off),
+    _last_err_time(0)
 {
     _err_handler = [this](const std::string &msg)
     {
@@ -201,55 +201,55 @@ inline void spdlog::logger::critical(const T& msg)
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* msg)
 {
-	std::wstring_convert<std::codecvt_utf8<wchar_t> > conv;
+    std::wstring_convert<std::codecvt_utf8<wchar_t> > conv;
 
-	log(lvl, conv.to_bytes(msg));
+    log(lvl, conv.to_bytes(msg));
 }
 
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* fmt, const Args&... args)
 {
-	fmt::WMemoryWriter wWriter;
+    fmt::WMemoryWriter wWriter;
 
-	wWriter.write(fmt, args...);
-	log(lvl, wWriter.c_str());
+    wWriter.write(fmt, args...);
+    log(lvl, wWriter.c_str());
 }
 
 template <typename... Args>
 inline void spdlog::logger::trace(const wchar_t* fmt, const Args&... args)
 {
-	log(level::trace, fmt, args...);
+    log(level::trace, fmt, args...);
 }
 
 template <typename... Args>
 inline void spdlog::logger::debug(const wchar_t* fmt, const Args&... args)
 {
-	log(level::debug, fmt, args...);
+    log(level::debug, fmt, args...);
 }
 
 template <typename... Args>
 inline void spdlog::logger::info(const wchar_t* fmt, const Args&... args)
 {
-	log(level::info, fmt, args...);
+    log(level::info, fmt, args...);
 }
 
 
 template <typename... Args>
 inline void spdlog::logger::warn(const wchar_t* fmt, const Args&... args)
 {
-	log(level::warn, fmt, args...);
+    log(level::warn, fmt, args...);
 }
 
 template <typename... Args>
 inline void spdlog::logger::error(const wchar_t* fmt, const Args&... args)
 {
-	log(level::err, fmt, args...);
+    log(level::err, fmt, args...);
 }
 
 template <typename... Args>
 inline void spdlog::logger::critical(const wchar_t* fmt, const Args&... args)
 {
-	log(level::critical, fmt, args...);
+    log(level::critical, fmt, args...);
 }
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
