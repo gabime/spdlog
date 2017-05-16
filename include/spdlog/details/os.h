@@ -422,7 +422,7 @@ inline int pid()
 
 // Detrmine if the terminal supports colors
 // Source: https://github.com/agauniyal/rang/
-bool is_color_terminal()
+inline bool is_color_terminal()
 {
 #ifdef _WIN32
     return true;
