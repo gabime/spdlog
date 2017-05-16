@@ -10,7 +10,7 @@ find_package(Threads)
 add_library(catch INTERFACE)
 target_include_directories(catch INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
 
-file(GLOB catch_tests LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+file(GLOB catch_tests LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.h *.hpp)
 
 add_executable(catch_tests ${catch_tests})
 target_link_libraries(catch_tests spdlog ${CMAKE_THREAD_LIBS_INIT})
