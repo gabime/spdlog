@@ -13,8 +13,8 @@
 #include <chrono>
 #include <thread>
 #include <algorithm>
-#include <stdio.h>
-#include <string.h>
+#include <cstring>
+#include <cstdlib>
 #include <sys/stat.h>
 #include <sys/types.h>
 
