@@ -69,7 +69,7 @@ Time needed to log 1,000,000 lines in asynchronous mode, i.e. the time it takes 
 
 ## Buck
 
-The test, examples and benchmarks can be run using [Buck](https://www.buckbuild.com):
+The tests, examples and benchmarks can be run using [Buck](https://www.buckbuild.com):
 
 ```bash
 buck run example/
@@ -131,11 +131,11 @@ int main(int, char*[])
         rotating_logger->info("This is another message with custom format");
 
 
-		// Runtime log levels
-		spd::set_level(spd::level::info); //Set global log level to info
-		console->debug("This message shold not be displayed!");
-		console->set_level(spd::level::debug); // Set specific logger's log level
-		console->debug("This message shold be displayed..");
+        // Runtime log levels
+	spd::set_level(spd::level::info); //Set global log level to info
+	console->debug("This message shold not be displayed!");
+	console->set_level(spd::level::debug); // Set specific logger's log level
+	console->debug("This message shold be displayed..");
 
         // Compile time log levels
         // define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON
@@ -159,13 +159,13 @@ int main(int, char*[])
         err_handler_example();
 
         // Apply a function on all registered loggers
-        spd::apply_all([&](std::shared_ptr<spdlog::logger> l)
+        spd::apply_all([&](std::shared_ptr<spd::logger> l)
         {
             l->info("End of example.");
         });
 
         // Release and close all loggers
-        spdlog::drop_all();
+        spd::drop_all();
     }
     // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
     catch (const spd::spdlog_ex& ex)
@@ -178,7 +178,7 @@ int main(int, char*[])
 void async_example()
 {
     size_t q_size = 4096; //queue size must be power of 2
-    spdlog::set_async_mode(q_size);
+    spd::set_async_mode(q_size);
     auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
     for (int i = 0; i < 100; ++i)
         async_file->info("Async message #{}", i);
@@ -216,7 +216,7 @@ void user_defined_example()
 //
 void err_handler_example()
 {
-	spdlog::set_error_handler([](const std::string& msg) {
+	spd::set_error_handler([](const std::string& msg) {
 		std::cerr << "my err handler: " << msg << std::endl;
 	});
 	// (or logger->set_error_handler(..) to set for specific logger)

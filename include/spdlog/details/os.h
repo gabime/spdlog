@@ -12,8 +12,9 @@
 #include <string>
 #include <chrono>
 #include <thread>
-#include <stdio.h>
-#include <string.h>
+#include <algorithm>
+#include <cstring>
+#include <cstdlib>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -364,6 +365,22 @@ inline std::string filename_to_str(const filename_t& filename)
 }
 #endif
 
+inline std::string errno_to_string(char [256], char* res)
+{
+    return std::string(res);
+}
+
+inline std::string errno_to_string(char buf[256], int res)
+{
+    if (res == 0)
+    {
+        return std::string(buf);
+    }
+    else
+    {
+        return "Unknown error";
+    }
+}
 
 // Return errno string (thread safe)
 inline std::string errno_str(int err_num)
@@ -375,7 +392,7 @@ inline std::string errno_str(int err_num)
     if(strerror_s(buf, buf_size, err_num) == 0)
         return std::string(buf);
     else
-        return "Unkown error";
+        return "Unknown error";
 
 #elif defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID) || defined(__SUNPRO_CC) || \
       ((_POSIX_C_SOURCE >= 200112L) && ! defined(_GNU_SOURCE)) // posix version
@@ -383,10 +400,11 @@ inline std::string errno_str(int err_num)
     if (strerror_r(err_num, buf, buf_size) == 0)
         return std::string(buf);
     else
-        return "Unkown error";
+        return "Unknown error";
 
 #else  // gnu version (might not use the given buf, so its retval pointer must be used)
-    return std::string(strerror_r(err_num, buf, buf_size));
+    auto err = strerror_r(err_num, buf, buf_size); // let compiler choose type
+    return errno_to_string(buf, err); // use overloading to select correct stringify function
 #endif
 }
 
@@ -400,6 +418,36 @@ inline int pid()
 #endif
 
 }
+
+
+// Detrmine if the terminal supports colors
+// Source: https://github.com/agauniyal/rang/
+inline bool is_color_terminal()
+{
+#ifdef _WIN32
+    return true;
+#else
+    static constexpr const char* Terms[] =
+    {
+        "ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm",
+        "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"
+    };
+
+    const char *env_p = std::getenv("TERM");
+    if (env_p == nullptr)
+    {
+        return false;
+    }
+
+    static const bool result = std::any_of(
+                                   std::begin(Terms), std::end(Terms), [&](const char* term)
+    {
+        return std::strstr(env_p, term) != nullptr;
+    });
+    return result;
+#endif
+}
+
 
 } //os
 } //details

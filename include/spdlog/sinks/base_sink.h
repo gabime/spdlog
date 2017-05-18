@@ -5,8 +5,8 @@
 
 #pragma once
 //
-// base sink templated over a mutex (either dummy or realy)
-// concrete implementation should only overrid the _sink_it method.
+// base sink templated over a mutex (either dummy or real)
+// concrete implementation should only override the _sink_it method.
 // all locking is taken care of here so no locking needed by the implementers..
 //
 
@@ -31,7 +31,7 @@ public:
     base_sink(const base_sink&) = delete;
     base_sink& operator=(const base_sink&) = delete;
 
-    void log(const details::log_msg& msg) override
+    void log(const details::log_msg& msg) SPDLOG_FINAL override
     {
         std::lock_guard<Mutex> lock(_mutex);
         _sink_it(msg);

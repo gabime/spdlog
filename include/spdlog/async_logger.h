@@ -31,7 +31,7 @@ namespace details
 class async_log_helper;
 }
 
-class async_logger :public logger
+class async_logger SPDLOG_FINAL :public logger
 {
 public:
     template<class It>
@@ -61,7 +61,7 @@ public:
                  const std::function<void()>& worker_teardown_cb = nullptr);
 
     //Wait for the queue to be empty, and flush synchronously
-    //Warning: this can potentialy last forever as we wait it to complete
+    //Warning: this can potentially last forever as we wait it to complete
     void flush() override;
 
     // Error handler

@@ -9,8 +9,6 @@
 // If the internal queue of log messages reaches its max size,
 // then the client call will block until there is more room.
 //
-// If the back thread throws during logging, a spdlog::spdlog_ex exception
-// will be thrown in client's thread when tries to log the next message
 
 #pragma once
 
@@ -62,11 +60,15 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
         logger_name(std::move(other.logger_name)),
                     level(std::move(other.level)),
                     time(std::move(other.time)),
+                    thread_id(other.thread_id),
                     txt(std::move(other.txt)),
                     msg_type(std::move(other.msg_type))
         {}
 
-        async_msg(async_msg_type m_type):msg_type(m_type)
+        async_msg(async_msg_type m_type):
+            level(level::info),
+            thread_id(0),
+            msg_type(m_type)
         {}
 
         async_msg& operator=(async_msg&& other) SPDLOG_NOEXCEPT
@@ -177,7 +179,7 @@ private:
 
     void handle_flush_interval(log_clock::time_point& now, log_clock::time_point& last_flush);
 
-    // sleep,yield or return immediatly using the time passed since last message as a hint
+    // sleep,yield or return immediately using the time passed since last message as a hint
     static void sleep_or_yield(const spdlog::log_clock::time_point& now, const log_clock::time_point& last_op_time);
 
     // wait until the queue is empty
