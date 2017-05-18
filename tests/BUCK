@@ -1,0 +1,17 @@
+cxx_binary(
+  name = 'tests',
+  header_namespace = '',
+  headers = glob([
+    '*.h',
+    '*.hpp',
+  ]),
+  srcs = glob([
+    '*.cpp',
+  ]),
+  compiler_flags = [
+    '-std=c++14',
+  ],
+  deps = [
+    '//:spdlog',
+  ],
+)

@@ -16,7 +16,8 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 * Fedora: `yum install spdlog`
 * Arch Linux: `pacman -S spdlog-git`
 * vcpkg: `vcpkg install spdlog`
- 
+* Buckaroo: `buckaroo install gabime/spdlog`
+
 
 ## Platforms
  * Linux, FreeBSD, Solaris
@@ -66,6 +67,15 @@ Time needed to log 1,000,000 lines in asynchronous mode, i.e. the time it takes 
 |100|      0.959s |0.202s|
 
 
+## Buck
+
+The test, examples and benchmarks can be run using [Buck](https://www.buckbuild.com):
+
+```bash
+buck run example/
+buck run example/:bench
+buck run tests/
+```
 
 
 ## Usage Example
@@ -97,10 +107,10 @@ int main(int, char*[])
         console->info("Support for floats {:03.2f}", 1.23456);
         console->info("Positional args are {1} {0}..", "too", "supported");
         console->info("{:<30}", "left aligned");
-        
+
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
-        
+
         // Create basic file logger (not rotated)
         auto my_logger = spd::basic_logger_mt("basic_logger", "logs/basic.txt");
         my_logger->info("Some log message");
@@ -177,7 +187,7 @@ void async_example()
 //syslog example
 void syslog_example()
 {
-#ifdef SPDLOG_ENABLE_SYSLOG 
+#ifdef SPDLOG_ENABLE_SYSLOG
     std::string ident = "spdlog-example";
     auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
     syslog_logger->warn("This is warning that will end up in syslog..");
@@ -205,10 +215,10 @@ void user_defined_example()
 //custom error handler
 //
 void err_handler_example()
-{	
+{
 	spdlog::set_error_handler([](const std::string& msg) {
 		std::cerr << "my err handler: " << msg << std::endl;
-	}); 
+	});
 	// (or logger->set_error_handler(..) to set for specific logger)
 }
 
