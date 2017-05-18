@@ -98,6 +98,7 @@ protected:
     spdlog::level_t _flush_level;
     log_err_handler _err_handler;
     std::atomic<time_t> _last_err_time;
+    std::atomic<size_t> _msg_counter;
 };
 }
 

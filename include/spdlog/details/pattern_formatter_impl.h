@@ -92,7 +92,14 @@ class a_formatter:public flag_formatter
         msg.formatted << days()[tm_time.tm_wday];
     }
 };
-
+// message counter formatter
+class i_formatter SPDLOG_FINAL:public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm& tm_time) override
+    {
+        msg.formatted << '#' << msg.msg_id;
+    }
+};
 //Full weekday name
 static const days_array& full_days()
 {
@@ -644,6 +651,12 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
     case ('P'):
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::pid_formatter()));
         break;
+
+#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+    case ('i'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::i_formatter()));
+        break;
+#endif
 
     default: //Unknown flag appears as is
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter('%')));
