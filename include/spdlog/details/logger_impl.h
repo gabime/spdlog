@@ -21,7 +21,8 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
     _formatter(std::make_shared<pattern_formatter>("%+")),
     _level(level::info),
     _flush_level(level::off),
-    _last_err_time(0)
+    _last_err_time(0),
+    _msg_counter(1)  // message counter will start from 1. 0-message id will be reserved for controll messages
 {
     _err_handler = [this](const std::string &msg)
     {
@@ -37,10 +38,7 @@ inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list si
 
 // ctor with single sink
 inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink):
-    logger(logger_name,
-{
-    single_sink
-})
+    logger(logger_name, { single_sink })
 {}
 
 
@@ -67,6 +65,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
     {
         details::log_msg log_msg(&_name, lvl);
         log_msg.raw.write(fmt, args...);
+        log_msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
         _sink_it(log_msg);
     }
     catch (const std::exception &ex)
@@ -87,6 +86,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
     {
         details::log_msg log_msg(&_name, lvl);
         log_msg.raw << msg;
+        log_msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
         _sink_it(log_msg);
     }
     catch (const std::exception &ex)
@@ -108,6 +108,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
     {
         details::log_msg log_msg(&_name, lvl);
         log_msg.raw << msg;
+        log_msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
         _sink_it(log_msg);
     }
     catch (const std::exception &ex)
