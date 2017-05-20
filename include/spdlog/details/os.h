@@ -447,7 +447,7 @@ namespace spdlog
 
 			// Detrmine if the terminal attached 
 			// Source: https://github.com/agauniyal/rang/
-			bool in_terminal(FILE* file)
+			inline bool in_terminal(FILE* file)
 			{
 
 #ifdef _WIN32
