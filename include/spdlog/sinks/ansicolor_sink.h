@@ -31,11 +31,11 @@ public:
         should_do_colors_ = details::os::in_terminal(file) && details::os::is_color_terminal();
         colors_[level::trace] = "\033[36m"; // cyan;
         colors_[level::debug] = "\033[36m"; // cyan;
-        colors_[level::info] = "\033[0m";// bold;
+        colors_[level::info] = "\033[0m";// default color;
         colors_[level::warn] = "\033[33m\033[1m"; // yellow_bold;
         colors_[level::err] = "\033[31m\033[1m"; // red_bold;
         colors_[level::critical] = "\033[1m\033[41m"; // bold_red_bg;
-        colors_[level::off] = "\033[0m"; //reset;
+        colors_[level::off] = "\033[0m"; //reset to default;
     }
     virtual ~ansicolor_sink()
     {
