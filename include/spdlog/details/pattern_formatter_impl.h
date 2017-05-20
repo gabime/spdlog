@@ -95,7 +95,7 @@ class a_formatter:public flag_formatter
 // message counter formatter
 class i_formatter SPDLOG_FINAL:public flag_formatter
 {
-    void format(details::log_msg& msg, const std::tm& tm_time) override
+    void format(details::log_msg& msg, const std::tm&) override
     {
         msg.formatted << '#' << msg.msg_id;
     }
