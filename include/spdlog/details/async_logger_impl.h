@@ -87,6 +87,9 @@ inline void spdlog::async_logger::_sink_it(details::log_msg& msg)
 {
     try
     {
+#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+		msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
+#endif
         _async_log_helper->log(msg);
         if (_should_flush_on(msg))
             _async_log_helper->flush(false); // do async flush

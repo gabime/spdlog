@@ -68,11 +68,6 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
     {
         details::log_msg log_msg(&_name, lvl);
         log_msg.raw.write(fmt, args...);
-
-#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-        log_msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
-#endif
-
         _sink_it(log_msg);
     }
     catch (const std::exception &ex)
@@ -93,11 +88,6 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
     {
         details::log_msg log_msg(&_name, lvl);
         log_msg.raw << msg;
-
-#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-        log_msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
-#endif
-
         _sink_it(log_msg);
     }
     catch (const std::exception &ex)
@@ -119,9 +109,6 @@ inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
     {
         details::log_msg log_msg(&_name, lvl);
         log_msg.raw << msg;
-#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-        log_msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
-#endif
         _sink_it(log_msg);
     }
     catch (const std::exception &ex)
@@ -313,6 +300,9 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 //
 inline void spdlog::logger::_sink_it(details::log_msg& msg)
 {
+#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+	msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
+#endif
     _formatter->format(msg);
     for (auto &sink : _sinks)
     {
