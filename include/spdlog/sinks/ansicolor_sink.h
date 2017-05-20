@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2016 Kevin M. Godby (a modified version by spdlog).
+// Copyright(c) 2017 spdlog authors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
@@ -56,9 +56,9 @@ protected:
         {
             const std::string& prefix = colors_[msg.level];
             const std::string& reset = colors_[level::off];
-            fwrite(prefix.c_str(), sizeof(char), prefix.size(), target_file_);
+            fwrite(prefix.data(), sizeof(char), prefix.size(), target_file_);
             fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
-            fwrite(reset.c_str(), sizeof(char), reset.size(), target_file_);
+            fwrite(reset.data(), sizeof(char), reset.size(), target_file_);
         }
         else
         {
