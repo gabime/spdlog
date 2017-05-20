@@ -10,7 +10,7 @@
 #include <spdlog/details/os.h>
 
 #include <string>
-#include <unordered_map>
+#include <map>
 
 namespace spdlog
 {
@@ -26,9 +26,8 @@ namespace spdlog
 		class ansicolor_sink SPDLOG_FINAL: public base_sink<Mutex>
 		{
 		public:
-			ansicolor_sink(FILE* file): _target_file(file)
+			ansicolor_sink(FILE* file): target_file_(file)
 			{
-				using namespace ansi_color_codes;
 				should_do_colors_ = details::os::in_terminal(file) && details::os::is_color_terminal();
 				colors_[level::trace] = "\033[36m"; // cyan;
 				colors_[level::debug] = "\033[36m"; // cyan;
@@ -45,7 +44,7 @@ namespace spdlog
 
 			void flush() override
 			{
-				fflush(_target_file);
+				fflush(target_file_);
 			}
 
 		protected:
@@ -56,19 +55,19 @@ namespace spdlog
 				if (should_do_colors_) 
 				{
 					const std::string& prefix = colors_[msg.level];					
-					const std::string& suffix = ansi_color_codes::reset;					
-					fwrite(prefix, sizeof(char), prefix.size(), _target_file);
-					fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), _target_file);
-					fwrite(suffix, sizeof(char), suffix.size(), _target_file);
+					const std::string& reset = colors_[level::off];					
+					fwrite(prefix.c_str(), sizeof(char), prefix.size(), target_file_);
+					fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
+					fwrite(reset.c_str(), sizeof(char), reset.size(), target_file_);
 				}
 				else
 				{
-					fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), _target_file);					
+					fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);					
 				}
-			}
-		private:
+			} 
+            FILE* target_file_;
 			bool should_do_colors_;
-			std::unordered_map<level::level_enum, std::string> colors_;				
+			std::map<level::level_enum, std::string> colors_;				
 		};
 
 
