@@ -19,10 +19,10 @@ namespace details
 struct log_msg
 {
     log_msg() = default;
-    log_msg(const std::string *loggers_name, level::level_enum lvl) : 
-		logger_name(loggers_name), 
-		level(lvl), 
-		msg_id(0)
+    log_msg(const std::string *loggers_name, level::level_enum lvl) :
+        logger_name(loggers_name),
+        level(lvl),
+        msg_id(0)
     {
 #ifndef SPDLOG_NO_DATETIME
         time = os::now();

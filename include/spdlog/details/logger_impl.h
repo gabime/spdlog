@@ -38,7 +38,10 @@ inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list si
 
 // ctor with single sink
 inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink):
-    logger(logger_name, { single_sink })
+    logger(logger_name,
+{
+    single_sink
+})
 {}
 
 

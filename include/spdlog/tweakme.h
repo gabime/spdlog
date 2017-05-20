@@ -122,7 +122,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-// Uncomment to enable message counting feature. Adds %i logger pattern that 
+// Uncomment to enable message counting feature. Adds %i logger pattern that
 // prints log message sequence id.
 //
 // #define SPDLOG_ENABLE_MESSAGE_COUNTER
