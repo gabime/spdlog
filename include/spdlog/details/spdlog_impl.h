@@ -137,25 +137,25 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_color_st(const std::string
 
 inline std::shared_ptr<spdlog::logger> spdlog::stdout_color_mt(const std::string& logger_name)
 {
-    auto sink = std::make_shared<spdlog::sinks::ansicolor_sink>(spdlog::sinks::stdout_sink_mt::instance());
+    auto sink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
     return spdlog::details::registry::instance().create(logger_name, sink);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stdout_color_st(const std::string& logger_name)
 {
-    auto sink = std::make_shared<spdlog::sinks::ansicolor_sink>(spdlog::sinks::stdout_sink_st::instance());
+    auto sink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_st>();
     return spdlog::details::registry::instance().create(logger_name, sink);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stderr_color_mt(const std::string& logger_name)
 {
-    auto sink = std::make_shared<spdlog::sinks::ansicolor_sink>(spdlog::sinks::stderr_sink_mt::instance());
+	auto sink = std::make_shared<spdlog::sinks::ansicolor_stderr_sink_mt>();
     return spdlog::details::registry::instance().create(logger_name, sink);
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::stderr_color_st(const std::string& logger_name)
 {
-    auto sink = std::make_shared<spdlog::sinks::ansicolor_sink>(spdlog::sinks::stderr_sink_st::instance());
+	auto sink = std::make_shared<spdlog::sinks::ansicolor_stderr_sink_st>();
     return spdlog::details::registry::instance().create(logger_name, sink);
 }
 #endif
