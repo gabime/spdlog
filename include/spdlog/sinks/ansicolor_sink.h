@@ -35,7 +35,7 @@ public:
         colors_[level::warn] = "\033[33m\033[1m"; // yellow_bold;
         colors_[level::err] = "\033[31m\033[1m"; // red_bold;
         colors_[level::critical] = "\033[1m\033[41m"; // bold_red_bg;
-        colors_[level::off] = "\033[00m"; //reset;
+        colors_[level::off] = "\033[0m"; //reset;
     }
     virtual ~ansicolor_sink()
     {
@@ -64,6 +64,7 @@ protected:
         {
             fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
         }
+        flush();
     }
     FILE* target_file_;
     bool should_do_colors_;
