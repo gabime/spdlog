@@ -18,8 +18,7 @@ namespace sinks
 {
 
 /**
- * @brief The ansi_color_sink is a decorator around another sink and prefixes
- * the output with an ANSI escape sequence color code depending on the severity
+ * @brief The ansi_color_sink  prefixes the output with an ANSI escape sequence color code depending on the severity
  * of the message.
  */
 template <class Mutex>
