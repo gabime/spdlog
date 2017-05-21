@@ -43,7 +43,7 @@ Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
 
-#include <spdlog/common.h>
+#include "spdlog/common.h"
 
 #include <atomic>
 #include <utility>

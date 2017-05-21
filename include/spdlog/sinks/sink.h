@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <spdlog/details/log_msg.h>
+#include "spdlog/details/log_msg.h"
 
 namespace spdlog
 {
