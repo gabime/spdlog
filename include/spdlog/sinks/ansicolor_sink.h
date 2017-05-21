@@ -23,7 +23,7 @@ namespace sinks
  * If no color terminal detected, omit the escape codes.
  */
 template <class Mutex>
-class ansicolor_sink SPDLOG_FINAL: public base_sink<Mutex>
+class ansicolor_sink: public base_sink<Mutex>
 {
 public:
     ansicolor_sink(FILE* file): target_file_(file)
