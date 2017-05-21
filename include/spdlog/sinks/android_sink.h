@@ -7,7 +7,7 @@
 
 #if defined(__ANDROID__)
 
-#include <spdlog/sinks/sink.h>
+#include "spdlog/sinks/sink.h"
 
 #include <mutex>
 #include <string>

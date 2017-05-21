@@ -143,7 +143,7 @@ struct my_type
     }
 };
 
-#include <spdlog/fmt/ostr.h> // must be included
+#include "spdlog/fmt/ostr.h" // must be included
 void user_defined_example()
 {
     spd::get("console")->info("user defined type: {}", my_type { 14 });
