@@ -30,15 +30,16 @@ public:
     {
     }
 
-    void flush() override
-    {
-    }
+    
 
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
         OutputDebugStringA(msg.formatted.c_str());
     }
+
+	void _flush() override
+	{}
 };
 
 typedef msvc_sink<std::mutex> msvc_sink_mt;

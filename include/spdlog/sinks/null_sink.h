@@ -22,7 +22,7 @@ protected:
     void _sink_it(const details::log_msg&) override
     {}
 
-    void flush() override
+    void _flush() override
     {}
 
 };

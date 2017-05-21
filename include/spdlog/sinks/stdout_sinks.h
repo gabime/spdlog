@@ -29,14 +29,14 @@ public:
         static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
         return instance;
     }
-
+protected:
     void _sink_it(const details::log_msg& msg) override
     {
         fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stdout);
         flush();
     }
 
-    void flush() override
+    void _flush() override
     {
         fflush(stdout);
     }
@@ -58,14 +58,14 @@ public:
         static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
         return instance;
     }
-
+protected:
     void _sink_it(const details::log_msg& msg) override
     {
         fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);
         flush();
     }
 
-    void flush() override
+    void _flush() override
     {
         fflush(stderr);
     }

@@ -42,10 +42,7 @@ public:
         flush();
     }
 
-    void flush() override
-    {
-        fflush(target_file_);
-    }
+    
 
 protected:
     virtual void _sink_it(const details::log_msg& msg) override
@@ -66,6 +63,11 @@ protected:
         }
         flush();
     }
+
+	void _flush() override
+	{
+		fflush(target_file_);
+	}
     FILE* target_file_;
     bool should_do_colors_;
     std::map<level::level_enum, std::string> colors_;

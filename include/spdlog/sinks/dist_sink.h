@@ -44,13 +44,15 @@ protected:
         }
     }
 
+	void _flush() override
+	{
+		std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
+		for (auto &sink : _sinks)
+			sink->flush();
+	}
+
 public:
-    void flush() override
-    {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
-        for (auto &sink : _sinks)
-            sink->flush();
-    }
+   
 
     void add_sink(std::shared_ptr<sink> sink)
     {
