@@ -18,8 +18,9 @@ namespace sinks
 {
 
 /**
- * @brief The ansi_color_sink  prefixes the output with an ANSI escape sequence color code depending on the severity
- * of the message.
+ * This sink prefixes the output with an ANSI escape sequence color code depending on the severity
+ * of the message. 
+ * If no color terminal detected, omit the escape codes.
  */
 template <class Mutex>
 class ansicolor_sink SPDLOG_FINAL: public base_sink<Mutex>
