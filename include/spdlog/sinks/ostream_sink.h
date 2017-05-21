@@ -32,7 +32,7 @@ protected:
             _ostream.flush();
     }
 
-    void flush() override
+    void _flush() override
     {
         _ostream.flush();
     }

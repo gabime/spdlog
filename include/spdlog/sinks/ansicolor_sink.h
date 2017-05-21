@@ -39,7 +39,7 @@ public:
     }
     virtual ~ansicolor_sink()
     {
-        flush();
+        _flush();
     }
 
     
@@ -61,7 +61,7 @@ protected:
         {
             fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
         }
-        flush();
+        _flush();
     }
 
 	void _flush() override

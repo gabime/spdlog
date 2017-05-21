@@ -33,7 +33,7 @@ protected:
     void _sink_it(const details::log_msg& msg) override
     {
         fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stdout);
-        flush();
+        _flush();
     }
 
     void _flush() override
@@ -62,7 +62,7 @@ protected:
     void _sink_it(const details::log_msg& msg) override
     {
         fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);
-        flush();
+        _flush();
     }
 
     void _flush() override
