@@ -9,9 +9,9 @@
 
 #define SPDLOG_VERSION "0.13.0"
 
-#include <spdlog/tweakme.h>
-#include <spdlog/common.h>
-#include <spdlog/logger.h>
+#include "spdlog/tweakme.h"
+#include "spdlog/common.h"
+#include "spdlog/logger.h"
 
 #include <memory>
 #include <functional>
@@ -175,4 +175,4 @@ void drop_all();
 }
 
 
-#include <spdlog/details/spdlog_impl.h>
+#include "spdlog/details/spdlog_impl.h"

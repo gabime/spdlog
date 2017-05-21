@@ -8,23 +8,23 @@
 //
 // Global registry functions
 //
-#include <spdlog/spdlog.h>
-#include <spdlog/details/registry.h>
-#include <spdlog/sinks/file_sinks.h>
-#include <spdlog/sinks/stdout_sinks.h>
+#include "spdlog/spdlog.h"
+#include "spdlog/details/registry.h"
+#include "spdlog/sinks/file_sinks.h"
+#include "spdlog/sinks/stdout_sinks.h"
 #ifdef SPDLOG_ENABLE_SYSLOG
-#include <spdlog/sinks/syslog_sink.h>
+#include "spdlog/sinks/syslog_sink.h"
 #endif
 
 #ifdef _WIN32
-#include <spdlog/sinks/wincolor_sink.h>
+#include "spdlog/sinks/wincolor_sink.h"
 #else
-#include <spdlog/sinks/ansicolor_sink.h>
+#include "spdlog/sinks/ansicolor_sink.h"
 #endif
 
 
 #ifdef __ANDROID__
-#include <spdlog/sinks/android_sink.h>
+#include "spdlog/sinks/android_sink.h"
 #endif
 
 #include <chrono>

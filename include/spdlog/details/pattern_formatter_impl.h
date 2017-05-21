@@ -5,10 +5,10 @@
 
 #pragma once
 
-#include <spdlog/formatter.h>
-#include <spdlog/details/log_msg.h>
-#include <spdlog/details/os.h>
-#include <spdlog/fmt/fmt.h>
+#include "spdlog/formatter.h"
+#include "spdlog/details/log_msg.h"
+#include "spdlog/details/os.h"
+#include "spdlog/fmt/fmt.h"
 
 #include <chrono>
 #include <ctime>
