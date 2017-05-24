@@ -483,7 +483,7 @@ class full_formatter SPDLOG_FINAL:public flag_formatter
         msg.formatted << '[' << *msg.logger_name << "] ";
 #endif
 
-        msg.formatted << '[' << level::to_str(msg.level) << "] ";
+        msg.formatted << '[' << level::get_color(msg.level) << level::to_str(msg.level) << "\e[0m" << "] ";
         msg.formatted << fmt::StringRef(msg.raw.data(), msg.raw.size());
     }
 };
