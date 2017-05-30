@@ -503,9 +503,9 @@ class full_formatter SPDLOG_FINAL:public flag_formatter
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////
 inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern, pattern_time ptime)
-: _time(ptime), _pattern(pattern)
+: _time(ptime)
 {
-    compile_pattern(_pattern, _time);
+    compile_pattern(pattern, _time);
 }
 
 inline void spdlog::pattern_formatter::compile_pattern(const std::string& pattern, pattern_time ptime)
