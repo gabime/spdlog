@@ -106,6 +106,15 @@ enum class async_overflow_policy
     discard_log_msg // Discard the message it enqueue fails
 };
 
+//
+// Pattern time - specific time getting to use for pattern_formatter.
+// local time by default
+//
+enum class pattern_time
+{
+	local, // use variant of time similar to std::localtime for std::tm
+	utc // use variant of time similar to std::gmtime for std::tm
+};
 
 //
 // Log exception

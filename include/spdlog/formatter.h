@@ -29,15 +29,16 @@ class pattern_formatter SPDLOG_FINAL : public formatter
 {
 
 public:
-    explicit pattern_formatter(const std::string& pattern);
+    explicit pattern_formatter(const std::string& pattern, pattern_time ptime = pattern_time::local);
     pattern_formatter(const pattern_formatter&) = delete;
     pattern_formatter& operator=(const pattern_formatter&) = delete;
     void format(details::log_msg& msg) override;
 private:
     const std::string _pattern;
+	const pattern_time _time;
     std::vector<std::unique_ptr<details::flag_formatter>> _formatters;
     void handle_flag(char flag);
-    void compile_pattern(const std::string& pattern);
+    void compile_pattern(const std::string& pattern, pattern_time ptime);
 };
 }
 

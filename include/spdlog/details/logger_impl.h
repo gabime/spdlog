@@ -53,9 +53,9 @@ inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
     _set_formatter(msg_formatter);
 }
 
-inline void spdlog::logger::set_pattern(const std::string& pattern)
+inline void spdlog::logger::set_pattern(const std::string& pattern, pattern_time ptime)
 {
-    _set_pattern(pattern);
+    _set_pattern(pattern, ptime);
 }
 
 
@@ -316,9 +316,9 @@ inline void spdlog::logger::_sink_it(details::log_msg& msg)
         flush();
 }
 
-inline void spdlog::logger::_set_pattern(const std::string& pattern)
+inline void spdlog::logger::_set_pattern(const std::string& pattern, pattern_time ptime)
 {
-    _formatter = std::make_shared<pattern_formatter>(pattern);
+    _formatter = std::make_shared<pattern_formatter>(pattern, ptime);
 }
 inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
 {
