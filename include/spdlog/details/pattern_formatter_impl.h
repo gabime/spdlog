@@ -324,7 +324,6 @@ class T_formatter SPDLOG_FINAL:public flag_formatter
     }
 };
 
-
 // ISO 8601 offset from UTC in timezone (+-HH:MM)
 class z_formatter SPDLOG_FINAL:public flag_formatter
 {
@@ -495,7 +494,8 @@ class full_formatter SPDLOG_FINAL:public flag_formatter
 ///////////////////////////////////////////////////////////////////////////////
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern)
+inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern, pattern_time_type pattern_time)
+: _pattern_time(pattern_time)
 {
     compile_pattern(pattern);
 }
@@ -665,12 +665,19 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
     }
 }
 
+inline std::tm spdlog::pattern_formatter::get_time(details::log_msg& msg) 
+{
+    if (_pattern_time == pattern_time_type::local)
+        return details::os::localtime(log_clock::to_time_t(msg.time));
+    else
+        return details::os::gmtime(log_clock::to_time_t(msg.time));
+}
 
 inline void spdlog::pattern_formatter::format(details::log_msg& msg)
 {
 
 #ifndef SPDLOG_NO_DATETIME
-    auto tm_time = details::os::localtime(log_clock::to_time_t(msg.time));
+    auto tm_time = get_time(msg);
 #else
     std::tm tm_time;
 #endif
