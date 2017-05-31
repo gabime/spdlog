@@ -66,7 +66,7 @@ public:
     void set_level(level::level_enum);
     level::level_enum level() const;
     const std::string& name() const;
-    void set_pattern(const std::string&, pattern_time = pattern_time::local);
+    void set_pattern(const std::string&, pattern_time_type = pattern_time_type::local);
     void set_formatter(formatter_ptr);
 
     // automatically call flush() if message level >= log_level
@@ -82,7 +82,7 @@ public:
 
 protected:
     virtual void _sink_it(details::log_msg&);
-    virtual void _set_pattern(const std::string&, pattern_time);
+    virtual void _set_pattern(const std::string&, pattern_time_type);
     virtual void _set_formatter(formatter_ptr);
 
     // default error handler: print the error to stderr with the max rate of 1 message/minute

@@ -110,10 +110,10 @@ enum class async_overflow_policy
 // Pattern time - specific time getting to use for pattern_formatter.
 // local time by default
 //
-enum class pattern_time
+enum class pattern_time_type
 {
-	local, // use variant of time similar to std::localtime for std::tm
-	utc // use variant of time similar to std::gmtime for std::tm
+    local, // use variant of time similar to std::localtime for std::tm
+    utc // use variant of time similar to std::gmtime for std::tm
 };
 
 //
