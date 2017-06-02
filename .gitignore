@@ -47,6 +47,7 @@ example/*
 !example/CMakeLists.txt
 !example/multisink.cpp
 !example/jni
+!example/BUCK
 
 # generated files
 generated
@@ -62,3 +63,13 @@ install_manifest.txt
 /tests/tests.VC.db
 /tests/tests
 /tests/logs/file_helper_test.txt
+
+# Logs
+/logs/
+
+# Buck
+/buck-out/
+/.buckd/
+/buckaroo/
+.buckconfig.local
+BUCKAROO_DEPS
