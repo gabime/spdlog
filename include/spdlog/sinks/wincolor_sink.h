@@ -44,7 +44,7 @@ public:
 
     virtual ~wincolor_sink()
     {
-        flush();
+        this->flush();
     }
 
     wincolor_sink(const wincolor_sink& other) = delete;
