@@ -203,6 +203,24 @@ inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_
     return details::registry::instance().create(logger_name, sinks_begin, sinks_end);
 }
 
+// Create and register an async logger with a single sink
+inline std::shared_ptr<spdlog::logger> spdlog::create_async(const std::string& logger_name, const sink_ptr& sink, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb)
+{
+    return details::registry::instance().create_async(logger_name, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb, sink);
+}
+
+// Create and register an async logger with multiple sinks
+inline std::shared_ptr<spdlog::logger> spdlog::create_async(const std::string& logger_name, sinks_init_list sinks, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb )
+{
+    return details::registry::instance().create_async(logger_name, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb, sinks);
+}
+
+template<class It>
+inline std::shared_ptr<spdlog::logger> spdlog::create_async(const std::string& logger_name, const It& sinks_begin, const It& sinks_end, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb)
+{
+    return details::registry::instance().create_async(logger_name, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb, sinks_begin, sinks_end);
+}
+
 inline void spdlog::set_formatter(spdlog::formatter_ptr f)
 {
     details::registry::instance().formatter(f);

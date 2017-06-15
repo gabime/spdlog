@@ -71,6 +71,26 @@ public:
         return new_logger;
     }
 
+    template<class It>
+    std::shared_ptr<async_logger> create_async(const std::string& logger_name, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb, const It& sinks_begin, const It& sinks_end)
+    {
+        std::lock_guard<Mutex> lock(_mutex);
+        throw_if_exists(logger_name);
+        auto new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb);
+
+        if (_formatter)
+            new_logger->set_formatter(_formatter);
+
+        if (_err_handler)
+            new_logger->set_error_handler(_err_handler);
+
+        new_logger->set_level(_level);
+
+        //Add to registry
+        _loggers[logger_name] = new_logger;
+        return new_logger;
+    }
+
     void apply_all(std::function<void(std::shared_ptr<logger>)> fun)
     {
         std::lock_guard<Mutex> lock(_mutex);
@@ -99,6 +119,15 @@ public:
         return create(logger_name, { sink });
     }
 
+    std::shared_ptr<async_logger> create_async(const std::string& logger_name, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb, sinks_init_list sinks)
+    {
+        return create_async(logger_name, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb, sinks.begin(), sinks.end());
+    }
+
+    std::shared_ptr<async_logger> create_async(const std::string& logger_name, size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb, sink_ptr sink)
+    {
+		return create_async(logger_name, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb, { sink });
+    }
 
     void formatter(formatter_ptr f)
     {
