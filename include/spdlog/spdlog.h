@@ -113,7 +113,7 @@ std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std:
 std::shared_ptr<logger> android_logger(const std::string& logger_name, const std::string& tag = "spdlog");
 #endif
 
-// Create and register a logger a single sink
+// Create and register a logger with a single sink
 std::shared_ptr<logger> create(const std::string& logger_name, const sink_ptr& sink);
 
 // Create and register a logger with multiple sinks
@@ -128,6 +128,13 @@ std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_b
 template <typename Sink, typename... Args>
 std::shared_ptr<spdlog::logger> create(const std::string& logger_name, Args...);
 
+// Create and register an async logger with a single sink
+std::shared_ptr<logger> create_async(const std::string& logger_name, const sink_ptr& sink, size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);
+
+// Create and register an async logger with multiple sinks
+std::shared_ptr<logger> create_async(const std::string& logger_name, sinks_init_list sinks, size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);
+template<class It>
+std::shared_ptr<logger> create_async(const std::string& logger_name, const It& sinks_begin, const It& sinks_end, size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);
 
 // Register the given logger with the given name
 void register_logger(std::shared_ptr<logger> logger);
