@@ -43,6 +43,8 @@ public:
     template <typename Arg1, typename... Args> void warn(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void error(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void critical(const char* fmt, const Arg1&, const Args&... args);
+
+    template <typename Arg1, typename... Args> void warn_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template <typename... Args> void log(level::level_enum lvl, const wchar_t* msg);
     template <typename... Args> void log(level::level_enum lvl, const wchar_t* fmt, const Args&... args);
@@ -61,6 +63,8 @@ public:
     template <typename T> void warn(const T&);
     template <typename T> void error(const T&);
     template <typename T> void critical(const T&);
+
+    template <typename T> void warn_if(const bool flag, const T&);
 
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
