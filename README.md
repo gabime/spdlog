@@ -30,6 +30,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 * Feature rich [call style](#usage-example) using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * Extremely fast asynchronous mode (optional) - using lockfree queues and other tricks to reach millions of calls/sec.
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
+* Conditional Logging
 * Multi/Single threaded loggers.
 * Various log targets:
     * Rotating log files.
@@ -90,6 +91,12 @@ int main(int, char*[])
         auto console = spd::stdout_color_mt("console");
         console->info("Welcome to spdlog!");
         console->error("Some error message with arg{}..", 1);
+
+	// Conditional logging example
+        auto i = 2;
+        console->info_if(i < 20, "Welcome to spdlog conditional logging!");
+        console->warn_if(i != 0, "an important message");
+        console->critical_if(i != 2, "a false warning which won't show up");
 
         // Formatting examples
         console->warn("Easy padding in numbers like {:08d}", 12);
