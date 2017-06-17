@@ -146,15 +146,6 @@ inline void spdlog::logger::warn(const char* fmt, const Arg1 &arg1, const Args&.
     log(level::warn, fmt, arg1, args...);
 }
 
-template <typename Arg1, typename... Args> 
-inline void spdlog::logger::warn_if(const bool flag, const char* fmt, const Arg1& arg1, const Args&... args)
-{
-    if (flag)
-    {
-        log(level::warn, fmt, arg1, args...);
-    }
-}
-
 template <typename Arg1, typename... Args>
 inline void spdlog::logger::error(const char* fmt, const Arg1 &arg1, const Args&... args)
 {
@@ -166,6 +157,79 @@ inline void spdlog::logger::critical(const char* fmt, const Arg1 &arg1, const Ar
 {
     log(level::critical, fmt, arg1, args...);
 }
+
+template <typename... Args>
+inline void spdlog::logger::log_if(const bool flag, level::level_enum lvl, const char* msg)
+{
+    if (flag)
+    {
+        log(lvl, msg);
+    }
+}
+
+template<typename T>
+inline void spdlog::logger::log_if(const bool flag, level::level_enum lvl, const T& msg)
+{
+    if (flag)
+    {
+        log(lvl, msg);
+    }
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::trace_if(const bool flag, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    if (flag)
+    {
+        log(level::trace, fmt, arg1, args...);
+    }
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::debug_if(const bool flag, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    if (flag)
+    {
+        log(level::debug, fmt, arg1, args...);
+    }
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::info_if(const bool flag, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    if (flag)
+    {
+        log(level::info, fmt, arg1, args...);
+    }
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::warn_if(const bool flag, const char* fmt, const Arg1& arg1, const Args&... args)
+{
+    if (flag)
+    {
+        log(level::warn, fmt, arg1, args...);
+    }
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::error_if(const bool flag, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    if (flag)
+    {
+        log(level::err, fmt, arg1, args...);
+    }
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::critical_if(const bool flag, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    if (flag)
+    {
+        log(level::critical, fmt, arg1, args...);
+    }
+}
+
 
 template<typename T>
 inline void spdlog::logger::trace(const T& msg)
@@ -194,15 +258,6 @@ inline void spdlog::logger::warn(const T& msg)
 }
 
 template<typename T>
-inline void spdlog::logger::warn_if(const bool flag, const T& msg)
-{
-    if (flag)
-    {
-        log(level::warn, msg);
-    }
-}
-
-template<typename T>
 inline void spdlog::logger::error(const T& msg)
 {
     log(level::err, msg);
@@ -213,6 +268,61 @@ inline void spdlog::logger::critical(const T& msg)
 {
     log(level::critical, msg);
 }
+
+template<typename T>
+inline void spdlog::logger::trace_if(const bool flag, const T& msg)
+{
+    if (flag)
+    {
+        log(level::trace, msg);
+    }
+}
+
+template<typename T>
+inline void spdlog::logger::debug_if(const bool flag, const T& msg)
+{
+    if (flag)
+    {
+        log(level::debug, msg);
+    }
+}
+
+template<typename T>
+inline void spdlog::logger::info_if(const bool flag, const T& msg)
+{
+    if (flag)
+    {
+        log(level::info, msg);
+    }
+}
+
+template<typename T>
+inline void spdlog::logger::warn_if(const bool flag, const T& msg)
+{
+    if (flag)
+    {
+        log(level::warn, msg);
+    }
+}
+
+template<typename T>
+inline void spdlog::logger::error_if(const bool flag, const T& msg)
+{
+    if (flag)
+    {
+        log(level::error, msg);
+    }
+}
+
+template<typename T>
+inline void spdlog::logger::critical_if(const bool flag, const T& msg)
+{
+    if (flag)
+    {
+        log(level::critical, msg);
+    }
+}
+
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #include <codecvt>
