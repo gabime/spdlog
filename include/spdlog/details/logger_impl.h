@@ -310,7 +310,7 @@ inline void spdlog::logger::error_if(const bool flag, const T& msg)
 {
     if (flag)
     {
-        log(level::error, msg);
+        log(level::err, msg);
     }
 }
 
