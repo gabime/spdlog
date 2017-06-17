@@ -27,6 +27,12 @@ int main(int, char*[])
         console->info("Welcome to spdlog!");
         console->error("Some error message with arg{}..", 1);
 
+        // Conditional logging example
+        auto i = 2;
+        console->info_if(i < 20, "Welcome to spdlog conditional logging!");
+        console->warn_if(i != 0, "an important message");
+        console->critical_if(i != 2, "a false warning which won't show up");
+        
         // Formatting examples
         console->warn("Easy padding in numbers like {:08d}", 12);
         console->critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
