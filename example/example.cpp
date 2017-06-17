@@ -6,6 +6,10 @@
 // spdlog usage example
 //
 //
+
+#define SPDLOG_TRACE_ON
+#define SPDLOG_DEBUG_ON
+
 #include "spdlog/spdlog.h"
 
 #include <iostream>
@@ -39,6 +43,8 @@ int main(int, char*[])
         console->info("Support for floats {:03.2f}", 1.23456);
         console->info("Positional args are {1} {0}..", "too", "supported");
         console->info("{:<30}", "left aligned");
+
+        SPDLOG_DEBUG_IF(console, true, "This is a debug log");
 
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
@@ -74,6 +80,8 @@ int main(int, char*[])
         // define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON
         SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
         SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
+        SPDLOG_DEBUG_IF(console, true, "This is a debug log");
+
 
         // Asynchronous logging is very fast..
         // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
