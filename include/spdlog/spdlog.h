@@ -162,22 +162,24 @@ void drop_all();
 // SPDLOG_TRACE(my_logger, "some trace message");
 // SPDLOG_TRACE(my_logger, "another trace message {} {}", 1, 2);
 // SPDLOG_DEBUG(my_logger, "some debug message {} {}", 3, 4);
+// SPDLOG_DEBUG_IF(my_logger, true, "some debug message {} {}", 3, 4);
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef SPDLOG_TRACE_ON
 #define SPDLOG_STR_H(x) #x
 #define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
 #define SPDLOG_TRACE(logger, ...) logger->trace("[" __FILE__ " line #" SPDLOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
+#define SPDLOG_TRACE_IF(logger, flag, ...) logger->trace_if(flag, "[" __FILE__ " line #" SPDLOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
 #else
 #define SPDLOG_TRACE(logger, ...)
 #endif
 
 #ifdef SPDLOG_DEBUG_ON
 #define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)
+#define SPDLOG_DEBUG_IF(logger, flag, ...) logger->debug_if(flag, __VA_ARGS__)
 #else
 #define SPDLOG_DEBUG(logger, ...)
 #endif
-
 
 }
 
