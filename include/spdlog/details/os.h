@@ -330,7 +330,11 @@ inline size_t _thread_id()
     long tid;
     thr_self(&tid);
     return static_cast<size_t>(tid);
-#else //Default to standard C++11 (OSX and other Unix)
+#elif __APPLE__
+    uint64_t tid;
+    pthread_threadid_np(nullptr, &tid);
+    return static_cast<size_t>(tid);
+#else //Default to standard C++11 (other Unix)
     return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
 #endif
 }
