@@ -507,7 +507,7 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 inline void spdlog::logger::_sink_it(details::log_msg& msg)
 {
 #if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-	msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
+    msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
 #endif
     _formatter->format(msg);
     for (auto &sink : _sinks)

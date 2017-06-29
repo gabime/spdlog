@@ -43,7 +43,7 @@ public:
     template <typename Arg1, typename... Args> void warn(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void error(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void critical(const char* fmt, const Arg1&, const Args&... args);
-    
+
     template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const char* fmt, const Args&... args);
     template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const char* msg);
     template <typename Arg1, typename... Args> void trace_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
