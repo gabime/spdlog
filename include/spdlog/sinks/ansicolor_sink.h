@@ -19,7 +19,7 @@ namespace sinks
 
 /**
  * This sink prefixes the output with an ANSI escape sequence color code depending on the severity
- * of the message. 
+ * of the message.
  * If no color terminal detected, omit the escape codes.
  */
 template <class Mutex>
@@ -42,7 +42,8 @@ public:
         _flush();
     }
 
-    void set_color(level::level_enum color_level, const std::string& color) {
+    void set_color(level::level_enum color_level, const std::string& color)
+    {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         colors_[color_level] = color;
     }
@@ -96,10 +97,10 @@ protected:
         _flush();
     }
 
-	void _flush() override
-	{
-		fflush(target_file_);
-	}
+    void _flush() override
+    {
+        fflush(target_file_);
+    }
     FILE* target_file_;
     bool should_do_colors_;
     std::map<level::level_enum, std::string> colors_;

@@ -33,7 +33,7 @@ public:
     {
         _file_helper.open(filename, truncate);
     }
-   
+
     void set_force_flush(bool force_flush)
     {
         _force_flush = force_flush;
@@ -46,10 +46,10 @@ protected:
         if(_force_flush)
             _file_helper.flush();
     }
-	void _flush() override
-	{
-		_file_helper.flush();
-	}
+    void _flush() override
+    {
+        _file_helper.flush();
+    }
 private:
     details::file_helper _file_helper;
     bool _force_flush;
@@ -77,7 +77,7 @@ public:
         _current_size = _file_helper.size(); //expensive. called only once
     }
 
-    
+
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
@@ -90,10 +90,10 @@ protected:
         _file_helper.write(msg);
     }
 
-	void _flush() override
-	{
-		_file_helper.flush();
-	}
+    void _flush() override
+    {
+        _file_helper.flush();
+    }
 
 private:
     static filename_t calc_filename(const filename_t& filename, std::size_t index)
@@ -208,10 +208,10 @@ protected:
         _file_helper.write(msg);
     }
 
-	void _flush() override
-	{
-		_file_helper.flush();
-	}
+    void _flush() override
+    {
+        _file_helper.flush();
+    }
 
 private:
     std::chrono::system_clock::time_point _next_rotation_tp()

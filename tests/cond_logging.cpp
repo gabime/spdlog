@@ -32,11 +32,11 @@ std::string conditional_log(const bool flag, const T& what, spdlog::level::level
         oss_logger.critical_if(flag, what);
         break;
     }
- 
+
     return oss.str().substr(0, oss.str().length() - spdlog::details::os::eol_size);
 }
 
-template <typename Arg1, typename... Args> 
+template <typename Arg1, typename... Args>
 std::string conditional_log_varags(spdlog::level::level_enum logger_level, const bool flag, const char* fmt, const Arg1& arg1, const Args&... args)
 {
     std::ostringstream oss;
