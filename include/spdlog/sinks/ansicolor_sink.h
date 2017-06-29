@@ -85,7 +85,6 @@ protected:
         if (should_do_colors_)
         {
             const std::string& prefix = colors_[msg.level];
-            const std::string& reset = colors_[level::off];
             fwrite(prefix.data(), sizeof(char), prefix.size(), target_file_);
             fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
             fwrite(reset.data(), sizeof(char), reset.size(), target_file_);
