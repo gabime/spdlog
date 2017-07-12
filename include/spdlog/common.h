@@ -81,7 +81,10 @@ typedef enum
     off = 6
 } level_enum;
 
-static const char* level_names[] { "trace", "debug", "info",  "warning", "error", "critical", "off" };
+#if !defined(SPDLOG_LEVEL_NAMES)
+#define SPDLOG_LEVEL_NAMES { "trace", "debug", "info",  "warning", "error", "critical", "off" };
+#endif
+static const char* level_names[] SPDLOG_LEVEL_NAMES
 
 static const char* short_level_names[] { "T", "D", "I", "W", "E", "C", "O" };
 
