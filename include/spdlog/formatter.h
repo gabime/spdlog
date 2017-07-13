@@ -25,6 +25,14 @@ public:
     virtual void format(details::log_msg& msg) = 0;
 };
 
+#ifdef SPDLOG_ENABLE_PATTERN_PADDING
+struct format_padding {
+    fmt::Alignment _alignment = fmt::ALIGN_RIGHT;
+    char _char = ' ';
+    unsigned _width = 0;
+};
+#endif
+
 class pattern_formatter SPDLOG_FINAL : public formatter
 {
 
@@ -38,7 +46,11 @@ private:
     const pattern_time_type _pattern_time;
     std::vector<std::unique_ptr<details::flag_formatter>> _formatters;
     std::tm get_time(details::log_msg& msg);
-    void handle_flag(char flag);
+#ifndef SPDLOG_ENABLE_PATTERN_PADDING
+    bool handle_flag(char flag);
+#else
+    bool handle_flag(char flag, format_padding& padding);
+#endif
     void compile_pattern(const std::string& pattern);
 };
 }
