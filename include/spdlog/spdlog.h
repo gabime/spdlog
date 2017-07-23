@@ -172,6 +172,7 @@ void drop_all();
 #define SPDLOG_TRACE_IF(logger, flag, ...) logger->trace_if(flag, "[" __FILE__ " line #" SPDLOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
 #else
 #define SPDLOG_TRACE(logger, ...)
+#define SPDLOG_TRACE_IF(logger, flag, ...)
 #endif
 
 #ifdef SPDLOG_DEBUG_ON
@@ -179,6 +180,7 @@ void drop_all();
 #define SPDLOG_DEBUG_IF(logger, flag, ...) logger->debug_if(flag, __VA_ARGS__)
 #else
 #define SPDLOG_DEBUG(logger, ...)
+#define SPDLOG_DEBUG_IF(logger, flag, ...)
 #endif
 
 }
