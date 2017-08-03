@@ -66,12 +66,13 @@ class rotating_file_sink SPDLOG_FINAL : public base_sink < Mutex >
 {
 public:
     rotating_file_sink(const filename_t &base_filename,
-                       std::size_t max_size, std::size_t max_files) :
+                       std::size_t max_size, std::size_t max_files, std::function<void()> cb) :
         _base_filename(base_filename),
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
-        _file_helper()
+        _file_helper(),
+        _on_finish_cb(cb)
     {
         _file_helper.open(calc_filename(_base_filename, 0));
         _current_size = _file_helper.size(); //expensive. called only once
@@ -134,12 +135,18 @@ private:
             }
         }
         _file_helper.reopen(true);
+        
+        if (_on_finish_cb)
+        {
+            _on_finish_cb();
+        }
     }
     filename_t _base_filename;
     std::size_t _max_size;
     std::size_t _max_files;
     std::size_t _current_size;
     details::file_helper _file_helper;
+    std::function<void()> _on_finish_cb;
 };
 
 typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
@@ -186,9 +193,11 @@ public:
     daily_file_sink(
         const filename_t& base_filename,
         int rotation_hour,
-        int rotation_minute) : _base_filename(base_filename),
+        int rotation_minute,
+        std::function<void()> cb) : _base_filename(base_filename),
         _rotation_h(rotation_hour),
-        _rotation_m(rotation_minute)
+        _rotation_m(rotation_minute),
+        _rotate_cb(cb)
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
@@ -204,6 +213,10 @@ protected:
         {
             _file_helper.open(FileNameCalc::calc_filename(_base_filename));
             _rotation_tp = _next_rotation_tp();
+            if (_rotate_cb)
+            {
+                _rotate_cb();
+            }
         }
         _file_helper.write(msg);
     }
@@ -234,6 +247,7 @@ private:
     int _rotation_m;
     std::chrono::system_clock::time_point _rotation_tp;
     details::file_helper _file_helper;
+    std::function<void()> _rotate_cb;
 };
 
 typedef daily_file_sink<std::mutex> daily_file_sink_mt;

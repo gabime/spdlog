@@ -108,7 +108,7 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
     fmt::MemoryWriter w;
     w.write("{}_{:04d}-{:02d}-{:02d}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
-    auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
+    auto logger = spdlog::create<sink_type>("logger", basename, 0, 0, nullptr);
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
     logger->flush();
@@ -140,7 +140,7 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
     fmt::MemoryWriter w;
     w.write("{}{:04d}{:02d}{:02d}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
-    auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
+    auto logger = spdlog::create<sink_type>("logger", basename, 0, 0, nullptr);
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
 
