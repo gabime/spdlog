@@ -59,25 +59,25 @@ inline std::shared_ptr<spdlog::logger> spdlog::basic_logger_st(const std::string
 }
 
 // Create multi/single threaded rotating file logger
-inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_mt(const std::string& logger_name, const filename_t& filename, size_t max_file_size, size_t max_files)
+inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_mt(const std::string& logger_name, const filename_t& filename, size_t max_file_size, size_t max_files, rotating_logger_cb cb /*= nullptr*/)
 {
-    return create<spdlog::sinks::rotating_file_sink_mt>(logger_name, filename, max_file_size, max_files);
+    return create<spdlog::sinks::rotating_file_sink_mt>(logger_name, filename, max_file_size, max_files, cb);
 }
 
-inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_st(const std::string& logger_name, const filename_t& filename, size_t max_file_size, size_t max_files)
+inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_st(const std::string& logger_name, const filename_t& filename, size_t max_file_size, size_t max_files, rotating_logger_cb cb /*= nullptr*/)
 {
-    return create<spdlog::sinks::rotating_file_sink_st>(logger_name, filename, max_file_size, max_files);
+    return create<spdlog::sinks::rotating_file_sink_st>(logger_name, filename, max_file_size, max_files, cb);
 }
 
 // Create file logger which creates new file at midnight):
-inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_mt(const std::string& logger_name, const filename_t& filename, int hour, int minute)
+inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_mt(const std::string& logger_name, const filename_t& filename, int hour, int minute, daily_logger_cb cb /*= nullptr*/)
 {
-    return create<spdlog::sinks::daily_file_sink_mt>(logger_name, filename, hour, minute);
+    return create<spdlog::sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, cb);
 }
 
-inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string& logger_name, const filename_t& filename, int hour, int minute)
+inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string& logger_name, const filename_t& filename, int hour, int minute, daily_logger_cb cb /*= nullptr*/)
 {
-    return create<spdlog::sinks::daily_file_sink_st>(logger_name, filename, hour, minute);
+    return create<spdlog::sinks::daily_file_sink_st>(logger_name, filename, hour, minute, cb);
 }
 
 

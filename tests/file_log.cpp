@@ -75,6 +75,31 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
     REQUIRE(get_filesize(filename1) <= 1024);
 }
 
+TEST_CASE("rotating_file_logger_cb", "[rotating_logger]]")
+{
+    return;
+    prepare_logdir();
+    std::string basename = "logs/rotating_log_cb";
+    std::vector<std::string> file_names;
+    auto cb_fun = [&file_names](std::vector<std::string> _file_names) mutable
+    {
+        file_names = _file_names;
+    };
+
+    auto logger = spdlog::rotating_logger_mt("logger", basename, 120, 3, cb_fun);
+    for (int i = 0; i < 100; ++i)
+        logger->info("0123456789");
+    logger->flush();
+
+    REQUIRE(file_names.size() == 3);
+
+    REQUIRE(get_filesize(basename) <= 120);
+    for (auto i = 1; i < 3; i++)
+    {
+        auto filename1 = basename + "." + std::to_string(i);
+        REQUIRE(get_filesize(filename1) <= 120);
+    }
+}
 
 TEST_CASE("daily_logger", "[daily_logger]]")
 {
@@ -108,7 +133,7 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
     fmt::MemoryWriter w;
     w.write("{}_{:04d}-{:02d}-{:02d}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
-    auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
+    auto logger = spdlog::create<sink_type>("logger", basename, 0, 0, nullptr);
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
     logger->flush();
@@ -140,7 +165,7 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
     fmt::MemoryWriter w;
     w.write("{}{:04d}{:02d}{:02d}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
-    auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
+    auto logger = spdlog::create<sink_type>("logger", basename, 0, 0, nullptr);
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
 
