@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fcntl.h>
 
 #ifdef _WIN32
 
@@ -38,16 +39,52 @@
 #else // unix
 
 #include <unistd.h>
-#include <fcntl.h>
+#include <sys/uio.h>
 
 #ifdef __linux__
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
+#include <linux/limits.h> // for PIPE_BUF
 
 #elif __FreeBSD__
 #include <sys/thr.h> //Use thr_self() syscall under FreeBSD to get thread id
+#include <limits.h>
+#endif
+
+// Max number of iovec structures
+#ifndef IOV_MAX
+#define IOV_MAX UIO_MAXIOV
 #endif
 
 #endif //unix
+
+// File open modes
+#if defined(_WIN32) && !defined(__MINGW32__)
+
+#define SPDLOG_O_APPEND _O_APPEND
+#define SPDLOG_O_CREATE _O_CREAT
+#define SPDLOG_O_BINARY _O_BINARY
+#define SPDLOG_O_WRONLY _O_WRONLY
+#define SPDLOG_O_RDONLY _O_RDONLY
+#define SPDLOG_O_RDWR _O_RDWR
+#define SPDLOG_O_TRUNCATE _O_TRUNC
+
+#else // unix and MinGW
+
+#define SPDLOG_O_APPEND O_APPEND
+#define SPDLOG_O_CREATE O_CREAT
+
+#ifdef O_BINARY
+#define SPDLOG_O_BINARY O_BINARY
+#else
+#define SPDLOG_O_BINARY 0
+#endif
+
+#define SPDLOG_O_WRONLY O_WRONLY
+#define SPDLOG_O_RDONLY O_RDONLY
+#define SPDLOG_O_RDWR O_RDWR
+#define SPDLOG_O_TRUNCATE O_TRUNC
+
+#endif
 
 #ifndef __has_feature       // Clang - feature checking macros.
 #define __has_feature(x) 0  // Compatibility with non-clang compilers.
@@ -77,6 +114,7 @@ inline spdlog::log_clock::time_point now()
 #endif
 
 }
+
 inline std::tm localtime(const std::time_t &time_tt)
 {
 
@@ -96,7 +134,6 @@ inline std::tm localtime()
     return localtime(now_t);
 }
 
-
 inline std::tm gmtime(const std::time_t &time_tt)
 {
 
@@ -115,6 +152,7 @@ inline std::tm gmtime()
     std::time_t now_t = time(nullptr);
     return gmtime(now_t);
 }
+
 inline bool operator==(const std::tm& tm1, const std::tm& tm2)
 {
     return (tm1.tm_sec == tm2.tm_sec &&
@@ -143,31 +181,43 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
 SPDLOG_CONSTEXPR static const char* eol = SPDLOG_EOL;
 SPDLOG_CONSTEXPR static int eol_size = sizeof(SPDLOG_EOL) - 1;
 
-inline void prevent_child_fd(FILE *f)
+inline int fileno_s(FILE* file)
 {
 #ifdef _WIN32
-    auto file_handle = (HANDLE)_get_osfhandle(_fileno(f));
+    return _fileno(file);
+#else
+    return fileno(file);
+#endif
+}
+
+inline void prevent_child_fd(int fd)
+{
+#ifdef _WIN32
+    auto file_handle = (HANDLE)_get_osfhandle(fd);
     if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
         throw spdlog_ex("SetHandleInformation failed", errno);
 #else
-    auto fd = fileno(f);
     if (fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
         throw spdlog_ex("fcntl with FD_CLOEXEC failed", errno);
 #endif
 }
 
+inline void prevent_child_fd(FILE *f)
+{
+    prevent_child_fd(fileno_s(f));
+}
 
 //fopen_s on non windows for writing
 inline int fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode)
 {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES
-    *fp = _wfsopen((filename.c_str()), mode.c_str(), _SH_DENYWR);
+    *fp = _wfsopen((filename.c_str()), (mode.c_str()), _SH_DENYWR);
 #else
-    *fp = _fsopen((filename.c_str()), mode.c_str(), _SH_DENYWR);
+    *fp = _fsopen((filename.c_str()), (mode.c_str()), _SH_DENYWR);
 #endif
 #else //unix
-    *fp = fopen((filename.c_str()), mode.c_str());
+    *fp = fopen((filename.c_str()), (mode.c_str()));
 #endif
 
 #ifdef SPDLOG_PREVENT_CHILD_FD
@@ -177,6 +227,97 @@ inline int fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode
     return *fp == nullptr;
 }
 
+inline int fopen_s(int* fp, const filename_t& filename, const int& mode)
+{
+#ifdef _WIN32
+#ifdef SPDLOG_WCHAR_FILENAMES
+    _wsopen_s(fp, (filename.c_str()), mode, _SH_DENYNO, (_S_IREAD | _S_IWRITE));
+#else
+    _sopen_s(fp, (filename.c_str()), mode, _SH_DENYNO, (_S_IREAD | _S_IWRITE));
+#endif
+#else //unix
+    *fp = open((filename.c_str()), mode, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+#endif
+
+#ifdef SPDLOG_PREVENT_CHILD_FD
+    if (*fp != nullptr)
+        prevent_child_fd(*fp);
+#endif
+
+    // Return true if something went wrong; false - if there was no errors and
+    // we get new file descriptor
+    return (fp != nullptr) && (*fp < 0) ? true : false;
+}
+
+inline void write_s(int fd, const char* msg, std::size_t size)
+{
+#ifdef _WIN32
+    // TODO: what is max size of data for atomic write on Windows?
+    int result = _write(fd, msg, size);
+    if ( (result < 0) || (static_cast<std::size_t>(result) != size) )
+    {
+        throw spdlog_ex("Write to file failed", errno);
+    }
+
+    // Immediately flush data to file
+    _commit(fd);
+
+#else // unix
+    // PIPE_BUF - max message length for atomic write
+    if (size <= static_cast<std::size_t>(PIPE_BUF))
+    {
+        if (write(fd, msg, size) != static_cast<ssize_t>(size))
+        {
+            throw spdlog_ex("Write to file failed", errno);
+        }
+    }
+    else
+    {
+        // Max message length should be less than SSIZE_MAX (see writev() docs)
+        std::size_t msg_size = std::min(size, static_cast<std::size_t>(SSIZE_MAX));
+
+        // Calculate how many iovec structures we need
+        const std::size_t iovec_num = std::min((size / PIPE_BUF) + 1, static_cast<std::size_t>(IOV_MAX));
+        std::vector<iovec> iovectors(iovec_num);
+
+        // Warning: using const_cast so we could move along the message buffer
+        char* msg_ptr = const_cast<char*>(msg);
+        for (std::size_t i = 0; i < iovectors.size(); ++i)
+        {
+            iovectors[i].iov_base = static_cast<void*>(msg_ptr);
+
+            std::size_t msg_part_length = 0;
+            if (i < iovectors.size() - 1)
+            {
+                msg_part_length = PIPE_BUF;
+            }
+            else
+            {
+                // Calc length of the last iovec
+                std::size_t previos_parts_length = PIPE_BUF * i;
+                msg_part_length = std::min(msg_size - previos_parts_length, static_cast<std::size_t>(PIPE_BUF));
+            }
+
+            iovectors[i].iov_len = msg_part_length;
+            msg_ptr += msg_part_length;
+        }
+
+        if (writev(fd, &iovectors[0], iovec_num) != static_cast<ssize_t>(msg_size))
+        {
+            throw spdlog::spdlog_ex("Failed writing to file", errno);
+        }
+    }
+#endif
+}
+
+inline void close_s(int fd)
+{
+#ifdef _WIN32
+    _close(fd);
+#else // unix
+    close(fd);
+#endif
+}
 
 inline int remove(const filename_t &filename)
 {
@@ -196,7 +337,6 @@ inline int rename(const filename_t& filename1, const filename_t& filename2)
 #endif
 }
 
-
 //Return if file exists
 inline bool file_exists(const filename_t& filename)
 {
@@ -213,29 +353,22 @@ inline bool file_exists(const filename_t& filename)
 #endif
 }
 
-
-
-
-//Return file size according to open FILE* object
-inline size_t filesize(FILE *f)
+//Return file size according to open file descriptor
+inline size_t filesize(int fd)
 {
-    if (f == nullptr)
-        throw spdlog_ex("Failed getting file size. fd is null");
 #ifdef _WIN32
-    int fd = _fileno(f);
 #if _WIN64 //64 bits
     struct _stat64 st;
     if (_fstat64(fd, &st) == 0)
         return st.st_size;
 
-#else //windows 32 bits
+#else // windows 32 bits
     long ret = _filelength(fd);
     if (ret >= 0)
         return static_cast<size_t>(ret);
 #endif
 
 #else // unix
-    int fd = fileno(f);
     //64 bits(but not in osx, where fstat64 is deprecated)
 #if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__))
     struct stat64 st;
@@ -247,11 +380,39 @@ inline size_t filesize(FILE *f)
         return static_cast<size_t>(st.st_size);
 #endif
 #endif
+
     throw spdlog_ex("Failed getting file size from fd", errno);
 }
 
+//Return file size according to open FILE* object
+inline size_t filesize(FILE *f)
+{
+    if (f == nullptr)
+        throw spdlog_ex("Failed getting file size. fd is null");
 
+    return filesize(fileno_s(f));
+}
 
+inline size_t filesize(const filename_t& filename)
+{
+    int fd = -1;
+    const int open_tries = 5;
+    const int open_interval = 10;
+    for (int tries = 0; tries < open_tries; ++tries)
+    {
+        if (!fopen_s(&fd, filename, SPDLOG_O_RDONLY))
+        {
+            size_t file_size = filesize(fd);
+            close_s(fd);
+
+            return file_size;
+        }
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
+    }
+
+    throw spdlog_ex("Failed opening file for filesize command", errno);
+}
 
 //Return utc offset in minutes or throw spdlog_ex on failure
 inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
@@ -414,13 +575,11 @@ inline std::string errno_str(int err_num)
 
 inline int pid()
 {
-
 #ifdef _WIN32
     return ::_getpid();
 #else
     return static_cast<int>(::getpid());
 #endif
-
 }
 
 
@@ -457,11 +616,10 @@ inline bool is_color_terminal()
 // Source: https://github.com/agauniyal/rang/
 inline bool in_terminal(FILE* file)
 {
-
 #ifdef _WIN32
-    return _isatty(_fileno(file)) ? true : false;
+    return _isatty(fileno_s(file)) ? true : false;
 #else
-    return isatty(fileno(file)) ? true : false;
+    return isatty(fileno_s(file)) ? true : false;
 #endif
 }
 } //os
