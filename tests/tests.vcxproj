@@ -131,6 +131,7 @@
     <ClCompile Include="file_log.cpp" />
     <ClCompile Include="format.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="padding.cpp" />
     <ClCompile Include="registry.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
