@@ -55,6 +55,7 @@ int main(int argc, char* argv[])
 
         auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st", file_size, rotating_files);
         bench(howmany, rotating_st);
+        bench(howmany, spdlog::create<spdlog::sinks::rotating_file_sink_mp_st>("rotating_mp_st", "logs/rotating_mp_st", file_size, rotating_files));
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st");
         bench(howmany, daily_st);
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
@@ -65,7 +66,7 @@ int main(int argc, char* argv[])
 
         auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt", file_size, rotating_files);
         bench_mt(howmany, rotating_mt, threads);
-
+        bench_mt(howmany, spdlog::create<spdlog::sinks::rotating_file_sink_mp_mt>("rotating_mp_mt", "logs/rotating_mp_mt", file_size, rotating_files), threads);
 
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt");
         bench_mt(howmany, daily_mt, threads);
