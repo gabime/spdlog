@@ -17,7 +17,6 @@
 #include <string>
 #include <thread>
 #include <cerrno>
-#include <algorithm>
 
 namespace spdlog
 {
