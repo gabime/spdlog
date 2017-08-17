@@ -31,6 +31,8 @@ std::string conditional_log(const bool flag, const T& what, spdlog::level::level
     case spdlog::level::critical:
         oss_logger.critical_if(flag, what);
         break;
+    default:
+        break;
     }
 
     return oss.str().substr(0, oss.str().length() - spdlog::details::os::eol_size);
@@ -65,6 +67,8 @@ std::string conditional_log_varags(spdlog::level::level_enum logger_level, const
         break;
     case spdlog::level::critical:
         oss_logger.critical_if(flag, fmt, arg1, args...);
+        break;
+    default:
         break;
     }
 
@@ -102,6 +106,8 @@ std::wstring conditional_log_varags(spdlog::level::level_enum logger_level, cons
         break;
     case spdlog::level::critical:
         oss_logger.critical_if(flag, fmt, arg1, args...);
+        break;
+    default:
         break;
     }
 
