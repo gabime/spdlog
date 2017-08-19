@@ -21,6 +21,9 @@
 #ifndef _WIN32
 # include <unistd.h>
 #else
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
 # include <windows.h>
 # include <io.h>
 
@@ -79,7 +82,7 @@ void fmt::BufferedFile::close() {
   if (!file_)
     return;
   int result = FMT_SYSTEM(fclose(file_));
-  file_ = 0;
+  file_ = FMT_NULL;
   if (result != 0)
     FMT_THROW(SystemError(errno, "cannot close file"));
 }

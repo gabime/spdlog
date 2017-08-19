@@ -11,9 +11,8 @@
 
 namespace fmt {
 
-namespace {
-// Write the content of w to os.
-void write(std::ostream &os, Writer &w) {
+namespace internal {
+FMT_FUNC void write(std::ostream &os, Writer &w) {
   const char *data = w.data();
   typedef internal::MakeUnsigned<std::streamsize>::Type UnsignedStreamSize;
   UnsignedStreamSize size = w.size();
@@ -31,13 +30,6 @@ void write(std::ostream &os, Writer &w) {
 FMT_FUNC void print(std::ostream &os, CStringRef format_str, ArgList args) {
   MemoryWriter w;
   w.write(format_str, args);
-  write(os, w);
-}
-
-FMT_FUNC int fprintf(std::ostream &os, CStringRef format, ArgList args) {
-  MemoryWriter w;
-  printf(w, format, args);
-  write(os, w);
-  return static_cast<int>(w.size());
+  internal::write(os, w);
 }
 }  // namespace fmt
