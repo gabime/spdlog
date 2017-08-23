@@ -6,6 +6,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(spdlog VERSION 1.0.0)
 include(CTest)
+include(CMakeDependentOption)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -17,7 +18,10 @@ endif()
 add_library(spdlog INTERFACE)
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
-option(SPDLOG_BUILD_TESTING "Build spdlog tests" ON)
+cmake_dependent_option(SPDLOG_BUILD_TESTING 
+    "Build spdlog tests" ON
+    "BUILD_TESTING" OFF
+)
 
 target_include_directories(
     spdlog
