@@ -11,6 +11,9 @@ include(CTest)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
 
+#---------------------------------------------------------------------------------------
+# compiler config
+#---------------------------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -18,6 +21,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     set(CMAKE_CXX_FLAGS "-Wall ${CMAKE_CXX_FLAGS}")
 endif()
 
+#---------------------------------------------------------------------------------------
+# spdlog target
+#---------------------------------------------------------------------------------------
 add_library(spdlog INTERFACE)
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
@@ -43,6 +49,9 @@ if(SPDLOG_BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
+#---------------------------------------------------------------------------------------
+# Install/export targets and files
+#---------------------------------------------------------------------------------------
 set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 set(include_install_dir "${CMAKE_INSTALL_INCLUDEDIR}")
 set(pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
