@@ -1,5 +1,3 @@
-### Install ###
-# Note: use 'targets_export_name'
 #
 # Copyright(c) 2015 Ruslan Baratov.
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
@@ -52,6 +50,7 @@ endif()
 #---------------------------------------------------------------------------------------
 # Install/export targets and files
 #---------------------------------------------------------------------------------------
+# set files and directories
 set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 set(include_install_dir "${CMAKE_INSTALL_INCLUDEDIR}")
 set(pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
@@ -61,34 +60,41 @@ set(pkg_config "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
 set(targets_export_name "${PROJECT_NAME}Targets")
 set(namespace "${PROJECT_NAME}::")
 
+# generate package version file
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     "${version_config}" COMPATIBILITY SameMajorVersion
 )
 
+# configure pkg config file
 configure_file("cmake/spdlog.pc.in" "${pkg_config}" @ONLY)
 
+# install targets
 install(
     TARGETS spdlog
     EXPORT "${targets_export_name}"
     INCLUDES DESTINATION "${include_install_dir}"
 )
 
+# install headers
 install(
     DIRECTORY "${HEADER_BASE}/${PROJECT_NAME}"
     DESTINATION "${include_install_dir}"
 )
 
+# install project version file
 install(
     FILES "${version_config}"
     DESTINATION "${config_install_dir}"
 )
 
+# install pkg config file
 install(
     FILES "${pkg_config}"
     DESTINATION "${pkgconfig_install_dir}"
 )
 
+# install project config file
 install(
     EXPORT "${targets_export_name}"
     NAMESPACE "${namespace}"
@@ -96,12 +102,14 @@ install(
     FILE ${project_config}
 )
 
+# export build directory config file
 export(
     EXPORT ${targets_export_name}
     NAMESPACE "${namespace}"
     FILE ${project_config}
 )
 
+# register project in CMake user registry
 export(PACKAGE ${PROJECT_NAME})
 
 file(GLOB_RECURSE spdlog_include_SRCS "${HEADER_BASE}/*.h")
