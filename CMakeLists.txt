@@ -1,3 +1,5 @@
+### Install ###
+# Note: use 'targets_export_name'
 #
 # Copyright(c) 2015 Ruslan Baratov.
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
@@ -7,6 +9,7 @@ cmake_minimum_required(VERSION 3.1)
 project(spdlog VERSION 1.0.0)
 include(CTest)
 include(CMakeDependentOption)
+include(GNUInstallDirs)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,7 +21,7 @@ endif()
 add_library(spdlog INTERFACE)
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
-cmake_dependent_option(SPDLOG_BUILD_TESTING 
+cmake_dependent_option(SPDLOG_BUILD_TESTING
     "Build spdlog tests" ON
     "BUILD_TESTING" OFF
 )
@@ -27,7 +30,7 @@ target_include_directories(
     spdlog
     INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-    "$<INSTALL_INTERFACE:include>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
 set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
@@ -40,17 +43,12 @@ if(SPDLOG_BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
-### Install ###
-# * https://github.com/forexample/package-example
-set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
-
-set(config_install_dir "lib/cmake/${PROJECT_NAME}")
-set(include_install_dir "include")
-set(pkgconfig_install_dir "lib/pkgconfig")
-
-set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
-set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
-set(pkg_config "${generated_dir}/${PROJECT_NAME}.pc")
+set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+set(include_install_dir "${CMAKE_INSTALL_INCLUDEDIR}")
+set(pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+set(version_config "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+set(project_config "${PROJECT_NAME}Config.cmake")
+set(pkg_config "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
 set(targets_export_name "${PROJECT_NAME}Targets")
 set(namespace "${PROJECT_NAME}::")
 
@@ -59,8 +57,6 @@ write_basic_package_version_file(
     "${version_config}" COMPATIBILITY SameMajorVersion
 )
 
-# Note: use 'targets_export_name'
-configure_file("cmake/Config.cmake.in" "${project_config}" @ONLY)
 configure_file("cmake/spdlog.pc.in" "${pkg_config}" @ONLY)
 
 install(
@@ -69,10 +65,13 @@ install(
     INCLUDES DESTINATION "${include_install_dir}"
 )
 
-install(DIRECTORY "include/spdlog" DESTINATION "${include_install_dir}")
+install(
+    DIRECTORY "${HEADER_BASE}/${PROJECT_NAME}"
+    DESTINATION "${include_install_dir}"
+)
 
 install(
-    FILES "${project_config}" "${version_config}"
+    FILES "${version_config}"
     DESTINATION "${config_install_dir}"
 )
 
@@ -85,7 +84,16 @@ install(
     EXPORT "${targets_export_name}"
     NAMESPACE "${namespace}"
     DESTINATION "${config_install_dir}"
+    FILE ${project_config}
 )
+
+export(
+    EXPORT ${targets_export_name}
+    NAMESPACE "${namespace}"
+    FILE ${project_config}
+)
+
+export(PACKAGE ${PROJECT_NAME})
 
 file(GLOB_RECURSE spdlog_include_SRCS "${HEADER_BASE}/*.h")
 add_custom_target(spdlog_headers_for_ide SOURCES ${spdlog_include_SRCS})
