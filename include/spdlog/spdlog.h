@@ -168,8 +168,13 @@ void drop_all();
 #ifdef SPDLOG_TRACE_ON
 #define SPDLOG_STR_H(x) #x
 #define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
-#define SPDLOG_TRACE(logger, ...) logger->trace("[" __FILE__ " line #" SPDLOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
-#define SPDLOG_TRACE_IF(logger, flag, ...) logger->trace_if(flag, "[" __FILE__ " line #" SPDLOG_STR_HELPER(__LINE__) "] " __VA_ARGS__)
+#ifdef _MSC_VER
+  #define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] " __VA_ARGS__)
+  #define SPDLOG_TRACE_IF(logger, flag, ...) logger.trace_if(flag, "[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] " __VA_ARGS__)
+#else
+  #define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] " __VA_ARGS__)
+  #define SPDLOG_TRACE_IF(logger, flag, ...) logger.trace_if(flag, "[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] " __VA_ARGS__)
+#endif
 #else
 #define SPDLOG_TRACE(logger, ...)
 #define SPDLOG_TRACE_IF(logger, flag, ...)
