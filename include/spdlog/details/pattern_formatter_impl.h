@@ -262,6 +262,16 @@ class F_formatter SPDLOG_FINAL:public flag_formatter
     }
 };
 
+class E_formatter SPDLOG_FINAL:public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        auto duration = msg.time.time_since_epoch();
+        auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
+        msg.formatted << seconds;
+    }
+};
+
 // AM/PM
 class p_formatter SPDLOG_FINAL:public flag_formatter
 {
@@ -596,6 +606,10 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
         break;
     case('F'):
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::F_formatter()));
+        break;
+
+    case('E'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::E_formatter()));
         break;
 
     case('p'):
