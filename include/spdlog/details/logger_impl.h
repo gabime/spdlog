@@ -326,6 +326,7 @@ inline void spdlog::logger::critical_if(const bool flag, const T& msg)
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #include <codecvt>
+#include <locale>
 
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* msg)
@@ -399,7 +400,7 @@ inline void spdlog::logger::log_if(const bool flag, level::level_enum lvl, const
 {
     if (flag)
     {
-        log(lvl, fmt, args);
+        log(lvl, fmt, args...);
     }
 }
 
