@@ -136,6 +136,5 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Uncomment to enable user defined tag names
 //
-// #define SPDLOG_LEVEL_NAMES  { "   TRACE", "   DEBUG", "    INFO",
-// " WARNING", "   ERROR", "CRITICAL", "OFF" };
+// #define SPDLOG_LEVEL_NAMES  { "TRACE", "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "OFF" };
 ///////////////////////////////////////////////////////////////////////////////
