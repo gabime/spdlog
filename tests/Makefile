@@ -1,5 +1,11 @@
 CXX	?= g++
-CXXFLAGS	=  -Wall  -pedantic -std=c++11 -pthread -O2 -I../include
+ifeq ($(STYLE),printf)
+    $(info *** PRINTF STYLE ***)
+    CXXFLAGS	=  -DSPDLOG_FMT_PRINTF -Wall  -pedantic -std=c++11 -pthread -O2 -I../include
+else
+    $(info *** FORMAT STYLE ***)
+    CXXFLAGS	=  -Wall  -pedantic -std=c++11 -pthread -O2 -I../include
+endif
 LDPFALGS = -pthread
 
 CPP_FILES := $(wildcard *.cpp)

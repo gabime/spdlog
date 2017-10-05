@@ -8,6 +8,14 @@
 #include "spdlog/logger.h"
 #include "spdlog/sinks/stdout_sinks.h"
 
+#if defined(SPDLOG_FMT_PRINTF)
+#if !defined(SPDLOG_FMT_EXTERNAL)
+#include "spdlog/fmt/bundled/printf.h"
+#else //external fmtlib
+#include <fmt/printf.h>
+#endif
+#endif
+
 #include <memory>
 #include <string>
 
@@ -58,7 +66,6 @@ inline void spdlog::logger::set_pattern(const std::string& pattern, pattern_time
     _set_pattern(pattern, pattern_time);
 }
 
-
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Args&... args)
 {
@@ -67,7 +74,12 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
     try
     {
         details::log_msg log_msg(&_name, lvl);
+
+#if defined(SPDLOG_FMT_PRINTF)
+        fmt::printf(log_msg.raw, fmt, args...);
+#else
         log_msg.raw.write(fmt, args...);
+#endif
         _sink_it(log_msg);
     }
     catch (const std::exception &ex)
