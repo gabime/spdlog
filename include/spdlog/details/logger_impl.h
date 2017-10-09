@@ -8,14 +8,6 @@
 #include "spdlog/logger.h"
 #include "spdlog/sinks/stdout_sinks.h"
 
-#if defined(SPDLOG_FMT_PRINTF)
-#if !defined(SPDLOG_FMT_EXTERNAL)
-#include "spdlog/fmt/bundled/printf.h"
-#else //external fmtlib
-#include <fmt/printf.h>
-#endif
-#endif
-
 #include <memory>
 #include <string>
 
