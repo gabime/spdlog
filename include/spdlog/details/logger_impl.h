@@ -58,7 +58,6 @@ inline void spdlog::logger::set_pattern(const std::string& pattern, pattern_time
     _set_pattern(pattern, pattern_time);
 }
 
-
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Args&... args)
 {
@@ -67,7 +66,12 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
     try
     {
         details::log_msg log_msg(&_name, lvl);
+
+#if defined(SPDLOG_FMT_PRINTF)
+        fmt::printf(log_msg.raw, fmt, args...);
+#else
         log_msg.raw.write(fmt, args...);
+#endif
         _sink_it(log_msg);
     }
     catch (const std::exception &ex)
