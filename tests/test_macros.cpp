@@ -32,9 +32,16 @@ TEST_CASE("debug and trace with format strings", "[macros]]")
 	logger->set_pattern("%v");
 	logger->set_level(spdlog::level::trace);
 
-	SPDLOG_TRACE(logger, "Test message 1");
+#if !defined(SPDLOG_FMT_PRINTF)
+	SPDLOG_TRACE(logger, "Test message {}", 1);
 	//SPDLOG_DEBUG(logger, "Test message 2");	
 	SPDLOG_DEBUG(logger, "Test message {}", 222);
+#else
+	SPDLOG_TRACE(logger, "Test message %d", 1);
+	//SPDLOG_DEBUG(logger, "Test message 2");	
+	SPDLOG_DEBUG(logger, "Test message %d", 222);
+#endif
+
 	logger->flush();
 
 	REQUIRE(ends_with(file_contents(filename), "Test message 222\n"));
