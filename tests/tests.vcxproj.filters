@@ -39,6 +39,9 @@
     <ClCompile Include="cond_logging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="test_macros.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes.h">
