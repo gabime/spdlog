@@ -387,7 +387,7 @@ class pid_formatter SPDLOG_FINAL:public flag_formatter
 // message counter formatter
 class i_formatter SPDLOG_FINAL :public flag_formatter
 {
-    void format(details::log_msg& msg, const std::tm& tm_time) override
+    void format(details::log_msg& msg, const std::tm&) override
     {
         msg.formatted << fmt::pad(msg.msg_id, 6, '0');
     }
