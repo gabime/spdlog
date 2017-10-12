@@ -512,7 +512,7 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 inline void spdlog::logger::_sink_it(details::log_msg& msg)
 {
 #if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-    msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
+    _incr_msg_counter(msg);
 #endif
     _formatter->format(msg);
     for (auto &sink : _sinks)
@@ -560,6 +560,11 @@ inline bool spdlog::logger::_should_flush_on(const details::log_msg &msg)
 {
     const auto flush_level = _flush_level.load(std::memory_order_relaxed);
     return (msg.level >= flush_level) && (msg.level != level::off);
+}
+
+inline void spdlog::logger::_incr_msg_counter(details::log_msg &msg)
+{
+    msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
 }
 
 inline const std::vector<spdlog::sink_ptr>& spdlog::logger::sinks() const

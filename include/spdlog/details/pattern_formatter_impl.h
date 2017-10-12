@@ -384,6 +384,14 @@ class pid_formatter SPDLOG_FINAL:public flag_formatter
     }
 };
 
+// message counter formatter
+class i_formatter SPDLOG_FINAL :public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm& tm_time) override
+    {
+        msg.formatted << fmt::pad(msg.msg_id, 6, '0');
+    }
+};
 
 class v_formatter SPDLOG_FINAL:public flag_formatter
 {
@@ -641,11 +649,10 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::pid_formatter()));
         break;
 
-#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+
     case ('i'):
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::i_formatter()));
         break;
-#endif
 
     default: //Unknown flag appears as is
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter('%')));
