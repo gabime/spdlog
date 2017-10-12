@@ -39,6 +39,7 @@ private:
     std::vector<std::unique_ptr<details::flag_formatter>> _formatters;
     std::tm get_time(details::log_msg& msg);
     void handle_flag(char flag);
+    bool try_handle_mdc_flag(char flag, std::string::const_iterator& it, const std::string::const_iterator& end);
     void compile_pattern(const std::string& pattern);
 };
 }
