@@ -24,7 +24,6 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     REQUIRE(count_lines(filename) == 2);
 }
 
-
 TEST_CASE("flush_on", "[flush_on]]")
 {
     prepare_logdir();
@@ -69,7 +68,6 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
     REQUIRE(count_lines(filename) == 10);
 }
 
-
 TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 {
     prepare_logdir();
@@ -97,6 +95,40 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 }
 
 
+TEST_CASE("rotating_file_logger_mp1", "[rotating_logger]]")
+{
+    prepare_logdir();
+    std::string basename = "logs/rotating_log";
+    auto logger = spdlog::create<spdlog::sinks::rotating_file_sink_mp_mt>("logger", basename, 1024, 0);
+
+    for (int i = 0; i < 10; ++i)
+        logger->info("Test message {}", i);
+
+    logger->flush();
+    auto filename = basename;
+    REQUIRE(count_lines(filename) == 10);
+}
+
+TEST_CASE("rotating_file_logger_mp2", "[rotating_logger]]")
+{
+    prepare_logdir();
+    std::string basename = "logs/rotating_log";
+    auto logger = spdlog::create<spdlog::sinks::rotating_file_sink_mp_mt>("logger", basename, 1024, 1);
+    for (int i = 0; i < 10; ++i)
+        logger->info("Test message {}", i);
+
+    logger->flush();
+    auto filename = basename;
+    REQUIRE(count_lines(filename) == 10);
+    for (int i = 0; i < 1000; i++)
+        logger->info("Test message {}", i);
+
+    logger->flush();
+    REQUIRE(get_filesize(filename) <= 1024);
+    auto filename1 = basename + ".1";
+    REQUIRE(get_filesize(filename1) <= 1024);
+}
+
 TEST_CASE("daily_logger", "[daily_logger]]")
 {
     prepare_logdir();
@@ -120,7 +152,6 @@ TEST_CASE("daily_logger", "[daily_logger]]")
     auto filename = w.str();
     REQUIRE(count_lines(filename) == 10);
 }
-
 
 TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
 {
@@ -187,4 +218,3 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
     auto filename = w.str();
     REQUIRE(count_lines(filename) == 10);
 }
-

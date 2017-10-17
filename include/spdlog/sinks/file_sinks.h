@@ -145,6 +145,165 @@ private:
 typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
 typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
 
+// Rotating file sink for multi-process environment
+template<class Mutex>
+class rotating_file_sink_mp SPDLOG_FINAL : public spdlog::sinks::base_sink < Mutex >
+{
+public:
+    rotating_file_sink_mp(const spdlog::filename_t & base_filename,
+                          const std::size_t& max_size,
+                          const std::size_t& max_files) :
+        _base_filename(base_filename),
+        _max_size(max_size),
+        _max_files(max_files),
+        _file_helper()
+    {
+        _rotating_file = get_folder_path(_base_filename) + "rotating";
+        _file_helper.open(calc_filename(_base_filename, 0));
+    }
+
+protected:
+    void _sink_it(const details::log_msg& msg) override
+    {
+        if (details::os::file_exists(_rotating_file))
+        {
+            wait_till_rotation_completed();
+        }
+        else
+        {
+            size_t file_size = _file_helper.size();
+            if ( (file_size + msg.formatted.size()) > _max_size )
+            {
+                // Check that _file_helper give us real size of a log file and not a size of already rotated (old) log file
+                if (file_size <= details::os::filesize(_file_helper.filename()))
+                {
+                    // Because previous operation was long, check that other processes did not started rotation
+                    if (details::os::file_exists(_rotating_file))
+                    {
+                        wait_till_rotation_completed();
+                    }
+                    else
+                    {
+                        safe_rotation();
+                    }
+                }
+                else
+                {
+                    // File helper have file descriptor to rotated log file. We need to close it and open current log file
+                    _file_helper.reopen(false);
+                }
+            }
+        }
+
+        _file_helper.write(msg);
+    }
+
+    void _flush() override
+    {
+        _file_helper.flush();
+    }
+
+private:
+    static filename_t get_folder_path(const filename_t& filename)
+    {
+        size_t pos = filename.find_last_of('/');
+        if (pos == std::string::npos)
+        {
+            return filename_t("/");
+        }
+
+        filename_t path;
+        path.assign(filename, 0, pos + 1);
+        return path;
+    }
+
+    static filename_t calc_filename(const filename_t& filename, std::size_t index)
+    {
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        if (index)
+            w.write(SPDLOG_FILENAME_T("{}.{}"), filename, index);
+        else
+            w.write(SPDLOG_FILENAME_T("{}"), filename);
+
+        return w.str();
+    }
+
+    void wait_till_rotation_completed()
+    {
+        _file_helper.close();
+
+        const int max_tries = 100;
+        const int sleep_time = 10;
+        for (int i = 0; i < max_tries; ++i)
+        {
+            if (!details::os::file_exists(_rotating_file))
+            {
+                break;
+            }
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep_time));
+        }
+
+        _file_helper.reopen(false);
+    }
+
+    void safe_rotation()
+    {
+        // create rotating file
+        details::file_helper_mp rotating_file;
+        rotating_file.open(_rotating_file);
+        rotating_file.close();
+
+        // close log file
+        _file_helper.close();
+
+        // perform rotation
+        _rotate();
+
+        // open log file and truncate it
+        _file_helper.reopen(true);
+
+        // delete rotating file
+        details::os::remove(_rotating_file);
+    }
+
+    // Rotate files:
+    // log.txt -> log.txt.1
+    // log.txt.1 -> log.txt.2
+    // log.txt.2 -> log.txt.3
+    // lo3.txt.3 -> delete
+    void _rotate()
+    {
+        for (auto i = _max_files; i > 0; --i)
+        {
+            filename_t src = calc_filename(_base_filename, i - 1);
+            filename_t target = calc_filename(_base_filename, i);
+            if (details::os::file_exists(target))
+            {
+                if (details::os::remove(target) != 0)
+                {
+                    throw spdlog_ex("rotating_file_sink: failed removing " + details::os::filename_to_str(target), errno);
+                }
+            }
+
+            if (details::os::file_exists(src) && details::os::rename(src, target))
+            {
+                throw spdlog_ex("rotating_file_sink: failed renaming " + details::os::filename_to_str(src) + " to " + details::os::filename_to_str(target), errno);
+            }
+        }
+    }
+
+private:
+    filename_t _base_filename;
+    filename_t _rotating_file;
+    std::size_t _max_size;
+    std::size_t _max_files;
+    details::file_helper_mp _file_helper;
+};
+
+typedef rotating_file_sink_mp<std::mutex> rotating_file_sink_mp_mt;
+typedef rotating_file_sink_mp<spdlog::details::null_mutex> rotating_file_sink_mp_st;
+
 /*
  * Default generator of daily log file names.
  */
