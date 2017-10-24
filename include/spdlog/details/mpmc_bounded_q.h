@@ -88,7 +88,7 @@ public:
         {
             cell = &buffer_[pos & buffer_mask_];
             size_t seq = cell->sequence_.load(std::memory_order_acquire);
-            intptr_t dif = (intptr_t)seq - (intptr_t)pos;
+            intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos);
             if (dif == 0)
             {
                 if (enqueue_pos_.compare_exchange_weak(pos, pos + 1, std::memory_order_relaxed))
@@ -117,7 +117,7 @@ public:
             cell = &buffer_[pos & buffer_mask_];
             size_t seq =
                 cell->sequence_.load(std::memory_order_acquire);
-            intptr_t dif = (intptr_t)seq - (intptr_t)(pos + 1);
+            intptr_t dif = static_cast<intptr_t>(seq) - static_cast<intptr_t>(pos + 1);
             if (dif == 0)
             {
                 if (dequeue_pos_.compare_exchange_weak(pos, pos + 1, std::memory_order_relaxed))
