@@ -119,14 +119,14 @@ class B_formatter:public flag_formatter
 };
 
 
-//write 2 ints seperated by sep with padding of 2
+//write 2 ints separated by sep with padding of 2
 static fmt::MemoryWriter& pad_n_join(fmt::MemoryWriter& w, int v1, int v2, char sep)
 {
     w << fmt::pad(v1, 2, '0') << sep << fmt::pad(v2, 2, '0');
     return w;
 }
 
-//write 3 ints seperated by sep with padding of 2
+//write 3 ints separated by sep with padding of 2
 static fmt::MemoryWriter& pad_n_join(fmt::MemoryWriter& w, int v1, int v2, int v3, char sep)
 {
     w << fmt::pad(v1, 2, '0') << sep << fmt::pad(v2, 2, '0') << sep << fmt::pad(v3, 2, '0');
