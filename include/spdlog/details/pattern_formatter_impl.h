@@ -99,7 +99,7 @@ class A_formatter:public flag_formatter
 };
 
 //Abbreviated month
-static const std::string  months[] { "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" };
+static const std::string  months[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" };
 class b_formatter:public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
