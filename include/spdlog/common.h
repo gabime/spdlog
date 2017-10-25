@@ -73,6 +73,9 @@ using level_t = std::atomic<int>;
 
 using log_err_handler = std::function<void(const std::string &err_msg)>;
 
+using rotating_logger_cb = std::function<void(std::vector<std::string>)>;
+using daily_logger_cb = std::function<void(std::string)>;
+
 //Log level enum
 namespace level
 {

@@ -66,12 +66,13 @@ class rotating_file_sink SPDLOG_FINAL : public base_sink < Mutex >
 {
 public:
     rotating_file_sink(const filename_t &base_filename,
-                       std::size_t max_size, std::size_t max_files) :
+                       std::size_t max_size, std::size_t max_files, rotating_logger_cb cb) :
         _base_filename(base_filename),
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
-        _file_helper()
+        _file_helper(),
+        _on_finish_cb(cb)
     {
         _file_helper.open(calc_filename(_base_filename, 0));
         _current_size = _file_helper.size(); //expensive. called only once
@@ -115,7 +116,10 @@ private:
     void _rotate()
     {
         using details::os::filename_to_str;
+        std::vector<filename_t> files;
         _file_helper.close();
+
+
         for (auto i = _max_files; i > 0; --i)
         {
             filename_t src = calc_filename(_base_filename, i - 1);
@@ -128,18 +132,31 @@ private:
                     throw spdlog_ex("rotating_file_sink: failed removing " + filename_to_str(target), errno);
                 }
             }
-            if (details::file_helper::file_exists(src) && details::os::rename(src, target))
+            if (details::file_helper::file_exists(src))
             {
-                throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+                if (details::os::rename(src, target))
+                {
+                    throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+                }
+                if (_on_finish_cb)
+                {
+                    files.push_back(target);
+                }
             }
         }
         _file_helper.reopen(true);
+        
+        if (_on_finish_cb)
+        {
+            _on_finish_cb(files);
+        }
     }
     filename_t _base_filename;
     std::size_t _max_size;
     std::size_t _max_files;
     std::size_t _current_size;
     details::file_helper _file_helper;
+    rotating_logger_cb _on_finish_cb;
 };
 
 typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
@@ -186,9 +203,11 @@ public:
     daily_file_sink(
         const filename_t& base_filename,
         int rotation_hour,
-        int rotation_minute) : _base_filename(base_filename),
+        int rotation_minute,
+        daily_logger_cb cb) : _base_filename(base_filename),
         _rotation_h(rotation_hour),
-        _rotation_m(rotation_minute)
+        _rotation_m(rotation_minute),
+        _daily_cb(cb)
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
@@ -202,8 +221,13 @@ protected:
     {
         if (std::chrono::system_clock::now() >= _rotation_tp)
         {
+            auto old_file_name = _file_helper.filename();
             _file_helper.open(FileNameCalc::calc_filename(_base_filename));
             _rotation_tp = _next_rotation_tp();
+            if (_daily_cb)
+            {
+                _daily_cb(old_file_name);
+            }
         }
         _file_helper.write(msg);
     }
@@ -234,6 +258,7 @@ private:
     int _rotation_m;
     std::chrono::system_clock::time_point _rotation_tp;
     details::file_helper _file_helper;
+    daily_logger_cb _daily_cb;
 };
 
 typedef daily_file_sink<std::mutex> daily_file_sink_mt;
