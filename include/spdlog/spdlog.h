@@ -152,6 +152,48 @@ void drop_all();
 
 
 ///////////////////////////////////////////////////////////////////////////////
+// Lower cost run-time logging macros
+// This elminates any function calls or argument passing if the log level
+// is below required level for logging and only incurs an inplace if check
+//
+// Example:
+// spdlog::set_level(spdlog::level::info);
+// CustomClassWithStreamOverloaded obj();
+// SPDLOG_PERF_TRACE(logger, "custom class with operator<<: {}..{}", obj, val);
+//
+// Duration calculations on Visual Studio 2017 64-bit Release build:
+//
+// Run tests/perf_log_macro.cpp
+// with #define PERF_LOG_MACRO_PRINT_DURATIONS uncommented for results on your platform
+//
+// Number of logs: 1000
+// Log level requires writing using PERF runtime macro:1969us
+// Log level requires writing using NORMAL interface: 1917us
+//
+// Number of logs: 10000
+// Log level does NOT require writing using PERF runtime macro: 6us
+// Log level does NOT require writing using NORMAL interface: 62us
+///////////////////////////////////////////////////////////////////////////////
+#define SPDLOG_PERF_LOG(logger, flag, level, ...)     \
+  if (flag && logger->should_log(level))       \
+  {                                            \
+    logger->log(level, __VA_ARGS__);           \
+  }
+
+#define SPDLOG_PERF_TRACE(logger, ...)              SPDLOG_PERF_LOG(logger.get(), true, spdlog::level::trace,    __VA_ARGS__)
+#define SPDLOG_PERF_TRACE_IF(logger, flag, ...)     SPDLOG_PERF_LOG(logger.get(), flag, spdlog::level::trace,    __VA_ARGS__)
+#define SPDLOG_PERF_DEBUG(logger, ...)              SPDLOG_PERF_LOG(logger.get(), true, spdlog::level::debug,    __VA_ARGS__)
+#define SPDLOG_PERF_DEBUG_IF(logger, flag, ...)     SPDLOG_PERF_LOG(logger.get(), flag, spdlog::level::debug,    __VA_ARGS__)
+#define SPDLOG_PERF_INFO(logger, ...)               SPDLOG_PERF_LOG(logger.get(), true, spdlog::level::info,     __VA_ARGS__)
+#define SPDLOG_PERF_INFO_IF(logger, flag, ...)      SPDLOG_PERF_LOG(logger.get(), flag, spdlog::level::info,     __VA_ARGS__)
+#define SPDLOG_PERF_WARN(logger, ...)               SPDLOG_PERF_LOG(logger.get(), true, spdlog::level::warn,     __VA_ARGS__)
+#define SPDLOG_PERF_WARN_IF(logger, flag, ...)      SPDLOG_PERF_LOG(logger.get(), flag, spdlog::level::warn,     __VA_ARGS__)
+#define SPDLOG_PERF_ERR(logger, ...)                SPDLOG_PERF_LOG(logger.get(), true, spdlog::level::err,      __VA_ARGS__)
+#define SPDLOG_PERF_ERR_IF(logger, flag, ...)       SPDLOG_PERF_LOG(logger.get(), flag, spdlog::level::err,      __VA_ARGS__)
+#define SPDLOG_PERF_CRITICAL(logger, ...)           SPDLOG_PERF_LOG(logger.get(), true, spdlog::level::critical, __VA_ARGS__)
+#define SPDLOG_PERF_CRITICAL_IF(logger, flag, ...)  SPDLOG_PERF_LOG(logger.get(), flag, spdlog::level::critical, __VA_ARGS__)
+
+///////////////////////////////////////////////////////////////////////////////
 //
 // Trace & Debug can be switched on/off at compile time for zero cost debug statements.
 // Uncomment SPDLOG_DEBUG_ON/SPDLOG_TRACE_ON in tweakme.h to enable.
