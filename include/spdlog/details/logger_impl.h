@@ -11,7 +11,6 @@
 #include <memory>
 #include <string>
 
-
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
 template<class It>
@@ -78,7 +77,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
     {
         _err_handler(ex.what());
     }
-    catch (...)
+    SPDLOG_CATCH_ALL
     {
         _err_handler("Unknown exception");
     }
@@ -98,7 +97,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
     {
         _err_handler(ex.what());
     }
-    catch (...)
+    SPDLOG_CATCH_ALL
     {
         _err_handler("Unknown exception");
     }
@@ -119,7 +118,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
     {
         _err_handler(ex.what());
     }
-    catch (...)
+    SPDLOG_CATCH_ALL
     {
         _err_handler("Unknown exception");
     }
@@ -571,3 +570,5 @@ inline const std::vector<spdlog::sink_ptr>& spdlog::logger::sinks() const
 {
     return _sinks;
 }
+
+#undef SPDLOG_CATCH_ALL
