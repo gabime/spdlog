@@ -19,6 +19,8 @@
 #include <utility>
 #include <vector>
 #include <array>
+#include <regex>
+#include <map>
 
 namespace spdlog
 {
@@ -433,6 +435,36 @@ private:
     std::string _str;
 };
 
+#define ENABLE_MDC_FORMATTER 1
+
+// Disabling this feature for MinGW
+// See https://github.com/Alexpux/MINGW-packages/issues/2519
+#ifdef __MINGW32__
+#undef ENABLE_MDC_FORMATTER
+#define ENABLE_MDC_FORMATTER 0
+#endif
+
+// Enabled formatting pattern %X{key} to be mapped to appropiate value
+class MDC_formatter SPDLOG_FINAL :public flag_formatter
+{
+public:
+#if ENABLE_MDC_FORMATTER
+    thread_local static std::map<std::string, std::string> mdc_map;
+#endif
+    MDC_formatter(std::string key): _key(std::move(key))
+    {}
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+#if ENABLE_MDC_FORMATTER
+        msg.formatted << mdc_map[_key];
+#else
+        msg.formatted << "%X{" << _key << "}";
+#endif
+    }
+private:
+    std::string _key;
+};
+
 // Full info formatter
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
 class full_formatter SPDLOG_FINAL:public flag_formatter
@@ -504,8 +536,11 @@ inline void spdlog::pattern_formatter::compile_pattern(const std::string& patter
             if (user_chars) //append user chars found so far
                 _formatters.push_back(std::move(user_chars));
 
-            if (++it != end)
-                handle_flag(*it);
+            if (++it != end) {
+                auto flag = *it;
+                if (flag != 'X' || !try_handle_mdc_flag(flag, it, end))
+                    handle_flag(flag);
+            }
             else
                 break;
         }
@@ -659,6 +694,22 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter(flag)));
         break;
     }
+}
+
+inline bool spdlog::pattern_formatter::try_handle_mdc_flag(char flag, std::string::const_iterator& it, const std::string::const_iterator& end)
+{
+    if (++it != end) {
+		if (*it != '{')
+			return false;
+        std::smatch mdc_key_match;
+        auto brace_end = std::find(it, end, '}');
+        if (brace_end != end && std::regex_match(it, brace_end + 1, mdc_key_match, std::regex("[{]([\\w]+)[}]"))) {
+            _formatters.push_back(std::unique_ptr<details::MDC_formatter>(new details::MDC_formatter(mdc_key_match[1])));
+            it += std::distance(mdc_key_match[0].first, mdc_key_match[0].second) - 1;
+            return true;
+        }
+    }
+    return false;
 }
 
 inline std::tm spdlog::pattern_formatter::get_time(details::log_msg& msg)
