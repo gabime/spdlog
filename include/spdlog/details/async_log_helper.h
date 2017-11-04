@@ -384,7 +384,7 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_
 inline void spdlog::details::async_log_helper::wait_empty_q()
 {
     auto last_op = details::os::now();
-    while (_q.approx_size() > 0)
+    while (!_q.is_empty())
     {
         sleep_or_yield(details::os::now(), last_op);
     }
