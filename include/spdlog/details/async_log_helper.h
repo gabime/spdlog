@@ -261,7 +261,7 @@ inline void spdlog::details::async_log_helper::flush(bool wait_for_q)
 {
     push_msg(async_msg(async_msg_type::flush));
     if (wait_for_q)
-        wait_empty_q(); //return only make after the above flush message was processed
+        wait_empty_q(); //return when queue is empty
 }
 
 inline void spdlog::details::async_log_helper::worker_loop()
