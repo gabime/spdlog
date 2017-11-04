@@ -221,7 +221,7 @@ inline size_t filesize(FILE *f)
 {
     if (f == nullptr)
         throw spdlog_ex("Failed getting file size. fd is null");
-#ifdef _WIN32
+#if defined ( _WIN32) && !defined(__CYGWIN__)
     int fd = _fileno(f);
 #if _WIN64 //64 bits
     struct _stat64 st;
@@ -236,12 +236,12 @@ inline size_t filesize(FILE *f)
 
 #else // unix
     int fd = fileno(f);
-    //64 bits(but not in osx, where fstat64 is deprecated)
-#if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__))
+    //64 bits(but not in osx or cygwin, where fstat64 is deprecated)
+#if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__)) && !defined(__CYGWIN__)
     struct stat64 st;
     if (fstat64(fd, &st) == 0)
         return static_cast<size_t>(st.st_size);
-#else // unix 32 bits or osx
+#else // unix 32 bits or cygwin
     struct stat st;
     if (fstat(fd, &st) == 0)
         return static_cast<size_t>(st.st_size);
