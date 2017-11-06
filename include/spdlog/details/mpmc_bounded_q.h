@@ -129,7 +129,7 @@ namespace spdlog
 
 			bool is_empty()
 			{				
-				unsigned front, front1, back;
+				size_t front, front1, back;
 				// try to take a consistent snapshot of front/tail.
 				do {					
 					front = enqueue_pos_.load(std::memory_order_acquire);
