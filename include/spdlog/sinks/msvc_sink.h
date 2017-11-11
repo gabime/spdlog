@@ -7,8 +7,8 @@
 
 #if defined(_MSC_VER)
 
-#include "spdlog/sinks/base_sink.h"
-#include "spdlog/details/null_mutex.h"
+#include "base_sink.h"
+#include "../details/null_mutex.h"
 
 #include <WinBase.h>
 

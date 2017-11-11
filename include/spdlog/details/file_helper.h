@@ -9,8 +9,8 @@
 // When failing to open a file, retry several times(5) with small delay between the tries(10 ms)
 // Throw spdlog_ex exception on errors
 
-#include "spdlog/details/os.h"
-#include "spdlog/details/log_msg.h"
+#include "../details/os.h"
+#include "../details/log_msg.h"
 
 #include <chrono>
 #include <cstdio>
