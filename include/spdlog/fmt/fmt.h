@@ -20,7 +20,7 @@
 #endif
 #include "bundled/format.h"
 #if defined(SPDLOG_FMT_PRINTF)
-#include "bundled/fmt/printf.h"
+#include "bundled/printf.h"
 #endif
 
 #else //external fmtlib
