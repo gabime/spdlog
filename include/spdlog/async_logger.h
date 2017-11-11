@@ -15,8 +15,8 @@
 //    3. will throw spdlog_ex upon log exceptions
 // Upon destruction, logs all remaining messages in the queue before destructing..
 
-#include "spdlog/common.h"
-#include "spdlog/logger.h"
+#include "common.h"
+#include "logger.h"
 
 #include <chrono>
 #include <functional>
@@ -79,4 +79,4 @@ private:
 }
 
 
-#include "spdlog/details/async_logger_impl.h"
+#include "details/async_logger_impl.h"

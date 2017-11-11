@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "spdlog/logger.h"
-#include "spdlog/sinks/stdout_sinks.h"
+#include "../logger.h"
+#include "../sinks/stdout_sinks.h"
 
 #include <memory>
 #include <string>

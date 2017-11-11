@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "spdlog/sinks/base_sink.h"
-#include "spdlog/common.h"
-#include "spdlog/details/os.h"
+#include "base_sink.h"
+#include "../common.h"
+#include "../details/os.h"
 
 #include <string>
 #include <map>
