@@ -7,7 +7,7 @@
 
 #include "base_sink.h"
 #include "../details/null_mutex.h"
-#include "common.h"
+#include "../common.h"
 
 #include <mutex>
 #include <string>
