@@ -76,11 +76,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
     catch (const std::exception &ex)
     {
         _err_handler(ex.what());
-    }
-    SPDLOG_CATCH_ALL
-    {
-        _err_handler("Unknown exception");
-    }
+    }   
 }
 
 template <typename... Args>
@@ -96,12 +92,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
     catch (const std::exception &ex)
     {
         _err_handler(ex.what());
-    }
-    SPDLOG_CATCH_ALL
-    {
-        _err_handler("Unknown exception");
-    }
-
+    }   
 }
 
 template<typename T>
@@ -117,11 +108,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
     catch (const std::exception &ex)
     {
         _err_handler(ex.what());
-    }
-    SPDLOG_CATCH_ALL
-    {
-        _err_handler("Unknown exception");
-    }
+    }  
 }
 
 
@@ -571,4 +558,3 @@ inline const std::vector<spdlog::sink_ptr>& spdlog::logger::sinks() const
     return _sinks;
 }
 
-#undef SPDLOG_CATCH_ALL

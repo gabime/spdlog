@@ -42,13 +42,6 @@
 #define SPDLOG_DEPRECATED
 #endif
 
-#if defined(__linux__) && !defined(__ANDROID__)
-#include <cxxabi.h>
-#define SPDLOG_CATCH_ALL catch (abi::__forced_unwind&) { _err_handler("Unknown exception"); throw; } catch (...)
-#else // __linux__
-#define SPDLOG_CATCH_ALL catch (...)
-#endif // __linux__
-
 #include "fmt/fmt.h"
 
 namespace spdlog
