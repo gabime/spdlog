@@ -5,12 +5,12 @@
 
 #pragma once
 
-#if defined(_MSC_VER)
+#if defined(_WIN32)
 
 #include "base_sink.h"
 #include "../details/null_mutex.h"
 
-#include <WinBase.h>
+#include <winbase.h>
 
 #include <mutex>
 #include <string>
