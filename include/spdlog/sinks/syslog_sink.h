@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "common.h"
+#include "../common.h"
 
 #ifdef SPDLOG_ENABLE_SYSLOG
 
