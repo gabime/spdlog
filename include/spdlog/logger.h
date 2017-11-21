@@ -107,6 +107,9 @@ public:
     virtual void set_error_handler(log_err_handler);
     virtual log_err_handler error_handler();
 
+    // this method should be called only by preprocessor macros
+    logger& update_tracer(std::string filename, int lineno, std::string function, std::string function_pretty);
+
 protected:
     virtual void _sink_it(details::log_msg&);
     virtual void _set_pattern(const std::string&, pattern_time_type);
@@ -129,6 +132,7 @@ protected:
     log_err_handler _err_handler;
     std::atomic<time_t> _last_err_time;
     std::atomic<size_t> _msg_counter;
+    spdlog::trace_info tracer;
 };
 }
 

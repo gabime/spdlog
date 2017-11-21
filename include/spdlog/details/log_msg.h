@@ -19,10 +19,11 @@ namespace details
 struct log_msg
 {
     log_msg() = default;
-    log_msg(const std::string *loggers_name, level::level_enum lvl) :
+    log_msg(const std::string *loggers_name, level::level_enum lvl, spdlog::trace_info tracer = {}) :
         logger_name(loggers_name),
         level(lvl),
-        msg_id(0)
+        msg_id(0),
+        tracer{std::move(tracer)}
     {
 #ifndef SPDLOG_NO_DATETIME
         time = os::now();
@@ -45,6 +46,7 @@ struct log_msg
     fmt::MemoryWriter raw;
     fmt::MemoryWriter formatted;
     size_t msg_id;
+    spdlog::trace_info tracer;
 };
 }
 }
