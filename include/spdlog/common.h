@@ -80,6 +80,13 @@ typedef enum
     off = 6
 } level_enum;
 
+#define SPDLOG_LOGLEVEL_CRITICAL 5
+#define SPDLOG_LOGLEVEL_ERROR    4
+#define SPDLOG_LOGLEVEL_WARNING  3
+#define SPDLOG_LOGLEVEL_INFO     2
+#define SPDLOG_LOGLEVEL_DEBUG    1
+#define SPDLOG_LOGLEVEL_TRACE    0
+
 #if !defined(SPDLOG_LEVEL_NAMES)
 #define SPDLOG_LEVEL_NAMES { "trace", "debug", "info",  "warning", "error", "critical", "off" };
 #endif
@@ -155,5 +162,10 @@ using filename_t = std::wstring;
 using filename_t = std::string;
 #endif
 
-
+struct trace_info {
+    std::string func_raw;
+    std::string func_pretty;
+    std::string filename;
+    int lineno=-1;
+};
 } //spdlog

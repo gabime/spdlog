@@ -64,7 +64,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
 
     try
     {
-        details::log_msg log_msg(&_name, lvl);
+        details::log_msg log_msg(&_name, lvl, tracer);
 
 #if defined(SPDLOG_FMT_PRINTF)
         fmt::printf(log_msg.raw, fmt, args...);
@@ -85,7 +85,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
     if (!should_log(lvl)) return;
     try
     {
-        details::log_msg log_msg(&_name, lvl);
+        details::log_msg log_msg(&_name, lvl, tracer);
         log_msg.raw << msg;
         _sink_it(log_msg);
     }
@@ -101,7 +101,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
     if (!should_log(lvl)) return;
     try
     {
-        details::log_msg log_msg(&_name, lvl);
+        details::log_msg log_msg(&_name, lvl, tracer);
         log_msg.raw << msg;
         _sink_it(log_msg);
     }
@@ -556,5 +556,13 @@ inline void spdlog::logger::_incr_msg_counter(details::log_msg &msg)
 inline const std::vector<spdlog::sink_ptr>& spdlog::logger::sinks() const
 {
     return _sinks;
+}
+
+inline spdlog::logger& spdlog::logger::update_tracer(std::string file, int lineno, std::string func, std::string prettyfunc) {
+    tracer.filename = std::move(file);
+    tracer.lineno = lineno;
+    tracer.func_raw = std::move(func);
+    tracer.func_pretty = std::move(prettyfunc);
+    return *this;
 }
 

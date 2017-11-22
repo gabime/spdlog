@@ -482,6 +482,56 @@ class full_formatter SPDLOG_FINAL:public flag_formatter
 
 
 
+// short file name
+class shortfilename_formatter SPDLOG_FINAL:public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        const auto &full = msg.tracer.filename;
+        auto it = full.find_last_of('/');
+        auto short_filename = it==std::string::npos ? full : full.substr(it + 1);
+        msg.formatted << short_filename;
+    }
+};
+
+// file name
+class filename_formatter SPDLOG_FINAL:public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        msg.formatted << msg.tracer.filename;
+    }
+};
+
+// line number
+class lineno_formatter SPDLOG_FINAL:public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        msg.formatted << msg.tracer.lineno;
+    }
+};
+
+// function name
+class function_formatter SPDLOG_FINAL:public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        msg.formatted << msg.tracer.func_raw;
+    }
+};
+
+// function pretty name
+class prettyfunction_formatter SPDLOG_FINAL:public flag_formatter
+{
+    void format(details::log_msg& msg, const std::tm&) override
+    {
+        msg.formatted << msg.tracer.func_pretty;
+    }
+};
+
+
+
 }
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -652,6 +702,26 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 
     case ('i'):
         _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::i_formatter()));
+        break;
+
+    case ('J'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::filename_formatter()));
+        break;
+
+    case ('j'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::shortfilename_formatter()));
+        break;
+
+    case ('#'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::lineno_formatter()));
+        break;
+
+    case ('u'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::function_formatter()));
+        break;
+
+    case ('U'):
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::prettyfunction_formatter()));
         break;
 
     default: //Unknown flag appears as is
