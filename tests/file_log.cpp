@@ -24,6 +24,29 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     REQUIRE(count_lines(filename) == 2);
 }
 
+TEST_CASE("file_logger_custom_format", "[simple_logger + custom format]]")
+{
+    prepare_logdir();
+    std::string filename = "logs/simple_log";
+    
+    auto sink = std::make_shared<spdlog::sinks::simple_file_sink_mt>(filename, false);
+    sink->set_pattern("%v");
+    auto logger = std::make_shared<spdlog::logger>("logger", sink);
+
+    logger->set_pattern("%+");
+
+#if !defined(SPDLOG_FMT_PRINTF)
+    logger->info("Test message {}", 1);
+    logger->info("Test message {}", 2);
+#else
+    logger->info("Test message %d", 1);
+    logger->info("Test message %d", 2);
+#endif
+    logger->flush();
+    REQUIRE(file_contents(filename) == std::string("Test message 1\nTest message 2\n"));
+    REQUIRE(count_lines(filename) == 2);
+}
+
 
 TEST_CASE("flush_on", "[flush_on]]")
 {
