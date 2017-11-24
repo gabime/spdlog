@@ -23,6 +23,7 @@ class formatter
 public:
     virtual ~formatter() {}
     virtual void format(details::log_msg& msg) = 0;
+    virtual void write_formated(const details::log_msg& msg, fmt::MemoryWriter& out) = 0;
 };
 
 class pattern_formatter SPDLOG_FINAL : public formatter
@@ -33,11 +34,12 @@ public:
     pattern_formatter(const pattern_formatter&) = delete;
     pattern_formatter& operator=(const pattern_formatter&) = delete;
     void format(details::log_msg& msg) override;
+    void write_formated(const details::log_msg& msg, fmt::MemoryWriter& out) override;
 private:
     const std::string _pattern;
     const pattern_time_type _pattern_time;
     std::vector<std::unique_ptr<details::flag_formatter>> _formatters;
-    std::tm get_time(details::log_msg& msg);
+    std::tm get_time(const details::log_msg& msg);
     void handle_flag(char flag);
     void compile_pattern(const std::string& pattern);
 };
