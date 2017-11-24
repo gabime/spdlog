@@ -76,6 +76,10 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
     catch (const std::exception &ex)
     {
         _err_handler(ex.what());
+    }
+    catch(...) {
+       _err_handler("Unknown exception in logger " + _name);
+       throw;    
     }   
 }
 

@@ -279,7 +279,13 @@ inline void spdlog::details::async_log_helper::worker_loop()
         catch (const std::exception &ex)
         {
             _err_handler(ex.what());
-        }      
+        } 
+        catch(...) 
+        {
+            _err_handler("Unknown exeption in worker loop. Terminating worker loop");
+            active = false; 
+
+        }     
     }
     if (_worker_teardown_cb) _worker_teardown_cb();
 

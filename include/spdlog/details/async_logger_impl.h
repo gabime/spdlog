@@ -97,5 +97,11 @@ inline void spdlog::async_logger::_sink_it(details::log_msg& msg)
     catch (const std::exception &ex)
     {
         _err_handler(ex.what());
-    }   
+    }
+    catch(...) 
+    {
+        _err_handler("Unknown exception in logger " + _name);
+        throw;
+    }
+
 }
