@@ -55,7 +55,9 @@ protected:
     {
         auto color = colors_[msg.level];
         auto orig_attribs = set_console_attribs(color);
-        WriteConsoleA(out_handle_, msg.formatted.data(), static_cast<DWORD>(msg.formatted.size()), nullptr, nullptr);
+        fmt::MemoryWriter formatted;
+        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (get_formatted_msg(msg, formatted));
+        WriteConsoleA(out_handle_, formatted_msg->data(), static_cast<DWORD>(formatted_msg->size()), nullptr, nullptr);
         SetConsoleTextAttribute(out_handle_, orig_attribs); //reset to orig colors
     }
 

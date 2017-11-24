@@ -32,11 +32,11 @@ public:
     void set_level(level::level_enum log_level);
     level::level_enum level() const;
 
-    void set_pattern(const std::string& pattern, pattern_time_type pattern_time);
+    void set_pattern(const std::string& pattern, pattern_time_type pattern_time = pattern_time_type::local);
     void set_formatter(formatter_ptr msg_formatter);
 
 protected:
-    const char* get_formatted_string(const details::log_msg& msg);
+    const fmt::MemoryWriter* get_formatted_msg(const details::log_msg& msg, fmt::MemoryWriter& out);
 
 private:
     level_t _level;
@@ -68,17 +68,16 @@ inline void sink::set_formatter(formatter_ptr msg_formatter)
     _formatter = msg_formatter;
 }
 
-inline const char* sink::get_formatted_string(const details::log_msg& msg)
+inline const fmt::MemoryWriter* sink::get_formatted_msg(const details::log_msg& msg, fmt::MemoryWriter& out)
 {
     if (_formatter == nullptr)
     {
-        return msg.formatted.c_str();
+        return &msg.formatted;
     }
     else
     {
-        fmt::MemoryWriter formatted_out;
-        _formatter->write_formated(msg, formatted_out);
-        return formatted_out.c_str();
+        _formatter->write_formated(msg, out);
+        return &out;
     }
 }
 

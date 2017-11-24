@@ -11,7 +11,7 @@ static void write_with_helper(file_helper &helper, size_t howmany)
 {
     log_msg msg;
     msg.formatted << std::string(howmany, '1');
-    helper.write(msg);
+    helper.write(msg.formatted.data(), msg.formatted.size());
     helper.flush();
 }
 

@@ -42,7 +42,9 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        _file_helper.write(msg);
+        fmt::MemoryWriter formatted;
+        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (get_formatted_msg(msg, formatted));
+        _file_helper.write(formatted_msg->data(), formatted_msg->size());
         if(_force_flush)
             _file_helper.flush();
     }
@@ -87,7 +89,9 @@ protected:
             _rotate();
             _current_size = msg.formatted.size();
         }
-        _file_helper.write(msg);
+        fmt::MemoryWriter formatted;
+        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (get_formatted_msg(msg, formatted));
+        _file_helper.write(formatted_msg->data(), formatted_msg->size());
     }
 
     void _flush() override
@@ -205,7 +209,9 @@ protected:
             _file_helper.open(FileNameCalc::calc_filename(_base_filename));
             _rotation_tp = _next_rotation_tp();
         }
-        _file_helper.write(msg);
+        fmt::MemoryWriter formatted;
+        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (get_formatted_msg(msg, formatted));
+        _file_helper.write(formatted_msg->data(), formatted_msg->size());
     }
 
     void _flush() override

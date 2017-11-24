@@ -35,7 +35,9 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
-        OutputDebugStringA(msg.formatted.c_str());
+        fmt::MemoryWriter formatted;
+        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (get_formatted_msg(msg, formatted));
+        OutputDebugStringA(formatted_msg->c_str());
     }
 
     void _flush() override

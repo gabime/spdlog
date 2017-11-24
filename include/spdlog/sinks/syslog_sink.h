@@ -54,7 +54,9 @@ public:
 
     void log(const details::log_msg &msg) override
     {
-        ::syslog(syslog_prio_from_level(msg), "%s", msg.raw.str().c_str());
+        fmt::MemoryWriter formatted;
+        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (get_formatted_msg(msg, formatted));
+        ::syslog(syslog_prio_from_level(msg), "%s", formatted_msg->str().c_str());
     }
 
     void flush() override

@@ -82,11 +82,8 @@ public:
         }
     }
 
-    void write(const log_msg& msg)
+    void write(const void* data, size_t msg_size)
     {
-
-        size_t msg_size = msg.formatted.size();
-        auto data = msg.formatted.data();
         if (std::fwrite(data, 1, msg_size, _fd) != msg_size)
             throw spdlog_ex("Failed writing to file " + os::filename_to_str(_filename), errno);
     }
