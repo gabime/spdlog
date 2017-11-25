@@ -28,7 +28,7 @@ protected:
     void _sink_it(const details::log_msg& msg) override
     {
         fmt::MemoryWriter formatted;
-        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (get_formatted_msg(msg, formatted));
+        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (sink::get_formatted_msg(msg, formatted));
         _ostream.write(formatted_msg->data(), formatted_msg->size());
         if (_force_flush)
             _ostream.flush();

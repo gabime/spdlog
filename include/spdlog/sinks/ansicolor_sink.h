@@ -81,7 +81,7 @@ protected:
     virtual void _sink_it(const details::log_msg& msg) override
     {
         fmt::MemoryWriter formatted;
-        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (get_formatted_msg(msg, formatted));
+        fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (sink::get_formatted_msg(msg, formatted));
         // Wrap the originally formatted message in color codes.
         // If color is not supported in the terminal, log as is instead.
         if (should_do_colors_)

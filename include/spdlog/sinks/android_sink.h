@@ -44,7 +44,7 @@ public:
         else 
         {
             fmt::MemoryWriter formatted;
-            fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (get_formatted_msg(msg, formatted));
+            fmt::MemoryWriter* formatted_msg = const_cast <fmt::MemoryWriter*> (sink::get_formatted_msg(msg, formatted));
             msg_output->c_str();
         }
 
