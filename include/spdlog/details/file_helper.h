@@ -45,13 +45,17 @@ public:
 
     void open(const filename_t& fname, bool truncate = false)
     {
-
         close();
         auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
         _filename = fname;
+#if defined(FILENAME_EXT)
+        filename_t fname_with_ext = fname + FILENAME_EXT;
+#else
+        filename_t fname_with_ext = fname;
+#endif
         for (int tries = 0; tries < open_tries; ++tries)
         {
-            if (!os::fopen_s(&_fd, fname, mode))
+            if (!os::fopen_s(&_fd, fname_with_ext, mode))
                 return;
 
             std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
