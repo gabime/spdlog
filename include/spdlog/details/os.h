@@ -316,7 +316,7 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 }
 
 //Return current thread id as size_t
-//It exists because the std::this_thread::get_id() is much slower(espcially under VS 2013)
+//It exists because the std::this_thread::get_id() is much slower(especially under VS 2013)
 inline size_t _thread_id()
 {
 #ifdef _WIN32
@@ -342,15 +342,15 @@ inline size_t _thread_id()
 //Return current thread id as size_t (from thread local storage)
 inline size_t thread_id()
 {
-#if defined(_MSC_VER) && (_MSC_VER < 1900) || defined(__clang__) && !__has_feature(cxx_thread_local)
+#if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || (defined(__clang__) && !__has_feature(cxx_thread_local))
     return _thread_id();
-#else
+#else // cache thread id in tls
     static thread_local const size_t tid = _thread_id();
     return tid;
 #endif
+
+
 }
-
-
 
 
 // wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
@@ -424,7 +424,7 @@ inline int pid()
 }
 
 
-// Detrmine if the terminal supports colors
+// Determine if the terminal supports colors
 // Source: https://github.com/agauniyal/rang/
 inline bool is_color_terminal()
 {
