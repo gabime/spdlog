@@ -126,11 +126,12 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Uncomment to mark some types as final, allowing more optimizations in release
+// Uncomment if your compiler doesn't support the "final" keyword.
+// The final keyword allows more optimizations in release
 // mode with recent compilers. See GCC's documentation for -Wsuggest-final-types
 // for instance.
 //
-// #define SPDLOG_FINAL final
+// #define SPDLOG_NO_FINAL
 ///////////////////////////////////////////////////////////////////////////////
 
 
@@ -140,6 +141,7 @@
 //
 // #define SPDLOG_ENABLE_MESSAGE_COUNTER
 ///////////////////////////////////////////////////////////////////////////////
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // Uncomment to customize level names (e.g. "MT TRACE")

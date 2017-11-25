@@ -29,9 +29,11 @@
 #define SPDLOG_CONSTEXPR constexpr
 #endif
 
-// See tweakme.h
-#if !defined(SPDLOG_FINAL)
+// final keyword support. On by default. See tweakme.h
+#if defined(SPDLOG_NO_FINAL)
 #define SPDLOG_FINAL
+#else
+#define SPDLOG_FINAL final
 #endif
 
 #if defined(__GNUC__)  || defined(__clang__)
