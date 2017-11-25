@@ -31,8 +31,6 @@ int main(int, char*[])
         console->info("Welcome to spdlog!");
         console->error("Some error message with arg{}..", 1);
 
-        // Conditional logging example
-        console->info_if(true, "Welcome to spdlog conditional logging!");
 
         // Formatting examples
         console->warn("Easy padding in numbers like {:08d}", 12);
@@ -40,9 +38,6 @@ int main(int, char*[])
         console->info("Support for floats {:03.2f}", 1.23456);
         console->info("Positional args are {1} {0}..", "too", "supported");
         console->info("{:<30}", "left aligned");
-
-        SPDLOG_DEBUG_IF(console, true, "This is a debug log");
-
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
 
@@ -77,7 +72,6 @@ int main(int, char*[])
         // define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON
         SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
         SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
-        SPDLOG_DEBUG_IF(console, true, "This is a debug log");
 
 
         // Asynchronous logging is very fast..

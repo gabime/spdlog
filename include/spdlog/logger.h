@@ -44,14 +44,6 @@ public:
     template <typename Arg1, typename... Args> void error(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void critical(const char* fmt, const Arg1&, const Args&... args);
 
-    template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const char* fmt, const Args&... args);
-    template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const char* msg);
-    template <typename Arg1, typename... Args> void trace_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void debug_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void info_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void warn_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void error_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void critical_if(const bool flag, const char* fmt, const Arg1&, const Args&... args);
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template <typename... Args> void log(level::level_enum lvl, const wchar_t* msg);
@@ -62,15 +54,6 @@ public:
     template <typename... Args> void warn(const wchar_t* fmt, const Args&... args);
     template <typename... Args> void error(const wchar_t* fmt, const Args&... args);
     template <typename... Args> void critical(const wchar_t* fmt, const Args&... args);
-
-    template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const wchar_t* msg);
-    template <typename... Args> void log_if(const bool flag, level::level_enum lvl, const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void trace_if(const bool flag, const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void debug_if(const bool flag, const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void info_if(const bool flag, const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void warn_if(const bool flag, const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void error_if(const bool flag, const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void critical_if(const bool flag, const wchar_t* fmt, const Args&... args);
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     template <typename T> void log(level::level_enum lvl, const T&);
