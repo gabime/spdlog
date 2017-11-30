@@ -63,15 +63,7 @@ public:
     template <typename T> void warn(const T&);
     template <typename T> void error(const T&);
     template <typename T> void critical(const T&);
-
-    template <typename T> void log_if(const bool flag, level::level_enum lvl, const T&);
-    template <typename T> void trace_if(const bool flag, const T&);
-    template <typename T> void debug_if(const bool flag, const T&);
-    template <typename T> void info_if(const bool flag, const T&);
-    template <typename T> void warn_if(const bool flag, const T&);
-    template <typename T> void error_if(const bool flag, const T&);
-    template <typename T> void critical_if(const bool flag, const T&);
-
+    
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
     level::level_enum level() const;
