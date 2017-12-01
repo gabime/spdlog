@@ -214,7 +214,7 @@ TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
 
 TEST_CASE("daily_file_sink::default_daily_file_name_calculator1", "[daily_file_sink]]")
 {
-    // daily.YYYY-MM-DD_hh-mm.txt
+    // daily_YYYY-MM-DD_hh-mm.txt
     auto filename = spdlog::sinks::default_daily_file_name_calculator::calc_filename("daily.txt");
     std::regex re(R"(^daily_(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])_\d\d-[0-5][0-9].txt$)");
     std::smatch match;
@@ -223,7 +223,7 @@ TEST_CASE("daily_file_sink::default_daily_file_name_calculator1", "[daily_file_s
 
 TEST_CASE("daily_file_sink::default_daily_file_name_calculator2", "[daily_file_sink]]")
 {
-    // daily.YYYY-MM-DD_hh-mm.txt
+    // daily_YYYY-MM-DD_hh-mm.txt
     auto filename = spdlog::sinks::default_daily_file_name_calculator::calc_filename("daily");
     std::regex re(R"(^daily_(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])_\d\d-[0-5][0-9]$)");
     std::smatch match;
@@ -232,7 +232,7 @@ TEST_CASE("daily_file_sink::default_daily_file_name_calculator2", "[daily_file_s
 
 TEST_CASE("daily_file_sink::dateonly_daily_file_name_calculator", "[daily_file_sink]]")
 {
-    // daily.YYYY-MM-DD_hh-mm.txt
+    // daily_YYYY-MM-DD_hh-mm.txt
     auto filename = spdlog::sinks::dateonly_daily_file_name_calculator::calc_filename("daily.txt");
     // date regex based on https://www.regular-expressions.info/dates.html
     std::regex re(R"(^daily_(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.txt$)");
