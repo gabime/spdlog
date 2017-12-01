@@ -73,6 +73,77 @@ TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]]")
     REQUIRE(helper.size() == expected_size);
 }
 
+TEST_CASE("file_helper_split_by_extenstion", "[file_helper::split_by_extenstion()]]")
+{
+	std::string basename, ext;
+	std::tie(basename, ext) = file_helper::split_by_extenstion("mylog.txt");	
+	REQUIRE(basename == "mylog");	
+	REQUIRE(ext == ".txt");
+}
+
+TEST_CASE("file_helper_split_by_extenstion2", "[file_helper::split_by_extenstion()]]")
+{
+	std::string basename, ext;
+	std::tie(basename, ext) = file_helper::split_by_extenstion("mylog");
+	REQUIRE(basename == "mylog");
+	REQUIRE(ext == "");
+}
+
+TEST_CASE("file_helper_split_by_extenstion3", "[file_helper::split_by_extenstion()]]")
+{
+	std::string basename, ext;
+	std::tie(basename, ext) = file_helper::split_by_extenstion("mylog.xyz.txt");
+	REQUIRE(basename == "mylog.xyz");
+	REQUIRE(ext == ".txt");
+}
+
+
+TEST_CASE("file_helper_split_by_extenstion4", "[file_helper::split_by_extenstion()]]")
+{
+	std::string basename, ext;
+	std::tie(basename, ext) = file_helper::split_by_extenstion("mylog.xyz....txt");
+	REQUIRE(basename == "mylog.xyz...");
+	REQUIRE(ext == ".txt");
+}
+
+TEST_CASE("file_helper_split_by_extenstion5", "[file_helper::split_by_extenstion(hidden_file)]]")
+{
+	std::string basename, ext;
+	std::tie(basename, ext) = file_helper::split_by_extenstion(".mylog");
+	REQUIRE(basename == ".mylog");
+	REQUIRE(ext == "");
+}
+
+TEST_CASE("file_helper_split_by_extenstion6", "[file_helper::split_by_extenstion(hidden_file)]]")
+{	
+#ifdef _WIN32
+	auto filename = "folder\\.mylog";	
+	auto expected_basename = "folder\\.mylog";
+#else
+	auto filename = "folder/.mylog";	
+	auto expected_basename = "folder/.mylog";
+#endif
+	std::string basename, ext;
+	std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
+	REQUIRE(basename == expected_basename);
+	REQUIRE(ext == "");
+}
+
+TEST_CASE("file_helper_split_by_extenstion7", "[file_helper::split_by_extenstion(hidden_file)]]")
+{
+#ifdef _WIN32
+	auto filename = "folder\\.mylog.txt";
+	auto expected_basename = "folder\\.mylog";
+#else
+	auto filename = "folder/.mylog.txt";
+	auto expected_basename = "folder//.mylog";
+#endif
+	std::string basename, ext;
+	std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
+	REQUIRE(basename == expected_basename);
+	REQUIRE(ext == ".txt");
+}
+
 
 
 

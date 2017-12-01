@@ -77,6 +77,23 @@ public:
         _current_size = _file_helper.size(); //expensive. called only once
     }
 
+	// calc filename according to index and file extension if exists.
+	// e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
+	static filename_t calc_filename(const filename_t& filename, std::size_t index)
+	{
+		std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+		if (index) 
+		{
+			filename_t basename, ext;
+			std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
+			w.write(SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
+		}
+		else 
+		{
+			w.write(SPDLOG_FILENAME_T("{}"), filename);
+		}			
+		return w.str();
+	}
 
 protected:
     void _sink_it(const details::log_msg& msg) override
@@ -94,24 +111,14 @@ protected:
     {
         _file_helper.flush();
     }
+	
 
-private:
-    static filename_t calc_filename(const filename_t& filename, std::size_t index)
-    {
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
-        if (index)
-            w.write(SPDLOG_FILENAME_T("{}.{}"), filename, index);
-        else
-            w.write(SPDLOG_FILENAME_T("{}"), filename);
-        return w.str();
-    }
-
+private:	
     // Rotate files:
-    // log.txt -> log.txt.1
-    // log.txt.1 -> log.txt.2
-    // log.txt.2 -> log.txt.3
-    // lo3.txt.3 -> delete
-
+    // log.txt -> log.1.txt
+    // log.1.txt -> log.2.txt
+    // log.2.txt -> log.3.txt
+    // log.3.txt -> delete
     void _rotate()
     {
         using details::os::filename_to_str;
@@ -150,27 +157,31 @@ typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
  */
 struct default_daily_file_name_calculator
 {
-    // Create filename for the form basename.YYYY-MM-DD_hh-mm
-    static filename_t calc_filename(const filename_t& basename)
+    // Create filename for the form filename.YYYY-MM-DD_hh-mm.ext
+    static filename_t calc_filename(const filename_t& filename)
     {
         std::tm tm = spdlog::details::os::localtime();
+		filename_t basename, ext;
+		std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
         std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
-        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, ext);
         return w.str();
     }
 };
 
 /*
- * Generator of daily log file names in format basename.YYYY-MM-DD
+ * Generator of daily log file names in format basename.YYYY-MM-DD.ext
  */
 struct dateonly_daily_file_name_calculator
 {
     // Create filename for the form basename.YYYY-MM-DD
-    static filename_t calc_filename(const filename_t& basename)
+    static filename_t calc_filename(const filename_t& filename)
     {
         std::tm tm = spdlog::details::os::localtime();
+		filename_t basename, ext;
+		std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
         std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
-        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, ext);
         return w.str();
     }
 };

@@ -143,6 +143,16 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
 SPDLOG_CONSTEXPR static const char* eol = SPDLOG_EOL;
 SPDLOG_CONSTEXPR static int eol_size = sizeof(SPDLOG_EOL) - 1;
 
+
+
+// folder separator
+#ifdef _WIN32
+SPDLOG_CONSTEXPR static const char folder_sep = '\\';
+#else
+SPDLOG_CONSTEXPR static const char folder_sep = '/';
+#endif
+
+
 inline void prevent_child_fd(FILE *f)
 {
 #ifdef _WIN32
