@@ -63,7 +63,7 @@ public:
     template <typename T> void warn(const T&);
     template <typename T> void error(const T&);
     template <typename T> void critical(const T&);
-    
+
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
     level::level_enum level() const;

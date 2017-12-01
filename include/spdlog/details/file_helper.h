@@ -108,26 +108,26 @@ public:
         return os::file_exists(fname);
     }
 
-	//
-	// return basename and extension:
-	//
-	// "mylog.txt" => ("mylog", ".txt")	
-	// "mylog" => ("mylog", "")	
-	//
-	// the starting dot in filenames is ignored (hidden files):
-	//
-	// "my_folder/.mylog" => ("my_folder/.mylog") 		
-	// "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
-	
-	static std::tuple<filename_t, filename_t> split_by_extenstion(const filename_t& fname)
-	{		
-		auto index = fname.rfind('.');
-		bool found_ext = index != filename_t::npos && index !=0 && fname[index - 1] != details::os::folder_sep;
-		if (found_ext)		
-			return std::make_tuple(fname.substr(0, index), fname.substr(index));					
-		else		
-			return std::make_tuple(fname, filename_t());		
-	}
+    //
+    // return basename and extension:
+    //
+    // "mylog.txt" => ("mylog", ".txt")
+    // "mylog" => ("mylog", "")
+    //
+    // the starting dot in filenames is ignored (hidden files):
+    //
+    // "my_folder/.mylog" => ("my_folder/.mylog")
+    // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
+
+    static std::tuple<filename_t, filename_t> split_by_extenstion(const filename_t& fname)
+    {
+        auto index = fname.rfind('.');
+        bool found_ext = index != filename_t::npos && index !=0 && fname[index - 1] != details::os::folder_sep;
+        if (found_ext)
+            return std::make_tuple(fname.substr(0, index), fname.substr(index));
+        else
+            return std::make_tuple(fname, filename_t());
+    }
 
 private:
     FILE* _fd;
