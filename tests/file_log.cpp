@@ -212,6 +212,13 @@ TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
 }
 
 
+
+
+
+
+
+// regex supported only from gcc 4.9 and above
+#if !(__GNUC__ <= 4 && __GNUC_MINOR__ < 9)
 TEST_CASE("daily_file_sink::default_daily_file_name_calculator1", "[daily_file_sink]]")
 {
     // daily_YYYY-MM-DD_hh-mm.txt
@@ -239,4 +246,4 @@ TEST_CASE("daily_file_sink::dateonly_daily_file_name_calculator", "[daily_file_s
     std::smatch match;
     REQUIRE(std::regex_match(filename, match, re));
 }
-
+#endif
