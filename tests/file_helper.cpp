@@ -136,7 +136,7 @@ TEST_CASE("file_helper_split_by_extenstion7", "[file_helper::split_by_extenstion
 	auto expected_basename = "folder\\.mylog";
 #else
 	auto filename = "folder/.mylog.txt";
-	auto expected_basename = "folder//.mylog";
+	auto expected_basename = "folder/.mylog";
 #endif
 	std::string basename, ext;
 	std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
