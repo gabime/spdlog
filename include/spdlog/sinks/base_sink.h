@@ -38,6 +38,7 @@ public:
     }
     void flush() SPDLOG_FINAL override
     {
+        std::lock_guard<Mutex> lock(_mutex);
         _flush();
     }
 
