@@ -100,8 +100,8 @@ int main(int, char*[])
         console->info("Support for floats {:03.2f}", 1.23456);
         console->info("Positional args are {1} {0}..", "too", "supported");
         console->info("{:<30}", "left aligned");
-        
-
+	
+	// Use global registry to retrieve loggers
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
         
         // Create basic file logger (not rotated)
