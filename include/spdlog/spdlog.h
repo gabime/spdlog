@@ -106,7 +106,7 @@ std::shared_ptr<logger> stderr_color_st(const std::string& logger_name);
 // Create and register a syslog logger
 //
 #ifdef SPDLOG_ENABLE_SYSLOG
-std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0);
+std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0, int syslog_facilty = (1<<3));
 #endif
 
 #if defined(__ANDROID__)
