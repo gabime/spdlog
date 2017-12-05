@@ -378,8 +378,8 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_
     if (time_since_op <= milliseconds(200))
         return sleep_for(milliseconds(20));
 
-    // sleep for 200 ms
-    return sleep_for(milliseconds(200));
+    // sleep for 500 ms
+    return sleep_for(milliseconds(500));
 }
 
 // wait for the queue to be empty
