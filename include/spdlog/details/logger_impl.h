@@ -252,8 +252,6 @@ inline void spdlog::logger::critical(const wchar_t* fmt, const Args&... args)
     log(level::critical, fmt, args...);
 }
 
-}
-
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 
