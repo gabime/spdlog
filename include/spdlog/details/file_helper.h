@@ -48,7 +48,7 @@ public:
     {
 
         close();
-        auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
+        auto *mode = truncate ? SPDLOG_TRUNCATE_MODE : SPDLOG_APPEND_MODE;
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
