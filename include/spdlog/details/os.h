@@ -350,7 +350,11 @@ inline size_t _thread_id()
 }
 
 //Return current thread id as size_t (from thread local storage)
+#ifdef __INTEL_COMPILER
+size_t thread_id()
+#else
 inline size_t thread_id()
+#endif
 {
 #if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || (defined(__clang__) && !__has_feature(cxx_thread_local))
     return _thread_id();
