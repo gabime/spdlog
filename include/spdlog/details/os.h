@@ -359,8 +359,8 @@ inline size_t thread_id()
 #if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || (defined(__clang__) && !__has_feature(cxx_thread_local))
     return _thread_id();
 #else // cache thread id in tls
-    static thread_local const size_t tid = _thread_id();
-    return tid;
+    static thread_local const size_t cached_tid = _thread_id();
+    return cached_tid;
 #endif
 
 
