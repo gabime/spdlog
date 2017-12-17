@@ -170,7 +170,7 @@ void drop_all();
 #ifdef _MSC_VER
 #define SPDLOG_TRACE(logger, fmt, ...) \
 do { \
-    auto s = std::string("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__ ") ] ") + std::string(fmt); \
+    auto s = std::string("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] ") + std::string(fmt); \
     logger->trace(s.c_str(), ##__VA_ARGS__); \
 } \
 while(0)
