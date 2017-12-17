@@ -167,20 +167,18 @@ void drop_all();
 #ifdef SPDLOG_TRACE_ON
 #define SPDLOG_STR_H(x) #x
 #define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
-#define SPDLOG_CONCAT_STR(str1, str2, res) \
-do { res = (char*) malloc((strlen(str1)+strlen(str2)+1)*sizeof(char)); strcpy(res, str1); strcat(res, str2);} while(0)
 #ifdef _MSC_VER
 #define SPDLOG_TRACE(logger, fmt, ...) \
 do { \
-    char* s; SPDLOG_CONCAT_STR("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] ", fmt, s); \
-    logger->trace(s, ##__VA_ARGS__); \
+    auto s = std::string("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__ ") ] ") + fmt; \
+    logger->trace(s.c_str(), ##__VA_ARGS__); \
 } \
 while(0)
 #else
 #define SPDLOG_TRACE(logger, fmt, ...) \
 do { \
-    char* s; SPDLOG_CONCAT_STR("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] ", fmt, s); \
-    logger->trace(s, ##__VA_ARGS__); \
+    auto s = std::string("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] ") + fmt; \
+    logger->trace(s.c_str(), ##__VA_ARGS__); \
 } \
 while(0)
 #endif
