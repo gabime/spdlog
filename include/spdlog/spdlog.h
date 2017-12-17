@@ -172,15 +172,15 @@ do { res = (char*) malloc((strlen(str1)+strlen(str2)+1)*sizeof(char)); strcpy(re
 #ifdef _MSC_VER
 #define SPDLOG_TRACE(logger, fmt, ...) \
 do { \
-    char* c; SPDLOG_CONCAT_STR("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] ", fmt, c); \
-    logger->trace(c, ##__VA_ARGS__); \
+    char* s; SPDLOG_CONCAT_STR("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] ", fmt, s); \
+    logger->trace(s, ##__VA_ARGS__); \
 } \
 while(0)
 #else
 #define SPDLOG_TRACE(logger, fmt, ...) \
 do { \
-    char* c; SPDLOG_CONCAT_STR("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] ", fmt, c); \
-    logger->trace(c, ##__VA_ARGS__); \
+    char* s; SPDLOG_CONCAT_STR("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] ", fmt, s); \
+    logger->trace(s, ##__VA_ARGS__); \
 } \
 while(0)
 #endif
