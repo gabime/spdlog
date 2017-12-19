@@ -168,9 +168,19 @@ void drop_all();
 #define SPDLOG_STR_H(x) #x
 #define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
 #ifdef _MSC_VER
-#define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] " __VA_ARGS__)
+#define SPDLOG_TRACE(logger, fmt, ...) \
+do { \
+    auto s = std::string("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] ") + std::string(fmt); \
+    logger->trace(s.c_str(), ##__VA_ARGS__); \
+} \
+while(0)
 #else
-#define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] " __VA_ARGS__)
+#define SPDLOG_TRACE(logger, fmt, ...) \
+do { \
+    auto s = std::string("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] ") + std::string(fmt); \
+    logger->trace(s.c_str(), ##__VA_ARGS__); \
+} \
+while(0)
 #endif
 #else
 #define SPDLOG_TRACE(logger, ...)
