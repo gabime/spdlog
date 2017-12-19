@@ -165,13 +165,15 @@ void drop_all();
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef SPDLOG_TRACE_ON
+#define SPDLOG_STR_H(x) #x
+#define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
 #ifdef _MSC_VER
-#define SPDLOG_TRACE(logger, s, ...) logger->trace(fmt::format("[ {}({}) ] {}", __FILE__, __LINE__, (s)).c_str(), ##__VA_ARGS__);
+#define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] " __VA_ARGS__)
 #else
-#define SPDLOG_TRACE(logger, s, ...) logger->trace(fmt::format("[ {}:{} ] {}", __FILE__, __LINE__, (s)).c_str(), ##__VA_ARGS__);
+#define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] " __VA_ARGS__)
 #endif
 #else
-#define SPDLOG_TRACE(logger, s, ...)
+#define SPDLOG_TRACE(logger, ...)
 #endif
 
 #ifdef SPDLOG_DEBUG_ON
