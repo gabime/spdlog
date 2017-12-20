@@ -80,6 +80,7 @@ install(
 install(
     DIRECTORY "${HEADER_BASE}/${PROJECT_NAME}"
     DESTINATION "${include_install_dir}"
+    FILES_MATCHING PATTERN "*.h"
 )
 
 # install project version file
