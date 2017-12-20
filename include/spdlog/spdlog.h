@@ -7,7 +7,7 @@
 
 #pragma once
 
-#define SPDLOG_VERSION "0.16.1"
+#include "version.h"
 
 #include "tweakme.h"
 #include "common.h"

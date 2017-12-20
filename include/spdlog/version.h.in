@@ -1,0 +1,9 @@
+/*
+ * Auto-generated source code file for 'spdlog'.
+ * See main CMake project file variables if you need to modify the original.
+ */
+
+#pragma once
+
+#define SPDLOG_VERSION "@PROJECT_VERSION@"
+

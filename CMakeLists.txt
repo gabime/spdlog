@@ -22,6 +22,12 @@ endif()
 #---------------------------------------------------------------------------------------
 # spdlog target
 #---------------------------------------------------------------------------------------
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/version.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/version.h
+    @ONLY
+)
+
 add_library(spdlog INTERFACE)
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
