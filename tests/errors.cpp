@@ -15,7 +15,7 @@ class failing_sink: public spdlog::sinks::sink
         throw std::runtime_error("some error happened during log");
     }
 
-    void flush()
+    void flush() override
     {}
 };
 
