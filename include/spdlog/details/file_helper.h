@@ -118,17 +118,18 @@ public:
     //
     // "my_folder/.mylog" => ("my_folder/.mylog")
     // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
-
     static std::tuple<filename_t, filename_t> split_by_extenstion(const filename_t& fname)
     {
         auto index = fname.rfind('.');
-        bool found_ext = index != filename_t::npos && index !=0 && fname[index - 1] != details::os::folder_sep;
-        if (found_ext)
-            return std::make_tuple(fname.substr(0, index), fname.substr(index));
-        else
-            return std::make_tuple(fname, filename_t());
+        if (index != filename_t::npos && index != fname.size() - 1 &&index !=0 && fname[index - 1] != details::os::folder_sep) 
+        {
+            auto index2 = fname.find(details::os::folder_sep, index);
+            if (index2 == fname.npos) {
+                 return std::make_tuple(fname.substr(0, index), fname.substr(index));
+            }
+        }
+        return std::make_tuple(fname, std::string());
     }
-
 private:
     FILE* _fd;
     filename_t _filename;
