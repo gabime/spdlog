@@ -73,91 +73,42 @@ TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]]")
     REQUIRE(helper.size() == expected_size);
 }
 
+
+
+static void test_split_ext(spdlog::filename_t& filename, spdlog::filename_t & expected_base, spdlog::filename_t & expected_ext)
+{	
+
+#ifdef _WIN32 // replace folder sep
+		std::replace(filename.begin(), filename.end(), '/', '\\'); 
+		std::replace(expected_base.begin(), expected_base.end(), '/', '\\');		
+#endif
+	spdlog::filename_t basename, ext;
+	std::tie(basename, ext) = file_helper::split_by_extenstion(filename);		
+	REQUIRE(basename == expected_base);
+	REQUIRE(ext == expected_ext);	
+}
+
+
 TEST_CASE("file_helper_split_by_extenstion", "[file_helper::split_by_extenstion()]]")
 {
-    std::string basename, ext;
-    std::tie(basename, ext) = file_helper::split_by_extenstion("mylog.txt");
-    REQUIRE(basename == "mylog");
-    REQUIRE(ext == ".txt");
+	
+	using file_t = spdlog::filename_t;
+	test_split_ext(file_t("mylog.txt"), file_t("mylog"), file_t(".txt"));
+	test_split_ext(file_t(".mylog.txt"), file_t(".mylog"), file_t(".txt"));
+	test_split_ext(file_t(".mylog"), file_t(".mylog"), file_t(""));
+	test_split_ext(file_t("/aaa/bb.d/mylog"), file_t("/aaa/bb.d/mylog"), file_t(""));
+	test_split_ext(file_t("/aaa/bb.d/mylog.txt"), file_t("/aaa/bb.d/mylog"), file_t(".txt"));
+	test_split_ext(file_t("aaa/bbb/ccc/mylog.txt"), file_t("aaa/bbb/ccc/mylog"), file_t(".txt"));
+	test_split_ext(file_t("aaa/bbb/ccc/mylog."), file_t("aaa/bbb/ccc/mylog."), file_t(""));
+	test_split_ext(file_t("aaa/bbb/ccc/.mylog.txt"), file_t("aaa/bbb/ccc/.mylog"), file_t(".txt"));
+	test_split_ext(file_t("/aaa/bbb/ccc/mylog.txt"), file_t("/aaa/bbb/ccc/mylog"), file_t(".txt"));
+	test_split_ext(file_t("/aaa/bbb/ccc/.mylog"), file_t("/aaa/bbb/ccc/.mylog"), file_t(""));
+	test_split_ext(file_t("../mylog.txt"), file_t("../mylog"), file_t(".txt"));
+	test_split_ext(file_t(".././mylog.txt"), file_t(".././mylog"), file_t(".txt"));
+	test_split_ext(file_t(".././mylog.txt/xxx"), file_t(".././mylog.txt/xxx"), file_t(""));		
+	test_split_ext(file_t("/mylog.txt"), file_t("/mylog"), file_t(".txt"));
+	test_split_ext(file_t("//mylog.txt"), file_t("//mylog"), file_t(".txt"));
 }
 
-TEST_CASE("file_helper_split_by_extenstion2", "[file_helper::split_by_extenstion()]]")
-{
-    std::string basename, ext;
-    std::tie(basename, ext) = file_helper::split_by_extenstion("mylog");
-    REQUIRE(basename == "mylog");
-    REQUIRE(ext == "");
-}
-
-TEST_CASE("file_helper_split_by_extenstion3", "[file_helper::split_by_extenstion()]]")
-{
-    std::string basename, ext;
-    std::tie(basename, ext) = file_helper::split_by_extenstion("mylog.xyz.txt");
-    REQUIRE(basename == "mylog.xyz");
-    REQUIRE(ext == ".txt");
-}
-
-
-TEST_CASE("file_helper_split_by_extenstion4", "[file_helper::split_by_extenstion()]]")
-{
-    std::string basename, ext;
-    std::tie(basename, ext) = file_helper::split_by_extenstion("mylog.xyz....txt");
-    REQUIRE(basename == "mylog.xyz...");
-    REQUIRE(ext == ".txt");
-}
-
-TEST_CASE("file_helper_split_by_extenstion5", "[file_helper::split_by_extenstion(hidden_file)]]")
-{
-    std::string basename, ext;
-    std::tie(basename, ext) = file_helper::split_by_extenstion(".mylog");
-    REQUIRE(basename == ".mylog");
-    REQUIRE(ext == "");
-}
-
-TEST_CASE("file_helper_split_by_extenstion6", "[file_helper::split_by_extenstion(hidden_file)]]")
-{
-#ifdef _WIN32
-    auto filename = "folder\\.mylog";
-    auto expected_basename = "folder\\.mylog";
-#else
-    auto filename = "folder/.mylog";
-    auto expected_basename = "folder/.mylog";
-#endif
-    std::string basename, ext;
-    std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
-    REQUIRE(basename == expected_basename);
-    REQUIRE(ext == "");
-}
-
-TEST_CASE("file_helper_split_by_extenstion7", "[file_helper::split_by_extenstion(hidden_file)]]")
-{
-#ifdef _WIN32
-    auto filename = "folder\\.mylog.txt";
-    auto expected_basename = "folder\\.mylog";
-#else
-    auto filename = "folder/.mylog.txt";
-    auto expected_basename = "folder/.mylog";
-#endif
-    std::string basename, ext;
-    std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
-    REQUIRE(basename == expected_basename);
-    REQUIRE(ext == ".txt");
-}
-
-
-TEST_CASE("file_helper_split_by_extenstion8", "[file_helper::split_by_extenstion(hidden_file)]]")
-{
-#ifdef _WIN32
-    auto filename = "folder.ext\\mylog";
-    auto expected_basename = "folder.ext\\mylog";
-#else
-    auto filename = "folder.ext/mylog";
-    auto expected_basename = "folder.ext/mylog";
-#endif
-    std::string basename, ext;
-    std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
-    REQUIRE(basename == expected_basename);
-    REQUIRE(ext == "");
-}
 
 
