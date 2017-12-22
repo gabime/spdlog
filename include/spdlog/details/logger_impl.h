@@ -98,6 +98,11 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
     {
         _err_handler(ex.what());
     }
+	catch (...)
+	{
+		_err_handler("Unknown exception in logger " + _name);
+		throw;
+	}
 }
 
 template<typename T>
@@ -114,6 +119,11 @@ inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
     {
         _err_handler(ex.what());
     }
+	catch (...)
+	{
+		_err_handler("Unknown exception in logger " + _name);
+		throw;
+	}
 }
 
 
