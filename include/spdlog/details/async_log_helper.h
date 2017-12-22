@@ -282,7 +282,7 @@ inline void spdlog::details::async_log_helper::worker_loop()
         }
         catch(...)
         {
-            _err_handler("Unknown exeption in async logger worker loop.");            
+            _err_handler("Unknown exeption in async logger worker loop.");
         }
     }
     if (_worker_teardown_cb) _worker_teardown_cb();

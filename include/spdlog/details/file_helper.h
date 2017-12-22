@@ -113,31 +113,31 @@ public:
     //
     // "mylog.txt" => ("mylog", ".txt")
     // "mylog" => ("mylog", "")
-	// "mylog." => ("mylog.", "")
-	// "/dir1/dir2/mylog.txt" => ("/dir1/dir2/mylog", ".txt")
+    // "mylog." => ("mylog.", "")
+    // "/dir1/dir2/mylog.txt" => ("/dir1/dir2/mylog", ".txt")
     //
     // the starting dot in filenames is ignored (hidden files):
     //
-	// ".mylog" => (".mylog". "")
+    // ".mylog" => (".mylog". "")
     // "my_folder/.mylog" => ("my_folder/.mylog", "")
     // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
-	static std::tuple<filename_t, filename_t> split_by_extenstion(const spdlog::filename_t& fname)
-	{
-		auto ext_index = fname.rfind('.');
+    static std::tuple<filename_t, filename_t> split_by_extenstion(const spdlog::filename_t& fname)
+    {
+        auto ext_index = fname.rfind('.');
 
-		// no valid extension found - return whole path and empty string as extension
-		if (ext_index == filename_t::npos || ext_index == 0 || ext_index == fname.size() - 1)
-			return std::make_tuple(fname, spdlog::filename_t());
+        // no valid extension found - return whole path and empty string as extension
+        if (ext_index == filename_t::npos || ext_index == 0 || ext_index == fname.size() - 1)
+            return std::make_tuple(fname, spdlog::filename_t());
 
-		// treat casese like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"
-		//auto folder_index = fname.find('\\', ext_index);
-		auto folder_index = fname.rfind(details::os::folder_sep);
-		if (folder_index != fname.npos && folder_index >= ext_index - 1)
-			return std::make_tuple(fname, spdlog::filename_t());
+        // treat casese like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"
+        //auto folder_index = fname.find('\\', ext_index);
+        auto folder_index = fname.rfind(details::os::folder_sep);
+        if (folder_index != fname.npos && folder_index >= ext_index - 1)
+            return std::make_tuple(fname, spdlog::filename_t());
 
-		// finally - return a valid base and extnetion tuple
-		return std::make_tuple(fname.substr(0, ext_index), fname.substr(ext_index));
-	}
+        // finally - return a valid base and extnetion tuple
+        return std::make_tuple(fname.substr(0, ext_index), fname.substr(ext_index));
+    }
 private:
     FILE* _fd;
     filename_t _filename;
