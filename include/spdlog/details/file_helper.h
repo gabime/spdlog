@@ -129,8 +129,7 @@ public:
         if (ext_index == filename_t::npos || ext_index == 0 || ext_index == fname.size() - 1)
             return std::make_tuple(fname, spdlog::filename_t());
 
-        // treat casese like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"
-        //auto folder_index = fname.find('\\', ext_index);
+        // treat casese like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"        
         auto folder_index = fname.rfind(details::os::folder_sep);
         if (folder_index != fname.npos && folder_index >= ext_index - 1)
             return std::make_tuple(fname, spdlog::filename_t());
