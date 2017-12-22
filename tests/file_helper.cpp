@@ -108,6 +108,9 @@ TEST_CASE("file_helper_split_by_extenstion", "[file_helper::split_by_extenstion(
 	test_split_ext(file_t(".././mylog.txt/xxx"), file_t(".././mylog.txt/xxx"), file_t(""));		
 	test_split_ext(file_t("/mylog.txt"), file_t("/mylog"), file_t(".txt"));
 	test_split_ext(file_t("//mylog.txt"), file_t("//mylog"), file_t(".txt"));
+	test_split_ext(file_t(""), file_t(""), file_t(""));
+	test_split_ext(file_t("."), file_t("."), file_t(""));
+	test_split_ext(file_t("..txt"), file_t("."), file_t(".txt"));
 }
 
 
