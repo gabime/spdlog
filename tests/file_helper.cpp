@@ -145,5 +145,19 @@ TEST_CASE("file_helper_split_by_extenstion7", "[file_helper::split_by_extenstion
 }
 
 
+TEST_CASE("file_helper_split_by_extenstion8", "[file_helper::split_by_extenstion(hidden_file)]]")
+{
+#ifdef _WIN32
+    auto filename = "folder.ext\\mylog";
+    auto expected_basename = "folder.ext\\mylog";
+#else
+    auto filename = "folder.ext/mylog";
+    auto expected_basename = "folder.ext/mylog";
+#endif
+    std::string basename, ext;
+    std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
+    REQUIRE(basename == expected_basename);
+    REQUIRE(ext == "");
+}
 
 
