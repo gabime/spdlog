@@ -22,6 +22,12 @@ endif()
 #---------------------------------------------------------------------------------------
 # spdlog target
 #---------------------------------------------------------------------------------------
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/version.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/version.h
+    @ONLY
+)
+
 add_library(spdlog INTERFACE)
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
@@ -80,6 +86,7 @@ install(
 install(
     DIRECTORY "${HEADER_BASE}/${PROJECT_NAME}"
     DESTINATION "${include_install_dir}"
+    FILES_MATCHING PATTERN "*.h"
 )
 
 # install project version file

@@ -50,6 +50,7 @@ example/*
 
 # generated files
 generated
+include/spdlog/version.h
 
 # Cmake
 CMakeCache.txt

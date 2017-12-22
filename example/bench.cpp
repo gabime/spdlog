@@ -12,6 +12,9 @@
 #include <memory>
 #include <string>
 #include <thread>
+
+#define SPDLOG_BENCH_ON
+
 #include "spdlog/spdlog.h"
 #include "spdlog/async_logger.h"
 #include "spdlog/sinks/file_sinks.h"

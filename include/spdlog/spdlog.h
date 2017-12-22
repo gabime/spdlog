@@ -7,7 +7,9 @@
 
 #pragma once
 
-#define SPDLOG_VERSION "0.16.1"
+#if !defined(SPDLOG_DEBUG_ON) and !defined(SPDLOG_BENCH_ON)
+#include "version.h"
+#endif
 
 #include "tweakme.h"
 #include "common.h"
