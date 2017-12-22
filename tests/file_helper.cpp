@@ -75,8 +75,11 @@ TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]]")
 
 
 
-static void test_split_ext(spdlog::filename_t& filename, spdlog::filename_t & expected_base, spdlog::filename_t & expected_ext)
+static void test_split_ext(const char* fname, const char* expect_base, const char* expect_ext)
 {	
+	spdlog::filename_t filename(fname);
+	spdlog::filename_t expected_base(expect_base);
+	spdlog::filename_t expected_ext(expect_ext);
 
 #ifdef _WIN32 // replace folder sep
 		std::replace(filename.begin(), filename.end(), '/', '\\'); 
@@ -90,27 +93,25 @@ static void test_split_ext(spdlog::filename_t& filename, spdlog::filename_t & ex
 
 
 TEST_CASE("file_helper_split_by_extenstion", "[file_helper::split_by_extenstion()]]")
-{
-	
-	using file_t = spdlog::filename_t;
-	test_split_ext(file_t("mylog.txt"), file_t("mylog"), file_t(".txt"));
-	test_split_ext(file_t(".mylog.txt"), file_t(".mylog"), file_t(".txt"));
-	test_split_ext(file_t(".mylog"), file_t(".mylog"), file_t(""));
-	test_split_ext(file_t("/aaa/bb.d/mylog"), file_t("/aaa/bb.d/mylog"), file_t(""));
-	test_split_ext(file_t("/aaa/bb.d/mylog.txt"), file_t("/aaa/bb.d/mylog"), file_t(".txt"));
-	test_split_ext(file_t("aaa/bbb/ccc/mylog.txt"), file_t("aaa/bbb/ccc/mylog"), file_t(".txt"));
-	test_split_ext(file_t("aaa/bbb/ccc/mylog."), file_t("aaa/bbb/ccc/mylog."), file_t(""));
-	test_split_ext(file_t("aaa/bbb/ccc/.mylog.txt"), file_t("aaa/bbb/ccc/.mylog"), file_t(".txt"));
-	test_split_ext(file_t("/aaa/bbb/ccc/mylog.txt"), file_t("/aaa/bbb/ccc/mylog"), file_t(".txt"));
-	test_split_ext(file_t("/aaa/bbb/ccc/.mylog"), file_t("/aaa/bbb/ccc/.mylog"), file_t(""));
-	test_split_ext(file_t("../mylog.txt"), file_t("../mylog"), file_t(".txt"));
-	test_split_ext(file_t(".././mylog.txt"), file_t(".././mylog"), file_t(".txt"));
-	test_split_ext(file_t(".././mylog.txt/xxx"), file_t(".././mylog.txt/xxx"), file_t(""));		
-	test_split_ext(file_t("/mylog.txt"), file_t("/mylog"), file_t(".txt"));
-	test_split_ext(file_t("//mylog.txt"), file_t("//mylog"), file_t(".txt"));
-	test_split_ext(file_t(""), file_t(""), file_t(""));
-	test_split_ext(file_t("."), file_t("."), file_t(""));
-	test_split_ext(file_t("..txt"), file_t("."), file_t(".txt"));
+{	
+	test_split_ext("mylog.txt", "mylog", ".txt");
+	test_split_ext(".mylog.txt", ".mylog", ".txt");
+	test_split_ext(".mylog", ".mylog", "");
+	test_split_ext("/aaa/bb.d/mylog", "/aaa/bb.d/mylog", "");
+	test_split_ext("/aaa/bb.d/mylog.txt", "/aaa/bb.d/mylog", ".txt");
+	test_split_ext("aaa/bbb/ccc/mylog.txt", "aaa/bbb/ccc/mylog", ".txt");
+	test_split_ext("aaa/bbb/ccc/mylog.", "aaa/bbb/ccc/mylog.", "");
+	test_split_ext("aaa/bbb/ccc/.mylog.txt", "aaa/bbb/ccc/.mylog", ".txt");
+	test_split_ext("/aaa/bbb/ccc/mylog.txt", "/aaa/bbb/ccc/mylog", ".txt");
+	test_split_ext("/aaa/bbb/ccc/.mylog", "/aaa/bbb/ccc/.mylog", "");
+	test_split_ext("../mylog.txt", "../mylog", ".txt");
+	test_split_ext(".././mylog.txt", ".././mylog", ".txt");
+	test_split_ext(".././mylog.txt/xxx", ".././mylog.txt/xxx", "");		
+	test_split_ext("/mylog.txt", "/mylog", ".txt");
+	test_split_ext("//mylog.txt", "//mylog", ".txt");
+	test_split_ext("", "", "");
+	test_split_ext(".", ".", "");
+	test_split_ext("..txt", ".", ".txt");
 }
 
 
