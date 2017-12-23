@@ -134,7 +134,7 @@ public:
         if (folder_index != fname.npos && folder_index >= ext_index - 1)
             return std::make_tuple(fname, spdlog::filename_t());
 
-        // finally - return a valid base and extnetion tuple
+        // finally - return a valid base and extension tuple
         return std::make_tuple(fname.substr(0, ext_index), fname.substr(ext_index));
     }
 private:
