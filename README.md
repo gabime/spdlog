@@ -21,7 +21,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 
 ## Platforms
  * Linux, FreeBSD, Solaris
- * Windows (vc 2013+, cygwin/mingw)
+ * Windows (vc 2013+, cygwin)
  * Mac OSX (clang 3.5+)
  * Android
 
