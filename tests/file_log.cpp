@@ -193,24 +193,35 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
  * File name calculations
  */
 
-TEST_CASE("rotating_file_sink::calc_filename1", "[rotating_file_sink]]")
+TEST_CASE("rotating_filename_calculator::calc_filename1", "[rotating_file_sink]]")
 {
-    auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename("rotated.txt", 3);
+    auto filename = spdlog::sinks::rotating_filename_calculator::calc_filename("rotated.txt", 3);
     REQUIRE(filename == "rotated.3.txt");
 }
 
-TEST_CASE("rotating_file_sink::calc_filename2", "[rotating_file_sink]]")
+TEST_CASE("rotating_filename_calculator::calc_filename2", "[rotating_file_sink]]")
 {
-    auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename("rotated", 3);
+    auto filename = spdlog::sinks::rotating_filename_calculator::calc_filename("rotated", 3);
     REQUIRE(filename == "rotated.3");
 }
 
-TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
+TEST_CASE("rotating_filename_calculator::calc_filename3", "[rotating_file_sink]]")
 {
-    auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename("rotated.txt", 0);
+    auto filename = spdlog::sinks::rotating_filename_calculator::calc_filename("rotated.txt", 0);
     REQUIRE(filename == "rotated.txt");
 }
 
+TEST_CASE("rotating_filename_calculator::calc_filename_with_extra_info1", "[rotating_file_sink]]")
+{
+    auto filename = spdlog::sinks::rotating_filename_calculator::calc_filename("rotated.txt", 1, "_2017-12-30");
+    REQUIRE(filename == "rotated_2017-12-30.1.txt");
+}
+
+TEST_CASE("rotating_filename_calculator::calc_filename_with_extra_info2", "[rotating_file_sink]]")
+{
+    auto filename = spdlog::sinks::rotating_filename_calculator::calc_filename("rotated.txt", 0, "_2017-12-30");
+    REQUIRE(filename == "rotated.txt");
+}
 
 
 
