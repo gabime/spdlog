@@ -211,6 +211,17 @@ TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
     REQUIRE(filename == "rotated.txt");
 }
 
+TEST_CASE("customizable_rotating_file_sink::calc_filename", "[customizable_rotating_file_sink]]")
+{
+    auto filename = spdlog::sinks::rotating_file_with_date_sink_st::calc_filename("rotated.txt", 1, "_2017-12-30");
+    REQUIRE(filename == "rotated_2017-12-30.1.txt");
+}
+
+TEST_CASE("customizable_rotating_file_sink::calc_filename2", "[customizable_rotating_file_sink]]")
+{
+    auto filename = spdlog::sinks::rotating_file_with_date_sink_st::calc_filename("rotated.txt", 0, "_2017-12-30");
+    REQUIRE(filename == "rotated.txt");
+}
 
 
 
