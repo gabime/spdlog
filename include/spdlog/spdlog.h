@@ -36,9 +36,14 @@ void set_pattern(const std::string& format_string);
 void set_formatter(formatter_ptr f);
 
 //
-// Set global logging level for
+// Set global logging level
 //
 void set_level(level::level_enum log_level);
+
+//
+// Set global flush level
+//
+void flush_on(level::level_enum log_level);
 
 //
 // Set global error handler

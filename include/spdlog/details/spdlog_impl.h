@@ -236,6 +236,11 @@ inline void spdlog::set_level(level::level_enum log_level)
     return details::registry::instance().set_level(log_level);
 }
 
+inline void spdlog::flush_on(level::level_enum log_level)
+{
+    return details::registry::instance().flush_on(log_level);
+}
+
 inline void spdlog::set_error_handler(log_err_handler handler)
 {
     return details::registry::instance().set_error_handler(handler);
