@@ -58,35 +58,18 @@ private:
 typedef simple_file_sink<std::mutex> simple_file_sink_mt;
 typedef simple_file_sink<details::null_mutex> simple_file_sink_st;
 
-/*
- * Rotating file sink based on size
- */
-template<class Mutex>
-class rotating_file_sink SPDLOG_FINAL : public base_sink < Mutex >
+struct rotating_filename_calculator
 {
-public:
-    rotating_file_sink(const filename_t &base_filename,
-                       std::size_t max_size, std::size_t max_files) :
-        _base_filename(base_filename),
-        _max_size(max_size),
-        _max_files(max_files),
-        _current_size(0),
-        _file_helper()
-    {
-        _file_helper.open(calc_filename(_base_filename, 0));
-        _current_size = _file_helper.size(); //expensive. called only once
-    }
-
     // calc filename according to index and file extension if exists.
     // e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
-    static filename_t calc_filename(const filename_t& filename, std::size_t index)
+    static filename_t calc_filename(const filename_t& filename, std::size_t index, const filename_t& extra_part = "")
     {
         std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
         if (index)
         {
             filename_t basename, ext;
             std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-            w.write(SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
+            w.write(SPDLOG_FILENAME_T("{}{}.{}{}"), basename, extra_part, index, ext);
         }
         else
         {
@@ -94,39 +77,41 @@ public:
         }
         return w.str();
     }
+};
 
-protected:
-    void _sink_it(const details::log_msg& msg) override
+struct no_extra_filename_part
+{
+    static filename_t calc_filename_part()
     {
-        _current_size += msg.formatted.size();
-        if (_current_size > _max_size)
-        {
-            _rotate();
-            _current_size = msg.formatted.size();
-        }
-        _file_helper.write(msg);
+        return "";
     }
+};
 
-    void _flush() override
+struct dateonly_filename_part
+{
+    static filename_t calc_filename_part()
     {
-        _file_helper.flush();
+        std::tm tm = spdlog::details::os::localtime();
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        w.write(SPDLOG_FILENAME_T("_{:04d}-{:02d}-{:02d}"), tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+        return w.str();
     }
+};
 
-
-private:
+struct rolling_rotate
+{
     // Rotate files:
     // log.txt -> log.1.txt
     // log.1.txt -> log.2.txt
     // log.2.txt -> log.3.txt
     // log.3.txt -> delete
-    void _rotate()
+    static void rotate(std::size_t max_files, const filename_t& base_filename)
     {
         using details::os::filename_to_str;
-        _file_helper.close();
-        for (auto i = _max_files; i > 0; --i)
+        for (auto i = max_files; i > 0; --i)
         {
-            filename_t src = calc_filename(_base_filename, i - 1);
-            filename_t target = calc_filename(_base_filename, i);
+            filename_t src = rotating_filename_calculator::calc_filename(base_filename, i - 1);
+            filename_t target = rotating_filename_calculator::calc_filename(base_filename, i);
 
             if (details::file_helper::file_exists(target))
             {
@@ -140,8 +125,109 @@ private:
                 throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
             }
         }
-        _file_helper.reopen(true);
     }
+};
+
+template <class ExtraFilenamePart = dateonly_filename_part>
+struct sequence_rotate
+{
+    // Rotate files:
+    // log.txt -> log.3.txt
+    // log.3.txt -> log.2.txt
+    // log.2.txt -> log.1.txt
+    // log.1.txt -> delete
+    static void rotate(std::size_t max_files, const filename_t& base_filename)
+    {
+        using details::os::filename_to_str;
+        filename_t extra_part = ExtraFilenamePart::calc_filename_part();
+
+        auto last_file = rotating_filename_calculator::calc_filename(base_filename, max_files, extra_part);
+        if (details::file_helper::file_exists(last_file))
+        {
+            sequence_rotate::_rotate(max_files, base_filename, extra_part);
+            return;
+        }
+
+        auto src = rotating_filename_calculator::calc_filename(base_filename, 0);
+        filename_t target;
+        for (auto i = 1; i <= max_files; ++i)
+        {
+            target = rotating_filename_calculator::calc_filename(base_filename, i, extra_part);
+            if (!details::file_helper::file_exists(target))
+            {
+                break;
+            }
+        }
+        if (details::file_helper::file_exists(src) && details::os::rename(src, target))
+        {
+            throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+        }
+    }
+
+    static void _rotate(std::size_t max_files, const filename_t& base_filename, const filename_t& extra_part)
+    {
+        using details::os::filename_to_str;
+        auto mod_base = max_files + 1;
+        for (auto i = 1; i <= max_files; ++i)
+        {
+            filename_t src = rotating_filename_calculator::calc_filename(base_filename, (i + 1) % mod_base, extra_part);
+            filename_t target = rotating_filename_calculator::calc_filename(base_filename, i, extra_part);
+
+            if (details::file_helper::file_exists(target))
+            {
+                if (details::os::remove(target) != 0)
+                {
+                    throw spdlog_ex("rotating_file_sink: failed removing " + filename_to_str(target), errno);
+                }
+            }
+            if (details::file_helper::file_exists(src) && details::os::rename(src, target))
+            {
+                throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+            }
+        }
+    }
+};
+
+/*
+ * Rotating file sink based on size
+ */
+template<class Mutex, class Rotating = rolling_rotate>
+class rotating_file_sink SPDLOG_FINAL : public base_sink < Mutex >
+{
+public:
+    rotating_file_sink(const filename_t &base_filename,
+                       std::size_t max_size, std::size_t max_files) :
+        _base_filename(base_filename),
+        _max_size(max_size),
+        _max_files(max_files),
+        _current_size(0),
+        _file_helper()
+    {
+        _file_helper.open(rotating_filename_calculator::calc_filename(_base_filename, 0));
+        _current_size = _file_helper.size(); //expensive. called only once
+    }
+
+protected:
+    void _sink_it(const details::log_msg& msg) override
+    {
+        _current_size += msg.formatted.size();
+        if (_current_size > _max_size)
+        {
+            _file_helper.close();
+            Rotating::rotate(_max_files, _base_filename);
+            _file_helper.reopen(true);
+            _current_size = msg.formatted.size();
+        }
+        _file_helper.write(msg);
+    }
+
+    void _flush() override
+    {
+        _file_helper.flush();
+    }
+
+
+private:
     filename_t _base_filename;
     std::size_t _max_size;
     std::size_t _max_files;
@@ -151,6 +237,8 @@ private:
 
 typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
 typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
+typedef rotating_file_sink<std::mutex, sequence_rotate<dateonly_filename_part>> rotating_file_with_date_sink_mt;
+typedef rotating_file_sink<details::null_mutex, sequence_rotate<dateonly_filename_part>> rotating_file_with_date_sink_st;
 
 /*
  * Default generator of daily log file names.
