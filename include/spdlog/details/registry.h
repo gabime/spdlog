@@ -64,6 +64,7 @@ public:
             new_logger->set_error_handler(_err_handler);
 
         new_logger->set_level(_level);
+        new_logger->flush_on(_flush_level);
 
 
         //Add to registry
@@ -85,6 +86,7 @@ public:
             new_logger->set_error_handler(_err_handler);
 
         new_logger->set_level(_level);
+        new_logger->flush_on(_flush_level);
 
         //Add to registry
         _loggers[logger_name] = new_logger;
@@ -153,6 +155,14 @@ public:
         _level = log_level;
     }
 
+    void flush_on(level::level_enum log_level)
+    {
+        std::lock_guard<Mutex> lock(_mutex);
+        for (auto& l : _loggers)
+            l.second->flush_on(log_level);
+        _flush_level = log_level;
+    }
+
     void set_error_handler(log_err_handler handler)
     {
         for (auto& l : _loggers)
@@ -197,6 +207,7 @@ private:
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
     formatter_ptr _formatter;
     level::level_enum _level = level::info;
+    level::level_enum _flush_level = level::off;
     log_err_handler _err_handler;
     bool _async_mode = false;
     size_t _async_q_size = 0;
