@@ -55,7 +55,7 @@ public:
             if (!os::fopen_s(&_fd, fname, mode))
                 return;
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(open_interval));
+            spdlog::details::os::sleep_for_millis(open_interval);
         }
 
         throw spdlog_ex("Failed opening file " + os::filename_to_str(_filename) + " for writing", errno);

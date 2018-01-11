@@ -358,7 +358,6 @@ inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_f
 // spin, yield or sleep. use the time passed since last message as a hint
 inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_clock::time_point& now, const spdlog::log_clock::time_point& last_op_time)
 {
-    using namespace std::this_thread;
     using std::chrono::milliseconds;
     using std::chrono::microseconds;
 
@@ -374,10 +373,10 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_
 
     // sleep for 20 ms upto 200 ms
     if (time_since_op <= milliseconds(200))
-        return sleep_for(milliseconds(20));
+        return spdlog::details::os::sleep_for_millis(20);
 
     // sleep for 500 ms
-    return sleep_for(milliseconds(500));
+    return spdlog::details::os::sleep_for_millis(500);
 }
 
 // wait for the queue to be empty
