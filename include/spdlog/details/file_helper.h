@@ -55,7 +55,7 @@ public:
             if (!os::fopen_s(&_fd, fname, mode))
                 return;
 
-            spdlog::details::os::sleep_for_millis(open_interval);
+            details::os::sleep_for_millis(open_interval);
         }
 
         throw spdlog_ex("Failed opening file " + os::filename_to_str(_filename) + " for writing", errno);
@@ -129,7 +129,7 @@ public:
         if (ext_index == filename_t::npos || ext_index == 0 || ext_index == fname.size() - 1)
             return std::make_tuple(fname, spdlog::filename_t());
 
-        // treat casese like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"        
+        // treat casese like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"
         auto folder_index = fname.rfind(details::os::folder_sep);
         if (folder_index != fname.npos && folder_index >= ext_index - 1)
             return std::make_tuple(fname, spdlog::filename_t());

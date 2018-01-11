@@ -373,10 +373,10 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_
 
     // sleep for 20 ms upto 200 ms
     if (time_since_op <= milliseconds(200))
-        return spdlog::details::os::sleep_for_millis(20);
+        return details::os::sleep_for_millis(20);
 
     // sleep for 500 ms
-    return spdlog::details::os::sleep_for_millis(500);
+    return details::os::sleep_for_millis(500);
 }
 
 // wait for the queue to be empty
