@@ -8,6 +8,7 @@
 #if defined(__ANDROID__)
 
 #include "sink.h"
+#include "../details/os.h"
 
 #include <mutex>
 #include <string>
@@ -43,7 +44,7 @@ public:
         int retry_count = 0;
         while ((ret == -11/*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_RETRIES))
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            details::os::sleep_for_millis(5);
             ret = __android_log_write(priority, _tag.c_str(), msg_output);
             retry_count++;
         }
