@@ -4,7 +4,7 @@
 #
 
 cmake_minimum_required(VERSION 3.1)
-project(spdlog VERSION 0.16.2)
+project(spdlog VERSION 0.16.3)
 include(CTest)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
