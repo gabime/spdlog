@@ -362,7 +362,9 @@ inline size_t thread_id()
 
 }
 
-// from https://github.com/gabime/spdlog/issues/609
+
+// This is avoid msvc issue in sleep_for that happens if the clock changes.
+// See https://github.com/gabime/spdlog/issues/609
 inline void sleep_for_millis(int milliseconds)
 {
 #if defined(_WIN32)
