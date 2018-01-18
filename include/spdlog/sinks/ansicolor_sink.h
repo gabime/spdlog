@@ -49,7 +49,7 @@ public:
     }
 
     /// Formatting codes
-    const std::string reset = "\033[00m";
+    const std::string reset = "\033[m";
     const std::string bold = "\033[1m";
     const std::string dark = "\033[2m";
     const std::string underline = "\033[4m";
