@@ -58,7 +58,7 @@ public:
     const std::string concealed = "\033[8m";
 
     // Foreground colors
-    const std::string grey = "\033[30m";
+    const std::string black = "\033[30m";
     const std::string red = "\033[31m";
     const std::string green = "\033[32m";
     const std::string yellow = "\033[33m";
@@ -68,7 +68,7 @@ public:
     const std::string white = "\033[37m";
 
     /// Background colors
-    const std::string on_grey = "\033[40m";
+    const std::string on_black = "\033[40m";
     const std::string on_red = "\033[41m";
     const std::string on_green = "\033[42m";
     const std::string on_yellow = "\033[43m";
