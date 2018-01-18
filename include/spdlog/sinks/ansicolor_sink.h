@@ -56,6 +56,7 @@ public:
     const std::string blink = "\033[5m";
     const std::string reverse = "\033[7m";
     const std::string concealed = "\033[8m";
+    const std::string clear_line = "\033[K";
 
     // Foreground colors
     const std::string black = "\033[30m";
@@ -88,6 +89,7 @@ protected:
             fwrite(prefix.data(), sizeof(char), prefix.size(), target_file_);
             fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
             fwrite(reset.data(), sizeof(char), reset.size(), target_file_);
+            fwrite(clear_line.data(), sizeof(char), clear_line.size(), target_file_);
         }
         else
         {
