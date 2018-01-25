@@ -236,6 +236,16 @@ inline void spdlog::set_level(level::level_enum log_level)
     return details::registry::instance().set_level(log_level);
 }
 
+inline void spdlog::set_custom_flag(char flag, const std::string& value)
+{
+	return details::registry::instance().set_custom_flag(flag, value);
+}
+
+inline const std::string& spdlog::value_custom_flag(char flag)
+{
+	return details::registry::instance().value_custom_flag(flag);
+}
+
 inline void spdlog::flush_on(level::level_enum log_level)
 {
     return details::registry::instance().flush_on(log_level);

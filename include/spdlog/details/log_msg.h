@@ -11,6 +11,7 @@
 
 #include <string>
 #include <utility>
+#include <unordered_map>
 
 namespace spdlog
 {
@@ -19,10 +20,11 @@ namespace details
 struct log_msg
 {
     log_msg() = default;
-    log_msg(const std::string *loggers_name, level::level_enum lvl) :
+    log_msg(const std::string *loggers_name, level::level_enum lvl, std::unordered_map<char, std::string>* flags) :
         logger_name(loggers_name),
         level(lvl),
-        msg_id(0)
+        msg_id(0),
+		custom_flags(flags)
     {
 #ifndef SPDLOG_NO_DATETIME
         time = os::now();
@@ -45,6 +47,7 @@ struct log_msg
     fmt::MemoryWriter raw;
     fmt::MemoryWriter formatted;
     size_t msg_id;
+	std::unordered_map<char, std::string>* custom_flags;
 };
 }
 }

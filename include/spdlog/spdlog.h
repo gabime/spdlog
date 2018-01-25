@@ -51,6 +51,15 @@ void flush_on(level::level_enum log_level);
 void set_error_handler(log_err_handler);
 
 //
+// Set custom flag
+//
+void set_custom_flag(char flag, const std::string& value);
+
+//
+// value custom flag
+//
+const std::string& value_custom_flag(char flag);
+//
 // Turn on async mode (off by default) and set the queue size for each async_logger.
 // effective only for loggers created after this call.
 // queue_size: size of queue (must be power of 2):

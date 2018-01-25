@@ -155,6 +155,28 @@ public:
         _level = log_level;
     }
 
+	void set_custom_flag(char flag, const std::string& value)
+	{
+		std::lock_guard<Mutex> lock(_mutex);
+		for (auto& l : _loggers)
+			l.second->set_custom_flag(flag, value);
+		_custom_flags[flag] = value;
+	}
+
+	const std::string& value_custom_flag(char flag)
+	{
+		auto end = _custom_flags.end();
+		auto it = _custom_flags.find(flag);
+		if (it != end)
+		{
+			return it->second;
+		}
+		else
+		{
+			return std::move(std::string(""));
+		}
+	}
+
     void flush_on(level::level_enum log_level)
     {
         std::lock_guard<Mutex> lock(_mutex);
@@ -215,6 +237,7 @@ private:
     std::function<void()> _worker_warmup_cb = nullptr;
     std::chrono::milliseconds _flush_interval_ms;
     std::function<void()> _worker_teardown_cb = nullptr;
+	std::unordered_map<char, std::string> _custom_flags;
 };
 #ifdef SPDLOG_NO_REGISTRY_MUTEX
 typedef registry_t<spdlog::details::null_mutex> registry;

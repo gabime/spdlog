@@ -18,6 +18,7 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
 namespace spdlog
 {
@@ -66,6 +67,8 @@ public:
 
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
+	void set_custom_flag(char flag, const std::string& value);
+	const std::string& value_custom_flag(char flag);
     level::level_enum level() const;
     const std::string& name() const;
     void set_pattern(const std::string&, pattern_time_type = pattern_time_type::local);
@@ -104,6 +107,7 @@ protected:
     log_err_handler _err_handler;
     std::atomic<time_t> _last_err_time;
     std::atomic<size_t> _msg_counter;
+	std::unordered_map<char, std::string> _custom_flags;
 };
 }
 

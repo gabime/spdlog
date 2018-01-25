@@ -414,6 +414,27 @@ private:
     char _ch;
 };
 
+class custom_formatter SPDLOG_FINAL:public flag_formatter
+{
+public:
+	explicit custom_formatter(char flag) : _flag(_flag)
+	{}
+	void format(details::log_msg& msg, const std::tm&) override
+	{
+		auto end = msg.custom_flags->end();
+		auto it = msg.custom_flags->find(_flag);
+		if (it != end)
+		{
+			msg.formatted << it->second;
+		}
+		else {
+			msg.formatted << _flag;
+		}
+	}
+private:
+	char _flag;
+};
+
 
 //aggregate user chars to display as is
 class aggregate_formatter SPDLOG_FINAL:public flag_formatter
@@ -655,8 +676,7 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
         break;
 
     default: //Unknown flag appears as is
-        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter('%')));
-        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::ch_formatter(flag)));
+        _formatters.push_back(std::unique_ptr<details::flag_formatter>(new details::custom_formatter(flag)));
         break;
     }
 }

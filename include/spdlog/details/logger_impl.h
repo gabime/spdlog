@@ -64,7 +64,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
 
     try
     {
-        details::log_msg log_msg(&_name, lvl);
+        details::log_msg log_msg(&_name, lvl, &_custom_flags);
 
 #if defined(SPDLOG_FMT_PRINTF)
         fmt::printf(log_msg.raw, fmt, args...);
@@ -90,7 +90,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* msg)
     if (!should_log(lvl)) return;
     try
     {
-        details::log_msg log_msg(&_name, lvl);
+        details::log_msg log_msg(&_name, lvl, &_custom_flags);
         log_msg.raw << msg;
         _sink_it(log_msg);
     }
@@ -111,7 +111,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T& msg)
     if (!should_log(lvl)) return;
     try
     {
-        details::log_msg log_msg(&_name, lvl);
+        details::log_msg log_msg(&_name, lvl,&_custom_flags);
         log_msg.raw << msg;
         _sink_it(log_msg);
     }
@@ -277,6 +277,25 @@ inline const std::string& spdlog::logger::name() const
 inline void spdlog::logger::set_level(spdlog::level::level_enum log_level)
 {
     _level.store(log_level);
+}
+
+inline void spdlog::logger::set_custom_flag(char flag,const std::string& value)
+{
+	_custom_flags[flag] = value;
+}
+
+inline const std::string& spdlog::logger::value_custom_flag(char flag)
+{
+	auto end = _custom_flags.end();
+	auto it = _custom_flags.find(flag);
+	if (it != end)
+	{
+		return it->second;
+	}
+	else
+	{
+		return "";
+	}
 }
 
 inline void spdlog::logger::set_error_handler(spdlog::log_err_handler err_handler)
