@@ -51,6 +51,9 @@ namespace spdlog
 
 class formatter;
 
+template<class T, size_t N>
+constexpr size_t size(T(&)[N]) { return N; }
+
 namespace sinks
 {
 class sink;
@@ -98,6 +101,18 @@ inline const char* to_short_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
 }
+inline spdlog::level::level_enum to_level_enum(const char* name)
+{
+	for (size_t level = 0; level < size(level_names); level++)
+	{
+		if (!strcmp(level_names[level], name))
+		{
+			return (spdlog::level::level_enum) level;
+		}
+	}
+	return (spdlog::level::level_enum) 0;
+}
+
 } //level
 
 
