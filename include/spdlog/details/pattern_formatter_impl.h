@@ -417,7 +417,7 @@ private:
 class custom_formatter SPDLOG_FINAL:public flag_formatter
 {
 public:
-	explicit custom_formatter(char flag) : _flag(_flag)
+	explicit custom_formatter(char flag) : _flag(flag)
 	{}
 	void format(details::log_msg& msg, const std::tm&) override
 	{
