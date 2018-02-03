@@ -49,16 +49,17 @@ public:
     }
 
     /// Formatting codes
-    const std::string reset = "\033[00m";
+    const std::string reset = "\033[m";
     const std::string bold = "\033[1m";
     const std::string dark = "\033[2m";
     const std::string underline = "\033[4m";
     const std::string blink = "\033[5m";
     const std::string reverse = "\033[7m";
     const std::string concealed = "\033[8m";
+    const std::string clear_line = "\033[K";
 
     // Foreground colors
-    const std::string grey = "\033[30m";
+    const std::string black = "\033[30m";
     const std::string red = "\033[31m";
     const std::string green = "\033[32m";
     const std::string yellow = "\033[33m";
@@ -68,7 +69,7 @@ public:
     const std::string white = "\033[37m";
 
     /// Background colors
-    const std::string on_grey = "\033[40m";
+    const std::string on_black = "\033[40m";
     const std::string on_red = "\033[41m";
     const std::string on_green = "\033[42m";
     const std::string on_yellow = "\033[43m";
@@ -88,6 +89,7 @@ protected:
             fwrite(prefix.data(), sizeof(char), prefix.size(), target_file_);
             fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
             fwrite(reset.data(), sizeof(char), reset.size(), target_file_);
+            fwrite(clear_line.data(), sizeof(char), clear_line.size(), target_file_);
         }
         else
         {
