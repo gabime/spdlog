@@ -11,7 +11,7 @@
 
 #include <mutex>
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <wincon.h>
 
 namespace spdlog
@@ -73,7 +73,7 @@ protected:
 
 private:
     HANDLE out_handle_;
-    std::map<level::level_enum, WORD> colors_;
+    std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 
     // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs)
