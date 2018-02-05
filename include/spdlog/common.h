@@ -112,7 +112,7 @@ inline spdlog::level::level_enum to_level_enum(const char* name)
 	}
 	return (spdlog::level::level_enum) 0;
 }
-
+using level_hasher = std::hash<int>;
 } //level
 
 
