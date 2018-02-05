@@ -350,7 +350,7 @@ inline void spdlog::logger::_default_err_handler(const std::string &msg)
     char date_buf[100];
     std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
     details::log_msg  err_msg;
-    err_msg.formatted.write("[*** LOG ERROR ***] [{}] [{}] [{}]{}", name(), msg, date_buf, details::os::eol);
+    err_msg.formatted.write("[*** LOG ERROR ***] [{}] [{}] [{}]{}", name(), msg, date_buf, details::os::default_eol);
     sinks::stderr_sink_mt::instance()->log(err_msg);
     _last_err_time = now;
 }
