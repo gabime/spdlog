@@ -50,6 +50,13 @@ public:
     wincolor_sink(const wincolor_sink& other) = delete;
     wincolor_sink& operator=(const wincolor_sink& other) = delete;
 
+    // change the  color for the given level
+    void set_color(level::level_enum level, WORD color)
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
+        colors_[level] = color;
+    }
+
 protected:
     virtual void _sink_it(const details::log_msg& msg) override
     {
@@ -62,13 +69,6 @@ protected:
     virtual void _flush() override
     {
         // windows console always flushed?
-    }
-
-    // change the  color for the given level
-    void set_color(level::level_enum level, WORD color)
-    {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
-        colors_[level] = color;
     }
 
 private:
