@@ -81,7 +81,7 @@ public:
     // e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
     static filename_t calc_filename(const filename_t& filename, std::size_t index)
     {
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
         if (index)
         {
             filename_t basename, ext;
