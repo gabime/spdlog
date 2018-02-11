@@ -22,7 +22,7 @@
 # *************************************************************************/
 
 cmake_minimum_required(VERSION 3.0)
-project(SpdlogExamples)
+project(SpdlogExamples CXX)
 
 if(TARGET spdlog)
   # Part of the main project

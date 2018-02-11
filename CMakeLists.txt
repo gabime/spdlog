@@ -4,7 +4,7 @@
 #
 
 cmake_minimum_required(VERSION 3.1)
-project(spdlog VERSION 0.16.3)
+project(spdlog VERSION 0.16.3 LANGUAGES CXX)
 include(CTest)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
@@ -73,7 +73,6 @@ configure_file("cmake/spdlog.pc.in" "${pkg_config}" @ONLY)
 install(
     TARGETS spdlog
     EXPORT "${targets_export_name}"
-    INCLUDES DESTINATION "${include_install_dir}"
 )
 
 # install headers
