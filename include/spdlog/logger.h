@@ -65,6 +65,18 @@ public:
     template <typename... Args> void warn(const wchar_t* fmt, const Args&... args);
     template <typename... Args> void error(const wchar_t* fmt, const Args&... args);
     template <typename... Args> void critical(const wchar_t* fmt, const Args&... args);
+
+#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
+    template <typename... Args> void log(level::level_enum lvl, metaattr_map_type&& ma, const wchar_t* msg);
+    template <typename... Args> void log(level::level_enum lvl, metaattr_map_type&& ma, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void trace(metaattr_map_type&& ma, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void debug(metaattr_map_type&& ma, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void info(metaattr_map_type&& ma, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void warn(metaattr_map_type&& ma, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void error(metaattr_map_type&& ma, const wchar_t* fmt, const Args&... args);
+    template <typename... Args> void critical(metaattr_map_type&& ma, const wchar_t* fmt, const Args&... args);
+#endif // SPDLOG_ENABLE_LOGMSG_METADATA
+
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     template <typename T> void log(level::level_enum lvl, const T&);
