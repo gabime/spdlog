@@ -57,58 +57,6 @@ inline void spdlog::logger::set_pattern(const std::string& pattern, pattern_time
     _set_pattern(pattern, pattern_time);
 }
 
-#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
-
-template <typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, metaattr_map_type&& ma, const char* fmt, const Args&... args)
-{
-    if (!should_log(lvl)) return;
-
-    try
-    {
-        details::log_msg log_msg(&_name, lvl, ma);
-
-#if defined(SPDLOG_FMT_PRINTF)
-        fmt::printf(log_msg.raw, fmt, args...);
-#else
-        log_msg.raw.write(fmt, args...);
-#endif
-        _sink_it(log_msg);
-    }
-    catch (const std::exception &ex)
-    {
-        _err_handler(ex.what());
-    }
-    catch(...)
-    {
-        _err_handler("Unknown exception in logger " + _name);
-        throw;
-    }
-}
-
-template <typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, metaattr_map_type&& ma, const char* msg)
-{
-    if (!should_log(lvl)) return;
-    try
-    {
-        details::log_msg log_msg(&_name, lvl, ma);
-        log_msg.raw << msg;
-        _sink_it(log_msg);
-    }
-    catch (const std::exception &ex)
-    {
-        _err_handler(ex.what());
-    }
-    catch (...)
-    {
-        _err_handler("Unknown exception in logger " + _name);
-        throw;
-    }
-}
-
-#endif // SPDLOG_ENABLE_LOGMSG_METADATA
-
 
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Args&... args)
@@ -215,6 +163,94 @@ inline void spdlog::logger::critical(const char* fmt, const Arg1 &arg1, const Ar
 {
     log(level::critical, fmt, arg1, args...);
 }
+
+#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
+
+template <typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, metaattr_map_type&& ma, const char* fmt, const Args&... args)
+{
+    if (!should_log(lvl)) return;
+
+    try
+    {
+        details::log_msg log_msg(&_name, lvl, ma);
+
+#if defined(SPDLOG_FMT_PRINTF)
+        fmt::printf(log_msg.raw, fmt, args...);
+#else
+        log_msg.raw.write(fmt, args...);
+#endif
+        _sink_it(log_msg);
+    }
+    catch (const std::exception &ex)
+    {
+        _err_handler(ex.what());
+    }
+    catch(...)
+    {
+        _err_handler("Unknown exception in logger " + _name);
+        throw;
+    }
+}
+
+template <typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, metaattr_map_type&& ma, const char* msg)
+{
+    if (!should_log(lvl)) return;
+    try
+    {
+        details::log_msg log_msg(&_name, lvl, ma);
+        log_msg.raw << msg;
+        _sink_it(log_msg);
+    }
+    catch (const std::exception &ex)
+    {
+        _err_handler(ex.what());
+    }
+    catch (...)
+    {
+        _err_handler("Unknown exception in logger " + _name);
+        throw;
+    }
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::trace(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    log(level::trace, ma, fmt, arg1, args...);
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::debug(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    log(level::debug, ma, fmt, arg1, args...);
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::info(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    log(level::info, ma, fmt, arg1, args...);
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::warn(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    log(level::warn, ma, fmt, arg1, args...);
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::error(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    log(level::err, ma, fmt, arg1, args...);
+}
+
+template <typename Arg1, typename... Args>
+inline void spdlog::logger::critical(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+{
+    log(level::critical, ma, fmt, arg1, args...);
+}
+
+#endif // SPDLOG_ENABLE_LOGMSG_METADATA
 
 
 template<typename T>
