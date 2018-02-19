@@ -34,10 +34,13 @@ target_include_directories(
     spdlog
     INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/3rdparty>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
 set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+include_directories(3rdparty)
 
 if(SPDLOG_BUILD_EXAMPLES)
     add_subdirectory(example)
