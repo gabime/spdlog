@@ -173,7 +173,7 @@ inline void spdlog::logger::log(level::level_enum lvl, metaattr_map_type& ma, co
 
     try
     {
-        details::log_msg log_msg(&_name, lvl, ma);
+        details::log_msg log_msg(&_name, lvl, std::move(ma));
 
 #if defined(SPDLOG_FMT_PRINTF)
         fmt::printf(log_msg.raw, fmt, args...);
@@ -199,7 +199,7 @@ inline void spdlog::logger::log(level::level_enum lvl, metaattr_map_type& ma, co
     if (!should_log(lvl)) return;
     try
     {
-        details::log_msg log_msg(&_name, lvl, ma);
+        details::log_msg log_msg(&_name, lvl, std::move(ma));
         log_msg.raw << msg;
         _sink_it(log_msg);
     }
