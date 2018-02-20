@@ -47,12 +47,12 @@ public:
 #ifdef SPDLOG_ENABLE_LOGMSG_METADATA
     template <typename... Args> void log(level::level_enum lvl, metaattr_map_type&& ma, const char* fmt, const Args&... args);
     template <typename... Args> void log(level::level_enum lvl, metaattr_map_type&& ma, const char* msg);
-    template <typename Arg1, typename... Args> void trace(metaattr_map_type&& ma, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void debug(metaattr_map_type&& ma, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void info(metaattr_map_type&& ma, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void warn(metaattr_map_type&& ma, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void error(metaattr_map_type&& ma, const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void critical(metaattr_map_type&& ma, const char* fmt, const Arg1&, const Args&... args);
+    template <typename... Args> void trace(metaattr_map_type&& ma, const char* fmt, const Args&... args);
+    template <typename... Args> void debug(metaattr_map_type&& ma, const char* fmt, const Args&... args);
+    template <typename... Args> void info(metaattr_map_type&& ma, const char* fmt, const Args&... args);
+    template <typename... Args> void warn(metaattr_map_type&& ma, const char* fmt, const Args&... args);
+    template <typename... Args> void error(metaattr_map_type&& ma, const char* fmt, const Args&... args);
+    template <typename... Args> void critical(metaattr_map_type&& ma, const char* fmt, const Args&... args);
 #endif // SPDLOG_ENABLE_LOGMSG_METADATA
 
 

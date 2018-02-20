@@ -214,40 +214,40 @@ inline void spdlog::logger::log(level::level_enum lvl, metaattr_map_type&& ma, c
     }
 }
 
-template <typename Arg1, typename... Args>
-inline void spdlog::logger::trace(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+template <typename... Args>
+inline void spdlog::logger::trace(metaattr_map_type&& ma, const char* fmt, const Args&... args)
 {
-    log(level::trace, ma, fmt, arg1, args...);
+    log(level::trace, ma, fmt, args...);
 }
 
-template <typename Arg1, typename... Args>
-inline void spdlog::logger::debug(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+template <typename... Args>
+inline void spdlog::logger::debug(metaattr_map_type&& ma, const char* fmt, const Args&... args)
 {
-    log(level::debug, ma, fmt, arg1, args...);
+    log(level::debug, ma, fmt, args...);
 }
 
-template <typename Arg1, typename... Args>
-inline void spdlog::logger::info(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+template <typename... Args>
+inline void spdlog::logger::info(metaattr_map_type&& ma, const char* fmt, const Args&... args)
 {
-    log(level::info, ma, fmt, arg1, args...);
+    log(level::info, ma, fmt, args...);
 }
 
-template <typename Arg1, typename... Args>
-inline void spdlog::logger::warn(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+template <typename... Args>
+inline void spdlog::logger::warn(metaattr_map_type&& ma, const char* fmt, const Args&... args)
 {
-    log(level::warn, ma, fmt, arg1, args...);
+    log(level::warn, ma, fmt, args...);
 }
 
-template <typename Arg1, typename... Args>
-inline void spdlog::logger::error(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+template <typename... Args>
+inline void spdlog::logger::error(metaattr_map_type&& ma, const char* fmt, const Args&... args)
 {
-    log(level::err, ma, fmt, arg1, args...);
+    log(level::err, ma, fmt, args...);
 }
 
-template <typename Arg1, typename... Args>
-inline void spdlog::logger::critical(metaattr_map_type&& ma, const char* fmt, const Arg1 &arg1, const Args&... args)
+template <typename... Args>
+inline void spdlog::logger::critical(metaattr_map_type&& ma, const char* fmt, const Args&... args)
 {
-    log(level::critical, ma, fmt, arg1, args...);
+    log(level::critical, ma, fmt, args...);
 }
 
 #endif // SPDLOG_ENABLE_LOGMSG_METADATA
