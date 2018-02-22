@@ -1,5 +1,4 @@
 project(spdlog-utests CXX)
-
 enable_testing()
 find_package(Threads REQUIRED)
 
