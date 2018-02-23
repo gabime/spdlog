@@ -51,13 +51,14 @@ TEST_CASE("name", "[pattern_formatter]")
 	REQUIRE(log_to_str("Some message", formatter) == "[pattern_tester] Some message\n");
 }
 
+
 TEST_CASE("date MM/DD/YY ", "[pattern_formatter]")
 {
 	using namespace::std::chrono;
 	auto formatter = std::make_shared<spdlog::pattern_formatter>("%D %v", spdlog::pattern_time_type::local, "\n");	
 	auto now_tm = spdlog::details::os::localtime();			
 	std::stringstream oss;	
-	oss << std::put_time(&now_tm, "%D") << " Some message\n";		
+	oss << std::setfill('0') << std::setw(2) << now_tm.tm_mon + 1 << "/" << now_tm.tm_mday << "/" << (now_tm.tm_year + 1900) % 1000 << " Some message\n";
 	REQUIRE(log_to_str("Some message", formatter) == oss.str());
 }
 
