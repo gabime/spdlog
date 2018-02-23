@@ -39,7 +39,6 @@ TEST_CASE("basic_logging ", "[basic_logging]")
     //REQUIRE(log_info(some_logged_class("some_val")) == "some_val");
 }
 
-
 TEST_CASE("log_levels", "[log_levels]")
 {
     REQUIRE(log_info("Hello", spdlog::level::err) == "");
@@ -48,6 +47,9 @@ TEST_CASE("log_levels", "[log_levels]")
     REQUIRE(log_info("Hello", spdlog::level::debug) == "Hello");
     REQUIRE(log_info("Hello", spdlog::level::trace) == "Hello");
 }
+
+
+
 
 
 
