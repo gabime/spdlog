@@ -502,7 +502,7 @@ inline void spdlog::pattern_formatter::compile_pattern(const std::string& patter
         if (*it == '%')
         {
             if (user_chars) //append user chars found so far
-                _formatters.push_back(std::move(user_chars));				
+                _formatters.push_back(std::move(user_chars));
             if (++it != end)
                 handle_flag(*it);
             else
@@ -526,136 +526,136 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
     switch (flag)
     {
     // logger name
-    case 'n':        
-		_formatters.emplace_back(new details::name_formatter());
+    case 'n':
+        _formatters.emplace_back(new details::name_formatter());
         break;
 
     case 'l':
-       _formatters.emplace_back(new details::level_formatter());
+        _formatters.emplace_back(new details::level_formatter());
         break;
 
     case 'L':
-       _formatters.emplace_back(new details::short_level_formatter());
+        _formatters.emplace_back(new details::short_level_formatter());
         break;
 
     case('t'):
-       _formatters.emplace_back(new details::t_formatter());
+        _formatters.emplace_back(new details::t_formatter());
         break;
 
     case('v'):
-       _formatters.emplace_back(new details::v_formatter());
+        _formatters.emplace_back(new details::v_formatter());
         break;
 
     case('a'):
-       _formatters.emplace_back(new details::a_formatter());
+        _formatters.emplace_back(new details::a_formatter());
         break;
 
     case('A'):
-       _formatters.emplace_back(new details::A_formatter());
+        _formatters.emplace_back(new details::A_formatter());
         break;
 
     case('b'):
     case('h'):
-       _formatters.emplace_back(new details::b_formatter());
+        _formatters.emplace_back(new details::b_formatter());
         break;
 
     case('B'):
-       _formatters.emplace_back(new details::B_formatter());
+        _formatters.emplace_back(new details::B_formatter());
         break;
     case('c'):
-       _formatters.emplace_back(new details::c_formatter());
+        _formatters.emplace_back(new details::c_formatter());
         break;
 
     case('C'):
-       _formatters.emplace_back(new details::C_formatter());
+        _formatters.emplace_back(new details::C_formatter());
         break;
 
     case('Y'):
-       _formatters.emplace_back(new details::Y_formatter());
+        _formatters.emplace_back(new details::Y_formatter());
         break;
 
     case('D'):
     case('x'):
 
-       _formatters.emplace_back(new details::D_formatter());
+        _formatters.emplace_back(new details::D_formatter());
         break;
 
     case('m'):
-       _formatters.emplace_back(new details::m_formatter());
+        _formatters.emplace_back(new details::m_formatter());
         break;
 
     case('d'):
-       _formatters.emplace_back(new details::d_formatter());
+        _formatters.emplace_back(new details::d_formatter());
         break;
 
     case('H'):
-       _formatters.emplace_back(new details::H_formatter());
+        _formatters.emplace_back(new details::H_formatter());
         break;
 
     case('I'):
-       _formatters.emplace_back(new details::I_formatter());
+        _formatters.emplace_back(new details::I_formatter());
         break;
 
     case('M'):
-       _formatters.emplace_back(new details::M_formatter());
+        _formatters.emplace_back(new details::M_formatter());
         break;
 
     case('S'):
-       _formatters.emplace_back(new details::S_formatter());
+        _formatters.emplace_back(new details::S_formatter());
         break;
 
     case('e'):
-       _formatters.emplace_back(new details::e_formatter());
+        _formatters.emplace_back(new details::e_formatter());
         break;
 
     case('f'):
-       _formatters.emplace_back(new details::f_formatter());
+        _formatters.emplace_back(new details::f_formatter());
         break;
     case('F'):
-       _formatters.emplace_back(new details::F_formatter());
+        _formatters.emplace_back(new details::F_formatter());
         break;
 
     case('E'):
-       _formatters.emplace_back(new details::E_formatter());
+        _formatters.emplace_back(new details::E_formatter());
         break;
 
     case('p'):
-       _formatters.emplace_back(new details::p_formatter());
+        _formatters.emplace_back(new details::p_formatter());
         break;
 
     case('r'):
-       _formatters.emplace_back(new details::r_formatter());
+        _formatters.emplace_back(new details::r_formatter());
         break;
 
     case('R'):
-       _formatters.emplace_back(new details::R_formatter());
+        _formatters.emplace_back(new details::R_formatter());
         break;
 
     case('T'):
     case('X'):
-       _formatters.emplace_back(new details::T_formatter());
+        _formatters.emplace_back(new details::T_formatter());
         break;
 
     case('z'):
-       _formatters.emplace_back(new details::z_formatter());
+        _formatters.emplace_back(new details::z_formatter());
         break;
 
     case ('+'):
-       _formatters.emplace_back(new details::full_formatter());
+        _formatters.emplace_back(new details::full_formatter());
         break;
 
     case ('P'):
-       _formatters.emplace_back(new details::pid_formatter());
+        _formatters.emplace_back(new details::pid_formatter());
         break;
 
 
     case ('i'):
-       _formatters.emplace_back(new details::i_formatter());
+        _formatters.emplace_back(new details::i_formatter());
         break;
 
     default: //Unknown flag appears as is
-       _formatters.emplace_back(new details::ch_formatter('%'));
-       _formatters.emplace_back(new details::ch_formatter(flag));
+        _formatters.emplace_back(new details::ch_formatter('%'));
+        _formatters.emplace_back(new details::ch_formatter(flag));
         break;
     }
 }
