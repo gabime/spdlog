@@ -72,9 +72,11 @@
 
 // Dummy implementations of strerror_r and strerror_s called if corresponding
 // system functions are not available.
+FMT_MAYBE_UNUSED
 static inline fmt::internal::Null<> strerror_r(int, char *, ...) {
   return fmt::internal::Null<>();
 }
+FMT_MAYBE_UNUSED
 static inline fmt::internal::Null<> strerror_s(char *, std::size_t, ...) {
   return fmt::internal::Null<>();
 }
@@ -121,7 +123,7 @@ typedef void (*FormatFunc)(Writer &, int, StringRef);
 // Buffer should be at least of size 1.
 int safe_strerror(
     int error_code, char *&buffer, std::size_t buffer_size) FMT_NOEXCEPT {
-  FMT_ASSERT(buffer != 0 && buffer_size != 0, "invalid buffer");
+  FMT_ASSERT(buffer != FMT_NULL && buffer_size != 0, "invalid buffer");
 
   class StrError {
    private:
@@ -159,6 +161,11 @@ int safe_strerror(
             ERANGE : result;
     }
 
+#ifdef __c2__
+# pragma clang diagnostic push
+# pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
     // Fallback to strerror if strerror_r and strerror_s are not available.
     int fallback(internal::Null<>) {
       errno = 0;
@@ -166,13 +173,15 @@ int safe_strerror(
       return errno;
     }
 
+#ifdef __c2__
+# pragma clang diagnostic pop
+#endif
+
    public:
     StrError(int err_code, char *&buf, std::size_t buf_size)
       : error_code_(err_code), buffer_(buf), buffer_size_(buf_size) {}
 
     int run() {
-      // Suppress a warning about unused strerror_r.
-      strerror_r(0, FMT_NULL, "");
       return handle(strerror_r(error_code_, buffer_, buffer_size_));
     }
   };
@@ -397,51 +406,6 @@ FMT_FUNC void format_system_error(
 }
 
 template <typename Char>
-void internal::ArgMap<Char>::init(const ArgList &args) {
-  if (!map_.empty())
-    return;
-  typedef internal::NamedArg<Char> NamedArg;
-  const NamedArg *named_arg = FMT_NULL;
-  bool use_values =
-      args.type(ArgList::MAX_PACKED_ARGS - 1) == internal::Arg::NONE;
-  if (use_values) {
-    for (unsigned i = 0;/*nothing*/; ++i) {
-      internal::Arg::Type arg_type = args.type(i);
-      switch (arg_type) {
-      case internal::Arg::NONE:
-        return;
-      case internal::Arg::NAMED_ARG:
-        named_arg = static_cast<const NamedArg*>(args.values_[i].pointer);
-        map_.push_back(Pair(named_arg->name, *named_arg));
-        break;
-      default:
-        /*nothing*/;
-      }
-    }
-    return;
-  }
-  for (unsigned i = 0; i != ArgList::MAX_PACKED_ARGS; ++i) {
-    internal::Arg::Type arg_type = args.type(i);
-    if (arg_type == internal::Arg::NAMED_ARG) {
-      named_arg = static_cast<const NamedArg*>(args.args_[i].pointer);
-      map_.push_back(Pair(named_arg->name, *named_arg));
-    }
-  }
-  for (unsigned i = ArgList::MAX_PACKED_ARGS;/*nothing*/; ++i) {
-    switch (args.args_[i].type) {
-    case internal::Arg::NONE:
-      return;
-    case internal::Arg::NAMED_ARG:
-      named_arg = static_cast<const NamedArg*>(args.args_[i].pointer);
-      map_.push_back(Pair(named_arg->name, *named_arg));
-      break;
-    default:
-      /*nothing*/;
-    }
-  }
-}
-
-template <typename Char>
 void internal::FixedBuffer<Char>::grow(std::size_t) {
   FMT_THROW(std::runtime_error("buffer overflow"));
 }
@@ -502,8 +466,6 @@ template struct internal::BasicData<void>;
 
 template void internal::FixedBuffer<char>::grow(std::size_t);
 
-template void internal::ArgMap<char>::init(const ArgList &args);
-
 template FMT_API int internal::CharTraits<char>::format_float(
     char *buffer, std::size_t size, const char *format,
     unsigned width, int precision, double value);
@@ -515,8 +477,6 @@ template FMT_API int internal::CharTraits<char>::format_float(
 // Explicit instantiations for wchar_t.
 
 template void internal::FixedBuffer<wchar_t>::grow(std::size_t);
-
-template void internal::ArgMap<wchar_t>::init(const ArgList &args);
 
 template FMT_API int internal::CharTraits<wchar_t>::format_float(
     wchar_t *buffer, std::size_t size, const wchar_t *format,
