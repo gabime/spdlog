@@ -6,7 +6,8 @@ set(SPDLOG_UTESTS_SOURCES
     errors.cpp
     file_helper.cpp
     file_log.cpp
-    format.cpp
+    test_misc.cpp
+	test_pattern_formatter
     includes.h
     registry.cpp
     test_macros.cpp
