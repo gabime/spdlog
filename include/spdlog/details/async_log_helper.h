@@ -216,9 +216,10 @@ inline spdlog::details::async_log_helper::async_log_helper(
     _overflow_policy(overflow_policy),
     _worker_warmup_cb(worker_warmup_cb),
     _flush_interval_ms(flush_interval_ms),
-    _worker_teardown_cb(worker_teardown_cb),
-    _worker_thread(&async_log_helper::worker_loop, this)
-{}
+    _worker_teardown_cb(worker_teardown_cb)
+{
+    _worker_thread = std::thread(&async_log_helper::worker_loop, this);
+}
 
 // Send to the worker thread termination message(level=off)
 // and wait for it to finish gracefully

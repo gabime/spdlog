@@ -140,8 +140,7 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
 #endif
 #endif
 
-SPDLOG_CONSTEXPR static const char* eol = SPDLOG_EOL;
-SPDLOG_CONSTEXPR static int eol_size = sizeof(SPDLOG_EOL) - 1;
+SPDLOG_CONSTEXPR static const char* default_eol = SPDLOG_EOL;
 
 
 
