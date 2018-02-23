@@ -29,9 +29,17 @@ template<class Mutex>
 class simple_file_sink SPDLOG_FINAL : public base_sink < Mutex >
 {
 public:
-    explicit simple_file_sink(const filename_t &filename, bool truncate = false):_force_flush(false)
+    explicit simple_file_sink(const filename_t &filename, bool truncate = false, bool delay = false):_filename(filename),_truncate(truncate),_force_flush(false)
     {
-        _file_helper.open(filename, truncate);
+        if(!delay)
+        {
+            _file_helper.open(filename, truncate);
+            _file_open=true;
+        }
+        else
+        {
+            _file_open=false;
+        }
     }
 
     void set_force_flush(bool force_flush)
@@ -42,6 +50,12 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
+        if(!_file_open)
+        {
+            _file_helper.open(_filename, _truncate);
+            _file_open=true;
+        }
+        
         _file_helper.write(msg);
         if(_force_flush)
             _file_helper.flush();
@@ -52,7 +66,10 @@ protected:
     }
 private:
     details::file_helper _file_helper;
+    filename_t _filename;
+    bool _truncate;
     bool _force_flush;
+    bool _file_open;
 };
 
 typedef simple_file_sink<std::mutex> simple_file_sink_mt;
@@ -66,15 +83,23 @@ class rotating_file_sink SPDLOG_FINAL : public base_sink < Mutex >
 {
 public:
     rotating_file_sink(const filename_t &base_filename,
-                       std::size_t max_size, std::size_t max_files) :
+                       std::size_t max_size, std::size_t max_files, bool delay = false) :
         _base_filename(base_filename),
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
         _file_helper()
     {
-        _file_helper.open(calc_filename(_base_filename, 0));
-        _current_size = _file_helper.size(); //expensive. called only once
+        if(!delay)
+        {
+            _file_helper.open(calc_filename(_base_filename, 0));
+            _current_size = _file_helper.size(); //expensive. called only once
+            _file_open=true;
+        }
+        else
+        {
+            _file_open=false;
+        }
     }
 
     // calc filename according to index and file extension if exists.
@@ -98,6 +123,13 @@ public:
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
+        if(!_file_open)
+        {
+            _file_helper.open(calc_filename(_base_filename, 0));
+            _current_size = _file_helper.size();
+            _file_open=true;
+        }
+        
         _current_size += msg.formatted.size();
         if (_current_size > _max_size)
         {
@@ -147,6 +179,7 @@ private:
     std::size_t _max_files;
     std::size_t _current_size;
     details::file_helper _file_helper;
+    bool _file_open;
 };
 
 typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
