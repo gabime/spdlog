@@ -7,7 +7,6 @@
 
 #pragma once
 
-#define SPDLOG_VERSION "0.16.3"
 
 #include "common.h"
 #include "logger.h"
