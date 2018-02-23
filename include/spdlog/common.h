@@ -22,7 +22,7 @@
 #if __cplusplus >= 201701L
 #include <variant>
 #else
-#include <mpark/v1.3.0/variant.hpp>
+#include "variant.hpp"
 #endif // __cplusplus >= 201701L
 #endif // SPDLOG_ENABLE_LOGMSG_METADATA
 
