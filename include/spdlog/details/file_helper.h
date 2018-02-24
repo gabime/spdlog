@@ -31,9 +31,7 @@ public:
     const int open_tries = 5;
     const int open_interval = 10;
 
-    explicit file_helper() :
-        _fd(nullptr)
-    {}
+    explicit file_helper() {}
 
     file_helper(const file_helper&) = delete;
     file_helper& operator=(const file_helper&) = delete;
@@ -138,7 +136,7 @@ public:
         return std::make_tuple(fname.substr(0, ext_index), fname.substr(ext_index));
     }
 private:
-    FILE* _fd;
+    FILE* _fd{ nullptr };
     filename_t _filename;
 };
 }

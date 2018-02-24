@@ -310,13 +310,12 @@ class T_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // ISO 8601 offset from UTC in timezone (+-HH:MM)
-class z_formatter SPDLOG_FINAL:public flag_formatter
+class z_formatter SPDLOG_FINAL : public flag_formatter
 {
 public:
     const std::chrono::seconds cache_refresh = std::chrono::seconds(5);
 
-    z_formatter():_last_update(std::chrono::seconds(0)), _offset_minutes(0)
-    {}
+    z_formatter() {}
     z_formatter(const z_formatter&) = delete;
     z_formatter& operator=(const z_formatter&) = delete;
 
@@ -347,8 +346,8 @@ public:
         pad_n_join(msg.formatted, h, m, ':');
     }
 private:
-    log_clock::time_point _last_update;
-    int _offset_minutes;
+    log_clock::time_point _last_update{ std::chrono::seconds(0) };
+    int _offset_minutes{ 0 };
     std::mutex _mutex;
 
     int get_cached_offset(const log_msg& msg, const std::tm& tm_time)

@@ -14,11 +14,6 @@ namespace sinks
 class sink
 {
 public:
-    sink()
-    {
-        _level = level::trace;
-    }
-
     virtual ~sink() = default;
     virtual void log(const details::log_msg& msg) = 0;
     virtual void flush() = 0;
@@ -28,7 +23,7 @@ public:
     level::level_enum level() const;
 
 private:
-    level_t _level;
+    level_t _level{ level::trace };
 };
 
 inline bool sink::should_log(level::level_enum msg_level) const
