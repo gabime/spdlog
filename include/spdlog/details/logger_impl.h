@@ -39,7 +39,7 @@ inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list si
 inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink):
     logger(logger_name,
 {
-    single_sink
+    std::move(single_sink)
 })
 {}
 
@@ -49,7 +49,7 @@ inline spdlog::logger::~logger() = default;
 
 inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
 {
-    _set_formatter(msg_formatter);
+    _set_formatter(std::move(msg_formatter));
 }
 
 inline void spdlog::logger::set_pattern(const std::string& pattern, pattern_time_type pattern_time)
@@ -281,14 +281,13 @@ inline void spdlog::logger::set_level(spdlog::level::level_enum log_level)
 
 inline void spdlog::logger::set_error_handler(spdlog::log_err_handler err_handler)
 {
-    _err_handler = err_handler;
+    _err_handler = std::move(err_handler);
 }
 
 inline spdlog::log_err_handler spdlog::logger::error_handler()
 {
     return _err_handler;
 }
-
 
 inline void spdlog::logger::flush_on(level::level_enum log_level)
 {
@@ -330,9 +329,10 @@ inline void spdlog::logger::_set_pattern(const std::string& pattern, pattern_tim
 {
     _formatter = std::make_shared<pattern_formatter>(pattern, pattern_time);
 }
+
 inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
 {
-    _formatter = msg_formatter;
+    _formatter = std::move(msg_formatter);
 }
 
 inline void spdlog::logger::flush()

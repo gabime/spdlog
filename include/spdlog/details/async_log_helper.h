@@ -207,10 +207,10 @@ inline spdlog::details::async_log_helper::async_log_helper(
     const std::function<void()>& worker_warmup_cb,
     const std::chrono::milliseconds& flush_interval_ms,
     const std::function<void()>& worker_teardown_cb):
-    _formatter(formatter),
+    _formatter(std::move(formatter)),
     _sinks(sinks),
     _q(queue_size),
-    _err_handler(err_handler),
+    _err_handler(std::move(err_handler)),
     _flush_requested(false),
     _terminate_requested(false),
     _overflow_policy(overflow_policy),
@@ -349,9 +349,8 @@ inline void spdlog::details::async_log_helper::handle_flush_interval(log_clock::
 
 inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
 {
-    _formatter = msg_formatter;
+    _formatter = std::move(msg_formatter);
 }
-
 
 // spin, yield or sleep. use the time passed since last message as a hint
 inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_clock::time_point& now, const spdlog::log_clock::time_point& last_op_time)
@@ -389,8 +388,5 @@ inline void spdlog::details::async_log_helper::wait_empty_q()
 
 inline void spdlog::details::async_log_helper::set_error_handler(spdlog::log_err_handler err_handler)
 {
-    _err_handler = err_handler;
+    _err_handler = std::move(err_handler);
 }
-
-
-
