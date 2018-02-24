@@ -23,7 +23,7 @@ namespace sinks
  * If no color terminal detected, omit the escape codes.
  */
 template <class Mutex>
-class ansicolor_sink: public base_sink<Mutex>
+class ansicolor_sink : public base_sink<Mutex>
 {
 public:
     ansicolor_sink(FILE* file): target_file_(file)
@@ -37,7 +37,8 @@ public:
         colors_[level::critical] = bold + on_red;
         colors_[level::off] = reset;
     }
-    virtual ~ansicolor_sink()
+
+    ~ansicolor_sink() override
     {
         _flush();
     }
@@ -79,7 +80,7 @@ public:
     const std::string on_white = "\033[47m";
 
 protected:
-    virtual void _sink_it(const details::log_msg& msg) override
+    void _sink_it(const details::log_msg& msg) override
     {
         // Wrap the originally formatted message in color codes.
         // If color is not supported in the terminal, log as is instead.
@@ -102,6 +103,7 @@ protected:
     {
         fflush(target_file_);
     }
+
     FILE* target_file_;
     bool should_do_colors_;
     std::unordered_map<level::level_enum, std::string, level::level_hasher> colors_;

@@ -16,13 +16,12 @@ namespace spdlog
 namespace sinks
 {
 template<class Mutex>
-class ostream_sink: public base_sink<Mutex>
+class ostream_sink : public base_sink<Mutex>
 {
 public:
     explicit ostream_sink(std::ostream& os, bool force_flush=false) :_ostream(os), _force_flush(force_flush) {}
     ostream_sink(const ostream_sink&) = delete;
     ostream_sink& operator=(const ostream_sink&) = delete;
-    virtual ~ostream_sink() = default;
 
 protected:
     void _sink_it(const details::log_msg& msg) override

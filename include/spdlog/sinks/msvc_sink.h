@@ -23,14 +23,12 @@ namespace sinks
 * MSVC sink (logging using OutputDebugStringA)
 */
 template<class Mutex>
-class msvc_sink : public base_sink < Mutex >
+class msvc_sink : public base_sink<Mutex>
 {
 public:
     explicit msvc_sink()
     {
     }
-
-
 
 protected:
     void _sink_it(const details::log_msg& msg) override

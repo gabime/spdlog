@@ -3,7 +3,6 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-
 #pragma once
 
 #include "../details/log_msg.h"
@@ -20,7 +19,7 @@ public:
         _level = level::trace;
     }
 
-    virtual ~sink() {}
+    virtual ~sink() = default;
     virtual void log(const details::log_msg& msg) = 0;
     virtual void flush() = 0;
 
@@ -30,7 +29,6 @@ public:
 
 private:
     level_t _level;
-
 };
 
 inline bool sink::should_log(level::level_enum msg_level) const
@@ -50,4 +48,3 @@ inline level::level_enum sink::level() const
 
 }
 }
-

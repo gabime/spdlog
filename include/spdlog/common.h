@@ -136,7 +136,7 @@ namespace os
 std::string errno_str(int err_num);
 }
 }
-class spdlog_ex: public std::exception
+class spdlog_ex : public std::exception
 {
 public:
     spdlog_ex(const std::string& msg):_msg(msg)
@@ -149,9 +149,9 @@ public:
     {
         return _msg.c_str();
     }
+
 private:
     std::string _msg;
-
 };
 
 //

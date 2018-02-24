@@ -26,7 +26,7 @@ namespace sinks
  * Trivial file sink with single file as target
  */
 template<class Mutex>
-class simple_file_sink SPDLOG_FINAL : public base_sink < Mutex >
+class simple_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
     explicit simple_file_sink(const filename_t &filename, bool truncate = false):_force_flush(false)
@@ -46,10 +46,12 @@ protected:
         if(_force_flush)
             _file_helper.flush();
     }
+
     void _flush() override
     {
         _file_helper.flush();
     }
+
 private:
     details::file_helper _file_helper;
     bool _force_flush;
@@ -112,7 +114,6 @@ protected:
         _file_helper.flush();
     }
 
-
 private:
     // Rotate files:
     // log.txt -> log.1.txt
@@ -142,6 +143,7 @@ private:
         }
         _file_helper.reopen(true);
     }
+
     filename_t _base_filename;
     std::size_t _max_size;
     std::size_t _max_files;

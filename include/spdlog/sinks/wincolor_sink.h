@@ -21,8 +21,8 @@ namespace sinks
 /*
  * Windows color console sink. Uses WriteConsoleA to write to the console with colors
  */
-template<class Mutex>
-class wincolor_sink: public  base_sink<Mutex>
+template <class Mutex>
+class wincolor_sink : public  base_sink<Mutex>
 {
 public:
     const WORD BOLD = FOREGROUND_INTENSITY;
@@ -42,7 +42,7 @@ public:
         colors_[level::off] = 0;
     }
 
-    virtual ~wincolor_sink()
+    ~wincolor_sink() override
     {
         this->flush();
     }
@@ -58,7 +58,7 @@ public:
     }
 
 protected:
-    virtual void _sink_it(const details::log_msg& msg) override
+    void _sink_it(const details::log_msg& msg) override
     {
         auto color = colors_[msg.level];
         auto orig_attribs = set_console_attribs(color);
@@ -66,7 +66,7 @@ protected:
         SetConsoleTextAttribute(out_handle_, orig_attribs); //reset to orig colors
     }
 
-    virtual void _flush() override
+    void _flush() override
     {
         // windows console always flushed?
     }
@@ -92,8 +92,8 @@ private:
 //
 // windows color console to stdout
 //
-template<class Mutex>
-class wincolor_stdout_sink: public wincolor_sink<Mutex>
+template <class Mutex>
+class wincolor_stdout_sink : public wincolor_sink<Mutex>
 {
 public:
     wincolor_stdout_sink() : wincolor_sink<Mutex>(GetStdHandle(STD_OUTPUT_HANDLE))
@@ -106,8 +106,8 @@ using wincolor_stdout_sink_st = wincolor_stdout_sink<details::null_mutex>;
 //
 // windows color console to stderr
 //
-template<class Mutex>
-class wincolor_stderr_sink: public wincolor_sink<Mutex>
+template <class Mutex>
+class wincolor_stderr_sink : public wincolor_sink<Mutex>
 {
 public:
     wincolor_stderr_sink() : wincolor_sink<Mutex>(GetStdHandle(STD_ERROR_HANDLE))

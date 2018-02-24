@@ -31,7 +31,7 @@ namespace details
 class async_log_helper;
 }
 
-class async_logger SPDLOG_FINAL :public logger
+class async_logger SPDLOG_FINAL : public logger
 {
 public:
     template<class It>
@@ -65,8 +65,8 @@ public:
     void flush() override;
 
     // Error handler
-    virtual void set_error_handler(log_err_handler) override;
-    virtual log_err_handler error_handler() override;
+    void set_error_handler(log_err_handler) override;
+    log_err_handler error_handler() override;
 
 protected:
     void _sink_it(details::log_msg& msg) override;

@@ -50,13 +50,14 @@ class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
     using MyType = stderr_sink<Mutex>;
 public:
-    stderr_sink()
-    {}
+    explicit stderr_sink() {}
+
     static std::shared_ptr<MyType> instance()
     {
         static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
         return instance;
     }
+
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
