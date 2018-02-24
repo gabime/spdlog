@@ -84,7 +84,7 @@ public:
     static filename_t calc_filename(const filename_t& filename, std::size_t index)
     {
         typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
-        if (index)
+        if (index != 0u)
         {
             filename_t basename, ext;
             std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
@@ -136,7 +136,7 @@ private:
                     throw spdlog_ex("rotating_file_sink: failed removing " + filename_to_str(target), errno);
                 }
             }
-            if (details::file_helper::file_exists(src) && details::os::rename(src, target))
+            if (details::file_helper::file_exists(src) && details::os::rename(src, target) != 0)
             {
                 throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
             }

@@ -170,7 +170,7 @@ inline void prevent_child_fd(FILE *f)
 
 
 //fopen_s on non windows for writing
-inline int fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode)
+inline bool fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode)
 {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES
@@ -482,9 +482,9 @@ inline bool in_terminal(FILE* file)
 {
 
 #ifdef _WIN32
-    return _isatty(_fileno(file)) ? true : false;
+    return _isatty(_fileno(file)) != 0;
 #else
-    return isatty(fileno(file)) ? true : false;
+    return isatty(fileno(file)) != 0;
 #endif
 }
 } //os

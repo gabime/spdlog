@@ -46,7 +46,6 @@ public:
 
     void open(const filename_t& fname, bool truncate = false)
     {
-
         close();
         auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
         _filename = fname;
@@ -76,7 +75,7 @@ public:
 
     void close()
     {
-        if (_fd)
+        if (_fd != nullptr)
         {
             std::fclose(_fd);
             _fd = nullptr;
@@ -93,8 +92,9 @@ public:
 
     size_t size() const
     {
-        if (!_fd)
+        if (_fd == nullptr) {
             throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
+        }
         return os::filesize(_fd);
     }
 
