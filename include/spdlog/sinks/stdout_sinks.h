@@ -42,9 +42,8 @@ protected:
     }
 };
 
-typedef stdout_sink<details::null_mutex> stdout_sink_st;
-typedef stdout_sink<std::mutex> stdout_sink_mt;
-
+using stdout_sink_mt = stdout_sink<std::mutex>;
+using stdout_sink_st = stdout_sink<details::null_mutex>;
 
 template <class Mutex>
 class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
@@ -71,7 +70,8 @@ protected:
     }
 };
 
-typedef stderr_sink<std::mutex> stderr_sink_mt;
-typedef stderr_sink<details::null_mutex> stderr_sink_st;
+using stderr_sink_mt = stderr_sink<std::mutex>;
+using stderr_sink_st = stderr_sink<details::null_mutex>;
+
 }
 }

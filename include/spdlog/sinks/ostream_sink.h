@@ -41,7 +41,8 @@ protected:
     bool _force_flush;
 };
 
-typedef ostream_sink<std::mutex> ostream_sink_mt;
-typedef ostream_sink<details::null_mutex> ostream_sink_st;
+using ostream_sink_mt = ostream_sink<std::mutex>;
+using ostream_sink_st = ostream_sink<details::null_mutex>;
+
 }
 }

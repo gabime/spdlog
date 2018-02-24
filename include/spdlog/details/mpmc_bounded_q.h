@@ -157,7 +157,7 @@ private:
     size_t const max_size_;
 
     static size_t const     cacheline_size = 64;
-    typedef char            cacheline_pad_t[cacheline_size];
+    using cacheline_pad_t = char[cacheline_size];
 
     cacheline_pad_t         pad0_;
     cell_t* const           buffer_;

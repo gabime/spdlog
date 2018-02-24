@@ -85,7 +85,7 @@ private:
         back_color &= static_cast<WORD>(~(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY));
         // keep the background color unchanged
         SetConsoleTextAttribute(out_handle_, attribs | back_color);
-        return  orig_buffer_info.wAttributes; //return orig attribs
+        return orig_buffer_info.wAttributes; //return orig attribs
     }
 };
 
@@ -100,8 +100,8 @@ public:
     {}
 };
 
-typedef wincolor_stdout_sink<std::mutex> wincolor_stdout_sink_mt;
-typedef wincolor_stdout_sink<details::null_mutex> wincolor_stdout_sink_st;
+using wincolor_stdout_sink_mt = wincolor_stdout_sink<std::mutex>;
+using wincolor_stdout_sink_st = wincolor_stdout_sink<details::null_mutex>;
 
 //
 // windows color console to stderr
@@ -114,8 +114,8 @@ public:
     {}
 };
 
-typedef wincolor_stderr_sink<std::mutex> wincolor_stderr_sink_mt;
-typedef wincolor_stderr_sink<details::null_mutex> wincolor_stderr_sink_st;
+using wincolor_stderr_sink_mt = wincolor_stderr_sink<std::mutex>;
+using wincolor_stderr_sink_st = wincolor_stderr_sink<details::null_mutex>;
 
 }
 }

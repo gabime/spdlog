@@ -216,10 +216,12 @@ private:
     std::chrono::milliseconds _flush_interval_ms;
     std::function<void()> _worker_teardown_cb = nullptr;
 };
+
 #ifdef SPDLOG_NO_REGISTRY_MUTEX
-typedef registry_t<spdlog::details::null_mutex> registry;
+using registry = registry_t<spdlog::details::null_mutex>;
 #else
-typedef registry_t<std::mutex> registry;
+using registry = registry_t<std::mutex>;
 #endif
+
 }
 }

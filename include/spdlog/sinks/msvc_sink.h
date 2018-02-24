@@ -42,8 +42,8 @@ protected:
     {}
 };
 
-typedef msvc_sink<std::mutex> msvc_sink_mt;
-typedef msvc_sink<details::null_mutex> msvc_sink_st;
+using msvc_sink_mt = msvc_sink<std::mutex>;
+using msvc_sink_st = msvc_sink<details::null_mutex>;
 
 }
 }

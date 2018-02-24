@@ -55,8 +55,8 @@ private:
     bool _force_flush;
 };
 
-typedef simple_file_sink<std::mutex> simple_file_sink_mt;
-typedef simple_file_sink<details::null_mutex> simple_file_sink_st;
+using simple_file_sink_mt = simple_file_sink<std::mutex>;
+using simple_file_sink_st = simple_file_sink<details::null_mutex>;
 
 /*
  * Rotating file sink based on size
@@ -149,8 +149,8 @@ private:
     details::file_helper _file_helper;
 };
 
-typedef rotating_file_sink<std::mutex> rotating_file_sink_mt;
-typedef rotating_file_sink<details::null_mutex>rotating_file_sink_st;
+using rotating_file_sink_mt = rotating_file_sink<std::mutex>;
+using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
 
 /*
  * Default generator of daily log file names.
@@ -247,7 +247,8 @@ private:
     details::file_helper _file_helper;
 };
 
-typedef daily_file_sink<std::mutex> daily_file_sink_mt;
-typedef daily_file_sink<details::null_mutex> daily_file_sink_st;
+using daily_file_sink_mt = daily_file_sink<std::mutex>;
+using daily_file_sink_st = daily_file_sink<details::null_mutex>;
+
 }
 }

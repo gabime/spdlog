@@ -75,7 +75,7 @@ using log_err_handler = std::function<void(const std::string &err_msg)>;
 //Log level enum
 namespace level
 {
-typedef enum
+enum level_enum
 {
     trace = 0,
     debug = 1,
@@ -84,7 +84,7 @@ typedef enum
     err = 4,
     critical = 5,
     off = 6
-} level_enum;
+};
 
 #if !defined(SPDLOG_LEVEL_NAMES)
 #define SPDLOG_LEVEL_NAMES { "trace", "debug", "info",  "warning", "error", "critical", "off" }
