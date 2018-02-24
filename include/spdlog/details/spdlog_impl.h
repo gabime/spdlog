@@ -16,7 +16,7 @@
 #include "../sinks/syslog_sink.h"
 #endif
 
-#ifdef _WIN32
+#if defined _WIN32 && !defined(__cplusplus_winrt)
 #include "../sinks/wincolor_sink.h"
 #else
 #include "../sinks/ansicolor_sink.h"
@@ -107,7 +107,8 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::strin
 //
 // stdout/stderr color loggers
 //
-#ifdef _WIN32
+#if defined _WIN32 && !defined(__cplusplus_winrt)
+
 inline std::shared_ptr<spdlog::logger> spdlog::stdout_color_mt(const std::string& logger_name)
 {
     auto sink = std::make_shared<spdlog::sinks::wincolor_stdout_sink_mt>();

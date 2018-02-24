@@ -5,6 +5,10 @@
 
 #pragma once
 
+#define SPDLOG_VERSION "0.16.3"
+
+#include "tweakme.h"
+
 #include <string>
 #include <initializer_list>
 #include <chrono>
@@ -98,6 +102,8 @@ inline const char* to_short_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
 }
+using level_hasher = std::hash<int>;
+
 } //level
 
 

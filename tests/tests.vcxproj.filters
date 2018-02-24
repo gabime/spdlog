@@ -18,9 +18,6 @@
     <ClCompile Include="file_log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="format.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -37,6 +34,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="test_macros.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_pattern_formatter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test_misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

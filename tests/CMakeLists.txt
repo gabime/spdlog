@@ -1,19 +1,23 @@
-#
-# Tests
-#
-
+project(spdlog-utests CXX)
 enable_testing()
+find_package(Threads REQUIRED)
 
-find_package(Threads)
+set(SPDLOG_UTESTS_SOURCES
+    errors.cpp
+    file_helper.cpp
+    file_log.cpp
+    test_misc.cpp
+	test_pattern_formatter
+    includes.h
+    registry.cpp
+    test_macros.cpp
+    utils.cpp
+    utils.h
+    main.cpp)
 
-# Build Catch unit tests
-add_library(catch INTERFACE)
-target_include_directories(catch INTERFACE ${CMAKE_CURRENT_SOURCE_DIR})
+add_executable(${PROJECT_NAME} ${SPDLOG_UTESTS_SOURCES})
+target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
 
-file(GLOB catch_tests LIST_DIRECTORIES false RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp *.h *.hpp)
-
-add_executable(catch_tests ${catch_tests})
-target_link_libraries(catch_tests spdlog ${CMAKE_THREAD_LIBS_INIT})
-add_test(NAME catch_tests COMMAND catch_tests)
+add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
-

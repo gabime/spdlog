@@ -140,8 +140,7 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
 #endif
 #endif
 
-SPDLOG_CONSTEXPR static const char* eol = SPDLOG_EOL;
-SPDLOG_CONSTEXPR static int eol_size = sizeof(SPDLOG_EOL) - 1;
+SPDLOG_CONSTEXPR static const char* default_eol = SPDLOG_EOL;
 
 
 
@@ -155,10 +154,13 @@ SPDLOG_CONSTEXPR static const char folder_sep = '/';
 
 inline void prevent_child_fd(FILE *f)
 {
+
 #ifdef _WIN32
+#if !defined(__cplusplus_winrt)
     auto file_handle = (HANDLE)_get_osfhandle(_fileno(f));
     if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
         throw spdlog_ex("SetHandleInformation failed", errno);
+#endif
 #else
     auto fd = fileno(f);
     if (fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
@@ -352,7 +354,7 @@ inline size_t _thread_id()
 //Return current thread id as size_t (from thread local storage)
 inline size_t thread_id()
 {
-#if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || (defined(__clang__) && !__has_feature(cxx_thread_local))
+#if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt ) || (defined(__clang__) && !__has_feature(cxx_thread_local))
     return _thread_id();
 #else // cache thread id in tls
     static thread_local const size_t tid = _thread_id();
@@ -368,7 +370,7 @@ inline size_t thread_id()
 inline void sleep_for_millis(int milliseconds)
 {
 #if defined(_WIN32)
-    Sleep(milliseconds);
+    ::Sleep(milliseconds);
 #else
     std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 #endif
@@ -437,7 +439,7 @@ inline int pid()
 {
 
 #ifdef _WIN32
-    return ::_getpid();
+    return static_cast<int>(::GetCurrentProcessId());
 #else
     return static_cast<int>(::getpid());
 #endif

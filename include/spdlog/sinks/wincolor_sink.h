@@ -11,7 +11,7 @@
 
 #include <mutex>
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <wincon.h>
 
 namespace spdlog
@@ -50,6 +50,13 @@ public:
     wincolor_sink(const wincolor_sink& other) = delete;
     wincolor_sink& operator=(const wincolor_sink& other) = delete;
 
+    // change the  color for the given level
+    void set_color(level::level_enum level, WORD color)
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
+        colors_[level] = color;
+    }
+
 protected:
     virtual void _sink_it(const details::log_msg& msg) override
     {
@@ -64,16 +71,9 @@ protected:
         // windows console always flushed?
     }
 
-    // change the  color for the given level
-    void set_color(level::level_enum level, WORD color)
-    {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
-        colors_[level] = color;
-    }
-
 private:
     HANDLE out_handle_;
-    std::map<level::level_enum, WORD> colors_;
+    std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 
     // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs)

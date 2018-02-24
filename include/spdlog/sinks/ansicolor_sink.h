@@ -10,7 +10,7 @@
 #include "../details/os.h"
 
 #include <string>
-#include <map>
+#include <unordered_map>
 
 namespace spdlog
 {
@@ -104,7 +104,7 @@ protected:
     }
     FILE* target_file_;
     bool should_do_colors_;
-    std::map<level::level_enum, std::string> colors_;
+    std::unordered_map<level::level_enum, std::string, level::level_hasher> colors_;
 };
 
 

@@ -58,13 +58,15 @@ Yes &convert(std::ostream &);
 struct DummyStream : std::ostream
 {
     DummyStream();  // Suppress a bogus warning in MSVC.
+
     // Hide all operator<< overloads from std::ostream.
-    void operator<<(Null<>);
+    template <typename T>
+    typename EnableIf<sizeof(T) == 0>::type operator<<(const T &);
 };
 
 No &operator<<(std::ostream &, int);
 
-template<typename T>
+template <typename T>
 struct ConvertToIntImpl<T, true>
 {
     // Convert to int only if T doesn't have an overloaded operator<<.
@@ -87,6 +89,7 @@ void format_arg(BasicFormatter<Char, ArgFormatter_> &f,
 
     internal::FormatBuf<Char> format_buf(buffer);
     std::basic_ostream<Char> output(&format_buf);
+    output.exceptions(std::ios_base::failbit | std::ios_base::badbit);
     output << value;
 
     BasicStringRef<Char> str(&buffer[0], buffer.size());
