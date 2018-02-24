@@ -328,13 +328,10 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
 
     // Handle empty queue..
     // This is the only place where the queue can terminate or flush to avoid losing messages already in the queue
-    else
-    {
-        auto now = details::os::now();
-        handle_flush_interval(now, last_flush);
-        sleep_or_yield(now, last_pop);
-        return !_terminate_requested;
-    }
+    auto now = details::os::now();
+    handle_flush_interval(now, last_flush);
+    sleep_or_yield(now, last_pop);
+    return !_terminate_requested;
 }
 
 // flush all sinks if _flush_interval_ms has expired

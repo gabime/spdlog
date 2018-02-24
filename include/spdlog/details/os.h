@@ -403,10 +403,7 @@ inline std::string errno_to_string(char buf[256], int res)
     {
         return std::string(buf);
     }
-    else
-    {
-        return "Unknown error";
-    }
+    return "Unknown error";
 }
 
 // Return errno string (thread safe)

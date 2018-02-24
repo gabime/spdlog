@@ -236,10 +236,10 @@ private:
         date.tm_min = _rotation_m;
         date.tm_sec = 0;
         auto rotation_time = std::chrono::system_clock::from_time_t(std::mktime(&date));
-        if (rotation_time > now)
+        if (rotation_time > now) {
             return rotation_time;
-        else
-            return std::chrono::system_clock::time_point(rotation_time + std::chrono::hours(24));
+        }
+        return std::chrono::system_clock::time_point(rotation_time + std::chrono::hours(24));
     }
 
     filename_t _base_filename;
