@@ -31,7 +31,7 @@ struct log_msg
 #endif
     }
 
-    log_msg(const log_msg& other)  = delete;
+    log_msg(const log_msg& other) = delete;
     log_msg& operator=(log_msg&& other) = delete;
     log_msg(log_msg&& other) = delete;
 

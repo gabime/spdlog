@@ -136,6 +136,9 @@ public:
     // stop logging and join the back thread
     ~async_log_helper();
 
+    async_log_helper(const async_log_helper&) = delete;
+    async_log_helper& operator=(const async_log_helper&) = delete;
+
     void set_formatter(formatter_ptr);
 
     void flush(bool wait_for_q);
@@ -154,7 +157,6 @@ private:
     bool _flush_requested;
 
     bool _terminate_requested;
-
 
     // overflow policy
     const async_overflow_policy _overflow_policy;

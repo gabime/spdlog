@@ -15,6 +15,7 @@ class sink
 {
 public:
     virtual ~sink() = default;
+
     virtual void log(const details::log_msg& msg) = 0;
     virtual void flush() = 0;
 

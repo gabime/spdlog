@@ -25,7 +25,7 @@ template<class Mutex>
 class base_sink : public sink
 {
 public:
-    base_sink():_mutex() {}
+    base_sink() = default;
 
     base_sink(const base_sink&) = delete;
     base_sink& operator=(const base_sink&) = delete;

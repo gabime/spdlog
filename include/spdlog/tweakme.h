@@ -54,7 +54,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Uncomment if logger name logging is not needed.
-// This will prevent spdlog from copying the logger name  on each log call.
+// This will prevent spdlog from copying the logger name on each log call.
 //
 // #define SPDLOG_NO_NAME
 ///////////////////////////////////////////////////////////////////////////////
@@ -156,5 +156,5 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Uncomment to customize level names (e.g. "MT TRACE")
 //
-// #define SPDLOG_LEVEL_NAMES  { "MY TRACE", "MY DEBUG", "MY INFO", "MY WARNING", "MY ERROR", "MY CRITICAL", "OFF" }
+// #define SPDLOG_LEVEL_NAMES { "MY TRACE", "MY DEBUG", "MY INFO", "MY WARNING", "MY ERROR", "MY CRITICAL", "OFF" }
 ///////////////////////////////////////////////////////////////////////////////

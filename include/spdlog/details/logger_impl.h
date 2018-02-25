@@ -21,7 +21,7 @@ inline spdlog::logger::logger(std::string name, const It& begin, const It& end):
     _level(level::info),
     _flush_level(level::off),
     _last_err_time(0),
-    _msg_counter(1)  // message counter will start from 1. 0-message id will be reserved for controll messages
+    _msg_counter(1) // message counter will start from 1. 0-message id will be reserved for controll messages
 {
     _err_handler = [this](const std::string &msg)
     {
@@ -349,7 +349,7 @@ inline void spdlog::logger::_default_err_handler(const std::string &msg)
     auto tm_time = details::os::localtime(now);
     char date_buf[100];
     std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
-    details::log_msg  err_msg;
+    details::log_msg err_msg;
     err_msg.formatted.write("[*** LOG ERROR ***] [{}] [{}] [{}]{}", name(), msg, date_buf, details::os::default_eol);
     sinks::stderr_sink_mt::instance()->log(err_msg);
     _last_err_time = now;

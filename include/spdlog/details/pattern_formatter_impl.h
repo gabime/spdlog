@@ -36,7 +36,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 namespace
 {
-class name_formatter:public flag_formatter
+class name_formatter : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -46,7 +46,7 @@ class name_formatter:public flag_formatter
 }
 
 // log level appender
-class level_formatter:public flag_formatter
+class level_formatter : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -55,7 +55,7 @@ class level_formatter:public flag_formatter
 };
 
 // short log level appender
-class short_level_formatter:public flag_formatter
+class short_level_formatter : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -79,7 +79,7 @@ static int to12h(const tm& t)
 
 //Abbreviated weekday name
 static const std::string days[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-class a_formatter:public flag_formatter
+class a_formatter : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -89,7 +89,7 @@ class a_formatter:public flag_formatter
 
 //Full weekday name
 static const std::string full_days[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-class A_formatter:public flag_formatter
+class A_formatter : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -98,8 +98,8 @@ class A_formatter:public flag_formatter
 };
 
 //Abbreviated month
-static const std::string  months[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" };
-class b_formatter:public flag_formatter
+static const std::string months[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" };
+class b_formatter : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -109,7 +109,7 @@ class b_formatter:public flag_formatter
 
 //Full month name
 static const std::string full_months[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
-class B_formatter:public flag_formatter
+class B_formatter : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -186,7 +186,7 @@ class d_formatter SPDLOG_FINAL : public flag_formatter
     }
 };
 
-// hours in 24 format  0-23
+// hours in 24 format 0-23
 class H_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
@@ -195,7 +195,7 @@ class H_formatter SPDLOG_FINAL : public flag_formatter
     }
 };
 
-// hours in 12 format  1-12
+// hours in 12 format 1-12
 class I_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override

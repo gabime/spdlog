@@ -87,7 +87,7 @@ enum level_enum
 };
 
 #if !defined(SPDLOG_LEVEL_NAMES)
-#define SPDLOG_LEVEL_NAMES { "trace", "debug", "info",  "warning", "error", "critical", "off" }
+#define SPDLOG_LEVEL_NAMES { "trace", "debug", "info", "warning", "error", "critical", "off" }
 #endif
 static const char* level_names[] SPDLOG_LEVEL_NAMES;
 

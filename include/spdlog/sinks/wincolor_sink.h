@@ -22,7 +22,7 @@ namespace sinks
  * Windows color console sink. Uses WriteConsoleA to write to the console with colors
  */
 template <class Mutex>
-class wincolor_sink : public  base_sink<Mutex>
+class wincolor_sink : public base_sink<Mutex>
 {
 public:
     const WORD BOLD = FOREGROUND_INTENSITY;
@@ -50,7 +50,7 @@ public:
     wincolor_sink(const wincolor_sink& other) = delete;
     wincolor_sink& operator=(const wincolor_sink& other) = delete;
 
-    // change the  color for the given level
+    // change the color for the given level
     void set_color(level::level_enum level, WORD color)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);

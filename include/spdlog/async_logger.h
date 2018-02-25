@@ -39,7 +39,7 @@ public:
                  const It& begin,
                  const It& end,
                  size_t queue_size,
-                 const async_overflow_policy overflow_policy =  async_overflow_policy::block_retry,
+                 const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
                  const std::function<void()>& worker_warmup_cb = nullptr,
                  const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
                  const std::function<void()>& worker_teardown_cb = nullptr);
@@ -55,7 +55,7 @@ public:
     async_logger(const std::string& name,
                  sink_ptr single_sink,
                  size_t queue_size,
-                 const async_overflow_policy overflow_policy =  async_overflow_policy::block_retry,
+                 const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
                  const std::function<void()>& worker_warmup_cb = nullptr,
                  const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
                  const std::function<void()>& worker_teardown_cb = nullptr);
@@ -77,6 +77,5 @@ private:
     std::unique_ptr<details::async_log_helper> _async_log_helper;
 };
 }
-
 
 #include "details/async_logger_impl.h"

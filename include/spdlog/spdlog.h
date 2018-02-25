@@ -56,7 +56,7 @@ void set_error_handler(log_err_handler);
 //
 // async_overflow_policy (optional, block_retry by default):
 //    async_overflow_policy::block_retry - if queue is full, block until queue has room for the new log entry.
-//    async_overflow_policy::discard_log_msg - never block and discard any new messages when queue  overflows.
+//    async_overflow_policy::discard_log_msg - never block and discard any new messages when queue overflows.
 //
 // worker_warmup_cb (optional):
 //     callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
@@ -84,7 +84,7 @@ std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const
 std::shared_ptr<logger> rotating_logger_st(const std::string& logger_name, const filename_t& filename, size_t max_file_size, size_t max_files);
 
 //
-// Create file logger which creates new file on the given time (default in  midnight):
+// Create file logger which creates new file on the given time (default in midnight):
 //
 std::shared_ptr<logger> daily_logger_mt(const std::string& logger_name, const filename_t& filename, int hour=0, int minute=0);
 std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const filename_t& filename, int hour=0, int minute=0);

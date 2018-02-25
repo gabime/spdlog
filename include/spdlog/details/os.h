@@ -331,12 +331,12 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 inline size_t _thread_id()
 {
 #ifdef _WIN32
-    return  static_cast<size_t>(::GetCurrentThreadId());
+    return static_cast<size_t>(::GetCurrentThreadId());
 #elif __linux__
 # if defined(__ANDROID__) && defined(__ANDROID_API__) && (__ANDROID_API__ < 21)
 #  define SYS_gettid __NR_gettid
 # endif
-    return  static_cast<size_t>(syscall(SYS_gettid));
+    return static_cast<size_t>(syscall(SYS_gettid));
 #elif __FreeBSD__
     long tid;
     thr_self(&tid);
