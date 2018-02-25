@@ -26,9 +26,12 @@ namespace spdlog
 {
 namespace details
 {
-template <class Mutex> class registry_t
+template <class Mutex>
+class registry_t
 {
 public:
+    registry_t<Mutex>(const registry_t<Mutex>&) = delete;
+    registry_t<Mutex>& operator=(const registry_t<Mutex>&) = delete;
 
     void register_logger(std::shared_ptr<logger> logger)
     {
@@ -37,7 +40,6 @@ public:
         throw_if_exists(logger_name);
         _loggers[logger_name] = logger;
     }
-
 
     std::shared_ptr<logger> get(const std::string& logger_name)
     {
@@ -111,6 +113,7 @@ public:
         std::lock_guard<Mutex> lock(_mutex);
         _loggers.clear();
     }
+
     std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks)
     {
         return create(logger_name, sinks.begin(), sinks.end());
@@ -195,8 +198,6 @@ public:
 
 private:
     registry_t<Mutex>() = default;
-    registry_t<Mutex>(const registry_t<Mutex>&) = delete;
-    registry_t<Mutex>& operator=(const registry_t<Mutex>&) = delete;
 
     void throw_if_exists(const std::string &logger_name)
     {

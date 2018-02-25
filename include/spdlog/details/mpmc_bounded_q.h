@@ -53,13 +53,13 @@ namespace spdlog
 namespace details
 {
 
-template<typename T>
+template <typename T>
 class mpmc_bounded_queue
 {
 public:
-
     using item_type = T;
-    mpmc_bounded_queue(size_t buffer_size)
+
+    explicit mpmc_bounded_queue(size_t buffer_size)
         :max_size_(buffer_size),
          buffer_(new cell_t[buffer_size]),
          buffer_mask_(buffer_size - 1)
@@ -79,6 +79,8 @@ public:
         delete[] buffer_;
     }
 
+    mpmc_bounded_queue(mpmc_bounded_queue const&) = delete;
+    void operator=(mpmc_bounded_queue const&) = delete;
 
     bool enqueue(T&& data)
     {
@@ -167,9 +169,6 @@ private:
     cacheline_pad_t         pad2_;
     std::atomic<size_t>     dequeue_pos_;
     cacheline_pad_t         pad3_;
-
-    mpmc_bounded_queue(mpmc_bounded_queue const&) = delete;
-    void operator= (mpmc_bounded_queue const&) = delete;
 };
 
 } // ns details

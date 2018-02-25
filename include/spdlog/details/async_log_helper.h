@@ -67,7 +67,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
                     msg_id(other.msg_id)
         {}
 
-        async_msg(async_msg_type m_type):
+        explicit async_msg(async_msg_type m_type):
             level(level::info),
             thread_id(0),
             msg_type(m_type),
@@ -91,7 +91,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
         async_msg& operator=(const async_msg& other) = delete;
 
         // construct from log_msg
-        async_msg(const details::log_msg& m):
+        explicit async_msg(const details::log_msg& m):
             level(m.level),
             time(m.time),
             thread_id(m.thread_id),

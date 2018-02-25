@@ -25,7 +25,7 @@ namespace spdlog
 class logger
 {
 public:
-    logger(const std::string& logger_name, sink_ptr single_sink);
+    logger(const std::string& name, sink_ptr single_sink);
     logger(const std::string& name, sinks_init_list);
     template<class It>
     logger(const std::string& name, const It& begin, const It& end);

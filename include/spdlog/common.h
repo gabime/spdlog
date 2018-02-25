@@ -106,7 +106,6 @@ using level_hasher = std::hash<int>;
 
 } //level
 
-
 //
 // Async overflow policy - block by default.
 //
@@ -139,12 +138,14 @@ std::string errno_str(int err_num);
 class spdlog_ex : public std::exception
 {
 public:
-    spdlog_ex(const std::string& msg):_msg(msg)
+    explicit spdlog_ex(std::string msg) : _msg(std::move(msg))
     {}
+
     spdlog_ex(const std::string& msg, int last_errno)
     {
         _msg = msg + ": " + details::os::errno_str(last_errno);
     }
+
     const char* what() const SPDLOG_NOEXCEPT override
     {
         return _msg.c_str();
@@ -162,6 +163,5 @@ using filename_t = std::wstring;
 #else
 using filename_t = std::string;
 #endif
-
 
 } //spdlog
