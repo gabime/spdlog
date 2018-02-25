@@ -81,10 +81,10 @@ inline std::tm localtime(const std::time_t &time_tt)
 {
 
 #ifdef _WIN32
-    std::tm tm{};
+    std::tm tm {};
     localtime_s(&tm, &time_tt);
 #else
-    std::tm tm{};
+    std::tm tm {};
     localtime_r(&time_tt, &tm);
 #endif
     return tm;
@@ -100,10 +100,10 @@ inline std::tm gmtime(const std::time_t &time_tt)
 {
 
 #ifdef _WIN32
-    std::tm tm{};
+    std::tm tm {};
     gmtime_s(&tm, &time_tt);
 #else
-    std::tm tm{};
+    std::tm tm {};
     gmtime_r(&time_tt, &tm);
 #endif
     return tm;
@@ -219,7 +219,7 @@ inline bool file_exists(const filename_t& filename)
 #endif
     return (attribs != INVALID_FILE_ATTRIBUTES && !(attribs & FILE_ATTRIBUTE_DIRECTORY));
 #else //common linux/unix all have the stat system call
-    struct stat buffer{};
+    struct stat buffer {};
     return (stat(filename.c_str(), &buffer) == 0);
 #endif
 }
@@ -249,11 +249,11 @@ inline size_t filesize(FILE *f)
     int fd = fileno(f);
     //64 bits(but not in osx or cygwin, where fstat64 is deprecated)
 #if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__)) && !defined(__CYGWIN__)
-    struct stat64 st{};
+    struct stat64 st {};
     if (fstat64(fd, &st) == 0)
         return static_cast<size_t>(st.st_size);
 #else // unix 32 bits or cygwin
-    struct stat st{};
+    struct stat st {};
     if (fstat(fd, &st) == 0)
         return static_cast<size_t>(st.st_size);
 #endif

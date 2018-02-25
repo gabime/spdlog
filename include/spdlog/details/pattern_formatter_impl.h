@@ -648,7 +648,8 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 
 inline std::tm spdlog::pattern_formatter::get_time(details::log_msg& msg)
 {
-    if (_pattern_time == pattern_time_type::local) {
+    if (_pattern_time == pattern_time_type::local)
+    {
         return details::os::localtime(log_clock::to_time_t(msg.time));
     }
     return details::os::gmtime(log_clock::to_time_t(msg.time));

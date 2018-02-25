@@ -90,7 +90,8 @@ public:
 
     size_t size() const
     {
-        if (_fd == nullptr) {
+        if (_fd == nullptr)
+        {
             throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
         }
         return os::filesize(_fd);
