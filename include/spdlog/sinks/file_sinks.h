@@ -71,9 +71,7 @@ public:
                        std::size_t max_size, std::size_t max_files) :
         _base_filename(std::move(base_filename)),
         _max_size(max_size),
-        _max_files(max_files),
-        _current_size(0),
-        _file_helper()
+        _max_files(max_files)
     {
         _file_helper.open(calc_filename(_base_filename, 0));
         _current_size = _file_helper.size(); //expensive. called only once

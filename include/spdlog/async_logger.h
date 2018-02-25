@@ -44,7 +44,7 @@ public:
                  const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
                  const std::function<void()>& worker_teardown_cb = nullptr);
 
-    async_logger(const std::string& logger_name,
+    async_logger(const std::string& name,
                  sinks_init_list sinks,
                  size_t queue_size,
                  const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
@@ -52,7 +52,7 @@ public:
                  const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
                  const std::function<void()>& worker_teardown_cb = nullptr);
 
-    async_logger(const std::string& logger_name,
+    async_logger(const std::string& name,
                  sink_ptr single_sink,
                  size_t queue_size,
                  const async_overflow_policy overflow_policy =  async_overflow_policy::block_retry,
