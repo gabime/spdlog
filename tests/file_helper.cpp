@@ -3,7 +3,8 @@
 */
 #include "includes.h"
 
-using namespace spdlog::details;
+using spdlog::details::log_msg;
+using spdlog::details::file_helper;
 
 static const std::string target_filename = "logs/file_helper_test.txt";
 
@@ -15,7 +16,6 @@ static void write_with_helper(file_helper &helper, size_t howmany)
     helper.flush();
 }
 
-
 TEST_CASE("file_helper_filename", "[file_helper::filename()]]")
 {
     prepare_logdir();
@@ -24,8 +24,6 @@ TEST_CASE("file_helper_filename", "[file_helper::filename()]]")
     helper.open(target_filename);
     REQUIRE(helper.filename() == target_filename);
 }
-
-
 
 TEST_CASE("file_helper_size", "[file_helper::size()]]")
 {
@@ -39,7 +37,6 @@ TEST_CASE("file_helper_size", "[file_helper::size()]]")
     }
     REQUIRE(get_filesize(target_filename) == expected_size);
 }
-
 
 TEST_CASE("file_helper_exists", "[file_helper::file_exists()]]")
 {
@@ -73,8 +70,6 @@ TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]]")
     REQUIRE(helper.size() == expected_size);
 }
 
-
-
 static void test_split_ext(const char* fname, const char* expect_base, const char* expect_ext)
 {
     spdlog::filename_t filename(fname);
@@ -90,7 +85,6 @@ static void test_split_ext(const char* fname, const char* expect_base, const cha
     REQUIRE(basename == expected_base);
     REQUIRE(ext == expected_ext);
 }
-
 
 TEST_CASE("file_helper_split_by_extenstion", "[file_helper::split_by_extenstion()]]")
 {
@@ -113,6 +107,3 @@ TEST_CASE("file_helper_split_by_extenstion", "[file_helper::split_by_extenstion(
     test_split_ext(".", ".", "");
     test_split_ext("..txt", ".", ".txt");
 }
-
-
-

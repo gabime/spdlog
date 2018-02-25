@@ -317,9 +317,9 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
         }
     };
 
-    long int offset_seconds = helper::calculate_gmt_offset(tm);
+    auto offset_seconds = helper::calculate_gmt_offset(tm);
 #else
-    long int offset_seconds = tm.tm_gmtoff;
+    auto offset_seconds = tm.tm_gmtoff;
 #endif
 
     return static_cast<int>(offset_seconds / 60);

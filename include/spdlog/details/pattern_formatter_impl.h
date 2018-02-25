@@ -34,8 +34,6 @@ public:
 ///////////////////////////////////////////////////////////////////////
 // name & level pattern appenders
 ///////////////////////////////////////////////////////////////////////
-namespace
-{
 class name_formatter : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
@@ -43,7 +41,6 @@ class name_formatter : public flag_formatter
         msg.formatted << *msg.logger_name;
     }
 };
-}
 
 // log level appender
 class level_formatter : public flag_formatter
@@ -344,7 +341,6 @@ private:
 
     int get_cached_offset(const log_msg& msg, const std::tm& tm_time)
     {
-        using namespace std::chrono;
         std::lock_guard<std::mutex> l(_mutex);
         if (msg.time - _last_update >= cache_refresh)
         {
