@@ -46,7 +46,7 @@ void flush_on(level::level_enum log_level);
 //
 // Set global error handler
 //
-void set_error_handler(log_err_handler);
+void set_error_handler(log_err_handler handler);
 
 //
 // Turn on async mode (off by default) and set the queue size for each async_logger.
@@ -129,7 +129,7 @@ std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_b
 // Example:
 // spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename");
 template <typename Sink, typename... Args>
-std::shared_ptr<spdlog::logger> create(const std::string& logger_name, Args...);
+std::shared_ptr<spdlog::logger> create(const std::string& logger_name, Args... args);
 
 // Create and register an async logger with a single sink
 std::shared_ptr<logger> create_async(const std::string& logger_name, const sink_ptr& sink, size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);

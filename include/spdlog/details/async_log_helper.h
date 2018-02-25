@@ -139,7 +139,7 @@ public:
     async_log_helper(const async_log_helper&) = delete;
     async_log_helper& operator=(const async_log_helper&) = delete;
 
-    void set_formatter(formatter_ptr);
+    void set_formatter(formatter_ptr msg_formatter);
 
     void flush(bool wait_for_q);
 
