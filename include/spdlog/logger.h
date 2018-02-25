@@ -28,12 +28,12 @@ public:
     logger(const std::string& name, sink_ptr single_sink);
     logger(const std::string& name, sinks_init_list);
     template<class It>
-    logger(const std::string& name, const It& begin, const It& end);
+    logger(std::string name, const It& begin, const It& end);
 
     virtual ~logger();
+
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
-
 
     template <typename... Args> void log(level::level_enum lvl, const char* fmt, const Args&... args);
     template <typename... Args> void log(level::level_enum lvl, const char* msg);

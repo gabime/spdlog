@@ -43,6 +43,7 @@ class async_log_helper
         flush,
         terminate
     };
+
     struct async_msg
     {
         std::string logger_name;
@@ -56,22 +57,21 @@ class async_log_helper
         async_msg() = default;
         ~async_msg() = default;
 
-
-async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
-        logger_name(std::move(other.logger_name)),
-                    level(std::move(other.level)),
-                    time(std::move(other.time)),
-                    thread_id(other.thread_id),
-                    txt(std::move(other.txt)),
-                    msg_type(std::move(other.msg_type)),
-                    msg_id(other.msg_id)
-        {}
-
-        explicit async_msg(async_msg_type m_type):
+        explicit async_msg(async_msg_type m_type) :
             level(level::info),
             thread_id(0),
             msg_type(m_type),
             msg_id(0)
+        {}
+
+        async_msg(async_msg&& other) SPDLOG_NOEXCEPT :
+            logger_name(std::move(other.logger_name)),
+            level(std::move(other.level)),
+            time(std::move(other.time)),
+            thread_id(other.thread_id),
+            txt(std::move(other.txt)),
+            msg_type(std::move(other.msg_type)),
+            msg_id(other.msg_id)
         {}
 
         async_msg& operator=(async_msg&& other) SPDLOG_NOEXCEPT
@@ -104,7 +104,6 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
 #endif
         }
 
-
         // copy into log_msg
         void fill_log_msg(log_msg &msg)
         {
@@ -118,21 +117,19 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
     };
 
 public:
-
     using item_type = async_msg;
     using q_type = details::mpmc_bounded_queue<item_type>;
 
     using clock = std::chrono::steady_clock;
 
-
     async_log_helper(formatter_ptr formatter,
-                     const std::vector<sink_ptr>& sinks,
+                     std::vector<sink_ptr> sinks,
                      size_t queue_size,
                      const log_err_handler err_handler,
                      const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-                     const std::function<void()>& worker_warmup_cb = nullptr,
+                     std::function<void()> worker_warmup_cb = nullptr,
                      const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
-                     const std::function<void()>& worker_teardown_cb = nullptr);
+                     std::function<void()> worker_teardown_cb = nullptr);
 
     void log(const details::log_msg& msg);
 
@@ -200,23 +197,23 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 inline spdlog::details::async_log_helper::async_log_helper(
     formatter_ptr formatter,
-    const std::vector<sink_ptr>& sinks,
+    std::vector<sink_ptr> sinks,
     size_t queue_size,
     log_err_handler err_handler,
     const async_overflow_policy overflow_policy,
-    const std::function<void()>& worker_warmup_cb,
+    std::function<void()> worker_warmup_cb,
     const std::chrono::milliseconds& flush_interval_ms,
-    const std::function<void()>& worker_teardown_cb):
+    std::function<void()> worker_teardown_cb):
     _formatter(std::move(formatter)),
-    _sinks(sinks),
+    _sinks(std::move(sinks)),
     _q(queue_size),
     _err_handler(std::move(err_handler)),
     _flush_requested(false),
     _terminate_requested(false),
     _overflow_policy(overflow_policy),
-    _worker_warmup_cb(worker_warmup_cb),
+    _worker_warmup_cb(std::move(worker_warmup_cb)),
     _flush_interval_ms(flush_interval_ms),
-    _worker_teardown_cb(worker_teardown_cb)
+    _worker_teardown_cb(std::move(worker_teardown_cb))
 {
     _worker_thread = std::thread(&async_log_helper::worker_loop, this);
 }

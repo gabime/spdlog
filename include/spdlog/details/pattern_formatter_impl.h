@@ -476,8 +476,9 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 ///////////////////////////////////////////////////////////////////////////////
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern, pattern_time_type pattern_time, const std::string& eol)
-    : _eol(eol), _pattern_time(pattern_time)
+inline spdlog::pattern_formatter::pattern_formatter(const std::string& pattern, pattern_time_type pattern_time, std::string eol) :
+    _eol(std::move(eol)),
+    _pattern_time(pattern_time)
 {
     compile_pattern(pattern);
 }

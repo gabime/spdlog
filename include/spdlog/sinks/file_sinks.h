@@ -25,7 +25,7 @@ namespace sinks
 /*
  * Trivial file sink with single file as target
  */
-template<class Mutex>
+template <class Mutex>
 class simple_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
@@ -63,13 +63,13 @@ using simple_file_sink_st = simple_file_sink<details::null_mutex>;
 /*
  * Rotating file sink based on size
  */
-template<class Mutex>
-class rotating_file_sink SPDLOG_FINAL : public base_sink < Mutex >
+template <class Mutex>
+class rotating_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
-    rotating_file_sink(const filename_t &base_filename,
+    rotating_file_sink(filename_t base_filename,
                        std::size_t max_size, std::size_t max_files) :
-        _base_filename(base_filename),
+        _base_filename(std::move(base_filename)),
         _max_size(max_size),
         _max_files(max_files),
         _current_size(0),
@@ -197,9 +197,10 @@ class daily_file_sink SPDLOG_FINAL :public base_sink < Mutex >
 public:
     //create daily file sink which rotates on given time
     daily_file_sink(
-        const filename_t& base_filename,
+        filename_t base_filename,
         int rotation_hour,
-        int rotation_minute) : _base_filename(base_filename),
+        int rotation_minute) :
+        _base_filename(std::move(base_filename)),
         _rotation_h(rotation_hour),
         _rotation_m(rotation_minute)
     {
