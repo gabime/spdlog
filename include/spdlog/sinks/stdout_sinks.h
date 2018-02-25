@@ -21,14 +21,16 @@ template <class Mutex>
 class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
     using MyType = stdout_sink<Mutex>;
+
 public:
-    stdout_sink()
-    {}
+    explicit stdout_sink() = default;
+
     static std::shared_ptr<MyType> instance()
     {
         static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
         return instance;
     }
+
 protected:
     void _sink_it(const details::log_msg& msg) override
     {
@@ -49,8 +51,9 @@ template <class Mutex>
 class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
     using MyType = stderr_sink<Mutex>;
+
 public:
-    explicit stderr_sink() {}
+    explicit stderr_sink() = default;
 
     static std::shared_ptr<MyType> instance()
     {

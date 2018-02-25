@@ -27,8 +27,7 @@ namespace details
 class flag_formatter
 {
 public:
-    virtual ~flag_formatter()
-    {}
+    virtual ~flag_formatter() = default;
     virtual void format(details::log_msg& msg, const std::tm& tm_time) = 0;
 };
 
@@ -118,7 +117,6 @@ class B_formatter:public flag_formatter
     }
 };
 
-
 //write 2 ints separated by sep with padding of 2
 static fmt::MemoryWriter& pad_n_join(fmt::MemoryWriter& w, int v1, int v2, char sep)
 {
@@ -133,9 +131,8 @@ static fmt::MemoryWriter& pad_n_join(fmt::MemoryWriter& w, int v1, int v2, int v
     return w;
 }
 
-
 //Date and time representation (Thu Aug 23 15:35:46 2014)
-class c_formatter SPDLOG_FINAL:public flag_formatter
+class c_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -144,9 +141,8 @@ class c_formatter SPDLOG_FINAL:public flag_formatter
     }
 };
 
-
 // year - 2 digit
-class C_formatter SPDLOG_FINAL:public flag_formatter
+class C_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -154,10 +150,8 @@ class C_formatter SPDLOG_FINAL:public flag_formatter
     }
 };
 
-
-
 // Short MM/DD/YY date, equivalent to %m/%d/%y 08/23/01
-class D_formatter SPDLOG_FINAL:public flag_formatter
+class D_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -165,9 +159,8 @@ class D_formatter SPDLOG_FINAL:public flag_formatter
     }
 };
 
-
 // year - 4 digit
-class Y_formatter SPDLOG_FINAL:public flag_formatter
+class Y_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -176,7 +169,7 @@ class Y_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // month 1-12
-class m_formatter SPDLOG_FINAL:public flag_formatter
+class m_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -185,7 +178,7 @@ class m_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // day of month 1-31
-class d_formatter SPDLOG_FINAL:public flag_formatter
+class d_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -194,7 +187,7 @@ class d_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // hours in 24 format  0-23
-class H_formatter SPDLOG_FINAL:public flag_formatter
+class H_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -203,7 +196,7 @@ class H_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // hours in 12 format  1-12
-class I_formatter SPDLOG_FINAL:public flag_formatter
+class I_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -212,7 +205,7 @@ class I_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // minutes 0-59
-class M_formatter SPDLOG_FINAL:public flag_formatter
+class M_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -221,7 +214,7 @@ class M_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // seconds 0-59
-class S_formatter SPDLOG_FINAL:public flag_formatter
+class S_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -230,7 +223,7 @@ class S_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // milliseconds
-class e_formatter SPDLOG_FINAL:public flag_formatter
+class e_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -241,7 +234,7 @@ class e_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // microseconds
-class f_formatter SPDLOG_FINAL:public flag_formatter
+class f_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -252,7 +245,7 @@ class f_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // nanoseconds
-class F_formatter SPDLOG_FINAL:public flag_formatter
+class F_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -262,7 +255,7 @@ class F_formatter SPDLOG_FINAL:public flag_formatter
     }
 };
 
-class E_formatter SPDLOG_FINAL:public flag_formatter
+class E_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -273,7 +266,7 @@ class E_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // AM/PM
-class p_formatter SPDLOG_FINAL:public flag_formatter
+class p_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -281,9 +274,8 @@ class p_formatter SPDLOG_FINAL:public flag_formatter
     }
 };
 
-
 // 12 hour clock 02:55:02 pm
-class r_formatter SPDLOG_FINAL:public flag_formatter
+class r_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -292,7 +284,7 @@ class r_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // 24-hour HH:MM time, equivalent to %H:%M
-class R_formatter SPDLOG_FINAL:public flag_formatter
+class R_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -301,7 +293,7 @@ class R_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // ISO 8601 time format (HH:MM:SS), equivalent to %H:%M:%S
-class T_formatter SPDLOG_FINAL:public flag_formatter
+class T_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -315,7 +307,7 @@ class z_formatter SPDLOG_FINAL : public flag_formatter
 public:
     const std::chrono::seconds cache_refresh = std::chrono::seconds(5);
 
-    z_formatter() {}
+    z_formatter() = default;
     z_formatter(const z_formatter&) = delete;
     z_formatter& operator=(const z_formatter&) = delete;
 
@@ -363,10 +355,8 @@ private:
     }
 };
 
-
-
 // Thread id
-class t_formatter SPDLOG_FINAL:public flag_formatter
+class t_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -375,7 +365,7 @@ class t_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // Current pid
-class pid_formatter SPDLOG_FINAL:public flag_formatter
+class pid_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -384,7 +374,7 @@ class pid_formatter SPDLOG_FINAL:public flag_formatter
 };
 
 // message counter formatter
-class i_formatter SPDLOG_FINAL :public flag_formatter
+class i_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -392,7 +382,7 @@ class i_formatter SPDLOG_FINAL :public flag_formatter
     }
 };
 
-class v_formatter SPDLOG_FINAL:public flag_formatter
+class v_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm&) override
     {
@@ -400,7 +390,7 @@ class v_formatter SPDLOG_FINAL:public flag_formatter
     }
 };
 
-class ch_formatter SPDLOG_FINAL:public flag_formatter
+class ch_formatter SPDLOG_FINAL : public flag_formatter
 {
 public:
     explicit ch_formatter(char ch): _ch(ch)
@@ -415,11 +405,11 @@ private:
 
 
 //aggregate user chars to display as is
-class aggregate_formatter SPDLOG_FINAL:public flag_formatter
+class aggregate_formatter SPDLOG_FINAL : public flag_formatter
 {
 public:
-    aggregate_formatter()
-    {}
+    aggregate_formatter() = default;
+
     void add_ch(char ch)
     {
         _str += ch;
@@ -434,7 +424,7 @@ private:
 
 // Full info formatter
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
-class full_formatter SPDLOG_FINAL:public flag_formatter
+class full_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
