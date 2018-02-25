@@ -238,7 +238,7 @@ private:
         if (rotation_time > now) {
             return rotation_time;
         }
-        return std::chrono::system_clock::time_point(rotation_time + std::chrono::hours(24));
+        return{ rotation_time + std::chrono::hours(24) };
     }
 
     filename_t _base_filename;
