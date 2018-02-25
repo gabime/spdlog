@@ -213,7 +213,7 @@ private:
     size_t _async_q_size = 0;
     async_overflow_policy _overflow_policy = async_overflow_policy::block_retry;
     std::function<void()> _worker_warmup_cb = nullptr;
-    std::chrono::milliseconds _flush_interval_ms;
+    std::chrono::milliseconds _flush_interval_ms{ 0 };
     std::function<void()> _worker_teardown_cb = nullptr;
 };
 
