@@ -117,10 +117,10 @@ using level_hasher = std::hash<int>;
 
 #ifdef SPDLOG_ENABLE_LOGMSG_METADATA
 #if __cplusplus >= 201701L
-using attr_type = std::variant<int, float, bool, std::string>;
+using attr_type = std::variant<int, double, float, bool, std::string>;
 namespace attrval = std;
 #else
-using attr_type = mpark::variant<int, float, bool, std::string>;
+using attr_type = mpark::variant<int, double, float, bool, std::string>;
 namespace attrval = mpark;
 #endif // __cplusplus >= 201701L
 using attrmap_type = std::map<std::string, attr_type>;

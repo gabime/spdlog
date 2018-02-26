@@ -87,6 +87,16 @@ public:
     template <typename T> void error(const T&);
     template <typename T> void critical(const T&);
 
+#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
+    template <typename T> void log(level::level_enum lvl, attrmap_type& ma, const T&);
+    template <typename T> void trace(attrmap_type& ma, const T&);
+    template <typename T> void debug(attrmap_type& ma, const T&);
+    template <typename T> void info(attrmap_type& ma, const T&);
+    template <typename T> void warn(attrmap_type& ma, const T&);
+    template <typename T> void error(attrmap_type& ma, const T&);
+    template <typename T> void critical(attrmap_type& ma, const T&);
+#endif // SPDLOG_ENABLE_LOGMSG_METADATA
+
     bool should_log(level::level_enum) const;
     void set_level(level::level_enum);
     level::level_enum level() const;
