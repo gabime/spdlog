@@ -62,12 +62,13 @@ static std::string log_to_str(spdlog::attrmap_type& attrs, const std::string& ms
 TEST_CASE("log attr tests", "[log_attrs]")
 {
     SECTION("attributes test") {
-        // supported types: int, double, float, bool, std::string
+        // see "common.h" for supported types
         spdlog::attrmap_type attrs {
-            {"param_int", 42},
-            {"param_double", 42.5},
-            {"param_float", 42.5},
             {"param_bool", true},
+            {"param_int", 42},
+            {"param_long", 42l},
+            {"param_float", 42.5f},
+            {"param_double", 42.5},
             {"param_string", "spdlog feature test"},
         };
         REQUIRE(log_to_str(attrs, "attributes enabled") == "attributes enabled");
