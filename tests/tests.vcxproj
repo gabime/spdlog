@@ -134,6 +134,7 @@
     <ClCompile Include="registry.cpp" />
     <ClCompile Include="test_macros.cpp" />
     <ClCompile Include="test_pattern_formatter.cpp" />
+    <ClCompile Include="test_log_attrs.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>

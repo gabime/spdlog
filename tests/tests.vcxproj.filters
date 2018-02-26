@@ -39,6 +39,9 @@
     <ClCompile Include="test_pattern_formatter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="test_log_attrs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="test_misc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
