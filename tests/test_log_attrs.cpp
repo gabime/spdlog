@@ -17,28 +17,33 @@ void NullSink::log(const spdlog::details::log_msg& msg)
     //std::cout << msg.formatted.str() << std::endl;
     {
         auto iter = msg.attrs.find("param_int");
-        if (iter != msg.attrs.end())
-            REQUIRE( 42 == spdlog::attrval::get<int>( iter->second ) );
+        if (iter == msg.attrs.end())
+            FAIL("log message missing 'param_int' attribute");
+        REQUIRE( 42 == spdlog::attrval::get<int>( iter->second ) );
     }
     {
         auto iter = msg.attrs.find("param_float");
-        if (iter != msg.attrs.end())
-            REQUIRE( 42.5 == spdlog::attrval::get<float>( iter->second ) );
+        if (iter == msg.attrs.end())
+            FAIL("log message missing 'param_float' attribute");
+        REQUIRE( 42.5 == spdlog::attrval::get<float>( iter->second ) );
     }
     {
         auto iter = msg.attrs.find("param_double");
-        if (iter != msg.attrs.end())
-            REQUIRE( 42.5 == spdlog::attrval::get<double>( iter->second ) );
+        if (iter == msg.attrs.end())
+            FAIL("log message missing 'param_double' attribute");
+        REQUIRE( 42.5 == spdlog::attrval::get<double>( iter->second ) );
     }
     {
         auto iter = msg.attrs.find("param_bool");
-        if (iter != msg.attrs.end())
-            REQUIRE( spdlog::attrval::get<double>( iter->second ) );
+        if (iter == msg.attrs.end())
+            FAIL("log message missing 'param_bool' attribute");
+        REQUIRE( spdlog::attrval::get<double>( iter->second ) );
     }
     {
         auto iter = msg.attrs.find("param_string");
-        if (iter != msg.attrs.end())
-            REQUIRE("spdlog feature test" == spdlog::attrval::get<std::string>( iter->second ) );
+        if (iter == msg.attrs.end())
+            FAIL("log message missing 'param_string' attribute");
+        REQUIRE("spdlog feature test" == spdlog::attrval::get<std::string>( iter->second ) );
     }
 }
 
