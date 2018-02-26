@@ -70,7 +70,7 @@ TEST_CASE("log attr tests", "[log_attrs]")
         auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
         spdlog::logger oss_logger("attr_tester", oss_sink);
         oss_logger.set_level(spdlog::level::info);
-        auto formatter = std::make_shared<spdlog::pattern_formatter>("%v", spdlog::pattern_time_type::local, "");
+        auto formatter = std::make_shared<spdlog::pattern_formatter>("%v");
         oss_logger.set_formatter(formatter);
 
         // see NullSink::log above for attribute value checks
