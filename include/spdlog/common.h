@@ -17,14 +17,14 @@
 #include <exception>
 #include <functional>
 
-#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
+#ifdef SPDLOG_ENABLE_LOG_ATTRIBUTES
 #include <map>
 #if __cplusplus >= 201701L
 #include <variant>
 #else
 #include "variant.hpp"
 #endif // __cplusplus >= 201701L
-#endif // SPDLOG_ENABLE_LOGMSG_METADATA
+#endif // SPDLOG_ENABLE_LOG_ATTRIBUTES
 
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 #include <codecvt>
@@ -172,7 +172,7 @@ using filename_t = std::string;
 #endif
 
 
-#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
+#ifdef SPDLOG_ENABLE_LOG_ATTRIBUTES
 // supported types:
 // standard fundamental types http://en.cppreference.com/w/cpp/language/types
 // spdlog types (filename_t, level_t)
@@ -184,6 +184,6 @@ using attr_type = mpark::variant<bool, int, long, float, double, std::string>;
 namespace attrval = mpark;
 #endif // __cplusplus >= 201701L
 using attrmap_type = std::map<std::string, attr_type>;
-#endif // SPDLOG_ENABLE_LOGMSG_METADATA
+#endif // SPDLOG_ENABLE_LOG_ATTRIBUTES
 
 } //spdlog

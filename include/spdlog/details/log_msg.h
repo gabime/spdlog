@@ -33,7 +33,7 @@ struct log_msg
 #endif
     }
 
-#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
+#ifdef SPDLOG_ENABLE_LOG_ATTRIBUTES
     log_msg(const std::string *loggers_name, level::level_enum lvl, attrmap_type&& mamap) :
         logger_name(loggers_name),
         level(lvl),
@@ -48,7 +48,7 @@ struct log_msg
         thread_id = os::thread_id();
 #endif // SPDLOG_NO_THREAD_ID
     }
-#endif // SPDLOG_ENABLE_LOGMSG_METADATA
+#endif // SPDLOG_ENABLE_LOG_ATTRIBUTES
 
     log_msg(const log_msg& other)  = delete;
     log_msg& operator=(log_msg&& other) = delete;
@@ -62,7 +62,7 @@ struct log_msg
     fmt::MemoryWriter raw;
     fmt::MemoryWriter formatted;
     size_t msg_id;
-#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
+#ifdef SPDLOG_ENABLE_LOG_ATTRIBUTES
     attrmap_type attrs;
 #endif
 };

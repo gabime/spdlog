@@ -164,7 +164,7 @@ inline void spdlog::logger::critical(const char* fmt, const Arg1 &arg1, const Ar
     log(level::critical, fmt, arg1, args...);
 }
 
-#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
+#ifdef SPDLOG_ENABLE_LOG_ATTRIBUTES
 
 template<typename T>
 inline void spdlog::logger::log(level::level_enum lvl, attrmap_type& attrs, const T& msg)
@@ -307,7 +307,7 @@ inline void spdlog::logger::critical(attrmap_type& attrs, const T& msg)
     log(level::critical, attrs, msg);
 }
 
-#endif // SPDLOG_ENABLE_LOGMSG_METADATA
+#endif // SPDLOG_ENABLE_LOG_ATTRIBUTES
 
 
 template<typename T>
@@ -406,7 +406,7 @@ inline void spdlog::logger::critical(const wchar_t* fmt, const Args&... args)
     log(level::critical, fmt, args...);
 }
 
-#ifdef SPDLOG_ENABLE_LOGMSG_METADATA
+#ifdef SPDLOG_ENABLE_LOG_ATTRIBUTES
 
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, attrmap_type& attrs, const wchar_t* msg)
@@ -462,7 +462,7 @@ inline void spdlog::logger::critical(attrmap_type& attrs, const wchar_t* fmt, co
     log(level::critical, attrs, fmt, args...);
 }
 
-#endif // SPDLOG_ENABLE_LOGMSG_METADATA
+#endif // SPDLOG_ENABLE_LOG_ATTRIBUTES
 
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 

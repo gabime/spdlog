@@ -1,4 +1,4 @@
-#define SPDLOG_ENABLE_LOGMSG_METADATA 1
+#define SPDLOG_ENABLE_LOG_ATTRIBUTES 1
 
 #include "includes.h"
 
