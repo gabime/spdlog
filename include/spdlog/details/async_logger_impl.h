@@ -17,7 +17,7 @@
 #include <memory>
 
 template<class It>
-inline spdlog::async_logger::async_logger(const std::string& name,
+inline spdlog::async_logger::async_logger(const std::string& logger_name,
         const It& begin,
         const It& end,
         size_t queue_size,
@@ -25,28 +25,28 @@ inline spdlog::async_logger::async_logger(const std::string& name,
         const std::function<void()>& worker_warmup_cb,
         const std::chrono::milliseconds& flush_interval_ms,
         const std::function<void()>& worker_teardown_cb) :
-    logger(name, begin, end),
+    logger(logger_name, begin, end),
     _async_log_helper(new details::async_log_helper(_formatter, _sinks, queue_size, _err_handler, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb))
 {
 }
 
-inline spdlog::async_logger::async_logger(const std::string& name,
-        sinks_init_list sinks,
+inline spdlog::async_logger::async_logger(const std::string& logger_name,
+        sinks_init_list sinks_list,
         size_t queue_size,
         const async_overflow_policy overflow_policy,
         const std::function<void()>& worker_warmup_cb,
         const std::chrono::milliseconds& flush_interval_ms,
         const std::function<void()>& worker_teardown_cb) :
-    async_logger(name, sinks.begin(), sinks.end(), queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb) {}
+    async_logger(logger_name, sinks_list.begin(), sinks_list.end(), queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb) {}
 
-inline spdlog::async_logger::async_logger(const std::string& name,
+inline spdlog::async_logger::async_logger(const std::string& logger_name,
         sink_ptr single_sink,
         size_t queue_size,
         const async_overflow_policy overflow_policy,
         const std::function<void()>& worker_warmup_cb,
         const std::chrono::milliseconds& flush_interval_ms,
         const std::function<void()>& worker_teardown_cb) :
-    async_logger(name,
+    async_logger(logger_name,
 {
     std::move(single_sink)
 }, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb) {}
