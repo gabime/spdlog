@@ -31,7 +31,7 @@ namespace details
 class async_log_helper;
 }
 
-class async_logger SPDLOG_FINAL :public logger
+class async_logger SPDLOG_FINAL : public logger
 {
 public:
     template<class It>
@@ -39,12 +39,12 @@ public:
                  const It& begin,
                  const It& end,
                  size_t queue_size,
-                 const async_overflow_policy overflow_policy =  async_overflow_policy::block_retry,
+                 const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
                  const std::function<void()>& worker_warmup_cb = nullptr,
                  const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
                  const std::function<void()>& worker_teardown_cb = nullptr);
 
-    async_logger(const std::string& logger_name,
+    async_logger(const std::string& name,
                  sinks_init_list sinks,
                  size_t queue_size,
                  const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
@@ -52,10 +52,10 @@ public:
                  const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
                  const std::function<void()>& worker_teardown_cb = nullptr);
 
-    async_logger(const std::string& logger_name,
+    async_logger(const std::string& name,
                  sink_ptr single_sink,
                  size_t queue_size,
-                 const async_overflow_policy overflow_policy =  async_overflow_policy::block_retry,
+                 const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
                  const std::function<void()>& worker_warmup_cb = nullptr,
                  const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
                  const std::function<void()>& worker_teardown_cb = nullptr);
@@ -65,8 +65,8 @@ public:
     void flush() override;
 
     // Error handler
-    virtual void set_error_handler(log_err_handler) override;
-    virtual log_err_handler error_handler() override;
+    void set_error_handler(log_err_handler) override;
+    log_err_handler error_handler() override;
 
 protected:
     void _sink_it(details::log_msg& msg) override;
@@ -77,6 +77,5 @@ private:
     std::unique_ptr<details::async_log_helper> _async_log_helper;
 };
 }
-
 
 #include "details/async_logger_impl.h"

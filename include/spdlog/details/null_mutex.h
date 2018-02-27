@@ -27,7 +27,7 @@ struct null_atomic_int
     int value;
     null_atomic_int() = default;
 
-    null_atomic_int(int val):value(val)
+    explicit null_atomic_int(int val) : value(val)
     {}
 
     int load(std::memory_order) const

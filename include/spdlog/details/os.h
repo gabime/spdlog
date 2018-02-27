@@ -81,10 +81,10 @@ inline std::tm localtime(const std::time_t &time_tt)
 {
 
 #ifdef _WIN32
-    std::tm tm;
+    std::tm tm {};
     localtime_s(&tm, &time_tt);
 #else
-    std::tm tm;
+    std::tm tm {};
     localtime_r(&time_tt, &tm);
 #endif
     return tm;
@@ -96,15 +96,14 @@ inline std::tm localtime()
     return localtime(now_t);
 }
 
-
 inline std::tm gmtime(const std::time_t &time_tt)
 {
 
 #ifdef _WIN32
-    std::tm tm;
+    std::tm tm {};
     gmtime_s(&tm, &time_tt);
 #else
-    std::tm tm;
+    std::tm tm {};
     gmtime_r(&time_tt, &tm);
 #endif
     return tm;
@@ -170,7 +169,7 @@ inline void prevent_child_fd(FILE *f)
 
 
 //fopen_s on non windows for writing
-inline int fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode)
+inline bool fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode)
 {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES
@@ -220,7 +219,7 @@ inline bool file_exists(const filename_t& filename)
 #endif
     return (attribs != INVALID_FILE_ATTRIBUTES && !(attribs & FILE_ATTRIBUTE_DIRECTORY));
 #else //common linux/unix all have the stat system call
-    struct stat buffer;
+    struct stat buffer {};
     return (stat(filename.c_str(), &buffer) == 0);
 #endif
 }
@@ -250,11 +249,11 @@ inline size_t filesize(FILE *f)
     int fd = fileno(f);
     //64 bits(but not in osx or cygwin, where fstat64 is deprecated)
 #if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__)) && !defined(__CYGWIN__)
-    struct stat64 st;
+    struct stat64 st {};
     if (fstat64(fd, &st) == 0)
         return static_cast<size_t>(st.st_size);
 #else // unix 32 bits or cygwin
-    struct stat st;
+    struct stat st {};
     if (fstat(fd, &st) == 0)
         return static_cast<size_t>(st.st_size);
 #endif
@@ -318,9 +317,9 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
         }
     };
 
-    long int offset_seconds = helper::calculate_gmt_offset(tm);
+    auto offset_seconds = helper::calculate_gmt_offset(tm);
 #else
-    long int offset_seconds = tm.tm_gmtoff;
+    auto offset_seconds = tm.tm_gmtoff;
 #endif
 
     return static_cast<int>(offset_seconds / 60);
@@ -332,12 +331,12 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 inline size_t _thread_id()
 {
 #ifdef _WIN32
-    return  static_cast<size_t>(::GetCurrentThreadId());
+    return static_cast<size_t>(::GetCurrentThreadId());
 #elif __linux__
 # if defined(__ANDROID__) && defined(__ANDROID_API__) && (__ANDROID_API__ < 21)
 #  define SYS_gettid __NR_gettid
 # endif
-    return  static_cast<size_t>(syscall(SYS_gettid));
+    return static_cast<size_t>(syscall(SYS_gettid));
 #elif __FreeBSD__
     long tid;
     thr_self(&tid);
@@ -403,10 +402,7 @@ inline std::string errno_to_string(char buf[256], int res)
     {
         return std::string(buf);
     }
-    else
-    {
-        return "Unknown error";
-    }
+    return "Unknown error";
 }
 
 // Return errno string (thread safe)
@@ -482,9 +478,9 @@ inline bool in_terminal(FILE* file)
 {
 
 #ifdef _WIN32
-    return _isatty(_fileno(file)) ? true : false;
+    return _isatty(_fileno(file)) != 0;
 #else
-    return isatty(fileno(file)) ? true : false;
+    return isatty(fileno(file)) != 0;
 #endif
 }
 } //os

@@ -44,7 +44,8 @@ public:
         //set ident to be program name if empty
         ::openlog(_ident.empty()? nullptr:_ident.c_str(), syslog_option, syslog_facility);
     }
-    ~syslog_sink()
+
+    ~syslog_sink() override
     {
         ::closelog();
     }
