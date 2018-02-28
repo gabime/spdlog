@@ -11,8 +11,8 @@
 #include "sink.h"
 
 #include <algorithm>
-#include <mutex>
 #include <memory>
+#include <mutex>
 #include <vector>
 
 // Distribution sink (mux). Stores a vector of sinks which get called when log is called
@@ -21,50 +21,51 @@ namespace spdlog
 {
 namespace sinks
 {
-template<class Mutex>
-class dist_sink : public base_sink<Mutex>
-{
-public:
-    explicit dist_sink() :_sinks() {}
-    dist_sink(const dist_sink&) = delete;
-    dist_sink& operator=(const dist_sink&) = delete;
-
-protected:
-    std::vector<std::shared_ptr<sink>> _sinks;
-
-    void _sink_it(const details::log_msg& msg) override
+    template <class Mutex>
+    class dist_sink : public base_sink<Mutex>
     {
-        for (auto &sink : _sinks)
+    public:
+        explicit dist_sink()
+            : _sinks()
         {
-            if( sink->should_log( msg.level))
+        }
+        dist_sink(const dist_sink&) = delete;
+        dist_sink& operator=(const dist_sink&) = delete;
+
+    protected:
+        std::vector<std::shared_ptr<sink>> _sinks;
+
+        void _sink_it(const details::log_msg& msg) override
+        {
+            for (auto& sink : _sinks)
             {
-                sink->log(msg);
+                if (sink->should_log(msg.level))
+                {
+                    sink->log(msg);
+                }
             }
         }
-    }
 
-    void _flush() override
-    {
-        for (auto &sink : _sinks)
-            sink->flush();
-    }
+        void _flush() override
+        {
+            for (auto& sink : _sinks) sink->flush();
+        }
 
-public:
-    void add_sink(std::shared_ptr<sink> sink)
-    {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
-        _sinks.push_back(sink);
-    }
+    public:
+        void add_sink(std::shared_ptr<sink> sink)
+        {
+            std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
+            _sinks.push_back(sink);
+        }
 
-    void remove_sink(std::shared_ptr<sink> sink)
-    {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
-        _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
-    }
-};
+        void remove_sink(std::shared_ptr<sink> sink)
+        {
+            std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
+            _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
+        }
+    };
 
-using dist_sink_mt = dist_sink<std::mutex>;
-using dist_sink_st = dist_sink<details::null_mutex>;
-
+    using dist_sink_mt = dist_sink<std::mutex>;
+    using dist_sink_st = dist_sink<details::null_mutex>;
 }
 }

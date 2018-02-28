@@ -13,16 +13,14 @@ namespace spdlog
 {
 namespace sinks
 {
+    /*
+     * Windows debug sink (logging using OutputDebugStringA, synonym for msvc_sink)
+     */
+    template <class Mutex>
+    using windebug_sink = msvc_sink<Mutex>;
 
-/*
-* Windows debug sink (logging using OutputDebugStringA, synonym for msvc_sink)
-*/
-template <class Mutex>
-using windebug_sink = msvc_sink<Mutex>;
-
-using windebug_sink_mt = msvc_sink_mt;
-using windebug_sink_st = msvc_sink_st;
-
+    using windebug_sink_mt = msvc_sink_mt;
+    using windebug_sink_st = msvc_sink_st;
 }
 }
 

@@ -7,24 +7,21 @@
 
 #pragma once
 
-
 #include "common.h"
 #include "logger.h"
 
-#include <memory>
-#include <functional>
 #include <chrono>
+#include <functional>
+#include <memory>
 #include <string>
 
 namespace spdlog
 {
-
 //
 // Return an existing logger or nullptr if a logger with such name doesn't exist.
 // example: spdlog::get("my_logger")->info("hello {}", "world");
 //
 std::shared_ptr<logger> get(const std::string& name);
-
 
 //
 // Set global formatting
@@ -59,35 +56,62 @@ void set_error_handler(log_err_handler handler);
 //    async_overflow_policy::discard_log_msg - never block and discard any new messages when queue overflows.
 //
 // worker_warmup_cb (optional):
-//     callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
+//     callback function that will be called in worker thread upon start (can be used to init stuff like thread
+//     affinity)
 //
 // worker_teardown_cb (optional):
 //     callback function that will be called in worker thread upon exit
 //
-void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);
+void set_async_mode(
+    size_t queue_size,
+    const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
+    const std::function<void()>& worker_warmup_cb = nullptr,
+    const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
+    const std::function<void()>& worker_teardown_cb = nullptr);
 
 // Turn off async mode
 void set_sync_mode();
-
 
 //
 // Create and register multi/single threaded basic file logger.
 // Basic logger simply writes to given file without any limitations or rotations.
 //
-std::shared_ptr<logger> basic_logger_mt(const std::string& logger_name, const filename_t& filename, bool truncate = false);
-std::shared_ptr<logger> basic_logger_st(const std::string& logger_name, const filename_t& filename, bool truncate = false);
+std::shared_ptr<logger> basic_logger_mt(
+    const std::string& logger_name,
+    const filename_t& filename,
+    bool truncate = false);
+std::shared_ptr<logger> basic_logger_st(
+    const std::string& logger_name,
+    const filename_t& filename,
+    bool truncate = false);
 
 //
 // Create and register multi/single threaded rotating file logger
 //
-std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const filename_t& filename, size_t max_file_size, size_t max_files);
-std::shared_ptr<logger> rotating_logger_st(const std::string& logger_name, const filename_t& filename, size_t max_file_size, size_t max_files);
+std::shared_ptr<logger> rotating_logger_mt(
+    const std::string& logger_name,
+    const filename_t& filename,
+    size_t max_file_size,
+    size_t max_files);
+std::shared_ptr<logger> rotating_logger_st(
+    const std::string& logger_name,
+    const filename_t& filename,
+    size_t max_file_size,
+    size_t max_files);
 
 //
 // Create file logger which creates new file on the given time (default in midnight):
 //
-std::shared_ptr<logger> daily_logger_mt(const std::string& logger_name, const filename_t& filename, int hour=0, int minute=0);
-std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const filename_t& filename, int hour=0, int minute=0);
+std::shared_ptr<logger> daily_logger_mt(
+    const std::string& logger_name,
+    const filename_t& filename,
+    int hour = 0,
+    int minute = 0);
+std::shared_ptr<logger> daily_logger_st(
+    const std::string& logger_name,
+    const filename_t& filename,
+    int hour = 0,
+    int minute = 0);
 
 //
 // Create and register stdout/stderr loggers
@@ -104,12 +128,15 @@ std::shared_ptr<logger> stdout_color_st(const std::string& logger_name);
 std::shared_ptr<logger> stderr_color_mt(const std::string& logger_name);
 std::shared_ptr<logger> stderr_color_st(const std::string& logger_name);
 
-
 //
 // Create and register a syslog logger
 //
 #ifdef SPDLOG_ENABLE_SYSLOG
-std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std::string& ident = "", int syslog_option = 0, int syslog_facilty = (1<<3));
+std::shared_ptr<logger> syslog_logger(
+    const std::string& logger_name,
+    const std::string& ident = "",
+    int syslog_option = 0,
+    int syslog_facilty = (1 << 3));
 #endif
 
 #if defined(__ANDROID__)
@@ -121,9 +148,8 @@ std::shared_ptr<logger> create(const std::string& logger_name, const sink_ptr& s
 
 // Create and register a logger with multiple sinks
 std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
-template<class It>
+template <class It>
 std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
-
 
 // Create and register a logger with templated sink type
 // Example:
@@ -132,12 +158,34 @@ template <typename Sink, typename... Args>
 std::shared_ptr<spdlog::logger> create(const std::string& logger_name, Args... args);
 
 // Create and register an async logger with a single sink
-std::shared_ptr<logger> create_async(const std::string& logger_name, const sink_ptr& sink, size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);
+std::shared_ptr<logger> create_async(
+    const std::string& logger_name,
+    const sink_ptr& sink,
+    size_t queue_size,
+    const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
+    const std::function<void()>& worker_warmup_cb = nullptr,
+    const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
+    const std::function<void()>& worker_teardown_cb = nullptr);
 
 // Create and register an async logger with multiple sinks
-std::shared_ptr<logger> create_async(const std::string& logger_name, sinks_init_list sinks, size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);
-template<class It>
-std::shared_ptr<logger> create_async(const std::string& logger_name, const It& sinks_begin, const It& sinks_end, size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);
+std::shared_ptr<logger> create_async(
+    const std::string& logger_name,
+    sinks_init_list sinks,
+    size_t queue_size,
+    const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
+    const std::function<void()>& worker_warmup_cb = nullptr,
+    const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
+    const std::function<void()>& worker_teardown_cb = nullptr);
+template <class It>
+std::shared_ptr<logger> create_async(
+    const std::string& logger_name,
+    const It& sinks_begin,
+    const It& sinks_end,
+    size_t queue_size,
+    const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
+    const std::function<void()>& worker_warmup_cb = nullptr,
+    const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
+    const std::function<void()>& worker_teardown_cb = nullptr);
 
 // Register the given logger with the given name
 void register_logger(std::shared_ptr<logger> logger);
@@ -148,11 +196,10 @@ void register_logger(std::shared_ptr<logger> logger);
 void apply_all(std::function<void(std::shared_ptr<logger>)> fun);
 
 // Drop the reference to the given logger
-void drop(const std::string &name);
+void drop(const std::string& name);
 
 // Drop all references from the registry
 void drop_all();
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -168,23 +215,22 @@ void drop_all();
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifdef SPDLOG_TRACE_ON
-#  define SPDLOG_STR_H(x) #x
-#  define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
-#  ifdef _MSC_VER
-#    define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] " __VA_ARGS__)
-#  else
-#    define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] " __VA_ARGS__)
-#  endif
+#define SPDLOG_STR_H(x) #x
+#define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
+#ifdef _MSC_VER
+#define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] " __VA_ARGS__)
 #else
-#  define SPDLOG_TRACE(logger, ...) (void)0
+#define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] " __VA_ARGS__)
+#endif
+#else
+#define SPDLOG_TRACE(logger, ...) (void)0
 #endif
 
 #ifdef SPDLOG_DEBUG_ON
-#  define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)
+#define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)
 #else
-#  define SPDLOG_DEBUG(logger, ...) (void)0
+#define SPDLOG_DEBUG(logger, ...) (void)0
 #endif
-
 }
 
 #include "details/spdlog_impl.h"

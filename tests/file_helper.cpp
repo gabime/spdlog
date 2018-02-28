@@ -1,14 +1,15 @@
 /*
-* This content is released under the MIT License as specified in https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
-*/
+ * This content is released under the MIT License as specified in
+ * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
+ */
 #include "includes.h"
 
-using spdlog::details::log_msg;
 using spdlog::details::file_helper;
+using spdlog::details::log_msg;
 
 static const std::string target_filename = "logs/file_helper_test.txt";
 
-static void write_with_helper(file_helper &helper, size_t howmany)
+static void write_with_helper(file_helper& helper, size_t howmany)
 {
     log_msg msg;
     msg.formatted << std::string(howmany, '1');

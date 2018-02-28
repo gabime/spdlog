@@ -12,16 +12,15 @@
 // 2. Format the message using the formatter function
 // 3. Pass the formatted message to its sinks to performa the actual logging
 
-#include "sinks/base_sink.h"
 #include "common.h"
+#include "sinks/base_sink.h"
 
-#include <vector>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace spdlog
 {
-
 class logger
 {
 public:
@@ -36,33 +35,56 @@ public:
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
 
-    template <typename... Args> void log(level::level_enum lvl, const char* fmt, const Args&... args);
-    template <typename... Args> void log(level::level_enum lvl, const char* msg);
-    template <typename Arg1, typename... Args> void trace(const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void debug(const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void info(const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void warn(const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void error(const char* fmt, const Arg1&, const Args&... args);
-    template <typename Arg1, typename... Args> void critical(const char* fmt, const Arg1&, const Args&... args);
+    template <typename... Args>
+    void log(level::level_enum lvl, const char* fmt, const Args&... args);
+    template <typename... Args>
+    void log(level::level_enum lvl, const char* msg);
+    template <typename Arg1, typename... Args>
+    void trace(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args>
+    void debug(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args>
+    void info(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args>
+    void warn(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args>
+    void error(const char* fmt, const Arg1&, const Args&... args);
+    template <typename Arg1, typename... Args>
+    void critical(const char* fmt, const Arg1&, const Args&... args);
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-    template <typename... Args> void log(level::level_enum lvl, const wchar_t* msg);
-    template <typename... Args> void log(level::level_enum lvl, const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void trace(const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void debug(const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void info(const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void warn(const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void error(const wchar_t* fmt, const Args&... args);
-    template <typename... Args> void critical(const wchar_t* fmt, const Args&... args);
+    template <typename... Args>
+    void log(level::level_enum lvl, const wchar_t* msg);
+    template <typename... Args>
+    void log(level::level_enum lvl, const wchar_t* fmt, const Args&... args);
+    template <typename... Args>
+    void trace(const wchar_t* fmt, const Args&... args);
+    template <typename... Args>
+    void debug(const wchar_t* fmt, const Args&... args);
+    template <typename... Args>
+    void info(const wchar_t* fmt, const Args&... args);
+    template <typename... Args>
+    void warn(const wchar_t* fmt, const Args&... args);
+    template <typename... Args>
+    void error(const wchar_t* fmt, const Args&... args);
+    template <typename... Args>
+    void critical(const wchar_t* fmt, const Args&... args);
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
-    template <typename T> void log(level::level_enum lvl, const T&);
-    template <typename T> void trace(const T& msg);
-    template <typename T> void debug(const T& msg);
-    template <typename T> void info(const T& msg);
-    template <typename T> void warn(const T& msg);
-    template <typename T> void error(const T& msg);
-    template <typename T> void critical(const T& msg);
+    template <typename T>
+    void log(level::level_enum lvl, const T&);
+    template <typename T>
+    void trace(const T& msg);
+    template <typename T>
+    void debug(const T& msg);
+    template <typename T>
+    void info(const T& msg);
+    template <typename T>
+    void warn(const T& msg);
+    template <typename T>
+    void error(const T& msg);
+    template <typename T>
+    void critical(const T& msg);
 
     bool should_log(level::level_enum msg_level) const;
     void set_level(level::level_enum log_level);
@@ -88,7 +110,7 @@ protected:
     virtual void _set_formatter(formatter_ptr msg_formatter);
 
     // default error handler: print the error to stderr with the max rate of 1 message/minute
-    virtual void _default_err_handler(const std::string &msg);
+    virtual void _default_err_handler(const std::string& msg);
 
     // return true if the given message level should trigger a flush
     bool _should_flush_on(const details::log_msg& msg);
