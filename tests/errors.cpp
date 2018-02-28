@@ -1,14 +1,12 @@
 /*
-* This content is released under the MIT License as specified in https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
-*/
+ * This content is released under the MIT License as specified in
+ * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
+ */
 #include "includes.h"
 
-#include<iostream>
+#include <iostream>
 
-
-
-
-class failing_sink: public spdlog::sinks::sink
+class failing_sink : public spdlog::sinks::sink
 {
     void log(const spdlog::details::log_msg& msg) override
     {
@@ -16,7 +14,8 @@ class failing_sink: public spdlog::sinks::sink
     }
 
     void flush() override
-    {}
+    {
+    }
 };
 
 TEST_CASE("default_error_handler", "[errors]]")
@@ -39,21 +38,16 @@ TEST_CASE("default_error_handler", "[errors]]")
     REQUIRE(count_lines(filename) == 1);
 }
 
-
-
-
 struct custom_ex
-{};
+{
+};
 TEST_CASE("custom_error_handler", "[errors]]")
 {
     prepare_logdir();
     std::string filename = "logs/simple_log.txt";
     auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename, true);
     logger->flush_on(spdlog::level::info);
-    logger->set_error_handler([=](const std::string& msg)
-    {
-        throw custom_ex();
-    });
+    logger->set_error_handler([=](const std::string& msg) { throw custom_ex(); });
     logger->info("Good message #1");
 #if !defined(SPDLOG_FMT_PRINTF)
     REQUIRE_THROWS_AS(logger->info("Bad format msg {} {}", "xxx"), custom_ex);
@@ -66,12 +60,8 @@ TEST_CASE("custom_error_handler", "[errors]]")
 
 TEST_CASE("default_error_handler2", "[errors]]")
 {
-
     auto logger = spdlog::create<failing_sink>("failed_logger");
-    logger->set_error_handler([=](const std::string& msg)
-    {
-        throw custom_ex();
-    });
+    logger->set_error_handler([=](const std::string& msg) { throw custom_ex(); });
     REQUIRE_THROWS_AS(logger->info("Some message"), custom_ex);
 }
 
@@ -83,8 +73,7 @@ TEST_CASE("async_error_handler", "[errors]]")
     std::string filename = "logs/simple_async_log.txt";
     {
         auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename, true);
-        logger->set_error_handler([=](const std::string& msg)
-        {
+        logger->set_error_handler([=](const std::string& msg) {
             std::ofstream ofs("logs/custom_err.txt");
             if (!ofs) throw std::runtime_error("Failed open logs/custom_err.txt");
             ofs << err_msg;
@@ -96,7 +85,7 @@ TEST_CASE("async_error_handler", "[errors]]")
         logger->info("Bad format msg %s %s", "xxx");
 #endif
         logger->info("Good message #2");
-        spdlog::drop("logger"); //force logger to drain the queue and shutdown
+        spdlog::drop("logger"); // force logger to drain the queue and shutdown
         spdlog::set_sync_mode();
     }
     REQUIRE(count_lines(filename) == 2);
@@ -111,14 +100,13 @@ TEST_CASE("async_error_handler2", "[errors]]")
     spdlog::set_async_mode(128);
     {
         auto logger = spdlog::create<failing_sink>("failed_logger");
-        logger->set_error_handler([=](const std::string& msg)
-        {
+        logger->set_error_handler([=](const std::string& msg) {
             std::ofstream ofs("logs/custom_err2.txt");
             if (!ofs) throw std::runtime_error("Failed open logs/custom_err2.txt");
             ofs << err_msg;
         });
         logger->info("Hello failure");
-        spdlog::drop("failed_logger"); //force logger to drain the queue and shutdown
+        spdlog::drop("failed_logger"); // force logger to drain the queue and shutdown
         spdlog::set_sync_mode();
     }
 

@@ -7,15 +7,15 @@
 
 #include "details/log_msg.h"
 
-#include <vector>
-#include <string>
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace spdlog
 {
 namespace details
 {
-class flag_formatter;
+    class flag_formatter;
 }
 
 class formatter
@@ -28,7 +28,10 @@ public:
 class pattern_formatter SPDLOG_FINAL : public formatter
 {
 public:
-    explicit pattern_formatter(const std::string& pattern, pattern_time_type pattern_time = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol);
+    explicit pattern_formatter(
+        const std::string& pattern,
+        pattern_time_type pattern_time = pattern_time_type::local,
+        std::string eol = spdlog::details::os::default_eol);
     pattern_formatter(const pattern_formatter&) = delete;
     pattern_formatter& operator=(const pattern_formatter&) = delete;
     void format(details::log_msg& msg) override;

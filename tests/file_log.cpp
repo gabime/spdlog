@@ -1,8 +1,8 @@
 /*
- * This content is released under the MIT License as specified in https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
+ * This content is released under the MIT License as specified in
+ * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
  */
 #include "includes.h"
-
 
 TEST_CASE("simple_file_logger", "[simple_logger]]")
 {
@@ -23,7 +23,6 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     REQUIRE(file_contents(filename) == std::string("Test message 1\nTest message 2\n"));
     REQUIRE(count_lines(filename) == 2);
 }
-
 
 TEST_CASE("flush_on", "[flush_on]]")
 {
@@ -69,14 +68,12 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
     REQUIRE(count_lines(filename) == 10);
 }
 
-
 TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 {
     prepare_logdir();
     std::string basename = "logs/rotating_log";
     auto logger = spdlog::rotating_logger_mt("logger", basename, 1024, 1);
-    for (int i = 0; i < 10; ++i)
-        logger->info("Test message {}", i);
+    for (int i = 0; i < 10; ++i) logger->info("Test message {}", i);
 
     logger->flush();
     auto filename = basename;
@@ -96,15 +93,21 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
     REQUIRE(get_filesize(filename1) <= 1024);
 }
 
-
 TEST_CASE("daily_logger", "[daily_logger]]")
 {
     prepare_logdir();
-    //calculate filename (time based)
+    // calculate filename (time based)
     std::string basename = "logs/daily_log";
     std::tm tm = spdlog::details::os::localtime();
     fmt::MemoryWriter w;
-    w.write("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
+    w.write(
+        "{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}",
+        basename,
+        tm.tm_year + 1900,
+        tm.tm_mon + 1,
+        tm.tm_mday,
+        tm.tm_hour,
+        tm.tm_min);
 
     auto logger = spdlog::daily_logger_mt("logger", basename, 0, 0);
     logger->flush_on(spdlog::level::info);
@@ -121,15 +124,12 @@ TEST_CASE("daily_logger", "[daily_logger]]")
     REQUIRE(count_lines(filename) == 10);
 }
 
-
 TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
 {
-    using sink_type = spdlog::sinks::daily_file_sink<
-                      std::mutex,
-                      spdlog::sinks::dateonly_daily_file_name_calculator>;
+    using sink_type = spdlog::sinks::daily_file_sink<std::mutex, spdlog::sinks::dateonly_daily_file_name_calculator>;
 
     prepare_logdir();
-    //calculate filename (time based)
+    // calculate filename (time based)
     std::string basename = "logs/daily_dateonly";
     std::tm tm = spdlog::details::os::localtime();
     fmt::MemoryWriter w;
@@ -162,12 +162,10 @@ struct custom_daily_file_name_calculator
 
 TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
 {
-    using sink_type = spdlog::sinks::daily_file_sink<
-                      std::mutex,
-                      custom_daily_file_name_calculator>;
+    using sink_type = spdlog::sinks::daily_file_sink<std::mutex, custom_daily_file_name_calculator>;
 
     prepare_logdir();
-    //calculate filename (time based)
+    // calculate filename (time based)
     std::string basename = "logs/daily_dateonly";
     std::tm tm = spdlog::details::os::localtime();
     fmt::MemoryWriter w;
@@ -187,7 +185,6 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
     auto filename = w.str();
     REQUIRE(count_lines(filename) == 10);
 }
-
 
 /*
  * File name calculations
@@ -211,12 +208,8 @@ TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
     REQUIRE(filename == "rotated.txt");
 }
 
-
-
-
-
 // regex supported only from gcc 4.9 and above
-#if defined (_MSC_VER) || !(__GNUC__ <= 4 && __GNUC_MINOR__ < 9)
+#if defined(_MSC_VER) || !(__GNUC__ <= 4 && __GNUC_MINOR__ < 9)
 #include <regex>
 TEST_CASE("daily_file_sink::default_daily_file_name_calculator1", "[daily_file_sink]]")
 {

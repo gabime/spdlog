@@ -16,66 +16,64 @@ namespace spdlog
 {
 namespace sinks
 {
-
-template <class Mutex>
-class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
-{
-    using MyType = stdout_sink<Mutex>;
-
-public:
-    explicit stdout_sink() = default;
-
-    static std::shared_ptr<MyType> instance()
+    template <class Mutex>
+    class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
     {
-        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
-        return instance;
-    }
+        using MyType = stdout_sink<Mutex>;
 
-protected:
-    void _sink_it(const details::log_msg& msg) override
+    public:
+        explicit stdout_sink() = default;
+
+        static std::shared_ptr<MyType> instance()
+        {
+            static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
+            return instance;
+        }
+
+    protected:
+        void _sink_it(const details::log_msg& msg) override
+        {
+            fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stdout);
+            _flush();
+        }
+
+        void _flush() override
+        {
+            fflush(stdout);
+        }
+    };
+
+    using stdout_sink_mt = stdout_sink<std::mutex>;
+    using stdout_sink_st = stdout_sink<details::null_mutex>;
+
+    template <class Mutex>
+    class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
     {
-        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stdout);
-        _flush();
-    }
+        using MyType = stderr_sink<Mutex>;
 
-    void _flush() override
-    {
-        fflush(stdout);
-    }
-};
+    public:
+        explicit stderr_sink() = default;
 
-using stdout_sink_mt = stdout_sink<std::mutex>;
-using stdout_sink_st = stdout_sink<details::null_mutex>;
+        static std::shared_ptr<MyType> instance()
+        {
+            static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
+            return instance;
+        }
 
-template <class Mutex>
-class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
-{
-    using MyType = stderr_sink<Mutex>;
+    protected:
+        void _sink_it(const details::log_msg& msg) override
+        {
+            fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);
+            _flush();
+        }
 
-public:
-    explicit stderr_sink() = default;
+        void _flush() override
+        {
+            fflush(stderr);
+        }
+    };
 
-    static std::shared_ptr<MyType> instance()
-    {
-        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
-        return instance;
-    }
-
-protected:
-    void _sink_it(const details::log_msg& msg) override
-    {
-        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);
-        _flush();
-    }
-
-    void _flush() override
-    {
-        fflush(stderr);
-    }
-};
-
-using stderr_sink_mt = stderr_sink<std::mutex>;
-using stderr_sink_st = stderr_sink<details::null_mutex>;
-
+    using stderr_sink_mt = stderr_sink<std::mutex>;
+    using stderr_sink_st = stderr_sink<details::null_mutex>;
 }
 }
