@@ -17,7 +17,6 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 * Gentoo: `emerge dev-libs/spdlog`
 * Arch Linux: `yaourt -S spdlog-git`
 * vcpkg: `vcpkg install spdlog`
- 
 
 ## Platforms
  * Linux, FreeBSD, Solaris
@@ -25,6 +24,10 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
  * Mac OSX (clang 3.5+)
  * Android
 
+## Language bindings:
+
+* Python: `pip install spdlog` - [pyspdlog](https://github.com/bodgergely/pyspdlog) - see the Language bindings wiki page for me information
+ 
 ## Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
 * Headers only, just copy and use.
