@@ -26,7 +26,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 
 ## Language bindings:
 
-* Python: `pip install spdlog` - see the Language bindings wiki page for me information
+* Python: `pip install spdlog` - [pyspdlog](https://github.com/bodgergely/pyspdlog) - see the Language bindings wiki page for me information
  
 ## Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
