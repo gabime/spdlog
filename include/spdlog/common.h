@@ -56,9 +56,6 @@ namespace spdlog
 
 class formatter;
 
-template<class T, size_t N>
-constexpr size_t size(T(&)[N]) { return N; }
-
 namespace sinks
 {
 class sink;
