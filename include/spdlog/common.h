@@ -15,7 +15,8 @@
 #include <memory>
 #include <atomic>
 #include <exception>
-#include<functional>
+#include <functional>
+#include <unordered_map>
 
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 #include <codecvt>
@@ -89,6 +90,17 @@ enum level_enum
     off = 6
 };
 
+static std::unordered_map<std::string, level_enum> name_to_level = {
+                                                                        { "trace"   , level::trace },
+                                                                        { "debug"   , level::debug },
+                                                                        { "info"    , level::info },
+                                                                        { "warning" , level::warn },
+                                                                        { "error"   , level::err },
+                                                                        { "critical", level::critical },
+                                                                        { "off"     , level::off }
+                                                                   };
+
+
 #if !defined(SPDLOG_LEVEL_NAMES)
 #define SPDLOG_LEVEL_NAMES { "trace", "debug", "info", "warning", "error", "critical", "off" }
 #endif
@@ -105,17 +117,19 @@ inline const char* to_short_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
 }
-inline spdlog::level::level_enum to_level_enum(const char* name)
+inline spdlog::level::level_enum to_level_enum(const std::string& name)
 {
-	for (size_t level = 0; level < size(level_names); level++)
-	{
-		if (!strcmp(level_names[level], name))
-		{
-			return (spdlog::level::level_enum) level;
-		}
-	}
-	return (spdlog::level::level_enum) 0;
+    auto ci = name_to_level.find(name);
+    if (ci != name_to_level.end())
+    {
+        return ci->second;
+    }
+    else
+    {
+        return level::off;
+    }
 }
+
 using level_hasher = std::hash<int>;
 } //level
 
