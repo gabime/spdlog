@@ -16,7 +16,7 @@ namespace sinks
 {
 
 template <class Mutex>
-class null_sink : public base_sink < Mutex >
+class null_sink : public base_sink<Mutex>
 {
 protected:
     void _sink_it(const details::log_msg&) override
@@ -26,8 +26,9 @@ protected:
     {}
 
 };
-typedef null_sink<details::null_mutex> null_sink_st;
-typedef null_sink<details::null_mutex> null_sink_mt;
+
+using null_sink_mt = null_sink<details::null_mutex>;
+using null_sink_st = null_sink<details::null_mutex>;
 
 }
 }

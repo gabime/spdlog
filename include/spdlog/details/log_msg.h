@@ -8,7 +8,6 @@
 #include "../common.h"
 #include "../details/os.h"
 
-
 #include <string>
 #include <utility>
 #include <unordered_map>
@@ -23,8 +22,7 @@ struct log_msg
     log_msg(const std::string *loggers_name, level::level_enum lvl, std::unordered_map<char, std::string>* flags) :
         logger_name(loggers_name),
         level(lvl),
-        msg_id(0),
-		custom_flags(flags)
+        custom_flags(flags)
     {
 #ifndef SPDLOG_NO_DATETIME
         time = os::now();
@@ -35,19 +33,19 @@ struct log_msg
 #endif
     }
 
-    log_msg(const log_msg& other)  = delete;
+    log_msg(const log_msg& other) = delete;
     log_msg& operator=(log_msg&& other) = delete;
     log_msg(log_msg&& other) = delete;
 
 
-    const std::string *logger_name;
+    const std::string *logger_name{ nullptr };
     level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;
     fmt::MemoryWriter raw;
     fmt::MemoryWriter formatted;
-    size_t msg_id;
-	std::unordered_map<char, std::string>* custom_flags;
+    size_t msg_id{ 0 };
+    std::unordered_map<char, std::string>* custom_flags;
 };
 }
 }

@@ -14,14 +14,14 @@
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
 template<class It>
-inline spdlog::logger::logger(const std::string& logger_name, const It& begin, const It& end):
-    _name(logger_name),
+inline spdlog::logger::logger(std::string logger_name, const It& begin, const It& end):
+    _name(std::move(logger_name)),
     _sinks(begin, end),
     _formatter(std::make_shared<pattern_formatter>("%+")),
     _level(level::info),
     _flush_level(level::off),
     _last_err_time(0),
-    _msg_counter(1)  // message counter will start from 1. 0-message id will be reserved for controll messages
+    _msg_counter(1) // message counter will start from 1. 0-message id will be reserved for controll messages
 {
     _err_handler = [this](const std::string &msg)
     {
@@ -39,7 +39,7 @@ inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list si
 inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink):
     logger(logger_name,
 {
-    single_sink
+    std::move(single_sink)
 })
 {}
 
@@ -49,7 +49,7 @@ inline spdlog::logger::~logger() = default;
 
 inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
 {
-    _set_formatter(msg_formatter);
+    _set_formatter(std::move(msg_formatter));
 }
 
 inline void spdlog::logger::set_pattern(const std::string& pattern, pattern_time_type pattern_time)
@@ -300,14 +300,13 @@ inline const std::string& spdlog::logger::value_custom_flag(char flag)
 
 inline void spdlog::logger::set_error_handler(spdlog::log_err_handler err_handler)
 {
-    _err_handler = err_handler;
+    _err_handler = std::move(err_handler);
 }
 
 inline spdlog::log_err_handler spdlog::logger::error_handler()
 {
     return _err_handler;
 }
-
 
 inline void spdlog::logger::flush_on(level::level_enum log_level)
 {
@@ -349,9 +348,10 @@ inline void spdlog::logger::_set_pattern(const std::string& pattern, pattern_tim
 {
     _formatter = std::make_shared<pattern_formatter>(pattern, pattern_time);
 }
+
 inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
 {
-    _formatter = msg_formatter;
+    _formatter = std::move(msg_formatter);
 }
 
 inline void spdlog::logger::flush()
@@ -368,7 +368,7 @@ inline void spdlog::logger::_default_err_handler(const std::string &msg)
     auto tm_time = details::os::localtime(now);
     char date_buf[100];
     std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
-    details::log_msg  err_msg;
+    details::log_msg err_msg;
     err_msg.formatted.write("[*** LOG ERROR ***] [{}] [{}] [{}]{}", name(), msg, date_buf, details::os::default_eol);
     sinks::stderr_sink_mt::instance()->log(err_msg);
     _last_err_time = now;

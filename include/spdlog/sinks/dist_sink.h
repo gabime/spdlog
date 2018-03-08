@@ -22,13 +22,12 @@ namespace spdlog
 namespace sinks
 {
 template<class Mutex>
-class dist_sink: public base_sink<Mutex>
+class dist_sink : public base_sink<Mutex>
 {
 public:
     explicit dist_sink() :_sinks() {}
     dist_sink(const dist_sink&) = delete;
     dist_sink& operator=(const dist_sink&) = delete;
-    virtual ~dist_sink() = default;
 
 protected:
     std::vector<std::shared_ptr<sink>> _sinks;
@@ -51,8 +50,6 @@ protected:
     }
 
 public:
-
-
     void add_sink(std::shared_ptr<sink> sink)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
@@ -66,7 +63,8 @@ public:
     }
 };
 
-typedef dist_sink<std::mutex> dist_sink_mt;
-typedef dist_sink<details::null_mutex> dist_sink_st;
+using dist_sink_mt = dist_sink<std::mutex>;
+using dist_sink_st = dist_sink<details::null_mutex>;
+
 }
 }

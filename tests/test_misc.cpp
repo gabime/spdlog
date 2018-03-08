@@ -1,4 +1,3 @@
-
 #include "includes.h"
 
 template<class T>
@@ -15,11 +14,6 @@ std::string log_info(const T& what, spdlog::level::level_enum logger_level = spd
 
     return oss.str().substr(0, oss.str().length() - strlen(spdlog::details::os::default_eol));
 }
-
-
-
-
-
 
 TEST_CASE("basic_logging ", "[basic_logging]")
 {

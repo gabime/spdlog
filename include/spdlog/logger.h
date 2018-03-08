@@ -26,15 +26,16 @@ namespace spdlog
 class logger
 {
 public:
-    logger(const std::string& logger_name, sink_ptr single_sink);
-    logger(const std::string& name, sinks_init_list);
-    template<class It>
-    logger(const std::string& name, const It& begin, const It& end);
+    logger(const std::string& name, sink_ptr single_sink);
+    logger(const std::string& name, sinks_init_list sinks);
+
+    template <class It>
+    logger(std::string name, const It& begin, const It& end);
 
     virtual ~logger();
+
     logger(const logger&) = delete;
     logger& operator=(const logger&) = delete;
-
 
     template <typename... Args> void log(level::level_enum lvl, const char* fmt, const Args&... args);
     template <typename... Args> void log(level::level_enum lvl, const char* msg);
@@ -44,7 +45,6 @@ public:
     template <typename Arg1, typename... Args> void warn(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void error(const char* fmt, const Arg1&, const Args&... args);
     template <typename Arg1, typename... Args> void critical(const char* fmt, const Arg1&, const Args&... args);
-
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template <typename... Args> void log(level::level_enum lvl, const wchar_t* msg);
@@ -58,21 +58,22 @@ public:
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     template <typename T> void log(level::level_enum lvl, const T&);
-    template <typename T> void trace(const T&);
-    template <typename T> void debug(const T&);
-    template <typename T> void info(const T&);
-    template <typename T> void warn(const T&);
-    template <typename T> void error(const T&);
-    template <typename T> void critical(const T&);
+    template <typename T> void trace(const T& msg);
+    template <typename T> void debug(const T& msg);
+    template <typename T> void info(const T& msg);
+    template <typename T> void warn(const T& msg);
+    template <typename T> void error(const T& msg);
+    template <typename T> void critical(const T& msg);
 
-    bool should_log(level::level_enum) const;
-    void set_level(level::level_enum);
-	void set_custom_flag(char flag, const std::string& value);
-	const std::string& value_custom_flag(char flag);
+    bool should_log(level::level_enum msg_level) const;
+    void set_level(level::level_enum log_level);
+    void set_custom_flag(char flag, const std::string& value);
+	  const std::string& value_custom_flag(char flag);
+
     level::level_enum level() const;
     const std::string& name() const;
-    void set_pattern(const std::string&, pattern_time_type = pattern_time_type::local);
-    void set_formatter(formatter_ptr);
+    void set_pattern(const std::string& pattern, pattern_time_type pattern_time = pattern_time_type::local);
+    void set_formatter(formatter_ptr msg_formatter);
 
     // automatically call flush() if message level >= log_level
     void flush_on(level::level_enum log_level);
@@ -82,22 +83,22 @@ public:
     const std::vector<sink_ptr>& sinks() const;
 
     // error handler
-    virtual void set_error_handler(log_err_handler);
+    virtual void set_error_handler(log_err_handler err_handler);
     virtual log_err_handler error_handler();
 
 protected:
-    virtual void _sink_it(details::log_msg&);
-    virtual void _set_pattern(const std::string&, pattern_time_type);
-    virtual void _set_formatter(formatter_ptr);
+    virtual void _sink_it(details::log_msg& msg);
+    virtual void _set_pattern(const std::string& pattern, pattern_time_type pattern_time);
+    virtual void _set_formatter(formatter_ptr msg_formatter);
 
     // default error handler: print the error to stderr with the max rate of 1 message/minute
     virtual void _default_err_handler(const std::string &msg);
 
     // return true if the given message level should trigger a flush
-    bool _should_flush_on(const details::log_msg&);
+    bool _should_flush_on(const details::log_msg& msg);
 
     // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
-    void _incr_msg_counter(details::log_msg &msg);
+    void _incr_msg_counter(details::log_msg& msg);
 
     const std::string _name;
     std::vector<sink_ptr> _sinks;

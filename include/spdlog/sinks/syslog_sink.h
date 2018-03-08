@@ -33,18 +33,19 @@ public:
     syslog_sink(const std::string& ident = "", int syslog_option=0, int syslog_facility=LOG_USER):
         _ident(ident)
     {
-        _priorities[static_cast<int>(level::trace)] = LOG_DEBUG;
-        _priorities[static_cast<int>(level::debug)] = LOG_DEBUG;
-        _priorities[static_cast<int>(level::info)] = LOG_INFO;
-        _priorities[static_cast<int>(level::warn)] = LOG_WARNING;
-        _priorities[static_cast<int>(level::err)] = LOG_ERR;
-        _priorities[static_cast<int>(level::critical)] = LOG_CRIT;
-        _priorities[static_cast<int>(level::off)] = LOG_INFO;
+        _priorities[static_cast<size_t>(level::trace)] = LOG_DEBUG;
+        _priorities[static_cast<size_t>(level::debug)] = LOG_DEBUG;
+        _priorities[static_cast<size_t>(level::info)] = LOG_INFO;
+        _priorities[static_cast<size_t>(level::warn)] = LOG_WARNING;
+        _priorities[static_cast<size_t>(level::err)] = LOG_ERR;
+        _priorities[static_cast<size_t>(level::critical)] = LOG_CRIT;
+        _priorities[static_cast<size_t>(level::off)] = LOG_INFO;
 
         //set ident to be program name if empty
         ::openlog(_ident.empty()? nullptr:_ident.c_str(), syslog_option, syslog_facility);
     }
-    ~syslog_sink()
+
+    ~syslog_sink() override
     {
         ::closelog();
     }
@@ -72,7 +73,7 @@ private:
     //
     int syslog_prio_from_level(const details::log_msg &msg) const
     {
-        return _priorities[static_cast<int>(msg.level)];
+        return _priorities[static_cast<size_t>(msg.level)];
     }
 };
 }

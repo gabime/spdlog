@@ -26,9 +26,12 @@ namespace spdlog
 {
 namespace details
 {
-template <class Mutex> class registry_t
+template <class Mutex>
+class registry_t
 {
 public:
+    registry_t<Mutex>(const registry_t<Mutex>&) = delete;
+    registry_t<Mutex>& operator=(const registry_t<Mutex>&) = delete;
 
     void register_logger(std::shared_ptr<logger> logger)
     {
@@ -37,7 +40,6 @@ public:
         throw_if_exists(logger_name);
         _loggers[logger_name] = logger;
     }
-
 
     std::shared_ptr<logger> get(const std::string& logger_name)
     {
@@ -111,6 +113,7 @@ public:
         std::lock_guard<Mutex> lock(_mutex);
         _loggers.clear();
     }
+
     std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks)
     {
         return create(logger_name, sinks.begin(), sinks.end());
@@ -216,15 +219,14 @@ public:
     }
 
 private:
-    registry_t<Mutex>() {}
-    registry_t<Mutex>(const registry_t<Mutex>&) = delete;
-    registry_t<Mutex>& operator=(const registry_t<Mutex>&) = delete;
+    registry_t<Mutex>() = default;
 
     void throw_if_exists(const std::string &logger_name)
     {
         if (_loggers.find(logger_name) != _loggers.end())
             throw spdlog_ex("logger with name '" + logger_name + "' already exists");
     }
+
     Mutex _mutex;
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
     formatter_ptr _formatter;
@@ -234,15 +236,17 @@ private:
     bool _async_mode = false;
     size_t _async_q_size = 0;
     async_overflow_policy _overflow_policy = async_overflow_policy::block_retry;
-    std::function<void()> _worker_warmup_cb = nullptr;
+    std::function<void()> _worker_warmup_cb;
     std::chrono::milliseconds _flush_interval_ms;
-    std::function<void()> _worker_teardown_cb = nullptr;
-	std::unordered_map<char, std::string> _custom_flags;
+    std::function<void()> _worker_teardown_cb;
+	  std::unordered_map<char, std::string> _custom_flags;
 };
+
 #ifdef SPDLOG_NO_REGISTRY_MUTEX
-typedef registry_t<spdlog::details::null_mutex> registry;
+using registry = registry_t<spdlog::details::null_mutex>;
 #else
-typedef registry_t<std::mutex> registry;
+using registry = registry_t<std::mutex>;
 #endif
+
 }
 }
