@@ -16,7 +16,7 @@
 #include "../sinks/syslog_sink.h"
 #endif
 
-#ifdef _WIN32
+#if defined _WIN32 && !defined(__cplusplus_winrt)
 #include "../sinks/wincolor_sink.h"
 #else
 #include "../sinks/ansicolor_sink.h"
@@ -34,7 +34,7 @@
 
 inline void spdlog::register_logger(std::shared_ptr<logger> logger)
 {
-    return details::registry::instance().register_logger(logger);
+    return details::registry::instance().register_logger(std::move(logger));
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::get(const std::string& name)
@@ -107,7 +107,8 @@ inline std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st(const std::strin
 //
 // stdout/stderr color loggers
 //
-#ifdef _WIN32
+#if defined _WIN32 && !defined(__cplusplus_winrt)
+
 inline std::shared_ptr<spdlog::logger> spdlog::stdout_color_mt(const std::string& logger_name)
 {
     auto sink = std::make_shared<spdlog::sinks::wincolor_stdout_sink_mt>();
@@ -182,12 +183,10 @@ inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_
 }
 
 //Create logger with multiple sinks
-
 inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_name, spdlog::sinks_init_list sinks)
 {
     return details::registry::instance().create(logger_name, sinks);
 }
-
 
 template <typename Sink, typename... Args>
 inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_name, Args... args)
@@ -195,7 +194,6 @@ inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_
     sink_ptr sink = std::make_shared<Sink>(args...);
     return details::registry::instance().create(logger_name, { sink });
 }
-
 
 template<class It>
 inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end)
@@ -223,7 +221,7 @@ inline std::shared_ptr<spdlog::logger> spdlog::create_async(const std::string& l
 
 inline void spdlog::set_formatter(spdlog::formatter_ptr f)
 {
-    details::registry::instance().formatter(f);
+    details::registry::instance().formatter(std::move(f));
 }
 
 inline void spdlog::set_pattern(const std::string& format_string)
@@ -243,9 +241,8 @@ inline void spdlog::flush_on(level::level_enum log_level)
 
 inline void spdlog::set_error_handler(log_err_handler handler)
 {
-    return details::registry::instance().set_error_handler(handler);
+    return details::registry::instance().set_error_handler(std::move(handler));
 }
-
 
 inline void spdlog::set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()>& worker_warmup_cb, const std::chrono::milliseconds& flush_interval_ms, const std::function<void()>& worker_teardown_cb)
 {
@@ -259,7 +256,7 @@ inline void spdlog::set_sync_mode()
 
 inline void spdlog::apply_all(std::function<void(std::shared_ptr<logger>)> fun)
 {
-    details::registry::instance().apply_all(fun);
+    details::registry::instance().apply_all(std::move(fun));
 }
 
 inline void spdlog::drop_all()

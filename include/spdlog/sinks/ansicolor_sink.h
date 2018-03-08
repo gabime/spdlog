@@ -23,10 +23,10 @@ namespace sinks
  * If no color terminal detected, omit the escape codes.
  */
 template <class Mutex>
-class ansicolor_sink: public base_sink<Mutex>
+class ansicolor_sink : public base_sink<Mutex>
 {
 public:
-    ansicolor_sink(FILE* file): target_file_(file)
+    explicit ansicolor_sink(FILE* file) : target_file_(file)
     {
         should_do_colors_ = details::os::in_terminal(file) && details::os::is_color_terminal();
         colors_[level::trace] = cyan;
@@ -37,7 +37,8 @@ public:
         colors_[level::critical] = bold + on_red;
         colors_[level::off] = reset;
     }
-    virtual ~ansicolor_sink()
+
+    ~ansicolor_sink() override
     {
         _flush();
     }
@@ -79,7 +80,7 @@ public:
     const std::string on_white = "\033[47m";
 
 protected:
-    virtual void _sink_it(const details::log_msg& msg) override
+    void _sink_it(const details::log_msg& msg) override
     {
         // Wrap the originally formatted message in color codes.
         // If color is not supported in the terminal, log as is instead.
@@ -102,6 +103,7 @@ protected:
     {
         fflush(target_file_);
     }
+
     FILE* target_file_;
     bool should_do_colors_;
     std::unordered_map<level::level_enum, std::string, level::level_hasher> colors_;
@@ -116,6 +118,9 @@ public:
     {}
 };
 
+using ansicolor_stdout_sink_mt = ansicolor_stdout_sink<std::mutex>;
+using ansicolor_stdout_sink_st = ansicolor_stdout_sink<details::null_mutex>;
+
 template<class Mutex>
 class ansicolor_stderr_sink: public ansicolor_sink<Mutex>
 {
@@ -124,11 +129,8 @@ public:
     {}
 };
 
-typedef ansicolor_stdout_sink<std::mutex> ansicolor_stdout_sink_mt;
-typedef ansicolor_stdout_sink<details::null_mutex> ansicolor_stdout_sink_st;
-
-typedef ansicolor_stderr_sink<std::mutex> ansicolor_stderr_sink_mt;
-typedef ansicolor_stderr_sink<details::null_mutex> ansicolor_stderr_sink_st;
+using ansicolor_stderr_sink_mt = ansicolor_stderr_sink<std::mutex>;
+using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::null_mutex>;
 
 } // namespace sinks
 } // namespace spdlog

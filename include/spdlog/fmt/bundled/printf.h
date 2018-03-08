@@ -152,7 +152,7 @@ public:
             visit_any_int(value);
     }
 
-    void visit_char(char value)
+    void visit_char(int value)
     {
         if (type_ != 's')
             visit_any_int(value);
@@ -170,7 +170,7 @@ public:
         using internal::Arg;
         typedef typename internal::Conditional<
         is_same<T, void>::value, U, T>::type TargetType;
-        if (sizeof(TargetType) <= sizeof(int))
+        if (const_check(sizeof(TargetType) <= sizeof(int)))
         {
             // Extra casts are used to silence warnings.
             if (is_signed)

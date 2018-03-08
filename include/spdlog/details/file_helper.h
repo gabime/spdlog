@@ -31,9 +31,7 @@ public:
     const int open_tries = 5;
     const int open_interval = 10;
 
-    explicit file_helper() :
-        _fd(nullptr)
-    {}
+    explicit file_helper() = default;
 
     file_helper(const file_helper&) = delete;
     file_helper& operator=(const file_helper&) = delete;
@@ -46,7 +44,6 @@ public:
 
     void open(const filename_t& fname, bool truncate = false)
     {
-
         close();
         auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
         _filename = fname;
@@ -76,7 +73,7 @@ public:
 
     void close()
     {
-        if (_fd)
+        if (_fd != nullptr)
         {
             std::fclose(_fd);
             _fd = nullptr;
@@ -93,8 +90,10 @@ public:
 
     size_t size() const
     {
-        if (!_fd)
+        if (_fd == nullptr)
+        {
             throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
+        }
         return os::filesize(_fd);
     }
 
@@ -137,8 +136,9 @@ public:
         // finally - return a valid base and extension tuple
         return std::make_tuple(fname.substr(0, ext_index), fname.substr(ext_index));
     }
+
 private:
-    FILE* _fd;
+    FILE* _fd{ nullptr };
     filename_t _filename;
 };
 }

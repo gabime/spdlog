@@ -21,8 +21,8 @@
 # * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
 # *************************************************************************/
 
-cmake_minimum_required(VERSION 3.0)
-project(SpdlogExamples)
+cmake_minimum_required(VERSION 3.1)
+project(SpdlogExamples CXX)
 
 if(TARGET spdlog)
   # Part of the main project
@@ -32,16 +32,16 @@ else()
   find_package(spdlog CONFIG REQUIRED)
 endif()
 
-find_package(Threads)
+find_package(Threads REQUIRED)
 
 add_executable(example example.cpp)
-target_link_libraries(example spdlog::spdlog ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(example spdlog::spdlog Threads::Threads)
 
 add_executable(benchmark bench.cpp)
-target_link_libraries(benchmark spdlog::spdlog ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(benchmark spdlog::spdlog Threads::Threads)
 
 add_executable(multisink multisink.cpp)
-target_link_libraries(multisink spdlog::spdlog ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(multisink spdlog::spdlog Threads::Threads)
 
 enable_testing()
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")

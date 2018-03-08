@@ -7,9 +7,7 @@
 
 #pragma once
 
-#define SPDLOG_VERSION "0.16.3"
 
-#include "tweakme.h"
 #include "common.h"
 #include "logger.h"
 
@@ -48,7 +46,7 @@ void flush_on(level::level_enum log_level);
 //
 // Set global error handler
 //
-void set_error_handler(log_err_handler);
+void set_error_handler(log_err_handler handler);
 
 //
 // Turn on async mode (off by default) and set the queue size for each async_logger.
@@ -58,7 +56,7 @@ void set_error_handler(log_err_handler);
 //
 // async_overflow_policy (optional, block_retry by default):
 //    async_overflow_policy::block_retry - if queue is full, block until queue has room for the new log entry.
-//    async_overflow_policy::discard_log_msg - never block and discard any new messages when queue  overflows.
+//    async_overflow_policy::discard_log_msg - never block and discard any new messages when queue overflows.
 //
 // worker_warmup_cb (optional):
 //     callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
@@ -86,7 +84,7 @@ std::shared_ptr<logger> rotating_logger_mt(const std::string& logger_name, const
 std::shared_ptr<logger> rotating_logger_st(const std::string& logger_name, const filename_t& filename, size_t max_file_size, size_t max_files);
 
 //
-// Create file logger which creates new file on the given time (default in  midnight):
+// Create file logger which creates new file on the given time (default in midnight):
 //
 std::shared_ptr<logger> daily_logger_mt(const std::string& logger_name, const filename_t& filename, int hour=0, int minute=0);
 std::shared_ptr<logger> daily_logger_st(const std::string& logger_name, const filename_t& filename, int hour=0, int minute=0);
@@ -131,7 +129,7 @@ std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_b
 // Example:
 // spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename");
 template <typename Sink, typename... Args>
-std::shared_ptr<spdlog::logger> create(const std::string& logger_name, Args...);
+std::shared_ptr<spdlog::logger> create(const std::string& logger_name, Args... args);
 
 // Create and register an async logger with a single sink
 std::shared_ptr<logger> create_async(const std::string& logger_name, const sink_ptr& sink, size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, const std::function<void()>& worker_warmup_cb = nullptr, const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(), const std::function<void()>& worker_teardown_cb = nullptr);

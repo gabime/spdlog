@@ -43,6 +43,7 @@ class async_log_helper
         flush,
         terminate
     };
+
     struct async_msg
     {
         std::string logger_name;
@@ -56,8 +57,14 @@ class async_log_helper
         async_msg() = default;
         ~async_msg() = default;
 
+        explicit async_msg(async_msg_type m_type) :
+            level(level::info),
+            thread_id(0),
+            msg_type(m_type),
+            msg_id(0)
+        {}
 
-async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
+async_msg(async_msg&& other) SPDLOG_NOEXCEPT :
         logger_name(std::move(other.logger_name)),
                     level(std::move(other.level)),
                     time(std::move(other.time)),
@@ -65,13 +72,6 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
                     txt(std::move(other.txt)),
                     msg_type(std::move(other.msg_type)),
                     msg_id(other.msg_id)
-        {}
-
-        async_msg(async_msg_type m_type):
-            level(level::info),
-            thread_id(0),
-            msg_type(m_type),
-            msg_id(0)
         {}
 
         async_msg& operator=(async_msg&& other) SPDLOG_NOEXCEPT
@@ -91,7 +91,7 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
         async_msg& operator=(const async_msg& other) = delete;
 
         // construct from log_msg
-        async_msg(const details::log_msg& m):
+        explicit async_msg(const details::log_msg& m):
             level(m.level),
             time(m.time),
             thread_id(m.thread_id),
@@ -103,7 +103,6 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
             logger_name = *m.logger_name;
 #endif
         }
-
 
         // copy into log_msg
         void fill_log_msg(log_msg &msg)
@@ -118,28 +117,29 @@ async_msg(async_msg&& other) SPDLOG_NOEXCEPT:
     };
 
 public:
-
     using item_type = async_msg;
     using q_type = details::mpmc_bounded_queue<item_type>;
 
     using clock = std::chrono::steady_clock;
 
-
     async_log_helper(formatter_ptr formatter,
-                     const std::vector<sink_ptr>& sinks,
+                     std::vector<sink_ptr> sinks,
                      size_t queue_size,
                      const log_err_handler err_handler,
                      const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-                     const std::function<void()>& worker_warmup_cb = nullptr,
+                     std::function<void()> worker_warmup_cb = nullptr,
                      const std::chrono::milliseconds& flush_interval_ms = std::chrono::milliseconds::zero(),
-                     const std::function<void()>& worker_teardown_cb = nullptr);
+                     std::function<void()> worker_teardown_cb = nullptr);
 
     void log(const details::log_msg& msg);
 
     // stop logging and join the back thread
     ~async_log_helper();
 
-    void set_formatter(formatter_ptr);
+    async_log_helper(const async_log_helper&) = delete;
+    async_log_helper& operator=(const async_log_helper&) = delete;
+
+    void set_formatter(formatter_ptr msg_formatter);
 
     void flush(bool wait_for_q);
 
@@ -157,7 +157,6 @@ private:
     bool _flush_requested;
 
     bool _terminate_requested;
-
 
     // overflow policy
     const async_overflow_policy _overflow_policy;
@@ -200,25 +199,26 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 inline spdlog::details::async_log_helper::async_log_helper(
     formatter_ptr formatter,
-    const std::vector<sink_ptr>& sinks,
+    std::vector<sink_ptr> sinks,
     size_t queue_size,
     log_err_handler err_handler,
     const async_overflow_policy overflow_policy,
-    const std::function<void()>& worker_warmup_cb,
+    std::function<void()> worker_warmup_cb,
     const std::chrono::milliseconds& flush_interval_ms,
-    const std::function<void()>& worker_teardown_cb):
-    _formatter(formatter),
-    _sinks(sinks),
+    std::function<void()> worker_teardown_cb):
+    _formatter(std::move(formatter)),
+    _sinks(std::move(sinks)),
     _q(queue_size),
-    _err_handler(err_handler),
+    _err_handler(std::move(err_handler)),
     _flush_requested(false),
     _terminate_requested(false),
     _overflow_policy(overflow_policy),
-    _worker_warmup_cb(worker_warmup_cb),
+    _worker_warmup_cb(std::move(worker_warmup_cb)),
     _flush_interval_ms(flush_interval_ms),
-    _worker_teardown_cb(worker_teardown_cb),
-    _worker_thread(&async_log_helper::worker_loop, this)
-{}
+    _worker_teardown_cb(std::move(worker_teardown_cb))
+{
+    _worker_thread = std::thread(&async_log_helper::worker_loop, this);
+}
 
 // Send to the worker thread termination message(level=off)
 // and wait for it to finish gracefully
@@ -327,13 +327,10 @@ inline bool spdlog::details::async_log_helper::process_next_msg(log_clock::time_
 
     // Handle empty queue..
     // This is the only place where the queue can terminate or flush to avoid losing messages already in the queue
-    else
-    {
-        auto now = details::os::now();
-        handle_flush_interval(now, last_flush);
-        sleep_or_yield(now, last_pop);
-        return !_terminate_requested;
-    }
+    auto now = details::os::now();
+    handle_flush_interval(now, last_flush);
+    sleep_or_yield(now, last_pop);
+    return !_terminate_requested;
 }
 
 // flush all sinks if _flush_interval_ms has expired
@@ -351,9 +348,8 @@ inline void spdlog::details::async_log_helper::handle_flush_interval(log_clock::
 
 inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
 {
-    _formatter = msg_formatter;
+    _formatter = std::move(msg_formatter);
 }
-
 
 // spin, yield or sleep. use the time passed since last message as a hint
 inline void spdlog::details::async_log_helper::sleep_or_yield(const spdlog::log_clock::time_point& now, const spdlog::log_clock::time_point& last_op_time)
@@ -391,8 +387,5 @@ inline void spdlog::details::async_log_helper::wait_empty_q()
 
 inline void spdlog::details::async_log_helper::set_error_handler(spdlog::log_err_handler err_handler)
 {
-    _err_handler = err_handler;
+    _err_handler = std::move(err_handler);
 }
-
-
-

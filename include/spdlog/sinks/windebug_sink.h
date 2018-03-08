@@ -17,11 +17,11 @@ namespace sinks
 /*
 * Windows debug sink (logging using OutputDebugStringA, synonym for msvc_sink)
 */
-template<class Mutex>
+template <class Mutex>
 using windebug_sink = msvc_sink<Mutex>;
 
-typedef msvc_sink_mt windebug_sink_mt;
-typedef msvc_sink_st windebug_sink_st;
+using windebug_sink_mt = msvc_sink_mt;
+using windebug_sink_st = msvc_sink_st;
 
 }
 }

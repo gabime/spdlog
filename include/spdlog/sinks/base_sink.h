@@ -22,11 +22,10 @@ namespace spdlog
 namespace sinks
 {
 template<class Mutex>
-class base_sink:public sink
+class base_sink : public sink
 {
 public:
-    base_sink():_mutex() {}
-    virtual ~base_sink() = default;
+    base_sink() = default;
 
     base_sink(const base_sink&) = delete;
     base_sink& operator=(const base_sink&) = delete;
@@ -36,6 +35,7 @@ public:
         std::lock_guard<Mutex> lock(_mutex);
         _sink_it(msg);
     }
+
     void flush() SPDLOG_FINAL override
     {
         std::lock_guard<Mutex> lock(_mutex);

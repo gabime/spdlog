@@ -21,19 +21,20 @@ class flag_formatter;
 class formatter
 {
 public:
-    virtual ~formatter() {}
+    virtual ~formatter() = default;
     virtual void format(details::log_msg& msg) = 0;
 };
 
 class pattern_formatter SPDLOG_FINAL : public formatter
 {
-
 public:
-    explicit pattern_formatter(const std::string& pattern, pattern_time_type pattern_time = pattern_time_type::local);
+    explicit pattern_formatter(const std::string& pattern, pattern_time_type pattern_time = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol);
     pattern_formatter(const pattern_formatter&) = delete;
     pattern_formatter& operator=(const pattern_formatter&) = delete;
     void format(details::log_msg& msg) override;
+
 private:
+    const std::string _eol;
     const std::string _pattern;
     const pattern_time_type _pattern_time;
     std::vector<std::unique_ptr<details::flag_formatter>> _formatters;
@@ -44,4 +45,3 @@ private:
 }
 
 #include "details/pattern_formatter_impl.h"
-

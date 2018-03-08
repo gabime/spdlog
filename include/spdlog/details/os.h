@@ -96,7 +96,6 @@ inline std::tm localtime()
     return localtime(now_t);
 }
 
-
 inline std::tm gmtime(const std::time_t &time_tt)
 {
 
@@ -140,8 +139,7 @@ inline bool operator!=(const std::tm& tm1, const std::tm& tm2)
 #endif
 #endif
 
-SPDLOG_CONSTEXPR static const char* eol = SPDLOG_EOL;
-SPDLOG_CONSTEXPR static int eol_size = sizeof(SPDLOG_EOL) - 1;
+SPDLOG_CONSTEXPR static const char* default_eol = SPDLOG_EOL;
 
 
 
@@ -155,10 +153,13 @@ SPDLOG_CONSTEXPR static const char folder_sep = '/';
 
 inline void prevent_child_fd(FILE *f)
 {
+
 #ifdef _WIN32
+#if !defined(__cplusplus_winrt)
     auto file_handle = (HANDLE)_get_osfhandle(_fileno(f));
     if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
         throw spdlog_ex("SetHandleInformation failed", errno);
+#endif
 #else
     auto fd = fileno(f);
     if (fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
@@ -168,7 +169,7 @@ inline void prevent_child_fd(FILE *f)
 
 
 //fopen_s on non windows for writing
-inline int fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode)
+inline bool fopen_s(FILE** fp, const filename_t& filename, const filename_t& mode)
 {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES
@@ -248,7 +249,7 @@ inline size_t filesize(FILE *f)
     int fd = fileno(f);
     //64 bits(but not in osx or cygwin, where fstat64 is deprecated)
 #if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__)) && !defined(__CYGWIN__)
-    struct stat64 st;
+    struct stat64 st ;
     if (fstat64(fd, &st) == 0)
         return static_cast<size_t>(st.st_size);
 #else // unix 32 bits or cygwin
@@ -316,9 +317,9 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
         }
     };
 
-    long int offset_seconds = helper::calculate_gmt_offset(tm);
+    auto offset_seconds = helper::calculate_gmt_offset(tm);
 #else
-    long int offset_seconds = tm.tm_gmtoff;
+    auto offset_seconds = tm.tm_gmtoff;
 #endif
 
     return static_cast<int>(offset_seconds / 60);
@@ -330,12 +331,12 @@ inline int utc_minutes_offset(const std::tm& tm = details::os::localtime())
 inline size_t _thread_id()
 {
 #ifdef _WIN32
-    return  static_cast<size_t>(::GetCurrentThreadId());
+    return static_cast<size_t>(::GetCurrentThreadId());
 #elif __linux__
 # if defined(__ANDROID__) && defined(__ANDROID_API__) && (__ANDROID_API__ < 21)
 #  define SYS_gettid __NR_gettid
 # endif
-    return  static_cast<size_t>(syscall(SYS_gettid));
+    return static_cast<size_t>(syscall(SYS_gettid));
 #elif __FreeBSD__
     long tid;
     thr_self(&tid);
@@ -352,7 +353,7 @@ inline size_t _thread_id()
 //Return current thread id as size_t (from thread local storage)
 inline size_t thread_id()
 {
-#if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || (defined(__clang__) && !__has_feature(cxx_thread_local))
+#if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt ) || (defined(__clang__) && !__has_feature(cxx_thread_local))
     return _thread_id();
 #else // cache thread id in tls
     static thread_local const size_t tid = _thread_id();
@@ -368,7 +369,7 @@ inline size_t thread_id()
 inline void sleep_for_millis(int milliseconds)
 {
 #if defined(_WIN32)
-    Sleep(milliseconds);
+    ::Sleep(milliseconds);
 #else
     std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 #endif
@@ -401,10 +402,7 @@ inline std::string errno_to_string(char buf[256], int res)
     {
         return std::string(buf);
     }
-    else
-    {
-        return "Unknown error";
-    }
+    return "Unknown error";
 }
 
 // Return errno string (thread safe)
@@ -437,7 +435,7 @@ inline int pid()
 {
 
 #ifdef _WIN32
-    return ::_getpid();
+    return static_cast<int>(::GetCurrentProcessId());
 #else
     return static_cast<int>(::getpid());
 #endif
@@ -480,9 +478,9 @@ inline bool in_terminal(FILE* file)
 {
 
 #ifdef _WIN32
-    return _isatty(_fileno(file)) ? true : false;
+    return _isatty(_fileno(file)) != 0;
 #else
-    return isatty(fileno(file)) ? true : false;
+    return isatty(fileno(file)) != 0;
 #endif
 }
 } //os

@@ -1,4 +1,3 @@
-
 #include "includes.h"
 
 template<class T>
@@ -13,13 +12,8 @@ std::string log_info(const T& what, spdlog::level::level_enum logger_level = spd
     oss_logger.set_pattern("%v");
     oss_logger.info(what);
 
-    return oss.str().substr(0, oss.str().length() - spdlog::details::os::eol_size);
+    return oss.str().substr(0, oss.str().length() - strlen(spdlog::details::os::default_eol));
 }
-
-
-
-
-
 
 TEST_CASE("basic_logging ", "[basic_logging]")
 {
@@ -39,7 +33,6 @@ TEST_CASE("basic_logging ", "[basic_logging]")
     //REQUIRE(log_info(some_logged_class("some_val")) == "some_val");
 }
 
-
 TEST_CASE("log_levels", "[log_levels]")
 {
     REQUIRE(log_info("Hello", spdlog::level::err) == "");
@@ -48,6 +41,9 @@ TEST_CASE("log_levels", "[log_levels]")
     REQUIRE(log_info("Hello", spdlog::level::debug) == "Hello");
     REQUIRE(log_info("Hello", spdlog::level::trace) == "Hello");
 }
+
+
+
 
 
 
