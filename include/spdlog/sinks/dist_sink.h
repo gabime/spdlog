@@ -11,32 +11,31 @@
 #include "sink.h"
 
 #include <algorithm>
-#include <mutex>
 #include <memory>
+#include <mutex>
 #include <vector>
 
 // Distribution sink (mux). Stores a vector of sinks which get called when log is called
 
-namespace spdlog
-{
-namespace sinks
-{
-template<class Mutex>
-class dist_sink : public base_sink<Mutex>
+namespace spdlog { namespace sinks {
+template <class Mutex> class dist_sink : public base_sink<Mutex>
 {
 public:
-    explicit dist_sink() :_sinks() {}
-    dist_sink(const dist_sink&) = delete;
-    dist_sink& operator=(const dist_sink&) = delete;
+    explicit dist_sink()
+        : _sinks()
+    {
+    }
+    dist_sink(const dist_sink &) = delete;
+    dist_sink &operator=(const dist_sink &) = delete;
 
 protected:
     std::vector<std::shared_ptr<sink>> _sinks;
 
-    void _sink_it(const details::log_msg& msg) override
+    void _sink_it(const details::log_msg &msg) override
     {
         for (auto &sink : _sinks)
         {
-            if( sink->should_log( msg.level))
+            if (sink->should_log(msg.level))
             {
                 sink->log(msg);
             }
@@ -66,5 +65,4 @@ public:
 using dist_sink_mt = dist_sink<std::mutex>;
 using dist_sink_st = dist_sink<details::null_mutex>;
 
-}
-}
+}} // namespace spdlog::sinks

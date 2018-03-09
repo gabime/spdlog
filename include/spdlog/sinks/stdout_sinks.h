@@ -12,13 +12,9 @@
 #include <memory>
 #include <mutex>
 
-namespace spdlog
-{
-namespace sinks
-{
+namespace spdlog { namespace sinks {
 
-template <class Mutex>
-class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
+template <class Mutex> class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
     using MyType = stdout_sink<Mutex>;
 
@@ -32,7 +28,7 @@ public:
     }
 
 protected:
-    void _sink_it(const details::log_msg& msg) override
+    void _sink_it(const details::log_msg &msg) override
     {
         fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stdout);
         _flush();
@@ -47,8 +43,7 @@ protected:
 using stdout_sink_mt = stdout_sink<std::mutex>;
 using stdout_sink_st = stdout_sink<details::null_mutex>;
 
-template <class Mutex>
-class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
+template <class Mutex> class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
     using MyType = stderr_sink<Mutex>;
 
@@ -62,7 +57,7 @@ public:
     }
 
 protected:
-    void _sink_it(const details::log_msg& msg) override
+    void _sink_it(const details::log_msg &msg) override
     {
         fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);
         _flush();
@@ -77,5 +72,4 @@ protected:
 using stderr_sink_mt = stderr_sink<std::mutex>;
 using stderr_sink_st = stderr_sink<details::null_mutex>;
 
-}
-}
+}} // namespace spdlog::sinks

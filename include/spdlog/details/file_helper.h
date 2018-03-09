@@ -9,20 +9,17 @@
 // When failing to open a file, retry several times(5) with small delay between the tries(10 ms)
 // Throw spdlog_ex exception on errors
 
-#include "../details/os.h"
 #include "../details/log_msg.h"
+#include "../details/os.h"
 
+#include <cerrno>
 #include <chrono>
 #include <cstdio>
 #include <string>
 #include <thread>
 #include <tuple>
-#include <cerrno>
 
-namespace spdlog
-{
-namespace details
-{
+namespace spdlog { namespace details {
 
 class file_helper
 {
@@ -33,16 +30,15 @@ public:
 
     explicit file_helper() = default;
 
-    file_helper(const file_helper&) = delete;
-    file_helper& operator=(const file_helper&) = delete;
+    file_helper(const file_helper &) = delete;
+    file_helper &operator=(const file_helper &) = delete;
 
     ~file_helper()
     {
         close();
     }
 
-
-    void open(const filename_t& fname, bool truncate = false)
+    void open(const filename_t &fname, bool truncate = false)
     {
         close();
         auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
@@ -63,7 +59,6 @@ public:
         if (_filename.empty())
             throw spdlog_ex("Failed re opening file - was not opened before");
         open(_filename, truncate);
-
     }
 
     void flush()
@@ -80,7 +75,7 @@ public:
         }
     }
 
-    void write(const log_msg& msg)
+    void write(const log_msg &msg)
     {
         size_t msg_size = msg.formatted.size();
         auto data = msg.formatted.data();
@@ -97,12 +92,12 @@ public:
         return os::filesize(_fd);
     }
 
-    const filename_t& filename() const
+    const filename_t &filename() const
     {
         return _filename;
     }
 
-    static bool file_exists(const filename_t& fname)
+    static bool file_exists(const filename_t &fname)
     {
         return os::file_exists(fname);
     }
@@ -120,7 +115,7 @@ public:
     // ".mylog" => (".mylog". "")
     // "my_folder/.mylog" => ("my_folder/.mylog", "")
     // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
-    static std::tuple<filename_t, filename_t> split_by_extenstion(const spdlog::filename_t& fname)
+    static std::tuple<filename_t, filename_t> split_by_extenstion(const spdlog::filename_t &fname)
     {
         auto ext_index = fname.rfind('.');
 
@@ -138,8 +133,7 @@ public:
     }
 
 private:
-    FILE* _fd{ nullptr };
+    FILE *_fd{nullptr};
     filename_t _filename;
 };
-}
-}
+}} // namespace spdlog::details

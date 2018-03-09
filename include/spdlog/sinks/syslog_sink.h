@@ -9,18 +9,14 @@
 
 #ifdef SPDLOG_ENABLE_SYSLOG
 
-#include "sink.h"
 #include "../details/log_msg.h"
+#include "sink.h"
 
 #include <array>
 #include <string>
 #include <syslog.h>
 
-
-namespace spdlog
-{
-namespace sinks
-{
+namespace spdlog { namespace sinks {
 /**
  * Sink that write to syslog using the `syscall()` library call.
  *
@@ -30,8 +26,8 @@ class syslog_sink : public sink
 {
 public:
     //
-    syslog_sink(const std::string& ident = "", int syslog_option=0, int syslog_facility=LOG_USER):
-        _ident(ident)
+    syslog_sink(const std::string &ident = "", int syslog_option = 0, int syslog_facility = LOG_USER)
+        : _ident(ident)
     {
         _priorities[static_cast<size_t>(level::trace)] = LOG_DEBUG;
         _priorities[static_cast<size_t>(level::debug)] = LOG_DEBUG;
@@ -41,8 +37,8 @@ public:
         _priorities[static_cast<size_t>(level::critical)] = LOG_CRIT;
         _priorities[static_cast<size_t>(level::off)] = LOG_INFO;
 
-        //set ident to be program name if empty
-        ::openlog(_ident.empty()? nullptr:_ident.c_str(), syslog_option, syslog_facility);
+        // set ident to be program name if empty
+        ::openlog(_ident.empty() ? nullptr : _ident.c_str(), syslog_option, syslog_facility);
     }
 
     ~syslog_sink() override
@@ -50,22 +46,19 @@ public:
         ::closelog();
     }
 
-    syslog_sink(const syslog_sink&) = delete;
-    syslog_sink& operator=(const syslog_sink&) = delete;
+    syslog_sink(const syslog_sink &) = delete;
+    syslog_sink &operator=(const syslog_sink &) = delete;
 
     void log(const details::log_msg &msg) override
     {
         ::syslog(syslog_prio_from_level(msg), "%s", msg.raw.str().c_str());
     }
 
-    void flush() override
-    {
-    }
-
+    void flush() override {}
 
 private:
     std::array<int, 7> _priorities;
-    //must store the ident because the man says openlog might use the pointer as is and not a string copy
+    // must store the ident because the man says openlog might use the pointer as is and not a string copy
     const std::string _ident;
 
     //
@@ -76,7 +69,6 @@ private:
         return _priorities[static_cast<size_t>(msg.level)];
     }
 };
-}
-}
+}} // namespace spdlog::sinks
 
 #endif

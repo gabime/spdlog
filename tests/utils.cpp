@@ -1,6 +1,5 @@
 #include "includes.h"
 
-
 void prepare_logdir()
 {
     spdlog::drop_all();
@@ -14,18 +13,15 @@ void prepare_logdir()
 #endif
 }
 
-
-std::string file_contents(const std::string& filename)
+std::string file_contents(const std::string &filename)
 {
     std::ifstream ifs(filename);
     if (!ifs)
         throw std::runtime_error("Failed open file ");
-    return std::string((std::istreambuf_iterator<char>(ifs)),
-                       (std::istreambuf_iterator<char>()));
-
+    return std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 }
 
-std::size_t count_lines(const std::string& filename)
+std::size_t count_lines(const std::string &filename)
 {
     std::ifstream ifs(filename);
     if (!ifs)
@@ -33,12 +29,12 @@ std::size_t count_lines(const std::string& filename)
 
     std::string line;
     size_t counter = 0;
-    while(std::getline(ifs, line))
+    while (std::getline(ifs, line))
         counter++;
     return counter;
 }
 
-std::size_t get_filesize(const std::string& filename)
+std::size_t get_filesize(const std::string &filename)
 {
     std::ifstream ifs(filename, std::ifstream::ate | std::ifstream::binary);
     if (!ifs)
@@ -47,10 +43,10 @@ std::size_t get_filesize(const std::string& filename)
     return static_cast<std::size_t>(ifs.tellg());
 }
 
-
 // source: https://stackoverflow.com/a/2072890/192001
-bool ends_with(std::string const & value, std::string const & ending)
+bool ends_with(std::string const &value, std::string const &ending)
 {
-    if (ending.size() > value.size()) return false;
+    if (ending.size() > value.size())
+        return false;
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
