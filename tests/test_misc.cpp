@@ -42,6 +42,39 @@ TEST_CASE("log_levels", "[log_levels]")
     REQUIRE(log_info("Hello", spdlog::level::trace) == "Hello");
 }
 
+TEST_CASE("to_str", "[convert_to_str]")
+{
+    REQUIRE(std::string(spdlog::level::to_str(spdlog::level::trace)) == "trace");
+    REQUIRE(std::string(spdlog::level::to_str(spdlog::level::debug)) == "debug");
+    REQUIRE(std::string(spdlog::level::to_str(spdlog::level::info)) == "info");
+    REQUIRE(std::string(spdlog::level::to_str(spdlog::level::warn)) == "warning");
+    REQUIRE(std::string(spdlog::level::to_str(spdlog::level::err)) == "error");
+    REQUIRE(std::string(spdlog::level::to_str(spdlog::level::critical)) == "critical");
+    REQUIRE(std::string(spdlog::level::to_str(spdlog::level::off)) == "off");
+}
+
+TEST_CASE("to_short_str", "[convert_to_short_str]")
+{
+    REQUIRE(std::string(spdlog::level::to_short_str(spdlog::level::trace)) == "T");
+    REQUIRE(std::string(spdlog::level::to_short_str(spdlog::level::debug)) == "D");
+    REQUIRE(std::string(spdlog::level::to_short_str(spdlog::level::info)) == "I");
+    REQUIRE(std::string(spdlog::level::to_short_str(spdlog::level::warn)) == "W");
+    REQUIRE(std::string(spdlog::level::to_short_str(spdlog::level::err)) == "E");
+    REQUIRE(std::string(spdlog::level::to_short_str(spdlog::level::critical)) == "C");
+    REQUIRE(std::string(spdlog::level::to_short_str(spdlog::level::off)) == "O");
+}
+
+TEST_CASE("to_level_enum", "[convert_to_level_enum]")
+{
+    REQUIRE(spdlog::level::to_level_enum("trace") == spdlog::level::trace);
+    REQUIRE(spdlog::level::to_level_enum("debug") == spdlog::level::debug);
+    REQUIRE(spdlog::level::to_level_enum("info") == spdlog::level::info);
+    REQUIRE(spdlog::level::to_level_enum("warning") == spdlog::level::warn);
+    REQUIRE(spdlog::level::to_level_enum("error") == spdlog::level::err);
+    REQUIRE(spdlog::level::to_level_enum("critical") == spdlog::level::critical);
+    REQUIRE(spdlog::level::to_level_enum("off") == spdlog::level::off);
+    REQUIRE(spdlog::level::to_level_enum("null") == spdlog::level::off);
+}
 
 
 
