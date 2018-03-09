@@ -5,7 +5,7 @@
 
 #pragma once
 
-#define SPDLOG_VERSION "0.16.3"
+#define SPDLOG_VERSION "0.16.4-rc"
 
 #include "tweakme.h"
 
