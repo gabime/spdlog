@@ -115,7 +115,7 @@ inline spdlog::level::level_enum to_level_enum(const std::string &name)
             {level_names[6], level::off}};                             // off
 
     auto lvl_it = name_to_level.find(name);
-    return lvl_it != name_to_level.end() ? lvl_it->second : level::off
+    return lvl_it != name_to_level.end() ? lvl_it->second : level::off;
 }
 
 using level_hasher = std::hash<int>;
