@@ -103,7 +103,7 @@ inline const char *to_short_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
 }
-inline spdlog::level::level_enum to_level_enum(const std::string &name)
+inline spdlog::level::level_enum from_str(const std::string &name)
 {
     static std::unordered_map<std::string, level_enum> name_to_level = // map string->level
         {{level_names[0], level::trace},                               // trace
