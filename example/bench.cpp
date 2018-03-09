@@ -53,9 +53,9 @@ int main(int argc, char* argv[])
         cout << "Single thread, " << format(howmany)  << " iterations" << endl;
         cout << "*******************************************************************************\n";
 
-        auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st", file_size, rotating_files);
+        auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
         bench(howmany, rotating_st);
-        auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st");
+        auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st.log");
         bench(howmany, daily_st);
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
@@ -63,11 +63,11 @@ int main(int argc, char* argv[])
         cout << threads << " threads sharing same logger, " << format(howmany)  << " iterations" << endl;
         cout << "*******************************************************************************\n";
 
-        auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt", file_size, rotating_files);
+        auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt.log", file_size, rotating_files);
         bench_mt(howmany, rotating_mt, threads);
 
 
-        auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt");
+        auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
         bench_mt(howmany, daily_mt, threads);
         bench(howmany, spdlog::create<null_sink_st>("null_mt"));
 
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 
         for(int i = 0; i < 3; ++i)
         {
-            auto as = spdlog::daily_logger_st("as", "logs/daily_async");
+            auto as = spdlog::daily_logger_st("as", "logs/daily_async.log");
             bench_mt(howmany, as, threads);
             spdlog::drop("as");
         }
