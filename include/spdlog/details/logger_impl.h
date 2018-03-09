@@ -217,11 +217,11 @@ inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* msg)
 }
 
 template <typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* fmt, const Args&... args)
+inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* fmtstr, const Args&... args)
 {
     fmt::WMemoryWriter wWriter;
 
-    wWriter.write(fmt, args...);
+    wWriter.write(fmtstr, args...);
     log(lvl, wWriter.c_str());
 }
 
