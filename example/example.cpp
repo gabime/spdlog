@@ -24,12 +24,6 @@ void err_handler_example();
 namespace spd = spdlog;
 int main(int, char *[])
 {
-    fmt::MemoryWriter w;
-    w.write("HELLO", 10);
-    std::string s(w.data(), w.size());
-    std::cout << s << std::endl;
-    return 0;
-
     try
     {
         // Console logger with color
