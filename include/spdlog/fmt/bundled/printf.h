@@ -632,7 +632,7 @@ inline void printf(WWriter &w, WCStringRef format, ArgList args)
 {
     PrintfFormatter<wchar_t>(args, w).format(format);
 }
-FMT_VARIADIC(void, printf, WWriter &, WCStringRef)
+FMT_VARIADIC_W(void, printf, WWriter &, WCStringRef)
 
 /**
   \rst

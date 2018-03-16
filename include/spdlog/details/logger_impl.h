@@ -58,7 +58,7 @@ inline void spdlog::logger::set_pattern(const std::string& pattern, pattern_time
 }
 
 template <typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Args&... args)
+inline void spdlog::logger::log(level::level_enum lvl, const char* fmtStr, const Args&... args)
 {
     if (!should_log(lvl)) return;
 
@@ -67,9 +67,9 @@ inline void spdlog::logger::log(level::level_enum lvl, const char* fmt, const Ar
         details::log_msg log_msg(&_name, lvl);
 
 #if defined(SPDLOG_FMT_PRINTF)
-        fmt::printf(log_msg.raw, fmt, args...);
+        fmt::printf(log_msg.raw, fmtStr, args...);
 #else
-        log_msg.raw.write(fmt, args...);
+        log_msg.raw.write(fmtStr, args...);
 #endif
         _sink_it(log_msg);
     }
@@ -219,9 +219,14 @@ inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* msg)
 template <typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const wchar_t* fmtstr, const Args&... args)
 {
-    fmt::WMemoryWriter wWriter;
+	fmt::WMemoryWriter wWriter;
 
-    wWriter.write(fmtstr, args...);
+#if defined(SPDLOG_FMT_PRINTF)
+	fmt::printf(wWriter, fmtstr, args...);
+#else
+	wWriter.write(fmtstr, args...);
+#endif
+   
     log(lvl, wWriter.c_str());
 }
 
@@ -261,6 +266,7 @@ inline void spdlog::logger::critical(const wchar_t* fmt, const Args&... args)
 {
     log(level::critical, fmt, args...);
 }
+
 
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
