@@ -18,7 +18,7 @@
 #include <mutex>
 
 namespace spdlog { namespace sinks {
-template <class Mutex> class base_sink : public sink
+template<class Mutex> class base_sink : public sink
 {
 public:
     base_sink() = default;

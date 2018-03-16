@@ -12,7 +12,7 @@
 #include <ostream>
 
 namespace spdlog { namespace sinks {
-template <class Mutex> class ostream_sink : public base_sink<Mutex>
+template<class Mutex> class ostream_sink : public base_sink<Mutex>
 {
 public:
     explicit ostream_sink(std::ostream &os, bool force_flush = false)

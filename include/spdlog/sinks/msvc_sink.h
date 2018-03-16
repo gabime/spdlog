@@ -19,7 +19,7 @@ namespace spdlog { namespace sinks {
 /*
  * MSVC sink (logging using OutputDebugStringA)
  */
-template <class Mutex> class msvc_sink : public base_sink<Mutex>
+template<class Mutex> class msvc_sink : public base_sink<Mutex>
 {
 public:
     explicit msvc_sink() {}

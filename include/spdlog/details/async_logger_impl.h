@@ -16,7 +16,7 @@
 #include <memory>
 #include <string>
 
-template <class It>
+template<class It>
 inline spdlog::async_logger::async_logger(const std::string &logger_name, const It &begin, const It &end, size_t queue_size,
     const async_overflow_policy overflow_policy, const std::function<void()> &worker_warmup_cb,
     const std::chrono::milliseconds &flush_interval_ms, const std::function<void()> &worker_teardown_cb)

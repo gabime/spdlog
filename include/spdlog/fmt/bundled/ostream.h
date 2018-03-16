@@ -17,7 +17,7 @@ namespace fmt {
 
 namespace internal {
 
-template <class Char> class FormatBuf : public std::basic_streambuf<Char>
+template<class Char> class FormatBuf : public std::basic_streambuf<Char>
 {
 private:
     typedef typename std::basic_streambuf<Char>::int_type int_type;
@@ -60,12 +60,12 @@ struct DummyStream : std::ostream
     DummyStream(); // Suppress a bogus warning in MSVC.
 
     // Hide all operator<< overloads from std::ostream.
-    template <typename T> typename EnableIf<sizeof(T) == 0>::type operator<<(const T &);
+    template<typename T> typename EnableIf<sizeof(T) == 0>::type operator<<(const T &);
 };
 
 No &operator<<(std::ostream &, int);
 
-template <typename T> struct ConvertToIntImpl<T, true>
+template<typename T> struct ConvertToIntImpl<T, true>
 {
     // Convert to int only if T doesn't have an overloaded operator<<.
     enum
@@ -79,7 +79,7 @@ FMT_API void write(std::ostream &os, Writer &w);
 } // namespace internal
 
 // Formats a value.
-template <typename Char, typename ArgFormatter_, typename T>
+template<typename Char, typename ArgFormatter_, typename T>
 void format_arg(BasicFormatter<Char, ArgFormatter_> &f, const Char *&format_str, const T &value)
 {
     internal::MemoryBuffer<Char, internal::INLINE_BUFFER_SIZE> buffer;

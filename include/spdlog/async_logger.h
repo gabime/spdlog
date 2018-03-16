@@ -32,7 +32,7 @@ class async_log_helper;
 class async_logger SPDLOG_FINAL : public logger
 {
 public:
-    template <class It>
+    template<class It>
     async_logger(const std::string &logger_name, const It &begin, const It &end, size_t queue_size,
         const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
         const std::function<void()> &worker_warmup_cb = nullptr,

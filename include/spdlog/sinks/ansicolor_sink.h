@@ -19,7 +19,7 @@ namespace spdlog { namespace sinks {
  * of the message.
  * If no color terminal detected, omit the escape codes.
  */
-template <class Mutex> class ansicolor_sink : public base_sink<Mutex>
+template<class Mutex> class ansicolor_sink : public base_sink<Mutex>
 {
 public:
     explicit ansicolor_sink(FILE *file)
@@ -106,7 +106,7 @@ protected:
     std::unordered_map<level::level_enum, std::string, level::level_hasher> colors_;
 };
 
-template <class Mutex> class ansicolor_stdout_sink : public ansicolor_sink<Mutex>
+template<class Mutex> class ansicolor_stdout_sink : public ansicolor_sink<Mutex>
 {
 public:
     ansicolor_stdout_sink()
@@ -118,7 +118,7 @@ public:
 using ansicolor_stdout_sink_mt = ansicolor_stdout_sink<std::mutex>;
 using ansicolor_stdout_sink_st = ansicolor_stdout_sink<details::null_mutex>;
 
-template <class Mutex> class ansicolor_stderr_sink : public ansicolor_sink<Mutex>
+template<class Mutex> class ansicolor_stderr_sink : public ansicolor_sink<Mutex>
 {
 public:
     ansicolor_stderr_sink()

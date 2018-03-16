@@ -190,14 +190,14 @@ inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string &logger_
     return details::registry::instance().create(logger_name, sinks);
 }
 
-template <typename Sink, typename... Args>
+template<typename Sink, typename... Args>
 inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string &logger_name, Args... args)
 {
     sink_ptr sink = std::make_shared<Sink>(args...);
     return details::registry::instance().create(logger_name, {sink});
 }
 
-template <class It>
+template<class It>
 inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string &logger_name, const It &sinks_begin, const It &sinks_end)
 {
     return details::registry::instance().create(logger_name, sinks_begin, sinks_end);
@@ -221,7 +221,7 @@ inline std::shared_ptr<spdlog::logger> spdlog::create_async(const std::string &l
         logger_name, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb, sinks);
 }
 
-template <class It>
+template<class It>
 inline std::shared_ptr<spdlog::logger> spdlog::create_async(const std::string &logger_name, const It &sinks_begin, const It &sinks_end,
     size_t queue_size, const async_overflow_policy overflow_policy, const std::function<void()> &worker_warmup_cb,
     const std::chrono::milliseconds &flush_interval_ms, const std::function<void()> &worker_teardown_cb)

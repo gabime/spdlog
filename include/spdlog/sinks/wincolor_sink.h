@@ -18,7 +18,7 @@ namespace spdlog { namespace sinks {
 /*
  * Windows color console sink. Uses WriteConsoleA to write to the console with colors
  */
-template <class Mutex> class wincolor_sink : public base_sink<Mutex>
+template<class Mutex> class wincolor_sink : public base_sink<Mutex>
 {
 public:
     const WORD BOLD = FOREGROUND_INTENSITY;
@@ -89,7 +89,7 @@ private:
 //
 // windows color console to stdout
 //
-template <class Mutex> class wincolor_stdout_sink : public wincolor_sink<Mutex>
+template<class Mutex> class wincolor_stdout_sink : public wincolor_sink<Mutex>
 {
 public:
     wincolor_stdout_sink()
@@ -104,7 +104,7 @@ using wincolor_stdout_sink_st = wincolor_stdout_sink<details::null_mutex>;
 //
 // windows color console to stderr
 //
-template <class Mutex> class wincolor_stderr_sink : public wincolor_sink<Mutex>
+template<class Mutex> class wincolor_stderr_sink : public wincolor_sink<Mutex>
 {
 public:
     wincolor_stderr_sink()
