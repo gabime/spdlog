@@ -50,7 +50,8 @@ Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 namespace spdlog { namespace details {
 
-template<typename T> class mpmc_bounded_queue
+template<typename T>
+class mpmc_bounded_queue
 {
 public:
     using item_type = T;

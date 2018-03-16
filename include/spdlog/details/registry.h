@@ -23,7 +23,8 @@
 #include <unordered_map>
 
 namespace spdlog { namespace details {
-template<class Mutex> class registry_t
+template<class Mutex>
+class registry_t
 {
 public:
     registry_t<Mutex>(const registry_t<Mutex> &) = delete;
@@ -44,7 +45,8 @@ public:
         return found == _loggers.end() ? nullptr : found->second;
     }
 
-    template<class It> std::shared_ptr<logger> create(const std::string &logger_name, const It &sinks_begin, const It &sinks_end)
+    template<class It>
+    std::shared_ptr<logger> create(const std::string &logger_name, const It &sinks_begin, const It &sinks_end)
     {
         std::lock_guard<Mutex> lock(_mutex);
         throw_if_exists(logger_name);

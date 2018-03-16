@@ -1,6 +1,7 @@
 #include "includes.h"
 
-template<class T> std::string log_info(const T &what, spdlog::level::level_enum logger_level = spdlog::level::info)
+template<class T>
+std::string log_info(const T &what, spdlog::level::level_enum logger_level = spdlog::level::info)
 {
 
     std::ostringstream oss;

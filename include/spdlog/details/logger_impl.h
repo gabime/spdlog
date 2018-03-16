@@ -50,7 +50,8 @@ inline void spdlog::logger::set_pattern(const std::string &pattern, pattern_time
     _set_pattern(pattern, pattern_time);
 }
 
-template<typename... Args> inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Args &... args)
+template<typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Args &... args)
 {
     if (!should_log(lvl))
         return;
@@ -77,7 +78,8 @@ template<typename... Args> inline void spdlog::logger::log(level::level_enum lvl
     }
 }
 
-template<typename... Args> inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
+template<typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
 {
     if (!should_log(lvl))
         return;
@@ -98,7 +100,8 @@ template<typename... Args> inline void spdlog::logger::log(level::level_enum lvl
     }
 }
 
-template<typename T> inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
+template<typename T>
+inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
 {
     if (!should_log(lvl))
         return;
@@ -119,62 +122,74 @@ template<typename T> inline void spdlog::logger::log(level::level_enum lvl, cons
     }
 }
 
-template<typename Arg1, typename... Args> inline void spdlog::logger::trace(const char *fmt, const Arg1 &arg1, const Args &... args)
+template<typename Arg1, typename... Args>
+inline void spdlog::logger::trace(const char *fmt, const Arg1 &arg1, const Args &... args)
 {
     log(level::trace, fmt, arg1, args...);
 }
 
-template<typename Arg1, typename... Args> inline void spdlog::logger::debug(const char *fmt, const Arg1 &arg1, const Args &... args)
+template<typename Arg1, typename... Args>
+inline void spdlog::logger::debug(const char *fmt, const Arg1 &arg1, const Args &... args)
 {
     log(level::debug, fmt, arg1, args...);
 }
 
-template<typename Arg1, typename... Args> inline void spdlog::logger::info(const char *fmt, const Arg1 &arg1, const Args &... args)
+template<typename Arg1, typename... Args>
+inline void spdlog::logger::info(const char *fmt, const Arg1 &arg1, const Args &... args)
 {
     log(level::info, fmt, arg1, args...);
 }
 
-template<typename Arg1, typename... Args> inline void spdlog::logger::warn(const char *fmt, const Arg1 &arg1, const Args &... args)
+template<typename Arg1, typename... Args>
+inline void spdlog::logger::warn(const char *fmt, const Arg1 &arg1, const Args &... args)
 {
     log(level::warn, fmt, arg1, args...);
 }
 
-template<typename Arg1, typename... Args> inline void spdlog::logger::error(const char *fmt, const Arg1 &arg1, const Args &... args)
+template<typename Arg1, typename... Args>
+inline void spdlog::logger::error(const char *fmt, const Arg1 &arg1, const Args &... args)
 {
     log(level::err, fmt, arg1, args...);
 }
 
-template<typename Arg1, typename... Args> inline void spdlog::logger::critical(const char *fmt, const Arg1 &arg1, const Args &... args)
+template<typename Arg1, typename... Args>
+inline void spdlog::logger::critical(const char *fmt, const Arg1 &arg1, const Args &... args)
 {
     log(level::critical, fmt, arg1, args...);
 }
 
-template<typename T> inline void spdlog::logger::trace(const T &msg)
+template<typename T>
+inline void spdlog::logger::trace(const T &msg)
 {
     log(level::trace, msg);
 }
 
-template<typename T> inline void spdlog::logger::debug(const T &msg)
+template<typename T>
+inline void spdlog::logger::debug(const T &msg)
 {
     log(level::debug, msg);
 }
 
-template<typename T> inline void spdlog::logger::info(const T &msg)
+template<typename T>
+inline void spdlog::logger::info(const T &msg)
 {
     log(level::info, msg);
 }
 
-template<typename T> inline void spdlog::logger::warn(const T &msg)
+template<typename T>
+inline void spdlog::logger::warn(const T &msg)
 {
     log(level::warn, msg);
 }
 
-template<typename T> inline void spdlog::logger::error(const T &msg)
+template<typename T>
+inline void spdlog::logger::error(const T &msg)
 {
     log(level::err, msg);
 }
 
-template<typename T> inline void spdlog::logger::critical(const T &msg)
+template<typename T>
+inline void spdlog::logger::critical(const T &msg)
 {
     log(level::critical, msg);
 }
@@ -183,14 +198,16 @@ template<typename T> inline void spdlog::logger::critical(const T &msg)
 #include <codecvt>
 #include <locale>
 
-template<typename... Args> inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *msg)
+template<typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *msg)
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
 
     log(lvl, conv.to_bytes(msg));
 }
 
-template<typename... Args> inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+template<typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
 {
     fmt::WMemoryWriter wWriter;
 
@@ -198,32 +215,38 @@ template<typename... Args> inline void spdlog::logger::log(level::level_enum lvl
     log(lvl, wWriter.c_str());
 }
 
-template<typename... Args> inline void spdlog::logger::trace(const wchar_t *fmt, const Args &... args)
+template<typename... Args>
+inline void spdlog::logger::trace(const wchar_t *fmt, const Args &... args)
 {
     log(level::trace, fmt, args...);
 }
 
-template<typename... Args> inline void spdlog::logger::debug(const wchar_t *fmt, const Args &... args)
+template<typename... Args>
+inline void spdlog::logger::debug(const wchar_t *fmt, const Args &... args)
 {
     log(level::debug, fmt, args...);
 }
 
-template<typename... Args> inline void spdlog::logger::info(const wchar_t *fmt, const Args &... args)
+template<typename... Args>
+inline void spdlog::logger::info(const wchar_t *fmt, const Args &... args)
 {
     log(level::info, fmt, args...);
 }
 
-template<typename... Args> inline void spdlog::logger::warn(const wchar_t *fmt, const Args &... args)
+template<typename... Args>
+inline void spdlog::logger::warn(const wchar_t *fmt, const Args &... args)
 {
     log(level::warn, fmt, args...);
 }
 
-template<typename... Args> inline void spdlog::logger::error(const wchar_t *fmt, const Args &... args)
+template<typename... Args>
+inline void spdlog::logger::error(const wchar_t *fmt, const Args &... args)
 {
     log(level::err, fmt, args...);
 }
 
-template<typename... Args> inline void spdlog::logger::critical(const wchar_t *fmt, const Args &... args)
+template<typename... Args>
+inline void spdlog::logger::critical(const wchar_t *fmt, const Args &... args)
 {
     log(level::critical, fmt, args...);
 }

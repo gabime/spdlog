@@ -133,7 +133,8 @@ void android_example()
 struct my_type
 {
     int i;
-    template<typename OStream> friend OStream &operator<<(OStream &os, const my_type &c)
+    template<typename OStream>
+    friend OStream &operator<<(OStream &os, const my_type &c)
     {
         return os << "[my_type i=" << c.i << "]";
     }
