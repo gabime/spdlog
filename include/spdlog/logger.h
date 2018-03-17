@@ -83,8 +83,8 @@ public:
 
     template<typename... Args>
     void critical(const wchar_t *fmt, const Args &... args);
-
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    
     template<typename T>
     void log(level::level_enum lvl, const T &);
 
