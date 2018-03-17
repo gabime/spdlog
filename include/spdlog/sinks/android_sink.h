@@ -20,7 +20,8 @@
 #define SPDLOG_ANDROID_RETRIES 2
 #endif
 
-namespace spdlog { namespace sinks {
+namespace spdlog {
+namespace sinks {
 
 /*
  * Android sink (logging using __android_log_write)
@@ -84,6 +85,7 @@ private:
     bool _use_raw_msg;
 };
 
-}} // namespace spdlog::sinks
+} // namespace sinks
+} // namespace spdlog
 
 #endif

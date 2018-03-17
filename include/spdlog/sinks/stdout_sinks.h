@@ -12,7 +12,8 @@
 #include <memory>
 #include <mutex>
 
-namespace spdlog { namespace sinks {
+namespace spdlog {
+namespace sinks {
 
 template<class Mutex>
 class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
@@ -74,4 +75,5 @@ protected:
 using stderr_sink_mt = stderr_sink<std::mutex>;
 using stderr_sink_st = stderr_sink<details::null_mutex>;
 
-}} // namespace spdlog::sinks
+} // namespace sinks
+} // namespace spdlog

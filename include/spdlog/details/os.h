@@ -53,7 +53,9 @@
 #define __has_feature(x) 0 // Compatibility with non-clang compilers.
 #endif
 
-namespace spdlog { namespace details { namespace os {
+namespace spdlog {
+namespace details {
+namespace os {
 
 inline spdlog::log_clock::time_point now()
 {
@@ -445,4 +447,6 @@ inline bool in_terminal(FILE *file)
     return isatty(fileno(file)) != 0;
 #endif
 }
-}}} // namespace spdlog::details::os
+} // namespace os
+} // namespace details
+} // namespace spdlog

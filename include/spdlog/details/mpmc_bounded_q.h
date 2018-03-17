@@ -48,7 +48,8 @@ Distributed under the MIT License (http://opensource.org/licenses/MIT)
 #include <atomic>
 #include <utility>
 
-namespace spdlog { namespace details {
+namespace spdlog {
+namespace details {
 
 template<typename T>
 class mpmc_bounded_queue
@@ -166,4 +167,5 @@ private:
     cacheline_pad_t pad3_;
 };
 
-}} // namespace spdlog::details
+} // namespace details
+} // namespace spdlog

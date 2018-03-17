@@ -14,7 +14,8 @@
 #include <unordered_map>
 #include <wincon.h>
 
-namespace spdlog { namespace sinks {
+namespace spdlog {
+namespace sinks {
 /*
  * Windows color console sink. Uses WriteConsoleA to write to the console with colors
  */
@@ -119,4 +120,5 @@ public:
 using wincolor_stderr_sink_mt = wincolor_stderr_sink<std::mutex>;
 using wincolor_stderr_sink_st = wincolor_stderr_sink<details::null_mutex>;
 
-}} // namespace spdlog::sinks
+} // namespace sinks
+} // namespace spdlog

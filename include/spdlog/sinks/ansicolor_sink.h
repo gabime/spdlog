@@ -12,7 +12,8 @@
 #include <string>
 #include <unordered_map>
 
-namespace spdlog { namespace sinks {
+namespace spdlog {
+namespace sinks {
 
 /**
  * This sink prefixes the output with an ANSI escape sequence color code depending on the severity
@@ -133,4 +134,5 @@ public:
 using ansicolor_stderr_sink_mt = ansicolor_stderr_sink<std::mutex>;
 using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::null_mutex>;
 
-}} // namespace spdlog::sinks
+} // namespace sinks
+} // namespace spdlog

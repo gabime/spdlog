@@ -11,7 +11,8 @@
 #include <string>
 #include <utility>
 
-namespace spdlog { namespace details {
+namespace spdlog {
+namespace details {
 struct log_msg
 {
     log_msg() = default;
@@ -40,4 +41,5 @@ struct log_msg
     fmt::MemoryWriter formatted;
     size_t msg_id{0};
 };
-}} // namespace spdlog::details
+} // namespace details
+} // namespace spdlog

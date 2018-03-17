@@ -17,7 +17,8 @@
 
 // Distribution sink (mux). Stores a vector of sinks which get called when log is called
 
-namespace spdlog { namespace sinks {
+namespace spdlog {
+namespace sinks {
 template<class Mutex>
 class dist_sink : public base_sink<Mutex>
 {
@@ -66,4 +67,5 @@ public:
 using dist_sink_mt = dist_sink<std::mutex>;
 using dist_sink_st = dist_sink<details::null_mutex>;
 
-}} // namespace spdlog::sinks
+} // namespace sinks
+} // namespace spdlog

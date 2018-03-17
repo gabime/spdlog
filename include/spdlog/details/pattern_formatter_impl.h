@@ -20,7 +20,8 @@
 #include <utility>
 #include <vector>
 
-namespace spdlog { namespace details {
+namespace spdlog {
+namespace details {
 class flag_formatter
 {
 public:
@@ -466,7 +467,8 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
     }
 };
 
-}} // namespace spdlog::details
+} // namespace details
+} // namespace spdlog
 ///////////////////////////////////////////////////////////////////////////////
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////

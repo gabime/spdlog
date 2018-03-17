@@ -17,7 +17,8 @@
 
 #include <mutex>
 
-namespace spdlog { namespace sinks {
+namespace spdlog {
+namespace sinks {
 template<class Mutex>
 class base_sink : public sink
 {
@@ -44,4 +45,5 @@ protected:
     virtual void _flush() = 0;
     Mutex _mutex;
 };
-}} // namespace spdlog::sinks
+} // namespace sinks
+} // namespace spdlog

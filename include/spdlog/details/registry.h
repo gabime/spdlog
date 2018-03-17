@@ -22,7 +22,8 @@
 #include <string>
 #include <unordered_map>
 
-namespace spdlog { namespace details {
+namespace spdlog {
+namespace details {
 template<class Mutex>
 class registry_t
 {
@@ -232,4 +233,5 @@ using registry = registry_t<spdlog::details::null_mutex>;
 using registry = registry_t<std::mutex>;
 #endif
 
-}} // namespace spdlog::details
+} // namespace details
+} // namespace spdlog

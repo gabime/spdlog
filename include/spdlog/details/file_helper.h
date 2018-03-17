@@ -19,7 +19,8 @@
 #include <thread>
 #include <tuple>
 
-namespace spdlog { namespace details {
+namespace spdlog {
+namespace details {
 
 class file_helper
 {
@@ -136,4 +137,5 @@ private:
     FILE *_fd{nullptr};
     filename_t _filename;
 };
-}} // namespace spdlog::details
+} // namespace details
+} // namespace spdlog

@@ -345,7 +345,8 @@ typedef __int64 intmax_t;
 #if FMT_MSC_VER && !defined(FMT_BUILTIN_CLZLL) && !defined(_MANAGED)
 #include <intrin.h> // _BitScanReverse, _BitScanReverse64
 
-namespace fmt { namespace internal {
+namespace fmt {
+namespace internal {
 // avoid Clang with Microsoft CodeGen's -Wunknown-pragmas warning
 #ifndef __clang__
 #pragma intrinsic(_BitScanReverse)
@@ -391,10 +392,12 @@ inline uint32_t clzll(uint64_t x)
     return 63 - r;
 }
 #define FMT_BUILTIN_CLZLL(n) fmt::internal::clzll(n)
-}} // namespace fmt::internal
+} // namespace internal
+} // namespace fmt
 #endif
 
-namespace fmt { namespace internal {
+namespace fmt {
+namespace internal {
 struct DummyInt
 {
     int data[2];
@@ -439,7 +442,8 @@ inline T const_check(T value)
 {
     return value;
 }
-}} // namespace fmt::internal
+} // namespace internal
+} // namespace fmt
 
 namespace std {
 // Standard permits specialization of std::numeric_limits. This specialization

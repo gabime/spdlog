@@ -28,7 +28,8 @@
 #include <utility>
 #include <vector>
 
-namespace spdlog { namespace details {
+namespace spdlog {
+namespace details {
 
 class async_log_helper
 {
@@ -184,7 +185,8 @@ private:
     // wait until the queue is empty
     void wait_empty_q();
 };
-}} // namespace spdlog::details
+} // namespace details
+} // namespace spdlog
 
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation

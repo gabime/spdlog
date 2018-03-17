@@ -10,7 +10,8 @@
 
 #include <mutex>
 
-namespace spdlog { namespace sinks {
+namespace spdlog {
+namespace sinks {
 
 template<class Mutex>
 class null_sink : public base_sink<Mutex>
@@ -24,4 +25,5 @@ protected:
 using null_sink_mt = null_sink<details::null_mutex>;
 using null_sink_st = null_sink<details::null_mutex>;
 
-}} // namespace spdlog::sinks
+} // namespace sinks
+} // namespace spdlog

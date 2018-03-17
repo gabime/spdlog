@@ -18,7 +18,8 @@
 #include <mutex>
 #include <string>
 
-namespace spdlog { namespace sinks {
+namespace spdlog {
+namespace sinks {
 /*
  * Trivial file sink with single file as target
  */
@@ -246,4 +247,5 @@ private:
 using daily_file_sink_mt = daily_file_sink<std::mutex>;
 using daily_file_sink_st = daily_file_sink<details::null_mutex>;
 
-}} // namespace spdlog::sinks
+} // namespace sinks
+} // namespace spdlog

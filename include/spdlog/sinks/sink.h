@@ -7,7 +7,8 @@
 
 #include "../details/log_msg.h"
 
-namespace spdlog { namespace sinks {
+namespace spdlog {
+namespace sinks {
 class sink
 {
 public:
@@ -39,4 +40,5 @@ inline level::level_enum sink::level() const
     return static_cast<spdlog::level::level_enum>(_level.load(std::memory_order_relaxed));
 }
 
-}} // namespace spdlog::sinks
+} // namespace sinks
+} // namespace spdlog
