@@ -148,7 +148,9 @@ inline void prevent_child_fd(FILE *f)
 #else
     auto fd = fileno(f);
     if (fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
+    {
         throw spdlog_ex("fcntl with FD_CLOEXEC failed", errno);
+    }
 #endif
 }
 
@@ -167,7 +169,9 @@ inline bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mod
 
 #ifdef SPDLOG_PREVENT_CHILD_FD
     if (*fp != nullptr)
+    {
         prevent_child_fd(*fp);
+    }
 #endif
     return *fp == nullptr;
 }
@@ -210,18 +214,24 @@ inline bool file_exists(const filename_t &filename)
 inline size_t filesize(FILE *f)
 {
     if (f == nullptr)
+    {
         throw spdlog_ex("Failed getting file size. fd is null");
+    }
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = _fileno(f);
 #if _WIN64 // 64 bits
     struct _stat64 st;
     if (_fstat64(fd, &st) == 0)
+    {
         return st.st_size;
+    }
 
 #else // windows 32 bits
     long ret = _filelength(fd);
     if (ret >= 0)
+    {
         return static_cast<size_t>(ret);
+    }
 #endif
 
 #else // unix
@@ -230,11 +240,15 @@ inline size_t filesize(FILE *f)
 #if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__)) && !defined(__CYGWIN__)
     struct stat64 st;
     if (fstat64(fd, &st) == 0)
+    {
         return static_cast<size_t>(st.st_size);
+    }
 #else // unix 32 bits or cygwin
     struct stat st;
     if (fstat(fd, &st) == 0)
+    {
         return static_cast<size_t>(st.st_size);
+    }
 #endif
 #endif
     throw spdlog_ex("Failed getting file size from fd", errno);
@@ -257,9 +271,13 @@ inline int utc_minutes_offset(const std::tm &tm = details::os::localtime())
 
     int offset = -tzinfo.Bias;
     if (tm.tm_isdst)
+    {
         offset -= tzinfo.DaylightBias;
+    }
     else
+    {
         offset -= tzinfo.StandardBias;
+    }
     return offset;
 #else
 
@@ -386,17 +404,25 @@ inline std::string errno_str(int err_num)
 
 #ifdef _WIN32
     if (strerror_s(buf, buf_size, err_num) == 0)
+    {
         return std::string(buf);
+    }
     else
+    {
         return "Unknown error";
+    }
 
 #elif defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID) || defined(__SUNPRO_CC) ||                                            \
     ((_POSIX_C_SOURCE >= 200112L) && !defined(_GNU_SOURCE)) // posix version
 
     if (strerror_r(err_num, buf, buf_size) == 0)
+    {
         return std::string(buf);
+    }
     else
+    {
         return "Unknown error";
+    }
 
 #else // gnu version (might not use the given buf, so its retval pointer must be used)
     auto err = strerror_r(err_num, buf, buf_size); // let compiler choose type

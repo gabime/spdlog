@@ -53,16 +53,24 @@ public:
         throw_if_exists(logger_name);
         std::shared_ptr<logger> new_logger;
         if (_async_mode)
+        {
             new_logger = std::make_shared<async_logger>(logger_name, sinks_begin, sinks_end, _async_q_size, _overflow_policy,
                 _worker_warmup_cb, _flush_interval_ms, _worker_teardown_cb);
+        }
         else
+        {
             new_logger = std::make_shared<logger>(logger_name, sinks_begin, sinks_end);
+        }
 
         if (_formatter)
+        {
             new_logger->set_formatter(_formatter);
+        }
 
         if (_err_handler)
+        {
             new_logger->set_error_handler(_err_handler);
+        }
 
         new_logger->set_level(_level);
         new_logger->flush_on(_flush_level);
@@ -84,10 +92,14 @@ public:
             logger_name, sinks_begin, sinks_end, queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms, worker_teardown_cb);
 
         if (_formatter)
+        {
             new_logger->set_formatter(_formatter);
+        }
 
         if (_err_handler)
+        {
             new_logger->set_error_handler(_err_handler);
+        }
 
         new_logger->set_level(_level);
         new_logger->flush_on(_flush_level);
@@ -101,7 +113,9 @@ public:
     {
         std::lock_guard<Mutex> lock(_mutex);
         for (auto &l : _loggers)
+        {
             fun(l.second);
+        }
     }
 
     void drop(const std::string &logger_name)
@@ -146,7 +160,9 @@ public:
         std::lock_guard<Mutex> lock(_mutex);
         _formatter = f;
         for (auto &l : _loggers)
+        {
             l.second->set_formatter(_formatter);
+        }
     }
 
     void set_pattern(const std::string &pattern)
@@ -154,14 +170,18 @@ public:
         std::lock_guard<Mutex> lock(_mutex);
         _formatter = std::make_shared<pattern_formatter>(pattern);
         for (auto &l : _loggers)
+        {
             l.second->set_formatter(_formatter);
+        }
     }
 
     void set_level(level::level_enum log_level)
     {
         std::lock_guard<Mutex> lock(_mutex);
         for (auto &l : _loggers)
+        {
             l.second->set_level(log_level);
+        }
         _level = log_level;
     }
 
@@ -169,14 +189,18 @@ public:
     {
         std::lock_guard<Mutex> lock(_mutex);
         for (auto &l : _loggers)
+        {
             l.second->flush_on(log_level);
+        }
         _flush_level = log_level;
     }
 
     void set_error_handler(log_err_handler handler)
     {
         for (auto &l : _loggers)
+        {
             l.second->set_error_handler(handler);
+        }
         _err_handler = handler;
     }
 
@@ -210,7 +234,9 @@ private:
     void throw_if_exists(const std::string &logger_name)
     {
         if (_loggers.find(logger_name) != _loggers.end())
+        {
             throw spdlog_ex("logger with name '" + logger_name + "' already exists");
+        }
     }
 
     Mutex _mutex;

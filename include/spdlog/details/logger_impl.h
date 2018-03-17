@@ -54,7 +54,9 @@ template<typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Args &... args)
 {
     if (!should_log(lvl))
+    {
         return;
+    }
 
     try
     {
@@ -82,7 +84,9 @@ template<typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
 {
     if (!should_log(lvl))
+    {
         return;
+    }
     try
     {
         details::log_msg log_msg(&_name, lvl);
@@ -104,7 +108,9 @@ template<typename T>
 inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
 {
     if (!should_log(lvl))
+    {
         return;
+    }
     try
     {
         details::log_msg log_msg(&_name, lvl);
@@ -309,7 +315,9 @@ inline void spdlog::logger::_sink_it(details::log_msg &msg)
     }
 
     if (_should_flush_on(msg))
+    {
         flush();
+    }
 }
 
 inline void spdlog::logger::_set_pattern(const std::string &pattern, pattern_time_type pattern_time)
@@ -325,14 +333,18 @@ inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
 inline void spdlog::logger::flush()
 {
     for (auto &sink : _sinks)
+    {
         sink->flush();
+    }
 }
 
 inline void spdlog::logger::_default_err_handler(const std::string &msg)
 {
     auto now = time(nullptr);
     if (now - _last_err_time < 60)
+    {
         return;
+    }
     auto tm_time = details::os::localtime(now);
     char date_buf[100];
     std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);

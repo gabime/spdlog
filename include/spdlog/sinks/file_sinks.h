@@ -43,7 +43,9 @@ protected:
     {
         _file_helper.write(msg);
         if (_force_flush)
+        {
             _file_helper.flush();
+        }
     }
 
     void _flush() override
@@ -199,7 +201,9 @@ public:
         , _rotation_m(rotation_minute)
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
+        {
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
+        }
         _rotation_tp = _next_rotation_tp();
         _file_helper.open(FileNameCalc::calc_filename(_base_filename));
     }

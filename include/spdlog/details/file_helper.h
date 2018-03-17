@@ -47,7 +47,9 @@ public:
         for (int tries = 0; tries < open_tries; ++tries)
         {
             if (!os::fopen_s(&_fd, fname, mode))
+            {
                 return;
+            }
 
             details::os::sleep_for_millis(open_interval);
         }
@@ -58,7 +60,9 @@ public:
     void reopen(bool truncate)
     {
         if (_filename.empty())
+        {
             throw spdlog_ex("Failed re opening file - was not opened before");
+        }
         open(_filename, truncate);
     }
 
@@ -81,7 +85,9 @@ public:
         size_t msg_size = msg.formatted.size();
         auto data = msg.formatted.data();
         if (std::fwrite(data, 1, msg_size, _fd) != msg_size)
+        {
             throw spdlog_ex("Failed writing to file " + os::filename_to_str(_filename), errno);
+        }
     }
 
     size_t size() const
@@ -122,12 +128,16 @@ public:
 
         // no valid extension found - return whole path and empty string as extension
         if (ext_index == filename_t::npos || ext_index == 0 || ext_index == fname.size() - 1)
+        {
             return std::make_tuple(fname, spdlog::filename_t());
+        }
 
         // treat casese like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"
         auto folder_index = fname.rfind(details::os::folder_sep);
         if (folder_index != fname.npos && folder_index >= ext_index - 1)
+        {
             return std::make_tuple(fname, spdlog::filename_t());
+        }
 
         // finally - return a valid base and extension tuple
         return std::make_tuple(fname.substr(0, ext_index), fname.substr(ext_index));

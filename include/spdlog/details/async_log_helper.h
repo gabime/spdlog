@@ -247,13 +247,17 @@ inline void spdlog::details::async_log_helper::flush(bool wait_for_q)
 {
     push_msg(async_msg(async_msg_type::flush));
     if (wait_for_q)
+    {
         wait_empty_q(); // return when queue is empty
+    }
 }
 
 inline void spdlog::details::async_log_helper::worker_loop()
 {
     if (_worker_warmup_cb)
+    {
         _worker_warmup_cb();
+    }
     auto last_pop = details::os::now();
     auto last_flush = last_pop;
     auto active = true;
@@ -273,7 +277,9 @@ inline void spdlog::details::async_log_helper::worker_loop()
         }
     }
     if (_worker_teardown_cb)
+    {
         _worker_teardown_cb();
+    }
 }
 
 // process next message in the queue
@@ -327,7 +333,9 @@ inline void spdlog::details::async_log_helper::handle_flush_interval(log_clock::
     if (should_flush)
     {
         for (auto &s : _sinks)
+        {
             s->flush();
+        }
         now = last_flush = details::os::now();
         _flush_requested = false;
     }
@@ -349,15 +357,21 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(
 
     // spin upto 50 micros
     if (time_since_op <= microseconds(50))
+    {
         return;
+    }
 
     // yield upto 150 micros
     if (time_since_op <= microseconds(100))
+    {
         return std::this_thread::yield();
+    }
 
     // sleep for 20 ms upto 200 ms
     if (time_since_op <= milliseconds(200))
+    {
         return details::os::sleep_for_millis(20);
+    }
 
     // sleep for 500 ms
     return details::os::sleep_for_millis(500);
