@@ -31,7 +31,7 @@ int main(int argc, char * argv[])
 
     log4cpp::Appender *appender  = new log4cpp::FileAppender("default", "logs/log4cpp-bench-mt.log");
     log4cpp::PatternLayout *layout = new log4cpp::PatternLayout();
-    layout->setConversionPattern("{%Y-%m-%d %H:%M:%S.%l}: %p - %m %n");
+    layout->setConversionPattern("%d{%Y-%m-%d %H:%M:%S.%l}: %p - %m %n");
     appender->setLayout(layout);
 
     log4cpp::Category& root = log4cpp::Category::getRoot();
