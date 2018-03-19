@@ -4,17 +4,22 @@
 //
 
 #include <atomic>
+#include <chrono>
+#include <iostream>
 #include <thread>
 #include <vector>
 
-#define _ELPP_THREAD_SAFE
+#define ELPP_THREAD_SAFE
 #include "easylogging++.h"
-_INITIALIZE_EASYLOGGINGPP
+#include "easylogging++.cc"
+INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
+    using namespace std::chrono;
+    using clock = steady_clock;
 
     int thread_count = 10;
     if (argc > 1)
@@ -23,12 +28,13 @@ int main(int argc, char *argv[])
     int howmany = 1000000;
 
     // Load configuration from file
-    el::Configurations conf("easyl.conf");
+    el::Configurations conf("easyl-mt.conf");
     el::Loggers::reconfigureLogger("default", conf);
 
     std::atomic<int> msg_counter{0};
     vector<thread> threads;
 
+    auto start = clock::now();
     for (int t = 0; t < thread_count; ++t)
     {
         threads.push_back(std::thread([&]() {
@@ -45,7 +51,16 @@ int main(int argc, char *argv[])
     for (auto &t : threads)
     {
         t.join();
-    };
+    }
+
+    duration<float> delta = clock::now() - start;
+    float deltaf = delta.count();
+    auto rate = howmany / deltaf;
+
+    std::cout << "Total: " << howmany << std::endl;
+    std::cout << "Threads: " << thread_count << std::endl;
+    std::cout << "Delta = " << deltaf << " seconds" << std::endl;
+    std::cout << "Rate = " << rate << "/sec" << std::endl;
 
     return 0;
 }

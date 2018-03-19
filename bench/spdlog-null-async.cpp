@@ -93,7 +93,7 @@ size_t bench_as(int howmany, std::shared_ptr<spdlog::logger> log, int thread_cou
     for (auto &t : threads)
     {
         t.join();
-    };
+    }
 
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();

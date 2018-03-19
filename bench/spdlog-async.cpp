@@ -15,22 +15,22 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-
     using namespace std::chrono;
     using clock = steady_clock;
-    namespace spd = spdlog;
 
     int thread_count = 10;
     if (argc > 1)
         thread_count = ::atoi(argv[1]);
+
     int howmany = 1000000;
 
-    spd::set_async_mode(1048576);
-    auto logger = spdlog::create<spd::sinks::simple_file_sink_mt>("file_logger", "logs/spd-bench-async.txt", false);
-    logger->set_pattern("[%Y-%b-%d %T.%e]: %v");
+    spdlog::set_async_mode(1048576);
+    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("file_logger", "logs/spdlog-bench-async.log", false);
+    logger->set_pattern("[%Y-%b-%d %T.%e]: %f");
 
     std::atomic<int> msg_counter{0};
     vector<thread> threads;
+
     auto start = clock::now();
     for (int t = 0; t < thread_count; ++t)
     {
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     for (auto &t : threads)
     {
         t.join();
-    };
+    }
 
     duration<float> delta = clock::now() - start;
     float deltaf = delta.count();
