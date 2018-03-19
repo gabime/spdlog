@@ -144,6 +144,13 @@ public:
         return true;
     }
 
+#if __cplusplus >= 201402L
+    [[deprecated("introduces data race")]]
+#elif defined(__clang__) || defined(__GNUC__)
+    __attribute__((deprecated("introduces data race")))
+#elif defined(_MSC_VER)
+    __declspec(deprecated("introduces data race"))
+#endif
     bool is_empty()
     {
         size_t front, front1, back;
@@ -155,6 +162,16 @@ public:
             front1 = enqueue_pos_.load(std::memory_order_relaxed);
         } while (front != front1);
         return back == front;
+    }
+
+    auto enqueue_pos(std::memory_order memory_order = std::memory_order_seq_cst) const -> size_t
+    {
+        return enqueue_pos_.load(memory_order);
+    }
+
+    auto dequeue_pos(std::memory_order memory_order = std::memory_order_seq_cst) const -> size_t
+    {
+        return dequeue_pos_.load(memory_order);
     }
 
 private:

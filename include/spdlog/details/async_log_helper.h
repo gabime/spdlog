@@ -182,8 +182,6 @@ private:
     // sleep,yield or return immediately using the time passed since last message as a hint
     static void sleep_or_yield(const spdlog::log_clock::time_point &now, const log_clock::time_point &last_op_time);
 
-    // wait until the queue is empty
-    void wait_empty_q();
 };
 } // namespace details
 } // namespace spdlog
@@ -248,7 +246,19 @@ inline void spdlog::details::async_log_helper::flush(bool wait_for_q)
     push_msg(async_msg(async_msg_type::flush));
     if (wait_for_q)
     {
-        wait_empty_q(); // return when queue is empty
+        auto write_pos = _q.enqueue_pos(std::memory_order_acquire);
+        auto read_pos  = _q.dequeue_pos(std::memory_order_relaxed); // synchronized by read of enqueue_pos_
+
+        if (write_pos > read_pos)
+        {
+            auto last_op = details::os::now();
+            do
+            {
+                sleep_or_yield(details::os::now(), last_op);
+                read_pos = _q.dequeue_pos(std::memory_order_acquire);
+            }
+            while (write_pos > read_pos);
+        }
     }
 }
 
@@ -375,16 +385,6 @@ inline void spdlog::details::async_log_helper::sleep_or_yield(
 
     // sleep for 500 ms
     return details::os::sleep_for_millis(500);
-}
-
-// wait for the queue to be empty
-inline void spdlog::details::async_log_helper::wait_empty_q()
-{
-    auto last_op = details::os::now();
-    while (!_q.is_empty())
-    {
-        sleep_or_yield(details::os::now(), last_op);
-    }
 }
 
 inline void spdlog::details::async_log_helper::set_error_handler(spdlog::log_err_handler err_handler)
