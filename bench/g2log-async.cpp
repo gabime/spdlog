@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     for (auto &t : threads)
     {
         t.join();
-    };
+    }
 
     duration<float> delta = clock::now() - start;
     float deltaf = delta.count();

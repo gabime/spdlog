@@ -3,34 +3,35 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#include "spdlog/spdlog.h"
 #include <atomic>
 #include <chrono>
-#include <cstdlib>
 #include <iostream>
 #include <thread>
 #include <vector>
 
+#include "g3log/g3log.hpp"
+#include "g3log/logworker.hpp"
+
 using namespace std;
+template <typename T> std::string format(const T &value);
 
 int main(int argc, char *argv[])
 {
     using namespace std::chrono;
     using clock = steady_clock;
-
     int thread_count = 10;
+
     if (argc > 1)
-        thread_count = ::atoi(argv[1]);
+        thread_count = atoi(argv[1]);
 
     int howmany = 1000000;
 
-    spdlog::set_async_mode(1048576);
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("file_logger", "logs/spdlog-bench-async.log", false);
-    logger->set_pattern("[%Y-%b-%d %T.%e]: %f");
+    auto worker = g3::LogWorker::createLogWorker();
+    auto handle= worker->addDefaultLogger(argv[0], "logs");
+    g3::initializeLogging(worker.get());
 
     std::atomic<int> msg_counter{0};
     vector<thread> threads;
-
     auto start = clock::now();
     for (int t = 0; t < thread_count; ++t)
     {
@@ -40,7 +41,7 @@ int main(int argc, char *argv[])
                 int counter = ++msg_counter;
                 if (counter > howmany)
                     break;
-                logger->info("spdlog message #{}: This is some text for your pleasure", counter);
+                LOG(INFO) << "g3log message #" << counter << ": This is some text for your pleasure";
             }
         }));
     }
