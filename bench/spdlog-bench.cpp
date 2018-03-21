@@ -16,7 +16,7 @@ int main(int, char *[])
     int howmany = 1000000;
 
     auto logger = spdlog::create<spdlog::sinks::simple_file_sink_st>("file_logger", "logs/spdlog-bench.log", false);
-    logger->set_pattern("[%Y-%b-%d %T.%f]: %v");
+    logger->set_pattern("[%Y-%m-%d %T.%F]: %L %v");
 
     auto start = clock::now();
     for (int i = 0; i < howmany; ++i)
@@ -27,8 +27,8 @@ int main(int, char *[])
     auto rate = howmany / deltaf;
 
     std::cout << "Total: " << howmany << std::endl;
-    std::cout << "Delta = " << deltaf << " seconds" << std::endl;
-    std::cout << "Rate = " << rate << "/sec" << std::endl;
+    std::cout << "Delta = " << std::fixed << deltaf << " seconds" << std::endl;
+    std::cout << "Rate = " << std::fixed << rate << "/sec" << std::endl;
 
     return 0;
 }

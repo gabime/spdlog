@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     int howmany = 1000000;
 
     auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("file_logger", "logs/spdlog-bench-mt.log", false);
-    logger->set_pattern("[%Y-%b-%d %T.%f]: %v");
+    logger->set_pattern("[%Y-%m-%d %T.%F]: %L %t %v");
 
     std::atomic<int> msg_counter{0};
     std::vector<thread> threads;
@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
 
     std::cout << "Total: " << howmany << std::endl;
     std::cout << "Threads: " << thread_count << std::endl;
-    std::cout << "Delta = " << deltaf << " seconds" << std::endl;
-    std::cout << "Rate = " << rate << "/sec" << std::endl;
+    std::cout << "Delta = " << std::fixed << deltaf << " seconds" << std::endl;
+    std::cout << "Rate = " << std::fixed << rate << "/sec" << std::endl;
 
     return 0;
 }

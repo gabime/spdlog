@@ -23,7 +23,7 @@ spdlog-bench-mt: spdlog-bench-mt.cpp
 	$(CXX) spdlog-bench-mt.cpp -o spdlog-bench-mt  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 	
 spdlog-async: spdlog-async.cpp
-	$(CXX) spdlog-async.cpp -o spdlog-async  $(CXXFLAGS) $(CXX_RELEASE_FLAGS) -g
+	$(CXX) spdlog-async.cpp -o spdlog-async  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 
 spdlog-null-async: spdlog-null-async.cpp
 	$(CXX) spdlog-null-async.cpp -o spdlog-null-async $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
