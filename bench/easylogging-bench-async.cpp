@@ -1,0 +1,67 @@
+//
+// Copyright(c) 2015 Gabi Melman.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
+//
+
+#include <atomic>
+#include <chrono>
+#include <iostream>
+#include <thread>
+#include <vector>
+
+#define ELPP_THREAD_SAFE
+#define ELPP_EXPERIMENTAL_ASYNC
+#include "easylogging++.h"
+#include "easylogging++.cc"
+INITIALIZE_EASYLOGGINGPP
+
+using namespace std;
+
+int main(int argc, char *argv[])
+{
+    using namespace std::chrono;
+    using clock = steady_clock;
+
+    int thread_count = 10;
+    if (argc > 1)
+        thread_count = atoi(argv[1]);
+
+    int howmany = 1000000;
+
+    // Load configuration from file
+    el::Configurations conf("easyl-async.conf");
+    el::Loggers::reconfigureLogger("default", conf);
+
+    std::atomic<int> msg_counter{0};
+    vector<thread> threads;
+
+    auto start = clock::now();
+    for (int t = 0; t < thread_count; ++t)
+    {
+        threads.push_back(std::thread([&]() {
+            while (true)
+            {
+                int counter = ++msg_counter;
+                if (counter > howmany)
+                    break;
+                LOG(INFO) << "easylog message #" << counter << ": This is some text for your pleasure";
+            }
+        }));
+    }
+
+    for (auto &t : threads)
+    {
+        t.join();
+    }
+
+    duration<float> delta = clock::now() - start;
+    float deltaf = delta.count();
+    auto rate = howmany / deltaf;
+
+    std::cout << "Total: " << howmany << std::endl;
+    std::cout << "Threads: " << thread_count << std::endl;
+    std::cout << "Delta = " << deltaf << " seconds" << std::endl;
+    std::cout << "Rate = " << rate << "/sec" << std::endl;
+
+    return 0;
+}

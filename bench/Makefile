@@ -11,7 +11,8 @@ binaries=spdlog-bench spdlog-bench-mt spdlog-async spdlog-null-async \
          p7-bench p7-bench-mt \
          log4cpp-bench log4cpp-bench-mt \
          log4cplus-bench log4cplus-bench-mt \
-         easylogging-bench easylogging-bench-mt
+         easylogging-bench easylogging-bench-mt easylogging-bench-async \
+         plog-bench plog-bench-mt
 
 all: $(binaries)
 
@@ -22,7 +23,7 @@ spdlog-bench-mt: spdlog-bench-mt.cpp
 	$(CXX) spdlog-bench-mt.cpp -o spdlog-bench-mt  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 	
 spdlog-async: spdlog-async.cpp
-	$(CXX) spdlog-async.cpp -o spdlog-async  $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+	$(CXX) spdlog-async.cpp -o spdlog-async  $(CXXFLAGS) $(CXX_RELEASE_FLAGS) -g
 
 spdlog-null-async: spdlog-null-async.cpp
 	$(CXX) spdlog-null-async.cpp -o spdlog-null-async $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
@@ -74,9 +75,20 @@ log4cplus-bench-mt: log4cplus-bench-mt.cpp
 EASYL_FLAGS = -I$(HOME)/easyloggingpp/src
 easylogging-bench: easylogging-bench.cpp
 	$(CXX) easylogging-bench.cpp -o easylogging-bench $(CXXFLAGS) $(EASYL_FLAGS) $(CXX_RELEASE_FLAGS)
+
 easylogging-bench-mt: easylogging-bench-mt.cpp
-	$(CXX) easylogging-bench-mt.cpp -o easylogging-bench-mt $(CXXFLAGS) $(EASYL_FLAGS) $(CXX_RELEASE_FLAGS)	
-	
+	$(CXX) easylogging-bench-mt.cpp -o easylogging-bench-mt $(CXXFLAGS) $(EASYL_FLAGS) $(CXX_RELEASE_FLAGS)
+
+easylogging-bench-async: easylogging-bench-async.cpp
+	$(CXX) easylogging-bench-async.cpp -o easylogging-bench-async $(CXXFLAGS) $(EASYL_FLAGS) $(CXX_RELEASE_FLAGS)
+
+PLOG_FLAGS = -I$(HOME)/include
+plog-bench: plog-bench.cpp
+	$(CXX) plog-bench.cpp -o plog-bench $(CXXFLAGS) $(PLOG_FLAGS) $(CXX_RELEASE_FLAGS)
+
+plog-bench-mt: plog-bench-mt.cpp
+	$(CXX) plog-bench-mt.cpp -o plog-bench-mt $(CXXFLAGS) $(PLOG_FLAGS) $(CXX_RELEASE_FLAGS)
+
 .PHONY: clean
 
 clean:
