@@ -6,11 +6,14 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
-#include <cstdlib>
 #include <thread>
 #include <vector>
 
-#include "spdlog/spdlog.h"
+#define ELPP_THREAD_SAFE
+#define ELPP_EXPERIMENTAL_ASYNC
+#include "easylogging++.h"
+#include "easylogging++.cc"
+INITIALIZE_EASYLOGGINGPP
 
 using namespace std;
 
@@ -21,15 +24,16 @@ int main(int argc, char *argv[])
 
     int thread_count = 10;
     if (argc > 1)
-        thread_count = std::atoi(argv[1]);
+        thread_count = atoi(argv[1]);
 
     int howmany = 1000000;
 
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("file_logger", "logs/spdlog-bench-mt.log", false);
-    logger->set_pattern("[%Y-%m-%d %T.%F]: %L %t %v");
+    // Load configuration from file
+    el::Configurations conf("easyl-async.conf");
+    el::Loggers::reconfigureLogger("default", conf);
 
     std::atomic<int> msg_counter{0};
-    std::vector<thread> threads;
+    vector<thread> threads;
 
     auto start = clock::now();
     for (int t = 0; t < thread_count; ++t)
@@ -40,7 +44,7 @@ int main(int argc, char *argv[])
                 int counter = ++msg_counter;
                 if (counter > howmany)
                     break;
-                logger->info("spdlog message #{}: This is some text for your pleasure", counter);
+                LOG(INFO) << "easylog message #" << counter << ": This is some text for your pleasure";
             }
         }));
     }
@@ -56,8 +60,8 @@ int main(int argc, char *argv[])
 
     std::cout << "Total: " << howmany << std::endl;
     std::cout << "Threads: " << thread_count << std::endl;
-    std::cout << "Delta = " << std::fixed << deltaf << " seconds" << std::endl;
-    std::cout << "Rate = " << std::fixed << rate << "/sec" << std::endl;
+    std::cout << "Delta = " << deltaf << " seconds" << std::endl;
+    std::cout << "Rate = " << rate << "/sec" << std::endl;
 
     return 0;
 }
