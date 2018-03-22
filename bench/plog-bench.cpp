@@ -5,10 +5,9 @@
 
 #include <chrono>
 #include <iostream>
+#include <memory>
 
-#include "easylogging++.h"
-#include "easylogging++.cc"
-INITIALIZE_EASYLOGGINGPP
+#include "plog/Log.h"
 
 int main(int, char *[])
 {
@@ -17,15 +16,11 @@ int main(int, char *[])
 
     int howmany = 1000000;
 
-    // Load configuration from file
-    el::Configurations conf("easyl.conf");
-    el::Loggers::reconfigureLogger("default", conf);
-
-    el::Logger* defaultLogger = el::Loggers::getLogger("default");
+    plog::init(plog::debug, "logs/plog-bench.log");
 
     auto start = clock::now();
     for (int i = 0; i < howmany; ++i)
-        LOG(INFO) << "easylog message #" << i << ": This is some text for your pleasure";
+        LOG_INFO << "plog message #" << i << ": This is some text for your pleasure";
 
     duration<float> delta = clock::now() - start;
     float deltaf = delta.count();

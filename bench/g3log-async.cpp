@@ -9,28 +9,29 @@
 #include <thread>
 #include <vector>
 
-#include "glog/logging.h"
+#include "g3log/g3log.hpp"
+#include "g3log/logworker.hpp"
 
 using namespace std;
+template <typename T> std::string format(const T &value);
 
 int main(int argc, char *argv[])
 {
     using namespace std::chrono;
     using clock = steady_clock;
-
     int thread_count = 10;
+
     if (argc > 1)
         thread_count = atoi(argv[1]);
 
     int howmany = 1000000;
 
-    FLAGS_logtostderr = 0;
-    FLAGS_log_dir = "logs";
-    google::InitGoogleLogging(argv[0]);
+    auto worker = g3::LogWorker::createLogWorker();
+    auto handle= worker->addDefaultLogger(argv[0], "logs");
+    g3::initializeLogging(worker.get());
 
     std::atomic<int> msg_counter{0};
     vector<thread> threads;
-
     auto start = clock::now();
     for (int t = 0; t < thread_count; ++t)
     {
@@ -40,7 +41,7 @@ int main(int argc, char *argv[])
                 int counter = ++msg_counter;
                 if (counter > howmany)
                     break;
-                LOG(INFO) << "glog message #" << counter << ": This is some text for your pleasure";
+                LOG(INFO) << "g3log message #" << counter << ": This is some text for your pleasure";
             }
         }));
     }
@@ -54,10 +55,8 @@ int main(int argc, char *argv[])
     float deltaf = delta.count();
     auto rate = howmany / deltaf;
 
-    std::cout << "Total: " << howmany << std::endl;
-    std::cout << "Threads: " << thread_count << std::endl;
+    cout << "Total: " << howmany << std::endl;
+    cout << "Threads: " << thread_count << std::endl;
     std::cout << "Delta = " << deltaf << " seconds" << std::endl;
     std::cout << "Rate = " << rate << "/sec" << std::endl;
-
-    return 0;
 }
