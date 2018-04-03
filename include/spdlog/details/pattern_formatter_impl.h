@@ -73,7 +73,7 @@ static int to12h(const tm &t)
 }
 
 // Abbreviated weekday name
-static const std::string days[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+static const char* days[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 class a_formatter : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
@@ -83,7 +83,7 @@ class a_formatter : public flag_formatter
 };
 
 // Full weekday name
-static const std::string full_days[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+static const char* full_days[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 class A_formatter : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
@@ -93,7 +93,7 @@ class A_formatter : public flag_formatter
 };
 
 // Abbreviated month
-static const std::string months[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
+static const char* months[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
 class b_formatter : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
@@ -103,7 +103,7 @@ class b_formatter : public flag_formatter
 };
 
 // Full month name
-static const std::string full_months[]{
+static const char* full_months[]{
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 class B_formatter : public flag_formatter
 {
