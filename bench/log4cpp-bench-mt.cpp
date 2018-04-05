@@ -10,15 +10,15 @@
 #include <thread>
 #include <vector>
 
-#include "log4cpp/Category.hh"
 #include "log4cpp/Appender.hh"
+#include "log4cpp/BasicLayout.hh"
+#include "log4cpp/Category.hh"
 #include "log4cpp/FileAppender.hh"
 #include "log4cpp/Layout.hh"
-#include "log4cpp/BasicLayout.hh"
-#include "log4cpp/Priority.hh"
 #include "log4cpp/PatternLayout.hh"
+#include "log4cpp/Priority.hh"
 
-int main(int argc, char * argv[])
+int main(int argc, char *argv[])
 {
     using namespace std::chrono;
     using clock = steady_clock;
@@ -29,12 +29,12 @@ int main(int argc, char * argv[])
 
     int howmany = 1000000;
 
-    log4cpp::Appender *appender  = new log4cpp::FileAppender("default", "logs/log4cpp-bench-mt.log");
+    log4cpp::Appender *appender = new log4cpp::FileAppender("default", "logs/log4cpp-bench-mt.log");
     log4cpp::PatternLayout *layout = new log4cpp::PatternLayout();
     layout->setConversionPattern("%d{%Y-%m-%d %H:%M:%S.%l}: %p - %m %n");
     appender->setLayout(layout);
 
-    log4cpp::Category& root = log4cpp::Category::getRoot();
+    log4cpp::Category &root = log4cpp::Category::getRoot();
     root.addAppender(appender);
     root.setPriority(log4cpp::Priority::INFO);
 

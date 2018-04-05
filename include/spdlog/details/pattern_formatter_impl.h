@@ -421,7 +421,24 @@ private:
     std::string _str;
 };
 
+// set the color range. expect it to be in the form of "%^colored text%$"
+class start_color_formatter SPDLOG_FINAL : public flag_formatter
+{
+    void format(details::log_msg &msg, const std::tm &) override
+    {
+        msg.color_range_start = msg.formatted.size();
+    }
+};
+class stop_color_formatter SPDLOG_FINAL : public flag_formatter
+{
+    void format(details::log_msg &msg, const std::tm &) override
+    {
+        msg.color_range_end = msg.formatted.size();
+    }
+};
+
 // Full info formatter
+
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
 class full_formatter SPDLOG_FINAL : public flag_formatter
 {
@@ -462,8 +479,13 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         msg.formatted << '[' << *msg.logger_name << "] ";
 #endif
 
-        msg.formatted << '[' << level::to_str(msg.level) << "] ";
+        const char *level_name = level::to_str(msg.level);
+        size_t level_name_size = strlen(level_name);
+        msg.formatted << '[' << fmt::StringRef(level_name, level_name_size) << "] ";
         msg.formatted << fmt::StringRef(msg.raw.data(), msg.raw.size());
+        // wrap the level with color
+        msg.color_range_start = 37;
+        msg.color_range_end = 37 + level_name_size;
     }
 };
 
@@ -491,6 +513,7 @@ inline void spdlog::pattern_formatter::compile_pattern(const std::string &patter
             {
                 _formatters.push_back(std::move(user_chars));
             }
+            // if(
             if (++it != end)
             {
                 handle_flag(*it);
@@ -643,6 +666,12 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
 
     case ('i'):
         _formatters.emplace_back(new details::i_formatter());
+        break;
+    case ('^'):
+        _formatters.emplace_back(new details::start_color_formatter());
+        break;
+    case ('$'):
+        _formatters.emplace_back(new details::stop_color_formatter());
         break;
 
     default: // Unknown flag appears as is

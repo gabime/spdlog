@@ -4,12 +4,11 @@
 //
 
 #include <chrono>
+#include <functional>
 #include <iostream>
 #include <memory>
-#include <functional>
 
 #include "P7_Trace.h"
-
 
 int main(int, char *[])
 {
@@ -20,10 +19,9 @@ int main(int, char *[])
 
     IP7_Trace::hModule module = NULL;
 
-    //create P7 client object
-    std::unique_ptr<IP7_Client, std::function<void (IP7_Client *)>> client(
-        P7_Create_Client(TM("/P7.Pool=1024 /P7.Sink=FileTxt /P7.Dir=logs/p7-bench")),
-        [&](IP7_Client *ptr){
+    // create P7 client object
+    std::unique_ptr<IP7_Client, std::function<void(IP7_Client *)>> client(
+        P7_Create_Client(TM("/P7.Pool=1024 /P7.Sink=FileTxt /P7.Dir=logs/p7-bench")), [&](IP7_Client *ptr) {
             if (ptr)
                 ptr->Release();
         });
@@ -34,10 +32,9 @@ int main(int, char *[])
         return 1;
     }
 
-    //create P7 trace object 1
-    std::unique_ptr<IP7_Trace, std::function<void (IP7_Trace *)>> trace(
-        P7_Create_Trace(client.get(), TM("Trace channel 1")),
-        [&](IP7_Trace *ptr){
+    // create P7 trace object 1
+    std::unique_ptr<IP7_Trace, std::function<void(IP7_Trace *)>> trace(
+        P7_Create_Trace(client.get(), TM("Trace channel 1")), [&](IP7_Trace *ptr) {
             if (ptr)
                 ptr->Release();
         });
@@ -54,7 +51,6 @@ int main(int, char *[])
     auto start = clock::now();
     for (int i = 0; i < howmany; ++i)
         trace->P7_INFO(module, TM("p7 message #%d: This is some text for your pleasure"), i);
-
 
     duration<float> delta = clock::now() - start;
     float deltaf = delta.count();

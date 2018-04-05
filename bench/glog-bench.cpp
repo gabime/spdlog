@@ -8,7 +8,6 @@
 
 #include "glog/logging.h"
 
-
 int main(int, char *argv[])
 {
     using namespace std::chrono;

@@ -238,7 +238,7 @@ inline size_t filesize(FILE *f)
     int fd = fileno(f);
     // 64 bits(but not in osx or cygwin, where fstat64 is deprecated)
 #if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__)) && !defined(__CYGWIN__)
-    struct stat64 st;   
+    struct stat64 st;
     if (fstat64(fd, &st) == 0)
     {
         return static_cast<size_t>(st.st_size);

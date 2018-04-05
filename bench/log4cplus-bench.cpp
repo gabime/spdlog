@@ -7,13 +7,13 @@
 #include <iostream>
 #include <memory>
 
-#include "log4cplus/logger.h"
 #include "log4cplus/fileappender.h"
-#include "log4cplus/layout.h"
-#include "log4cplus/ndc.h"
 #include "log4cplus/helpers/loglog.h"
 #include "log4cplus/helpers/property.h"
+#include "log4cplus/layout.h"
+#include "log4cplus/logger.h"
 #include "log4cplus/loggingmacros.h"
+#include "log4cplus/ndc.h"
 
 using namespace log4cplus;
 
@@ -25,13 +25,11 @@ int main(int, char *[])
     int howmany = 1000000;
 
     log4cplus::initialize();
-    SharedFileAppenderPtr append(
-        new FileAppender(LOG4CPLUS_TEXT("logs/log4cplus-bench.log"), std::ios_base::trunc,
-            true, true));
+    SharedFileAppenderPtr append(new FileAppender(LOG4CPLUS_TEXT("logs/log4cplus-bench.log"), std::ios_base::trunc, true, true));
     append->setName(LOG4CPLUS_TEXT("File"));
 
     log4cplus::tstring pattern = LOG4CPLUS_TEXT("%d{%Y-%m-%d %H:%M:%S.%Q}: %p - %m %n");
-    append->setLayout( std::auto_ptr<Layout>(new PatternLayout(pattern)) );
+    append->setLayout(std::auto_ptr<Layout>(new PatternLayout(pattern)));
     append->getloc();
     Logger::getRoot().addAppender(SharedAppenderPtr(append.get()));
 
