@@ -59,8 +59,9 @@ int main(int, char *[])
 
         // Customize msg format for all messages
         spd::set_pattern("[%^+++%$] [%H:%M:%S %z] [thread %t] %v");
-        console->info("This a message with custom format (and custom color range between the '%^' and '%$')");
-
+        console->info("This an info message with custom format (and custom color range between the '%^' and '%$')");
+		console->error("This an error message with custom format (and custom color range between the '%^' and '%$')");
+		
         // Runtime log levels
         spd::set_level(spd::level::info); // Set global log level to info
         console->debug("This message should not be displayed!");
