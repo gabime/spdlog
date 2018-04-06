@@ -28,7 +28,7 @@ public:
         : target_file_(file)
     {
         should_do_colors_ = details::os::in_terminal(file) && details::os::is_color_terminal();
-        colors_[level::trace] = magenta;
+        colors_[level::trace] = white;
         colors_[level::debug] = cyan;
         colors_[level::info] = green;
         colors_[level::warn] = yellow + bold;
