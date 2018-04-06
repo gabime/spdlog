@@ -11,8 +11,8 @@
 
 #define ELPP_THREAD_SAFE
 #define ELPP_EXPERIMENTAL_ASYNC
-#include "easylogging++.h"
 #include "easylogging++.cc"
+#include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
 using namespace std;

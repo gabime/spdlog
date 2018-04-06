@@ -5,8 +5,8 @@
 
 #include <atomic>
 #include <chrono>
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 #include <thread>
 #include <vector>
 
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
         run = false;
     }));
 
-    while(run)
+    while (run)
     {
         std::atomic<int> msg_counter{0};
         std::vector<std::thread> threads;
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
         std::cout << "Threads: " << thread_count << std::endl;
         std::cout << "Delta = " << std::fixed << deltaf << " seconds" << std::endl;
         std::cout << "Rate = " << std::fixed << rate << "/sec" << std::endl;
-    } //while
+    } // while
 
     stoper.join();
 

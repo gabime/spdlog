@@ -10,8 +10,8 @@
 #include <vector>
 
 #define ELPP_THREAD_SAFE
-#include "easylogging++.h"
 #include "easylogging++.cc"
+#include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
 using namespace std;

@@ -82,6 +82,5 @@ int main(int argc, char *argv[])
     std::cout << "Delta = " << deltaf << " seconds" << std::endl;
     std::cout << "Rate = " << rate << "/sec" << std::endl;
 
-
     return 0;
 }

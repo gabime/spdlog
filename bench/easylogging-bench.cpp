@@ -6,8 +6,8 @@
 #include <chrono>
 #include <iostream>
 
-#include "easylogging++.h"
 #include "easylogging++.cc"
+#include "easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
 int main(int, char *[])
@@ -21,7 +21,7 @@ int main(int, char *[])
     el::Configurations conf("easyl.conf");
     el::Loggers::reconfigureLogger("default", conf);
 
-    el::Logger* defaultLogger = el::Loggers::getLogger("default");
+    el::Logger *defaultLogger = el::Loggers::getLogger("default");
 
     auto start = clock::now();
     for (int i = 0; i < howmany; ++i)
