@@ -25,7 +25,7 @@ class wincolor_sink : public base_sink<Mutex>
 public:
     const WORD BOLD = FOREGROUND_INTENSITY;
     const WORD RED = FOREGROUND_RED;
-	const WORD GREEN = FOREGROUND_GREEN;
+    const WORD GREEN = FOREGROUND_GREEN;
     const WORD CYAN = FOREGROUND_GREEN | FOREGROUND_BLUE;
     const WORD WHITE = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
     const WORD YELLOW = FOREGROUND_RED | FOREGROUND_GREEN;
@@ -60,22 +60,22 @@ public:
 protected:
     void _sink_it(const details::log_msg &msg) override
     {
-		if (msg.color_range_end > msg.color_range_start)
-		{
-			// before color range
-			_print_range(msg, 0, msg.color_range_start);
-			
-			// in color range			
-			auto orig_attribs = set_console_attribs(colors_[msg.level]);
-			_print_range(msg, msg.color_range_start, msg.color_range_end);			
-			::SetConsoleTextAttribute(out_handle_, orig_attribs); // reset to orig colors
-			// after color range
-			_print_range(msg, msg.color_range_end, msg.formatted.size());			
-		}
-		else // print without colors if color range is invalid
-		{
-			_print_range(msg, 0, msg.formatted.size());			
-		}
+        if (msg.color_range_end > msg.color_range_start)
+        {
+            // before color range
+            _print_range(msg, 0, msg.color_range_start);
+
+            // in color range
+            auto orig_attribs = set_console_attribs(colors_[msg.level]);
+            _print_range(msg, msg.color_range_start, msg.color_range_end);
+            ::SetConsoleTextAttribute(out_handle_, orig_attribs); // reset to orig colors
+            // after color range
+            _print_range(msg, msg.color_range_end, msg.formatted.size());
+        }
+        else // print without colors if color range is invalid
+        {
+            _print_range(msg, 0, msg.formatted.size());
+        }
     }
 
     void _flush() override
@@ -100,12 +100,12 @@ private:
         return orig_buffer_info.wAttributes; // return orig attribs
     }
 
-	// print a range of formatted message to console
-	void _print_range(const details::log_msg &msg, size_t start, size_t end)
-	{
-		DWORD size = static_cast<DWORD>(end - start);
-		WriteConsoleA(out_handle_, msg.formatted.data() + start, size, nullptr, nullptr);		
-	}
+    // print a range of formatted message to console
+    void _print_range(const details::log_msg &msg, size_t start, size_t end)
+    {
+        DWORD size = static_cast<DWORD>(end - start);
+        WriteConsoleA(out_handle_, msg.formatted.data() + start, size, nullptr, nullptr);
+    }
 };
 
 //

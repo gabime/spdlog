@@ -7,10 +7,10 @@ static std::string log_to_str(const std::string &msg, const std::shared_ptr<spdl
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
     spdlog::logger oss_logger("pattern_tester", oss_sink);
     oss_logger.set_level(spdlog::level::info);
-	if (formatter)
-	{
-		oss_logger.set_formatter(formatter);
-	}
+    if (formatter)
+    {
+        oss_logger.set_formatter(formatter);
+    }
     oss_logger.info(msg);
     return oss.str();
 }
@@ -65,60 +65,60 @@ TEST_CASE("date MM/DD/YY ", "[pattern_formatter]")
 }
 
 TEST_CASE("color range test1", "[pattern_formatter]")
-{	
-	auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%v%$", spdlog::pattern_time_type::local, "\n");
-	spdlog::details::log_msg msg;
-	msg.raw << "Hello";
-	formatter->format(msg);
-	REQUIRE(msg.color_range_start == 0);
-	REQUIRE(msg.color_range_end == 5);	
-	REQUIRE(log_to_str("hello", formatter) == "hello\n");
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%v%$", spdlog::pattern_time_type::local, "\n");
+    spdlog::details::log_msg msg;
+    msg.raw << "Hello";
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 0);
+    REQUIRE(msg.color_range_end == 5);
+    REQUIRE(log_to_str("hello", formatter) == "hello\n");
 }
 
 TEST_CASE("color range test2", "[pattern_formatter]")
 {
-	auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%$", spdlog::pattern_time_type::local, "\n");
-	spdlog::details::log_msg msg;	
-	formatter->format(msg);
-	REQUIRE(msg.color_range_start == 0);
-	REQUIRE(msg.color_range_end == 0);
-	REQUIRE(log_to_str("", formatter) == "\n");
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%$", spdlog::pattern_time_type::local, "\n");
+    spdlog::details::log_msg msg;
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 0);
+    REQUIRE(msg.color_range_end == 0);
+    REQUIRE(log_to_str("", formatter) == "\n");
 }
 
 TEST_CASE("color range test3", "[pattern_formatter]")
 {
-	auto formatter = std::make_shared<spdlog::pattern_formatter>("%^***%$");
-	spdlog::details::log_msg msg;
-	formatter->format(msg);
-	REQUIRE(msg.color_range_start == 0);
-	REQUIRE(msg.color_range_end == 3);
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^***%$");
+    spdlog::details::log_msg msg;
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 0);
+    REQUIRE(msg.color_range_end == 3);
 }
 
 TEST_CASE("color range test4", "[pattern_formatter]")
 {
-	auto formatter = std::make_shared<spdlog::pattern_formatter>("XX%^YYY%$", spdlog::pattern_time_type::local, "\n");
-	spdlog::details::log_msg msg;
-	msg.raw << "ignored";
-	formatter->format(msg);
-	REQUIRE(msg.color_range_start == 2);
-	REQUIRE(msg.color_range_end == 5);
-	REQUIRE(log_to_str("ignored", formatter) == "XXYYY\n");
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("XX%^YYY%$", spdlog::pattern_time_type::local, "\n");
+    spdlog::details::log_msg msg;
+    msg.raw << "ignored";
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 2);
+    REQUIRE(msg.color_range_end == 5);
+    REQUIRE(log_to_str("ignored", formatter) == "XXYYY\n");
 }
 
 TEST_CASE("color range test5", "[pattern_formatter]")
 {
-	auto formatter = std::make_shared<spdlog::pattern_formatter>("**%^");
-	spdlog::details::log_msg msg;
-	formatter->format(msg);
-	REQUIRE(msg.color_range_start == 2);
-	REQUIRE(msg.color_range_end == 0);
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("**%^");
+    spdlog::details::log_msg msg;
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 2);
+    REQUIRE(msg.color_range_end == 0);
 }
 
 TEST_CASE("color range test6", "[pattern_formatter]")
 {
-	auto formatter = std::make_shared<spdlog::pattern_formatter>("**%$");
-	spdlog::details::log_msg msg;
-	formatter->format(msg);
-	REQUIRE(msg.color_range_start == 0);
-	REQUIRE(msg.color_range_end == 2);
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("**%$");
+    spdlog::details::log_msg msg;
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 0);
+    REQUIRE(msg.color_range_end == 2);
 }
