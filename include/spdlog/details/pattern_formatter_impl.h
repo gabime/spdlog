@@ -478,13 +478,13 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         msg.formatted << '[' << *msg.logger_name << "] ";
 #endif
 
-        const char *level_name = level::to_str(msg.level);
-        size_t level_name_size = strlen(level_name);
-        msg.formatted << '[' << fmt::StringRef(level_name, level_name_size) << "] ";
-        msg.formatted << fmt::StringRef(msg.raw.data(), msg.raw.size());
-        // wrap the level with color
-        msg.color_range_start = 37;
-        msg.color_range_end = 37 + level_name_size;
+        msg.formatted << '[';
+        // wrap the level name with color
+        msg.color_range_start = msg.formatted.size();        
+        msg.formatted << level::to_str(msg.level);        
+        msg.color_range_end =  msg.formatted.size();
+        msg.formatted << "] " << fmt::StringRef(msg.raw.data(), msg.raw.size());
+      
     }
 };
 
