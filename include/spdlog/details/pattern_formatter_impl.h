@@ -704,5 +704,5 @@ inline void spdlog::pattern_formatter::format(details::log_msg &msg)
         f->format(msg, tm_time);
     }
     // write eol
-    msg.formatted.write(_eol.data(), _eol.size());
+    msg.formatted << _eol;
 }
