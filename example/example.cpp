@@ -26,17 +26,8 @@ int main(int, char *[])
 {
     try
     {
-         spdlog::set_async_mode(1024);
         // Console logger with color
         auto console = spd::stdout_color_mt("console");
-        
-        for (int i = 0; i < 2000; i++)
-        {
-            console->info("{} Hello thread pool!", i);
-        }
-        
-        return 0;
-        
         console->info("Welcome to spdlog!");
         console->error("Some error message with arg{}..", 1);
 
@@ -48,7 +39,6 @@ int main(int, char *[])
         console->info("{:<30}", "left aligned");
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
-        return 0;
 
         // Create basic file logger (not rotated)
         auto my_logger = spd::basic_logger_mt("basic_logger", "logs/basic-log.txt");
