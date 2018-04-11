@@ -286,6 +286,11 @@ public:
         _file_helper.open(_current_filename);
         _current_size = _file_helper.size(); // expensive. called only once
     }
+    
+    ~step_file_sink()
+    {
+        close_current_file();
+    }
 
 protected:
     void _sink_it(const details::log_msg &msg) override
@@ -306,7 +311,6 @@ protected:
     void _flush() override
     {
         _file_helper.flush();
-        close_current_file();
     }
 
 private:
