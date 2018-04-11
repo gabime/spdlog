@@ -83,6 +83,19 @@ inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(
     return create<spdlog::sinks::daily_file_sink_st>(logger_name, filename, hour, minute);
 }
 
+// Create a file logger that creates new files with a specified increment
+inline std::shared_ptr<spdlog::logger> spdlog::step_logger_mt(
+    const std::string &logger_name, const filename_t &filename_fmt, unsigned seconds, size_t max_file_size)
+{
+    return create<spdlog::sinks::step_file_sink_mt>(logger_name, filename_fmt, seconds, max_file_size);
+}
+
+inline std::shared_ptr<spdlog::logger> spdlog::step_logger_st(
+    const std::string &logger_name, const filename_t &filename_fmt, unsigned seconds, size_t max_file_size)
+{
+    return create<spdlog::sinks::step_file_sink_st>(logger_name, filename_fmt, seconds, max_file_size);
+}
+
 //
 // stdout/stderr loggers
 //

@@ -251,5 +251,97 @@ private:
 using daily_file_sink_mt = daily_file_sink<std::mutex>;
 using daily_file_sink_st = daily_file_sink<details::null_mutex>;
 
+/*
+ * Default generator of step log file names.
+ */
+struct default_step_file_name_calculator
+{
+    // Create filename for the form filename_YYYY-MM-DD_hh-mm-ss.ext
+    static std::tuple<filename_t, filename_t> calc_filename(const filename_t &filename)
+    {
+        std::tm tm = spdlog::details::os::localtime();
+        filename_t basename, ext;
+        std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}-{:02d}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+            tm.tm_hour, tm.tm_min, tm.tm_sec);
+        return std::make_tuple(w.str(), ext);
+    }
+};
+
+/*
+ * Rotating file sink based on size and a specified time step
+ */
+template<class Mutex, class FileNameCalc = default_step_file_name_calculator>
+class step_file_sink SPDLOG_FINAL : public base_sink<Mutex>
+{
+public:
+    step_file_sink(filename_t base_filename, unsigned step_seconds, std::size_t max_size)
+        : _base_filename(std::move(base_filename))
+        , _step_seconds(step_seconds)
+        , _max_size(max_size)
+    {
+        _tp = _next_tp();
+        std::tie(_current_filename, _ext) = FileNameCalc::calc_filename(_base_filename);
+        _file_helper.open(_current_filename);
+        _current_size = _file_helper.size(); // expensive. called only once
+    }
+
+protected:
+    void _sink_it(const details::log_msg &msg) override
+    {
+        _current_size += msg.formatted.size();
+        if (std::chrono::system_clock::now() >= _tp || _current_size > _max_size)
+        {
+            close_current_file();
+
+            std::tie(_current_filename, std::ignore) = FileNameCalc::calc_filename(_base_filename);
+            _file_helper.open(_current_filename);
+            _tp = _next_tp();
+            _current_size = msg.formatted.size();
+        }
+        _file_helper.write(msg);
+    }
+
+    void _flush() override
+    {
+        _file_helper.flush();
+        close_current_file();
+    }
+
+private:
+    std::chrono::system_clock::time_point _next_tp()
+    {
+        return std::chrono::system_clock::now() + _step_seconds;
+    }
+
+    void close_current_file()
+    {
+        using details::os::filename_to_str;
+
+        filename_t src =_current_filename;
+        filename_t target = _current_filename + _ext;
+
+        if (details::file_helper::file_exists(src) && details::os::rename(src, target) != 0)
+        {
+            throw spdlog_ex("step_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+        }
+    }
+
+    filename_t _base_filename;
+    std::chrono::seconds _step_seconds;
+    std::size_t _max_size;
+
+    std::chrono::system_clock::time_point _tp;
+    filename_t _current_filename;
+    filename_t _ext;
+    std::size_t _current_size;
+    
+    details::file_helper _file_helper;
+};
+
+using step_file_sink_mt = step_file_sink<std::mutex>;
+using step_file_sink_st = step_file_sink<details::null_mutex>;
+
 } // namespace sinks
 } // namespace spdlog
