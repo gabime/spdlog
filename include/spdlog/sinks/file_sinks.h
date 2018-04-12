@@ -289,7 +289,12 @@ public:
     
     ~step_file_sink()
     {
-        close_current_file();
+        using details::os::filename_to_str;
+
+        filename_t src =_current_filename;
+        filename_t target = _current_filename + _ext;
+        
+        details::os::rename(src, target);
     }
 
 protected:
