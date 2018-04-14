@@ -28,8 +28,7 @@ int main(int, char *[])
     try
     {
         // Console logger with color
-        auto console = spdlog::console<spd::stdout_color_mt>("console");
-        auto console2 = spdlog::console<spd::stdout_color_mt>("console");
+        auto console = spdlog::console<spd::stdout_color_mt>("console");        
         console->info("Welcome to spdlog!");
         console->error("Some error message with arg: {}", 1);
 
