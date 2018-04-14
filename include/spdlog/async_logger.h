@@ -19,10 +19,9 @@
 #include "logger.h"
 
 #include <chrono>
-#include <functional>
-#include <iostream>
 #include <memory>
 #include <string>
+
 namespace spdlog {
 namespace details {
 class thread_pool;
