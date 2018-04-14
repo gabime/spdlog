@@ -30,8 +30,8 @@ struct log_msg
     }
 
     log_msg(const log_msg &other) = delete;
-    log_msg &operator=(log_msg &&other) = delete;
     log_msg(log_msg &&other) = delete;
+    log_msg &operator=(log_msg &&other) = delete;
 
     const std::string *logger_name{nullptr};
     level::level_enum level;
@@ -40,7 +40,7 @@ struct log_msg
     fmt::MemoryWriter raw;
     fmt::MemoryWriter formatted;
     size_t msg_id{0};
-    // wrap this range with color codes
+    // info about wrapping the formatted text with color
     size_t color_range_start{0};
     size_t color_range_end{0};
 };

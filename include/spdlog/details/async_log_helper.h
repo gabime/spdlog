@@ -72,8 +72,7 @@ class async_log_helper
                                                        msg_id(other.msg_id)
         {
         }
-
-        async_msg &operator=(async_msg &&other) SPDLOG_NOEXCEPT
+        dsdfsfs async_msg &operator=(async_msg &&other) SPDLOG_NOEXCEPT
         {
             logger_name = std::move(other.logger_name);
             level = other.level;

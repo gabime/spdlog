@@ -20,52 +20,39 @@
 
 #include <chrono>
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <string>
-
 namespace spdlog {
-
 namespace details {
-class async_log_helper;
+class thread_pool;
 }
 
-class async_logger SPDLOG_FINAL : public logger
+class async_logger SPDLOG_FINAL : public std::enable_shared_from_this<async_logger>, public logger
 {
+    friend class details::thread_pool;
+
 public:
     template<class It>
-    async_logger(const std::string &logger_name, const It &begin, const It &end, size_t queue_size,
-        const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-        const std::function<void()> &worker_warmup_cb = nullptr,
-        const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
-        const std::function<void()> &worker_teardown_cb = nullptr);
+    async_logger(const std::string &logger_name, const It &begin, const It &end, std::weak_ptr<details::thread_pool> tp,
+        async_overflow_policy overflow_policy = async_overflow_policy::block_retry);
 
-    async_logger(const std::string &logger_name, sinks_init_list sinks, size_t queue_size,
-        const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-        const std::function<void()> &worker_warmup_cb = nullptr,
-        const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
-        const std::function<void()> &worker_teardown_cb = nullptr);
+    async_logger(const std::string &logger_name, sinks_init_list sinks, std::weak_ptr<details::thread_pool> tp,
+        async_overflow_policy overflow_policy = async_overflow_policy::block_retry);
 
-    async_logger(const std::string &logger_name, sink_ptr single_sink, size_t queue_size,
-        const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-        const std::function<void()> &worker_warmup_cb = nullptr,
-        const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
-        const std::function<void()> &worker_teardown_cb = nullptr);
-
-    // Wait for the queue to be empty, and flush synchronously
-    // Warning: this can potentially last forever as we wait it to complete
-    void flush() override;
-
-    // Error handler
-    void set_error_handler(log_err_handler) override;
-    log_err_handler error_handler() override;
+    async_logger(const std::string &logger_name, sink_ptr single_sink, std::weak_ptr<details::thread_pool> tp,
+        async_overflow_policy overflow_policy = async_overflow_policy::block_retry);
 
 protected:
     void _sink_it(details::log_msg &msg) override;
-    void _set_formatter(spdlog::formatter_ptr msg_formatter) override;
-    void _set_pattern(const std::string &pattern, pattern_time_type pattern_time) override;
+    void _flush() override;
+
+    void _backend_log(details::log_msg &incoming_log_msg);
+    void _backend_flush();
 
 private:
-    std::unique_ptr<details::async_log_helper> _async_log_helper;
+    std::weak_ptr<details::thread_pool> _thread_pool;
+    async_overflow_policy _overflow_policy;
 };
 } // namespace spdlog
 

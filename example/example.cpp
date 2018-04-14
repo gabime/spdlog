@@ -10,6 +10,7 @@
 #define SPDLOG_TRACE_ON
 #define SPDLOG_DEBUG_ON
 
+#include "spdlog/async.h"
 #include "spdlog/spdlog.h"
 
 #include <iostream>
@@ -27,9 +28,10 @@ int main(int, char *[])
     try
     {
         // Console logger with color
-        auto console = spd::stdout_color_mt("console");
+        auto console = spdlog::console<spd::stdout_color_mt>("console");
+        auto console2 = spdlog::console<spd::stdout_color_mt>("console");
         console->info("Welcome to spdlog!");
-        console->error("Some error message with arg{}..", 1);
+        console->error("Some error message with arg: {}", 1);
 
         // Formatting examples
         console->warn("Easy padding in numbers like {:08d}", 12);
@@ -105,13 +107,16 @@ int main(int, char *[])
 
 void async_example()
 {
-    size_t q_size = 4096; // queue size must be power of 2
-    spdlog::set_async_mode(q_size);
-    auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
+
+    auto async_file = spd::basic_logger_mt<spdlog::create_async>("async_file_logger", "logs/async_log.txt");
     for (int i = 0; i < 100; ++i)
     {
         async_file->info("Async message #{}", i);
     }
+
+    // optional change thread pool settings *before* creating the logger:
+    // spdlog::init_thread_pool(8192, 1);
+    // if not called a defaults are: 8192 queue size and 1 worker thread.
 }
 
 // syslog example (linux/osx/freebsd)

@@ -6,10 +6,10 @@
 //
 // bench.cpp : spdlog benchmarks
 //
-#include "spdlog/async_logger.h"
-#include "spdlog/sinks/file_sinks.h"
+#include "spdlog/async.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/spdlog.h"
+
 #include "utils.h"
 #include <atomic>
 #include <cstdlib> // EXIT_FAILURE
@@ -71,11 +71,10 @@ int main(int argc, char *argv[])
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
         cout << "*******************************************************************************\n";
 
-        spdlog::set_async_mode(queue_size);
-
         for (int i = 0; i < 3; ++i)
         {
-            auto as = spdlog::daily_logger_st("as", "logs/daily_async.log");
+            spdlog::init_thread_pool(queue_size, 1);
+            auto as = spdlog::daily_logger_mt<spdlog::create_async>("as", "logs/daily_async.log");
             bench_mt(howmany, as, threads);
             spdlog::drop("as");
         }

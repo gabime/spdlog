@@ -785,7 +785,7 @@ inline typename MakeUnsigned<Int>::Type to_unsigned(Int value)
 // to avoid dynamic memory allocation.
 enum
 {
-    INLINE_BUFFER_SIZE = 500
+    INLINE_BUFFER_SIZE = 500 // TODO reduce to 250
 };
 
 #if FMT_SECURE_SCL

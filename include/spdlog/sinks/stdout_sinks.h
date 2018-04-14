@@ -23,12 +23,6 @@ class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
 public:
     explicit stdout_sink() = default;
 
-    static std::shared_ptr<MyType> instance()
-    {
-        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
-        return instance;
-    }
-
 protected:
     void _sink_it(const details::log_msg &msg) override
     {
@@ -52,12 +46,6 @@ class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
 
 public:
     explicit stderr_sink() = default;
-
-    static std::shared_ptr<MyType> instance()
-    {
-        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
-        return instance;
-    }
 
 protected:
     void _sink_it(const details::log_msg &msg) override

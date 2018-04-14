@@ -42,12 +42,12 @@ inline spdlog::logger::~logger() = default;
 
 inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
 {
-    _set_formatter(std::move(msg_formatter));
+    _formatter = std::move(msg_formatter);
 }
 
 inline void spdlog::logger::set_pattern(const std::string &pattern, pattern_time_type pattern_time)
 {
-    _set_pattern(pattern, pattern_time);
+    _formatter = std::make_shared<pattern_formatter>(pattern, pattern_time);
 }
 
 template<typename... Args>
@@ -282,9 +282,20 @@ inline spdlog::log_err_handler spdlog::logger::error_handler()
     return _err_handler;
 }
 
+inline void spdlog::logger::flush()
+{
+    _flush();
+}
+
 inline void spdlog::logger::flush_on(level::level_enum log_level)
 {
     _flush_level.store(log_level);
+}
+
+inline bool spdlog::logger::_should_flush(const details::log_msg &msg)
+{
+    auto flush_level = _flush_level.load(std::memory_order_relaxed);
+    return (msg.level >= flush_level) && (msg.level != level::off);
 }
 
 inline spdlog::level::level_enum spdlog::logger::level() const
@@ -314,23 +325,13 @@ inline void spdlog::logger::_sink_it(details::log_msg &msg)
         }
     }
 
-    if (_should_flush_on(msg))
+    if (_should_flush(msg))
     {
         flush();
     }
 }
 
-inline void spdlog::logger::_set_pattern(const std::string &pattern, pattern_time_type pattern_time)
-{
-    _formatter = std::make_shared<pattern_formatter>(pattern, pattern_time);
-}
-
-inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
-{
-    _formatter = std::move(msg_formatter);
-}
-
-inline void spdlog::logger::flush()
+inline void spdlog::logger::_flush()
 {
     for (auto &sink : _sinks)
     {
@@ -345,19 +346,11 @@ inline void spdlog::logger::_default_err_handler(const std::string &msg)
     {
         return;
     }
+    _last_err_time = now;
     auto tm_time = details::os::localtime(now);
     char date_buf[100];
     std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
-    details::log_msg err_msg;
-    err_msg.formatted.write("[*** LOG ERROR ***] [{}] [{}] [{}]{}", name(), msg, date_buf, details::os::default_eol);
-    sinks::stderr_sink_mt::instance()->log(err_msg);
-    _last_err_time = now;
-}
-
-inline bool spdlog::logger::_should_flush_on(const details::log_msg &msg)
-{
-    const auto flush_level = _flush_level.load(std::memory_order_relaxed);
-    return (msg.level >= flush_level) && (msg.level != level::off);
+    fmt::print(stderr, "[*** LOG ERROR ***] [{}] [{}] {}\n", date_buf, name(), msg);
 }
 
 inline void spdlog::logger::_incr_msg_counter(details::log_msg &msg)

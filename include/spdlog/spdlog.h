@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2015-2018 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 // spdlog main header file.
@@ -7,8 +7,22 @@
 
 #pragma once
 
+#include "details/registry.h"
+#include "sinks/file_sinks.h"
+#include "sinks/stdout_sinks.h"
+
 #include "common.h"
 #include "logger.h"
+
+#if defined _WIN32
+#include "sinks/wincolor_sink.h"
+#else
+#include "sinks/ansicolor_sink.h"
+#endif
+
+#ifdef __ANDROID__
+#include "sinks/android_sink.h"
+#endif
 
 #include <chrono>
 #include <functional>
@@ -17,156 +31,212 @@
 
 namespace spdlog {
 
+// Default logger factory-  creates synchronous loggers
+struct default_factory
+{
+    template<typename Sink, typename... SinkArgs>
+
+    static std::shared_ptr<spdlog::logger> create(const std::string &logger_name, SinkArgs &&... args)
+    {
+        auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
+        auto new_logger = std::make_shared<logger>(logger_name, std::move(sink));
+        details::registry::instance().register_and_init(new_logger);
+        return new_logger;
+    }
+};
+
+// Create and register a logger with a templated sink type
+// The logger's level, formatter and flush level will be set according the global settings.
+// Example:
+// spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
+template<typename Sink, typename... SinkArgs>
+inline std::shared_ptr<spdlog::logger> create(const std::string &logger_name, SinkArgs &&... sink_args)
+{
+    return default_factory::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
+}
+
 //
 // Return an existing logger or nullptr if a logger with such name doesn't exist.
 // example: spdlog::get("my_logger")->info("hello {}", "world");
 //
-std::shared_ptr<logger> get(const std::string &name);
+inline std::shared_ptr<logger> get(const std::string &name)
+{
+    return details::registry::instance().get(name);
+}
 
 //
 // Set global formatting
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 //
-void set_pattern(const std::string &format_string);
-void set_formatter(formatter_ptr f);
+inline void set_pattern(const std::string &format_string)
+{
+    details::registry::instance().set_pattern(format_string);
+}
+
+inline void set_formatter(formatter_ptr f)
+{
+    details::registry::instance().set_formatter(std::move(f));
+}
 
 //
 // Set global logging level
 //
-void set_level(level::level_enum log_level);
+inline void set_level(level::level_enum log_level)
+{
+    details::registry::instance().set_level(log_level);
+}
 
 //
 // Set global flush level
 //
-void flush_on(level::level_enum log_level);
+inline void flush_on(level::level_enum log_level)
+{
+    details::registry::instance().flush_on(log_level);
+}
 
 //
 // Set global error handler
 //
-void set_error_handler(log_err_handler handler);
+inline void set_error_handler(log_err_handler handler)
+{
+    details::registry::instance().set_error_handler(std::move(handler));
+}
 
-//
-// Turn on async mode (off by default) and set the queue size for each async_logger.
-// effective only for loggers created after this call.
-// queue_size: size of queue (must be power of 2):
-//    Each logger will pre-allocate a dedicated queue with queue_size entries upon construction.
-//
-// async_overflow_policy (optional, block_retry by default):
-//    async_overflow_policy::block_retry - if queue is full, block until queue has room for the new log entry.
-//    async_overflow_policy::discard_log_msg - never block and discard any new messages when queue overflows.
-//
-// worker_warmup_cb (optional):
-//     callback function that will be called in worker thread upon start (can be used to init stuff like thread affinity)
-//
-// worker_teardown_cb (optional):
-//     callback function that will be called in worker thread upon exit
-//
-void set_async_mode(size_t queue_size, const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-    const std::function<void()> &worker_warmup_cb = nullptr,
-    const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
-    const std::function<void()> &worker_teardown_cb = nullptr);
+// Register the given logger with the given name
+inline void register_logger(std::shared_ptr<logger> logger)
+{
+    details::registry::instance().register_logger(std::move(logger));
+}
 
-// Turn off async mode
-void set_sync_mode();
+// Apply a user defined function on all registered loggers
+// Example:
+// spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->flush();});
+inline void apply_all(std::function<void(std::shared_ptr<logger>)> fun)
+{
+    details::registry::instance().apply_all(std::move(fun));
+}
+
+// Drop the reference to the given logger
+inline void drop(const std::string &name)
+{
+    details::registry::instance().drop(name);
+}
+
+// Drop all references from the registry
+inline void drop_all()
+{
+    details::registry::instance().drop_all();
+}
 
 //
 // Create and register multi/single threaded basic file logger.
 // Basic logger simply writes to given file without any limitations or rotations.
 //
-std::shared_ptr<logger> basic_logger_mt(const std::string &logger_name, const filename_t &filename, bool truncate = false);
-std::shared_ptr<logger> basic_logger_st(const std::string &logger_name, const filename_t &filename, bool truncate = false);
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> basic_logger_mt(const std::string &logger_name, const filename_t &filename, bool truncate = false)
+{
+    return Factory::template create<sinks::simple_file_sink_mt>(logger_name, filename, truncate);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name, const filename_t &filename, bool truncate = false)
+{
+    return Factory::template create<sinks::simple_file_sink_st>(logger_name, filename, truncate);
+}
 
 //
 // Create and register multi/single threaded rotating file logger
 //
-std::shared_ptr<logger> rotating_logger_mt(
-    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files);
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> rotating_logger_mt(
+    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files)
+{
+    return Factory::template create<sinks::rotating_file_sink_mt>(logger_name, filename, max_file_size, max_files);
+}
 
-std::shared_ptr<logger> rotating_logger_st(
-    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files);
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> rotating_logger_st(
+    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files)
+{
+    return Factory::template create<sinks::rotating_file_sink_st>(logger_name, filename, max_file_size, max_files);
+}
 
 //
 // Create file logger which creates new file on the given time (default in midnight):
 //
-std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0);
-std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0);
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0)
+{
+    return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute);
+}
 
-//
-// Create and register stdout/stderr loggers
-//
-std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name);
-std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name);
-std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name);
-std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
-//
-// Create and register colored stdout/stderr loggers
-//
-std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name);
-std::shared_ptr<logger> stdout_color_st(const std::string &logger_name);
-std::shared_ptr<logger> stderr_color_mt(const std::string &logger_name);
-std::shared_ptr<logger> stderr_color_st(const std::string &logger_name);
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0)
+{
+    return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute);
+}
 
+///////////////////////////////////////////////////////////////////////////////
+// stdout and stderr loggers
 //
-// Create and register a syslog logger
+// multi threaded and colored:
+//    spdlog::console<stdout_color_mt>("name")
+//    spdlog::console<stderr_color_mt>("name")
 //
+// single threaded and colored:
+//    spdlog::console<stdout_color_st>("name")
+//    spdlog::console<stderr_color_st>("name")
+//
+// multi threaded, no color:
+//    spdlog::console<stdout_mt>("name")
+//    spdlog::console<stderr_mt>("name")
+//
+// single threaded, no color:
+//   spdlog::console<stdout_st>("name")
+//   spdlog::console<stderr_st>("name")
+///////////////////////////////////////////////////////////////////////////////
+
+#if defined _WIN32 // window color console
+using stdout_color_mt = sinks::wincolor_stdout_sink_mt;
+using stdout_color_st = sinks::wincolor_stdout_sink_st;
+using stderr_color_mt = sinks::wincolor_stderr_sink_mt;
+using stderr_color_st = sinks::wincolor_stderr_sink_st;
+#else // ansi color console
+using stdout_color_mt = sinks::ansicolor_stdout_sink_mt;
+using stdout_color_st = sinks::ansicolor_stdout_sink_st;
+using stderr_color_mt = sinks::ansicolor_stderr_sink_mt;
+using stderr_color_st = sinks::ansicolor_stderr_sink_st;
+#endif
+// no color console
+using stdout_mt = sinks::stdout_sink_mt;
+using stdout_st = sinks::stdout_sink_st;
+using stderr_mt = sinks::stderr_sink_mt;
+using stderr_st = sinks::stderr_sink_st;
+
+template<typename Sink, typename Factory = default_factory>
+inline std::shared_ptr<logger> console(const std::string &logger_name)
+{
+    return Factory::template create<Sink>(logger_name);
+}
+
 #ifdef SPDLOG_ENABLE_SYSLOG
-std::shared_ptr<logger> syslog_logger(
-    const std::string &logger_name, const std::string &ident = "", int syslog_option = 0, int syslog_facilty = (1 << 3));
+// Create and register a syslog logger
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> syslog_logger(
+    const std::string &logger_name, const std::string &ident = "", int syslog_option = 0, int syslog_facilty = (1 << 3))
+{
+    return return Factory::template create<sinks::syslog_sink>(logger_name, syslog_ident, syslog_option, syslog_facility);
+}
 #endif
 
 #if defined(__ANDROID__)
-std::shared_ptr<logger> android_logger(const std::string &logger_name, const std::string &tag = "spdlog");
+// Create and register android syslog logger
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> android_logger(const std::string &logger_name, const std::string &tag = "spdlog")
+{
+    return return Factory::template create<sinks::android_sink>(logger_name, tag);
+}
 #endif
-
-// Create and register a logger with a single sink
-std::shared_ptr<logger> create(const std::string &logger_name, const sink_ptr &sink);
-
-// Create and register a logger with multiple sinks
-std::shared_ptr<logger> create(const std::string &logger_name, sinks_init_list sinks);
-
-template<class It>
-std::shared_ptr<logger> create(const std::string &logger_name, const It &sinks_begin, const It &sinks_end);
-
-// Create and register a logger with templated sink type
-// Example:
-// spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename");
-template<typename Sink, typename... Args>
-std::shared_ptr<spdlog::logger> create(const std::string &logger_name, Args... args);
-
-// Create and register an async logger with a single sink
-std::shared_ptr<logger> create_async(const std::string &logger_name, const sink_ptr &sink, size_t queue_size,
-    const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-    const std::function<void()> &worker_warmup_cb = nullptr,
-    const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
-    const std::function<void()> &worker_teardown_cb = nullptr);
-
-// Create and register an async logger with multiple sinks
-std::shared_ptr<logger> create_async(const std::string &logger_name, sinks_init_list sinks, size_t queue_size,
-    const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-    const std::function<void()> &worker_warmup_cb = nullptr,
-    const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
-    const std::function<void()> &worker_teardown_cb = nullptr);
-
-template<class It>
-std::shared_ptr<logger> create_async(const std::string &logger_name, const It &sinks_begin, const It &sinks_end, size_t queue_size,
-    const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
-    const std::function<void()> &worker_warmup_cb = nullptr,
-    const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
-    const std::function<void()> &worker_teardown_cb = nullptr);
-
-// Register the given logger with the given name
-void register_logger(std::shared_ptr<logger> logger);
-
-// Apply a user defined function on all registered loggers
-// Example:
-// spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->flush();});
-void apply_all(std::function<void(std::shared_ptr<logger>)> fun);
-
-// Drop the reference to the given logger
-void drop(const std::string &name);
-
-// Drop all references from the registry
-void drop_all();
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -200,5 +270,3 @@ void drop_all();
 #endif
 
 } // namespace spdlog
-
-#include "details/spdlog_impl.h"

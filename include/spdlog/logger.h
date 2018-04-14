@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2015-2108 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
@@ -113,27 +113,23 @@ public:
     void set_pattern(const std::string &pattern, pattern_time_type pattern_time = pattern_time_type::local);
     void set_formatter(formatter_ptr msg_formatter);
 
-    // automatically call flush() if message level >= log_level
+    void flush();
     void flush_on(level::level_enum log_level);
-
-    virtual void flush();
 
     const std::vector<sink_ptr> &sinks() const;
 
     // error handler
-    virtual void set_error_handler(log_err_handler err_handler);
-    virtual log_err_handler error_handler();
+    void set_error_handler(log_err_handler err_handler);
+    log_err_handler error_handler();
 
 protected:
     virtual void _sink_it(details::log_msg &msg);
-    virtual void _set_pattern(const std::string &pattern, pattern_time_type pattern_time);
-    virtual void _set_formatter(formatter_ptr msg_formatter);
+    virtual void _flush();
+
+    bool _should_flush(const details::log_msg &msg);
 
     // default error handler: print the error to stderr with the max rate of 1 message/minute
-    virtual void _default_err_handler(const std::string &msg);
-
-    // return true if the given message level should trigger a flush
-    bool _should_flush_on(const details::log_msg &msg);
+    void _default_err_handler(const std::string &msg);
 
     // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
     void _incr_msg_counter(details::log_msg &msg);

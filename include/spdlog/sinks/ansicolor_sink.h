@@ -94,7 +94,7 @@ protected:
             // after color range
             _print_range(msg, msg.color_range_end, msg.formatted.size());
         }
-        else
+        else // no color
         {
             _print_range(msg, 0, msg.formatted.size());
         }
