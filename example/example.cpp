@@ -10,7 +10,7 @@
 #define SPDLOG_TRACE_ON
 #define SPDLOG_DEBUG_ON
 
-#include "spdlog/async.h"
+
 #include "spdlog/spdlog.h"
 
 #include <iostream>
@@ -103,7 +103,8 @@ int main(int, char *[])
         return 1;
     }
 }
-
+// must be included to use async logger
+#include "spdlog/async.h"
 void async_example()
 {
 
