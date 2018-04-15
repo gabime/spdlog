@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <thread>
+#include <mutex>
 
 #ifdef _WIN32
 
@@ -473,6 +474,19 @@ inline bool in_terminal(FILE *file)
 #else
     return isatty(fileno(file)) != 0;
 #endif
+}
+
+// stdout/stderr global mutexes
+inline std::mutex& stdout_mutex()
+{
+	static std::mutex &mutex = std::mutex{};
+	return mutex;
+}
+
+inline std::mutex& stderr_mutex()
+{
+	static std::mutex &mutex = std::mutex{};
+	return mutex;
 }
 } // namespace os
 } // namespace details

@@ -10,6 +10,7 @@
 #include "base_sink.h"
 
 #include <mutex>
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <wincon.h>
@@ -20,7 +21,7 @@ namespace sinks {
  * Windows color console sink. Uses WriteConsoleA to write to the console with colors
  */
 template<class Mutex>
-class wincolor_sink : public base_sink<Mutex>
+class wincolor_sink : public sink
 {
 public:
     const WORD BOLD = FOREGROUND_INTENSITY;
@@ -30,8 +31,8 @@ public:
     const WORD WHITE = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
     const WORD YELLOW = FOREGROUND_RED | FOREGROUND_GREEN;
 
-    wincolor_sink(HANDLE std_handle)
-        : out_handle_(std_handle)
+    wincolor_sink(HANDLE std_handle,  Mutex& stdout_mutex)
+        : out_handle_(std_handle), _mutex(stdout_mutex)
     {
         colors_[level::trace] = WHITE;
         colors_[level::debug] = CYAN;
@@ -42,6 +43,7 @@ public:
         colors_[level::off] = 0;
     }
 
+	
     ~wincolor_sink() override
     {
         this->flush();
@@ -57,55 +59,58 @@ public:
         colors_[level] = color;
     }
 
-protected:
-    void _sink_it(const details::log_msg &msg) override
-    {
-        if (msg.color_range_end > msg.color_range_start)
-        {
-            // before color range
-            _print_range(msg, 0, msg.color_range_start);
+	void log(const details::log_msg &msg) SPDLOG_FINAL override
+	{
+		std::lock_guard<Mutex> lock(_mutex);
 
-            // in color range
-            auto orig_attribs = set_console_attribs(colors_[msg.level]);
-            _print_range(msg, msg.color_range_start, msg.color_range_end);
-            ::SetConsoleTextAttribute(out_handle_, orig_attribs); // reset to orig colors
-            // after color range
-            _print_range(msg, msg.color_range_end, msg.formatted.size());
-        }
-        else // print without colors if color range is invalid
-        {
-            _print_range(msg, 0, msg.formatted.size());
-        }
-    }
+		if (msg.color_range_end > msg.color_range_start)
+		{
+			// before color range
+			_print_range(msg, 0, msg.color_range_start);
 
-    void _flush() override
-    {
-        // windows console always flushed?
-    }
+			// in color range
+			auto orig_attribs = set_console_attribs(colors_[msg.level]);
+			_print_range(msg, msg.color_range_start, msg.color_range_end);
+			::SetConsoleTextAttribute(out_handle_, orig_attribs); // reset to orig colors
+																  // after color range
+			_print_range(msg, msg.color_range_end, msg.formatted.size());
+		}
+		else // print without colors if color range is invalid
+		{
+			_print_range(msg, 0, msg.formatted.size());
+		}
+	}
 
-private:
-    HANDLE out_handle_;
-    std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
+	void flush() SPDLOG_FINAL override
+	{
+		// windows console always flushed?
+	}
 
+    
+private:  
     // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs)
     {
         CONSOLE_SCREEN_BUFFER_INFO orig_buffer_info;
-        GetConsoleScreenBufferInfo(out_handle_, &orig_buffer_info);
+        ::GetConsoleScreenBufferInfo(out_handle_, &orig_buffer_info);
         WORD back_color = orig_buffer_info.wAttributes;
         // retrieve the current background color
         back_color &= static_cast<WORD>(~(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY));
         // keep the background color unchanged
-        SetConsoleTextAttribute(out_handle_, attribs | back_color);
+        ::SetConsoleTextAttribute(out_handle_, attribs | back_color);
         return orig_buffer_info.wAttributes; // return orig attribs
     }
 
     // print a range of formatted message to console
     void _print_range(const details::log_msg &msg, size_t start, size_t end)
     {
-        DWORD size = static_cast<DWORD>(end - start);
-        WriteConsoleA(out_handle_, msg.formatted.data() + start, size, nullptr, nullptr);
+        auto size = static_cast<DWORD>(end - start);
+        ::WriteConsoleA(out_handle_, msg.formatted.data() + start, size, nullptr, nullptr);
     }
+
+	HANDLE out_handle_;
+	Mutex& _mutex;
+	std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 };
 
 //
@@ -113,12 +118,24 @@ private:
 //
 template<class Mutex>
 class wincolor_stdout_sink : public wincolor_sink<Mutex>
-{
+{	
 public:
-    wincolor_stdout_sink()
-        : wincolor_sink<Mutex>(GetStdHandle(STD_OUTPUT_HANDLE))
+	wincolor_stdout_sink()
+		: wincolor_sink<Mutex>(GetStdHandle(STD_OUTPUT_HANDLE), details::os::stdout_mutex())
     {
     }
+};
+
+template<>
+class wincolor_stdout_sink<details::null_mutex> : public wincolor_sink<details::null_mutex>
+{
+	details::null_mutex _null_mutex;
+public:
+	wincolor_stdout_sink()
+		: wincolor_sink<details::null_mutex>(GetStdHandle(STD_OUTPUT_HANDLE), _null_mutex)
+	{
+	}
+
 };
 
 using wincolor_stdout_sink_mt = wincolor_stdout_sink<std::mutex>;
@@ -132,9 +149,20 @@ class wincolor_stderr_sink : public wincolor_sink<Mutex>
 {
 public:
     wincolor_stderr_sink()
-        : wincolor_sink<Mutex>(GetStdHandle(STD_ERROR_HANDLE))
+        : wincolor_sink<Mutex>(GetStdHandle(STD_ERROR_HANDLE), details::os::stderr_mutex())
     {
     }
+};
+
+template<>
+class wincolor_stderr_sink<details::null_mutex> : public wincolor_sink<details::null_mutex>
+{
+	details::null_mutex _null_mutex;
+public:
+	wincolor_stderr_sink()
+		: wincolor_sink<details::null_mutex>(GetStdHandle(STD_ERROR_HANDLE), _null_mutex)
+	{
+	}
 };
 
 using wincolor_stderr_sink_mt = wincolor_stderr_sink<std::mutex>;
