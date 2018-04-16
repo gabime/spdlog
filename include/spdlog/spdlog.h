@@ -92,12 +92,6 @@ std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const fi
 std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0);
 
 //
-// Create a file logger which creates new files with a specified time step and fixed file size:
-//
-std::shared_ptr<logger> step_logger_mt(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, size_t max_file_size = std::numeric_limits<int>::max());
-std::shared_ptr<logger> step_logger_st(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, size_t max_file_size = std::numeric_limits<int>::max());
-
-//
 // Create and register stdout/stderr loggers
 //
 std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name);
