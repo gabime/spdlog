@@ -176,48 +176,57 @@ inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, c
     return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// stdout and stderr loggers
 //
-// multi threaded and colored:
-//    spdlog::console<stdout_color_mt>("name")
-//    spdlog::console<stderr_color_mt>("name")
+// color console logger
 //
-// single threaded and colored:
-//    spdlog::console<stdout_color_st>("name")
-//    spdlog::console<stderr_color_st>("name")
-//
-// multi threaded, no color:
-//    spdlog::console<stdout_mt>("name")
-//    spdlog::console<stderr_mt>("name")
-//
-// single threaded, no color:
-//   spdlog::console<stdout_st>("name")
-//   spdlog::console<stderr_st>("name")
-///////////////////////////////////////////////////////////////////////////////
-
-#if defined _WIN32 // window color console
-using stdout_color_mt = sinks::wincolor_stdout_sink_mt;
-using stdout_color_st = sinks::wincolor_stdout_sink_st;
-using stderr_color_mt = sinks::wincolor_stderr_sink_mt;
-using stderr_color_st = sinks::wincolor_stderr_sink_st;
-#else // ansi color console
-using stdout_color_mt = sinks::ansicolor_stdout_sink_mt;
-using stdout_color_st = sinks::ansicolor_stdout_sink_st;
-using stderr_color_mt = sinks::ansicolor_stderr_sink_mt;
-using stderr_color_st = sinks::ansicolor_stderr_sink_st;
-#endif
-// no color console
-using stdout_mt = sinks::stdout_sink_mt;
-using stdout_st = sinks::stdout_sink_st;
-using stderr_mt = sinks::stderr_sink_mt;
-using stderr_st = sinks::stderr_sink_st;
-
-template<typename Sink, typename Factory = default_factory>
-inline std::shared_ptr<logger> console(const std::string &logger_name)
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name)
 {
-    return Factory::template create<Sink>(logger_name);
+	return Factory::template create<sinks::stdout_color_mt>(logger_name);
 }
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stdout_color_st(const std::string &logger_name)
+{
+	return Factory::template create<sinks::stdout_color_st>(logger_name);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stderr_color_mt(const std::string &logger_name)
+{
+	return Factory::template create<sinks::stderr_color_mt>(logger_name);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stderr_color_st(const std::string &logger_name)
+{
+	return Factory::template create<sinks::stderr_color_st>(logger_name);
+}
+
+// console loggers (no colors)
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name)
+{
+	return Factory::template create<sinks::stdout_sink_mt>(logger_name);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name)
+{
+	return Factory::template create<sinks::stdout_sink_st>(logger_name);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name)
+{
+	return Factory::template create<sinks::stderr_sink_mt>(logger_name);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name)
+{
+	return Factory::template create<sinks::stderr_sink_st>(logger_name);
+}
+
 
 #ifdef SPDLOG_ENABLE_SYSLOG
 // Create and register a syslog logger

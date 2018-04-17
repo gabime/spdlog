@@ -5,12 +5,14 @@
 
 #pragma once
 
-#include "../common.h"
+#include "../details/null_mutex.h"
 #include "../details/os.h"
-#include "base_sink.h"
+#include "../details/traits.h"
 
 #include <string>
 #include <unordered_map>
+#include <memory>
+#include <mutex>
 
 namespace spdlog {
 namespace sinks {
@@ -20,12 +22,15 @@ namespace sinks {
  * of the message.
  * If no color terminal detected, omit the escape codes.
  */
-template<class Mutex>
-class ansicolor_sink : public base_sink<Mutex>
-{
+template<class StdoutTrait, class ConsoleMutexTrait>
+class ansicolor_sink : public sink
+{	
 public:
-    explicit ansicolor_sink(FILE *file)
-        : target_file_(file)
+	using mutex_t = typename ConsoleMutexTrait::mutex_t;
+     ansicolor_sink()
+        : target_file_(StdoutTrait::stream()), 
+		 _mutex(ConsoleMutexTrait::mutex())
+		
     {
         should_do_colors_ = details::os::in_terminal(file) && details::os::is_color_terminal();
         colors_[level::trace] = white;
@@ -42,9 +47,12 @@ public:
         _flush();
     }
 
+	ansicolor_sink(const ansicolor_sink &other) = delete;
+	ansicolor_sink &operator=(const ansicolor_sink &other) = delete;
+
     void set_color(level::level_enum color_level, const std::string &color)
     {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
+        std::lock_guard<mutex_t> lock(_mutex);
         colors_[color_level] = color;
     }
 
@@ -78,35 +86,39 @@ public:
     const std::string on_cyan = "\033[46m";
     const std::string on_white = "\033[47m";
 
-protected:
-    void _sink_it(const details::log_msg &msg) override
-    {
-        // Wrap the originally formatted message in color codes.
-        // If color is not supported in the terminal, log as is instead.
-        if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
-        {
-            // before color range
-            _print_range(msg, 0, msg.color_range_start);
-            // in color range
-            _print_ccode(colors_[msg.level]);
-            _print_range(msg, msg.color_range_start, msg.color_range_end);
-            _print_ccode(reset);
-            // after color range
-            _print_range(msg, msg.color_range_end, msg.formatted.size());
-        }
-        else // no color
-        {
-            _print_range(msg, 0, msg.formatted.size());
-        }
-        _flush();
-    }
 
-    void _flush() override
-    {
-        fflush(target_file_);
-    }
+	void log(const details::log_msg &msg) SPDLOG_FINAL override
+	{
+		// Wrap the originally formatted message in color codes.
+		// If color is not supported in the terminal, log as is instead.
+		std::lock_guard<mutex_t> lock(_mutex);
+		if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
+		{
+			// before color range
+			_print_range(msg, 0, msg.color_range_start);
+			// in color range
+			_print_ccode(colors_[msg.level]);
+			_print_range(msg, msg.color_range_start, msg.color_range_end);
+			_print_ccode(reset);
+			// after color range
+			_print_range(msg, msg.color_range_end, msg.formatted.size());
+		}
+		else // no color
+		{
+			_print_range(msg, 0, msg.formatted.size());
+		}
+		fflush(target_file_);
+	}
 
-private:
+	void flush() SPDLOG_FINAL override
+	{
+		std::lock_guard<mutex_t> lock(_mutex);
+		fflush(target_file_);
+	}
+    
+
+private:	
+	
     void _print_ccode(const std::string &color_code)
     {
         fwrite(color_code.data(), sizeof(char), color_code.size(), target_file_);
@@ -115,36 +127,19 @@ private:
     {
         fwrite(msg.formatted.data() + start, sizeof(char), end - start, target_file_);
     }
+
     FILE *target_file_;
+	mutex_t & _mutex;
+
     bool should_do_colors_;
     std::unordered_map<level::level_enum, std::string, level::level_hasher> colors_;
 };
+#ifndef _WIN32
+using stdout_color_mt = ansicolor_sink<details::console_stdout_trait, details::console_mutex_trait>;
+using stdout_color_st = ansicolor_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
 
-template<class Mutex>
-class ansicolor_stdout_sink : public ansicolor_sink<Mutex>
-{
-public:
-    ansicolor_stdout_sink()
-        : ansicolor_sink<Mutex>(stdout)
-    {
-    }
-};
-
-using ansicolor_stdout_sink_mt = ansicolor_stdout_sink<std::mutex>;
-using ansicolor_stdout_sink_st = ansicolor_stdout_sink<details::null_mutex>;
-
-template<class Mutex>
-class ansicolor_stderr_sink : public ansicolor_sink<Mutex>
-{
-public:
-    ansicolor_stderr_sink()
-        : ansicolor_sink<Mutex>(stderr)
-    {
-    }
-};
-
-using ansicolor_stderr_sink_mt = ansicolor_stderr_sink<std::mutex>;
-using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::null_mutex>;
-
+using stderr_color_mt = ansicolor_sink<details::console_stderr_trait, details::console_mutex_trait>;
+using stderr_color_st = ansicolor_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
+#endif
 } // namespace sinks
 } // namespace spdlog

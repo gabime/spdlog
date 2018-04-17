@@ -148,8 +148,16 @@ public:
 
     void drop_all()
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        _loggers.clear();
+		{
+			std::lock_guard<Mutex> lock(_mutex);
+			_loggers.clear();
+		}
+
+		{		
+			std::lock_guard<Mutex> lock(_tp_mutex); 
+			_tp.reset();
+		}
+		
     }
 
     Mutex &tp_mutex()

@@ -7,7 +7,7 @@
 
 #include "../common.h"
 #include "../details/null_mutex.h"
-#include "base_sink.h"
+#include "../details/traits.h"
 
 #include <mutex>
 #include <memory>
@@ -19,11 +19,12 @@ namespace spdlog {
 namespace sinks {
 /*
  * Windows color console sink. Uses WriteConsoleA to write to the console with colors
- */
-template<class Mutex>
+ */	
+template<class HandleTrait, class ConsoleMutexTrait>
 class wincolor_sink : public sink
 {
 public:
+	
     const WORD BOLD = FOREGROUND_INTENSITY;
     const WORD RED = FOREGROUND_RED;
     const WORD GREEN = FOREGROUND_GREEN;
@@ -31,8 +32,9 @@ public:
     const WORD WHITE = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
     const WORD YELLOW = FOREGROUND_RED | FOREGROUND_GREEN;
 
-    wincolor_sink(HANDLE std_handle,  Mutex& stdout_mutex)
-        : out_handle_(std_handle), _mutex(stdout_mutex)
+    wincolor_sink()
+        : out_handle_(HandleTrait::handle()),
+		_mutex(ConsoleMutexTrait::console_mutex())
     {
         colors_[level::trace] = WHITE;
         colors_[level::debug] = CYAN;
@@ -55,13 +57,13 @@ public:
     // change the color for the given level
     void set_color(level::level_enum level, WORD color)
     {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
+        std::lock_guard<mutex_t> lock(_mutex);
         colors_[level] = color;
     }
 
 	void log(const details::log_msg &msg) SPDLOG_FINAL override
 	{
-		std::lock_guard<Mutex> lock(_mutex);
+		std::lock_guard<mutex_t> lock(_mutex);
 
 		if (msg.color_range_end > msg.color_range_start)
 		{
@@ -85,9 +87,9 @@ public:
 	{
 		// windows console always flushed?
 	}
-
     
 private:  
+	using mutex_t = typename ConsoleMutexTrait::mutex_t;
     // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs)
     {
@@ -109,64 +111,18 @@ private:
     }
 
 	HANDLE out_handle_;
-	Mutex& _mutex;
+	mutex_t &_mutex;
 	std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 };
 
 //
 // windows color console to stdout
 //
-template<class Mutex>
-class wincolor_stdout_sink : public wincolor_sink<Mutex>
-{	
-public:
-	wincolor_stdout_sink()
-		: wincolor_sink<Mutex>(GetStdHandle(STD_OUTPUT_HANDLE), details::os::stdout_mutex())
-    {
-    }
-};
 
-template<>
-class wincolor_stdout_sink<details::null_mutex> : public wincolor_sink<details::null_mutex>
-{
-	details::null_mutex _null_mutex;
-public:
-	wincolor_stdout_sink()
-		: wincolor_sink<details::null_mutex>(GetStdHandle(STD_OUTPUT_HANDLE), _null_mutex)
-	{
-	}
-
-};
-
-using wincolor_stdout_sink_mt = wincolor_stdout_sink<std::mutex>;
-using wincolor_stdout_sink_st = wincolor_stdout_sink<details::null_mutex>;
-
-//
-// windows color console to stderr
-//
-template<class Mutex>
-class wincolor_stderr_sink : public wincolor_sink<Mutex>
-{
-public:
-    wincolor_stderr_sink()
-        : wincolor_sink<Mutex>(GetStdHandle(STD_ERROR_HANDLE), details::os::stderr_mutex())
-    {
-    }
-};
-
-template<>
-class wincolor_stderr_sink<details::null_mutex> : public wincolor_sink<details::null_mutex>
-{
-	details::null_mutex _null_mutex;
-public:
-	wincolor_stderr_sink()
-		: wincolor_sink<details::null_mutex>(GetStdHandle(STD_ERROR_HANDLE), _null_mutex)
-	{
-	}
-};
-
-using wincolor_stderr_sink_mt = wincolor_stderr_sink<std::mutex>;
-using wincolor_stderr_sink_st = wincolor_stderr_sink<details::null_mutex>;
+using stdout_color_mt = wincolor_sink<details::console_stdout_trait, details::console_mutex_trait>;
+using stdout_color_st = wincolor_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
+using stderr_color_mt = wincolor_sink<details::console_stderr_trait, details::console_mutex_trait>;
+using stderr_color_st = wincolor_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
 
 } // namespace sinks
 } // namespace spdlog

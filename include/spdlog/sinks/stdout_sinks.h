@@ -6,7 +6,7 @@
 #pragma once
 
 #include "../details/null_mutex.h"
-#include "base_sink.h"
+#include "../details/traits.h"
 
 #include <cstdio>
 #include <memory>
@@ -15,53 +15,40 @@
 namespace spdlog {
 namespace sinks {
 
-template<class Mutex>
-class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
-{
-    using MyType = stdout_sink<Mutex>;
-
+template<class StdoutTrait, class ConsoleMutexTrait>
+class stdout_sink : public sink
+{ 	
 public:
-    explicit stdout_sink() = default;
+	using mutex_t = typename ConsoleMutexTrait::mutex_t;
+	stdout_sink() :
+		_mutex(ConsoleMutexTrait::console_mutex()),
+		_file(StdoutTrait::stream()) {}
+	~stdout_sink() = default;
 
-protected:
-    void _sink_it(const details::log_msg &msg) override
+	stdout_sink(const stdout_sink &other) = delete;
+	stdout_sink &operator=(const stdout_sink &other) = delete;
+
+    void log(const details::log_msg &msg) override
     {
-        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stdout);
-        _flush();
+		std::lock_guard<mutex_t> lock(_mutex);
+        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), _file);
+        fflush(StdoutTrait::stream());
     }
 
-    void _flush() override
+    void flush() override
     {
-        fflush(stdout);
+		std::lock_guard<mutex_t> lock(_mutex);
+        fflush(StdoutTrait::stream());
     }
+private:
+	typename mutex_t&  _mutex;
+	FILE* _file;
 };
 
-using stdout_sink_mt = stdout_sink<std::mutex>;
-using stdout_sink_st = stdout_sink<details::null_mutex>;
-
-template<class Mutex>
-class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
-{
-    using MyType = stderr_sink<Mutex>;
-
-public:
-    explicit stderr_sink() = default;
-
-protected:
-    void _sink_it(const details::log_msg &msg) override
-    {
-        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), stderr);
-        _flush();
-    }
-
-    void _flush() override
-    {
-        fflush(stderr);
-    }
-};
-
-using stderr_sink_mt = stderr_sink<std::mutex>;
-using stderr_sink_st = stderr_sink<details::null_mutex>;
+using stdout_sink_mt = stdout_sink<details::console_stdout_trait, details::console_mutex_trait>;
+using stdout_sink_st = stdout_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
+using stderr_sink_mt = stdout_sink<details::console_stderr_trait, details::console_mutex_trait>;
+using stderr_sink_st = stdout_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
 
 } // namespace sinks
 } // namespace spdlog
