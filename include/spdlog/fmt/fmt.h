@@ -23,7 +23,7 @@
 #include "bundled/printf.h"
 #endif
 
-#else //external fmtlib
+#else // external fmtlib
 
 #include <fmt/format.h>
 #if defined(SPDLOG_FMT_PRINTF)
@@ -31,4 +31,3 @@
 #endif
 
 #endif
-

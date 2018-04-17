@@ -12,10 +12,8 @@
 #include <utility>
 #include <unordered_map>
 
-namespace spdlog
-{
-namespace details
-{
+namespace spdlog {
+namespace details {
 struct log_msg
 {
     log_msg() = default;
@@ -33,12 +31,11 @@ struct log_msg
 #endif
     }
 
-    log_msg(const log_msg& other) = delete;
-    log_msg& operator=(log_msg&& other) = delete;
-    log_msg(log_msg&& other) = delete;
+    log_msg(const log_msg &other) = delete;
+    log_msg &operator=(log_msg &&other) = delete;
+    log_msg(log_msg &&other) = delete;
 
-
-    const std::string *logger_name{ nullptr };
+    const std::string *logger_name{nullptr};
     level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;
@@ -46,6 +43,9 @@ struct log_msg
     fmt::MemoryWriter formatted;
     size_t msg_id{ 0 };
     std::unordered_map<char, std::string>* custom_flags;
+    // wrap this range with color codes
+    size_t color_range_start{0};
+    size_t color_range_end{0};
 };
-}
-}
+} // namespace details
+} // namespace spdlog

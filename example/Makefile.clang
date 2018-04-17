@@ -1,4 +1,4 @@
-CXX	?= clang++
+CXX	= clang++
 CXXFLAGS	= -march=native -Wall -Wextra -Wshadow -pedantic -std=c++11 -pthread -I../include
 CXX_RELEASE_FLAGS = -O2
 CXX_DEBUG_FLAGS= -g 

@@ -7,16 +7,14 @@
 
 #include "../details/log_msg.h"
 
-namespace spdlog
-{
-namespace sinks
-{
+namespace spdlog {
+namespace sinks {
 class sink
 {
 public:
     virtual ~sink() = default;
 
-    virtual void log(const details::log_msg& msg) = 0;
+    virtual void log(const details::log_msg &msg) = 0;
     virtual void flush() = 0;
 
     bool should_log(level::level_enum msg_level) const;
@@ -24,7 +22,7 @@ public:
     level::level_enum level() const;
 
 private:
-    level_t _level{ level::trace };
+    level_t _level{level::trace};
 };
 
 inline bool sink::should_log(level::level_enum msg_level) const
@@ -42,5 +40,5 @@ inline level::level_enum sink::level() const
     return static_cast<spdlog::level::level_enum>(_level.load(std::memory_order_relaxed));
 }
 
-}
-}
+} // namespace sinks
+} // namespace spdlog

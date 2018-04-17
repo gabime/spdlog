@@ -1,10 +1,10 @@
 /*
-* This content is released under the MIT License as specified in https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
-*/
+ * This content is released under the MIT License as specified in https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
+ */
 #include "includes.h"
 
-using spdlog::details::log_msg;
 using spdlog::details::file_helper;
+using spdlog::details::log_msg;
 
 static const std::string target_filename = "logs/file_helper_test.txt";
 
@@ -70,7 +70,7 @@ TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]]")
     REQUIRE(helper.size() == expected_size);
 }
 
-static void test_split_ext(const char* fname, const char* expect_base, const char* expect_ext)
+static void test_split_ext(const char *fname, const char *expect_base, const char *expect_ext)
 {
     spdlog::filename_t filename(fname);
     spdlog::filename_t expected_base(expect_base);

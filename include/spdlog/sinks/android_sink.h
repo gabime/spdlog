@@ -7,34 +7,36 @@
 
 #if defined(__ANDROID__)
 
-#include "sink.h"
 #include "../details/os.h"
+#include "sink.h"
 
+#include <android/log.h>
+#include <chrono>
 #include <mutex>
 #include <string>
-#include <android/log.h>
 #include <thread>
-#include <chrono>
 
 #if !defined(SPDLOG_ANDROID_RETRIES)
 #define SPDLOG_ANDROID_RETRIES 2
 #endif
 
-namespace spdlog
-{
-namespace sinks
-{
+namespace spdlog {
+namespace sinks {
 
 /*
-* Android sink (logging using __android_log_write)
-* __android_log_write is thread-safe. No lock is needed.
-*/
+ * Android sink (logging using __android_log_write)
+ * __android_log_write is thread-safe. No lock is needed.
+ */
 class android_sink : public sink
 {
 public:
-    explicit android_sink(const std::string& tag = "spdlog", bool use_raw_msg = false): _tag(tag), _use_raw_msg(use_raw_msg) {}
+    explicit android_sink(const std::string &tag = "spdlog", bool use_raw_msg = false)
+        : _tag(tag)
+        , _use_raw_msg(use_raw_msg)
+    {
+    }
 
-    void log(const details::log_msg& msg) override
+    void log(const details::log_msg &msg) override
     {
         const android_LogPriority priority = convert_to_android(msg.level);
         const char *msg_output = (_use_raw_msg ? msg.raw.c_str() : msg.formatted.c_str());
@@ -42,7 +44,7 @@ public:
         // See system/core/liblog/logger_write.c for explanation of return value
         int ret = __android_log_write(priority, _tag.c_str(), msg_output);
         int retry_count = 0;
-        while ((ret == -11/*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_RETRIES))
+        while ((ret == -11 /*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_RETRIES))
         {
             details::os::sleep_for_millis(5);
             ret = __android_log_write(priority, _tag.c_str(), msg_output);
@@ -55,14 +57,12 @@ public:
         }
     }
 
-    void flush() override
-    {
-    }
+    void flush() override {}
 
 private:
     static android_LogPriority convert_to_android(spdlog::level::level_enum level)
     {
-        switch(level)
+        switch (level)
         {
         case spdlog::level::trace:
             return ANDROID_LOG_VERBOSE;
@@ -85,7 +85,7 @@ private:
     bool _use_raw_msg;
 };
 
-}
-}
+} // namespace sinks
+} // namespace spdlog
 
 #endif

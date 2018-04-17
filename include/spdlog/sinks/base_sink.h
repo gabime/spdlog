@@ -10,27 +10,25 @@
 // all locking is taken care of here so no locking needed by the implementers..
 //
 
-#include "sink.h"
-#include "../formatter.h"
 #include "../common.h"
 #include "../details/log_msg.h"
+#include "../formatter.h"
+#include "sink.h"
 
 #include <mutex>
 
-namespace spdlog
-{
-namespace sinks
-{
+namespace spdlog {
+namespace sinks {
 template<class Mutex>
 class base_sink : public sink
 {
 public:
     base_sink() = default;
 
-    base_sink(const base_sink&) = delete;
-    base_sink& operator=(const base_sink&) = delete;
+    base_sink(const base_sink &) = delete;
+    base_sink &operator=(const base_sink &) = delete;
 
-    void log(const details::log_msg& msg) SPDLOG_FINAL override
+    void log(const details::log_msg &msg) SPDLOG_FINAL override
     {
         std::lock_guard<Mutex> lock(_mutex);
         _sink_it(msg);
@@ -43,9 +41,9 @@ public:
     }
 
 protected:
-    virtual void _sink_it(const details::log_msg& msg) = 0;
+    virtual void _sink_it(const details::log_msg &msg) = 0;
     virtual void _flush() = 0;
     Mutex _mutex;
 };
-}
-}
+} // namespace sinks
+} // namespace spdlog

@@ -13,13 +13,11 @@
 #include "format.h"
 #include <ostream>
 
-namespace fmt
-{
+namespace fmt {
 
-namespace internal
-{
+namespace internal {
 
-template <class Char>
+template<class Char>
 class FormatBuf : public std::basic_streambuf<Char>
 {
 private:
@@ -29,7 +27,10 @@ private:
     Buffer<Char> &buffer_;
 
 public:
-    FormatBuf(Buffer<Char> &buffer) : buffer_(buffer) {}
+    FormatBuf(Buffer<Char> &buffer)
+        : buffer_(buffer)
+    {
+    }
 
 protected:
     // The put-area is actually always empty. This makes the implementation
@@ -57,16 +58,16 @@ Yes &convert(std::ostream &);
 
 struct DummyStream : std::ostream
 {
-    DummyStream();  // Suppress a bogus warning in MSVC.
+    DummyStream(); // Suppress a bogus warning in MSVC.
 
     // Hide all operator<< overloads from std::ostream.
-    template <typename T>
+    template<typename T>
     typename EnableIf<sizeof(T) == 0>::type operator<<(const T &);
 };
 
 No &operator<<(std::ostream &, int);
 
-template <typename T>
+template<typename T>
 struct ConvertToIntImpl<T, true>
 {
     // Convert to int only if T doesn't have an overloaded operator<<.
@@ -78,12 +79,11 @@ struct ConvertToIntImpl<T, true>
 
 // Write the content of w to os.
 FMT_API void write(std::ostream &os, Writer &w);
-}  // namespace internal
+} // namespace internal
 
 // Formats a value.
-template <typename Char, typename ArgFormatter_, typename T>
-void format_arg(BasicFormatter<Char, ArgFormatter_> &f,
-                const Char *&format_str, const T &value)
+template<typename Char, typename ArgFormatter_, typename T>
+void format_arg(BasicFormatter<Char, ArgFormatter_> &f, const Char *&format_str, const T &value)
 {
     internal::MemoryBuffer<Char, internal::INLINE_BUFFER_SIZE> buffer;
 
@@ -93,7 +93,7 @@ void format_arg(BasicFormatter<Char, ArgFormatter_> &f,
     output << value;
 
     BasicStringRef<Char> str(&buffer[0], buffer.size());
-    typedef internal::MakeArg< BasicFormatter<Char> > MakeArg;
+    typedef internal::MakeArg<BasicFormatter<Char>> MakeArg;
     format_str = f.format(format_str, MakeArg(str));
 }
 
@@ -108,10 +108,10 @@ void format_arg(BasicFormatter<Char, ArgFormatter_> &f,
  */
 FMT_API void print(std::ostream &os, CStringRef format_str, ArgList args);
 FMT_VARIADIC(void, print, std::ostream &, CStringRef)
-}  // namespace fmt
+} // namespace fmt
 
 #ifdef FMT_HEADER_ONLY
-# include "ostream.cc"
+#include "ostream.cc"
 #endif
 
-#endif  // FMT_OSTREAM_H_
+#endif // FMT_OSTREAM_H_
