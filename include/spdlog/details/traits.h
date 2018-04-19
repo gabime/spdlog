@@ -28,7 +28,7 @@ namespace spdlog {
 			using mutex_t = std::mutex;			
 			static mutex_t& console_mutex()
 			{ 
-				static auto mutex = mutex_t{};
+				static auto &mutex = mutex_t{};
 				return mutex;
 			}
 		};
