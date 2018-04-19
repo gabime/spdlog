@@ -40,6 +40,7 @@ struct create_synchronous
     }
 };
 
+using default_factory = create_synchronous;
 
 
 
@@ -162,13 +163,13 @@ inline void drop_all()
 // Create and register multi/single threaded basic file logger.
 // Basic logger simply writes to given file without any limitations or rotations.
 //
-template<typename Factory = create_synchronous>
+template<typename Factory = default_factory>
 inline std::shared_ptr<logger> basic_logger_mt(const std::string &logger_name, const filename_t &filename, bool truncate = false)
 {
     return Factory::template create<sinks::simple_file_sink_mt>(logger_name, filename, truncate);
 }
 
-template<typename Factory = create_synchronous>
+template<typename Factory = default_factory>
 inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name, const filename_t &filename, bool truncate = false)
 {
     return Factory::template create<sinks::simple_file_sink_st>(logger_name, filename, truncate);
@@ -177,14 +178,14 @@ inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name, c
 //
 // Create and register multi/single threaded rotating file logger
 //
-template<typename Factory = create_synchronous>
+template<typename Factory = default_factory>
 inline std::shared_ptr<logger> rotating_logger_mt(
     const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files)
 {
     return Factory::template create<sinks::rotating_file_sink_mt>(logger_name, filename, max_file_size, max_files);
 }
 
-template<typename Factory = create_synchronous>
+template<typename Factory = default_factory>
 inline std::shared_ptr<logger> rotating_logger_st(
     const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files)
 {
@@ -194,13 +195,13 @@ inline std::shared_ptr<logger> rotating_logger_st(
 //
 // Create file logger which creates new file on the given time (default in midnight):
 //
-template<typename Factory = create_synchronous>
+template<typename Factory = default_factory>
 inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0)
 {
     return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute);
 }
 
-template<typename Factory = create_synchronous>
+template<typename Factory = default_factory>
 inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0)
 {
     return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute);
@@ -209,7 +210,7 @@ inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, c
 
 #ifdef SPDLOG_ENABLE_SYSLOG
 // Create and register a syslog logger
-template<typename Factory = create_synchronous>
+template<typename Factory = default_factory>
 inline std::shared_ptr<logger> syslog_logger(
     const std::string &logger_name, const std::string &ident = "", int syslog_option = 0, int syslog_facilty = (1 << 3))
 {
@@ -219,7 +220,7 @@ inline std::shared_ptr<logger> syslog_logger(
 
 #if defined(__ANDROID__)
 // Create and register android syslog logger
-template<typename Factory = create_synchronous>
+template<typename Factory = default_factory>
 inline std::shared_ptr<logger> android_logger(const std::string &logger_name, const std::string &tag = "spdlog")
 {
     return return Factory::template create<sinks::android_sink>(logger_name, tag);

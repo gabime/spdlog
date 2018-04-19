@@ -14,8 +14,8 @@
 
 
 #include "spdlog/color_logger.h"
-#include "spdlog/stdout_logger.h"
-#include "spdlog/async.h"
+//#include "spdlog/stdout_logger.h"
+//#include "spdlog/async.h"
 #include "spdlog/spdlog.h"
 
 #include <iostream>
@@ -36,10 +36,10 @@ int main(int, char *[])
 	{
 		
 		// Console logger with color		
-		spd::init_thread_pool(8192, 3);
+		//spd::init_thread_pool(8192, 3);
 
 		auto console1 = spdlog::stdout_color_mt("console111");
-		auto console2 = spdlog::stdout_logger_mt<spdlog::create_async>("console2");
+		auto console2 = spdlog::stdout_color_mt<>("console2");
 		//auto console3 = spdlog::stdout_color_mt<spdlog::create_async>("console3");
 		for (int i = 0; i < 10000; i++)
 		{
