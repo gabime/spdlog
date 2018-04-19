@@ -5,9 +5,11 @@
 
 #pragma once
 
+#include "sink.h"
 #include "../common.h"
 #include "../details/null_mutex.h"
 #include "../details/traits.h"
+
 
 #include <mutex>
 #include <memory>

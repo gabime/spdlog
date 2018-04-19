@@ -27,6 +27,7 @@
     <ClInclude Include="..\include\spdlog\details\pattern_formatter_impl.h" />
     <ClInclude Include="..\include\spdlog\details\registry.h" />
     <ClInclude Include="..\include\spdlog\details\spdlog_impl.h" />
+    <ClInclude Include="..\include\spdlog\details\thread_pool.h" />
     <ClInclude Include="..\include\spdlog\fmt\fmt.h" />
     <ClInclude Include="..\include\spdlog\fmt\ostr.h" />
     <ClInclude Include="..\include\spdlog\formatter.h" />

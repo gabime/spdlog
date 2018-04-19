@@ -13,7 +13,8 @@
 // 3. Pass the formatted message to its sinks to performa the actual logging
 
 #include "common.h"
-#include "sinks/base_sink.h"
+#include "sinks/sink.h"
+#include "formatter.h"
 
 #include <memory>
 #include <string>

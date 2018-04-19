@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright(c) 2015 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
@@ -10,6 +10,10 @@
 #define SPDLOG_TRACE_ON
 #define SPDLOG_DEBUG_ON
 
+
+
+#include "spdlog/sinks/color_sinks.h"
+#include "spdlog/async.h"
 
 #include "spdlog/spdlog.h"
 
@@ -25,13 +29,28 @@ void err_handler_example();
 namespace spd = spdlog;
 int main(int, char *[])
 {
+	
     try
     {
-        // Console logger with color
-        auto console = spdlog::console<spd::stdout_color_mt>("console");        
+		
+        // Console logger with color		
+		spd::init_thread_pool(8192, 3);
+        auto console = spdlog::stdout_color_mt<spdlog::create_async>("console1");		
+		auto console2 = spdlog::stderr_logger_mt<spdlog::create_async>("console2");
+		//auto console3 = spdlog::stdout_color_mt<spdlog::create_async>("console3");
+		for (int i = 0; i < 10000; i++)
+		{
+			console->info("CONSOLE1");
+			console2->warn("CONSOLE2");
+		}
+		spdlog::drop_all();
+		return 0;
+
+		console->info("Welcome to spdlog!");
+
         console->info("Welcome to spdlog!");
         console->error("Some error message with arg: {}", 1);
-
+		err_handler_example();
         // Formatting examples
         console->warn("Easy padding in numbers like {:08d}", 12);
         console->critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
@@ -59,7 +78,8 @@ int main(int, char *[])
         daily_logger->info(123.44);
 
         // Customize msg format for all messages
-        spd::set_pattern("[%^+++%$] [%H:%M:%S %z] [thread %t] %v");
+        //spd::set_pattern("[%^+++%$] [%H:%M:%S %z] [thread %t] %v"); //crash
+		
         console->info("This an info message with custom format");
         console->error("This an error message with custom format");
 
@@ -88,7 +108,7 @@ int main(int, char *[])
         user_defined_example();
 
         // Change default log error handler
-        err_handler_example();
+        err_handler_example(); 
 
         // Apply a function on all registered loggers
         spd::apply_all([&](std::shared_ptr<spdlog::logger> l) { l->info("End of example."); });
@@ -162,6 +182,7 @@ void user_defined_example()
 void err_handler_example()
 {
     // can be set globaly or per logger(logger->set_error_handler(..))
-    spdlog::set_error_handler([](const std::string &msg) { std::cerr << "my err handler: " << msg << std::endl; });
-    spd::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
+	spdlog::set_error_handler([](const std::string &msg) { spd::get("console")->error("*******my err handler: {}", msg); });
+	spd::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
+    //spd::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
 }

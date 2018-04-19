@@ -4,6 +4,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
+#include "stdio.h"
 namespace spdlog {
 	namespace details {
 		struct console_stdout_trait
