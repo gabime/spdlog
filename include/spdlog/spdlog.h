@@ -8,16 +8,8 @@
 #pragma once
 
 #include "details/registry.h"
-#include "sinks/file_sinks.h"
-#include "sinks/stdout_sinks.h"
-
 #include "common.h"
 #include "logger.h"
-
-
-#ifdef __ANDROID__
-#include "sinks/android_sink.h"
-#endif
 
 #include <chrono>
 #include <functional>
@@ -27,7 +19,7 @@
 namespace spdlog {
 
 // Default logger factory-  creates synchronous loggers
-struct create_synchronous
+struct default_factory
 {
     template<typename Sink, typename... SinkArgs>
 
@@ -39,41 +31,6 @@ struct create_synchronous
         return new_logger;
     }
 };
-
-using default_factory = create_synchronous;
-
-
-
-//
-// color console loggers
-//
-// you must include "spdlog/sinks/color_sinks.h" before creating color loggers
-//
-// #include "spdlog/color_console.h"
-//
-// using namespace spdlog::sinks
-// auto logger = spdlog::console<stdout_color_mt>("logger_name1");
-// auto logger = spdlog::console<stdout_color_st>("logger_name2");
-// auto looger = spdlog::console<stderr_color_mt>("logger_name3");
-//
-//
-// create asynchrounous color logger 
-// you must include "spdlog/asynch.h" before creating async loggers
-//
-// #include "spdlog/asynch."
-// #include "spdlog/sinks/color_sinks.h"
-// auto async_console = spdlog::console<stderr_color_st, spdlog::create_async>("some_name");
-// or
-// auto async_console = spdlog::create_async_logger<stdout_color_mt>("Console2");
-
-
-
-
-//template<typename console_type, typename Factory = create_synchronous>
-//inline std::shared_ptr<logger> console(const std::string &logger_name)
-//{
-//	return Factory::template create<console_type>(logger_name);
-//}
 
 
 // Create and register a logger with a templated sink type
@@ -159,73 +116,6 @@ inline void drop_all()
     details::registry::instance().drop_all();
 }
 
-//
-// Create and register multi/single threaded basic file logger.
-// Basic logger simply writes to given file without any limitations or rotations.
-//
-template<typename Factory = default_factory>
-inline std::shared_ptr<logger> basic_logger_mt(const std::string &logger_name, const filename_t &filename, bool truncate = false)
-{
-    return Factory::template create<sinks::simple_file_sink_mt>(logger_name, filename, truncate);
-}
-
-template<typename Factory = default_factory>
-inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name, const filename_t &filename, bool truncate = false)
-{
-    return Factory::template create<sinks::simple_file_sink_st>(logger_name, filename, truncate);
-}
-
-//
-// Create and register multi/single threaded rotating file logger
-//
-template<typename Factory = default_factory>
-inline std::shared_ptr<logger> rotating_logger_mt(
-    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files)
-{
-    return Factory::template create<sinks::rotating_file_sink_mt>(logger_name, filename, max_file_size, max_files);
-}
-
-template<typename Factory = default_factory>
-inline std::shared_ptr<logger> rotating_logger_st(
-    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files)
-{
-    return Factory::template create<sinks::rotating_file_sink_st>(logger_name, filename, max_file_size, max_files);
-}
-
-//
-// Create file logger which creates new file on the given time (default in midnight):
-//
-template<typename Factory = default_factory>
-inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0)
-{
-    return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute);
-}
-
-template<typename Factory = default_factory>
-inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0)
-{
-    return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute);
-}
-
-
-#ifdef SPDLOG_ENABLE_SYSLOG
-// Create and register a syslog logger
-template<typename Factory = default_factory>
-inline std::shared_ptr<logger> syslog_logger(
-    const std::string &logger_name, const std::string &ident = "", int syslog_option = 0, int syslog_facilty = (1 << 3))
-{
-    return return Factory::template create<sinks::syslog_sink>(logger_name, syslog_ident, syslog_option, syslog_facility);
-}
-#endif
-
-#if defined(__ANDROID__)
-// Create and register android syslog logger
-template<typename Factory = default_factory>
-inline std::shared_ptr<logger> android_logger(const std::string &logger_name, const std::string &tag = "spdlog")
-{
-    return return Factory::template create<sinks::android_sink>(logger_name, tag);
-}
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //

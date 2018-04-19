@@ -11,19 +11,13 @@
 #define SPDLOG_DEBUG_ON
 
 
-
-
-#include "spdlog/color_logger.h"
-//#include "spdlog/stdout_logger.h"
-//#include "spdlog/async.h"
-#include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/file_sinks.h"
 
 #include <iostream>
 #include <memory>
 
 void async_example();
-void syslog_example();
-void android_example();
 void user_defined_example();
 void err_handler_example();
 
@@ -31,23 +25,8 @@ namespace spd = spdlog;
 int main(int, char *[])
 {
 
-
 	try
-	{
-		
-		// Console logger with color		
-		//spd::init_thread_pool(8192, 3);
-
-		auto console1 = spdlog::stdout_color_mt("console111");
-		auto console2 = spdlog::stdout_color_mt<>("console2");
-		//auto console3 = spdlog::stdout_color_mt<spdlog::create_async>("console3");
-		for (int i = 0; i < 10000; i++)
-		{
-			console1->info(111111);
-			console2->warn(222222);
-		}
-		spdlog::drop_all();
-		return 0;
+	{			
 		auto console = spdlog::stdout_color_st("console");
 		console->info("Welcome to spdlog!");
 
@@ -100,12 +79,7 @@ int main(int, char *[])
 		// Asynchronous logging is very fast..
 		// Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
 		async_example();
-
-		// syslog example. linux/osx only
-		syslog_example();
-
-		// android example. compile with NDK
-		android_example();
+		
 
 		// Log user-defined types example
 		user_defined_example();
@@ -130,37 +104,39 @@ int main(int, char *[])
 #include "spdlog/async.h"
 void async_example()
 {
-
 	auto async_file = spd::basic_logger_mt<spdlog::create_async>("async_file_logger", "logs/async_log.txt");
 	for (int i = 0; i < 100; ++i)
 	{
 		async_file->info("Async message #{}", i);
-	}
+	}	
 
-	// optional change thread pool settings *before* creating the logger:
-	// spdlog::init_thread_pool(8192, 1);
-	// if not called a defaults are: 8192 queue size and 1 worker thread.
+	// you can also modify thread pool settings *before* creating the logger:
+	// spdlog::init_thread_pool(32768, 4); // queue with 32k of pre allocated items and 4 backing threads.
+	// if not called a defaults are: preallocated 8192 queue items and 1 worker thread.
 }
 
 // syslog example (linux/osx/freebsd)
+#ifndef _WIN32
+#incude "spdlog/sinks/syslog_sink.h"
 void syslog_example()
 {
-#ifdef SPDLOG_ENABLE_SYSLOG
 	std::string ident = "spdlog-example";
 	auto syslog_logger = spd::syslog_logger("syslog", ident, LOG_PID);
 	syslog_logger->warn("This is warning that will end up in syslog.");
-#endif
 }
+#endif
 
 // Android example
+#if defined(__ANDROID__)
+#incude "spdlog/sinks/android_sink.h"
 void android_example()
 {
-#if defined(__ANDROID__)
 	std::string tag = "spdlog-android";
 	auto android_logger = spd::android_logger("android", tag);
 	android_logger->critical("Use \"adb shell logcat\" to view this message.");
-#endif
 }
+
+#endif
 
 // user defined types logging by implementing operator<<
 struct my_type
