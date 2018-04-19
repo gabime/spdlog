@@ -117,14 +117,12 @@ private:
 	std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 };
 
-//
-// windows color console to stdout
-//
 
-using stdout_color_mt = wincolor_sink<details::console_stdout_trait, details::console_mutex_trait>;
-using stdout_color_st = wincolor_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
-using stderr_color_mt = wincolor_sink<details::console_stderr_trait, details::console_mutex_trait>;
-using stderr_color_st = wincolor_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
+using wincolor_stdout_sink_mt = wincolor_sink<details::console_stdout_trait, details::console_mutex_trait>;
+using wincolor_stdout_sink_st = wincolor_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
+
+using wincolor_stderr_sink_mt = wincolor_sink<details::console_stderr_trait, details::console_mutex_trait>;
+using wincolor_stderr_sink_st = wincolor_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
 
 } // namespace sinks
 } // namespace spdlog

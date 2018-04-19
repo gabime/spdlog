@@ -134,12 +134,11 @@ private:
     bool should_do_colors_;
     std::unordered_map<level::level_enum, std::string, level::level_hasher> colors_;
 };
-#ifndef _WIN32
-using stdout_color_mt = ansicolor_sink<details::console_stdout_trait, details::console_mutex_trait>;
-using stdout_color_st = ansicolor_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
 
-using stderr_color_mt = ansicolor_sink<details::console_stderr_trait, details::console_mutex_trait>;
-using stderr_color_st = ansicolor_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
-#endif
+using ansicolor_stdout_sink_mt = ansicolor_sink<details::console_stdout_trait, details::console_mutex_trait>;
+using ansicolor_stdout_sink_st = ansicolor_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
+using ansicolor_stderr_sink_mt = ansicolor_sink<details::console_stderr_trait, details::console_mutex_trait>;
+using ansicolor_stderr_sink_st = ansicolor_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
+
 } // namespace sinks
 } // namespace spdlog

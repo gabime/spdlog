@@ -20,8 +20,8 @@
 #include <memory>
 namespace spdlog {
 
-// async logger factory- creates a-synchronous loggers
-// creates a global thread pool with default queue size of 8192 items and single thread.
+// async logger factory - creates async loggers backed with thread pool.
+// if a global thread pool doesn't already exist, create it with default queue size of 8192 items and single thread.
 struct create_async
 {
     template<typename Sink, typename... SinkArgs>
@@ -45,7 +45,7 @@ struct create_async
 };
 
 template<typename Sink, typename... SinkArgs>
-inline std::shared_ptr<spdlog::logger> create_as(const std::string &logger_name, SinkArgs &&... sink_args)
+inline std::shared_ptr<spdlog::logger> create_async_logger(const std::string &logger_name, SinkArgs &&... sink_args)
 {
     return create_async::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
 }
