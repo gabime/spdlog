@@ -44,11 +44,11 @@ class async_log_helper
 
     struct async_msg
     {
-        std::string logger_name;
+        string logger_name;
         level::level_enum level;
         log_clock::time_point time;
         size_t thread_id;
-        std::string txt;
+        string txt;
         async_msg_type msg_type;
         size_t msg_id;
 
@@ -121,7 +121,7 @@ public:
 
     using clock = std::chrono::steady_clock;
 
-    async_log_helper(formatter_ptr formatter, std::vector<sink_ptr> sinks, size_t queue_size, const log_err_handler err_handler,
+    async_log_helper(formatter_ptr formatter, vector<sink_ptr> sinks, size_t queue_size, const log_err_handler err_handler,
         const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, std::function<void()> worker_warmup_cb = nullptr,
         const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
         std::function<void()> worker_teardown_cb = nullptr);
@@ -142,7 +142,7 @@ public:
 
 private:
     formatter_ptr _formatter;
-    std::vector<std::shared_ptr<sinks::sink>> _sinks;
+    vector<shared_ptr<sinks::sink>> _sinks;
 
     // queue of messages to log
     q_type _q;
@@ -191,7 +191,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, std::vector<sink_ptr> sinks, size_t queue_size,
+inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, vector<sink_ptr> sinks, size_t queue_size,
     log_err_handler err_handler, const async_overflow_policy overflow_policy, std::function<void()> worker_warmup_cb,
     const std::chrono::milliseconds &flush_interval_ms, std::function<void()> worker_teardown_cb)
     : _formatter(std::move(formatter))
