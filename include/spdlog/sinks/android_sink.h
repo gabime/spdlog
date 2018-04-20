@@ -30,7 +30,7 @@ namespace sinks {
 class android_sink : public sink
 {
 public:
-    explicit android_sink(const std::string &tag = "spdlog", bool use_raw_msg = false)
+    explicit android_sink(const string &tag = "spdlog", bool use_raw_msg = false)
         : _tag(tag)
         , _use_raw_msg(use_raw_msg)
     {
@@ -81,7 +81,7 @@ private:
         }
     }
 
-    std::string _tag;
+    string _tag;
     bool _use_raw_msg;
 };
 
