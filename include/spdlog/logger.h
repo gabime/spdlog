@@ -6,7 +6,7 @@
 #pragma once
 
 // Thread safe logger (except for set_pattern(..), set_formatter(..) and set_error_handler())
-// Has name, log level, vector of std::shared sink pointers and formatter
+// Has name, log level, vector of shared sink pointers and formatter
 // Upon each log write the logger:
 // 1. Checks if its log level is enough to log the message
 // 2. Format the message using the formatter function
@@ -24,11 +24,11 @@ namespace spdlog {
 class logger
 {
 public:
-    logger(const std::string &name, sink_ptr single_sink);
-    logger(const std::string &name, sinks_init_list sinks);
+    logger(const string &name, sink_ptr single_sink);
+    logger(const string &name, sinks_init_list sinks);
 
     template<class It>
-    logger(std::string name, const It &begin, const It &end);
+    logger(string name, const It &begin, const It &end);
 
     virtual ~logger();
 
@@ -109,8 +109,8 @@ public:
     bool should_log(level::level_enum msg_level) const;
     void set_level(level::level_enum log_level);
     level::level_enum level() const;
-    const std::string &name() const;
-    void set_pattern(const std::string &pattern, pattern_time_type pattern_time = pattern_time_type::local);
+    const string &name() const;
+    void set_pattern(const string &pattern, pattern_time_type pattern_time = pattern_time_type::local);
     void set_formatter(formatter_ptr msg_formatter);
 
     // automatically call flush() if message level >= log_level
@@ -118,7 +118,7 @@ public:
 
     virtual void flush();
 
-    const std::vector<sink_ptr> &sinks() const;
+    const vector<sink_ptr> &sinks() const;
 
     // error handler
     virtual void set_error_handler(log_err_handler err_handler);
@@ -126,11 +126,11 @@ public:
 
 protected:
     virtual void _sink_it(details::log_msg &msg);
-    virtual void _set_pattern(const std::string &pattern, pattern_time_type pattern_time);
+    virtual void _set_pattern(const string &pattern, pattern_time_type pattern_time);
     virtual void _set_formatter(formatter_ptr msg_formatter);
 
     // default error handler: print the error to stderr with the max rate of 1 message/minute
-    virtual void _default_err_handler(const std::string &msg);
+    virtual void _default_err_handler(const string &msg);
 
     // return true if the given message level should trigger a flush
     bool _should_flush_on(const details::log_msg &msg);
@@ -138,8 +138,8 @@ protected:
     // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
     void _incr_msg_counter(details::log_msg &msg);
 
-    const std::string _name;
-    std::vector<sink_ptr> _sinks;
+    const string _name;
+    vector<sink_ptr> _sinks;
     formatter_ptr _formatter;
     spdlog::level_t _level;
     spdlog::level_t _flush_level;
