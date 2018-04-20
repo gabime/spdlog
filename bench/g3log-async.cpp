@@ -13,7 +13,8 @@
 #include "g3log/logworker.hpp"
 
 using namespace std;
-template <typename T> std::string format(const T &value);
+template<typename T>
+std::string format(const T &value);
 
 int main(int argc, char *argv[])
 {
@@ -27,7 +28,7 @@ int main(int argc, char *argv[])
     int howmany = 1000000;
 
     auto worker = g3::LogWorker::createLogWorker();
-    auto handle= worker->addDefaultLogger(argv[0], "logs");
+    auto handle = worker->addDefaultLogger(argv[0], "logs");
     g3::initializeLogging(worker.get());
 
     std::atomic<int> msg_counter{0};

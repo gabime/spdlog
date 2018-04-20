@@ -58,8 +58,9 @@ int main(int, char *[])
         daily_logger->info(123.44);
 
         // Customize msg format for all messages
-        spd::set_pattern("*** [%H:%M:%S %z] [thread %t] %v ***");
-        rotating_logger->info("This is another message with custom format");
+        spd::set_pattern("[%^+++%$] [%H:%M:%S %z] [thread %t] %v");
+        console->info("This an info message with custom format");
+        console->error("This an error message with custom format");
 
         // Runtime log levels
         spd::set_level(spd::level::info); // Set global log level to info

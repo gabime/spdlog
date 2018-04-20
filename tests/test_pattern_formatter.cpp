@@ -8,7 +8,9 @@ static std::string log_to_str(const std::string &msg, const std::shared_ptr<spdl
     spdlog::logger oss_logger("pattern_tester", oss_sink);
     oss_logger.set_level(spdlog::level::info);
     if (formatter)
+    {
         oss_logger.set_formatter(formatter);
+    }
     oss_logger.info(msg);
     return oss.str();
 }
@@ -60,4 +62,63 @@ TEST_CASE("date MM/DD/YY ", "[pattern_formatter]")
     oss << std::setfill('0') << std::setw(2) << now_tm.tm_mon + 1 << "/" << std::setw(2) << now_tm.tm_mday << "/" << std::setw(2)
         << (now_tm.tm_year + 1900) % 1000 << " Some message\n";
     REQUIRE(log_to_str("Some message", formatter) == oss.str());
+}
+
+TEST_CASE("color range test1", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%v%$", spdlog::pattern_time_type::local, "\n");
+    spdlog::details::log_msg msg;
+    msg.raw << "Hello";
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 0);
+    REQUIRE(msg.color_range_end == 5);
+    REQUIRE(log_to_str("hello", formatter) == "hello\n");
+}
+
+TEST_CASE("color range test2", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%$", spdlog::pattern_time_type::local, "\n");
+    spdlog::details::log_msg msg;
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 0);
+    REQUIRE(msg.color_range_end == 0);
+    REQUIRE(log_to_str("", formatter) == "\n");
+}
+
+TEST_CASE("color range test3", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^***%$");
+    spdlog::details::log_msg msg;
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 0);
+    REQUIRE(msg.color_range_end == 3);
+}
+
+TEST_CASE("color range test4", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("XX%^YYY%$", spdlog::pattern_time_type::local, "\n");
+    spdlog::details::log_msg msg;
+    msg.raw << "ignored";
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 2);
+    REQUIRE(msg.color_range_end == 5);
+    REQUIRE(log_to_str("ignored", formatter) == "XXYYY\n");
+}
+
+TEST_CASE("color range test5", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("**%^");
+    spdlog::details::log_msg msg;
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 2);
+    REQUIRE(msg.color_range_end == 0);
+}
+
+TEST_CASE("color range test6", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("**%$");
+    spdlog::details::log_msg msg;
+    formatter->format(msg);
+    REQUIRE(msg.color_range_start == 0);
+    REQUIRE(msg.color_range_end == 2);
 }

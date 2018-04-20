@@ -5,14 +5,13 @@
 
 #include <atomic>
 #include <chrono>
+#include <functional>
 #include <iostream>
+#include <memory>
 #include <thread>
 #include <vector>
-#include <memory>
-#include <functional>
 
 #include "P7_Trace.h"
-
 
 int main(int argc, char *argv[])
 {
@@ -27,10 +26,9 @@ int main(int argc, char *argv[])
 
     IP7_Trace::hModule module = NULL;
 
-    //create P7 client object
-    std::unique_ptr<IP7_Client, std::function<void (IP7_Client *)>> client(
-        P7_Create_Client(TM("/P7.Pool=1024 /P7.Sink=FileTxt /P7.Dir=logs/p7-bench-mt")),
-        [&](IP7_Client *ptr){
+    // create P7 client object
+    std::unique_ptr<IP7_Client, std::function<void(IP7_Client *)>> client(
+        P7_Create_Client(TM("/P7.Pool=1024 /P7.Sink=FileTxt /P7.Dir=logs/p7-bench-mt")), [&](IP7_Client *ptr) {
             if (ptr)
                 ptr->Release();
         });
@@ -41,10 +39,9 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    //create P7 trace object 1
-    std::unique_ptr<IP7_Trace, std::function<void (IP7_Trace *)>> trace(
-        P7_Create_Trace(client.get(), TM("Trace channel 1")),
-        [&](IP7_Trace *ptr){
+    // create P7 trace object 1
+    std::unique_ptr<IP7_Trace, std::function<void(IP7_Trace *)>> trace(
+        P7_Create_Trace(client.get(), TM("Trace channel 1")), [&](IP7_Trace *ptr) {
             if (ptr)
                 ptr->Release();
         });
@@ -65,7 +62,7 @@ int main(int argc, char *argv[])
     for (int t = 0; t < thread_count; ++t)
     {
         threads.push_back(std::thread([&]() {
-            trace->Register_Thread(TM("Application"), t+1);
+            trace->Register_Thread(TM("Application"), t + 1);
             while (true)
             {
                 int counter = ++msg_counter;
@@ -73,7 +70,7 @@ int main(int argc, char *argv[])
                     break;
                 trace->P7_INFO(module, TM("p7 message #%d: This is some text for your pleasure"), counter);
             }
-            trace->Register_Thread(TM("Application"), t+1);
+            trace->Register_Thread(TM("Application"), t + 1);
         }));
     }
 

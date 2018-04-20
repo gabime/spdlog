@@ -28,12 +28,19 @@ public:
         : target_file_(file)
     {
         should_do_colors_ = details::os::in_terminal(file) && details::os::is_color_terminal();
-        colors_[level::trace] = cyan;
+        colors_[level::trace] = white;
         colors_[level::debug] = cyan;
+<<<<<<< HEAD
         colors_[level::info] = reset;
         colors_[level::warn] = string(yellow) + bold;
         colors_[level::err] = string(red) + bold;
         colors_[level::critical] = string(bold) + on_red;
+=======
+        colors_[level::info] = green;
+        colors_[level::warn] = yellow + bold;
+        colors_[level::err] = red + bold;
+        colors_[level::critical] = bold + on_red;
+>>>>>>> upstream/master
         colors_[level::off] = reset;
     }
 
@@ -83,17 +90,20 @@ protected:
     {
         // Wrap the originally formatted message in color codes.
         // If color is not supported in the terminal, log as is instead.
-        if (should_do_colors_)
+        if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
         {
-            const string& prefix = colors_[msg.level];
-            fwrite(prefix.data(), sizeof(char), prefix.size(), target_file_);
-            fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
-            fwrite(reset, sizeof(char), sizeof(reset) / sizeof(*reset), target_file_);
-            fwrite(clear_line, sizeof(char), sizeof(clear_line) / sizeof(*clear_line), target_file_);
+            // before color range
+            _print_range(msg, 0, msg.color_range_start);
+            // in color range
+            _print_ccode(colors_[msg.level]);
+            _print_range(msg, msg.color_range_start, msg.color_range_end);
+            _print_ccode(reset);
+            // after color range
+            _print_range(msg, msg.color_range_end, msg.formatted.size());
         }
         else
         {
-            fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
+            _print_range(msg, 0, msg.formatted.size());
         }
         _flush();
     }
@@ -103,6 +113,15 @@ protected:
         fflush(target_file_);
     }
 
+private:
+    void _print_ccode(const string &color_code)
+    {
+        fwrite(color_code.data(), sizeof(char), color_code.size(), target_file_);
+    }
+    void _print_range(const details::log_msg &msg, size_t start, size_t end)
+    {
+        fwrite(msg.formatted.data() + start, sizeof(char), end - start, target_file_);
+    }
     FILE *target_file_;
     bool should_do_colors_;
     unordered_map<level::level_enum, string, level::level_hasher> colors_;
