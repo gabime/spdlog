@@ -114,14 +114,16 @@ class B_formatter : public flag_formatter
 };
 
 // write 2 ints separated by sep with padding of 2
-static fmt::MemoryWriter &pad_n_join(fmt::MemoryWriter &w, int v1, int v2, char sep)
+template<class Allocator = std::allocator<char>>
+static fmt::BasicMemoryWriter<char, Allocator> &pad_n_join(fmt::BasicMemoryWriter<char, Allocator> &w, int v1, int v2, char sep)
 {
     w << fmt::pad(v1, 2, '0') << sep << fmt::pad(v2, 2, '0');
     return w;
 }
 
 // write 3 ints separated by sep with padding of 2
-static fmt::MemoryWriter &pad_n_join(fmt::MemoryWriter &w, int v1, int v2, int v3, char sep)
+template<class Allocator = std::allocator<char>>
+static fmt::BasicMemoryWriter<char, Allocator> &pad_n_join(fmt::BasicMemoryWriter<char, Allocator> &w, int v1, int v2, int v3, char sep)
 {
     w << fmt::pad(v1, 2, '0') << sep << fmt::pad(v2, 2, '0') << sep << fmt::pad(v3, 2, '0');
     return w;
@@ -418,7 +420,7 @@ public:
     }
 
 private:
-    std::string _str;
+    string _str;
 };
 
 // Full info formatter
@@ -472,17 +474,17 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 ///////////////////////////////////////////////////////////////////////////////
 // pattern_formatter inline impl
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::pattern_formatter::pattern_formatter(const std::string &pattern, pattern_time_type pattern_time, std::string eol)
+inline spdlog::pattern_formatter::pattern_formatter(const string &pattern, pattern_time_type pattern_time, string eol)
     : _eol(std::move(eol))
     , _pattern_time(pattern_time)
 {
     compile_pattern(pattern);
 }
 
-inline void spdlog::pattern_formatter::compile_pattern(const std::string &pattern)
+inline void spdlog::pattern_formatter::compile_pattern(const string &pattern)
 {
     auto end = pattern.end();
-    std::unique_ptr<details::aggregate_formatter> user_chars;
+    unique_ptr<details::aggregate_formatter> user_chars;
     for (auto it = pattern.begin(); it != end; ++it)
     {
         if (*it == '%')
@@ -504,7 +506,7 @@ inline void spdlog::pattern_formatter::compile_pattern(const std::string &patter
         {
             if (!user_chars)
             {
-                user_chars = std::unique_ptr<details::aggregate_formatter>(new details::aggregate_formatter());
+                user_chars = unique_ptr<details::aggregate_formatter>(make_unique<details::aggregate_formatter>());
             }
             user_chars->add_ch(*it);
         }
@@ -520,134 +522,134 @@ inline void spdlog::pattern_formatter::handle_flag(char flag)
     {
     // logger name
     case 'n':
-        _formatters.emplace_back(new details::name_formatter());
+        _formatters.emplace_back(make_unique<details::name_formatter>());
         break;
 
     case 'l':
-        _formatters.emplace_back(new details::level_formatter());
+        _formatters.emplace_back(make_unique<details::level_formatter>());
         break;
 
     case 'L':
-        _formatters.emplace_back(new details::short_level_formatter());
+        _formatters.emplace_back(make_unique<details::short_level_formatter>());
         break;
 
     case ('t'):
-        _formatters.emplace_back(new details::t_formatter());
+        _formatters.emplace_back(make_unique<details::t_formatter>());
         break;
 
     case ('v'):
-        _formatters.emplace_back(new details::v_formatter());
+        _formatters.emplace_back(make_unique<details::v_formatter>());
         break;
 
     case ('a'):
-        _formatters.emplace_back(new details::a_formatter());
+        _formatters.emplace_back(make_unique<details::a_formatter>());
         break;
 
     case ('A'):
-        _formatters.emplace_back(new details::A_formatter());
+        _formatters.emplace_back(make_unique<details::A_formatter>());
         break;
 
     case ('b'):
     case ('h'):
-        _formatters.emplace_back(new details::b_formatter());
+        _formatters.emplace_back(make_unique<details::b_formatter>());
         break;
 
     case ('B'):
-        _formatters.emplace_back(new details::B_formatter());
+        _formatters.emplace_back(make_unique<details::B_formatter>());
         break;
     case ('c'):
-        _formatters.emplace_back(new details::c_formatter());
+        _formatters.emplace_back(make_unique<details::c_formatter>());
         break;
 
     case ('C'):
-        _formatters.emplace_back(new details::C_formatter());
+        _formatters.emplace_back(make_unique<details::C_formatter>());
         break;
 
     case ('Y'):
-        _formatters.emplace_back(new details::Y_formatter());
+        _formatters.emplace_back(make_unique<details::Y_formatter>());
         break;
 
     case ('D'):
     case ('x'):
 
-        _formatters.emplace_back(new details::D_formatter());
+        _formatters.emplace_back(make_unique<details::D_formatter>());
         break;
 
     case ('m'):
-        _formatters.emplace_back(new details::m_formatter());
+        _formatters.emplace_back(make_unique<details::m_formatter>());
         break;
 
     case ('d'):
-        _formatters.emplace_back(new details::d_formatter());
+        _formatters.emplace_back(make_unique<details::d_formatter>());
         break;
 
     case ('H'):
-        _formatters.emplace_back(new details::H_formatter());
+        _formatters.emplace_back(make_unique<details::H_formatter>());
         break;
 
     case ('I'):
-        _formatters.emplace_back(new details::I_formatter());
+        _formatters.emplace_back(make_unique<details::I_formatter>());
         break;
 
     case ('M'):
-        _formatters.emplace_back(new details::M_formatter());
+        _formatters.emplace_back(make_unique<details::M_formatter>());
         break;
 
     case ('S'):
-        _formatters.emplace_back(new details::S_formatter());
+        _formatters.emplace_back(make_unique<details::S_formatter>());
         break;
 
     case ('e'):
-        _formatters.emplace_back(new details::e_formatter());
+        _formatters.emplace_back(make_unique<details::e_formatter>());
         break;
 
     case ('f'):
-        _formatters.emplace_back(new details::f_formatter());
+        _formatters.emplace_back(make_unique<details::f_formatter>());
         break;
     case ('F'):
-        _formatters.emplace_back(new details::F_formatter());
+        _formatters.emplace_back(make_unique<details::F_formatter>());
         break;
 
     case ('E'):
-        _formatters.emplace_back(new details::E_formatter());
+        _formatters.emplace_back(make_unique<details::E_formatter>());
         break;
 
     case ('p'):
-        _formatters.emplace_back(new details::p_formatter());
+        _formatters.emplace_back(make_unique<details::p_formatter>());
         break;
 
     case ('r'):
-        _formatters.emplace_back(new details::r_formatter());
+        _formatters.emplace_back(make_unique<details::r_formatter>());
         break;
 
     case ('R'):
-        _formatters.emplace_back(new details::R_formatter());
+        _formatters.emplace_back(make_unique<details::R_formatter>());
         break;
 
     case ('T'):
     case ('X'):
-        _formatters.emplace_back(new details::T_formatter());
+        _formatters.emplace_back(make_unique<details::T_formatter>());
         break;
 
     case ('z'):
-        _formatters.emplace_back(new details::z_formatter());
+        _formatters.emplace_back(make_unique<details::z_formatter>());
         break;
 
     case ('+'):
-        _formatters.emplace_back(new details::full_formatter());
+        _formatters.emplace_back(make_unique<details::full_formatter>());
         break;
 
     case ('P'):
-        _formatters.emplace_back(new details::pid_formatter());
+        _formatters.emplace_back(make_unique<details::pid_formatter>());
         break;
 
     case ('i'):
-        _formatters.emplace_back(new details::i_formatter());
+        _formatters.emplace_back(make_unique<details::i_formatter>());
         break;
 
     default: // Unknown flag appears as is
-        _formatters.emplace_back(new details::ch_formatter('%'));
-        _formatters.emplace_back(new details::ch_formatter(flag));
+        _formatters.emplace_back(make_unique<details::ch_formatter>('%'));
+        _formatters.emplace_back(make_unique<details::ch_formatter>(flag));
         break;
     }
 }
