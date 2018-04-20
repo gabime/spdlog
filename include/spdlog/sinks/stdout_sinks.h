@@ -23,9 +23,9 @@ class stdout_sink SPDLOG_FINAL : public base_sink<Mutex>
 public:
     explicit stdout_sink() = default;
 
-    static std::shared_ptr<MyType> instance()
+    static shared_ptr<MyType> instance()
     {
-        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
+        static shared_ptr<MyType> instance = make_shared<MyType>();
         return instance;
     }
 
@@ -53,9 +53,9 @@ class stderr_sink SPDLOG_FINAL : public base_sink<Mutex>
 public:
     explicit stderr_sink() = default;
 
-    static std::shared_ptr<MyType> instance()
+    static shared_ptr<MyType> instance()
     {
-        static std::shared_ptr<MyType> instance = std::make_shared<MyType>();
+        static shared_ptr<MyType> instance = make_shared<MyType>();
         return instance;
     }
 
