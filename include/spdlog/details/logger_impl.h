@@ -14,26 +14,26 @@
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
 template<class It>
-inline spdlog::logger::logger(std::string logger_name, const It &begin, const It &end)
+inline spdlog::logger::logger(string logger_name, const It &begin, const It &end)
     : _name(std::move(logger_name))
     , _sinks(begin, end)
-    , _formatter(std::make_shared<pattern_formatter>("%+"))
+    , _formatter(make_shared<pattern_formatter>("%+"))
     , _level(level::info)
     , _flush_level(level::off)
     , _last_err_time(0)
     , _msg_counter(1) // message counter will start from 1. 0-message id will be reserved for controll messages
 {
-    _err_handler = [this](const std::string &msg) { this->_default_err_handler(msg); };
+    _err_handler = [this](const string &msg) { this->_default_err_handler(msg); };
 }
 
 // ctor with sinks as init list
-inline spdlog::logger::logger(const std::string &logger_name, sinks_init_list sinks_list)
+inline spdlog::logger::logger(const string &logger_name, sinks_init_list sinks_list)
     : logger(logger_name, sinks_list.begin(), sinks_list.end())
 {
 }
 
 // ctor with single sink
-inline spdlog::logger::logger(const std::string &logger_name, spdlog::sink_ptr single_sink)
+inline spdlog::logger::logger(const string &logger_name, spdlog::sink_ptr single_sink)
     : logger(logger_name, {std::move(single_sink)})
 {
 }
@@ -45,7 +45,7 @@ inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
     _set_formatter(std::move(msg_formatter));
 }
 
-inline void spdlog::logger::set_pattern(const std::string &pattern, pattern_time_type pattern_time)
+inline void spdlog::logger::set_pattern(const string &pattern, pattern_time_type pattern_time)
 {
     _set_pattern(pattern, pattern_time);
 }
@@ -262,7 +262,7 @@ inline void spdlog::logger::critical(const wchar_t *fmt, const Args &... args)
 //
 // name and level
 //
-inline const std::string &spdlog::logger::name() const
+inline const spdlog::string &spdlog::logger::name() const
 {
     return _name;
 }
@@ -320,9 +320,9 @@ inline void spdlog::logger::_sink_it(details::log_msg &msg)
     }
 }
 
-inline void spdlog::logger::_set_pattern(const std::string &pattern, pattern_time_type pattern_time)
+inline void spdlog::logger::_set_pattern(const string &pattern, pattern_time_type pattern_time)
 {
-    _formatter = std::make_shared<pattern_formatter>(pattern, pattern_time);
+    _formatter = spdlog::make_shared<pattern_formatter>(pattern, pattern_time);
 }
 
 inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
@@ -338,7 +338,7 @@ inline void spdlog::logger::flush()
     }
 }
 
-inline void spdlog::logger::_default_err_handler(const std::string &msg)
+inline void spdlog::logger::_default_err_handler(const string &msg)
 {
     auto now = time(nullptr);
     if (now - _last_err_time < 60)
@@ -365,7 +365,7 @@ inline void spdlog::logger::_incr_msg_counter(details::log_msg &msg)
     msg.msg_id = _msg_counter.fetch_add(1, std::memory_order_relaxed);
 }
 
-inline const std::vector<spdlog::sink_ptr> &spdlog::logger::sinks() const
+inline const spdlog::vector<spdlog::sink_ptr> &spdlog::logger::sinks() const
 {
     return _sinks;
 }
