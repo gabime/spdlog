@@ -26,20 +26,20 @@ public:
 class pattern_formatter SPDLOG_FINAL : public formatter
 {
 public:
-    explicit pattern_formatter(const std::string &pattern, pattern_time_type pattern_time = pattern_time_type::local,
-        std::string eol = spdlog::details::os::default_eol);
+    explicit pattern_formatter(const string &pattern, pattern_time_type pattern_time = pattern_time_type::local,
+        string eol = spdlog::details::os::default_eol);
     pattern_formatter(const pattern_formatter &) = delete;
     pattern_formatter &operator=(const pattern_formatter &) = delete;
     void format(details::log_msg &msg) override;
 
 private:
-    const std::string _eol;
-    const std::string _pattern;
+    const string _eol;
+    const string _pattern;
     const pattern_time_type _pattern_time;
-    std::vector<std::unique_ptr<details::flag_formatter>> _formatters;
+    vector<unique_ptr<details::flag_formatter>> _formatters;
     std::tm get_time(details::log_msg &msg);
     void handle_flag(char flag);
-    void compile_pattern(const std::string &pattern);
+    void compile_pattern(const string &pattern);
 };
 } // namespace spdlog
 
