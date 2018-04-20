@@ -72,7 +72,7 @@ protected:
 
 private:
     HANDLE out_handle_;
-    std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
+    unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 
     // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs)
