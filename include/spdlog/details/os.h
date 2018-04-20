@@ -371,35 +371,35 @@ inline void sleep_for_millis(int milliseconds)
 // wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 #define SPDLOG_FILENAME_T(s) L##s
-inline std::string filename_to_str(const filename_t &filename)
+inline string filename_to_str(const filename_t &filename)
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
-    return c.to_bytes(filename);
+    return c.to_bytes(filename).c_str();
 }
 #else
 #define SPDLOG_FILENAME_T(s) s
-inline std::string filename_to_str(const filename_t &filename)
+inline string filename_to_str(const filename_t &filename)
 {
     return filename;
 }
 #endif
 
-inline std::string errno_to_string(char[256], char *res)
+inline string errno_to_string(char[256], char *res)
 {
-    return std::string(res);
+    return string(res);
 }
 
-inline std::string errno_to_string(char buf[256], int res)
+inline string errno_to_string(char buf[256], int res)
 {
     if (res == 0)
     {
-        return std::string(buf);
+        return string(buf);
     }
     return "Unknown error";
 }
 
 // Return errno string (thread safe)
-inline std::string errno_str(int err_num)
+inline string errno_str(int err_num)
 {
     char buf[256];
     SPDLOG_CONSTEXPR auto buf_size = sizeof(buf);
@@ -407,7 +407,7 @@ inline std::string errno_str(int err_num)
 #ifdef _WIN32
     if (strerror_s(buf, buf_size, err_num) == 0)
     {
-        return std::string(buf);
+        return string(buf);
     }
     else
     {
@@ -419,7 +419,7 @@ inline std::string errno_str(int err_num)
 
     if (strerror_r(err_num, buf, buf_size) == 0)
     {
-        return std::string(buf);
+        return string(buf);
     }
     else
     {
