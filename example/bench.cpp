@@ -7,6 +7,7 @@
 // bench.cpp : spdlog benchmarks
 //
 #include "spdlog/async.h"
+#include "spdlog/sinks/file_sinks.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/spdlog.h"
 

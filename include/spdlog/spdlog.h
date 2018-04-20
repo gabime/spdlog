@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "details/registry.h"
 #include "common.h"
+#include "details/registry.h"
 #include "logger.h"
 
 #include <chrono>
@@ -31,7 +31,6 @@ struct default_factory
         return new_logger;
     }
 };
-
 
 // Create and register a logger with a templated sink type
 // The logger's level, formatter and flush level will be set according the global settings.
@@ -115,7 +114,6 @@ inline void drop_all()
 {
     details::registry::instance().drop_all();
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //

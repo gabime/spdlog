@@ -7,73 +7,78 @@
 
 #include "../details/null_mutex.h"
 #include "../details/traits.h"
+#include "../spdlog.h"
 
 #include <cstdio>
 #include <memory>
 #include <mutex>
 
 namespace spdlog {
-	namespace sinks {
 
-		template<class StdoutTrait, class ConsoleMutexTrait>
-		class stdout_sink : public sink
-		{
-		public:
-			using mutex_t = typename ConsoleMutexTrait::mutex_t;
-			stdout_sink() :
-				_mutex(ConsoleMutexTrait::console_mutex()),
-				_file(StdoutTrait::stream()) {}
-			~stdout_sink() = default;
+namespace sinks {
 
-			stdout_sink(const stdout_sink &other) = delete;
-			stdout_sink &operator=(const stdout_sink &other) = delete;
+template<class StdoutTrait, class ConsoleMutexTrait>
+class stdout_sink : public sink
+{
+public:
+    using mutex_t = typename ConsoleMutexTrait::mutex_t;
+    stdout_sink()
+        : _mutex(ConsoleMutexTrait::console_mutex())
+        , _file(StdoutTrait::stream())
+    {
+    }
+    ~stdout_sink() = default;
 
-			void log(const details::log_msg &msg) override
-			{
-				std::lock_guard<mutex_t> lock(_mutex);
-				fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), _file);
-				fflush(StdoutTrait::stream());
-			}
+    stdout_sink(const stdout_sink &other) = delete;
+    stdout_sink &operator=(const stdout_sink &other) = delete;
 
-			void flush() override
-			{
-				std::lock_guard<mutex_t> lock(_mutex);
-				fflush(StdoutTrait::stream());
-			}
-		private:
-			typename mutex_t&  _mutex;
-			FILE* _file;
-		};
+    void log(const details::log_msg &msg) override
+    {
+        std::lock_guard<mutex_t> lock(_mutex);
+        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), _file);
+        fflush(StdoutTrait::stream());
+    }
 
-		using stdout_sink_mt = stdout_sink<details::console_stdout_trait, details::console_mutex_trait>;
-		using stdout_sink_st = stdout_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
-		using stderr_sink_mt = stdout_sink<details::console_stderr_trait, details::console_mutex_trait>;
-		using stderr_sink_st = stdout_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
+    void flush() override
+    {
+        std::lock_guard<mutex_t> lock(_mutex);
+        fflush(StdoutTrait::stream());
+    }
 
-	} // namespace sinks
+private:
+    mutex_t &_mutex;
+    FILE *_file;
+};
 
-	// factory methods
-	template<typename Factory = default_factory>
-	inline std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name)
-	{
-		return Factory::template create<stdout_color_sink_mt>(logger_name);
-	}
+using stdout_sink_mt = stdout_sink<details::console_stdout_trait, details::console_mutex_trait>;
+using stdout_sink_st = stdout_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
+using stderr_sink_mt = stdout_sink<details::console_stderr_trait, details::console_mutex_trait>;
+using stderr_sink_st = stdout_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
 
-	template<typename Factory = default_factory>
-	inline std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name)
-	{
-		return Factory::template create<stdout_color_sink_mt>(logger_name);
-	}
+} // namespace sinks
 
-	template<typename Factory = default_factory>
-	inline std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name)
-	{
-		return Factory::template create<stderr_color_sink_mt>(logger_name);
-	}
+// factory methods
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name)
+{
+    return Factory::template create<stdout_color_sink_mt>(logger_name);
+}
 
-	template<typename Factory = default_factory>
-	inline std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name)
-	{
-		return Factory::template create<stderr_logger_sink_mt>(logger_name);
-	}
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name)
+{
+    return Factory::template create<stdout_color_sink_mt>(logger_name);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name)
+{
+    return Factory::template create<stderr_color_sink_mt>(logger_name);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name)
+{
+    return Factory::template create<stderr_logger_sink_mt>(logger_name);
+}
 } // namespace spdlog

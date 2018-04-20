@@ -37,18 +37,18 @@ inline spdlog::async_logger::async_logger(
 
 // send the log message to the thread pool
 inline void spdlog::async_logger::_sink_it(details::log_msg &msg)
-{    
+{
 #if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-        _incr_msg_counter(msg);
+    _incr_msg_counter(msg);
 #endif
-        if (auto pool_ptr = _thread_pool.lock())
-        {
-            pool_ptr->post_log(shared_from_this(), std::move(msg), _overflow_policy);
-        }
-        else
-        {
-            throw spdlog_ex("async log: thread pool doens't exist anymore");
-        }        
+    if (auto pool_ptr = _thread_pool.lock())
+    {
+        pool_ptr->post_log(shared_from_this(), std::move(msg), _overflow_policy);
+    }
+    else
+    {
+        throw spdlog_ex("async log: thread pool doens't exist anymore");
+    }
 }
 
 // send flush request to the thread pool
@@ -89,10 +89,10 @@ inline void spdlog::async_logger::_backend_log(details::log_msg &incoming_log_ms
         _err_handler("Unknown exception in async logger " + _name);
     }
 
-	if (_should_flush(incoming_log_msg))
-	{
-		_backend_flush();
-	}
+    if (_should_flush(incoming_log_msg))
+    {
+        _backend_flush();
+    }
 }
 
 inline void spdlog::async_logger::_backend_flush()

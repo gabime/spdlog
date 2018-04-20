@@ -41,7 +41,7 @@ struct create_async
         auto new_logger = std::make_shared<async_logger>(logger_name, std::move(sink), std::move(tp), async_overflow_policy::block_retry);
         registry::instance().register_and_init(new_logger);
         return new_logger;
-    }	
+    }
 };
 
 template<typename Sink, typename... SinkArgs>
