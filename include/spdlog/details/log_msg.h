@@ -16,7 +16,7 @@ namespace details {
 struct log_msg
 {
     log_msg() = default;
-    log_msg(const std::string *loggers_name, level::level_enum lvl)
+    log_msg(const string *loggers_name, level::level_enum lvl)
         : logger_name(loggers_name)
         , level(lvl)
     {
@@ -33,12 +33,12 @@ struct log_msg
     log_msg &operator=(log_msg &&other) = delete;
     log_msg(log_msg &&other) = delete;
 
-    const std::string *logger_name{nullptr};
+    const string *logger_name{nullptr};
     level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;
-    fmt::MemoryWriter raw;
-    fmt::MemoryWriter formatted;
+    fmt::BasicMemoryWriter<char, _allocator<char>> raw;
+    fmt::BasicMemoryWriter<char, _allocator<char>> formatted;
     size_t msg_id{0};
 };
 } // namespace details
