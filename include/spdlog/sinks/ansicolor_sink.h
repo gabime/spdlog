@@ -88,8 +88,8 @@ protected:
             const string& prefix = colors_[msg.level];
             fwrite(prefix.data(), sizeof(char), prefix.size(), target_file_);
             fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), target_file_);
-            fwrite(reset.data(), sizeof(char), reset.size(), target_file_);
-            fwrite(clear_line.data(), sizeof(char), clear_line.size(), target_file_);
+            fwrite(reset, sizeof(char), sizeof(reset) / sizeof(*reset), target_file_);
+            fwrite(clear_line, sizeof(char), sizeof(clear_line) / sizeof(*clear_line), target_file_);
         }
         else
         {
