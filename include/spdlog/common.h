@@ -53,6 +53,100 @@
 
 namespace spdlog {
 
+	struct base_allocator {
+		using alloc = void*(*)(size_t);
+		using free = void(*)(void*);
+
+		alloc allocate{ std::malloc };
+		free deallocate{ std::free };
+	};
+	inline base_allocator& allocator()
+	{
+		static base_allocator allocator;
+		return allocator;
+	}
+
+	template<class T>
+	struct _allocator
+	{
+		using value_type = T;
+		using pointer = value_type*;
+		using const_pointer = const value_type*;
+		using reference = value_type&;
+		using const_reference = const value_type&;
+		using size_type = std::size_t;
+		using difference_type = std::ptrdiff_t;
+
+		_allocator() = default;
+		_allocator(const _allocator&) = default;
+		_allocator(_allocator&&) = default;
+		template <class U> constexpr _allocator(const _allocator<U>&) noexcept {}
+
+		T* allocate(size_t n)
+		{
+			if (n > size_t(-1) / sizeof(T)) return nullptr;
+			if (auto p = static_cast<T*>(allocator().allocate(n * sizeof(T)))) return p;
+			return nullptr;
+		}
+		void deallocate(T* p, size_t) noexcept { allocator().deallocate(p); }
+
+		pointer address(reference x) const { return &x; }
+		const_pointer address(const_reference x) const { return &x; }
+		size_type max_size() const { return static_cast<size_type>(-1) / sizeof(value_type); }
+		template< class U, class... Args >
+		void construct(U* p, Args&&... args) { new((void *)p) U(std::forward<Args>(args)...); }
+		void destroy(pointer p) { p->~value_type(); (void)p; }
+	};
+
+	template <class T, class U>
+	bool operator==(const _allocator<T>&, const _allocator<U>&) { return true; }
+	template <class T, class U>
+	bool operator!=(const _allocator<T>&, const _allocator<U>&) { return false; }
+
+	using string = std::basic_string<char, std::char_traits<char>, _allocator<char>>;
+	using wstring = std::basic_string<wchar_t, std::char_traits<wchar_t>, _allocator<wchar_t>>;
+	template<typename KEY, typename VALUE, class HASHER = std::hash<KEY>, class COMP = std::equal_to<KEY>>
+	using unordered_map = std::unordered_map<KEY, VALUE, HASHER, COMP, _allocator<std::pair<KEY, VALUE>>>;
+	template<typename T>
+	using vector = std::vector<T, _allocator<T>>;
+
+	template<class T>
+	struct _deleter {
+		void operator()(T* p) const {
+			p->~T();
+			allocator().deallocate(p);
+		}
+
+		constexpr _deleter() = default;
+		constexpr _deleter(const _deleter&) = default;
+		constexpr _deleter(_deleter&&) = default;
+		_deleter& operator=(const _deleter&) = default;
+		_deleter& operator=(_deleter&&) = default;
+		~_deleter() = default;
+		template<class T2,
+			class = typename std::enable_if<std::is_convertible<T2*, T*>::value,
+			void>::type>
+			_deleter(const _deleter<T2>&)
+		{	// construct from another default_delete
+		}
+	};
+	template<typename TYPE>
+	using unique_ptr = std::unique_ptr<TYPE, _deleter<TYPE>>;
+	template<class T, class... ARGS>
+	unique_ptr<T> make_unique(ARGS&&... args)
+	{
+		auto p = allocator().allocate(sizeof(T));
+		T* ptr = new (p) T(std::forward<ARGS>(args)...);
+		return unique_ptr<T>(ptr);
+	}
+	template<class T>
+	using shared_ptr = std::shared_ptr<T>;
+	template<class T, class... Args>
+	shared_ptr<T> make_shared(Args&&... args)
+	{
+		return std::allocate_shared<T>(_allocator<T>(), std::forward<Args>(args)...);
+	}
+
 class formatter;
 
 namespace sinks {
@@ -60,16 +154,16 @@ class sink;
 }
 
 using log_clock = std::chrono::system_clock;
-using sink_ptr = std::shared_ptr<sinks::sink>;
+using sink_ptr = shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
-using formatter_ptr = std::shared_ptr<spdlog::formatter>;
+using formatter_ptr = shared_ptr<spdlog::formatter>;
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
 #else
 using level_t = std::atomic<int>;
 #endif
 
-using log_err_handler = std::function<void(const std::string &err_msg)>;
+using log_err_handler = std::function<void(const string &err_msg)>;
 
 // Log level enum
 namespace level {
@@ -103,16 +197,16 @@ inline const char *to_short_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
 }
-inline spdlog::level::level_enum from_str(const std::string &name)
+inline spdlog::level::level_enum from_str(const string &name)
 {
-    static std::unordered_map<std::string, level_enum> name_to_level = // map string->level
-        {{level_names[0], level::trace},                               // trace
-            {level_names[1], level::debug},                            // debug
-            {level_names[2], level::info},                             // info
-            {level_names[3], level::warn},                             // warn
-            {level_names[4], level::err},                              // err
-            {level_names[5], level::critical},                         // critical
-            {level_names[6], level::off}};                             // off
+    static unordered_map<string, level_enum> name_to_level = // map string->level
+        {{level_names[0], level::trace},                     // trace
+            {level_names[1], level::debug},                  // debug
+            {level_names[2], level::info},                   // info
+            {level_names[3], level::warn},                   // warn
+            {level_names[4], level::err},                    // err
+            {level_names[5], level::critical},               // critical
+            {level_names[6], level::off}};                   // off
 
     auto lvl_it = name_to_level.find(name);
     return lvl_it != name_to_level.end() ? lvl_it->second : level::off;
@@ -145,18 +239,18 @@ enum class pattern_time_type
 //
 namespace details {
 namespace os {
-std::string errno_str(int err_num);
+string errno_str(int err_num);
 }
 } // namespace details
 class spdlog_ex : public std::exception
 {
 public:
-    explicit spdlog_ex(std::string msg)
+    explicit spdlog_ex(string msg)
         : _msg(std::move(msg))
     {
     }
 
-    spdlog_ex(const std::string &msg, int last_errno)
+    spdlog_ex(const string &msg, int last_errno)
     {
         _msg = msg + ": " + details::os::errno_str(last_errno);
     }
@@ -167,16 +261,16 @@ public:
     }
 
 private:
-    std::string _msg;
+    string _msg;
 };
 
 //
 // wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
 //
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
-using filename_t = std::wstring;
+using filename_t = wstring;
 #else
-using filename_t = std::string;
+using filename_t = string;
 #endif
 
 } // namespace spdlog
