@@ -27,7 +27,7 @@ class syslog_sink : public sink
 {
 public:
     //
-    syslog_sink(const std::string &ident = "", int syslog_option = 0, int syslog_facility = LOG_USER)
+    syslog_sink(const string &ident = "", int syslog_option = 0, int syslog_facility = LOG_USER)
         : _ident(ident)
     {
         _priorities[static_cast<size_t>(level::trace)] = LOG_DEBUG;
@@ -60,7 +60,7 @@ public:
 private:
     std::array<int, 7> _priorities;
     // must store the ident because the man says openlog might use the pointer as is and not a string copy
-    const std::string _ident;
+    const string _ident;
 
     //
     // Simply maps spdlog's log level to syslog priority level.
