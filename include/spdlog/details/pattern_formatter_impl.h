@@ -513,7 +513,6 @@ inline void spdlog::pattern_formatter::compile_pattern(const string &pattern)
             {
                 _formatters.push_back(std::move(user_chars));
             }
-            // if(
             if (++it != end)
             {
                 handle_flag(*it);
