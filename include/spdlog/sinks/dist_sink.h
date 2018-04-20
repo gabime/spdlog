@@ -31,7 +31,7 @@ public:
     dist_sink &operator=(const dist_sink &) = delete;
 
 protected:
-    std::vector<std::shared_ptr<sink>> _sinks;
+    vector<shared_ptr<sink>> _sinks;
 
     void _sink_it(const details::log_msg &msg) override
     {
@@ -51,13 +51,13 @@ protected:
     }
 
 public:
-    void add_sink(std::shared_ptr<sink> sink)
+    void add_sink(shared_ptr<sink> sink)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         _sinks.push_back(sink);
     }
 
-    void remove_sink(std::shared_ptr<sink> sink)
+    void remove_sink(shared_ptr<sink> sink)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
