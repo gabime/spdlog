@@ -61,24 +61,24 @@ using stderr_sink_st = stdout_sink<details::console_stderr_trait, details::conso
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name)
 {
-    return Factory::template create<stdout_color_sink_mt>(logger_name);
+    return Factory::template create<sinks::stdout_sink_mt>(logger_name);
 }
 
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name)
 {
-    return Factory::template create<stdout_color_sink_mt>(logger_name);
+    return Factory::template create<sinks::stdout_sink_st>(logger_name);
 }
 
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name)
 {
-    return Factory::template create<stderr_color_sink_mt>(logger_name);
+    return Factory::template create<sinks::stderr_sink_mt>(logger_name);
 }
 
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name)
 {
-    return Factory::template create<stderr_logger_sink_mt>(logger_name);
+    return Factory::template create<sinks::stderr_sink_st>(logger_name);
 }
 } // namespace spdlog
