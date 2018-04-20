@@ -30,17 +30,10 @@ public:
         should_do_colors_ = details::os::in_terminal(file) && details::os::is_color_terminal();
         colors_[level::trace] = white;
         colors_[level::debug] = cyan;
-<<<<<<< HEAD
-        colors_[level::info] = reset;
+        colors_[level::info] = green;
         colors_[level::warn] = string(yellow) + bold;
         colors_[level::err] = string(red) + bold;
         colors_[level::critical] = string(bold) + on_red;
-=======
-        colors_[level::info] = green;
-        colors_[level::warn] = yellow + bold;
-        colors_[level::err] = red + bold;
-        colors_[level::critical] = bold + on_red;
->>>>>>> upstream/master
         colors_[level::off] = reset;
     }
 
