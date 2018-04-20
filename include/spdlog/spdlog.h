@@ -40,7 +40,7 @@ struct default_factory
 template<typename Sink, typename... SinkArgs>
 inline std::shared_ptr<spdlog::logger> create(const std::string &logger_name, SinkArgs &&... sink_args)
 {
-    return create_synchronous::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
+    return default_factory::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
 }
 
 //

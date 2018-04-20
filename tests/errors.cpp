@@ -71,7 +71,7 @@ TEST_CASE("async_error_handler", "[errors]]")
     std::string filename = "logs/simple_async_log.txt";
     {
         spdlog::init_thread_pool(128, 1);
-        auto logger = spdlog::create_as<spdlog::sinks::simple_file_sink_mt>("logger", filename, true);
+        auto logger = spdlog::create_async_logger<spdlog::sinks::simple_file_sink_mt>("logger", filename, true);
         logger->set_error_handler([=](const std::string &msg) {
             std::ofstream ofs("logs/custom_err.txt");
             if (!ofs)
@@ -99,7 +99,7 @@ TEST_CASE("async_error_handler2", "[errors]]")
     std::string err_msg("This is async handler error message");
     {
         spdlog::init_thread_pool(128, 1);
-        auto logger = spdlog::create_as<failing_sink>("failed_logger");
+        auto logger = spdlog::create_async_logger<failing_sink>("failed_logger");
         logger->set_error_handler([=](const std::string &msg) {
             std::ofstream ofs("logs/custom_err2.txt");
             if (!ofs)
