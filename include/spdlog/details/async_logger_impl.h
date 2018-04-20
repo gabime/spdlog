@@ -17,7 +17,7 @@
 #include <string>
 
 template<class It>
-inline spdlog::async_logger::async_logger(const std::string &logger_name, const It &begin, const It &end, size_t queue_size,
+inline spdlog::async_logger::async_logger(const string &logger_name, const It &begin, const It &end, size_t queue_size,
     const async_overflow_policy overflow_policy, const std::function<void()> &worker_warmup_cb,
     const std::chrono::milliseconds &flush_interval_ms, const std::function<void()> &worker_teardown_cb)
     : logger(logger_name, begin, end)
@@ -26,7 +26,7 @@ inline spdlog::async_logger::async_logger(const std::string &logger_name, const 
 {
 }
 
-inline spdlog::async_logger::async_logger(const std::string &logger_name, sinks_init_list sinks_list, size_t queue_size,
+inline spdlog::async_logger::async_logger(const string &logger_name, sinks_init_list sinks_list, size_t queue_size,
     const async_overflow_policy overflow_policy, const std::function<void()> &worker_warmup_cb,
     const std::chrono::milliseconds &flush_interval_ms, const std::function<void()> &worker_teardown_cb)
     : async_logger(logger_name, sinks_list.begin(), sinks_list.end(), queue_size, overflow_policy, worker_warmup_cb, flush_interval_ms,
@@ -34,7 +34,7 @@ inline spdlog::async_logger::async_logger(const std::string &logger_name, sinks_
 {
 }
 
-inline spdlog::async_logger::async_logger(const std::string &logger_name, sink_ptr single_sink, size_t queue_size,
+inline spdlog::async_logger::async_logger(const string &logger_name, sink_ptr single_sink, size_t queue_size,
     const async_overflow_policy overflow_policy, const std::function<void()> &worker_warmup_cb,
     const std::chrono::milliseconds &flush_interval_ms, const std::function<void()> &worker_teardown_cb)
     : async_logger(
@@ -64,9 +64,9 @@ inline void spdlog::async_logger::_set_formatter(spdlog::formatter_ptr msg_forma
     _async_log_helper->set_formatter(_formatter);
 }
 
-inline void spdlog::async_logger::_set_pattern(const std::string &pattern, pattern_time_type pattern_time)
+inline void spdlog::async_logger::_set_pattern(const string &pattern, pattern_time_type pattern_time)
 {
-    _formatter = std::make_shared<pattern_formatter>(pattern, pattern_time);
+    _formatter = spdlog::make_shared<pattern_formatter>(pattern, pattern_time);
     _async_log_helper->set_formatter(_formatter);
 }
 
