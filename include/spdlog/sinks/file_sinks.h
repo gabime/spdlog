@@ -81,7 +81,7 @@ public:
     // e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
     static filename_t calc_filename(const filename_t &filename, std::size_t index)
     {
-        typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::BasicMemoryWriter<char, _allocator<char>>, fmt::BasicMemoryWriter<wchar_t, _allocator<wchar_t>>>::type w;
         if (index != 0u)
         {
             filename_t basename, ext;
@@ -92,7 +92,7 @@ public:
         {
             w.write(SPDLOG_FILENAME_T("{}"), filename);
         }
-        return w.str();
+        return w.c_str();
     }
 
 protected:
@@ -163,10 +163,10 @@ struct default_daily_file_name_calculator
         std::tm tm = spdlog::details::os::localtime();
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::BasicMemoryWriter<char, spdlog::_allocator<char>>, fmt::BasicMemoryWriter<wchar_t, spdlog::_allocator<wchar_t>>>::type w;
         w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
             tm.tm_hour, tm.tm_min, ext);
-        return w.str();
+        return w.c_str();
     }
 };
 
@@ -181,9 +181,9 @@ struct dateonly_daily_file_name_calculator
         std::tm tm = spdlog::details::os::localtime();
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::BasicMemoryWriter<char, spdlog::_allocator<char>>, fmt::BasicMemoryWriter<wchar_t, spdlog::_allocator<wchar_t>>>::type w;
         w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, ext);
-        return w.str();
+        return w.c_str();
     }
 };
 
