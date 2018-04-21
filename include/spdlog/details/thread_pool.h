@@ -26,13 +26,13 @@ enum class async_msg_type
 struct async_msg
 {
     async_msg_type msg_type;
-    level::level_enum level{level::info};
+    level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;
     fmt::MemoryWriter raw;
 
     size_t msg_id;
-    async_logger_ptr worker_ptr{nullptr};
+    async_logger_ptr worker_ptr;
 
     async_msg() = default;
     ~async_msg() = default;
