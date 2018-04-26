@@ -25,7 +25,7 @@
 namespace spdlog {
 namespace details {
 template<class Mutex>
-class registry_t
+class SPDLOG_API registry_t
 {
 public:
     registry_t<Mutex>(const registry_t<Mutex> &) = delete;

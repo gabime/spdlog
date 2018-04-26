@@ -141,3 +141,28 @@
 //
 // #define SPDLOG_LEVEL_NAMES { "MY TRACE", "MY DEBUG", "MY INFO", "MY WARNING", "MY ERROR", "MY CRITICAL", "OFF" }
 ///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Uncomment to enable dll symbols export/import.
+// You also need to define SPDLOG_EXPORTS when compiling shared library.
+// 
+// #define SPDLOG_ENABLE_DLL_IMPORT_EXPORT
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// This defines the SPDLOG_API macro that allows a class marked with it to be
+// exported by a dll.
+// Users should define SPDLOG_EXPORTS=1 when compiling a shared library that
+// uses spdlog.
+#ifdef SPDLOG_ENABLE_DLL_IMPORT_EXPORT
+#ifdef  SPDLOG_EXPORTS
+/*Enabled as "export" while compiling the dll project*/
+#define SPDLOG_API __declspec(dllexport)
+#else
+/*Enabled as "import" in the Client side for using already created dll file*/
+#define SPDLOG_API __declspec(dllimport)
+#endif
+#else
+#define SPDLOG_API
+#endif
+///////////////////////////////////////////////////////////////////////////////
