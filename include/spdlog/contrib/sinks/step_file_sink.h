@@ -18,7 +18,7 @@
 // Create a file logger which creates new files with a specified time step and fixed file size:
 //
 // std::shared_ptr<logger> step_logger_mt(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, const filename_t &tmp_ext = ".tmp", unsigned max_file_size = std::numeric_limits<unsigned>::max());
-// std::shared_ptr<logger> step_logger_st(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, const filename_t &tmp_ext = ".tmp", unsigned max_file_size = std::numeric_limits<unsigned>::max();;
+// std::shared_ptr<logger> step_logger_st(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, const filename_t &tmp_ext = ".tmp", unsigned max_file_size = std::numeric_limits<unsigned>::max());
 
 // Example for spdlog_impl.h
 // Create a file logger that creates new files with a specified increment
@@ -91,13 +91,12 @@ public:
     
     ~step_file_sink()
     {
-        using details::os::filename_to_str;
-
-        filename_t src =_current_filename, target;
-        std::tie(target, std::ignore) = details::file_helper::split_by_extenstion(src);
-        target += _ext;
-        
-        details::os::rename(src, target);
+        try
+        {
+            close_current_file();
+        }
+        catch (...)
+        {}
     }
 
 protected:
