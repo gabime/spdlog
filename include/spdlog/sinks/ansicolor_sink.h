@@ -22,13 +22,13 @@ namespace sinks {
  * of the message.
  * If no color terminal detected, omit the escape codes.
  */
-template<class ConsoleStdoutTrait, class ConsoleMutexTrait>
+template<class ConsoleTargetTrait, class ConsoleMutexTrait>
 class ansicolor_sink : public sink
 {
 public:
     using mutex_t = typename ConsoleMutexTrait::mutex_t;
     ansicolor_sink()
-        : target_file_(ConsoleStdoutTrait::stream())
+        : target_file_(ConsoleTargetTrait::stream())
         , _mutex(ConsoleMutexTrait::console_mutex())
 
     {
