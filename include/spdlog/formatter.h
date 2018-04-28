@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "details/log_msg.h"
+#include "spdlog/details/log_msg.h"
 
 #include <memory>
 #include <string>
