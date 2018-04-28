@@ -5,10 +5,10 @@
 
 #pragma once
 
-#include "../common.h"
-#include "../details/null_mutex.h"
-#include "../details/traits.h"
-#include "sink.h"
+#include "spdlog/common.h"
+#include "spdlog/details/null_mutex.h"
+#include "spdlog/details/traits.h"
+#include "spdlog/sinks/sink.h"
 
 #include <memory>
 #include <mutex>

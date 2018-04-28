@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "../details/null_mutex.h"
-#include "../details/os.h"
-#include "../details/traits.h"
+#include "spdlog/details/null_mutex.h"
+#include "spdlog/details/os.h"
+#include "spdlog/details/traits.h"
 
 #include <memory>
 #include <mutex>

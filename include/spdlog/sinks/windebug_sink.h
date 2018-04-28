@@ -7,7 +7,7 @@
 
 #if defined(_WIN32)
 
-#include "msvc_sink.h"
+#include "spdlog/sinks/msvc_sink.h"
 
 namespace spdlog {
 namespace sinks {

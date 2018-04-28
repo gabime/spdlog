@@ -12,9 +12,9 @@
 // 2. Format the message using the formatter function
 // 3. Pass the formatted message to its sinks to performa the actual logging
 
-#include "common.h"
-#include "formatter.h"
-#include "sinks/sink.h"
+#include "spdlog/common.h"
+#include "spdlog/formatter.h"
+#include "spdlog/sinks/sink.h"
 
 #include <memory>
 #include <string>

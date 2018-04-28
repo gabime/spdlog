@@ -7,7 +7,7 @@
 
 #define SPDLOG_VERSION "0.16.4-rc"
 
-#include "tweakme.h"
+#include "spdlog/tweakme.h"
 
 #include <atomic>
 #include <chrono>
@@ -23,7 +23,7 @@
 #include <locale>
 #endif
 
-#include "details/null_mutex.h"
+#include "spdlog/details/null_mutex.h"
 
 // visual studio upto 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)

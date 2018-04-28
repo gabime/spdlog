@@ -7,8 +7,8 @@
 
 #if defined(__ANDROID__)
 
-#include "../details/os.h"
-#include "sink.h"
+#include "spdlog/details/os.h"
+#include "spdlog/sinks/sink.h"
 
 #include <android/log.h>
 #include <chrono>

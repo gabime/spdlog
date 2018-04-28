@@ -10,10 +10,10 @@
 // all locking is taken care of here so no locking needed by the implementers..
 //
 
-#include "../common.h"
-#include "../details/log_msg.h"
-#include "../formatter.h"
-#include "sink.h"
+#include "spdlog/common.h"
+#include "spdlog/details/log_msg.h"
+#include "spdlog/formatter.h"
+#include "spdlog/sinks/sink.h"
 
 #include <mutex>
 

@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "common.h"
-#include "details/registry.h"
-#include "logger.h"
+#include "spdlog/common.h"
+#include "spdlog/details/registry.h"
+#include "spdlog/logger.h"
 
 #include <chrono>
 #include <functional>

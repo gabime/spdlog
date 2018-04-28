@@ -5,10 +5,9 @@
 
 #pragma once
 
-#include "../details/log_msg.h"
-#include "../details/null_mutex.h"
-#include "base_sink.h"
-#include "sink.h"
+#include "spdlog/details/log_msg.h"
+#include "spdlog/details/null_mutex.h"
+#include "spdlog/sink/base_sink.h"
 
 #include <algorithm>
 #include <memory>
