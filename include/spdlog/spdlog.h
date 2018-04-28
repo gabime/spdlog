@@ -19,7 +19,7 @@
 namespace spdlog {
 
 // Default logger factory-  creates synchronous loggers
-struct create_sync
+struct create_synchronous
 {
     template<typename Sink, typename... SinkArgs>
 
@@ -32,7 +32,7 @@ struct create_sync
     }
 };
 
-using default_factory = create_sync;
+using default_factory = create_synchronous;
 
 // Create and register a logger with a templated sink type
 // The logger's level, formatter and flush level will be set according the global settings.
