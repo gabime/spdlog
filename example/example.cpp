@@ -64,6 +64,9 @@ int main(int, char *[])
         console->info("This an info message with custom format");
         console->error("This an error message with custom format");
 
+		// Change format back to to default
+		spd::set_pattern ("%+");
+
         // Runtime log levels
         spd::set_level(spd::level::info); // Set global log level to info
         console->debug("This message should not be displayed!");
