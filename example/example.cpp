@@ -10,7 +10,9 @@
 #define SPDLOG_TRACE_ON
 #define SPDLOG_DEBUG_ON
 
-#include "spdlog/sinks/file_sinks.h"
+#include "spdlog/sinks/file/simple_file_sink.h"
+#include "spdlog/sinks/file/daily_file_sink.h"
+#include "spdlog/sinks/file/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 #include <iostream>

@@ -7,7 +7,9 @@
 // bench.cpp : spdlog benchmarks
 //
 #include "spdlog/async.h"
-#include "spdlog/sinks/file_sinks.h"
+#include "spdlog/sinks/file/simple_file_sink.h"
+#include "spdlog/sinks/file/daily_file_sink.h"
+#include "spdlog/sinks/file/rotating_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/spdlog.h"
 
@@ -33,7 +35,7 @@ int main(int argc, char *argv[])
 
     int queue_size = 1048576;
     int howmany = 1000000;
-    int threads = 1;
+    int threads = 10;
     int file_size = 30 * 1024 * 1024;
     int rotating_files = 5;
 
@@ -46,7 +48,7 @@ int main(int argc, char *argv[])
             threads = atoi(argv[2]);
         if (argc > 3)
             queue_size = atoi(argv[3]);
-	/*
+	
         cout << "*******************************************************************************\n";
         cout << "Single thread, " << format(howmany) << " iterations" << endl;
         cout << "*******************************************************************************\n";
@@ -67,12 +69,12 @@ int main(int argc, char *argv[])
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
         bench_mt(howmany, daily_mt, threads);
         bench(howmany, spdlog::create<null_sink_st>("null_mt"));
-*/
+
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
         cout << "*******************************************************************************\n";
 
-        for (int i = 0; i < 300; ++i)
+        for (int i = 0; i < 3; ++i)
         {
             spdlog::init_thread_pool(queue_size, 1);
             auto as = spdlog::basic_logger_mt<spdlog::create_async>("as", "logs/basic_async.log", true);
