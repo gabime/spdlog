@@ -10,8 +10,6 @@
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/spdlog.h"
 
-#include <algorithm>
-#include <cerrno>
 #include <chrono>
 #include <cstdio>
 #include <ctime>
