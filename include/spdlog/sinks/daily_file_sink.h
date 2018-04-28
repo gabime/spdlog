@@ -4,11 +4,11 @@
 //
 
 #pragma once
-#include "spdlog/spdlog.h"
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/sinks/base_sink.h"
+#include "spdlog/spdlog.h"
 
 #include <algorithm>
 #include <cerrno>
@@ -123,7 +123,7 @@ using daily_file_sink_st = daily_file_sink<details::null_mutex>;
 } // namespace sinks
 
 //
-// factory functions 
+// factory functions
 //
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0)

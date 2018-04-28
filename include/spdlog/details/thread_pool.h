@@ -151,8 +151,6 @@ public:
         return _msg_counter.load(std::memory_order_relaxed);
     }
 
-
-
 private:
     std::atomic<size_t> _msg_counter; // total # of messages processed in this pool
     q_type _q;
@@ -222,12 +220,12 @@ private:
         using std::chrono::milliseconds;
 
         auto time_since_op = now - last_op_time;
-               
+
         // yield upto 150 micros
         if (time_since_op <= microseconds(150))
         {
             return std::this_thread::yield();
-        }		
+        }
 
         // sleep for 20 ms upto 200 ms
         if (time_since_op <= milliseconds(200))

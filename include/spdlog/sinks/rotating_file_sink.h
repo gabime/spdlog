@@ -4,18 +4,18 @@
 //
 
 #pragma once
-#include "spdlog/spdlog.h"
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/sinks/base_sink.h"
+#include "spdlog/spdlog.h"
 
 #include <cerrno>
 #include <chrono>
-#include <tuple>
 #include <ctime>
 #include <mutex>
 #include <string>
+#include <tuple>
 
 namespace spdlog {
 namespace sinks {
@@ -116,7 +116,6 @@ using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
 //
 // factory functions
 //
-
 
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> rotating_logger_mt(

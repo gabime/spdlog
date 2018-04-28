@@ -7,10 +7,10 @@
 // bench.cpp : spdlog benchmarks
 //
 #include "spdlog/async.h"
-#include "spdlog/sinks/simple_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
-#include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
+#include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/sinks/simple_file_sink.h"
 #include "spdlog/spdlog.h"
 
 #include "utils.h"
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
             threads = atoi(argv[2]);
         if (argc > 3)
             queue_size = atoi(argv[3]);
-	
+
         cout << "*******************************************************************************\n";
         cout << "Single thread, " << format(howmany) << " iterations" << endl;
         cout << "*******************************************************************************\n";

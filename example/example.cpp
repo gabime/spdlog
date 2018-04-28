@@ -10,9 +10,9 @@
 #define SPDLOG_TRACE_ON
 #define SPDLOG_DEBUG_ON
 
-#include "spdlog/sinks/simple_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/sinks/simple_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 #include <iostream>
@@ -61,13 +61,13 @@ int main(int, char *[])
         daily_logger->info(123.44);
 
         // Customize msg format for all messages
-        spd::set_pattern("[%^+++%$] [%H:%M:%S %z] [thread %t] %v"); 
+        spd::set_pattern("[%^+++%$] [%H:%M:%S %z] [thread %t] %v");
 
         console->info("This an info message with custom format");
         console->error("This an error message with custom format");
 
-		// Change format back to to default
-		spd::set_pattern ("%+");
+        // Change format back to to default
+        spd::set_pattern("%+");
 
         // Runtime log levels
         spd::set_level(spd::level::info); // Set global log level to info

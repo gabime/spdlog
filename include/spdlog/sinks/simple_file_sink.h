@@ -4,10 +4,10 @@
 //
 
 #pragma once
-#include "spdlog/spdlog.h"
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
+#include "spdlog/spdlog.h"
 
 #include <mutex>
 #include <string>
@@ -54,7 +54,6 @@ private:
 
 using simple_file_sink_mt = simple_file_sink<std::mutex>;
 using simple_file_sink_st = simple_file_sink<details::null_mutex>;
-
 
 } // namespace sinks
 
