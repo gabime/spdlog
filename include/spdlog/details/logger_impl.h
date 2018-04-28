@@ -72,8 +72,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
     }
     catch (...)
     {
-        _err_handler("Unknown exception in logger " + _name);
-        throw;
+        _err_handler("Unknown exception in logger " + _name);        
     }
 }
 
@@ -96,8 +95,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
     }
     catch (...)
     {
-        _err_handler("Unknown exception in logger " + _name);
-        throw;
+        _err_handler("Unknown exception in logger " + _name);        
     }
 }
 
@@ -120,8 +118,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
     }
     catch (...)
     {
-        _err_handler("Unknown exception in logger " + _name);
-        throw;
+        _err_handler("Unknown exception in logger " + _name);        
     }
 }
 
