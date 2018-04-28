@@ -15,8 +15,6 @@
 #include "spdlog/formatter.h"
 #include "spdlog/sinks/sink.h"
 
-#include <mutex>
-
 namespace spdlog {
 namespace sinks {
 template<class Mutex>
