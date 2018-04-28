@@ -76,7 +76,8 @@ Time needed to log 1,000,000 lines in asynchronous mode, i.e. the time it takes 
 
 #define SPDLOG_TRACE_ON
 #define SPDLOG_DEBUG_ON
-// include only what you used from the below 
+
+// include only features that you use
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/simple_file_sink.h"
