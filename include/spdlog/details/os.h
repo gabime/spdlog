@@ -4,7 +4,7 @@
 //
 #pragma once
 
-#include "../common.h"
+#include "spdlog/common.h"
 
 #include <algorithm>
 #include <chrono>

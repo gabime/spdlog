@@ -10,8 +10,8 @@
 // If user requests a non existing logger, nullptr will be returned
 // This class is thread safe
 
-#include "../common.h"
-#include "../logger.h"
+#include "spdlog/common.h"
+#include "spdlog/logger.h"
 
 #include <chrono>
 #include <functional>

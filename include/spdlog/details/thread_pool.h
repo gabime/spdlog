@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../details/log_msg.h"
-#include "../details/mpmc_bounded_q.h"
-#include "../details/os.h"
+#include "spdlog/details/log_msg.h"
+#include "spdlog/details/mpmc_bounded_q.h"
+#include "spdlog/details/os.h"
 
 #include <chrono>
 #include <memory>

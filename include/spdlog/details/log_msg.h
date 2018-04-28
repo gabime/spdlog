@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "../common.h"
-#include "../details/os.h"
+#include "spdlog/common.h"
+#include "spdlog/details/os.h"
 
 #include <string>
 #include <utility>
