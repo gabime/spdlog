@@ -49,6 +49,6 @@ inline std::shared_ptr<logger> stderr_color_mt(const std::string &logger_name)
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> stderr_color_st(const std::string &logger_name)
 {
-    return Factory::template createstderr_color_sink_mt > (logger_name);
+    return Factory::template create<stderr_color_sink_mt > (logger_name);
 }
 } // namespace spdlog
