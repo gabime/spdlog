@@ -78,7 +78,7 @@ struct async_msg
     }
 
     // copy into log_msg
-    void to_log_msg(log_msg &msg)
+    void to_log_msg(log_msg &&msg)
     {
         msg.logger_name = &worker_ptr->name();
         msg.level = level;
@@ -151,14 +151,7 @@ public:
         return _msg_counter.load(std::memory_order_relaxed);
     }
 
-    void wait_empty_q()
-    {
-        auto last_op = clock_type::now();
-        while (!_q.is_empty())
-        {
-            sleep_or_yield(clock_type::now(), last_op);
-        }
-    }
+
 
 private:
     std::atomic<size_t> _msg_counter; // total # of messages processed in this pool
@@ -208,7 +201,7 @@ private:
 
                 default:
                 {
-                    popped_async_msg.to_log_msg(msg);
+                    popped_async_msg.to_log_msg(std::move(msg));
                     auto worker = std::move(popped_async_msg.worker_ptr);
                     worker->_backend_log(msg);
                     _msg_counter.fetch_add(1, std::memory_order_relaxed);
@@ -229,18 +222,12 @@ private:
         using std::chrono::milliseconds;
 
         auto time_since_op = now - last_op_time;
-
-        // spin upto 50 micros
-        if (time_since_op <= microseconds(50))
-        {
-            return;
-        }
-
+               
         // yield upto 150 micros
-        if (time_since_op <= microseconds(100))
+        if (time_since_op <= microseconds(150))
         {
             return std::this_thread::yield();
-        }
+        }		
 
         // sleep for 20 ms upto 200 ms
         if (time_since_op <= milliseconds(200))
