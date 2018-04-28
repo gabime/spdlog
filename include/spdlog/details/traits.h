@@ -25,7 +25,7 @@ struct console_stderr_trait
 {
     static FILE *stream()
     {
-        return stdout;
+        return stderr;
     }
 #ifdef _WIN32
     static HANDLE handle()
