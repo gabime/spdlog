@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
         bench_mt(howmany, daily_mt, threads);
-        bench(howmany, spdlog::create<null_sink_st>("null_mt"));
+        bench(howmany, spdlog::create<null_sink_mt>("null_mt"));
 
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
