@@ -44,7 +44,7 @@ inline spdlog::async_logger::async_logger(const std::string &logger_name, sink_p
 
 inline void spdlog::async_logger::flush()
 {
-    _async_log_helper->flush(true);
+    _async_log_helper->flush(false);
 }
 
 // Error handler
