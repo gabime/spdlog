@@ -17,20 +17,19 @@ template<class Mutex>
 class test_sink : public base_sink<Mutex>
 {
 public:
-	size_t msg_counter() 
-	{ 
-		return msg_counter_; 
-	}
+    size_t msg_counter()
+    {
+        return msg_counter_;
+    }
 
 protected:
-    void _sink_it(const details::log_msg &) override 
-	{
-		msg_counter_++;				
-	}
+    void _sink_it(const details::log_msg &) override
+    {
+        msg_counter_++;
+    }
 
     void _flush() override {}
-	size_t msg_counter_{ 0 };
-
+    size_t msg_counter_{0};
 };
 
 using test_sink_mt = test_sink<std::mutex>;

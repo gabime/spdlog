@@ -7,7 +7,8 @@
 // bench.cpp : spdlog benchmarks
 //
 #include "spdlog/async_logger.h"
-#include "spdlog/sinks/test_sink.h"
+#include "spdlog/sinks/file_sinks.h"
+#include "spdlog/sinks/null_sink.h"
 #include "spdlog/spdlog.h"
 #include "utils.h"
 #include <atomic>
@@ -29,10 +30,12 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int argc, char *argv[])
 {
 
-    int queue_size = 1024*1024;
+    int queue_size = 1048576;
     int howmany = 1000000;
     int threads = 10;
- 
+    int file_size = 30 * 1024 * 1024;
+    int rotating_files = 5;
+
     try
     {
 
@@ -42,7 +45,7 @@ int main(int argc, char *argv[])
             threads = atoi(argv[2]);
         if (argc > 3)
             queue_size = atoi(argv[3]);
-		/*
+
         cout << "*******************************************************************************\n";
         cout << "Single thread, " << format(howmany) << " iterations" << endl;
         cout << "*******************************************************************************\n";
@@ -64,32 +67,17 @@ int main(int argc, char *argv[])
         bench_mt(howmany, daily_mt, threads);
         bench(howmany, spdlog::create<null_sink_st>("null_mt"));
 
-		*/
-
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
         cout << "*******************************************************************************\n";
 
         spdlog::set_async_mode(queue_size);
 
-		
-        for (int i = 0; i < 300; ++i)
+        for (int i = 0; i < 3; ++i)
         {
-            //auto as = spdlog::daily_logger_mt("as", "logs/daily_async.log");
-			auto test_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
-			//auto as = spdlog::basic_logger_mt("as", "logs/async.log", true);
-			auto as = std::make_shared<spdlog::async_logger>("as", test_sink, queue_size, async_overflow_policy::block_retry, nullptr, std::chrono::milliseconds(2000));
-            bench_mt(howmany, as, threads);			
-			as.reset();
+            auto as = spdlog::daily_logger_st("as", "logs/daily_async.log");
+            bench_mt(howmany, as, threads);
             spdlog::drop("as");
-
-			auto msg_counter = test_sink->msg_counter();
-			cout << "Count:" << msg_counter << endl;
-			if (msg_counter != howmany)
-			{
-				cout << "ERROR! Expected " << howmany;
-				exit(0);
-			}
         }
     }
     catch (std::exception &ex)
@@ -131,7 +119,6 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
                 if (counter > howmany)
                     break;
                 log->info("Hello logger: msg number {}", counter);
-				//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
             }
         }));
     }

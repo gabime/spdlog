@@ -17,8 +17,10 @@
 //
 // Create a file logger which creates new files with a specified time step and fixed file size:
 //
-// std::shared_ptr<logger> step_logger_mt(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, const filename_t &tmp_ext = ".tmp", unsigned max_file_size = std::numeric_limits<unsigned>::max());
-// std::shared_ptr<logger> step_logger_st(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, const filename_t &tmp_ext = ".tmp", unsigned max_file_size = std::numeric_limits<unsigned>::max());
+// std::shared_ptr<logger> step_logger_mt(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, const
+// filename_t &tmp_ext = ".tmp", unsigned max_file_size = std::numeric_limits<unsigned>::max()); std::shared_ptr<logger>
+// step_logger_st(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, const filename_t &tmp_ext = ".tmp",
+// unsigned max_file_size = std::numeric_limits<unsigned>::max());
 
 // Example for spdlog_impl.h
 // Create a file logger that creates new files with a specified increment
@@ -76,7 +78,7 @@ public:
         {
             throw spdlog_ex("step_file_sink: Invalid max log size in ctor");
         }
-        
+
         _tp = _next_tp();
         std::tie(_current_filename, _ext) = FileNameCalc::calc_filename(_base_filename, _tmp_ext);
 
@@ -88,7 +90,7 @@ public:
         _file_helper.open(_current_filename);
         _current_size = _file_helper.size(); // expensive. called only once
     }
-    
+
     ~step_file_sink()
     {
         try
@@ -96,7 +98,8 @@ public:
             close_current_file();
         }
         catch (...)
-        {}
+        {
+        }
     }
 
 protected:
@@ -130,7 +133,7 @@ private:
     {
         using details::os::filename_to_str;
 
-        filename_t src =_current_filename, target;
+        filename_t src = _current_filename, target;
         std::tie(target, std::ignore) = details::file_helper::split_by_extenstion(src);
         target += _ext;
 
@@ -149,7 +152,7 @@ private:
     filename_t _current_filename;
     filename_t _ext;
     unsigned _current_size;
-    
+
     details::file_helper _file_helper;
 };
 
