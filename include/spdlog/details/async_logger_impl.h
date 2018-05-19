@@ -44,7 +44,7 @@ inline spdlog::async_logger::async_logger(const std::string &logger_name, sink_p
 
 inline void spdlog::async_logger::flush()
 {
-    _async_log_helper->flush(false);//dont wat for the q to draing before returning from flush
+    _async_log_helper->flush();
 }
 
 // Error handler
@@ -80,7 +80,7 @@ inline void spdlog::async_logger::_sink_it(details::log_msg &msg)
         _async_log_helper->log(msg);
         if (_should_flush_on(msg))
         {
-            _async_log_helper->flush(false); // do async flush
+            _async_log_helper->flush(); // do async flush
         }
     }
     catch (const std::exception &ex)
