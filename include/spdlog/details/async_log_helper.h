@@ -329,7 +329,6 @@ inline void spdlog::details::async_log_helper::set_error_handler(spdlog::log_err
 }
 
 
-
 // flush all sinks if _flush_interval_ms has expired. 
 inline void spdlog::details::async_log_helper::handle_flush_interval()
 {
