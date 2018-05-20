@@ -1,12 +1,12 @@
 //
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2018 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
 #pragma once
 
-#include "../details/null_mutex.h"
-#include "base_sink.h"
+#include "spdlog/details/null_mutex.h"
+#include "spdlog/sinks/base_sink.h"
 
 #include <mutex>
 
@@ -22,14 +22,23 @@ public:
         return msg_counter_;
     }
 
+    size_t flushed_msg_counter()
+    {
+        return flushed_msg_counter_;
+    }
+
 protected:
     void _sink_it(const details::log_msg &) override
     {
         msg_counter_++;
     }
 
-    void _flush() override {}
+    void _flush() override
+    {
+        flushed_msg_counter_ += msg_counter_;
+    }
     size_t msg_counter_{0};
+    size_t flushed_msg_counter_{0};
 };
 
 using test_sink_mt = test_sink<std::mutex>;
