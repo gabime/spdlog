@@ -190,8 +190,7 @@ inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatt
     _worker_thread = std::thread(&async_log_helper::worker_loop, this);
 }
 
-// Send to the worker thread termination message(level=off)
-// and wait for it to finish gracefully
+// send to the worker thread terminate message, and join it.
 inline spdlog::details::async_log_helper::~async_log_helper()
 {
     try
@@ -204,7 +203,7 @@ inline spdlog::details::async_log_helper::~async_log_helper()
     }
 }
 
-// Try to push and block until succeeded (if the policy is not to discard when the queue is full)
+// try to push and block until succeeded (if the policy is not to discard when the queue is full)
 inline void spdlog::details::async_log_helper::log(const details::log_msg &msg)
 {
     enqueue_msg(async_msg(msg), _overflow_policy);
