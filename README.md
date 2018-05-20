@@ -30,7 +30,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 * Headers only, just copy and use.
 * Feature rich [call style](#usage-example) using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * Optional printf syntax support.
-* Extremely fast asynchronous mode (optional) - using lockfree queues and other tricks to reach millions of calls/sec.
+* Asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Conditional Logging
 * Multi/Single threaded loggers.
@@ -54,9 +54,9 @@ Time needed to log 1,000,000 lines in synchronous mode (in seconds, the best of 
 
 |threads|boost log 1.54|glog   |easylogging |spdlog|
 |-------|:-------:|:-----:|----------:|------:|
-|1|       4.169s  |1.066s |0.975s     |0.302s|
-|10|     6.180s   |3.032s |2.857s     |0.968s|
-|100|     5.981s  |1.139s |4.512s     |0.497s|
+|1|       4.169s  |1.066s |0.975s     |0.392s|
+|10|     6.180s   |3.032s |2.857s     |0.773s|
+|100|     5.981s  |1.139s |4.512s     |0.587s|
 
 
 #### Asynchronous mode
@@ -64,9 +64,9 @@ Time needed to log 1,000,000 lines in asynchronous mode, i.e. the time it takes 
 
 |threads|g2log <sup>async logger</sup>   |spdlog <sup>async mode</sup>|
 |:-------|:-----:|-------------------------:|
-|1|       1.850s |0.216s |
-|10|      0.943s  |0.173s|
-|100|      0.959s |0.202s|
+|1|       1.850s |0.39s |
+|10|      0.943s  |0.416s|
+|100|      0.959s |0.413s|
 
 
 
