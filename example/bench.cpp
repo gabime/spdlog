@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
             threads = atoi(argv[2]);
         if (argc > 3)
             queue_size = atoi(argv[3]);
-        
+
         cout << "*******************************************************************************\n";
         cout << "Single thread, " << format(howmany) << " iterations" << endl;
         cout << "*******************************************************************************\n";
