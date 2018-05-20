@@ -65,27 +65,8 @@ class async_log_helper
         {
         }
 
-        async_msg(async_msg &&other) SPDLOG_NOEXCEPT : logger_name(std::move(other.logger_name)),
-                                                       level(std::move(other.level)),
-                                                       time(std::move(other.time)),
-                                                       thread_id(other.thread_id),
-                                                       txt(std::move(other.txt)),
-                                                       msg_type(std::move(other.msg_type)),
-                                                       msg_id(other.msg_id)
-        {
-        }
-
-        async_msg &operator=(async_msg &&other) SPDLOG_NOEXCEPT
-        {
-            logger_name = std::move(other.logger_name);
-            level = other.level;
-            time = std::move(other.time);
-            thread_id = other.thread_id;
-            txt = std::move(other.txt);
-            msg_type = other.msg_type;
-            msg_id = other.msg_id;
-            return *this;
-        }
+        async_msg(async_msg &&other) = default;
+        async_msg &operator=(async_msg &&other) = default;
 
         // never copy or assign. should only be moved..
         async_msg(const async_msg &) = delete;
@@ -112,6 +93,7 @@ class async_log_helper
             msg.level = level;
             msg.time = time;
             msg.thread_id = thread_id;
+            msg.raw.clear();
             msg.raw << txt;
             msg.msg_id = msg_id;
         }
@@ -281,7 +263,7 @@ inline void spdlog::details::async_log_helper::worker_loop()
 inline bool spdlog::details::async_log_helper::process_next_msg()
 {
     async_msg incoming_async_msg;
-    bool dequeued = _q.dequeue_for(incoming_async_msg, std::chrono::seconds(2));	
+    bool dequeued = _q.dequeue_for(incoming_async_msg, std::chrono::seconds(2));
     if (!dequeued)
     {
         handle_flush_interval();
@@ -309,14 +291,12 @@ inline bool spdlog::details::async_log_helper::process_next_msg()
                 s->log(incoming_log_msg);
             }
         }
-		handle_flush_interval();
+        handle_flush_interval();
         return true;
     }
     assert(false);
     return true; // should not be reached
 }
-
-
 
 inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
 {
@@ -328,8 +308,7 @@ inline void spdlog::details::async_log_helper::set_error_handler(spdlog::log_err
     _err_handler = std::move(err_handler);
 }
 
-
-// flush all sinks if _flush_interval_ms has expired. 
+// flush all sinks if _flush_interval_ms has expired.
 inline void spdlog::details::async_log_helper::handle_flush_interval()
 {
     if (_flush_interval_ms == std::chrono::milliseconds::zero())
@@ -346,7 +325,7 @@ inline void spdlog::details::async_log_helper::handle_flush_interval()
 
 // flush all sinks if _flush_interval_ms has expired. only called if queue is empty
 inline void spdlog::details::async_log_helper::flush_sinks()
-{    
+{
     for (auto &s : _sinks)
     {
         s->flush();
