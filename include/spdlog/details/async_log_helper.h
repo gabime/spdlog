@@ -45,8 +45,7 @@ class async_log_helper
     };
 
     struct async_msg
-    {
-        std::string logger_name;
+    {        
         level::level_enum level;
         log_clock::time_point time;
         size_t thread_id;
@@ -81,15 +80,12 @@ class async_log_helper
             , msg_type(async_msg_type::log)
             , msg_id(m.msg_id)
         {
-#ifndef SPDLOG_NO_NAME
-            logger_name = *m.logger_name;
-#endif
         }
 
         // copy into log_msg
-        void fill_log_msg(log_msg &msg)
+        void fill_log_msg(log_msg &msg, std::string* logger_name)
         {
-            msg.logger_name = &logger_name;
+            msg.logger_name = logger_name;
             msg.level = level;
             msg.time = time;
             msg.thread_id = thread_id;
@@ -105,10 +101,15 @@ public:
 
     using clock = std::chrono::steady_clock;
 
-    async_log_helper(formatter_ptr formatter, std::vector<sink_ptr> sinks, size_t queue_size, const log_err_handler err_handler,
-        const async_overflow_policy overflow_policy = async_overflow_policy::block_retry, std::function<void()> worker_warmup_cb = nullptr,
-        const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
-        std::function<void()> worker_teardown_cb = nullptr);
+    async_log_helper(std::string logger_name,
+                     formatter_ptr formatter,
+                     std::vector<sink_ptr> sinks,
+                     size_t queue_size,
+                     const log_err_handler err_handler,
+                     const async_overflow_policy overflow_policy = async_overflow_policy::block_retry,
+                     std::function<void()> worker_warmup_cb = nullptr,
+                     const std::chrono::milliseconds &flush_interval_ms = std::chrono::milliseconds::zero(),
+                     std::function<void()> worker_teardown_cb = nullptr);
 
     void log(const details::log_msg &msg);
 
@@ -125,6 +126,7 @@ public:
     void set_error_handler(spdlog::log_err_handler err_handler);
 
 private:
+	std::string _logger_name;
     formatter_ptr _formatter;
     std::vector<std::shared_ptr<sinks::sink>> _sinks;
 
@@ -174,10 +176,17 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, std::vector<sink_ptr> sinks, size_t queue_size,
-    log_err_handler err_handler, const async_overflow_policy overflow_policy, std::function<void()> worker_warmup_cb,
-    const std::chrono::milliseconds &flush_interval_ms, std::function<void()> worker_teardown_cb)
-    : _formatter(std::move(formatter))
+inline spdlog::details::async_log_helper::async_log_helper(std::string logger_name, 
+                                                           formatter_ptr formatter, 
+                                                           std::vector<sink_ptr> sinks,
+                                                           size_t queue_size,
+                                                           log_err_handler err_handler, 
+                                                           const async_overflow_policy overflow_policy,
+                                                           std::function<void()> worker_warmup_cb,
+                                                           const std::chrono::milliseconds &flush_interval_ms,
+                                                           std::function<void()> worker_teardown_cb)
+    : _logger_name(std::move(logger_name)) 
+	, _formatter(std::move(formatter))
     , _sinks(std::move(sinks))
     , _q(queue_size)
     , _err_handler(std::move(err_handler))
@@ -281,7 +290,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg()
 
     default:
         log_msg incoming_log_msg;
-        incoming_async_msg.fill_log_msg(incoming_log_msg);
+        incoming_async_msg.fill_log_msg(incoming_log_msg, &_logger_name);
         _formatter->format(incoming_log_msg);
         for (auto &s : _sinks)
         {
