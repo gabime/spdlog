@@ -170,7 +170,7 @@ int main(int, char*[])
 
 void async_example()
 {
-    size_t q_size = 4096; //queue size must be power of 2
+    size_t q_size = 4096; 
     spd::set_async_mode(q_size);
     auto async_file = spd::daily_logger_st("async_file_logger", "logs/async_log.txt");
     for (int i = 0; i < 100; ++i)

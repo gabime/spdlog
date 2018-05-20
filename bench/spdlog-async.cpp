@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
 
     int howmany = 1000000;
 
-    spdlog::set_async_mode(1048576);
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("file_logger", "logs/spdlog-bench-async.log", false);
+    spdlog::set_async_mode(1000000);
+    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("file_logger", "logs/spdlog-bench-async.log", true);
     logger->set_pattern("[%Y-%m-%d %T.%F]: %L %t %v");
 
     std::cout << "To stop, press <Enter>" << std::endl;
