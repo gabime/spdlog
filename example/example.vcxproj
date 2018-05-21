@@ -11,39 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\spdlog\async_logger.h" />
-    <ClInclude Include="..\include\spdlog\common.h" />
-    <ClInclude Include="..\include\spdlog\details\async_logger_impl.h" />
-    <ClInclude Include="..\include\spdlog\details\async_log_helper.h" />
-    <ClInclude Include="..\include\spdlog\details\file_helper.h" />
-    <ClInclude Include="..\include\spdlog\details\logger_impl.h" />
-    <ClInclude Include="..\include\spdlog\details\log_msg.h" />
-    <ClInclude Include="..\include\spdlog\details\null_mutex.h" />
-    <ClInclude Include="..\include\spdlog\details\os.h" />
-    <ClInclude Include="..\include\spdlog\details\pattern_formatter_impl.h" />
-    <ClInclude Include="..\include\spdlog\details\registry.h" />
-    <ClInclude Include="..\include\spdlog\details\spdlog_impl.h" />
-    <ClInclude Include="..\include\spdlog\fmt\fmt.h" />
-    <ClInclude Include="..\include\spdlog\fmt\ostr.h" />
-    <ClInclude Include="..\include\spdlog\formatter.h" />
-    <ClInclude Include="..\include\spdlog\logger.h" />
-    <ClInclude Include="..\include\spdlog\sinks\android_sink.h" />
-    <ClInclude Include="..\include\spdlog\sinks\ansicolor_sink.h" />
-    <ClInclude Include="..\include\spdlog\sinks\base_sink.h" />
-    <ClInclude Include="..\include\spdlog\sinks\dist_sink.h" />
-    <ClInclude Include="..\include\spdlog\sinks\file_sinks.h" />
-    <ClInclude Include="..\include\spdlog\sinks\msvc_sink.h" />
-    <ClInclude Include="..\include\spdlog\sinks\null_sink.h" />
-    <ClInclude Include="..\include\spdlog\sinks\ostream_sink.h" />
-    <ClInclude Include="..\include\spdlog\sinks\sink.h" />
-    <ClInclude Include="..\include\spdlog\sinks\stdout_sinks.h" />
-    <ClInclude Include="..\include\spdlog\sinks\syslog_sink.h" />
-    <ClInclude Include="..\include\spdlog\sinks\wincolor_sink.h" />
-    <ClInclude Include="..\include\spdlog\spdlog.h" />
-    <ClInclude Include="..\include\spdlog\tweakme.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="bench.cpp" />
+    <ClCompile Include="example.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}</ProjectGuid>

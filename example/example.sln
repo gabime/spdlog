@@ -1,9 +1,82 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example", "example.vcxproj", "{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "spdlog", "spdlog", "{319A0767-E66D-4DD0-8BEF-E29E891BA836}"
+	ProjectSection(SolutionItems) = preProject
+		..\include\spdlog\async_logger.h = ..\include\spdlog\async_logger.h
+		..\include\spdlog\common.h = ..\include\spdlog\common.h
+		..\include\spdlog\formatter.h = ..\include\spdlog\formatter.h
+		..\include\spdlog\logger.h = ..\include\spdlog\logger.h
+		..\include\spdlog\spdlog.h = ..\include\spdlog\spdlog.h
+		..\include\spdlog\tweakme.h = ..\include\spdlog\tweakme.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "contrib", "contrib", "{F1B153FB-7638-4F2B-B6FF-F56859D381F9}"
+	ProjectSection(SolutionItems) = preProject
+		..\include\spdlog\contrib\README.md = ..\include\spdlog\contrib\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sinks", "sinks", "{9B3669F7-6D70-4699-9067-451E9298BA53}"
+	ProjectSection(SolutionItems) = preProject
+		..\include\spdlog\contrib\sinks\.gitignore = ..\include\spdlog\contrib\sinks\.gitignore
+		..\include\spdlog\contrib\sinks\step_file_sink.h = ..\include\spdlog\contrib\sinks\step_file_sink.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "details", "details", "{579FDBF1-8FCD-4F1D-99F1-540F2EFF95E0}"
+	ProjectSection(SolutionItems) = preProject
+		..\include\spdlog\details\async_log_helper.h = ..\include\spdlog\details\async_log_helper.h
+		..\include\spdlog\details\async_logger_impl.h = ..\include\spdlog\details\async_logger_impl.h
+		..\include\spdlog\details\file_helper.h = ..\include\spdlog\details\file_helper.h
+		..\include\spdlog\details\log_msg.h = ..\include\spdlog\details\log_msg.h
+		..\include\spdlog\details\logger_impl.h = ..\include\spdlog\details\logger_impl.h
+		..\include\spdlog\details\mpmc_blocking_q.h = ..\include\spdlog\details\mpmc_blocking_q.h
+		..\include\spdlog\details\null_mutex.h = ..\include\spdlog\details\null_mutex.h
+		..\include\spdlog\details\os.h = ..\include\spdlog\details\os.h
+		..\include\spdlog\details\pattern_formatter_impl.h = ..\include\spdlog\details\pattern_formatter_impl.h
+		..\include\spdlog\details\registry.h = ..\include\spdlog\details\registry.h
+		..\include\spdlog\details\spdlog_impl.h = ..\include\spdlog\details\spdlog_impl.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "fmt", "fmt", "{2034E575-9375-4AE7-B667-AF4A359F1483}"
+	ProjectSection(SolutionItems) = preProject
+		..\include\spdlog\fmt\fmt.h = ..\include\spdlog\fmt\fmt.h
+		..\include\spdlog\fmt\ostr.h = ..\include\spdlog\fmt\ostr.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bundled", "bundled", "{16763E99-3CC7-4C46-8F79-259356FF0B37}"
+	ProjectSection(SolutionItems) = preProject
+		..\include\spdlog\fmt\bundled\format.cc = ..\include\spdlog\fmt\bundled\format.cc
+		..\include\spdlog\fmt\bundled\format.h = ..\include\spdlog\fmt\bundled\format.h
+		..\include\spdlog\fmt\bundled\LICENSE.rst = ..\include\spdlog\fmt\bundled\LICENSE.rst
+		..\include\spdlog\fmt\bundled\ostream.cc = ..\include\spdlog\fmt\bundled\ostream.cc
+		..\include\spdlog\fmt\bundled\ostream.h = ..\include\spdlog\fmt\bundled\ostream.h
+		..\include\spdlog\fmt\bundled\posix.cc = ..\include\spdlog\fmt\bundled\posix.cc
+		..\include\spdlog\fmt\bundled\posix.h = ..\include\spdlog\fmt\bundled\posix.h
+		..\include\spdlog\fmt\bundled\printf.cc = ..\include\spdlog\fmt\bundled\printf.cc
+		..\include\spdlog\fmt\bundled\printf.h = ..\include\spdlog\fmt\bundled\printf.h
+		..\include\spdlog\fmt\bundled\time.h = ..\include\spdlog\fmt\bundled\time.h
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sinks", "sinks", "{13310FA4-52E7-46BA-B071-B72B1D8E44D9}"
+	ProjectSection(SolutionItems) = preProject
+		..\include\spdlog\sinks\android_sink.h = ..\include\spdlog\sinks\android_sink.h
+		..\include\spdlog\sinks\ansicolor_sink.h = ..\include\spdlog\sinks\ansicolor_sink.h
+		..\include\spdlog\sinks\base_sink.h = ..\include\spdlog\sinks\base_sink.h
+		..\include\spdlog\sinks\dist_sink.h = ..\include\spdlog\sinks\dist_sink.h
+		..\include\spdlog\sinks\file_sinks.h = ..\include\spdlog\sinks\file_sinks.h
+		..\include\spdlog\sinks\msvc_sink.h = ..\include\spdlog\sinks\msvc_sink.h
+		..\include\spdlog\sinks\null_sink.h = ..\include\spdlog\sinks\null_sink.h
+		..\include\spdlog\sinks\ostream_sink.h = ..\include\spdlog\sinks\ostream_sink.h
+		..\include\spdlog\sinks\sink.h = ..\include\spdlog\sinks\sink.h
+		..\include\spdlog\sinks\stdout_sinks.h = ..\include\spdlog\sinks\stdout_sinks.h
+		..\include\spdlog\sinks\syslog_sink.h = ..\include\spdlog\sinks\syslog_sink.h
+		..\include\spdlog\sinks\wincolor_sink.h = ..\include\spdlog\sinks\wincolor_sink.h
+		..\include\spdlog\sinks\windebug_sink.h = ..\include\spdlog\sinks\windebug_sink.h
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,5 +95,16 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F1B153FB-7638-4F2B-B6FF-F56859D381F9} = {319A0767-E66D-4DD0-8BEF-E29E891BA836}
+		{9B3669F7-6D70-4699-9067-451E9298BA53} = {F1B153FB-7638-4F2B-B6FF-F56859D381F9}
+		{579FDBF1-8FCD-4F1D-99F1-540F2EFF95E0} = {319A0767-E66D-4DD0-8BEF-E29E891BA836}
+		{2034E575-9375-4AE7-B667-AF4A359F1483} = {319A0767-E66D-4DD0-8BEF-E29E891BA836}
+		{16763E99-3CC7-4C46-8F79-259356FF0B37} = {2034E575-9375-4AE7-B667-AF4A359F1483}
+		{13310FA4-52E7-46BA-B071-B72B1D8E44D9} = {319A0767-E66D-4DD0-8BEF-E29E891BA836}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8C12721F-513C-4922-B2F8-B9F2403412B4}
 	EndGlobalSection
 EndGlobal
