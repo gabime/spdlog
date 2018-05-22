@@ -8,7 +8,7 @@
 // async logger implementation
 // uses a thread pool to perform the actual logging
 
-#include "../details/thread_pool.h"
+#include "spdlog/details/thread_pool.h"
 
 #include <chrono>
 #include <memory>

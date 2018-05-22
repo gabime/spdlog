@@ -129,6 +129,7 @@
     <ClCompile Include="errors.cpp" />
     <ClCompile Include="file_helper.cpp" />
     <ClCompile Include="file_log.cpp" />
+    <ClCompile Include="test_async.cpp" />
     <ClCompile Include="test_misc.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="registry.cpp" />
