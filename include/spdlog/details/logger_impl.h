@@ -278,7 +278,18 @@ inline spdlog::log_err_handler spdlog::logger::error_handler()
 
 inline void spdlog::logger::flush()
 {
-    _flush();
+	try 
+	{
+		_flush();
+	}
+	catch (const std::exception &ex)
+	{
+		_err_handler(ex.what());
+	}
+	catch (...)
+	{
+		_err_handler("Unknown exception in logger during flush: " + _name);
+	}
 }
 
 inline void spdlog::logger::flush_on(level::level_enum log_level)
