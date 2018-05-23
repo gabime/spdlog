@@ -68,15 +68,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
 #endif
         _sink_it(log_msg);
     }
-    catch (const std::exception &ex)
-    {
-        _err_handler(ex.what());
-    }
-    catch (...)
-    {
-        _err_handler("Unknown exception in logger " + _name);
-        throw;
-    }
+    SPDLOG_CATCH_AND_HANDLE
 }
 
 template<typename... Args>
@@ -92,15 +84,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
         log_msg.raw << msg;
         _sink_it(log_msg);
     }
-    catch (const std::exception &ex)
-    {
-        _err_handler(ex.what());
-    }
-    catch (...)
-    {
-        _err_handler("Unknown exception in logger " + _name);
-        throw;
-    }
+   SPDLOG_CATCH_AND_HANDLE
 }
 
 template<typename T>
@@ -116,15 +100,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
         log_msg.raw << msg;
         _sink_it(log_msg);
     }
-    catch (const std::exception &ex)
-    {
-        _err_handler(ex.what());
-    }
-    catch (...)
-    {
-        _err_handler("Unknown exception in logger " + _name);
-        throw;
-    }
+	SPDLOG_CATCH_AND_HANDLE
 }
 
 template<typename Arg1, typename... Args>
@@ -331,10 +307,14 @@ inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
 
 inline void spdlog::logger::flush()
 {
-    for (auto &sink : _sinks)
-    {
-        sink->flush();
-    }
+	try 
+	{
+		for (auto &sink : _sinks)
+		{
+			sink->flush();
+		}
+	}
+	SPDLOG_CATCH_AND_HANDLE
 }
 
 inline void spdlog::logger::_default_err_handler(const std::string &msg)

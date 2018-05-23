@@ -179,4 +179,6 @@ using filename_t = std::wstring;
 using filename_t = std::string;
 #endif
 
+#define SPDLOG_CATCH_AND_HANDLE catch (const std::exception &ex) {_err_handler(ex.what());}\
+								catch (...) {_err_handler("Unknown exeption in logger");}
 } // namespace spdlog

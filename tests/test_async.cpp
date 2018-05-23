@@ -21,7 +21,7 @@ TEST_CASE("basic async test ", "[async]")
     auto test_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
     size_t queue_size = 128;
     size_t messages = 256;
-    auto logger = spdlog::create_async("as", test_sink, 128, spdlog::async_overflow_policy::block_retry);
+    auto logger = spdlog::create_async("as", test_sink, queue_size, spdlog::async_overflow_policy::block_retry);
     for (size_t i = 0; i < messages; i++)
     {
         logger->info("Hello message #{}", i);
