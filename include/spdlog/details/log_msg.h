@@ -37,12 +37,13 @@ struct log_msg
     level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;
-    fmt::MemoryWriter raw;
-    fmt::MemoryWriter formatted;
+    fmt::memory_buffer raw;
+    fmt::memory_buffer formatted;
     size_t msg_id{0};
     // wrap this range with color codes
     size_t color_range_start{0};
     size_t color_range_end{0};
+
 };
 } // namespace details
 } // namespace spdlog

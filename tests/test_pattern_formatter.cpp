@@ -68,7 +68,7 @@ TEST_CASE("color range test1", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%v%$", spdlog::pattern_time_type::local, "\n");
     spdlog::details::log_msg msg;
-    msg.raw << "Hello";
+    fmt::format_to(msg.raw, "Hello");
     formatter->format(msg);
     REQUIRE(msg.color_range_start == 0);
     REQUIRE(msg.color_range_end == 5);
@@ -98,7 +98,7 @@ TEST_CASE("color range test4", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("XX%^YYY%$", spdlog::pattern_time_type::local, "\n");
     spdlog::details::log_msg msg;
-    msg.raw << "ignored";
+    fmt::format_to(msg.raw, "ignored");
     formatter->format(msg);
     REQUIRE(msg.color_range_start == 2);
     REQUIRE(msg.color_range_end == 5);
