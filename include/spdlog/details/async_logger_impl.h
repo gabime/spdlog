@@ -80,14 +80,7 @@ inline void spdlog::async_logger::_backend_log(details::log_msg &incoming_log_ms
             }
         }
     }
-    catch (const std::exception &ex)
-    {
-        _err_handler(ex.what());
-    }
-    catch (...)
-    {
-        _err_handler("Unknown exception in async logger " + _name);
-    }
+	SPDLOG_CATCH_AND_HANDLE
 
     if (_should_flush(incoming_log_msg))
     {
@@ -99,18 +92,10 @@ inline void spdlog::async_logger::_backend_flush()
 {
     try
     {
-
         for (auto &sink : _sinks)
         {
             sink->flush();
         }
     }
-    catch (const std::exception &ex)
-    {
-        _err_handler(ex.what());
-    }
-    catch (...)
-    {
-        _err_handler("Unknown exception in async logger " + _name);
-    }
+	SPDLOG_CATCH_AND_HANDLE
 }
