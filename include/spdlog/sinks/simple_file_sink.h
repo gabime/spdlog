@@ -60,8 +60,6 @@ using simple_file_sink_st = simple_file_sink<details::null_mutex>;
 //
 // factory functions
 //
-
-// Basic logger simply writes to given file without any limitations or rotations.
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> basic_logger_mt(const std::string &logger_name, const filename_t &filename, bool truncate = false)
 {
