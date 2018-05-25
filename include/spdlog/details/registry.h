@@ -192,7 +192,7 @@ private:
 };
 
 #ifdef SPDLOG_NO_REGISTRY_MUTEX
-#include "../details/null_mutex.h"
+#include "spdlog/details/null_mutex.h"
 using registry = registry_t<spdlog::details::null_mutex>;
 #else
 #include <mutex>
