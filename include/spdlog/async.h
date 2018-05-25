@@ -51,7 +51,7 @@ inline std::shared_ptr<spdlog::logger> create_async_logger(const std::string &lo
     return create_async::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
 }
 
-// set global thread pool. q_size must be power of 2
+// set global thread pool.
 inline void init_thread_pool(size_t q_size, size_t thread_count)
 {
     using details::registry;
