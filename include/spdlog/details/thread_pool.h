@@ -130,7 +130,7 @@ namespace spdlog {
 
 			void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy)
 			{
-				post_async_msg(async_msg(std::forward<async_logger_ptr>(worker_ptr), async_msg_type::flush), overflow_policy);
+				post_async_msg(async_msg(std::move(worker_ptr), async_msg_type::flush), overflow_policy);
 			}
 
 			size_t msg_counter()
