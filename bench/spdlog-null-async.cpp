@@ -6,10 +6,10 @@
 //
 // bench.cpp : spdlog benchmarks
 //
+#include "spdlog/async.h"
 #include "spdlog/async_logger.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/spdlog.h"
-#include "spdlog/async.h"
 #include "utils.h"
 #include <atomic>
 #include <cstdlib> // EXIT_FAILURE
@@ -29,33 +29,47 @@ size_t bench_as(int howmany, std::shared_ptr<spdlog::logger> log, int thread_cou
 int main(int argc, char *argv[])
 {
 
-    int queue_size = 1048576;
-    int howmany = 1000000;
-    int threads = 10;
+    int howmany;
+    int tp_queue_size;
+    int tp_threads = 1;
+    int client_threads = 10;
     int iters = 10;
 
     try
     {
+        if (argc < 2)
+        {
+            cout << "Usage: " << argv[0] << " <howmany> [q_size] [client_threads] [tp_threads]" << endl;
+            return (1);
+        }
 
-        if (argc > 1)
-            howmany = atoi(argv[1]);
+        howmany = atoi(argv[1]);
         if (argc > 2)
-            threads = atoi(argv[2]);
+            client_threads = atoi(argv[2]);
+
         if (argc > 3)
-            queue_size = atoi(argv[3]);
+            tp_queue_size = atoi(argv[3]);
+        else
+            tp_queue_size = howmany;
+
+        if (argc > 4)
+            tp_threads = atoi(argv[4]);
 
         cout << "\n*******************************************************************************\n";
-        cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " messages " << endl;
+        cout << "client_threads:\t" << client_threads << endl;
+        cout << "messages:\t" << format(howmany) << endl;
+        cout << "tp queue:\t" << format(tp_queue_size) << endl;
+        cout << "tp threads:\t" << tp_threads << endl;
         cout << "*******************************************************************************\n";
-        
+
         size_t total_rate = 0;
 
         for (int i = 0; i < iters; ++i)
         {
-			spdlog::init_thread_pool (queue_size, 1);
+            spdlog::init_thread_pool(tp_queue_size, tp_threads);
             // auto as = spdlog::daily_logger_st("as", "logs/daily_async");
-            auto as = spdlog::create_async_logger <null_sink_st>("async(null-sink)");
-            total_rate += bench_as(howmany, as, threads);
+            auto as = spdlog::create_async_logger<null_sink_st>("async(null-sink)");
+            total_rate += bench_as(howmany, as, client_threads);
             spdlog::drop("async(null-sink)");
         }
         std::cout << endl;
