@@ -66,7 +66,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
 #endif
         _sink_it(log_msg);
     }
-	SPDLOG_CATCH_AND_HANDLE
+    SPDLOG_CATCH_AND_HANDLE
 }
 
 template<typename... Args>
@@ -82,7 +82,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
         log_msg.raw << msg;
         _sink_it(log_msg);
     }
-	SPDLOG_CATCH_AND_HANDLE
+    SPDLOG_CATCH_AND_HANDLE
 }
 
 template<typename T>
@@ -98,7 +98,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
         log_msg.raw << msg;
         _sink_it(log_msg);
     }
-	SPDLOG_CATCH_AND_HANDLE
+    SPDLOG_CATCH_AND_HANDLE
 }
 
 template<typename Arg1, typename... Args>
@@ -257,11 +257,11 @@ inline spdlog::log_err_handler spdlog::logger::error_handler()
 
 inline void spdlog::logger::flush()
 {
-	try 
-	{
-		_flush();
-	}
-	SPDLOG_CATCH_AND_HANDLE
+    try
+    {
+        _flush();
+    }
+    SPDLOG_CATCH_AND_HANDLE
 }
 
 inline void spdlog::logger::flush_on(level::level_enum log_level)

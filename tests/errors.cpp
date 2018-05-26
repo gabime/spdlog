@@ -13,14 +13,14 @@ class failing_sink : public spdlog::sinks::sink
     }
 
     void flush() override
-	{
-		throw std::runtime_error("some error happened during flush");
-	}
+    {
+        throw std::runtime_error("some error happened during flush");
+    }
 };
 
 TEST_CASE("default_error_handler", "[errors]]")
 {
-	spdlog::drop_all();
+    spdlog::drop_all();
     prepare_logdir();
     std::string filename = "logs/simple_log.txt";
 
@@ -44,7 +44,7 @@ struct custom_ex
 };
 TEST_CASE("custom_error_handler", "[errors]]")
 {
-	spdlog::drop_all();
+    spdlog::drop_all();
     prepare_logdir();
     std::string filename = "logs/simple_log.txt";
     auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename, true);
@@ -62,7 +62,7 @@ TEST_CASE("custom_error_handler", "[errors]]")
 
 TEST_CASE("default_error_handler2", "[errors]]")
 {
-	spdlog::drop_all();
+    spdlog::drop_all();
     auto logger = spdlog::create<failing_sink>("failed_logger");
     logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
     REQUIRE_THROWS_AS(logger->info("Some message"), custom_ex);
@@ -70,15 +70,15 @@ TEST_CASE("default_error_handler2", "[errors]]")
 
 TEST_CASE("flush_error_handler", "[errors]]")
 {
-	spdlog::drop_all();
-	auto logger = spdlog::create<failing_sink>("failed_logger");
-	logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
-	REQUIRE_THROWS_AS(logger->flush(), custom_ex);
+    spdlog::drop_all();
+    auto logger = spdlog::create<failing_sink>("failed_logger");
+    logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
+    REQUIRE_THROWS_AS(logger->flush(), custom_ex);
 }
 
 TEST_CASE("async_error_handler", "[errors]]")
 {
-	spdlog::drop_all();
+    spdlog::drop_all();
     prepare_logdir();
     std::string err_msg("log failed with some msg");
 
@@ -109,7 +109,7 @@ TEST_CASE("async_error_handler", "[errors]]")
 // Make sure async error handler is executed
 TEST_CASE("async_error_handler2", "[errors]]")
 {
-	spdlog::drop_all();
+    spdlog::drop_all();
     prepare_logdir();
     std::string err_msg("This is async handler error message");
     {

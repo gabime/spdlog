@@ -6,8 +6,8 @@
 #include <chrono>
 #include <iostream>
 
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/simple_file_sink.h"
+#include "spdlog/spdlog.h"
 
 int main(int, char *[])
 {

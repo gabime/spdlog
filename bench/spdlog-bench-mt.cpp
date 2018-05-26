@@ -10,8 +10,8 @@
 #include <thread>
 #include <vector>
 
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/simple_file_sink.h"
+#include "spdlog/spdlog.h"
 
 using namespace std;
 

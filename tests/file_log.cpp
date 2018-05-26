@@ -50,7 +50,7 @@ TEST_CASE("flush_on", "[flush_on]]")
 TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 {
     prepare_logdir();
-	size_t max_size = 1024 * 10;
+    size_t max_size = 1024 * 10;
     std::string basename = "logs/rotating_log";
     auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 0);
 
@@ -71,7 +71,7 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 {
     prepare_logdir();
-	size_t max_size = 1024 * 10;
+    size_t max_size = 1024 * 10;
     std::string basename = "logs/rotating_log";
     auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 1);
     for (int i = 0; i < 10; ++i)

@@ -80,7 +80,7 @@ inline void spdlog::async_logger::_backend_log(details::log_msg &incoming_log_ms
             }
         }
     }
-	SPDLOG_CATCH_AND_HANDLE
+    SPDLOG_CATCH_AND_HANDLE
 
     if (_should_flush(incoming_log_msg))
     {
@@ -97,5 +97,5 @@ inline void spdlog::async_logger::_backend_flush()
             sink->flush();
         }
     }
-	SPDLOG_CATCH_AND_HANDLE
+    SPDLOG_CATCH_AND_HANDLE
 }

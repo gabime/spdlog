@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
         thread_count = std::atoi(argv[1]);
 
     int howmany = 1000000;
-	spdlog::init_thread_pool (howmany, 1);
-    
+    spdlog::init_thread_pool(howmany, 1);
+
     auto logger = spdlog::create_async_logger<spdlog::sinks::simple_file_sink_mt>("file_logger", "logs/spdlog-bench-async.log", false);
     logger->set_pattern("[%Y-%m-%d %T.%F]: %L %t %v");
 
