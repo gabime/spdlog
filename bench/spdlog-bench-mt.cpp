@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/simple_file_sink.h"
 
 using namespace std;
 

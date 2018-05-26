@@ -10,7 +10,8 @@
 #include <thread>
 #include <vector>
 
-#include "spdlog/spdlog.h"
+#include "spdlog/async.h"
+#include "spdlog/sinks/simple_file_sink.h"
 
 using namespace std;
 
@@ -24,9 +25,9 @@ int main(int argc, char *argv[])
         thread_count = std::atoi(argv[1]);
 
     int howmany = 1000000;
-
-    spdlog::set_async_mode(1048576);
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("file_logger", "logs/spdlog-bench-async.log", false);
+	spdlog::init_thread_pool (howmany, 1);
+    
+    auto logger = spdlog::create_async_logger<spdlog::sinks::simple_file_sink_mt>("file_logger", "logs/spdlog-bench-async.log", false);
     logger->set_pattern("[%Y-%m-%d %T.%F]: %L %t %v");
 
     std::cout << "To stop, press <Enter>" << std::endl;

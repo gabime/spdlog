@@ -9,6 +9,7 @@
 #include "spdlog/async_logger.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/spdlog.h"
+#include "spdlog/async.h"
 #include "utils.h"
 #include <atomic>
 #include <cstdlib> // EXIT_FAILURE
@@ -46,15 +47,14 @@ int main(int argc, char *argv[])
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " messages " << endl;
         cout << "*******************************************************************************\n";
-
-        spdlog::set_async_mode(queue_size);
-
+        
         size_t total_rate = 0;
 
         for (int i = 0; i < iters; ++i)
         {
+			spdlog::init_thread_pool (queue_size, 1);
             // auto as = spdlog::daily_logger_st("as", "logs/daily_async");
-            auto as = spdlog::create<null_sink_st>("async(null-sink)");
+            auto as = spdlog::create_async_logger <null_sink_st>("async(null-sink)");
             total_rate += bench_as(howmany, as, threads);
             spdlog::drop("async(null-sink)");
         }

@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/simple_file_sink.h"
 
 int main(int, char *[])
 {
