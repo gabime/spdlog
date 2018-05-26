@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
             tp_threads = atoi(argv[4]);
 
         cout << "\n*******************************************************************************\n";
-        cout << "client_threads:\t" << client_threads << endl;
         cout << "messages:\t" << format(howmany) << endl;
+        cout << "client_threads:\t" << client_threads << endl;
         cout << "tp queue:\t" << format(tp_queue_size) << endl;
         cout << "tp threads:\t" << tp_threads << endl;
         cout << "*******************************************************************************\n";
