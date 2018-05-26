@@ -29,7 +29,7 @@ namespace spdlog {
 			level::level_enum level;
 			log_clock::time_point time;
 			size_t thread_id;
-			fmt::MemoryWriter raw;
+			std::string txt;
 
 			size_t msg_id;
 			async_logger_ptr worker_ptr;
@@ -48,7 +48,7 @@ namespace spdlog {
 				, level(m.level)
 				, time(m.time)
 				, thread_id(m.thread_id)
-				, raw(std::move(m.raw))
+				, txt(m.raw.data(), m.raw.size())
 				, msg_id(m.msg_id)
 				, worker_ptr(std::forward<async_logger_ptr>(worker))
 			{
@@ -71,7 +71,8 @@ namespace spdlog {
 				msg.level = level;
 				msg.time = time;
 				msg.thread_id = thread_id;
-				msg.raw = std::move(raw);
+				msg.raw.clear();
+				msg.raw << txt;
 				msg.formatted.clear();
 				msg.msg_id = msg_id;
 				msg.color_range_start = 0;
