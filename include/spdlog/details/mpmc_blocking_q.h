@@ -19,11 +19,11 @@ namespace spdlog {
 namespace details {
 
 template<typename T>
-class mpmc_bounded_queue
+class mpmc_blocking_queue
 {
 public:
     using item_type = T;
-    explicit mpmc_bounded_queue(size_t max_items)
+    explicit mpmc_blocking_queue(size_t max_items)
         : max_items_(max_items)
     {
     }

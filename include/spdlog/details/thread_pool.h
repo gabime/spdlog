@@ -83,7 +83,7 @@ namespace spdlog {
 		{
 		public:
 			using item_type = async_msg;
-			using q_type = details::mpmc_bounded_queue<item_type>;
+			using q_type = details::mpmc_blocking_queue<item_type>;
 			using clock_type = std::chrono::steady_clock;
 
 			thread_pool(size_t q_size_bytes, size_t threads_n)
