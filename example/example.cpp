@@ -28,8 +28,6 @@ int main(int, char *[])
 
     try
     {
-		async_example();
-		return 0;
         auto console = spdlog::stdout_color_st("console");
         console->info("Welcome to spdlog!");
 
