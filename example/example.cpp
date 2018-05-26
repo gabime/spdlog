@@ -80,9 +80,8 @@ int main(int, char *[])
         SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
         SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
 
-        // Asynchronous logging is very fast..
-        // Just call spdlog::set_async_mode(q_size) and all created loggers from now on will be asynchronous..
-        // async_example();
+        // Asynchronous logging example
+        async_example();
 
         // Log user-defined types example
         user_defined_example();
@@ -107,22 +106,14 @@ int main(int, char *[])
 #include "spdlog/async.h"
 void async_example()
 {
-    // auto async_file = spd::basic_logger_mt<spdlog::create_async>("async_file_logger", "logs/async_log.txt");
+    auto async_file = spd::basic_logger_mt<spdlog::create_async>("async_file_logger", "logs/async_log.txt");
 
-    for (int j = 0; j < 1; j++)
-    {
-        spdlog::init_thread_pool(1024, 10);
-        auto async_file = spd::stderr_color_mt<spdlog::create_async>("console");
-        for (int i = 0; i < 1024; ++i)
-        {
-            async_file->info("{} Async message #{}", j, i);
-        }
-        spdlog::drop_all();
-    }
-    // std::this_thread::sleep_for(std::chrono::seconds(1));
-
-    // you can also modify thread pool settings *before* creating the logger:
+    // thread pool settings can be modified *before* creating the async logger:
     // spdlog::init_thread_pool(32768, 4); // queue with max 32k items 4 backing threads.
+    for (int i = 0; i < 100; ++i)
+    {
+        async_file->info("Async message #{}", i + 1);
+    }
 }
 
 // syslog example (linux/osx/freebsd)
