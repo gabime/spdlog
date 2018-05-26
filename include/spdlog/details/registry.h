@@ -34,107 +34,107 @@ public:
 
     void register_logger(std::shared_ptr<logger> new_logger)
     {
-        std::lock_guard<Mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(mutex_);
         auto logger_name = new_logger->name();
         throw_if_exists(logger_name);
-        _loggers[logger_name] = new_logger;
+        loggers_[logger_name] = new_logger;
     }
 
     void register_and_init(std::shared_ptr<logger> new_logger)
     {
-        std::lock_guard<Mutex> lock(_mutex);
+        std::lock_guard<Mutex> lock(mutex_);
         auto logger_name = new_logger->name();
         throw_if_exists(logger_name);
 
-        if (_formatter)
+        if (formatter_)
         {
-            new_logger->set_formatter(_formatter);
+            new_logger->set_formatter(formatter_);
         }
 
-        if (_err_handler)
+        if (err_handler_)
         {
-            new_logger->set_error_handler(_err_handler);
+            new_logger->set_error_handler(err_handler_);
         }
 
-        new_logger->set_level(_level);
-        new_logger->flush_on(_flush_level);
+        new_logger->set_level(level_);
+        new_logger->flush_on(flush_level_);
 
         // Add to registry
-        _loggers[logger_name] = new_logger;
+        loggers_[logger_name] = new_logger;
     }
 
     std::shared_ptr<logger> get(const std::string &logger_name)
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        auto found = _loggers.find(logger_name);
-        return found == _loggers.end() ? nullptr : found->second;
+        std::lock_guard<Mutex> lock(mutex_);
+        auto found = loggers_.find(logger_name);
+        return found == loggers_.end() ? nullptr : found->second;
     }
 
     void set_thread_pool(std::shared_ptr<thread_pool> tp)
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        _tp = std::move(tp);
+        std::lock_guard<Mutex> lock(mutex_);
+        tp_ = std::move(tp);
     }
 
     std::shared_ptr<thread_pool> get_thread_pool()
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        return _tp;
+        std::lock_guard<Mutex> lock(mutex_);
+        return tp_;
     }
 
     void set_formatter(formatter_ptr f)
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        _formatter = f;
-        for (auto &l : _loggers)
+        std::lock_guard<Mutex> lock(mutex_);
+        formatter_ = f;
+        for (auto &l : loggers_)
         {
-            l.second->set_formatter(_formatter);
+            l.second->set_formatter(formatter_);
         }
     }
 
     void set_pattern(const std::string &pattern)
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        _formatter = std::make_shared<pattern_formatter>(pattern);
-        for (auto &l : _loggers)
+        std::lock_guard<Mutex> lock(mutex_);
+        formatter_ = std::make_shared<pattern_formatter>(pattern);
+        for (auto &l : loggers_)
         {
-            l.second->set_formatter(_formatter);
+            l.second->set_formatter(formatter_);
         }
     }
 
     void set_level(level::level_enum log_level)
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        for (auto &l : _loggers)
+        std::lock_guard<Mutex> lock(mutex_);
+        for (auto &l : loggers_)
         {
             l.second->set_level(log_level);
         }
-        _level = log_level;
+        level_ = log_level;
     }
 
     void flush_on(level::level_enum log_level)
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        for (auto &l : _loggers)
+        std::lock_guard<Mutex> lock(mutex_);
+        for (auto &l : loggers_)
         {
             l.second->flush_on(log_level);
         }
-        _flush_level = log_level;
+        flush_level_ = log_level;
     }
 
     void set_error_handler(log_err_handler handler)
     {
-        for (auto &l : _loggers)
+        for (auto &l : loggers_)
         {
             l.second->set_error_handler(handler);
         }
-        _err_handler = handler;
+        err_handler_ = handler;
     }
 
     void apply_all(std::function<void(std::shared_ptr<logger>)> fun)
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        for (auto &l : _loggers)
+        std::lock_guard<Mutex> lock(mutex_);
+        for (auto &l : loggers_)
         {
             fun(l.second);
         }
@@ -142,26 +142,26 @@ public:
 
     void drop(const std::string &logger_name)
     {
-        std::lock_guard<Mutex> lock(_mutex);
-        _loggers.erase(logger_name);
+        std::lock_guard<Mutex> lock(mutex_);
+        loggers_.erase(logger_name);
     }
 
     void drop_all()
     {
         {
-            std::lock_guard<Mutex> lock(_mutex);
-            _loggers.clear();
+            std::lock_guard<Mutex> lock(mutex_);
+            loggers_.clear();
         }
 
         {
-            std::lock_guard<Mutex> lock(_tp_mutex);
-            _tp.reset();
+            std::lock_guard<Mutex> lock(tp_mutex_);
+            tp_.reset();
         }
     }
 
     Mutex &tp_mutex()
     {
-        return _tp_mutex;
+        return tp_mutex_;
     }
 
     static registry_t<Mutex> &instance()
@@ -175,20 +175,20 @@ private:
 
     void throw_if_exists(const std::string &logger_name)
     {
-        if (_loggers.find(logger_name) != _loggers.end())
+        if (loggers_.find(logger_name) != loggers_.end())
         {
             throw spdlog_ex("logger with name '" + logger_name + "' already exists");
         }
     }
 
-    Mutex _mutex;
-    Mutex _tp_mutex;
-    std::unordered_map<std::string, std::shared_ptr<logger>> _loggers;
-    formatter_ptr _formatter;
-    level::level_enum _level = level::info;
-    level::level_enum _flush_level = level::off;
-    log_err_handler _err_handler;
-    std::shared_ptr<thread_pool> _tp;
+    Mutex mutex_;
+    Mutex tp_mutex_;
+    std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
+    formatter_ptr formatter_;
+    level::level_enum level_ = level::info;
+    level::level_enum flush_level_ = level::off;
+    log_err_handler err_handler_;
+    std::shared_ptr<thread_pool> tp_;
 };
 
 #ifdef SPDLOG_NO_REGISTRY_MUTEX
