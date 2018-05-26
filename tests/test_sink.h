@@ -8,7 +8,9 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
 
+#include <chrono>
 #include <mutex>
+#include <thread>
 
 namespace spdlog {
 namespace sinks {
@@ -22,23 +24,30 @@ public:
         return msg_counter_;
     }
 
-    size_t flushed_msg_counter()
+    size_t flush_counter()
     {
-        return flushed_msg_counter_;
+        return flush_counter_;
+    }
+
+    void set_delay(std::chrono::milliseconds delay)
+    {
+        delay_ = delay;
     }
 
 protected:
     void _sink_it(const details::log_msg &) override
     {
         msg_counter_++;
+        std::this_thread::sleep_for(delay_);
     }
 
     void _flush() override
     {
-        flushed_msg_counter_ += msg_counter_;
+        flush_counter_++;
     }
     size_t msg_counter_{0};
-    size_t flushed_msg_counter_{0};
+    size_t flush_counter_{0};
+    std::chrono::milliseconds delay_{0};
 };
 
 using test_sink_mt = test_sink<std::mutex>;

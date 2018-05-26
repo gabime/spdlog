@@ -3,12 +3,6 @@
 #include "spdlog/sinks/simple_file_sink.h"
 #include "test_sink.h"
 
-// std::unique_ptr<spdlog::async_logger> create_logger(size_t tp_queue_size, size_t tp_threads)
-//{
-//	auto tp = std::make_shared<details::thread_pool>(8192, 1);
-//	auto logger = std::make_shared<async_logger>("as", test_sink, tp, async_overflow_policy::block_retry);
-//}
-
 TEST_CASE("basic async test ", "[async]")
 {
     using namespace spdlog;
@@ -25,7 +19,7 @@ TEST_CASE("basic async test ", "[async]")
         logger->flush();
     }
     REQUIRE(test_sink->msg_counter() == messages);
-    REQUIRE(test_sink->flushed_msg_counter() == messages);
+    REQUIRE(test_sink->flush_counter() == 1);
 }
 
 TEST_CASE("discard policy ", "[async]")
@@ -43,8 +37,7 @@ TEST_CASE("discard policy ", "[async]")
         }
     }
 
-    REQUIRE(test_sink->msg_counter() < messages);
-    REQUIRE(test_sink->flushed_msg_counter() < messages);
+    REQUIRE(test_sink->msg_counter() < messages);    
 }
 
 TEST_CASE("flush", "[async]")
@@ -65,7 +58,27 @@ TEST_CASE("flush", "[async]")
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
     REQUIRE(test_sink->msg_counter() == messages);
-    REQUIRE(test_sink->flushed_msg_counter() == messages);
+    REQUIRE(test_sink->flush_counter() == 1);
+}
+
+TEST_CASE("tp->wait_empty() ", "[async]")
+{
+    using namespace spdlog;
+    auto test_sink = std::make_shared<sinks::test_sink_mt>();
+    test_sink->set_delay(std::chrono::milliseconds(5));
+    size_t messages = 50;
+
+    auto tp = std::make_shared<details::thread_pool>(messages, 2);
+    auto logger = std::make_shared<async_logger>("as", test_sink, tp, async_overflow_policy::block_retry);
+    for (size_t i = 0; i < messages; i++)
+    {
+        logger->info("Hello message #{}", i);
+    }
+    logger->flush();
+    tp->wait_empty();
+
+    REQUIRE(test_sink->msg_counter() == messages);
+    REQUIRE(test_sink->flush_counter() == 1);
 }
 
 TEST_CASE("multi threads", "[async]")
@@ -88,17 +101,18 @@ TEST_CASE("multi threads", "[async]")
                     logger->info("Hello message #{}", j);
                 }
             });
+			logger->flush();
         }
 
         for (auto &t : threads)
         {
             t.join();
         }
-        logger->flush();
+        
     }
 
     REQUIRE(test_sink->msg_counter() == messages * n_threads);
-    REQUIRE(test_sink->flushed_msg_counter() == messages * n_threads);
+    REQUIRE(test_sink->flush_counter() == n_threads);
 }
 
 TEST_CASE("to_file", "[async]")
