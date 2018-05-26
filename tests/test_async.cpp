@@ -103,42 +103,42 @@ TEST_CASE("multi threads", "[async]")
 
 TEST_CASE("to_file", "[async]")
 {
-	prepare_logdir();	
-	size_t messages = 1024;
-	size_t tp_threads = 1;
-	std::string filename = "logs/async_test.log";
-	{
-		auto file_sink = std::make_shared<spdlog::sinks::simple_file_sink_mt>(filename, true);
-		auto tp = std::make_shared<spdlog::details::thread_pool>(messages, tp_threads);
-		auto logger = std::make_shared<spdlog::async_logger>("as", std::move(file_sink), std::move(tp)); 
+    prepare_logdir();
+    size_t messages = 1024;
+    size_t tp_threads = 1;
+    std::string filename = "logs/async_test.log";
+    {
+        auto file_sink = std::make_shared<spdlog::sinks::simple_file_sink_mt>(filename, true);
+        auto tp = std::make_shared<spdlog::details::thread_pool>(messages, tp_threads);
+        auto logger = std::make_shared<spdlog::async_logger>("as", std::move(file_sink), std::move(tp));
 
-		for (size_t j = 0; j < messages; j++)
-		{
-			logger->info("Hello message #{}", j);
-		}
-	}
-	
-	REQUIRE(count_lines(filename) == messages);
-	auto contents = file_contents(filename); 
-	REQUIRE(ends_with (contents, std::string("Hello message #1023") + SPDLOG_EOL));
+        for (size_t j = 0; j < messages; j++)
+        {
+            logger->info("Hello message #{}", j);
+        }
+    }
+
+    REQUIRE(count_lines(filename) == messages);
+    auto contents = file_contents(filename);
+    REQUIRE(ends_with(contents, std::string("Hello message #1023") + SPDLOG_EOL));
 }
 
 TEST_CASE("to_file multi-workers", "[async]")
 {
-	prepare_logdir();	
-	size_t messages = 1024*10;
-	size_t tp_threads = 10;
-	std::string filename = "logs/async_test.log";
-	{
-		auto file_sink = std::make_shared<spdlog::sinks::simple_file_sink_mt>(filename, true);
-		auto tp = std::make_shared<spdlog::details::thread_pool>(messages, tp_threads);
-		auto logger = std::make_shared<spdlog::async_logger>("as", std::move(file_sink), std::move(tp)); 
+    prepare_logdir();
+    size_t messages = 1024 * 10;
+    size_t tp_threads = 10;
+    std::string filename = "logs/async_test.log";
+    {
+        auto file_sink = std::make_shared<spdlog::sinks::simple_file_sink_mt>(filename, true);
+        auto tp = std::make_shared<spdlog::details::thread_pool>(messages, tp_threads);
+        auto logger = std::make_shared<spdlog::async_logger>("as", std::move(file_sink), std::move(tp));
 
-		for (size_t j = 0; j < messages; j++)
-		{
-			logger->info("Hello message #{}", j);
-		}
-	}
-	
-	REQUIRE(count_lines(filename) == messages);	
+        for (size_t j = 0; j < messages; j++)
+        {
+            logger->info("Hello message #{}", j);
+        }
+    }
+
+    REQUIRE(count_lines(filename) == messages);
 }
