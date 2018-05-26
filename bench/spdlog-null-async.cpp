@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     {
         if (argc < 2)
         {
-            cout << "Usage: " << argv[0] << " <howmany> [q_size] [client_threads] [tp_threads]" << endl;
+            cout << "Usage: " << argv[0] << " <howmany> [client_threads] [q_size] [tp_threads]" << endl;
             return (1);
         }
 
