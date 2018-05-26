@@ -46,7 +46,7 @@ public:
         _filename = fname;
         for (int tries = 0; tries < open_tries; ++tries)
         {
-            if (!os::fopen_s(&_fd, fname, mode))
+            if (!os::fopen_s(&fd_, fname, mode))
             {
                 return;
             }
@@ -68,15 +68,15 @@ public:
 
     void flush()
     {
-        std::fflush(_fd);
+        std::fflush(fd_);
     }
 
     void close()
     {
-        if (_fd != nullptr)
+        if (fd_ != nullptr)
         {
-            std::fclose(_fd);
-            _fd = nullptr;
+            std::fclose(fd_);
+            fd_ = nullptr;
         }
     }
 
@@ -84,7 +84,7 @@ public:
     {
         size_t msg_size = msg.formatted.size();
         auto data = msg.formatted.data();
-        if (std::fwrite(data, 1, msg_size, _fd) != msg_size)
+        if (std::fwrite(data, 1, msg_size, fd_) != msg_size)
         {
             throw spdlog_ex("Failed writing to file " + os::filename_to_str(_filename), errno);
         }
@@ -92,11 +92,11 @@ public:
 
     size_t size() const
     {
-        if (_fd == nullptr)
+        if (fd_ == nullptr)
         {
             throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
         }
-        return os::filesize(_fd);
+        return os::filesize(fd_);
     }
 
     const filename_t &filename() const
@@ -144,7 +144,7 @@ public:
     }
 
 private:
-    FILE *_fd{nullptr};
+    FILE *fd_{nullptr};
     filename_t _filename;
 };
 } // namespace details
