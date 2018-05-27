@@ -114,6 +114,8 @@ void async_example()
     {
         async_file->info("Async message #{}", i + 1);
     }
+	// you can wait for all the messages to processed:
+	// spdlog::thread_pool()->wait_empty();
 }
 
 // syslog example (linux/osx/freebsd)
