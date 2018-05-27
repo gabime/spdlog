@@ -74,12 +74,13 @@ int main(int argc, char *argv[])
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
         cout << "*******************************************************************************\n";
 
+        spdlog::init_thread_pool(queue_size, 1);
         for (int i = 0; i < 3; ++i)
         {
-            spdlog::init_thread_pool(queue_size, 1);
             auto as = spdlog::basic_logger_mt<spdlog::create_async>("as", "logs/basic_async.log", true);
             bench_mt(howmany, as, threads);
             spdlog::drop("as");
+            spdlog::thread_pool()->wait_empty();
         }
     }
     catch (std::exception &ex)

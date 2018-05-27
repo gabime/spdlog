@@ -37,7 +37,7 @@ TEST_CASE("discard policy ", "[async]")
         }
     }
 
-    REQUIRE(test_sink->msg_counter() < messages);    
+    REQUIRE(test_sink->msg_counter() < messages);
 }
 
 TEST_CASE("flush", "[async]")
@@ -101,14 +101,13 @@ TEST_CASE("multi threads", "[async]")
                     logger->info("Hello message #{}", j);
                 }
             });
-			logger->flush();
+            logger->flush();
         }
 
         for (auto &t : threads)
         {
             t.join();
         }
-        
     }
 
     REQUIRE(test_sink->msg_counter() == messages * n_threads);

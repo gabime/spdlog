@@ -59,4 +59,10 @@ inline void init_thread_pool(size_t q_size, size_t thread_count)
     auto tp = std::make_shared<thread_pool>(q_size, thread_count);
     registry::instance().set_thread_pool(std::move(tp));
 }
+
+// get the global thread pool.
+inline std::shared_ptr<spdlog::details::thread_pool> thread_pool()
+{
+    return details::registry::instance().get_thread_pool();
+}
 } // namespace spdlog
