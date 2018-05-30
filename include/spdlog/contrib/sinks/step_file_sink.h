@@ -75,7 +75,15 @@ public:
         {
             throw spdlog_ex("step_file_sink: Invalid time step in ctor");
         }
-        if (max_size == 0)
+
+        if (!file_header.empty())
+        {
+            pattern_formatter formatter_for_file_header("%v");
+            _file_header.raw << file_header;
+            formatter_for_file_header.format(_file_header);
+        }
+
+        if (max_size <= _file_header.formatted.size())
         {
             throw spdlog_ex("step_file_sink: Invalid max log size in ctor");
         }
@@ -86,13 +94,6 @@ public:
         if (_tmp_ext == _ext)
         {
             throw spdlog_ex("step_file_sink: The temporary extension matches the specified in ctor");
-        }
-
-        if (!file_header.empty())
-        {
-            pattern_formatter formatter_for_file_header("%v");
-            _file_header.raw << file_header;
-            formatter_for_file_header.format(_file_header);
         }
 
         _file_helper.open(_current_filename);
@@ -120,14 +121,19 @@ protected:
 
         if (std::chrono::system_clock::now() >= _tp || _current_size + msg_size > _max_size)
         {
-            close_current_file();
+            filename_t new_filename;
+            std::tie(new_filename, std::ignore) = FileNameCalc::calc_filename(_base_filename, _tmp_ext);
+            if (new_filename != _current_filename)
+            {
+                close_current_file();
 
-            std::tie(_current_filename, std::ignore) = FileNameCalc::calc_filename(_base_filename, _tmp_ext);
-            _file_helper.open(_current_filename);
-            _tp = _next_tp();
+                // std::tie(_current_filename, std::ignore) = FileNameCalc::calc_filename(_base_filename, _tmp_ext);
+                _file_helper.open(_current_filename);
+                _tp = _next_tp();
 
-            _current_size = _file_header.formatted.size();
-            if (_current_size) _file_helper.write(_file_header);
+                _current_size = _file_header.formatted.size();
+                if (_current_size) _file_helper.write(_file_header);
+            }
         }
 
         _current_size += msg_size;
