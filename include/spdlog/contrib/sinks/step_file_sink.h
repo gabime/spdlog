@@ -99,8 +99,11 @@ public:
         _file_helper.open(_current_filename);
         _current_size = _file_helper.size(); // expensive. called only once
 
-        _current_size += _file_header.formatted.size();
-        if (_current_size) _file_helper.write(_file_header);
+        if (!_current_size)
+        {
+            _current_size += _file_header.formatted.size();
+            if (_current_size) _file_helper.write(_file_header);
+        }
     }
 
     ~step_file_sink()
@@ -123,14 +126,17 @@ protected:
         {
             filename_t new_filename;
             std::tie(new_filename, std::ignore) = FileNameCalc::calc_filename(_base_filename, _tmp_ext);
-            if (new_filename != _current_filename)
+            
+            bool change_occured = !details::file_helper::file_exists(new_filename);
+            if (change_occured) close_current_file();
+
+            _current_filename = std::move(new_filename);
+
+            _file_helper.open(_current_filename);
+            _tp = _next_tp();
+
+            if (change_occured)
             {
-                close_current_file();
-
-                // std::tie(_current_filename, std::ignore) = FileNameCalc::calc_filename(_base_filename, _tmp_ext);
-                _file_helper.open(_current_filename);
-                _tp = _next_tp();
-
                 _current_size = _file_header.formatted.size();
                 if (_current_size) _file_helper.write(_file_header);
             }
