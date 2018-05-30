@@ -282,7 +282,7 @@ inline int utc_minutes_offset(const std::tm &tm = details::os::localtime())
     return offset;
 #else
 
-#if defined(sun) || defined(__sun)
+#if defined(sun) || defined(__sun) || defined(_AIX)
     // 'tm_gmtoff' field is BSD extension and it's missing on SunOS/Solaris
     struct helper
     {
