@@ -383,57 +383,16 @@ inline std::string filename_to_str(const filename_t &filename)
 }
 #endif
 
-inline std::string errno_to_string(char[256], char *res)
-{
-    return std::string(res);
-}
-
-inline std::string errno_to_string(char buf[256], int res)
-{
-    if (res == 0)
-    {
-        return std::string(buf);
-    }
-    return "Unknown error";
-}
-
-inline std::string errno_to_string(char buf[256], const fmt::internal::Null<> &/*tag*/)
-{
-    return errno_to_string(buf, -1);
-}
-
 // Return errno string (thread safe)
 inline std::string errno_str(int err_num)
 {
-    char buf[256];
+    char buf[256], *buf_ptr = buf;
     SPDLOG_CONSTEXPR auto buf_size = sizeof(buf);
-
-#ifdef _WIN32
-    if (strerror_s(buf, buf_size, err_num) == 0)
+    if (fmt::safe_strerror(err_num, buf_ptr, buf_size) == 0)
     {
-        return std::string(buf);
+        return std::string(buf_ptr);
     }
-    else
-    {
-        return "Unknown error";
-    }
-
-#elif defined(__FreeBSD__) || defined(__APPLE__) || defined(ANDROID) || defined(__SUNPRO_CC) ||                                            \
-    ((_POSIX_C_SOURCE >= 200112L) && !defined(_GNU_SOURCE)) // posix version
-
-    if (strerror_r(err_num, buf, buf_size) == 0)
-    {
-        return std::string(buf);
-    }
-    else
-    {
-        return "Unknown error";
-    }
-
-#else // gnu version (might not use the given buf, so its retval pointer must be used)
-    auto err = strerror_r(err_num, buf, buf_size); // let compiler choose type
-    return errno_to_string(buf, err);              // use overloading to select correct stringify function
-#endif
+    return "Unknown error";
 }
 
 inline int pid()
