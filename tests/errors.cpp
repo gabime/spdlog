@@ -20,11 +20,11 @@ class failing_sink : public spdlog::sinks::sink
 
 TEST_CASE("default_error_handler", "[errors]]")
 {
-    spdlog::drop_all();
+
     prepare_logdir();
     std::string filename = "logs/simple_log.txt";
 
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename, true);
+    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("test-error", filename, true);
     logger->set_pattern("%v");
 #if !defined(SPDLOG_FMT_PRINTF)
     logger->info("Test message {} {}", 1);
@@ -44,7 +44,6 @@ struct custom_ex
 };
 TEST_CASE("custom_error_handler", "[errors]]")
 {
-    spdlog::drop_all();
     prepare_logdir();
     std::string filename = "logs/simple_log.txt";
     auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename, true);
@@ -78,7 +77,6 @@ TEST_CASE("flush_error_handler", "[errors]]")
 
 TEST_CASE("async_error_handler", "[errors]]")
 {
-    spdlog::drop_all();
     prepare_logdir();
     std::string err_msg("log failed with some msg");
 
@@ -109,7 +107,6 @@ TEST_CASE("async_error_handler", "[errors]]")
 // Make sure async error handler is executed
 TEST_CASE("async_error_handler2", "[errors]]")
 {
-    spdlog::drop_all();
     prepare_logdir();
     std::string err_msg("This is async handler error message");
     {
