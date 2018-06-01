@@ -153,15 +153,18 @@ public:
 
     spdlog_ex(const std::string &msg, int last_errno)
     {
+        std::string errno_string;
         char buf[256], *buf_ptr = buf;
-        SPDLOG_CONSTEXPR auto buf_size = sizeof(buf);
-        if (fmt::safe_strerror(last_errno, buf_ptr, buf_size) != 0)
+
+        if (fmt::safe_strerror(last_errno, buf_ptr, sizeof(buf)) == 0)
         {
-            buf_ptr = buf;
-            char unknown[] = "Unknown error";
-            std::copy(unknown, unknown + sizeof(unknown), buf_ptr);
+            errno_string = buf_ptr;
         }
-        _msg = msg + ": " + std::string(buf_ptr);
+        else
+        {
+            errno_string = "Unknown error";
+        }
+        _msg = msg + ": " + errno_string;
     }
 
     const char *what() const SPDLOG_NOEXCEPT override
@@ -182,6 +185,13 @@ using filename_t = std::wstring;
 using filename_t = std::string;
 #endif
 
-#define SPDLOG_CATCH_AND_HANDLE catch (const std::exception &ex) {_err_handler(ex.what());}\
-								catch (...) {_err_handler("Unknown exeption in logger");}
+#define SPDLOG_CATCH_AND_HANDLE                                                                                                            \
+    catch (const std::exception &ex)                                                                                                       \
+    {                                                                                                                                      \
+        _err_handler(ex.what());                                                                                                           \
+    }                                                                                                                                      \
+    catch (...)                                                                                                                            \
+    {                                                                                                                                      \
+        _err_handler("Unknown exeption in logger");                                                                                        \
+    }
 } // namespace spdlog
