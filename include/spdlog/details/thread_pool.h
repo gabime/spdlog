@@ -87,9 +87,8 @@ public:
     using q_type = details::mpmc_blocking_queue<item_type>;
     using clock_type = std::chrono::steady_clock;
 
-    thread_pool(size_t q_size_bytes, size_t threads_n)
-        : msg_counter_(0)
-        , q_(q_size_bytes)
+    thread_pool(size_t q_max_items, size_t threads_n)
+        : q_(q_max_items)
     {
         // std::cout << "thread_pool()  q_size_bytes: " << q_size_bytes << "\tthreads_n: " << threads_n << std::endl;
         if (threads_n == 0 || threads_n > 1000)
@@ -134,13 +133,7 @@ public:
         post_async_msg(async_msg(std::move(worker_ptr), async_msg_type::flush), overflow_policy);
     }
 
-    size_t msg_counter()
-    {
-        return msg_counter_.load(std::memory_order_relaxed);
-    }
-
 private:
-    std::atomic<size_t> msg_counter_; // total # of messages processed in this pool
     q_type q_;
 
     std::vector<std::thread> threads_;
@@ -191,7 +184,6 @@ private:
             log_msg msg;
             incoming_async_msg.to_log_msg(std::move(msg));
             incoming_async_msg.worker_ptr->_backend_log(msg);
-            msg_counter_.fetch_add(1, std::memory_order_relaxed);
             return true;
         }
         }
