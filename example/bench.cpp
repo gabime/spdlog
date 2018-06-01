@@ -108,7 +108,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 
     cout << log->name() << "...\t\t" << flush;
     std::atomic<int> msg_counter{0};
-    vector<thread> threads;
+    vector<std::thread> threads;
     auto start = system_clock::now();
     for (int t = 0; t < thread_count; ++t)
     {
