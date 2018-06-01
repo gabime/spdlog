@@ -383,18 +383,6 @@ inline std::string filename_to_str(const filename_t &filename)
 }
 #endif
 
-// Return errno string (thread safe)
-inline std::string errno_str(int err_num)
-{
-    char buf[256], *buf_ptr = buf;
-    SPDLOG_CONSTEXPR auto buf_size = sizeof(buf);
-    if (fmt::safe_strerror(err_num, buf_ptr, buf_size) == 0)
-    {
-        return std::string(buf_ptr);
-    }
-    return "Unknown error";
-}
-
 inline int pid()
 {
 
