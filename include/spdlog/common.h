@@ -159,7 +159,7 @@ public:
     spdlog_ex(const std::string &msg, int last_errno)
     {
         std::string errno_string;
-        char buf[256], *buf_ptr = buf;
+        char buf[500], *buf_ptr = buf;
 
         if (fmt::safe_strerror(last_errno, buf_ptr, sizeof(buf)) == 0)
         {
