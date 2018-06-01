@@ -66,7 +66,7 @@ TEST_CASE("tp->wait_empty() ", "[async]")
     using namespace spdlog;
     auto test_sink = std::make_shared<sinks::test_sink_mt>();
     test_sink->set_delay(std::chrono::milliseconds(5));
-    size_t messages = 50;
+    size_t messages = 100;
 
     auto tp = std::make_shared<details::thread_pool>(messages, 2);
     auto logger = std::make_shared<async_logger>("as", test_sink, tp, async_overflow_policy::block_retry);
@@ -75,7 +75,8 @@ TEST_CASE("tp->wait_empty() ", "[async]")
         logger->info("Hello message #{}", i);
     }
     logger->flush();
-    tp->wait_empty();
+    tp.reset();
+
 
     REQUIRE(test_sink->msg_counter() == messages);
     REQUIRE(test_sink->flush_counter() == 1);

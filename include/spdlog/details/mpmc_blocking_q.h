@@ -71,13 +71,7 @@ public:
         pop_cv_.notify_one();
         return true;
     }
-
-    // wait until the queue is empty
-    void wait_empty()
-    {
-        std::unique_lock<std::mutex> lock(queue_mutex_);
-        pop_cv_.wait(lock, [this] { return this->q_.empty(); });
-    }
+  
 
 private:
     size_t max_items_;
