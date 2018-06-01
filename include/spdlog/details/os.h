@@ -397,6 +397,11 @@ inline std::string errno_to_string(char buf[256], int res)
     return "Unknown error";
 }
 
+inline std::string errno_to_string(char buf[256], const fmt::internal::Null<> &/*tag*/)
+{
+    return errno_to_string(buf, -1);
+}
+
 // Return errno string (thread safe)
 inline std::string errno_str(int err_num)
 {
