@@ -143,11 +143,6 @@ enum class pattern_time_type
 //
 // Log exception
 //
-namespace details {
-namespace os {
-std::string errno_str(int err_num);
-}
-} // namespace details
 class spdlog_ex : public std::exception
 {
 public:
@@ -158,7 +153,15 @@ public:
 
     spdlog_ex(const std::string &msg, int last_errno)
     {
-        _msg = msg + ": " + details::os::errno_str(last_errno);
+        char buf[256], *buf_ptr = buf;
+        SPDLOG_CONSTEXPR auto buf_size = sizeof(buf);
+        if (fmt::safe_strerror(last_errno, buf_ptr, buf_size) != 0)
+        {
+            buf_ptr = buf;
+            char unknown[] = "Unknown error";
+            std::copy(unknown, unknown + sizeof(unknown), buf_ptr);
+        }
+        _msg = msg + ": " + std::string(buf_ptr);
     }
 
     const char *what() const SPDLOG_NOEXCEPT override
