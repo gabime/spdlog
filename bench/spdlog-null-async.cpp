@@ -63,13 +63,13 @@ int main(int argc, char *argv[])
         cout << "*******************************************************************************\n";
 
         size_t total_rate = 0;
-        spdlog::init_thread_pool(tp_queue_size, tp_threads);
+
         for (int i = 0; i < iters; ++i)
         {
+            spdlog::init_thread_pool(tp_queue_size, tp_threads);
             auto as = spdlog::create_async_logger<null_sink_mt>("async(null-sink)");
             total_rate += bench_as(howmany, as, client_threads);
-            spdlog::drop("async(null-sink)");
-            spdlog::thread_pool()->wait_empty();
+            spdlog::drop("async(null-sink)");            
         }
         std::cout << endl;
         std::cout << "Avg rate: " << format(total_rate / iters) << "/sec" << std::endl;

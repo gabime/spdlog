@@ -12,7 +12,6 @@
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/simple_file_sink.h"
 #include "spdlog/spdlog.h"
-
 #include "utils.h"
 #include <atomic>
 #include <cstdlib> // EXIT_FAILURE
@@ -73,7 +72,6 @@ int main(int argc, char *argv[])
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
         cout << "*******************************************************************************\n";
-
         
         for (int i = 0; i < 3; ++i)
         {
@@ -83,6 +81,9 @@ int main(int argc, char *argv[])
             spdlog::drop("as");
             
         }
+
+       
+
     }
     catch (std::exception &ex)
     {
@@ -104,7 +105,7 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    cout << format(int(howmany / delta_d)) << "/sec" << endl;
+    cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
 }
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
@@ -134,5 +135,5 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 
     auto delta = system_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    cout << format(int(howmany / delta_d)) << "/sec" << endl;
+    cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
 }
