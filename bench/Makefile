@@ -12,8 +12,7 @@ bench: bench.cpp
 	
 spdlog-null-async: spdlog-null-async.cpp
 	$(CXX) spdlog-null-async.cpp -o spdlog-null-async $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
-		
-
+			
 
 .PHONY: clean
 
