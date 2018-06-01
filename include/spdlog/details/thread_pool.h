@@ -138,7 +138,6 @@ public:
     {
         return msg_counter_.load(std::memory_order_relaxed);
     }
-    
 
 private:
     std::atomic<size_t> msg_counter_; // total # of messages processed in this pool

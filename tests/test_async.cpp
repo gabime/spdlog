@@ -77,7 +77,6 @@ TEST_CASE("tp->wait_empty() ", "[async]")
     logger->flush();
     tp.reset();
 
-
     REQUIRE(test_sink->msg_counter() == messages);
     REQUIRE(test_sink->flush_counter() == 1);
 }

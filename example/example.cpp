@@ -113,7 +113,7 @@ void async_example()
     for (int i = 0; i < 100; ++i)
     {
         async_file->info("Async message #{}", i + 1);
-    }	
+    }
 }
 
 // syslog example (linux/osx/freebsd)

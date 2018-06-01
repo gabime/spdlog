@@ -71,7 +71,6 @@ public:
         pop_cv_.notify_one();
         return true;
     }
-  
 
 private:
     size_t max_items_;
