@@ -153,18 +153,9 @@ public:
 
     spdlog_ex(const std::string &msg, int last_errno)
     {
-        std::string errno_string;
-        char buf[256], *buf_ptr = buf;
-
-        if (fmt::safe_strerror(last_errno, buf_ptr, sizeof(buf)) == 0)
-        {
-            errno_string = buf_ptr;
-        }
-        else
-        {
-            errno_string = "Unknown error";
-        }
-        _msg = msg + ": " + errno_string;
+        fmt::MemoryWriter writer;
+        fmt::format_system_error(writer, last_errno, msg);
+        _msg = writer.str();
     }
 
     const char *what() const SPDLOG_NOEXCEPT override
