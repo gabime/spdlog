@@ -74,7 +74,7 @@ int main(int, char *[])
         // Runtime log levels
         spd::set_level(spd::level::info); // Set global log level to info
         console->debug("This message should not be displayed!");
-        console->set_level(spd::level::debug); // Set specific logger's log level
+        console->set_level(spd::level::trace); // Set specific logger's log level
         console->debug("This message should be displayed..");
 
         // Compile time log levels
