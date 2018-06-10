@@ -21,6 +21,7 @@
 void async_example();
 void user_defined_example();
 void err_handler_example();
+void syslog_example();
 
 namespace spd = spdlog;
 int main(int, char *[])
@@ -28,6 +29,7 @@ int main(int, char *[])
 
     try
     {
+        syslog_example();
         auto console = spdlog::stdout_color_st("console");
         console->info("Welcome to spdlog!");
 
