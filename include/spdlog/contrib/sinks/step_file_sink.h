@@ -18,22 +18,26 @@
 // Create a file logger which creates new files with a specified time step and fixed file size:
 //
 // std::shared_ptr<logger> step_logger_mt(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, const
-// filename_t &tmp_ext = ".tmp", unsigned max_file_size = std::numeric_limits<unsigned>::max(), bool delete_empty_files = true, const filename_t &file_header = ""); std::shared_ptr<logger>
-// step_logger_st(const std::string &logger_name, const filename_t &filename, unsigned seconds = 60, const filename_t &tmp_ext = ".tmp",
-// unsigned max_file_size = std::numeric_limits<unsigned>::max());
+// filename_t &tmp_ext = ".tmp", unsigned max_file_size = std::numeric_limits<unsigned>::max(), bool delete_empty_files = true, const
+// filename_t &file_header = ""); std::shared_ptr<logger> step_logger_st(const std::string &logger_name, const filename_t &filename,
+// unsigned seconds = 60, const filename_t &tmp_ext = ".tmp", unsigned max_file_size = std::numeric_limits<unsigned>::max());
 
 // Example for spdlog_impl.h
 // Create a file logger that creates new files with a specified increment
 // inline std::shared_ptr<spdlog::logger> spdlog::step_logger_mt(
-//     const std::string &logger_name, const filename_t &filename_fmt, unsigned seconds, const filename_t &tmp_ext, unsigned max_file_size, bool delete_empty_files, const filename_t &file_header)
+//     const std::string &logger_name, const filename_t &filename_fmt, unsigned seconds, const filename_t &tmp_ext, unsigned max_file_size,
+//     bool delete_empty_files, const filename_t &file_header)
 // {
-//     return create<spdlog::sinks::step_file_sink_mt>(logger_name, filename_fmt, seconds, tmp_ext, max_file_size, delete_empty_files, file_header);
+//     return create<spdlog::sinks::step_file_sink_mt>(logger_name, filename_fmt, seconds, tmp_ext, max_file_size, delete_empty_files,
+//     file_header);
 // }
 
 // inline std::shared_ptr<spdlog::logger> spdlog::step_logger_st(
-//     const std::string &logger_name, const filename_t &filename_fmt, unsigned seconds, const filename_t &tmp_ext, unsigned max_file_size, bool delete_empty_files, const filename_t &file_header)
+//     const std::string &logger_name, const filename_t &filename_fmt, unsigned seconds, const filename_t &tmp_ext, unsigned max_file_size,
+//     bool delete_empty_files, const filename_t &file_header)
 // {
-//     return create<spdlog::sinks::step_file_sink_st>(logger_name, filename_fmt, seconds, tmp_ext, max_file_size, delete_empty_files, file_header);
+//     return create<spdlog::sinks::step_file_sink_st>(logger_name, filename_fmt, seconds, tmp_ext, max_file_size, delete_empty_files,
+//     file_header);
 // }
 
 namespace spdlog {
@@ -64,7 +68,8 @@ template<class Mutex, class FileNameCalc = default_step_file_name_calculator>
 class step_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
-    step_file_sink(filename_t base_filename, unsigned step_seconds, filename_t tmp_ext, unsigned max_size, bool delete_empty_files, filename_t file_header)
+    step_file_sink(filename_t base_filename, unsigned step_seconds, filename_t tmp_ext, unsigned max_size, bool delete_empty_files,
+        filename_t file_header)
         : _base_filename(std::move(base_filename))
         , _tmp_ext(std::move(tmp_ext))
         , _step_seconds(step_seconds)
@@ -102,7 +107,8 @@ public:
         if (!_current_size)
         {
             _current_size += _file_header.formatted.size();
-            if (_current_size) _file_helper.write(_file_header);
+            if (_current_size)
+                _file_helper.write(_file_header);
         }
     }
 
@@ -126,9 +132,9 @@ protected:
         {
             filename_t new_filename;
             std::tie(new_filename, std::ignore) = FileNameCalc::calc_filename(_base_filename, _tmp_ext);
-            
+
             bool change_occured = !details::file_helper::file_exists(new_filename);
-            if (change_occured) 
+            if (change_occured)
             {
                 close_current_file();
 
@@ -142,7 +148,8 @@ protected:
             if (change_occured)
             {
                 _current_size = _file_header.formatted.size();
-                if (_current_size) _file_helper.write(_file_header);
+                if (_current_size)
+                    _file_helper.write(_file_header);
             }
         }
 
@@ -182,7 +189,8 @@ private:
 
         if (details::file_helper::file_exists(_current_filename) && details::os::rename(_current_filename, target) != 0)
         {
-            throw spdlog_ex("step_file_sink: failed renaming " + filename_to_str(_current_filename) + " to " + filename_to_str(target), errno);
+            throw spdlog_ex(
+                "step_file_sink: failed renaming " + filename_to_str(_current_filename) + " to " + filename_to_str(target), errno);
         }
     }
 

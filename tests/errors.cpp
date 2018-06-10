@@ -12,10 +12,10 @@ class failing_sink : public spdlog::sinks::sink
         throw std::runtime_error("some error happened during log");
     }
 
-	void flush() override
-	{
-		throw std::runtime_error("some error happened during flush");
-	}
+    void flush() override
+    {
+        throw std::runtime_error("some error happened during flush");
+    }
 };
 using namespace std;
 TEST_CASE("default_error_handler", "[errors]]")
@@ -67,10 +67,10 @@ TEST_CASE("default_error_handler2", "[errors]]")
 
 TEST_CASE("flush_error_handler", "[errors]]")
 {
-	spdlog::drop_all();
-	auto logger = spdlog::create<failing_sink>("failed_logger");
-	logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
-	REQUIRE_THROWS_AS(logger->flush(), custom_ex);
+    spdlog::drop_all();
+    auto logger = spdlog::create<failing_sink>("failed_logger");
+    logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
+    REQUIRE_THROWS_AS(logger->flush(), custom_ex);
 }
 
 TEST_CASE("async_error_handler", "[errors]]")
@@ -115,10 +115,10 @@ TEST_CASE("async_error_handler2", "[errors]]")
                 throw std::runtime_error("Failed open logs/custom_err2.txt");
             ofs << err_msg;
         });
-        logger->info("Hello failure");		
+        logger->info("Hello failure");
         spdlog::drop("failed_logger"); // force logger to drain the queue and shutdown
         spdlog::set_sync_mode();
-		logger.reset();
+        logger.reset();
     }
 
     REQUIRE(file_contents("logs/custom_err2.txt") == err_msg);

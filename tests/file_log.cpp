@@ -70,7 +70,7 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 {
     prepare_logdir();
-	size_t max_size = 10 * 1024;
+    size_t max_size = 10 * 1024;
     std::string basename = "logs/rotating_log.txt";
     auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 1);
     for (int i = 0; i < 10; ++i)
@@ -90,7 +90,7 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 
     logger->flush();
     REQUIRE(get_filesize(filename) <= max_size);
-	auto filename1 = "logs/rotating_log.1.txt";
+    auto filename1 = "logs/rotating_log.1.txt";
     REQUIRE(get_filesize(filename1) <= max_size);
 }
 
