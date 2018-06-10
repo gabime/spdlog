@@ -33,10 +33,9 @@ public:
     void format(details::log_msg &msg) override;
 
 private:
-    const std::string _eol;
-    const std::string _pattern;
-    const pattern_time_type _pattern_time;
-    std::vector<std::unique_ptr<details::flag_formatter>> _formatters;
+    const std::string eol_;    
+    const pattern_time_type pattern_time_;
+    std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
     std::tm get_time(details::log_msg &msg);
     void handle_flag(char flag);
     void compile_pattern(const std::string &pattern);

@@ -18,28 +18,28 @@ class ostream_sink : public base_sink<Mutex>
 {
 public:
     explicit ostream_sink(std::ostream &os, bool force_flush = false)
-        : _ostream(os)
-        , _force_flush(force_flush)
+        : ostream_(os)
+        , force_flush_(force_flush)
     {
     }
     ostream_sink(const ostream_sink &) = delete;
     ostream_sink &operator=(const ostream_sink &) = delete;
 
 protected:
-    void _sink_it(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &msg) override
     {
-        _ostream.write(msg.formatted.data(), msg.formatted.size());
-        if (_force_flush)
-            _ostream.flush();
+        ostream_.write(msg.formatted.data(), msg.formatted.size());
+        if (force_flush_)
+            ostream_.flush();
     }
 
-    void _flush() override
+    void flush_() override
     {
-        _ostream.flush();
+        ostream_.flush();
     }
 
-    std::ostream &_ostream;
-    bool _force_flush;
+    std::ostream &ostream_;
+    bool force_flush_;
 };
 
 using ostream_sink_mt = ostream_sink<std::mutex>;

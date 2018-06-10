@@ -23,8 +23,8 @@ class stdout_sink : public sink
 public:
     using mutex_t = typename ConsoleMutexTrait::mutex_t;
     stdout_sink()
-        : _mutex(ConsoleMutexTrait::console_mutex())
-        , _file(StdoutTrait::stream())
+        : mutex_(ConsoleMutexTrait::console_mutex())
+        , file_(StdoutTrait::stream())
     {
     }
     ~stdout_sink() = default;
@@ -34,20 +34,20 @@ public:
 
     void log(const details::log_msg &msg) override
     {
-        std::lock_guard<mutex_t> lock(_mutex);
-        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), _file);
+        std::lock_guard<mutex_t> lock(mutex_);
+        fwrite(msg.formatted.data(), sizeof(char), msg.formatted.size(), file_);
         fflush(StdoutTrait::stream());
     }
 
     void flush() override
     {
-        std::lock_guard<mutex_t> lock(_mutex);
+        std::lock_guard<mutex_t> lock(mutex_);
         fflush(StdoutTrait::stream());
     }
 
 private:
-    mutex_t &_mutex;
-    FILE *_file;
+    mutex_t &mutex_;
+    FILE *file_;
 };
 
 using stdout_sink_mt = stdout_sink<details::console_stdout_trait, details::console_mutex_trait>;

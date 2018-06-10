@@ -29,7 +29,7 @@ public:
     using mutex_t = typename ConsoleMutexTrait::mutex_t;
     ansicolor_sink()
         : target_file_(StreamTrait::stream())
-        , _mutex(ConsoleMutexTrait::console_mutex())
+        , mutex_(ConsoleMutexTrait::console_mutex())
 
     {
         should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
@@ -49,7 +49,7 @@ public:
 
     void set_color(level::level_enum color_level, const std::string &color)
     {
-        std::lock_guard<mutex_t> lock(_mutex);
+        std::lock_guard<mutex_t> lock(mutex_);
         colors_[color_level] = color;
     }
 
@@ -87,43 +87,43 @@ public:
     {
         // Wrap the originally formatted message in color codes.
         // If color is not supported in the terminal, log as is instead.
-        std::lock_guard<mutex_t> lock(_mutex);
+        std::lock_guard<mutex_t> lock(mutex_);
         if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
         {
             // before color range
-            _print_range(msg, 0, msg.color_range_start);
+            print_range_(msg, 0, msg.color_range_start);
             // in color range
-            _print_ccode(colors_[msg.level]);
-            _print_range(msg, msg.color_range_start, msg.color_range_end);
-            _print_ccode(reset);
+            print_ccode_(colors_[msg.level]);
+            print_range_(msg, msg.color_range_start, msg.color_range_end);
+            print_ccode_(reset);
             // after color range
-            _print_range(msg, msg.color_range_end, msg.formatted.size());
+            print_range_(msg, msg.color_range_end, msg.formatted.size());
         }
         else // no color
         {
-            _print_range(msg, 0, msg.formatted.size());
+            print_range_(msg, 0, msg.formatted.size());
         }
         fflush(target_file_);
     }
 
     void flush() SPDLOG_FINAL override
     {
-        std::lock_guard<mutex_t> lock(_mutex);
+        std::lock_guard<mutex_t> lock(mutex_);
         fflush(target_file_);
     }
 
 private:
-    void _print_ccode(const std::string &color_code)
+    void print_ccode_(const std::string &color_code)
     {
         fwrite(color_code.data(), sizeof(char), color_code.size(), target_file_);
     }
-    void _print_range(const details::log_msg &msg, size_t start, size_t end)
+    void print_range_(const details::log_msg &msg, size_t start, size_t end)
     {
         fwrite(msg.formatted.data() + start, sizeof(char), end - start, target_file_);
     }
 
     FILE *target_file_;
-    mutex_t &_mutex;
+    mutex_t &mutex_;
 
     bool should_do_colors_;
     std::unordered_map<level::level_enum, std::string, level::level_hasher> colors_;

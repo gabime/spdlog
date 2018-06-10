@@ -35,13 +35,13 @@ public:
     }
 
 protected:
-    void _sink_it(const details::log_msg &) override
+    void sink_it_(const details::log_msg &) override
     {
         msg_counter_++;
         std::this_thread::sleep_for(delay_);
     }
 
-    void _flush() override
+    void flush_() override
     {
         flush_counter_++;
     }

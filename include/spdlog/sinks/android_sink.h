@@ -31,23 +31,23 @@ class android_sink : public sink
 {
 public:
     explicit android_sink(const std::string &tag = "spdlog", bool use_raw_msg = false)
-        : _tag(tag)
-        , _use_raw_msg(use_raw_msg)
+        : tag_(tag)
+        , use_raw_msg_(use_raw_msg)
     {
     }
 
     void log(const details::log_msg &msg) override
     {
         const android_LogPriority priority = convert_to_android(msg.level);
-        const char *msg_output = (_use_raw_msg ? msg.raw.c_str() : msg.formatted.c_str());
+        const char *msg_output = (use_raw_msg_ ? msg.raw.c_str() : msg.formatted.c_str());
 
         // See system/core/liblog/logger_write.c for explanation of return value
-        int ret = __android_log_write(priority, _tag.c_str(), msg_output);
+        int ret = __android_log_write(priority, tag_.c_str(), msg_output);
         int retry_count = 0;
         while ((ret == -11 /*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_RETRIES))
         {
             details::os::sleep_for_millis(5);
-            ret = __android_log_write(priority, _tag.c_str(), msg_output);
+            ret = __android_log_write(priority, tag_.c_str(), msg_output);
             retry_count++;
         }
 
@@ -81,8 +81,8 @@ private:
         }
     }
 
-    std::string _tag;
-    bool _use_raw_msg;
+    std::string tag_;
+    bool use_raw_msg_;
 };
 
 } // namespace sinks

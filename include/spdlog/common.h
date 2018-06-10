@@ -193,10 +193,10 @@ using filename_t = std::string;
 #define SPDLOG_CATCH_AND_HANDLE                                                                                                            \
     catch (const std::exception &ex)                                                                                                       \
     {                                                                                                                                      \
-        _err_handler(ex.what());                                                                                                           \
+        err_handler_(ex.what());                                                                                                           \
     }                                                                                                                                      \
     catch (...)                                                                                                                            \
     {                                                                                                                                      \
-        _err_handler("Unknown exeption in logger");                                                                                        \
+        err_handler_("Unknown exeption in logger");                                                                                        \
     }
 } // namespace spdlog

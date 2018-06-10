@@ -28,12 +28,12 @@ class rotating_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
     rotating_file_sink(filename_t base_filename, std::size_t max_size, std::size_t max_files)
-        : _base_filename(std::move(base_filename))
-        , _max_size(max_size)
-        , _max_files(max_files)
+        : base_filename_(std::move(base_filename))
+        , max_size_(max_size)
+        , max_files_(max_files)
     {
-        _file_helper.open(calc_filename(_base_filename, 0));
-        _current_size = _file_helper.size(); // expensive. called only once
+        file_helper_.open(calc_filename(base_filename_, 0));
+        current_size_ = file_helper_.size(); // expensive. called only once
     }
 
     // calc filename according to index and file extension if exists.
@@ -55,20 +55,20 @@ public:
     }
 
 protected:
-    void _sink_it(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &msg) override
     {
-        _current_size += msg.formatted.size();
-        if (_current_size > _max_size)
+        current_size_ += msg.formatted.size();
+        if (current_size_ > max_size_)
         {
-            _rotate();
-            _current_size = msg.formatted.size();
+            rotate_();
+            current_size_ = msg.formatted.size();
         }
-        _file_helper.write(msg);
+        file_helper_.write(msg);
     }
 
-    void _flush() override
+    void flush_() override
     {
-        _file_helper.flush();
+        file_helper_.flush();
     }
 
 private:
@@ -77,14 +77,14 @@ private:
     // log.1.txt -> log.2.txt
     // log.2.txt -> log.3.txt
     // log.3.txt -> delete
-    void _rotate()
+    void rotate_()
     {
         using details::os::filename_to_str;
-        _file_helper.close();
-        for (auto i = _max_files; i > 0; --i)
+        file_helper_.close();
+        for (auto i = max_files_; i > 0; --i)
         {
-            filename_t src = calc_filename(_base_filename, i - 1);
-            filename_t target = calc_filename(_base_filename, i);
+            filename_t src = calc_filename(base_filename_, i - 1);
+            filename_t target = calc_filename(base_filename_, i);
 
             if (details::file_helper::file_exists(target))
             {
@@ -98,14 +98,14 @@ private:
                 throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
             }
         }
-        _file_helper.reopen(true);
+        file_helper_.reopen(true);
     }
 
-    filename_t _base_filename;
-    std::size_t _max_size;
-    std::size_t _max_files;
-    std::size_t _current_size;
-    details::file_helper _file_helper;
+    filename_t base_filename_;
+    std::size_t max_size_;
+    std::size_t max_files_;
+    std::size_t current_size_;
+    details::file_helper file_helper_;
 };
 
 using rotating_file_sink_mt = rotating_file_sink<std::mutex>;

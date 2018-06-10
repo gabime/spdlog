@@ -43,15 +43,15 @@ public:
         async_overflow_policy overflow_policy = async_overflow_policy::block_retry);
 
 protected:
-    void _sink_it(details::log_msg &msg) override;
-    void _flush() override;
+    void sink_it_(details::log_msg &msg) override;
+    void flush_() override;
 
-    void _backend_log(details::log_msg &incoming_log_msg);
-    void _backend_flush();
+    void backend_log_(details::log_msg &incoming_log_msg);
+    void backend_flush_();
 
 private:
-    std::weak_ptr<details::thread_pool> _thread_pool;
-    async_overflow_policy _overflow_policy;
+    std::weak_ptr<details::thread_pool> thread_pool_;
+    async_overflow_policy overflow_policy_;
 };
 } // namespace spdlog
 

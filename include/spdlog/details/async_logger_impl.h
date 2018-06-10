@@ -18,8 +18,8 @@ template<class It>
 inline spdlog::async_logger::async_logger(const std::string &logger_name, const It &begin, const It &end,
     std::weak_ptr<details::thread_pool> tp, async_overflow_policy overflow_policy)
     : logger(logger_name, begin, end)
-    , _thread_pool(tp)
-    , _overflow_policy(overflow_policy)
+    , thread_pool_(tp)
+    , overflow_policy_(overflow_policy)
 {
 }
 
@@ -36,14 +36,14 @@ inline spdlog::async_logger::async_logger(
 }
 
 // send the log message to the thread pool
-inline void spdlog::async_logger::_sink_it(details::log_msg &msg)
+inline void spdlog::async_logger::sink_it_(details::log_msg &msg)
 {
 #if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
     _incr_msg_counter(msg);
 #endif
-    if (auto pool_ptr = _thread_pool.lock())
+    if (auto pool_ptr = thread_pool_.lock())
     {
-        pool_ptr->post_log(shared_from_this(), std::move(msg), _overflow_policy);
+        pool_ptr->post_log(shared_from_this(), std::move(msg), overflow_policy_);
     }
     else
     {
@@ -52,11 +52,11 @@ inline void spdlog::async_logger::_sink_it(details::log_msg &msg)
 }
 
 // send flush request to the thread pool
-inline void spdlog::async_logger::_flush()
+inline void spdlog::async_logger::flush_()
 {
-    if (auto pool_ptr = _thread_pool.lock())
+    if (auto pool_ptr = thread_pool_.lock())
     {
-        pool_ptr->post_flush(shared_from_this(), _overflow_policy);
+        pool_ptr->post_flush(shared_from_this(), overflow_policy_);
     }
     else
     {
@@ -67,12 +67,12 @@ inline void spdlog::async_logger::_flush()
 //
 // backend functions - called from the thread pool to do the actual job
 //
-inline void spdlog::async_logger::_backend_log(details::log_msg &incoming_log_msg)
+inline void spdlog::async_logger::backend_log_(details::log_msg &incoming_log_msg)
 {
     try
     {
-        _formatter->format(incoming_log_msg);
-        for (auto &s : _sinks)
+        formatter_->format(incoming_log_msg);
+        for (auto &s : sinks_)
         {
             if (s->should_log(incoming_log_msg.level))
             {
@@ -82,17 +82,17 @@ inline void spdlog::async_logger::_backend_log(details::log_msg &incoming_log_ms
     }
     SPDLOG_CATCH_AND_HANDLE
 
-    if (_should_flush(incoming_log_msg))
+    if (should_flush_(incoming_log_msg))
     {
-        _backend_flush();
+        backend_flush_();
     }
 }
 
-inline void spdlog::async_logger::_backend_flush()
+inline void spdlog::async_logger::backend_flush_()
 {
     try
     {
-        for (auto &sink : _sinks)
+        for (auto &sink : sinks_)
         {
             sink->flush();
         }

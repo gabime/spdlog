@@ -170,7 +170,7 @@ private:
         {
         case async_msg_type::flush:
         {
-            incoming_async_msg.worker_ptr->_backend_flush();
+            incoming_async_msg.worker_ptr->backend_flush_();
             return true;
         }
 
@@ -183,7 +183,7 @@ private:
         {
             log_msg msg;
             incoming_async_msg.to_log_msg(std::move(msg));
-            incoming_async_msg.worker_ptr->_backend_log(msg);
+            incoming_async_msg.worker_ptr->backend_log_(msg);
             return true;
         }
         }

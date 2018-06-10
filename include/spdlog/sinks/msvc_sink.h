@@ -27,12 +27,12 @@ public:
     explicit msvc_sink() {}
 
 protected:
-    void _sink_it(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &msg) override
     {
         OutputDebugStringA(msg.formatted.c_str());
     }
 
-    void _flush() override {}
+    void flush_() override {}
 };
 
 using msvc_sink_mt = msvc_sink<std::mutex>;

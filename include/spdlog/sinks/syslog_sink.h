@@ -26,18 +26,18 @@ class syslog_sink : public sink
 public:
     //
     syslog_sink(const std::string &ident = "", int syslog_option = 0, int syslog_facility = LOG_USER)
-        : _ident(ident)
+        : ident_(ident)
     {
-        _priorities[static_cast<size_t>(level::trace)] = LOG_DEBUG;
-        _priorities[static_cast<size_t>(level::debug)] = LOG_DEBUG;
-        _priorities[static_cast<size_t>(level::info)] = LOG_INFO;
-        _priorities[static_cast<size_t>(level::warn)] = LOG_WARNING;
-        _priorities[static_cast<size_t>(level::err)] = LOG_ERR;
-        _priorities[static_cast<size_t>(level::critical)] = LOG_CRIT;
-        _priorities[static_cast<size_t>(level::off)] = LOG_INFO;
+        priorities_[static_cast<size_t>(level::trace)] = LOG_DEBUG;
+        priorities_[static_cast<size_t>(level::debug)] = LOG_DEBUG;
+        priorities_[static_cast<size_t>(level::info)] = LOG_INFO;
+        priorities_[static_cast<size_t>(level::warn)] = LOG_WARNING;
+        priorities_[static_cast<size_t>(level::err)] = LOG_ERR;
+        priorities_[static_cast<size_t>(level::critical)] = LOG_CRIT;
+        priorities_[static_cast<size_t>(level::off)] = LOG_INFO;
 
         // set ident to be program name if empty
-        ::openlog(_ident.empty() ? nullptr : _ident.c_str(), syslog_option, syslog_facility);
+        ::openlog(ident_.empty() ? nullptr : ident_.c_str(), syslog_option, syslog_facility);
     }
 
     ~syslog_sink() override
@@ -56,16 +56,16 @@ public:
     void flush() override {}
 
 private:
-    std::array<int, 7> _priorities;
+    std::array<int, 7> priorities_;
     // must store the ident because the man says openlog might use the pointer as is and not a string copy
-    const std::string _ident;
+    const std::string ident_;
 
     //
     // Simply maps spdlog's log level to syslog priority level.
     //
     int syslog_prio_from_level(const details::log_msg &msg) const
     {
-        return _priorities[static_cast<size_t>(msg.level)];
+        return priorities_[static_cast<size_t>(msg.level)];
     }
 };
 } // namespace sinks

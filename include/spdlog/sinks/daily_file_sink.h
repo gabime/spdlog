@@ -63,42 +63,42 @@ class daily_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 public:
     // create daily file sink which rotates on given time
     daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute)
-        : _base_filename(std::move(base_filename))
-        , _rotation_h(rotation_hour)
-        , _rotation_m(rotation_minute)
+        : base_filename_(std::move(base_filename))
+        , rotation_h_(rotation_hour)
+        , rotation_m_(rotation_minute)
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
         {
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
-        _rotation_tp = _next_rotation_tp();
-        _file_helper.open(FileNameCalc::calc_filename(_base_filename));
+        rotation_tp_ = next_rotation_tp_();
+        file_helper_.open(FileNameCalc::calc_filename(base_filename_));
     }
 
 protected:
-    void _sink_it(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &msg) override
     {
-        if (std::chrono::system_clock::now() >= _rotation_tp)
+        if (std::chrono::system_clock::now() >= rotation_tp_)
         {
-            _file_helper.open(FileNameCalc::calc_filename(_base_filename));
-            _rotation_tp = _next_rotation_tp();
+            file_helper_.open(FileNameCalc::calc_filename(base_filename_));
+            rotation_tp_ = next_rotation_tp_();
         }
-        _file_helper.write(msg);
+        file_helper_.write(msg);
     }
 
-    void _flush() override
+    void flush_() override
     {
-        _file_helper.flush();
+        file_helper_.flush();
     }
 
 private:
-    std::chrono::system_clock::time_point _next_rotation_tp()
+    std::chrono::system_clock::time_point next_rotation_tp_()
     {
         auto now = std::chrono::system_clock::now();
         time_t tnow = std::chrono::system_clock::to_time_t(now);
         tm date = spdlog::details::os::localtime(tnow);
-        date.tm_hour = _rotation_h;
-        date.tm_min = _rotation_m;
+        date.tm_hour = rotation_h_;
+        date.tm_min = rotation_m_;
         date.tm_sec = 0;
         auto rotation_time = std::chrono::system_clock::from_time_t(std::mktime(&date));
         if (rotation_time > now)
@@ -108,11 +108,11 @@ private:
         return {rotation_time + std::chrono::hours(24)};
     }
 
-    filename_t _base_filename;
-    int _rotation_h;
-    int _rotation_m;
-    std::chrono::system_clock::time_point _rotation_tp;
-    details::file_helper _file_helper;
+    filename_t base_filename_;
+    int rotation_h_;
+    int rotation_m_;
+    std::chrono::system_clock::time_point rotation_tp_;
+    details::file_helper file_helper_;
 };
 
 using daily_file_sink_mt = daily_file_sink<std::mutex>;

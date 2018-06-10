@@ -22,34 +22,34 @@ class simple_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
     explicit simple_file_sink(const filename_t &filename, bool truncate = false)
-        : _force_flush(false)
+        : force_flush_(false)
     {
-        _file_helper.open(filename, truncate);
+        file_helper_.open(filename, truncate);
     }
 
     void set_force_flush(bool force_flush)
     {
-        _force_flush = force_flush;
+        force_flush_ = force_flush;
     }
 
 protected:
-    void _sink_it(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &msg) override
     {
-        _file_helper.write(msg);
-        if (_force_flush)
+        file_helper_.write(msg);
+        if (force_flush_)
         {
-            _file_helper.flush();
+            file_helper_.flush();
         }
     }
 
-    void _flush() override
+    void flush_() override
     {
-        _file_helper.flush();
+        file_helper_.flush();
     }
 
 private:
-    details::file_helper _file_helper;
-    bool _force_flush;
+    details::file_helper file_helper_;
+    bool force_flush_;
 };
 
 using simple_file_sink_mt = simple_file_sink<std::mutex>;

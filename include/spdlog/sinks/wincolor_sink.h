@@ -34,7 +34,7 @@ public:
 
     wincolor_sink()
         : out_handle_(HandleTrait::handle())
-        , _mutex(ConsoleMutexTrait::console_mutex())
+        , mutex_(ConsoleMutexTrait::console_mutex())
     {
         colors_[level::trace] = WHITE;
         colors_[level::debug] = CYAN;
@@ -56,29 +56,29 @@ public:
     // change the color for the given level
     void set_color(level::level_enum level, WORD color)
     {
-        std::lock_guard<mutex_t> lock(_mutex);
+        std::lock_guard<mutex_t> lock(mutex_);
         colors_[level] = color;
     }
 
     void log(const details::log_msg &msg) SPDLOG_FINAL override
     {
-        std::lock_guard<mutex_t> lock(_mutex);
+        std::lock_guard<mutex_t> lock(mutex_);
 
         if (msg.color_range_end > msg.color_range_start)
         {
             // before color range
-            _print_range(msg, 0, msg.color_range_start);
+            print_range_(msg, 0, msg.color_range_start);
 
             // in color range
             auto orig_attribs = set_console_attribs(colors_[msg.level]);
-            _print_range(msg, msg.color_range_start, msg.color_range_end);
+            print_range_(msg, msg.color_range_start, msg.color_range_end);
             ::SetConsoleTextAttribute(out_handle_, orig_attribs); // reset to orig colors
                                                                   // after color range
-            _print_range(msg, msg.color_range_end, msg.formatted.size());
+            print_range_(msg, msg.color_range_end, msg.formatted.size());
         }
         else // print without colors if color range is invalid
         {
-            _print_range(msg, 0, msg.formatted.size());
+            print_range_(msg, 0, msg.formatted.size());
         }
     }
 
@@ -103,14 +103,14 @@ private:
     }
 
     // print a range of formatted message to console
-    void _print_range(const details::log_msg &msg, size_t start, size_t end)
+    void print_range_(const details::log_msg &msg, size_t start, size_t end)
     {
         auto size = static_cast<DWORD>(end - start);
         ::WriteConsoleA(out_handle_, msg.formatted.data() + start, size, nullptr, nullptr);
     }
 
     HANDLE out_handle_;
-    mutex_t &_mutex;
+    mutex_t &mutex_;
     std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 };
 

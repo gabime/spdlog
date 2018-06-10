@@ -124,25 +124,25 @@ public:
     log_err_handler error_handler();
 
 protected:
-    virtual void _sink_it(details::log_msg &msg);
-    virtual void _flush();
+    virtual void sink_it_(details::log_msg &msg);
+    virtual void flush_();
 
-    bool _should_flush(const details::log_msg &msg);
+    bool should_flush_(const details::log_msg &msg);
 
     // default error handler: print the error to stderr with the max rate of 1 message/minute
-    void _default_err_handler(const std::string &msg);
+    void default_err_handler_(const std::string &msg);
 
     // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
-    void _incr_msg_counter(details::log_msg &msg);
+    void incr_msg_counter_(details::log_msg &msg);
 
-    const std::string _name;
-    std::vector<sink_ptr> _sinks;
-    formatter_ptr _formatter;
-    spdlog::level_t _level;
-    spdlog::level_t _flush_level;
-    log_err_handler _err_handler;
-    std::atomic<time_t> _last_err_time;
-    std::atomic<size_t> _msg_counter;
+    const std::string name_;
+    std::vector<sink_ptr> sinks_;
+    formatter_ptr formatter_;
+    spdlog::level_t level_;
+    spdlog::level_t flush_level_;
+    log_err_handler err_handler_;
+    std::atomic<time_t> last_err_time_;
+    std::atomic<size_t> msg_counter_;
 };
 } // namespace spdlog
 

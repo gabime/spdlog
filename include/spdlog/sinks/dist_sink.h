@@ -23,18 +23,18 @@ class dist_sink : public base_sink<Mutex>
 {
 public:
     explicit dist_sink()
-        : _sinks()
+        : sinks_()
     {
     }
     dist_sink(const dist_sink &) = delete;
     dist_sink &operator=(const dist_sink &) = delete;
 
 protected:
-    std::vector<std::shared_ptr<sink>> _sinks;
+    std::vector<std::shared_ptr<sink>> sinks_;
 
-    void _sink_it(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &msg) override
     {
-        for (auto &sink : _sinks)
+        for (auto &sink : sinks_)
         {
             if (sink->should_log(msg.level))
             {
@@ -43,23 +43,23 @@ protected:
         }
     }
 
-    void _flush() override
+    void flush_() override
     {
-        for (auto &sink : _sinks)
+        for (auto &sink : sinks_)
             sink->flush();
     }
 
 public:
     void add_sink(std::shared_ptr<sink> sink)
     {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
-        _sinks.push_back(sink);
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        sinks_.push_back(sink);
     }
 
     void remove_sink(std::shared_ptr<sink> sink)
     {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
-        _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink), sinks_.end());
     }
 };
 
