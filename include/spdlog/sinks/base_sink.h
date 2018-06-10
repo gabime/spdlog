@@ -30,7 +30,6 @@ public:
     {
         std::lock_guard<Mutex> lock(mutex_);
         sink_it_(msg);
-
     }
 
     void flush() SPDLOG_FINAL override
