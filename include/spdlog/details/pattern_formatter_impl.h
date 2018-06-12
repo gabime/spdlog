@@ -33,42 +33,53 @@ inline void append_buf(const fmt::memory_buffer &buf, fmt::memory_buffer &dest)
     dest.append(buf_ptr, buf_ptr + buf.size());
 }
 
+inline void append_int(int n, fmt::memory_buffer &dest)
+{
+    fmt::format_int i(n);
+    dest.append(i.data(), i.data() + i.size());
+}
+
+inline void append_size_t(size_t n, fmt::memory_buffer &dest)
+{
+    fmt::format_int i(n);
+    dest.append(i.data(), i.data() + i.size());
+}
+
 inline void append_and_pad2(int n, fmt::memory_buffer &dest)
 {
 
-    if(n < 0) // should not happen in this formatter, but just in case, let fmt deal with negatives correctly
+    if (n < 0) // should not happen in this formatter, but just in case, let fmt deal with negatives correctly
     {
         fmt::format_to(dest, "{:02}", n);
         return;
     }
-    if(n < 10)
+    if (n < 10)
     {
         dest.push_back('0');
     }
-    fmt::format_int i(n);
-    dest.append(i.data(), i.data()+i.size());
+    append_int(n, dest);
 }
 
-    inline void append_and_pad3(int n, fmt::memory_buffer &dest)
-    {
+inline void append_and_pad3(int n, fmt::memory_buffer &dest)
+{
 
-        if(n < 0)// should not happen in this formatter, but just in case, let fmt deal with negatives correctly
-        {
-            fmt::format_to(dest, "{:03}", n);
-            return;
-        }
-        if(n < 10)
-        {
-            dest.push_back('0');
-            dest.push_back('0');
-        }
-        else if(n < 100)
-        {
-            dest.push_back('0');
-        }
-        fmt::format_int i(n);
-        dest.append(i.data(), i.data()+i.size());
+    if (n < 0) // should not happen in this formatter, but just in case, let fmt deal with negatives correctly
+    {
+        fmt::format_to(dest, "{:03}", n);
+        return;
     }
+    if (n < 10)
+    {
+        dest.push_back('0');
+        dest.push_back('0');
+    }
+    else if (n < 100)
+    {
+        dest.push_back('0');
+    }
+    append_int(n, dest);
+}
+
 } // namespace
 
 namespace spdlog {
@@ -170,8 +181,18 @@ class c_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{} {} {} {:02}:{:02}:{:02} {}", days[tm_time.tm_wday], months[tm_time.tm_mon], tm_time.tm_mday,
-            tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, tm_time.tm_year + 1900);
+        //        fmt::format_to(msg.formatted, "{} {} {} {:02}:{:02}:{:02} {}", days[tm_time.tm_wday], months[tm_time.tm_mon],
+        //        tm_time.tm_mday,
+        //            tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, tm_time.tm_year + 1900);
+
+        fmt::format_to(msg.formatted, "{} {} {} ", days[tm_time.tm_wday], months[tm_time.tm_mon], tm_time.tm_mday); //
+        append_and_pad2(tm_time.tm_hour, msg.formatted);
+        msg.formatted.push_back(':');
+        append_and_pad2(tm_time.tm_min, msg.formatted);
+        msg.formatted.push_back(':');
+        append_and_pad2(tm_time.tm_sec, msg.formatted);
+        msg.formatted.push_back(' ');
+        append_int(tm_time.tm_year + 1900, msg.formatted);
     }
 };
 
@@ -180,7 +201,8 @@ class C_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}", tm_time.tm_year % 100);
+        // fmt::format_to(msg.formatted, "{:02}", tm_time.tm_year % 100);
+        append_and_pad2(tm_time.tm_year % 100, msg.formatted);
     }
 };
 
@@ -189,7 +211,12 @@ class D_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}/{:02}/{:02}", tm_time.tm_mon + 1, tm_time.tm_mday, tm_time.tm_year % 100);
+        // fmt::format_to(msg.formatted, "{:02}/{:02}/{:02}", tm_time.tm_mon + 1, tm_time.tm_mday, tm_time.tm_year % 100);
+        append_and_pad2(tm_time.tm_mon + 1, msg.formatted);
+        msg.formatted.push_back('/');
+        append_and_pad2(tm_time.tm_mday, msg.formatted);
+        msg.formatted.push_back('/');
+        append_and_pad2(tm_time.tm_year % 100, msg.formatted);
     }
 };
 
@@ -198,7 +225,8 @@ class Y_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{}", tm_time.tm_year + 1900);
+        // fmt::format_to(msg.formatted, "{}", tm_time.tm_year + 1900);
+        append_int(tm_time.tm_year + 1900, msg.formatted);
     }
 };
 
@@ -207,7 +235,8 @@ class m_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}", tm_time.tm_mon + 1);
+        // fmt::format_to(msg.formatted, "{:02}", tm_time.tm_mon + 1);
+        append_and_pad2(tm_time.tm_mon + 1, msg.formatted);
     }
 };
 
@@ -216,7 +245,8 @@ class d_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}", tm_time.tm_mday);
+        // fmt::format_to(msg.formatted, "{:02}", tm_time.tm_mday);
+        append_and_pad2(tm_time.tm_mday, msg.formatted);
     }
 };
 
@@ -225,7 +255,8 @@ class H_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}", tm_time.tm_hour);
+        // fmt::format_to(msg.formatted, "{:02}", tm_time.tm_hour);
+        append_and_pad2(tm_time.tm_hour, msg.formatted);
     }
 };
 
@@ -234,7 +265,8 @@ class I_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}", to12h(tm_time));
+        // fmt::format_to(msg.formatted, "{:02}", to12h(tm_time));
+        append_and_pad2(to12h(tm_time), msg.formatted);
     }
 };
 
@@ -243,7 +275,8 @@ class M_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}", tm_time.tm_min);
+        // fmt::format_to(msg.formatted, "{:02}", tm_time.tm_min);
+        append_and_pad2(tm_time.tm_min, msg.formatted);
     }
 };
 
@@ -252,7 +285,8 @@ class S_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}", tm_time.tm_sec);
+        // fmt::format_to(msg.formatted, "{:02}", tm_time.tm_sec);
+        append_and_pad2(tm_time.tm_sec, msg.formatted);
     }
 };
 
@@ -263,7 +297,8 @@ class e_formatter SPDLOG_FINAL : public flag_formatter
     {
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-        fmt::format_to(msg.formatted, "{:03}", static_cast<int>(millis));
+        // fmt::format_to(msg.formatted, "{:03}", static_cast<int>(millis));
+        append_and_pad3(static_cast<int>(millis), msg.formatted);
     }
 };
 
@@ -295,7 +330,8 @@ class E_formatter SPDLOG_FINAL : public flag_formatter
     {
         auto duration = msg.time.time_since_epoch();
         auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-        fmt::format_to(msg.formatted, "{}", seconds);
+        // fmt::format_to(msg.formatted, "{}", seconds);
+        append_int(seconds, msg.formatted);
     }
 };
 
@@ -313,7 +349,13 @@ class r_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}:{:02}:{:02} {}", to12h(tm_time), tm_time.tm_min, tm_time.tm_sec, ampm(tm_time));
+        // fmt::format_to(msg.formatted, "{:02}:{:02}:{:02} {}", to12h(tm_time), tm_time.tm_min, tm_time.tm_sec, ampm(tm_time));
+        append_and_pad2(to12h(tm_time), msg.formatted);
+        msg.formatted.push_back(':');
+        append_and_pad2(tm_time.tm_min, msg.formatted);
+        msg.formatted.push_back(':');
+        append_and_pad2(tm_time.tm_sec, msg.formatted);
+        fmt::format_to(msg.formatted, " {}", ampm(tm_time));
     }
 };
 
@@ -322,7 +364,10 @@ class R_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}:{:02}", tm_time.tm_hour, tm_time.tm_min);
+        // fmt::format_to(msg.formatted, "{:02}:{:02}", tm_time.tm_hour, tm_time.tm_min);
+        append_and_pad2(tm_time.tm_hour, msg.formatted);
+        msg.formatted.push_back(':');
+        append_and_pad2(tm_time.tm_min, msg.formatted);
     }
 };
 
@@ -331,7 +376,12 @@ class T_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &tm_time) override
     {
-        fmt::format_to(msg.formatted, "{:02}:{:02}:{:02}", tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec);
+        // fmt::format_to(msg.formatted, "{:02}:{:02}:{:02}", tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec);
+        append_and_pad2(tm_time.tm_hour, msg.formatted);
+        msg.formatted.push_back(':');
+        append_and_pad2(tm_time.tm_min, msg.formatted);
+        msg.formatted.push_back(':');
+        append_and_pad2(tm_time.tm_sec, msg.formatted);
     }
 };
 
@@ -368,7 +418,11 @@ public:
 
         int h = total_minutes / 60;
         int m = total_minutes % 60;
-        fmt::format_to(msg.formatted, "{}{:02}:{:02}", sign, h, m);
+        // fmt::format_to(msg.formatted, "{}{:02}:{:02}", sign, h, m);
+        msg.formatted.push_back(sign);
+        append_and_pad2(h, msg.formatted);
+        msg.formatted.push_back(':');
+        append_and_pad2(m, msg.formatted);
     }
 
 private:
@@ -393,7 +447,8 @@ class t_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &) override
     {
-        fmt::format_to(msg.formatted, "{}", msg.thread_id);
+        // fmt::format_to(msg.formatted, "{}", msg.thread_id);
+        append_size_t(msg.thread_id, msg.formatted);
     }
 };
 
@@ -402,7 +457,8 @@ class pid_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(details::log_msg &msg, const std::tm &) override
     {
-        fmt::format_to(msg.formatted, "{}", details::os::pid());
+        // fmt::format_to(msg.formatted, "{}", details::os::pid());
+        append_int(details::os::pid(), msg.formatted);
     }
 };
 
@@ -484,24 +540,13 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         auto duration = msg.time.time_since_epoch();
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
 
-        /*
-        msg.formatted << '[' << static_cast<unsigned int>(tm_time.tm_year + 1900) << '-'
-                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_mon + 1), 2, '0') << '-'
-                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_mday), 2, '0') << ' '
-                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_hour), 2, '0') << ':'
-                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_min), 2, '0') << ':'
-                      << fmt::pad(static_cast<unsigned int>(tm_time.tm_sec), 2, '0') << '.'
-                      << fmt::pad(static_cast<unsigned int>(millis), 3, '0') << "] ";
-        */
-
-
-//        fmt::format_to(msg.formatted, "[{}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}] ", tm_time.tm_year + 1900, tm_time.tm_mon + 1,
-//            tm_time.tm_mday, tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, static_cast<int>(millis));
+        //        fmt::format_to(msg.formatted, "[{}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}] ", tm_time.tm_year + 1900, tm_time.tm_mon + 1,
+        //            tm_time.tm_mday, tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, static_cast<int>(millis));
 
         msg.formatted.push_back('[');
 
         fmt::format_int i(tm_time.tm_year + 1900);
-        msg.formatted.append(i.data(), i.data()+i.size());
+        msg.formatted.append(i.data(), i.data() + i.size());
         msg.formatted.push_back('-');
 
         append_and_pad2(tm_time.tm_mon + 1, msg.formatted);
@@ -516,10 +561,8 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         append_and_pad2(tm_time.tm_min, msg.formatted);
         msg.formatted.push_back(':');
 
-
         append_and_pad2(tm_time.tm_sec, msg.formatted);
         msg.formatted.push_back('.');
-
 
         append_and_pad3(static_cast<int>(millis), msg.formatted);
         msg.formatted.push_back(']');
@@ -531,7 +574,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 #endif
 
 #ifndef SPDLOG_NO_NAME
-        //fmt::format_to(msg.formatted, "[{}] ", *msg.logger_name);
+        // fmt::format_to(msg.formatted, "[{}] ", *msg.logger_name);
         append_str(*msg.logger_name, msg.formatted);
 #endif
 
