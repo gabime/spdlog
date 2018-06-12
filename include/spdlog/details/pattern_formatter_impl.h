@@ -32,6 +32,43 @@ inline void append_buf(const fmt::memory_buffer &buf, fmt::memory_buffer &dest)
     const char *buf_ptr = buf.data();
     dest.append(buf_ptr, buf_ptr + buf.size());
 }
+
+inline void append_and_pad2(int n, fmt::memory_buffer &dest)
+{
+
+    if(n < 0) // should not happen in this formatter, but just in case, let fmt deal with negatives correctly
+    {
+        fmt::format_to(dest, "{:02}", n);
+        return;
+    }
+    if(n < 10)
+    {
+        dest.push_back('0');
+    }
+    fmt::format_int i(n);
+    dest.append(i.data(), i.data()+i.size());
+}
+
+    inline void append_and_pad3(int n, fmt::memory_buffer &dest)
+    {
+
+        if(n < 0)// should not happen in this formatter, but just in case, let fmt deal with negatives correctly
+        {
+            fmt::format_to(dest, "{:03}", n);
+            return;
+        }
+        if(n < 10)
+        {
+            dest.push_back('0');
+            dest.push_back('0');
+        }
+        else if(n < 100)
+        {
+            dest.push_back('0');
+        }
+        fmt::format_int i(n);
+        dest.append(i.data(), i.data()+i.size());
+    }
 } // namespace
 
 namespace spdlog {
@@ -457,8 +494,36 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
                       << fmt::pad(static_cast<unsigned int>(millis), 3, '0') << "] ";
         */
 
-        fmt::format_to(msg.formatted, "[{}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}] ", tm_time.tm_year + 1900, tm_time.tm_mon + 1,
-            tm_time.tm_mday, tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, static_cast<int>(millis));
+
+//        fmt::format_to(msg.formatted, "[{}-{:02}-{:02} {:02}:{:02}:{:02}.{:03}] ", tm_time.tm_year + 1900, tm_time.tm_mon + 1,
+//            tm_time.tm_mday, tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, static_cast<int>(millis));
+
+        msg.formatted.push_back('[');
+
+        fmt::format_int i(tm_time.tm_year + 1900);
+        msg.formatted.append(i.data(), i.data()+i.size());
+        msg.formatted.push_back('-');
+
+        append_and_pad2(tm_time.tm_mon + 1, msg.formatted);
+        msg.formatted.push_back('-');
+
+        append_and_pad2(tm_time.tm_mday, msg.formatted);
+        msg.formatted.push_back(' ');
+
+        append_and_pad2(tm_time.tm_hour, msg.formatted);
+        msg.formatted.push_back(':');
+
+        append_and_pad2(tm_time.tm_min, msg.formatted);
+        msg.formatted.push_back(':');
+
+
+        append_and_pad2(tm_time.tm_sec, msg.formatted);
+        msg.formatted.push_back('.');
+
+
+        append_and_pad3(static_cast<int>(millis), msg.formatted);
+        msg.formatted.push_back(']');
+        msg.formatted.push_back(' ');
 
         // no datetime needed
 #else
@@ -466,7 +531,8 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 #endif
 
 #ifndef SPDLOG_NO_NAME
-        fmt::format_to(msg.formatted, "[{}] ", *msg.logger_name);
+        //fmt::format_to(msg.formatted, "[{}] ", *msg.logger_name);
+        append_str(*msg.logger_name, msg.formatted);
 #endif
 
         msg.formatted.push_back('[');
