@@ -47,8 +47,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "bundled", "bundled", "{F0D4
 		..\include\spdlog\fmt\bundled\ostream.h = ..\include\spdlog\fmt\bundled\ostream.h
 		..\include\spdlog\fmt\bundled\posix.cc = ..\include\spdlog\fmt\bundled\posix.cc
 		..\include\spdlog\fmt\bundled\posix.h = ..\include\spdlog\fmt\bundled\posix.h
-		..\include\spdlog\fmt\bundled\printf.cc = ..\include\spdlog\fmt\bundled\printf.cc
-		..\include\spdlog\fmt\bundled\printf.h = ..\include\spdlog\fmt\bundled\printf.h
 		..\include\spdlog\fmt\bundled\time.h = ..\include\spdlog\fmt\bundled\time.h
 	EndProjectSection
 EndProject

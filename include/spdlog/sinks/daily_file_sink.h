@@ -30,10 +30,10 @@ struct default_daily_file_name_calculator
         std::tm tm = spdlog::details::os::localtime();
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
-        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
-            tm.tm_hour, tm.tm_min, ext);
-        return w.str();
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
+        fmt::format_to(w, SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}-{:02d}{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1,
+            tm.tm_mday, tm.tm_hour, tm.tm_min, ext);
+        return fmt::to_string(w);
     }
 };
 
@@ -48,9 +48,9 @@ struct dateonly_daily_file_name_calculator
         std::tm tm = spdlog::details::os::localtime();
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
-        w.write(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, ext);
-        return w.str();
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
+        fmt::format_to(w, SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, ext);
+        return fmt::to_string(w);
     }
 };
 

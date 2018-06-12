@@ -158,9 +158,9 @@ public:
 
     spdlog_ex(const std::string &msg, int last_errno)
     {
-        fmt::MemoryWriter writer;
-        fmt::format_system_error(writer, last_errno, msg);
-        _msg = writer.str();
+        fmt::memory_buffer buf;
+        fmt::format_system_error(buf, last_errno, msg);
+        _msg = fmt::to_string(buf);
     }
 
     const char *what() const SPDLOG_NOEXCEPT override

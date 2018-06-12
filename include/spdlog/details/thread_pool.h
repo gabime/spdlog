@@ -65,15 +65,13 @@ struct async_msg
     }
 
     // copy into log_msg
-    void to_log_msg(log_msg &&msg)
+    void to_log_msg(log_msg &msg)
     {
         msg.logger_name = &worker_ptr->name();
         msg.level = level;
         msg.time = time;
         msg.thread_id = thread_id;
-        msg.raw.clear();
-        msg.raw << txt;
-        msg.formatted.clear();
+        msg.raw.append(txt.data(), txt.data() + txt.size());
         msg.msg_id = msg_id;
         msg.color_range_start = 0;
         msg.color_range_end = 0;
@@ -182,7 +180,7 @@ private:
         default:
         {
             log_msg msg;
-            incoming_async_msg.to_log_msg(std::move(msg));
+            incoming_async_msg.to_log_msg(msg);
             incoming_async_msg.worker_ptr->backend_log_(msg);
             return true;
         }

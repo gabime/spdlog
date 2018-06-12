@@ -11,13 +11,9 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");
 
-#if !defined(SPDLOG_FMT_PRINTF)
     logger->info("Test message {}", 1);
     logger->info("Test message {}", 2);
-#else
-    logger->info("Test message %d", 1);
-    logger->info("Test message %d", 2);
-#endif
+
     logger->flush();
     REQUIRE(file_contents(filename) == std::string("Test message 1\nTest message 2\n"));
     REQUIRE(count_lines(filename) == 2);
@@ -35,13 +31,8 @@ TEST_CASE("flush_on", "[flush_on]]")
     logger->trace("Should not be flushed");
     REQUIRE(count_lines(filename) == 0);
 
-#if !defined(SPDLOG_FMT_PRINTF)
     logger->info("Test message {}", 1);
     logger->info("Test message {}", 2);
-#else
-    logger->info("Test message %d", 1);
-    logger->info("Test message %d", 2);
-#endif
     logger->flush();
     REQUIRE(file_contents(filename) == std::string("Should not be flushed\nTest message 1\nTest message 2\n"));
     REQUIRE(count_lines(filename) == 3);
@@ -56,11 +47,7 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 
     for (int i = 0; i < 10; ++i)
     {
-#if !defined(SPDLOG_FMT_PRINTF)
         logger->info("Test message {}", i);
-#else
-        logger->info("Test message %d", i);
-#endif
     }
 
     logger->flush();
@@ -82,11 +69,8 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
     REQUIRE(count_lines(filename) == 10);
     for (int i = 0; i < 1000; i++)
     {
-#if !defined(SPDLOG_FMT_PRINTF)
+
         logger->info("Test message {}", i);
-#else
-        logger->info("Test message %d", i);
-#endif
     }
 
     logger->flush();
@@ -108,11 +92,7 @@ TEST_CASE("daily_logger", "[daily_logger]]")
     logger->flush_on(spdlog::level::info);
     for (int i = 0; i < 10; ++i)
     {
-#if !defined(SPDLOG_FMT_PRINTF)
         logger->info("Test message {}", i);
-#else
-        logger->info("Test message %d", i);
-#endif
     }
 
     auto filename = w.str();
@@ -133,11 +113,8 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
     for (int i = 0; i < 10; ++i)
     {
-#if !defined(SPDLOG_FMT_PRINTF)
+
         logger->info("Test message {}", i);
-#else
-        logger->info("Test message %d", i);
-#endif
     }
     logger->flush();
     auto filename = w.str();
@@ -169,11 +146,7 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
     for (int i = 0; i < 10; ++i)
     {
-#if !defined(SPDLOG_FMT_PRINTF)
         logger->info("Test message {}", i);
-#else
-        logger->info("Test message %d", i);
-#endif
     }
 
     logger->flush();

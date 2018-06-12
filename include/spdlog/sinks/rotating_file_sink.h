@@ -40,18 +40,18 @@ public:
     // e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
     static filename_t calc_filename(const filename_t &filename, std::size_t index)
     {
-        typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::MemoryWriter, fmt::WMemoryWriter>::type w;
+        typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
         if (index != 0u)
         {
             filename_t basename, ext;
             std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-            w.write(SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
+            fmt::format_to(w, SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
         }
         else
         {
-            w.write(SPDLOG_FILENAME_T("{}"), filename);
+            fmt::format_to(w, SPDLOG_FILENAME_T("{}"), filename);
         }
-        return w.str();
+        return fmt::to_string(w);
     }
 
 protected:
