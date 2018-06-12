@@ -39,7 +39,7 @@ inline spdlog::async_logger::async_logger(
 inline void spdlog::async_logger::sink_it_(details::log_msg &msg)
 {
 #if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-    _incr_msg_counter(msg);
+    incr_msg_counter_(msg);
 #endif
     if (auto pool_ptr = thread_pool_.lock())
     {
