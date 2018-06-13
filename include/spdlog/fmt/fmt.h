@@ -22,7 +22,4 @@
 #else // external fmtlib
 #include <fmt/core.h>
 #include <fmt/format.h>
-#if defined(SPDLOG_FMT_PRINTF)
-#include <fmt/printf.h>
-#endif
 #endif
