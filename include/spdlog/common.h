@@ -9,7 +9,6 @@
 
 #include "spdlog/tweakme.h"
 
-#include <exception>
 #include <atomic>
 #include <chrono>
 #include <functional>
