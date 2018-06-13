@@ -20,7 +20,7 @@
 #include <utility>
 #include <vector>
 
-namespace {
+namespace { // Some fmt helpers to efficiently format and pad ints and strings
 inline void append_str(const std::string &str, fmt::memory_buffer &dest)
 {
     const char *str_ptr = str.data();
@@ -47,35 +47,87 @@ inline void append_size_t(size_t n, fmt::memory_buffer &dest)
 
 inline void append_and_pad2(int n, fmt::memory_buffer &dest)
 {
-
-    if (n < 0) // should not happen in this formatter, but just in case, let fmt deal with negatives correctly
+    if (n > 9)
     {
-        fmt::format_to(dest, "{:02}", n);
+        append_int(n, dest);
         return;
     }
-    if (n < 10)
+    if (n >= 0) // 0-9
     {
         dest.push_back('0');
+        append_int(n, dest);
+        return;
     }
-    append_int(n, dest);
+    // negatives (unlikely but just in case, let fmt deal with it)
+    fmt::format_to(dest, "{:02}", n);
 }
 
 inline void append_and_pad3(int n, fmt::memory_buffer &dest)
 {
-
-    if (n < 0) // should not happen in this formatter, but just in case, let fmt deal with negatives correctly
+    if (n > 99)
     {
-        fmt::format_to(dest, "{:03}", n);
+        append_int(n, dest);
         return;
     }
-    if (n < 10)
+    if (n > 9) // 10-99
+    {
+        dest.push_back('0');
+        append_int(n, dest);
+        return;
+    }
+    if (n >= 0)
+    {
+        dest.push_back('0');
+        dest.push_back('0');
+        append_int(n, dest);
+        return;
+    }
+    // negatives (unlikely, but just in case let fmt deal with it)
+    fmt::format_to(dest, "{:03}", n);
+}
+
+void append_and_pad6(int n, fmt::memory_buffer &dest)
+{
+    if (n > 99999)
+    {
+        append_int(n, dest);
+        return;
+    }
+    if (n > 9999)
+    {
+        dest.push_back('0');
+    }
+
+    else if (n > 999)
     {
         dest.push_back('0');
         dest.push_back('0');
     }
-    else if (n < 100)
+    else if (n > 99)
     {
         dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+    }
+    else if (n > 9)
+    {
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+    }
+    else if (n >= 0)
+    {
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+    }
+    else // negatives (unlikely, but just in case let fmt deal with it)
+    {
+        fmt::format_to(dest, "{:06}", n);
+        return;
     }
     append_int(n, dest);
 }
@@ -309,7 +361,7 @@ class f_formatter SPDLOG_FINAL : public flag_formatter
     {
         auto duration = msg.time.time_since_epoch();
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() % 1000000;
-        fmt::format_to(msg.formatted, "{:06}", static_cast<int>(micros));
+        append_and_pad6(static_cast<int>(micros), msg.formatted);
     }
 };
 
@@ -544,9 +596,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         //            tm_time.tm_mday, tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec, static_cast<int>(millis));
 
         msg.formatted.push_back('[');
-
-        fmt::format_int i(tm_time.tm_year + 1900);
-        msg.formatted.append(i.data(), i.data() + i.size());
+        append_int(tm_time.tm_year + 1900, msg.formatted);
         msg.formatted.push_back('-');
 
         append_and_pad2(tm_time.tm_mon + 1, msg.formatted);
