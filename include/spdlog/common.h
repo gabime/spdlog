@@ -11,7 +11,7 @@
 
 #include <atomic>
 #include <chrono>
-#include <exception>
+#include <stdexcept>
 #include <functional>
 #include <initializer_list>
 #include <memory>
@@ -148,28 +148,26 @@ namespace os {
 std::string errno_str(int err_num);
 }
 } // namespace details
-class spdlog_ex : public std::exception
+class spdlog_ex : public std::runtime_error
 {
 public:
-    explicit spdlog_ex(std::string msg)
-        : _msg(std::move(msg))
+    spdlog_ex(const std::string &msg): runtime_error(msg)
     {
+        fmt::format_to(buf_, "{}", msg);
     }
 
-    spdlog_ex(const std::string &msg, int last_errno)
+    spdlog_ex(const std::string &msg, int last_errno): runtime_error(msg)
     {
-        fmt::memory_buffer buf;
-        fmt::format_system_error(buf, last_errno, msg);
-        _msg = fmt::to_string(buf);
+        fmt::format_system_error(buf_, last_errno, msg);
     }
 
     const char *what() const SPDLOG_NOEXCEPT override
     {
-        return _msg.c_str();
+        return fmt::to_string(buf_).c_str();
     }
-
+    
 private:
-    std::string _msg;
+    fmt::memory_buffer buf_;
 };
 
 //
