@@ -9,13 +9,13 @@
 
 #include "spdlog/tweakme.h"
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
-#include <stdexcept>
 #include <functional>
-#include <algorithm>
 #include <initializer_list>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
@@ -147,11 +147,18 @@ enum class pattern_time_type
 class spdlog_ex : public std::runtime_error
 {
 public:
-    explicit spdlog_ex(const std::string& msg) : runtime_error(msg){}
-    spdlog_ex(const std::string& msg, int last_errno) : runtime_error(msg), last_errno_(last_errno){}
+    explicit spdlog_ex(const std::string &msg)
+        : runtime_error(msg)
+    {
+    }
+    spdlog_ex(const std::string &msg, int last_errno)
+        : runtime_error(msg)
+        , last_errno_(last_errno)
+    {
+    }
     const char *what() const SPDLOG_NOEXCEPT override
     {
-        if(last_errno_)
+        if (last_errno_)
         {
             fmt::memory_buffer buf;
             std::string msg(runtime_error::what());
@@ -166,7 +173,6 @@ public:
 
 private:
     int last_errno_{0};
-
 };
 
 //
