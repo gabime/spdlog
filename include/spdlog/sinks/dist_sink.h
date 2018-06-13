@@ -62,6 +62,12 @@ public:
         std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
         _sinks.erase(std::remove(_sinks.begin(), _sinks.end(), sink), _sinks.end());
     }
+
+    void remove_all_sinks()
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::_mutex);
+        _sinks.clear();
+    }
 };
 
 using dist_sink_mt = dist_sink<std::mutex>;
