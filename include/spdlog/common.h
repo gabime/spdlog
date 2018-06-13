@@ -13,6 +13,7 @@
 #include <chrono>
 #include <stdexcept>
 #include <functional>
+#include <algorithm>
 #include <initializer_list>
 #include <memory>
 #include <string>
@@ -143,31 +144,29 @@ enum class pattern_time_type
 //
 // Log exception
 //
-namespace details {
-namespace os {
-std::string errno_str(int err_num);
-}
-} // namespace details
 class spdlog_ex : public std::runtime_error
 {
 public:
-    spdlog_ex(const std::string &msg): runtime_error(msg)
-    {
-        fmt::format_to(buf_, "{}", msg);
-    }
-
-    spdlog_ex(const std::string &msg, int last_errno): runtime_error(msg)
-    {
-        fmt::format_system_error(buf_, last_errno, msg);
-    }
-
+    explicit spdlog_ex(const std::string& msg) : runtime_error(msg){}
+    spdlog_ex(const std::string& msg, int last_errno) : runtime_error(msg), last_errno_(last_errno){}
     const char *what() const SPDLOG_NOEXCEPT override
     {
-        return fmt::to_string(buf_).c_str();
+        if(last_errno_)
+        {
+            fmt::memory_buffer buf;
+            std::string msg(runtime_error::what());
+            fmt::format_system_error(buf, last_errno_, msg);
+            return fmt::to_string(buf).c_str();
+        }
+        else
+        {
+            return runtime_error::what();
+        }
     }
-    
+
 private:
-    fmt::memory_buffer buf_;
+    int last_errno_{0};
+
 };
 
 //
