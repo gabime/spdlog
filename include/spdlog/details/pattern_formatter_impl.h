@@ -72,18 +72,19 @@ inline void append_and_pad3(int n, fmt::memory_buffer &dest)
     if (n > 9) // 10-99
     {
         dest.push_back('0');
-        append_int(n, dest);
-        return;
     }
-    if (n >= 0)
+    else if (n >= 0)
     {
         dest.push_back('0');
         dest.push_back('0');
-        append_int(n, dest);
-        return;
     }
     // negatives (unlikely, but just in case let fmt deal with it)
-    fmt::format_to(dest, "{:03}", n);
+    else
+    {
+        fmt::format_to(dest, "{:03}", n);
+        return;
+    }
+    append_int(n, dest);
 }
 
 void append_and_pad6(int n, fmt::memory_buffer &dest)
