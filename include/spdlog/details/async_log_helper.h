@@ -88,8 +88,8 @@ class async_log_helper
             msg.level = level;
             msg.time = time;
             msg.thread_id = thread_id;
-            msg.raw.clear();
-            msg.raw << txt;
+            msg.raw = fmt::memory_buffer();
+            fmt::format_to(msg.raw, txt);
             msg.msg_id = msg_id;
         }
     };
