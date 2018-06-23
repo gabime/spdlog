@@ -33,9 +33,9 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &, const fmt::memory_buffer &formatted) override
     {
-        file_helper_.write(msg);
+        file_helper_.write(formatted);
         if (force_flush_)
         {
             file_helper_.flush();

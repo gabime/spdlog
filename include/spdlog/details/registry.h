@@ -46,10 +46,9 @@ public:
         auto logger_name = new_logger->name();
         throw_if_exists(logger_name);
 
-        if (formatter_)
-        {
-            new_logger->set_formatter(formatter_);
-        }
+        // create default formatter if not exists
+
+        new_logger->set_pattern(formatter_pattern_);
 
         if (err_handler_)
         {
@@ -82,23 +81,13 @@ public:
         return tp_;
     }
 
-    void set_formatter(formatter_ptr f)
-    {
-        std::lock_guard<Mutex> lock(mutex_);
-        formatter_ = f;
-        for (auto &l : loggers_)
-        {
-            l.second->set_formatter(formatter_);
-        }
-    }
-
     void set_pattern(const std::string &pattern)
     {
         std::lock_guard<Mutex> lock(mutex_);
-        formatter_ = std::make_shared<pattern_formatter>(pattern);
+        formatter_pattern_ = pattern;
         for (auto &l : loggers_)
         {
-            l.second->set_formatter(formatter_);
+            l.second->set_pattern(pattern);
         }
     }
 
@@ -184,7 +173,7 @@ private:
     Mutex mutex_;
     Mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
-    formatter_ptr formatter_;
+    std::string formatter_pattern_ = "%+";
     level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;
     log_err_handler err_handler_;

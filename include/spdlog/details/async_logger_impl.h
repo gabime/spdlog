@@ -71,7 +71,6 @@ inline void spdlog::async_logger::backend_log_(details::log_msg &incoming_log_ms
 {
     try
     {
-        formatter_->format(incoming_log_msg);
         for (auto &s : sinks_)
         {
             if (s->should_log(incoming_log_msg.level))

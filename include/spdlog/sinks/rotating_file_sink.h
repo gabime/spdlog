@@ -55,15 +55,15 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &, const fmt::memory_buffer &formatted) override
     {
-        current_size_ += msg.formatted.size();
+        current_size_ += formatted.size();
         if (current_size_ > max_size_)
         {
             rotate_();
-            current_size_ = msg.formatted.size();
+            current_size_ = formatted.size();
         }
-        file_helper_.write(msg);
+        file_helper_.write(formatted);
     }
 
     void flush_() override

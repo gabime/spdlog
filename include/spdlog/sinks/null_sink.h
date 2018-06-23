@@ -17,12 +17,12 @@ template<class Mutex>
 class null_sink : public base_sink<Mutex>
 {
 protected:
-    void sink_it_(const details::log_msg &) override {}
+    void sink_it_(const details::log_msg &, const fmt::memory_buffer &) override {}
 
     void flush_() override {}
 };
 
-using null_sink_mt = null_sink<details::null_mutex>;
+using null_sink_mt = null_sink<std::mutex>;
 using null_sink_st = null_sink<details::null_mutex>;
 
 } // namespace sinks

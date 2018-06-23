@@ -80,10 +80,10 @@ public:
         }
     }
 
-    void write(const log_msg &msg)
+    void write(const fmt::memory_buffer &buf)
     {
-        size_t msg_size = msg.formatted.size();
-        auto data = msg.formatted.data();
+        size_t msg_size = buf.size();
+        auto data = buf.data();
         if (std::fwrite(data, 1, msg_size, fd_) != msg_size)
         {
             throw spdlog_ex("Failed writing to file " + os::filename_to_str(_filename), errno);

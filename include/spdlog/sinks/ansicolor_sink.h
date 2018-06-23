@@ -88,20 +88,23 @@ public:
         // Wrap the originally formatted message in color codes.
         // If color is not supported in the terminal, log as is instead.
         std::lock_guard<mutex_t> lock(mutex_);
+
+        fmt::memory_buffer formatted;
+        formatter_->format(msg, formatted);
         if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
         {
             // before color range
-            print_range_(msg, 0, msg.color_range_start);
+            print_range_(formatted, 0, msg.color_range_start);
             // in color range
             print_ccode_(colors_[msg.level]);
-            print_range_(msg, msg.color_range_start, msg.color_range_end);
+            print_range_(formatted, msg.color_range_start, msg.color_range_end);
             print_ccode_(reset);
             // after color range
-            print_range_(msg, msg.color_range_end, msg.formatted.size());
+            print_range_(formatted, msg.color_range_end, formatted.size());
         }
         else // no color
         {
-            print_range_(msg, 0, msg.formatted.size());
+            print_range_(formatted, 0, formatted.size());
         }
         fflush(target_file_);
     }
@@ -117,9 +120,9 @@ private:
     {
         fwrite(color_code.data(), sizeof(char), color_code.size(), target_file_);
     }
-    void print_range_(const details::log_msg &msg, size_t start, size_t end)
+    void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end)
     {
-        fwrite(msg.formatted.data() + start, sizeof(char), end - start, target_file_);
+        fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);
     }
 
     FILE *target_file_;

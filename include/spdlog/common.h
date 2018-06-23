@@ -49,7 +49,7 @@
 #define SPDLOG_DEPRECATED
 #endif
 
-#include "fmt/fmt.h"
+#include "spdlog/fmt/fmt.h"
 
 namespace spdlog {
 

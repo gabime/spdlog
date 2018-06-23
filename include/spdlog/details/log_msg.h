@@ -38,11 +38,10 @@ struct log_msg
     log_clock::time_point time;
     size_t thread_id;
     fmt::memory_buffer raw;
-    fmt::memory_buffer formatted;
     size_t msg_id{0};
     // info about wrapping the formatted text with color
-    size_t color_range_start{0};
-    size_t color_range_end{0};
+    mutable size_t color_range_start{0};
+    mutable size_t color_range_end{0};
 };
 } // namespace details
 } // namespace spdlog

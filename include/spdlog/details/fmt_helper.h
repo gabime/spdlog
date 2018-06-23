@@ -14,6 +14,12 @@ inline void append_str(const std::string &str, fmt::memory_buffer &dest)
     dest.append(str_ptr, str_ptr + str.size());
 }
 
+inline void append_c_str(const char *c_str, fmt::memory_buffer &dest)
+{
+    auto str_size = strlen(c_str);
+    dest.append(c_str, c_str + str_size);
+}
+
 inline void append_buf(const fmt::memory_buffer &buf, fmt::memory_buffer &dest)
 {
     const char *buf_ptr = buf.data();
@@ -74,7 +80,7 @@ inline void append_and_pad3(int n, fmt::memory_buffer &dest)
     append_int(n, dest);
 }
 
-void append_and_pad6(int n, fmt::memory_buffer &dest)
+inline void append_and_pad6(int n, fmt::memory_buffer &dest)
 {
     if (n > 99999)
     {

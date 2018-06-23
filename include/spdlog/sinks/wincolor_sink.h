@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include "../fmt/fmt.h"
 #include "spdlog/common.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/traits.h"
@@ -63,22 +64,23 @@ public:
     void log(const details::log_msg &msg) SPDLOG_FINAL override
     {
         std::lock_guard<mutex_t> lock(mutex_);
-
+        fmt::memory_buffer formatted;
+        formatter_->format(msg, formatted);
         if (msg.color_range_end > msg.color_range_start)
         {
             // before color range
-            print_range_(msg, 0, msg.color_range_start);
+            print_range_(formatted, 0, msg.color_range_start);
 
             // in color range
             auto orig_attribs = set_console_attribs(colors_[msg.level]);
-            print_range_(msg, msg.color_range_start, msg.color_range_end);
+            print_range_(formatted, msg.color_range_start, msg.color_range_end);
             ::SetConsoleTextAttribute(out_handle_, orig_attribs); // reset to orig colors
                                                                   // after color range
-            print_range_(msg, msg.color_range_end, msg.formatted.size());
+            print_range_(formatted, msg.color_range_end, formatted.size());
         }
         else // print without colors if color range is invalid
         {
-            print_range_(msg, 0, msg.formatted.size());
+            print_range_(formatted, 0, formatted.size());
         }
     }
 
@@ -103,10 +105,10 @@ private:
     }
 
     // print a range of formatted message to console
-    void print_range_(const details::log_msg &msg, size_t start, size_t end)
+    void print_range_(const fmt::memory_buffer formatted, size_t start, size_t end)
     {
         auto size = static_cast<DWORD>(end - start);
-        ::WriteConsoleA(out_handle_, msg.formatted.data() + start, size, nullptr, nullptr);
+        ::WriteConsoleA(out_handle_, formatted.data() + start, size, nullptr, nullptr);
     }
 
     HANDLE out_handle_;

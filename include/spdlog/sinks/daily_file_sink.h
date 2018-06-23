@@ -76,14 +76,14 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &, const fmt::memory_buffer &formatted) override
     {
         if (std::chrono::system_clock::now() >= rotation_tp_)
         {
             file_helper_.open(FileNameCalc::calc_filename(base_filename_));
             rotation_tp_ = next_rotation_tp_();
         }
-        file_helper_.write(msg);
+        file_helper_.write(formatted);
     }
 
     void flush_() override

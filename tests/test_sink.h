@@ -35,7 +35,7 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &) override
+    void sink_it_(const details::log_msg &, const fmt::memory_buffer &) override
     {
         msg_counter_++;
         std::this_thread::sleep_for(delay_);

@@ -8,9 +8,12 @@
 // Thread safe logger (except for set_pattern(..), set_formatter(..) and set_error_handler())
 // Has name, log level, vector of std::shared sink pointers and formatter
 // Upon each log write the logger:
-// 1. Checks if its log level is enough to log the message
-// 2. Format the message using the formatter function
-// 3. Pass the formatted message to its sinks to performa the actual logging
+// 1. Checks if its log level is enough to log the message and if yes:
+// 2. Call the underlying sinks to do the job.
+// 3. Each sink use its own private copy of a formatter to format the message and send to its destination.
+//
+// The use of private formatter per sink provides the opportunity to cache some formatted data,
+// and support customize format per each sink.
 
 #include "spdlog/common.h"
 #include "spdlog/formatter.h"
@@ -111,8 +114,15 @@ public:
     void set_level(level::level_enum log_level);
     level::level_enum level() const;
     const std::string &name() const;
+
+    // create a pattern formatter all the sinks in this logger.
+    // each sink gets itw own private copy of a formatter object.
     void set_pattern(const std::string &pattern, pattern_time_type pattern_time = pattern_time_type::local);
-    void set_formatter(formatter_ptr msg_formatter);
+
+    // create a FormatterT formatter all the sinks in this logger.
+    // each sink gets itw own private copy of a formatter object.
+    template<class FormatterT, typename... Args>
+    void set_formatter(const Args &... args);
 
     void flush();
     void flush_on(level::level_enum log_level);
@@ -137,7 +147,6 @@ protected:
 
     const std::string name_;
     std::vector<sink_ptr> sinks_;
-    formatter_ptr formatter_;
     spdlog::level_t level_;
     spdlog::level_t flush_level_;
     log_err_handler err_handler_;

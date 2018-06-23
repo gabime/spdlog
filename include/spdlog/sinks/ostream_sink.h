@@ -26,9 +26,9 @@ public:
     ostream_sink &operator=(const ostream_sink &) = delete;
 
 protected:
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &msg, const fmt::memory_buffer &formatted) override
     {
-        ostream_.write(msg.formatted.data(), msg.formatted.size());
+        ostream_.write(formatted.data(), formatted.size());
         if (force_flush_)
             ostream_.flush();
     }

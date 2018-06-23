@@ -14,7 +14,6 @@ template<class It>
 inline spdlog::logger::logger(std::string logger_name, const It &begin, const It &end)
     : name_(std::move(logger_name))
     , sinks_(begin, end)
-    , formatter_(std::make_shared<pattern_formatter>("%+"))
     , level_(level::info)
     , flush_level_(level::off)
     , last_err_time_(0)
@@ -37,14 +36,19 @@ inline spdlog::logger::logger(const std::string &logger_name, spdlog::sink_ptr s
 
 inline spdlog::logger::~logger() = default;
 
-inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
+template<class FormatterT, typename... Args>
+inline void spdlog::logger::set_formatter(const Args &... args)
 {
-    formatter_ = std::move(msg_formatter);
+    for (auto &sink : sinks_)
+    {
+        std::unique_ptr<FormatterT> formatter(new FormatterT(args...));
+        sink->set_formatter(std::move(formatter));
+    }
 }
 
 inline void spdlog::logger::set_pattern(const std::string &pattern, pattern_time_type pattern_time)
 {
-    formatter_ = std::make_shared<pattern_formatter>(pattern, pattern_time);
+    set_formatter<spdlog::pattern_formatter>(pattern, pattern_time);
 }
 
 template<typename... Args>
@@ -288,7 +292,6 @@ inline void spdlog::logger::sink_it_(details::log_msg &msg)
 #if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
     incr_msg_counter_(msg);
 #endif
-    formatter_->format(msg);
     for (auto &sink : sinks_)
     {
         if (sink->should_log(msg.level))

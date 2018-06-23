@@ -62,11 +62,6 @@ inline void set_pattern(const std::string &format_string)
     details::registry::instance().set_pattern(format_string);
 }
 
-inline void set_formatter(formatter_ptr f)
-{
-    details::registry::instance().set_formatter(std::move(f));
-}
-
 //
 // Set global logging level
 //

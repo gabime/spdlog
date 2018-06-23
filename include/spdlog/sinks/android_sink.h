@@ -39,7 +39,17 @@ public:
     void log(const details::log_msg &msg) override
     {
         const android_LogPriority priority = convert_to_android(msg.level);
-        const char *msg_output = (use_raw_msg_ ? msg.raw.c_str() : msg.formatted.c_str());
+        fmt::memory_buffer formatted;
+        if (use_raw_msg_)
+        {
+            formatted.append(msg.raw.data(), msg.raw.data() + msg.raw.size());
+        }
+        else
+        {
+            formatter_->format(msg, formatted);
+        }
+        formatted.push_back('\0');
+        const char *msg_output = formatted.data();
 
         // See system/core/liblog/logger_write.c for explanation of return value
         int ret = __android_log_write(priority, tag_.c_str(), msg_output);
