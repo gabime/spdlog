@@ -29,7 +29,6 @@ int main(int, char *[])
 
     try
     {
-        syslog_example();
         auto console = spdlog::stdout_color_st("console");
         console->info("Welcome to spdlog!");
 
