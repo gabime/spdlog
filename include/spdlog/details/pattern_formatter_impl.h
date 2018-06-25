@@ -506,7 +506,6 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 #endif
 
         dest.push_back('[');
-
         // wrap the level name with color
         msg.color_range_start = dest.size();
         fmt_helper::append_c_str(level::to_str(msg.level), dest);

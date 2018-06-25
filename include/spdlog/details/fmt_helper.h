@@ -16,8 +16,12 @@ inline void append_str(const std::string &str, fmt::memory_buffer &dest)
 
 inline void append_c_str(const char *c_str, fmt::memory_buffer &dest)
 {
-    auto str_size = strlen(c_str);
-    dest.append(c_str, c_str + str_size);
+    char ch;
+    while ((ch = *c_str) != '\0')
+    {
+        dest.push_back(ch);
+        ++c_str;
+    }
 }
 
 inline void append_buf(const fmt::memory_buffer &buf, fmt::memory_buffer &dest)
