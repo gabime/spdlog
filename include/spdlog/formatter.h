@@ -8,9 +8,6 @@
 #include "fmt/fmt.h"
 #include "spdlog/details/log_msg.h"
 
-#include <memory>
-#include <string>
-#include <vector>
 
 namespace spdlog {
 
