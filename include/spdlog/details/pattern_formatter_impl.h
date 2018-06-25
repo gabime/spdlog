@@ -372,7 +372,7 @@ class t_formatter SPDLOG_FINAL : public flag_formatter
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
         // fmt::format_to(dest, "{}", msg.thread_id);
-        fmt_helper::append_size_t(msg.thread_id, dest);
+        fmt_helper::append_int(msg.thread_id, dest);
     }
 };
 
@@ -527,8 +527,8 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
     }
 
 private:
-    long cached_seconds_ts_{0};
-    long cached_millis_ts_{0};
+    std::chrono::seconds::rep cached_seconds_ts_{0};
+    std::chrono::milliseconds::rep cached_millis_ts_{0};
     fmt::memory_buffer cached_header_;
     fmt::memory_buffer cached_millis_;
 };
