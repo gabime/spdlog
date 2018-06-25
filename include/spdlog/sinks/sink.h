@@ -48,7 +48,7 @@ public:
         return static_cast<spdlog::level::level_enum>(level_.load(std::memory_order_relaxed));
     }
 
-    void set_pattern(const std::string& pattern)
+    void set_pattern(const std::string &pattern)
     {
         formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
     }

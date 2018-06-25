@@ -33,25 +33,7 @@ inline void append_int(T n, fmt::memory_buffer &dest)
     dest.append(i.data(), i.data() + i.size());
 }
 
-
-inline void append_and_pad2(int n, fmt::memory_buffer &dest)
-{
-    if (n > 9)
-    {
-        append_int(n, dest);
-        return;
-    }
-    if (n >= 0) // 0-9
-    {
-        dest.push_back('0');
-        append_int(n, dest);
-        return;
-    }
-    // negatives (unlikely but just in case, let fmt deal with it)
-    fmt::format_to(dest, "{:02}", n);
-}
-
-inline void append_and_pad3(int n, fmt::memory_buffer &dest)
+inline void pad2(int n, fmt::memory_buffer &dest)
 {
     if (n > 99)
     {
@@ -60,70 +42,43 @@ inline void append_and_pad3(int n, fmt::memory_buffer &dest)
     }
     if (n > 9) // 10-99
     {
-        dest.push_back('0');		
-		dest.push_back('0' + n / 10);
-		dest.push_back('0' + n % 10);		
-		return;
-    }
-    else if (n >= 0)
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-		dest.push_back('0' + n);
-		return;
-    }
-    // negatives (unlikely, but just in case let fmt deal with it)
-    else
-    {
-        fmt::format_to(dest, "{:03}", n);
+        dest.push_back('0' + (n / 10));
+        dest.push_back('0' + (n % 10));
         return;
     }
-    
+    if (n >= 0) // 0-9
+    {
+        dest.push_back('0');
+        dest.push_back('0' + n);
+        return;
+    }
+    // negatives (unlikely, but just in case, let fmt deal with it)
+    fmt::format_to(dest, "{:02}", n);
 }
 
-inline void append_and_pad6(int n, fmt::memory_buffer &dest)
+inline void pad3(int n, fmt::memory_buffer &dest)
 {
-    if (n > 99999)
+    if (n > 99)
     {
         append_int(n, dest);
         return;
     }
-    if (n > 9999)
+    if (n > 9) // 10-99
     {
         dest.push_back('0');
-    }
-    else if (n > 999)
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-    }
-    else if (n > 99)
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-    }
-    else if (n > 9)
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-    }
-    else if (n >= 0)
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-    }
-    else // negatives (unlikely, but just in case let fmt deal with it)
-    {
-        fmt::format_to(dest, "{:06}", n);
+        dest.push_back('0' + n / 10);
+        dest.push_back('0' + n % 10);
         return;
     }
-    append_int(n, dest);
+    if (n >= 0)
+    {
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0' + n);
+        return;
+    }
+    // negatives (unlikely, but just in case let fmt deal with it)
+    fmt::format_to(dest, "{:03}", n);
 }
 
 } // namespace fmt_helper

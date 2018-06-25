@@ -4,26 +4,20 @@ CXX_RELEASE_FLAGS = -O2
 CXX_DEBUG_FLAGS= -g 
 
 
-all:	example bench
-debug: example-debug bench-debug
+all:	example 
+debug: example-debug 
 
 example: example.cpp
 	$(CXX) example.cpp -o example-clang $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 
-bench: bench.cpp
-	$(CXX) bench.cpp -o bench-clang $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 	
 
 example-debug: example.cpp
 	$(CXX) example.cpp -o example-clang-debug $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
-	
-bench-debug: bench.cpp
-	$(CXX) bench.cpp -o bench-clang-debug $(CXXFLAGS) $(CXX_DEBUG_FLAGS)	
-
 
 
 clean:
-	rm -f *.o logs/*.txt example-clang example-clang-debug bench-clang bench-clang-debug 
+	rm -f *.o logs/*.txt example-clang example-clang-debug 
 
 
 rebuild: clean all
