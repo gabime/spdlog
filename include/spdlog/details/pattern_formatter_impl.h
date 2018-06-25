@@ -460,13 +460,12 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
     void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
 #ifndef SPDLOG_NO_DATETIME
-        auto duration = msg.time.time_since_epoch();
 
         // each second cache the header
+        auto duration = msg.time.time_since_epoch();
         auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
         if (cached_header_.size() == 0 || cached_seconds_ts_ != seconds)
         {
-
             cached_header_ = std::move(fmt::memory_buffer());
             cached_header_.push_back('[');
             fmt_helper::append_int(tm_time.tm_year + 1900, cached_header_);
@@ -491,19 +490,10 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         }
         fmt_helper::append_buf(cached_header_, dest);
 
-        //
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-
-        if (cached_millis_.size() == 0 || millis != cached_millis_ts_)
-        {
-            cached_millis_ = std::move(fmt::memory_buffer());
-            fmt_helper::append_and_pad3(static_cast<int>(millis), cached_millis_);
-            cached_millis_.push_back(']');
-            cached_millis_.push_back(' ');
-            cached_millis_ts_ = millis;
-        }
-        fmt_helper::append_buf(cached_millis_, dest);
-
+        fmt_helper::append_and_pad3(static_cast<int>(millis), dest);
+        dest.push_back(']');
+        dest.push_back(' ');
 #else // no datetime needed
         (void)tm_time;
 #endif
@@ -528,226 +518,237 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 
 private:
     std::chrono::seconds::rep cached_seconds_ts_{0};
-    std::chrono::milliseconds::rep cached_millis_ts_{0};
     fmt::memory_buffer cached_header_;
-    fmt::memory_buffer cached_millis_;
 };
 
 } // namespace details
-} // namespace spdlog
-///////////////////////////////////////////////////////////////////////////////
-// pattern_formatter inline impl
-///////////////////////////////////////////////////////////////////////////////
-inline spdlog::pattern_formatter::pattern_formatter(const std::string &pattern, pattern_time_type pattern_time, std::string eol)
-    : eol_(std::move(eol))
-    , pattern_time_(pattern_time)
-{
-    compile_pattern(pattern);
-}
 
-inline void spdlog::pattern_formatter::compile_pattern(const std::string &pattern)
+class pattern_formatter SPDLOG_FINAL : public formatter
 {
-    auto end = pattern.end();
-    std::unique_ptr<details::aggregate_formatter> user_chars;
-    for (auto it = pattern.begin(); it != end; ++it)
+public:
+    explicit pattern_formatter(const std::string &pattern, pattern_time_type pattern_time = pattern_time_type::local,
+        std::string eol = spdlog::details::os::default_eol)
+        : eol_(std::move(eol))
+        , pattern_time_(pattern_time)
     {
-        if (*it == '%')
-        {
-            if (user_chars) // append user chars found so far
-            {
-                formatters_.push_back(std::move(user_chars));
-            }
-            // if(
-            if (++it != end)
-            {
-                handle_flag(*it);
-            }
-            else
-            {
-                break;
-            }
-        }
-        else // chars not following the % sign should be displayed as is
-        {
-            if (!user_chars)
-            {
-                user_chars = std::unique_ptr<details::aggregate_formatter>(new details::aggregate_formatter());
-            }
-            user_chars->add_ch(*it);
-        }
+        compile_pattern(pattern);
     }
-    if (user_chars) // append raw chars found so far
+
+    pattern_formatter(const pattern_formatter &) = default;
+    pattern_formatter &operator=(const pattern_formatter &) = default;
+    void format(const details::log_msg &msg, fmt::memory_buffer &dest) override
     {
-        formatters_.push_back(std::move(user_chars));
-    }
-}
-inline void spdlog::pattern_formatter::handle_flag(char flag)
-{
-    switch (flag)
-    {
-    // logger name
-    case 'n':
-        formatters_.emplace_back(new details::name_formatter());
-        break;
-
-    case 'l':
-        formatters_.emplace_back(new details::level_formatter());
-        break;
-
-    case 'L':
-        formatters_.emplace_back(new details::short_level_formatter());
-        break;
-
-    case ('t'):
-        formatters_.emplace_back(new details::t_formatter());
-        break;
-
-    case ('v'):
-        formatters_.emplace_back(new details::v_formatter());
-        break;
-
-    case ('a'):
-        formatters_.emplace_back(new details::a_formatter());
-        break;
-
-    case ('A'):
-        formatters_.emplace_back(new details::A_formatter());
-        break;
-
-    case ('b'):
-    case ('h'):
-        formatters_.emplace_back(new details::b_formatter());
-        break;
-
-    case ('B'):
-        formatters_.emplace_back(new details::B_formatter());
-        break;
-    case ('c'):
-        formatters_.emplace_back(new details::c_formatter());
-        break;
-
-    case ('C'):
-        formatters_.emplace_back(new details::C_formatter());
-        break;
-
-    case ('Y'):
-        formatters_.emplace_back(new details::Y_formatter());
-        break;
-
-    case ('D'):
-    case ('x'):
-
-        formatters_.emplace_back(new details::D_formatter());
-        break;
-
-    case ('m'):
-        formatters_.emplace_back(new details::m_formatter());
-        break;
-
-    case ('d'):
-        formatters_.emplace_back(new details::d_formatter());
-        break;
-
-    case ('H'):
-        formatters_.emplace_back(new details::H_formatter());
-        break;
-
-    case ('I'):
-        formatters_.emplace_back(new details::I_formatter());
-        break;
-
-    case ('M'):
-        formatters_.emplace_back(new details::M_formatter());
-        break;
-
-    case ('S'):
-        formatters_.emplace_back(new details::S_formatter());
-        break;
-
-    case ('e'):
-        formatters_.emplace_back(new details::e_formatter());
-        break;
-
-    case ('f'):
-        formatters_.emplace_back(new details::f_formatter());
-        break;
-    case ('F'):
-        formatters_.emplace_back(new details::F_formatter());
-        break;
-
-    case ('E'):
-        formatters_.emplace_back(new details::E_formatter());
-        break;
-
-    case ('p'):
-        formatters_.emplace_back(new details::p_formatter());
-        break;
-
-    case ('r'):
-        formatters_.emplace_back(new details::r_formatter());
-        break;
-
-    case ('R'):
-        formatters_.emplace_back(new details::R_formatter());
-        break;
-
-    case ('T'):
-    case ('X'):
-        formatters_.emplace_back(new details::T_formatter());
-        break;
-
-    case ('z'):
-        formatters_.emplace_back(new details::z_formatter());
-        break;
-
-    case ('+'):
-        formatters_.emplace_back(new details::full_formatter());
-        break;
-
-    case ('P'):
-        formatters_.emplace_back(new details::pid_formatter());
-        break;
-
-    case ('i'):
-        formatters_.emplace_back(new details::i_formatter());
-        break;
-
-    case ('^'):
-        formatters_.emplace_back(new details::color_start_formatter());
-        break;
-
-    case ('$'):
-        formatters_.emplace_back(new details::color_stop_formatter());
-        break;
-
-    default: // Unknown flag appears as is
-        formatters_.emplace_back(new details::ch_formatter('%'));
-        formatters_.emplace_back(new details::ch_formatter(flag));
-        break;
-    }
-}
-
-inline std::tm spdlog::pattern_formatter::get_time(const details::log_msg &msg)
-{
-    if (pattern_time_ == pattern_time_type::local)
-    {
-        return details::os::localtime(log_clock::to_time_t(msg.time));
-    }
-    return details::os::gmtime(log_clock::to_time_t(msg.time));
-}
-
-inline void spdlog::pattern_formatter::format(const details::log_msg &msg, fmt::memory_buffer &dest)
-{
-
 #ifndef SPDLOG_NO_DATETIME
-    auto tm_time = get_time(msg);
-#else
-    std::tm tm_time;
+        auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
+        if (secs != last_log_secs_)
+        {
+            cached_tm_ = get_time(msg);
+            last_log_secs_ = secs;
+        }
 #endif
-    for (auto &f : formatters_)
-    {
-        f->format(msg, tm_time, dest);
+        for (auto &f : formatters_)
+        {
+            f->format(msg, cached_tm_, dest);
+        }
+        // write eol
+        details::fmt_helper::append_str(eol_, dest);
     }
-    // write eol
-    details::fmt_helper::append_str(eol_, dest);
-}
+
+private:
+    const std::string eol_;
+    const pattern_time_type pattern_time_;
+    std::tm cached_tm_{};
+    std::chrono::seconds last_log_secs_;
+
+    std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
+    std::tm get_time(const details::log_msg &msg)
+    {
+        if (pattern_time_ == pattern_time_type::local)
+        {
+            return details::os::localtime(log_clock::to_time_t(msg.time));
+        }
+        return details::os::gmtime(log_clock::to_time_t(msg.time));
+    }
+    void handle_flag(char flag)
+    {
+        switch (flag)
+        {
+            // logger name
+        case 'n':
+            formatters_.emplace_back(new details::name_formatter());
+            break;
+
+        case 'l':
+            formatters_.emplace_back(new details::level_formatter());
+            break;
+
+        case 'L':
+            formatters_.emplace_back(new details::short_level_formatter());
+            break;
+
+        case ('t'):
+            formatters_.emplace_back(new details::t_formatter());
+            break;
+
+        case ('v'):
+            formatters_.emplace_back(new details::v_formatter());
+            break;
+
+        case ('a'):
+            formatters_.emplace_back(new details::a_formatter());
+            break;
+
+        case ('A'):
+            formatters_.emplace_back(new details::A_formatter());
+            break;
+
+        case ('b'):
+        case ('h'):
+            formatters_.emplace_back(new details::b_formatter());
+            break;
+
+        case ('B'):
+            formatters_.emplace_back(new details::B_formatter());
+            break;
+        case ('c'):
+            formatters_.emplace_back(new details::c_formatter());
+            break;
+
+        case ('C'):
+            formatters_.emplace_back(new details::C_formatter());
+            break;
+
+        case ('Y'):
+            formatters_.emplace_back(new details::Y_formatter());
+            break;
+
+        case ('D'):
+        case ('x'):
+            formatters_.emplace_back(new details::D_formatter());
+            break;
+
+        case ('m'):
+            formatters_.emplace_back(new details::m_formatter());
+            break;
+
+        case ('d'):
+            formatters_.emplace_back(new details::d_formatter());
+            break;
+
+        case ('H'):
+            formatters_.emplace_back(new details::H_formatter());
+            break;
+
+        case ('I'):
+            formatters_.emplace_back(new details::I_formatter());
+            break;
+
+        case ('M'):
+            formatters_.emplace_back(new details::M_formatter());
+            break;
+
+        case ('S'):
+            formatters_.emplace_back(new details::S_formatter());
+            break;
+
+        case ('e'):
+            formatters_.emplace_back(new details::e_formatter());
+            break;
+
+        case ('f'):
+            formatters_.emplace_back(new details::f_formatter());
+            break;
+        case ('F'):
+            formatters_.emplace_back(new details::F_formatter());
+            break;
+
+        case ('E'):
+            formatters_.emplace_back(new details::E_formatter());
+            break;
+
+        case ('p'):
+            formatters_.emplace_back(new details::p_formatter());
+            break;
+
+        case ('r'):
+            formatters_.emplace_back(new details::r_formatter());
+            break;
+
+        case ('R'):
+            formatters_.emplace_back(new details::R_formatter());
+            break;
+
+        case ('T'):
+        case ('X'):
+            formatters_.emplace_back(new details::T_formatter());
+            break;
+
+        case ('z'):
+            formatters_.emplace_back(new details::z_formatter());
+            break;
+
+        case ('+'):
+            formatters_.emplace_back(new details::full_formatter());
+            break;
+
+        case ('P'):
+            formatters_.emplace_back(new details::pid_formatter());
+            break;
+
+        case ('i'):
+            formatters_.emplace_back(new details::i_formatter());
+            break;
+
+        case ('^'):
+            formatters_.emplace_back(new details::color_start_formatter());
+            break;
+
+        case ('$'):
+            formatters_.emplace_back(new details::color_stop_formatter());
+            break;
+
+        default: // Unknown flag appears as is
+            formatters_.emplace_back(new details::ch_formatter('%'));
+            formatters_.emplace_back(new details::ch_formatter(flag));
+            break;
+        }
+    }
+
+    void compile_pattern(const std::string &pattern)
+    {
+        auto end = pattern.end();
+        std::unique_ptr<details::aggregate_formatter> user_chars;
+        for (auto it = pattern.begin(); it != end; ++it)
+        {
+            if (*it == '%')
+            {
+                if (user_chars) // append user chars found so far
+                {
+                    formatters_.push_back(std::move(user_chars));
+                }
+                // if(
+                if (++it != end)
+                {
+                    handle_flag(*it);
+                }
+                else
+                {
+                    break;
+                }
+            }
+            else // chars not following the % sign should be displayed as is
+            {
+                if (!user_chars)
+                {
+                    user_chars = std::unique_ptr<details::aggregate_formatter>(new details::aggregate_formatter());
+                }
+                user_chars->add_ch(*it);
+            }
+        }
+        if (user_chars) // append raw chars found so far
+        {
+            formatters_.push_back(std::move(user_chars));
+        }
+    }
+};
+} // namespace spdlog

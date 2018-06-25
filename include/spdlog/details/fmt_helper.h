@@ -26,17 +26,13 @@ inline void append_buf(const fmt::memory_buffer &buf, fmt::memory_buffer &dest)
     dest.append(buf_ptr, buf_ptr + buf.size());
 }
 
-inline void append_int(int n, fmt::memory_buffer &dest)
+template<typename T>
+inline void append_int(T n, fmt::memory_buffer &dest)
 {
     fmt::format_int i(n);
     dest.append(i.data(), i.data() + i.size());
 }
 
-inline void append_size_t(size_t n, fmt::memory_buffer &dest)
-{
-    fmt::format_int i(n);
-    dest.append(i.data(), i.data() + i.size());
-}
 
 inline void append_and_pad2(int n, fmt::memory_buffer &dest)
 {
@@ -64,12 +60,17 @@ inline void append_and_pad3(int n, fmt::memory_buffer &dest)
     }
     if (n > 9) // 10-99
     {
-        dest.push_back('0');
+        dest.push_back('0');		
+		dest.push_back('0' + n / 10);
+		dest.push_back('0' + n % 10);		
+		return;
     }
     else if (n >= 0)
     {
         dest.push_back('0');
         dest.push_back('0');
+		dest.push_back('0' + n);
+		return;
     }
     // negatives (unlikely, but just in case let fmt deal with it)
     else
@@ -77,7 +78,7 @@ inline void append_and_pad3(int n, fmt::memory_buffer &dest)
         fmt::format_to(dest, "{:03}", n);
         return;
     }
-    append_int(n, dest);
+    
 }
 
 inline void append_and_pad6(int n, fmt::memory_buffer &dest)
