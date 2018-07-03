@@ -126,8 +126,8 @@ using level_hasher = std::hash<int>;
 //
 enum class async_overflow_policy
 {
-    block_retry,    // Block / yield / sleep until message can be enqueued
-    discard_log_msg // Discard the message it enqueue fails
+    block_retry,    // Block until message can be enqueued
+    overrun_oldeset // Discard oldest message in the queue if full when trying to add new item.
 };
 
 //

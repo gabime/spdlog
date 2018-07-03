@@ -39,19 +39,14 @@ public:
         push_cv_.notify_one();
     }
 
-    // try to enqueue and return immediately false if no room left
-    bool enqueue_nowait(T &&item)
+    // enqueue immediately. overrun oldest message in the queue if no room left.
+    void enqueue_nowait(T &&item)
     {
         {
             std::unique_lock<std::mutex> lock(queue_mutex_);
-            if (q_.full())
-            {
-                return false;
-            }
-            q_.push_back(std::forward<T>(item));
+            q_.push_back(std::move(item));
         }
         push_cv_.notify_one();
-        return true;
     }
 
     // try to dequeue item. if no item found. wait upto timeout and try again

@@ -30,7 +30,7 @@ TEST_CASE("discard policy ", "[async]")
     size_t messages = 1024;
     {
         auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
-        auto logger = std::make_shared<async_logger>("as", test_sink, tp, async_overflow_policy::discard_log_msg);
+        auto logger = std::make_shared<async_logger>("as", test_sink, tp, async_overflow_policy::overrun_oldeset);
         for (size_t i = 0; i < messages; i++)
         {
             logger->info("Hello message #{}", i);
