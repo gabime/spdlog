@@ -24,9 +24,10 @@ inline void append_c_str(const char *c_str, fmt::memory_buffer &dest)
     }
 }
 
-inline void append_buf(const fmt::memory_buffer &buf, fmt::memory_buffer &dest)
+template<size_t N1, size_t N2>
+inline void append_buf(const fmt::basic_memory_buffer<char, N1> &buf, fmt::basic_memory_buffer<char, N2> &dest)
 {
-    const char *buf_ptr = buf.data();
+    auto *buf_ptr = buf.data();
     dest.append(buf_ptr, buf_ptr + buf.size());
 }
 
