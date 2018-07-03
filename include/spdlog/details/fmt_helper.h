@@ -86,6 +86,51 @@ inline void pad3(int n, fmt::memory_buffer &dest)
     fmt::format_to(dest, "{:03}", n);
 }
 
+inline void pad6(int n, fmt::memory_buffer &dest)
+{
+    if (n > 99999)
+    {
+        append_int(n, dest);
+        return;
+    }
+    if (n > 9999)
+    {
+        dest.push_back('0');
+    }
+    else if (n > 999)
+    {
+        dest.push_back('0');
+        dest.push_back('0');
+    }
+    else if (n > 99)
+    {
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+    }
+    else if (n > 9)
+    {
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+    }
+    else if (n >= 0)
+    {
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+        dest.push_back('0');
+    }
+    else // negatives (unlikely, but just in case let fmt deal with it)
+    {
+        fmt::format_to(dest, "{:06}", n);
+        return;
+    }
+    append_int(n, dest);
+}
+
 } // namespace fmt_helper
 } // namespace details
 } // namespace spdlog

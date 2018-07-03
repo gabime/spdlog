@@ -235,7 +235,7 @@ class f_formatter SPDLOG_FINAL : public flag_formatter
     {
         auto duration = msg.time.time_since_epoch();
         auto micros = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() % 1000000;
-        fmt::format_to(dest, "{:06}", static_cast<int>(micros));
+        fmt_helper::pad6(static_cast<int>(micros), dest);
     }
 };
 
@@ -371,8 +371,8 @@ class t_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        // fmt::format_to(dest, "{}", msg.thread_id);
-        fmt_helper::append_int(msg.thread_id, dest);
+
+        fmt_helper::pad6(msg.thread_id, dest);
     }
 };
 
@@ -390,7 +390,8 @@ class i_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        fmt::format_to(dest, "{:06}", msg.msg_id);
+        // fmt::format_to(dest, "{:06}", msg.msg_id);
+        fmt_helper::pad6(msg.msg_id, dest);
     }
 };
 
