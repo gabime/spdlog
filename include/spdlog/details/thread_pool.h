@@ -29,7 +29,7 @@ struct async_msg
     level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;
-    std::string txt;
+    fmt::basic_memory_buffer<char, 128> raw;
 
     size_t msg_id;
     async_logger_ptr worker_ptr;
@@ -48,10 +48,10 @@ struct async_msg
         , level(m.level)
         , time(m.time)
         , thread_id(m.thread_id)
-        , txt(m.raw.data(), m.raw.size())
         , msg_id(m.msg_id)
         , worker_ptr(std::forward<async_logger_ptr>(worker))
     {
+        fmt_helper::append_buf(m.raw, raw);
     }
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
@@ -71,7 +71,7 @@ struct async_msg
         msg.level = level;
         msg.time = time;
         msg.thread_id = thread_id;
-        msg.raw.append(txt.data(), txt.data() + txt.size());
+        fmt_helper::append_buf(raw, msg.raw);
         msg.msg_id = msg_id;
         msg.color_range_start = 0;
         msg.color_range_end = 0;
