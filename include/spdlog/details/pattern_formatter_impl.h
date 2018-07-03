@@ -47,7 +47,7 @@ class level_formatter : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        fmt_helper::append_c_str(level::to_str(msg.level), dest);
+        fmt_helper::append_c_str(level::to_c_str(msg.level), dest);
     }
 };
 
@@ -390,7 +390,7 @@ class i_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        // fmt::format_to(dest, "{:06}", msg.msg_id);
+
         fmt_helper::pad6(msg.msg_id, dest);
     }
 };
@@ -509,7 +509,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         dest.push_back('[');
         // wrap the level name with color
         msg.color_range_start = dest.size();
-        fmt_helper::append_c_str(level::to_str(msg.level), dest);
+        fmt_helper::append_c_str(level::to_c_str(msg.level), dest);
         msg.color_range_end = dest.size();
         dest.push_back(']');
         dest.push_back(' ');

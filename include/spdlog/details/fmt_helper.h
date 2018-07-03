@@ -10,7 +10,7 @@ namespace details {
 namespace fmt_helper {
 inline void append_str(const std::string &str, fmt::memory_buffer &dest)
 {
-    const char *str_ptr = str.data();
+    auto *str_ptr = str.data();
     dest.append(str_ptr, str_ptr + str.size());
 }
 

@@ -94,7 +94,7 @@ static const char *level_names[] SPDLOG_LEVEL_NAMES;
 
 static const char *short_level_names[]{"T", "D", "I", "W", "E", "C", "O"};
 
-inline const char *to_str(spdlog::level::level_enum l)
+inline const char *to_c_str(spdlog::level::level_enum l)
 {
     return level_names[l];
 }
