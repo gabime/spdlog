@@ -99,7 +99,7 @@ inline const char *to_c_str(spdlog::level::level_enum l)
     return level_names[l];
 }
 
-inline const char *to_short_str(spdlog::level::level_enum l)
+inline const char *to_short_c_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
 }

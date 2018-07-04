@@ -56,7 +56,7 @@ class short_level_formatter : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        fmt_helper::append_c_str(level::to_short_str(msg.level), dest);
+        fmt_helper::append_c_str(level::to_short_c_str(msg.level), dest);
     }
 };
 
