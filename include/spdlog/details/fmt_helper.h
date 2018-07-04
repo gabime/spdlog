@@ -86,7 +86,7 @@ inline void pad3(int n, fmt::memory_buffer &dest)
     fmt::format_to(dest, "{:03}", n);
 }
 
-inline void pad6(int n, fmt::memory_buffer &dest)
+inline void pad6(size_t n, fmt::memory_buffer &dest)
 {
     if (n > 99999)
     {
@@ -122,12 +122,7 @@ inline void pad6(int n, fmt::memory_buffer &dest)
         dest.push_back('0');
         dest.push_back('0');
         dest.push_back('0');
-    }
-    else // negatives (unlikely, but just in case let fmt deal with it)
-    {
-        fmt::format_to(dest, "{:06}", n);
-        return;
-    }
+    }   
     append_int(n, dest);
 }
 

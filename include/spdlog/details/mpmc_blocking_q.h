@@ -59,7 +59,6 @@ public:
             {
                 return false;
             }
-
             q_.pop_front(popped_item);
         }
         pop_cv_.notify_one();
@@ -70,7 +69,6 @@ private:
     std::mutex queue_mutex_;
     std::condition_variable push_cv_;
     std::condition_variable pop_cv_;
-
     spdlog::details::circular_q<T> q_;
 };
 } // namespace details
