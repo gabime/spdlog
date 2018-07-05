@@ -52,15 +52,23 @@ int main(int argc, char *argv[])
         cout << "Single thread, " << format(howmany) << " iterations" << endl;
         cout << "*******************************************************************************\n";
 
+        auto basic_st = spdlog::basic_logger_mt("basic_st", "logs/basic_st.log", true);
+        bench(howmany, basic_st);
+
         auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
         bench(howmany, rotating_st);
+
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st.log");
         bench(howmany, daily_st);
+
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
         cout << "\n*******************************************************************************\n";
         cout << threads << " threads sharing same logger, " << format(howmany) << " iterations" << endl;
         cout << "*******************************************************************************\n";
+
+        auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
+        bench_mt(howmany, basic_mt, threads);
 
         auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt.log", file_size, rotating_files);
         bench_mt(howmany, rotating_mt, threads);
@@ -92,34 +100,31 @@ int main(int argc, char *argv[])
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
+    using std::chrono::high_resolution_clock;
     cout << log->name() << "...\t\t" << flush;
-    auto start = system_clock::now();
+    auto start = high_resolution_clock::now();
     for (auto i = 0; i < howmany; ++i)
     {
         log->info("Hello logger: msg number {}", i);
     }
 
-    auto delta = system_clock::now() - start;
+    auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
     cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
 }
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
 {
-
+    using std::chrono::high_resolution_clock;
     cout << log->name() << "...\t\t" << flush;
-    std::atomic<int> msg_counter{0};
     vector<thread> threads;
-    auto start = system_clock::now();
+    auto start = high_resolution_clock::now();
     for (int t = 0; t < thread_count; ++t)
     {
         threads.push_back(std::thread([&]() {
-            for (;;)
+            for (int j = 0; j < howmany/thread_count; j++)
             {
-                int counter = ++msg_counter;
-                if (counter > howmany)
-                    break;
-                log->info("Hello logger: msg number {}", counter);
+                log->info("Hello logger: msg number {}", j);
             }
         }));
     }
@@ -129,7 +134,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
         t.join();
     };
 
-    auto delta = system_clock::now() - start;
+        auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
     cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
 }
