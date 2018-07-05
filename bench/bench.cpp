@@ -32,7 +32,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int argc, char *argv[])
 {
 
-    int queue_size = 1048576;
+    int queue_size = 1000000;
     int howmany = 1000000;
     int threads = 10;
     int file_size = 30 * 1024 * 1024;
