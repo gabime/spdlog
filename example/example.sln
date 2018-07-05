@@ -20,16 +20,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "details", "details", "{08E9
 	ProjectSection(SolutionItems) = preProject
 		..\include\spdlog\details\async_log_helper.h = ..\include\spdlog\details\async_log_helper.h
 		..\include\spdlog\details\async_logger_impl.h = ..\include\spdlog\details\async_logger_impl.h
+		..\include\spdlog\details\circular_q.h = ..\include\spdlog\details\circular_q.h
 		..\include\spdlog\details\file_helper.h = ..\include\spdlog\details\file_helper.h
+		..\include\spdlog\details\fmt_helper.h = ..\include\spdlog\details\fmt_helper.h
 		..\include\spdlog\details\log_msg.h = ..\include\spdlog\details\log_msg.h
 		..\include\spdlog\details\logger_impl.h = ..\include\spdlog\details\logger_impl.h
-		..\include\spdlog\details\mpmc_bounded_q.h = ..\include\spdlog\details\mpmc_bounded_q.h
+		..\include\spdlog\details\mpmc_blocking_q.h = ..\include\spdlog\details\mpmc_blocking_q.h
 		..\include\spdlog\details\null_mutex.h = ..\include\spdlog\details\null_mutex.h
 		..\include\spdlog\details\os.h = ..\include\spdlog\details\os.h
 		..\include\spdlog\details\pattern_formatter_impl.h = ..\include\spdlog\details\pattern_formatter_impl.h
 		..\include\spdlog\details\registry.h = ..\include\spdlog\details\registry.h
 		..\include\spdlog\details\spdlog_impl.h = ..\include\spdlog\details\spdlog_impl.h
-		..\include\spdlog\details\thread_pool.h = ..\include\spdlog\details\thread_pool.h
+		..\include\spdlog\details\thread_pool.h.128.buf.h = ..\include\spdlog\details\thread_pool.h.128.buf.h
 		..\include\spdlog\details\traits.h = ..\include\spdlog\details\traits.h
 	EndProjectSection
 EndProject
@@ -58,13 +60,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sinks", "sinks", "{27D16BB9
 		..\include\spdlog\sinks\android_sink.h = ..\include\spdlog\sinks\android_sink.h
 		..\include\spdlog\sinks\ansicolor_sink.h = ..\include\spdlog\sinks\ansicolor_sink.h
 		..\include\spdlog\sinks\base_sink.h = ..\include\spdlog\sinks\base_sink.h
-		..\include\spdlog\sinks\stdout_color_sinks.h = ..\include\spdlog\sinks\stdout_color_sinks.h
 		..\include\spdlog\sinks\dist_sink.h = ..\include\spdlog\sinks\dist_sink.h
 		..\include\spdlog\sinks\file_sinks.h = ..\include\spdlog\sinks\file_sinks.h
 		..\include\spdlog\sinks\msvc_sink.h = ..\include\spdlog\sinks\msvc_sink.h
 		..\include\spdlog\sinks\null_sink.h = ..\include\spdlog\sinks\null_sink.h
 		..\include\spdlog\sinks\ostream_sink.h = ..\include\spdlog\sinks\ostream_sink.h
 		..\include\spdlog\sinks\sink.h = ..\include\spdlog\sinks\sink.h
+		..\include\spdlog\sinks\stdout_color_sinks.h = ..\include\spdlog\sinks\stdout_color_sinks.h
 		..\include\spdlog\sinks\stdout_sinks.h = ..\include\spdlog\sinks\stdout_sinks.h
 		..\include\spdlog\sinks\syslog_sink.h = ..\include\spdlog\sinks\syslog_sink.h
 		..\include\spdlog\sinks\wincolor_sink.h = ..\include\spdlog\sinks\wincolor_sink.h
@@ -81,10 +83,12 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Debug|Win32.ActiveCfg = Debug|Win32
 		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Debug|Win32.Build.0 = Debug|Win32
-		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Debug|x64.ActiveCfg = Debug|Win32
+		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Debug|x64.ActiveCfg = Debug|x64
+		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Debug|x64.Build.0 = Debug|x64
 		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Release|Win32.ActiveCfg = Release|Win32
 		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Release|Win32.Build.0 = Release|Win32
-		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Release|x64.ActiveCfg = Release|Win32
+		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Release|x64.ActiveCfg = Release|x64
+		{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -97,5 +101,17 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1BF53532-C5DC-4236-B195-9E17CBE40A48}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal
