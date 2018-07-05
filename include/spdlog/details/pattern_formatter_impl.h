@@ -246,7 +246,7 @@ class F_formatter SPDLOG_FINAL : public flag_formatter
     {
         auto duration = msg.time.time_since_epoch();
         auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() % 1000000000;
-        fmt::format_to(dest, "{:09}", static_cast<int>(ns));
+        fmt::format_to(dest, "{:09}", ns);
     }
 };
 
