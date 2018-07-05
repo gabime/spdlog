@@ -22,24 +22,16 @@ class simple_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
     explicit simple_file_sink(const filename_t &filename, bool truncate = false)
-        : force_flush_(false)
     {
         file_helper_.open(filename, truncate);
     }
 
-    void set_force_flush(bool force_flush)
-    {
-        force_flush_ = force_flush;
-    }
+
 
 protected:
     void sink_it_(const details::log_msg &, const fmt::memory_buffer &formatted) override
     {
         file_helper_.write(formatted);
-        if (force_flush_)
-        {
-            file_helper_.flush();
-        }
     }
 
     void flush_() override
@@ -49,7 +41,6 @@ protected:
 
 private:
     details::file_helper file_helper_;
-    bool force_flush_;
 };
 
 using simple_file_sink_mt = simple_file_sink<std::mutex>;
