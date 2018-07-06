@@ -119,8 +119,8 @@ public:
     // each sink gets itw own private copy of a formatter object.
     void set_pattern(const std::string &pattern, pattern_time_type pattern_time = pattern_time_type::local);
 
-    // create a FormatterT formatter all the sinks in this logger.
-    // each sink gets itw own private copy of a formatter object.
+    // create a FormatterT formatter for each sink in this logger.
+    // each sink gets its own private copy of a formatter object.
     template<class FormatterT, typename... Args>
     void set_formatter(const Args &... args);
 
