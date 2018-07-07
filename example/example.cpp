@@ -56,7 +56,6 @@ int main(int, char *[])
 }
 
 #include "spdlog/sinks/stdout_color_sinks.h" // or "/sinks/stdout_sinks.h" if no colors needed
-
 void stdout_example()
 {
     // create color multi threaded logger
