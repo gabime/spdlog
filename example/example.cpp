@@ -65,7 +65,7 @@ void stdout_example()
 
     auto err_logger = spdlog::stderr_color_mt("error_logger");
     err_logger->error("Some error message");
-    
+
     // Formatting examples
     console->warn("Easy padding in numbers like {:08d}", 12);
     console->critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);

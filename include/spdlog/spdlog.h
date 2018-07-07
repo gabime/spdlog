@@ -57,9 +57,9 @@ inline std::shared_ptr<logger> get(const std::string &name)
 // Set global formatting
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 //
-inline void set_pattern(const std::string &format_string)
+inline void set_pattern(const std::string &format_string, pattern_time_type time_type = pattern_time_type::local)
 {
-    details::registry::instance().set_pattern(format_string);
+    details::registry::instance().set_pattern(format_string, time_type);
 }
 
 //

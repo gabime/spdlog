@@ -46,9 +46,9 @@ inline void spdlog::logger::set_formatter(const Args &... args)
     }
 }
 
-inline void spdlog::logger::set_pattern(const std::string &pattern, pattern_time_type pattern_time)
+inline void spdlog::logger::set_pattern(const std::string &pattern, pattern_time_type time_type)
 {
-    set_formatter<spdlog::pattern_formatter>(pattern, pattern_time);
+    set_formatter<spdlog::pattern_formatter>(pattern, time_type);
 }
 
 template<typename... Args>

@@ -48,7 +48,7 @@ public:
 
         // create default formatter if not exists
 
-        new_logger->set_pattern(formatter_pattern_);
+        new_logger->set_formatter<pattern_formatter>(formatter_pattern_, pattern_time_type_);
 
         if (err_handler_)
         {
@@ -81,13 +81,14 @@ public:
         return tp_;
     }
 
-    void set_pattern(const std::string &pattern)
+    void set_pattern(const std::string &pattern, pattern_time_type time_type)
     {
         std::lock_guard<Mutex> lock(mutex_);
         formatter_pattern_ = pattern;
+        pattern_time_type_ = time_type;
         for (auto &l : loggers_)
         {
-            l.second->set_pattern(pattern);
+            l.second->set_pattern(pattern, time_type);
         }
     }
 
@@ -174,6 +175,7 @@ private:
     Mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
     std::string formatter_pattern_ = "%+";
+    pattern_time_type pattern_time_type_ = pattern_time_type::local;
     level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;
     log_err_handler err_handler_;
