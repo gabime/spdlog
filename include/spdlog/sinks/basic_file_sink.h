@@ -26,8 +26,6 @@ public:
         file_helper_.open(filename, truncate);
     }
 
-
-
 protected:
     void sink_it_(const details::log_msg &, const fmt::memory_buffer &formatted) override
     {

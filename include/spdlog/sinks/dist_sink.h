@@ -18,7 +18,7 @@
 namespace spdlog {
 namespace sinks {
 
-template <typename Mutex>
+template<typename Mutex>
 class dist_sink : public sink
 {
 public:
@@ -60,7 +60,6 @@ public:
 private:
     Mutex mutex_;
     std::vector<std::shared_ptr<sink>> sinks_;
-
 };
 
 using dist_sink_mt = dist_sink<std::mutex>;

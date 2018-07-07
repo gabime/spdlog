@@ -122,7 +122,7 @@ inline void pad6(size_t n, fmt::memory_buffer &dest)
         dest.push_back('0');
         dest.push_back('0');
         dest.push_back('0');
-    }   
+    }
     append_int(n, dest);
 }
 

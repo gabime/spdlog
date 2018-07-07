@@ -7,7 +7,6 @@
 //
 //
 
-
 #include <iostream>
 
 void stdout_example();
@@ -42,7 +41,6 @@ int main(int, char *[])
         // custom  error handler
         err_handler_example();
 
-
         // apply some function on all registered loggers
         spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) { l->info("End of example."); });
 
@@ -57,7 +55,6 @@ int main(int, char *[])
     }
 }
 
-
 #include "spdlog/sinks/stdout_color_sinks.h" // or "/sinks/stdout_sinks.h" if no colors needed
 
 void stdout_example()
@@ -68,7 +65,7 @@ void stdout_example()
     console->error("Some error message with arg: {}", 1);
 
     auto err_logger = spdlog::stderr_color_mt("error_logger");
-    err_logger ->error("Some error message");
+    err_logger->error("Some error message");
     // Formatting examples
     console->warn("Easy padding in numbers like {:08d}", 12);
     console->critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
@@ -84,20 +81,15 @@ void stdout_example()
     console->set_level(spdlog::level::trace); // Set specific logger's log level
     console->debug("This message should be displayed..");
 
-
     // Customize msg format for all loggers
     spdlog::set_pattern("[%H:%M:%S %z] [%^---%L---%$] [thread %t] %v");
     console->info("This an info message with custom format");
-
-
 
     // Compile time log levels
     // define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON
     SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
     SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
-
 }
-
 
 #include "spdlog/sinks/basic_file_sink.h"
 void basic_example()
@@ -118,9 +110,7 @@ void daily_example()
 {
     // Create a daily logger - a new file is created every day on 2:30am
     auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
-
 }
-
 
 #include "spdlog/async.h"
 void async_example()
@@ -137,8 +127,6 @@ void async_example()
     }
 }
 
-
-
 // user defined types logging by implementing operator<<
 #include "spdlog/fmt/ostr.h" // must be included
 struct my_type
@@ -150,7 +138,6 @@ struct my_type
         return os << "[my_type i=" << c.i << "]";
     }
 };
-
 
 void user_defined_example()
 {
@@ -166,7 +153,6 @@ void err_handler_example()
     spdlog::set_error_handler([](const std::string &msg) { spdlog::get("console")->error("*** LOGGER ERROR ***: {}", msg); });
     spdlog::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
 }
-
 
 // syslog example (linux/osx/freebsd)
 #ifndef _WIN32

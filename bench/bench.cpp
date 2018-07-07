@@ -7,10 +7,10 @@
 // bench.cpp : spdlog benchmarks
 //
 #include "spdlog/async.h"
+#include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
-#include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/spdlog.h"
 #include "utils.h"
 #include <atomic>
@@ -122,7 +122,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
     for (int t = 0; t < thread_count; ++t)
     {
         threads.push_back(std::thread([&]() {
-            for (int j = 0; j < howmany/thread_count; j++)
+            for (int j = 0; j < howmany / thread_count; j++)
             {
                 log->info("Hello logger: msg number {}", j);
             }
@@ -134,7 +134,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
         t.join();
     };
 
-        auto delta = high_resolution_clock::now() - start;
+    auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
     cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
 }
