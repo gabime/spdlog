@@ -100,37 +100,37 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
     SPDLOG_CATCH_AND_HANDLE
 }
 
-template<typename Arg1, typename... Args>
+template<typename... Args>
 inline void spdlog::logger::trace(const char *fmt, const Args &... args)
 {
     log(level::trace, fmt, args...);
 }
 
-template<typename Arg1, typename... Args>
+template<typename... Args>
 inline void spdlog::logger::debug(const char *fmt, const Args &... args)
 {
     log(level::debug, fmt, args...);
 }
 
-template<typename Arg1, typename... Args>
+template<typename... Args>
 inline void spdlog::logger::info(const char *fmt, const Args &... args)
 {
     log(level::info, fmt, args...);
 }
 
-template<typename Arg1, typename... Args>
+template<typename... Args>
 inline void spdlog::logger::warn(const char *fmt, const Args &... args)
 {
     log(level::warn, fmt, args...);
 }
 
-template<typename Arg1, typename... Args>
+template<typename... Args>
 inline void spdlog::logger::error(const char *fmt, const Args &... args)
 {
     log(level::err, fmt, args...);
 }
 
-template<typename Arg1, typename... Args>
+template<typename... Args>
 inline void spdlog::logger::critical(const char *fmt, const Args &... args)
 {
     log(level::critical, fmt, args...);

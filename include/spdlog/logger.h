@@ -45,22 +45,22 @@ public:
     template<typename... Args>
     void log(level::level_enum lvl, const char *msg);
 
-    template<typename Arg1, typename... Args>
+    template<typename... Args>
     void trace(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
+    template<typename... Args>
     void debug(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
+    template<typename... Args>
     void info(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
+    template<typename... Args>
     void warn(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
+    template<typename... Args>
     void error(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
+    template<typename... Args>
     void critical(const char *fmt, const Args &... args);
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
