@@ -176,7 +176,6 @@ class d_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        // fmt::format_to(dest, "{:02}", tm_time.tm_mday);
         fmt_helper::pad2(tm_time.tm_mday, dest);
     }
 };
@@ -265,7 +264,7 @@ class p_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        fmt::format_to(dest, "{}", ampm(tm_time));
+        fmt_helper::append_c_str(ampm(tm_time), dest);
     }
 };
 
@@ -274,13 +273,13 @@ class r_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        // fmt::format_to(dest, "{:02}:{:02}:{:02} {}", to12h(tm_time), tm_time.tm_min, tm_time.tm_sec, ampm(tm_time));
         fmt_helper::pad2(to12h(tm_time), dest);
         dest.push_back(':');
         fmt_helper::pad2(tm_time.tm_min, dest);
         dest.push_back(':');
         fmt_helper::pad2(tm_time.tm_sec, dest);
-        fmt::format_to(dest, " {}", ampm(tm_time));
+        dest.push_back(' ');
+        fmt_helper::append_c_str(ampm(tm_time), dest);
     }
 };
 
