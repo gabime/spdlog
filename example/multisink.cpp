@@ -15,8 +15,8 @@ int main(int, char *[])
         // Each sink can have it's own log level and a message will be logged.
         std::vector<spdlog::sink_ptr> sinks;
         sinks.push_back(std::make_shared<spdlog::sinks::stdout_sink_mt>());
-        sinks.push_back(std::make_shared<spdlog::sinks::simple_file_sink_mt>("./log_regular_file.txt"));
-        sinks.push_back(std::make_shared<spdlog::sinks::simple_file_sink_mt>("./log_debug_file.txt"));
+        sinks.push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("./log_regular_file.txt"));
+        sinks.push_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("./log_debug_file.txt"));
 
         spdlog::logger console_multisink("multisink", sinks.begin(), sinks.end());
         console_multisink.set_level(spdlog::level::warn);

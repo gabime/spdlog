@@ -10,7 +10,7 @@
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
-#include "spdlog/sinks/simple_file_sink.h"
+#include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/spdlog.h"
 #include "utils.h"
 #include <atomic>
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
         for (int i = 0; i < 3; ++i)
         {
             spdlog::init_thread_pool(queue_size, 1);
-            auto as = spdlog::basic_logger_mt<spdlog::create_async>("as", "logs/basic_async.log", true);
+            auto as = spdlog::basic_logger_mt<spdlog::async_factory>("as", "logs/basic_async.log", true);
             bench_mt(howmany, as, threads);
             spdlog::drop("as");
         }

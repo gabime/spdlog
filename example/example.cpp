@@ -12,7 +12,7 @@
 
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
-#include "spdlog/sinks/simple_file_sink.h"
+#include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
 #include <iostream>
@@ -29,6 +29,7 @@ int main(int, char *[])
 
     try
     {
+        spd::set_pattern("TEST PATTERN %v");
         auto console = spdlog::stdout_color_st("console");
         console->info("Welcome to spdlog!");
 
@@ -107,10 +108,15 @@ int main(int, char *[])
 #include "spdlog/async.h"
 void async_example()
 {
-    auto async_file = spd::basic_logger_mt<spdlog::create_async>("async_file_logger", "logs/async_log.txt");
-
-    // thread pool settings can be modified *before* creating the async logger:
+    // default thread pool settings can be modified *before* creating the async logger:
+    // spdlog::init_thread_pool(32768, 1); // queue with max 32k items 1 backing thread.
     // spdlog::init_thread_pool(32768, 4); // queue with max 32k items 4 backing threads.
+
+    auto async_file = spd::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt");
+
+    // alternatively:
+    // auto async_file = spd::create_async<spd::sinks::basic_file_sink_mt>("async_file_logger", "logs/async_log.txt");
+
     for (int i = 0; i < 100; ++i)
     {
         async_file->info("Async message #{}", i + 1);
