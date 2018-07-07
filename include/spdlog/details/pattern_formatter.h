@@ -329,23 +329,19 @@ public:
         int total_minutes = os::utc_minutes_offset(tm_time);
 #endif
         bool is_negative = total_minutes < 0;
-        char sign;
         if (is_negative)
         {
             total_minutes = -total_minutes;
-            sign = '-';
+            dest.push_back('-');
         }
         else
         {
-            sign = '+';
+            dest.push_back('+');
         }
 
-        int h = total_minutes / 60;
-        int m = total_minutes % 60;
-        dest.push_back(sign);
-        fmt_helper::pad2(h, dest);
+        fmt_helper::pad2(total_minutes / 60, dest); //hours
         dest.push_back(':');
-        fmt_helper::pad2(m, dest);
+        fmt_helper::pad2(total_minutes % 60, dest); //minutes
     }
 
 private:
