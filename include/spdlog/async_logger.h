@@ -34,13 +34,13 @@ class async_logger SPDLOG_FINAL : public std::enable_shared_from_this<async_logg
 public:
     template<class It>
     async_logger(const std::string &logger_name, const It &begin, const It &end, std::weak_ptr<details::thread_pool> tp,
-        async_overflow_policy overflow_policy = async_overflow_policy::block_retry);
+        async_overflow_policy overflow_policy = async_overflow_policy::block);
 
     async_logger(const std::string &logger_name, sinks_init_list sinks, std::weak_ptr<details::thread_pool> tp,
-        async_overflow_policy overflow_policy = async_overflow_policy::block_retry);
+        async_overflow_policy overflow_policy = async_overflow_policy::block);
 
     async_logger(const std::string &logger_name, sink_ptr single_sink, std::weak_ptr<details::thread_pool> tp,
-        async_overflow_policy overflow_policy = async_overflow_policy::block_retry);
+        async_overflow_policy overflow_policy = async_overflow_policy::block);
 
 protected:
     void sink_it_(details::log_msg &msg) override;

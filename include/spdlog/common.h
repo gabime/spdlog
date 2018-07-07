@@ -63,6 +63,7 @@ using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using formatter_ptr = std::shared_ptr<spdlog::formatter>;
+
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
 #else
@@ -126,8 +127,8 @@ using level_hasher = std::hash<int>;
 //
 enum class async_overflow_policy
 {
-    block_retry,    // Block until message can be enqueued
-    overrun_oldeset // Discard oldest message in the queue if full when trying to add new item.
+    block,          // Block until message can be enqueued
+    overrun_oldest  // Discard oldest message in the queue if full when trying to add new item.
 };
 
 //

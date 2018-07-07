@@ -39,7 +39,7 @@ struct async_factory
         }
 
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
-        auto new_logger = std::make_shared<async_logger>(logger_name, std::move(sink), std::move(tp), async_overflow_policy::block_retry);
+        auto new_logger = std::make_shared<async_logger>(logger_name, std::move(sink), std::move(tp), async_overflow_policy::block);
         registry::instance().register_and_init(new_logger);
         return new_logger;
     }

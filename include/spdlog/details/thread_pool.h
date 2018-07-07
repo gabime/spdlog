@@ -106,14 +106,13 @@ public:
         {
             for (size_t i = 0; i < threads_.size(); i++)
             {
-                post_async_msg_(async_msg(async_msg_type::terminate), async_overflow_policy::block_retry);
+                post_async_msg_(async_msg(async_msg_type::terminate), async_overflow_policy::block);
             }
 
             for (auto &t : threads_)
             {
                 t.join();
             }
-            // std::cout << "~thread_pool()  msg_counter_: " << msg_counter_ << std::endl;
         }
         catch (...)
         {
@@ -138,7 +137,7 @@ private:
 
     void post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy)
     {
-        if (overflow_policy == async_overflow_policy::block_retry)
+        if (overflow_policy == async_overflow_policy::block)
         {
             q_.enqueue(std::move(new_msg));
         }
