@@ -533,7 +533,7 @@ public:
         , last_log_secs_(0)
     {
         std::memset(&cached_tm_, 0, sizeof(cached_tm_));
-        compile_pattern(pattern);
+        compile_pattern_(pattern);
     }
 
     pattern_formatter(const pattern_formatter &) = default;
@@ -544,7 +544,7 @@ public:
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
         if (secs != last_log_secs_)
         {
-            cached_tm_ = get_time(msg);
+            cached_tm_ = get_time_(msg);
             last_log_secs_ = secs;
         }
 #endif
@@ -563,7 +563,7 @@ private:
     std::chrono::seconds last_log_secs_;
 
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
-    std::tm get_time(const details::log_msg &msg)
+    std::tm get_time_(const details::log_msg &msg)
     {
         if (pattern_time_ == pattern_time_type::local)
         {
@@ -572,7 +572,7 @@ private:
         return details::os::gmtime(log_clock::to_time_t(msg.time));
     }
 
-    void handle_flag(char flag)
+    void handle_flag_(char flag)
     {
         switch (flag)
         {
@@ -717,7 +717,7 @@ private:
         }
     }
 
-    void compile_pattern(const std::string &pattern)
+    void compile_pattern_(const std::string &pattern)
     {
         auto end = pattern.end();
         std::unique_ptr<details::aggregate_formatter> user_chars;
@@ -732,7 +732,7 @@ private:
                 // if(
                 if (++it != end)
                 {
-                    handle_flag(*it);
+                    handle_flag_(*it);
                 }
                 else
                 {

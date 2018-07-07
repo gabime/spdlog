@@ -55,16 +55,16 @@ int main(int, char *[])
     }
 }
 
-#include "spdlog/sinks/stdout_color_sinks.h" // or "/sinks/stdout_sinks.h" if no colors needed
+#include "spdlog/sinks/stdout_sinks.h" // or "/sinks/stdout_sinks.h" if no colors needed
 
 void stdout_example()
 {
     // create color multi threaded logger
-    auto console = spdlog::stdout_color_mt("console");
+    auto console = spdlog::stdout_logger_mt("console");
     console->info("Welcome to spdlog!");
     console->error("Some error message with arg: {}", 1);
 
-    auto err_logger = spdlog::stderr_color_mt("error_logger");
+    auto err_logger = spdlog::stderr_logger_mt("error_logger");
     err_logger->error("Some error message");
     // Formatting examples
     console->warn("Easy padding in numbers like {:08d}", 12);

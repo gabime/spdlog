@@ -7,8 +7,8 @@
 
 #include "../fmt/fmt.h"
 #include "spdlog/common.h"
-#include "spdlog/details/null_mutex.h"
 #include "spdlog/details/console_globals.h"
+#include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/sink.h"
 
 #include <memory>
@@ -22,7 +22,7 @@ namespace sinks {
 /*
  * Windows color console sink. Uses WriteConsoleA to write to the console with colors
  */
-template<class HandleTrait, class ConsoleMutexTrait>
+template<class OutHandle, class ConsoleMutex>
 class wincolor_sink : public sink
 {
 public:
@@ -34,8 +34,8 @@ public:
     const WORD YELLOW = FOREGROUND_RED | FOREGROUND_GREEN;
 
     wincolor_sink()
-        : out_handle_(HandleTrait::handle())
-        , mutex_(ConsoleMutexTrait::console_mutex())
+        : out_handle_(OutHandle::handle())
+        , mutex_(ConsoleMutex::console_mutex())
     {
         colors_[level::trace] = WHITE;
         colors_[level::debug] = CYAN;
@@ -90,7 +90,7 @@ public:
     }
 
 private:
-    using mutex_t = typename ConsoleMutexTrait::mutex_t;
+    using mutex_t = typename ConsoleMutex::mutex_t;
     // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs)
     {

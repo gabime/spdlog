@@ -6,6 +6,7 @@
 #pragma once
 
 #include "spdlog/details/log_msg.h"
+#include "spdlog/details/pattern_formatter_impl.h"
 #include "spdlog/formatter.h"
 
 namespace spdlog {

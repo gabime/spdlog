@@ -36,7 +36,7 @@ public:
     {
         std::lock_guard<Mutex> lock(mutex_);
         auto logger_name = new_logger->name();
-        throw_if_exists(logger_name);
+        throw_if_exists_(logger_name);
         loggers_[logger_name] = new_logger;
     }
 
@@ -44,7 +44,7 @@ public:
     {
         std::lock_guard<Mutex> lock(mutex_);
         auto logger_name = new_logger->name();
-        throw_if_exists(logger_name);
+        throw_if_exists_(logger_name);
 
         // create default formatter if not exists
 
@@ -162,7 +162,7 @@ public:
 private:
     registry_t<Mutex>() = default;
 
-    void throw_if_exists(const std::string &logger_name)
+    void throw_if_exists_(const std::string &logger_name)
     {
         if (loggers_.find(logger_name) != loggers_.end())
         {

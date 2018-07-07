@@ -5,9 +5,9 @@
 
 #pragma once
 
+#include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/os.h"
-#include "spdlog/details/console_globals.h"
 
 #include <memory>
 #include <mutex>
@@ -22,14 +22,14 @@ namespace sinks {
  * of the message.
  * If no color terminal detected, omit the escape codes.
  */
-template<class StreamTrait, class ConsoleMutexTrait>
+template<class TargetStream, class ConsoleMutex>
 class ansicolor_sink : public sink
 {
 public:
-    using mutex_t = typename ConsoleMutexTrait::mutex_t;
+    using mutex_t = typename ConsoleMutex::mutex_t;
     ansicolor_sink()
-        : target_file_(StreamTrait::stream())
-        , mutex_(ConsoleMutexTrait::console_mutex())
+        : target_file_(TargetStream::stream())
+        , mutex_(ConsoleMutex::console_mutex())
 
     {
         should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();

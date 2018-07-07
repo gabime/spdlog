@@ -88,6 +88,10 @@ inline void pad3(int n, fmt::memory_buffer &dest)
 
 inline void pad6(size_t n, fmt::memory_buffer &dest)
 {
+    // todo: maybe replace this implementation with
+    // pad3(n / 1000, dest);
+    // pad3(n % 1000, dest);
+
     if (n > 99999)
     {
         append_int(n, dest);
