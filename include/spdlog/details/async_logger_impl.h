@@ -60,7 +60,7 @@ inline void spdlog::async_logger::flush_()
     }
     else
     {
-        throw spdlog_ex("async flush: thread pool doens't exist anymore");
+        throw spdlog_ex("async flush: thread pool doesn't exist anymore");
     }
 }
 
