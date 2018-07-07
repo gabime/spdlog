@@ -8,7 +8,7 @@
 #include "../fmt/fmt.h"
 #include "spdlog/common.h"
 #include "spdlog/details/null_mutex.h"
-#include "spdlog/details/traits.h"
+#include "spdlog/details/console_globals.h"
 #include "spdlog/sinks/sink.h"
 
 #include <memory>
@@ -116,11 +116,11 @@ private:
     std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 };
 
-using wincolor_stdout_sink_mt = wincolor_sink<details::console_stdout_trait, details::console_mutex_trait>;
-using wincolor_stdout_sink_st = wincolor_sink<details::console_stdout_trait, details::console_null_mutex_trait>;
+using wincolor_stdout_sink_mt = wincolor_sink<details::console_stdout_stream, details::console_global_mutex>;
+using wincolor_stdout_sink_st = wincolor_sink<details::console_stdout_stream, details::console_global_nullmutex>;
 
-using wincolor_stderr_sink_mt = wincolor_sink<details::console_stderr_trait, details::console_mutex_trait>;
-using wincolor_stderr_sink_st = wincolor_sink<details::console_stderr_trait, details::console_null_mutex_trait>;
+using wincolor_stderr_sink_mt = wincolor_sink<details::console_stderr_stream, details::console_global_mutex>;
+using wincolor_stderr_sink_st = wincolor_sink<details::console_stderr_stream, details::console_global_nullmutex>;
 
 } // namespace sinks
 } // namespace spdlog
