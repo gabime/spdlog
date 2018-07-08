@@ -339,9 +339,9 @@ public:
             dest.push_back('+');
         }
 
-        fmt_helper::pad2(total_minutes / 60, dest); //hours
+        fmt_helper::pad2(total_minutes / 60, dest); // hours
         dest.push_back(':');
-        fmt_helper::pad2(total_minutes % 60, dest); //minutes
+        fmt_helper::pad2(total_minutes % 60, dest); // minutes
     }
 
 private:

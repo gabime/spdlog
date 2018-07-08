@@ -20,7 +20,6 @@ public:
     {
     }
 
-
     virtual ~sink() = default;
 
     virtual void log(const details::log_msg &msg) = 0;
