@@ -55,7 +55,7 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 Single thread, 1,000,000 iterations
 *******************************************************************************
 basic_st...		Elapsed: 0.231041	4,328,228/sec
-rotating_st     Elapsed: 0.233466	4,283,282/sec
+rotating...             Elapsed: 0.233466	4,283,282/sec
 daily_st...		Elapsed: 0.244491	4,090,136/sec
 null_st...		Elapsed: 0.162708	6,145,995/sec
 
