@@ -50,6 +50,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 Below are some [benchmarks](bench) comparing popular log libraries under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
 
 #### Synchronous mode
+```
 *******************************************************************************
 Single thread, 1,000,000 iterations
 *******************************************************************************
@@ -73,7 +74,7 @@ async logging.. 10 threads sharing same logger, 1,000,000 iterations
 async...		Elapsed: 0.442731	2,258,706/sec
 async...		Elapsed: 0.427072	2,341,527/sec
 async...		Elapsed: 0.449768	2,223,369/sec
-
+```
 
 ## Usage Example
 ```c++
