@@ -50,25 +50,29 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 Below are some [benchmarks](bench) comparing popular log libraries under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
 
 #### Synchronous mode
-Time needed to log 1,000,000 lines in synchronous mode (in seconds, the best of 3 runs):
+*******************************************************************************
+Single thread, 1,000,000 iterations
+*******************************************************************************
+basic_st...		Elapsed: 0.231041	4,328,228/sec
+rotating_st     Elapsed: 0.233466	4,283,282/sec
+daily_st...		Elapsed: 0.244491	4,090,136/sec
+null_st...		Elapsed: 0.162708	6,145,995/sec
 
-|threads|boost log 1.54|glog   |easylogging |spdlog|
-|-------|:-------:|:-----:|----------:|------:|
-|1|       4.169s  |1.066s |0.975s     |0.302s|
-|10|     6.180s   |3.032s |2.857s     |0.968s|
-|100|     5.981s  |1.139s |4.512s     |0.497s|
-
+*******************************************************************************
+10 threads sharing same logger, 1,000,000 iterations
+*******************************************************************************
+basic_mt...		Elapsed: 0.854029	1,170,920/sec
+rotating_mt		Elapsed: 0.867038	1,153,351/sec
+daily_mt...		Elapsed: 0.869593	1,149,963/sec
+null_mt...		Elapsed: 0.171215	5,840,602/sec
 
 #### Asynchronous mode
-Time needed to log 1,000,000 lines in asynchronous mode, i.e. the time it takes to put them in the async queue (in seconds, the best of 3 runs):
-
-|threads|g2log <sup>async logger</sup>   |spdlog <sup>async mode</sup>|
-|:-------|:-----:|-------------------------:|
-|1|       1.850s |0.216s |
-|10|      0.943s  |0.173s|
-|100|      0.959s |0.202s|
-
-
+*******************************************************************************
+async logging.. 10 threads sharing same logger, 1,000,000 iterations 
+*******************************************************************************
+async...		Elapsed: 0.442731	2,258,706/sec
+async...		Elapsed: 0.427072	2,341,527/sec
+async...		Elapsed: 0.449768	2,223,369/sec
 
 
 ## Usage Example
