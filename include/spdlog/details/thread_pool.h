@@ -29,7 +29,7 @@ struct async_msg
     level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;
-    fmt::basic_memory_buffer<char, 128> raw;
+    fmt::basic_memory_buffer<char, 176> raw;
 
     size_t msg_id;
     async_logger_ptr worker_ptr;
