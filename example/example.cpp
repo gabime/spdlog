@@ -14,6 +14,7 @@ void basic_example();
 void rotating_example();
 void daily_example();
 void async_example();
+void multi_sink_example();
 void user_defined_example();
 void err_handler_example();
 void syslog_example();
@@ -34,6 +35,9 @@ int main(int, char *[])
 
         // async logging using a backing thread pool
         async_example();
+
+        // a logger can have multiple targets with different formats
+        multi_sink_example();
 
         // user defined types logging by implementing operator<<
         user_defined_example();
@@ -63,7 +67,7 @@ void stdout_example()
     console->info("Welcome to spdlog!");
     console->error("Some error message with arg: {}", 1);
 
-    auto err_logger = spdlog::stderr_color_mt("error_logger");
+    auto err_logger = spdlog::stderr_color_mt("stderr");
     err_logger->error("Some error message");
 
     // Formatting examples
@@ -82,7 +86,7 @@ void stdout_example()
     console->debug("This message should be displayed..");
 
     // Customize msg format for all loggers
-    spdlog::set_pattern("[%H:%M:%S %z] [%^---%L---%$] [thread %t] %v");
+    spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
     console->info("This an info message with custom format");
 
     // Compile time log levels
@@ -127,6 +131,23 @@ void async_example()
     }
 }
 
+// create logger with 2 targets with different  log levels and formats
+
+void multi_sink_example()
+{
+
+    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt >();
+    console_sink->set_level(spdlog::level::warn);
+    console_sink->set_pattern("[multi_sink_example] [%^%l%$] %v");
+
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt >("logs/multisink.txt", true);
+    file_sink->set_level(spdlog::level::info);
+
+    spdlog::logger logger("multi_sink", {console_sink, file_sink});
+    logger.warn("this should appear in both console and file");
+    logger.info("this message should not appear in the console, only in the file");
+
+}
 // user defined types logging by implementing operator<<
 #include "spdlog/fmt/ostr.h" // must be included
 struct my_type
