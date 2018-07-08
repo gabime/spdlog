@@ -84,9 +84,9 @@ int main(int argc, char *argv[])
         for (int i = 0; i < 3; ++i)
         {
             spdlog::init_thread_pool(queue_size, 1);
-            auto as = spdlog::basic_logger_mt<spdlog::async_factory>("as", "logs/basic_async.log", true);
+            auto as = spdlog::basic_logger_mt<spdlog::async_factory>("async", "logs/basic_async.log", true);
             bench_mt(howmany, as, threads);
-            spdlog::drop("as");
+            spdlog::drop("async");
         }
     }
     catch (std::exception &ex)
