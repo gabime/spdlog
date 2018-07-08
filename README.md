@@ -66,8 +66,9 @@ basic_mt...		Elapsed: 0.854029	1,170,920/sec
 rotating_mt		Elapsed: 0.867038	1,153,351/sec
 daily_mt...		Elapsed: 0.869593	1,149,963/sec
 null_mt...		Elapsed: 0.171215	5,840,602/sec
-
+```
 #### Asynchronous mode
+```
 *******************************************************************************
 async logging.. 10 threads sharing same logger, 1,000,000 iterations 
 *******************************************************************************
