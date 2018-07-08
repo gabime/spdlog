@@ -47,7 +47,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 
 ## Benchmarks
 
-Below are some [benchmarks](bench) comparing popular log libraries under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
+Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/bench.cpp) comparing popular log libraries under Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
 
 #### Synchronous mode
 ```
@@ -70,7 +70,7 @@ null_mt...		Elapsed: 0.171215	5,840,602/sec
 #### Asynchronous mode
 ```
 *******************************************************************************
-async logging.. 10 threads sharing same logger, 1,000,000 iterations 
+10 threads sharing same logger, 1,000,000 iterations 
 *******************************************************************************
 async...		Elapsed: 0.442731	2,258,706/sec
 async...		Elapsed: 0.427072	2,341,527/sec
