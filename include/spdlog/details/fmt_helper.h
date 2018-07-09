@@ -8,13 +8,16 @@
 namespace spdlog {
 namespace details {
 namespace fmt_helper {
-inline void append_str(const std::string &str, fmt::memory_buffer &dest)
+
+template <size_t Buffer_Size>
+inline void append_str(const std::string &str, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     auto *str_ptr = str.data();
     dest.append(str_ptr, str_ptr + str.size());
 }
 
-inline void append_c_str(const char *c_str, fmt::memory_buffer &dest)
+template <size_t Buffer_Size>
+inline void append_c_str(const char *c_str, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     char ch;
     while ((ch = *c_str) != '\0')
@@ -24,21 +27,22 @@ inline void append_c_str(const char *c_str, fmt::memory_buffer &dest)
     }
 }
 
-template<size_t N1, size_t N2>
-inline void append_buf(const fmt::basic_memory_buffer<char, N1> &buf, fmt::basic_memory_buffer<char, N2> &dest)
+template<size_t Buffer_Size1, size_t Buffer_Size2>
+inline void append_buf(const fmt::basic_memory_buffer<char, Buffer_Size1> &buf, fmt::basic_memory_buffer<char, Buffer_Size2> &dest)
 {
     auto *buf_ptr = buf.data();
     dest.append(buf_ptr, buf_ptr + buf.size());
 }
 
-template<typename T>
-inline void append_int(T n, fmt::memory_buffer &dest)
+template<typename T, size_t Buffer_Size>
+inline void append_int(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     fmt::format_int i(n);
     dest.append(i.data(), i.data() + i.size());
 }
 
-inline void pad2(int n, fmt::memory_buffer &dest)
+template <size_t Buffer_Size>
+inline void pad2(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     if (n > 99)
     {
@@ -61,7 +65,8 @@ inline void pad2(int n, fmt::memory_buffer &dest)
     fmt::format_to(dest, "{:02}", n);
 }
 
-inline void pad3(int n, fmt::memory_buffer &dest)
+template <size_t Buffer_Size>
+inline void pad3(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     if (n > 99)
     {
@@ -86,7 +91,8 @@ inline void pad3(int n, fmt::memory_buffer &dest)
     fmt::format_to(dest, "{:03}", n);
 }
 
-inline void pad6(size_t n, fmt::memory_buffer &dest)
+template <size_t Buffer_Size>
+inline void pad6(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     // todo: maybe replace this implementation with
     // pad3(n / 1000, dest);
