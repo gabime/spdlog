@@ -32,7 +32,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int , char *[])
 {
     std::srand(std::time(nullptr)); // use current time as seed for random generator
-    int howmany = 50;
+    int howmany = 10000;
     int queue_size = howmany + 2;
     int threads = 10;
     int file_size = 30 * 1024 * 1024;
@@ -91,12 +91,6 @@ int main(int , char *[])
     return EXIT_SUCCESS;
 }
 
-void rand_sleep()
-{
-
-    auto sleep_ms= std::chrono::milliseconds(std::rand() % 50);
-    std::this_thread::sleep_for(sleep_ms);
-}
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
@@ -113,7 +107,6 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
         log->info("Hello logger: msg number {}", i);
         auto delta_nanos = chrono::duration_cast<nanoseconds>(high_resolution_clock::now() - start);
         total_nanos+= delta_nanos;
-        rand_sleep();
     }
 
     auto avg = total_nanos.count()/howmany;
@@ -129,20 +122,17 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 
     cout << log->name() << "...\t\t" << flush;
     vector<thread> threads;
-    nanoseconds::rep total_nanos = 0;
+    std::atomic<nanoseconds::rep> total_nanos{0};
     for (int t = 0; t < thread_count; ++t)
     {
         threads.push_back(std::thread([&]() {
-            nanoseconds thr_total_nanos = nanoseconds::zero();
             for (int j = 0; j < howmany / thread_count; j++)
             {
                 auto start = high_resolution_clock::now();
                 log->info("Hello logger: msg number {}", j);
                 auto delta_nanos = chrono::duration_cast<nanoseconds>(high_resolution_clock::now() - start);
-                thr_total_nanos+= delta_nanos;
-                rand_sleep();
+                total_nanos+= delta_nanos.count();
             }
-            total_nanos+= thr_total_nanos.count();
         }));
     }
 
