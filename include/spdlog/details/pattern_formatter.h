@@ -460,9 +460,9 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         // each second cache the header
         auto duration = msg.time.time_since_epoch();
         auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-        if (cached_header_.size() == 0 || cached_seconds_ts_ != seconds)
+        if (true || cached_header_.size() == 0 || cached_seconds_ts_ != seconds)
         {
-            cached_header_ = fmt::memory_buffer();
+            cached_header_.resize(0);
             cached_header_.push_back('[');
             fmt_helper::append_int(tm_time.tm_year + 1900, cached_header_);
             cached_header_.push_back('-');
