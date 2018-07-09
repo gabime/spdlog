@@ -29,6 +29,16 @@ class flag_formatter
 public:
     virtual ~flag_formatter() = default;
     virtual void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) = 0;
+
+protected:
+    fmt::memory_buffer cached_buf_;
+    std::tm cached_tm_;
+    bool from_cache(const std::tm &tm_time, fmt::memory_buffer &dest)
+    {
+
+    }
+
+
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -460,7 +470,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         // each second cache the header
         auto duration = msg.time.time_since_epoch();
         auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-        if (true || cached_header_.size() == 0 || cached_seconds_ts_ != seconds)
+        if (cached_header_.size() == 0 || cached_seconds_ts_ != seconds)
         {
             cached_header_.resize(0);
             cached_header_.push_back('[');
