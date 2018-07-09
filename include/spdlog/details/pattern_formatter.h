@@ -29,16 +29,6 @@ class flag_formatter
 public:
     virtual ~flag_formatter() = default;
     virtual void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) = 0;
-
-protected:
-    fmt::memory_buffer cached_buf_;
-    std::tm cached_tm_;
-    bool from_cache(const std::tm &tm_time, fmt::memory_buffer &dest)
-    {
-
-    }
-
-
 };
 
 ///////////////////////////////////////////////////////////////////////
