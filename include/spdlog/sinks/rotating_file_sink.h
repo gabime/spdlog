@@ -95,7 +95,14 @@ private:
             }
             if (details::file_helper::file_exists(src) && details::os::rename(src, target) != 0)
             {
-                throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+				// if failed try again after small delay.
+				// this is a workaround to a windows issue, where on high rotation rates the rename fails sometimes (because of antivirus?).
+				details::os::sleep_for_millis(20);
+				details::os::remove(target);
+				if (details::os::rename(src, target) != 0)
+				{
+					throw spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+				}                
             }
         }
         file_helper_.reopen(true);
