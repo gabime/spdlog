@@ -18,7 +18,7 @@
 #include <string>
 #include <unordered_map>
 
-#if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
+#if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #include <codecvt>
 #include <locale>
 #endif

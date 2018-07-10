@@ -173,24 +173,25 @@ inline void spdlog::logger::critical(const T &msg)
 }
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-#include <codecvt>
-#include <locale>
-
-template<typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *msg)
-{
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
-
-    log(lvl, conv.to_bytes(msg));
-}
-
 template<typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
-{
-    fmt::WMemoryWriter wWriter;
+{   
+	if (!should_log(lvl))
+	{
+		return;
+	}
+	
+	decltype(wstring_converter_)::byte_string utf8_string;
 
-    wWriter.write(fmt, args...);
-    log(lvl, wWriter.c_str());
+	try
+	{
+		{
+			std::lock_guard<std::mutex> lock(wstring_converter_mutex_);
+			utf8_string = wstring_converter_.to_bytes(fmt);
+		}
+		log(lvl, utf8_string.c_str(), args...);		
+	}
+	SPDLOG_CATCH_AND_HANDLE				
 }
 
 template<typename... Args>
