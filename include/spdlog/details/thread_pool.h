@@ -39,8 +39,32 @@ struct async_msg
 
     // should only be moved in or out of the queue..
     async_msg(const async_msg &) = delete;
+#if defined(_MSC_VER) && _MSC_VER <= 1800 // support for vs2013 move
+    async_msg(async_msg &&other) SPDLOG_NOEXCEPT : msg_type(other.msg_type),
+                                                   level(other.level),
+                                                   time(other.time),
+                                                   thread_id(other.thread_id),
+                                                   raw(move(other.raw)),
+                                                   msg_id(other.msg_id),
+                                                   worker_ptr(std::move(other.worker_ptr))
+    {
+    }
+
+    async_msg &operator=(async_msg &&other) SPDLOG_NOEXCEPT
+    {
+        msg_type = other.msg_type;
+        level = other.level;
+        time = other.time;
+        thread_id = other.thread_id;
+        raw = std::move(other.raw);
+        msg_id = other.msg_id;
+        worker_ptr = std::move(other.worker_ptr);
+		return *this;
+    }
+#else
     async_msg(async_msg &&other) = default;
     async_msg &operator=(async_msg &&other) = default;
+#endif
 
     // construct from log_msg with given type
     async_msg(async_logger_ptr &&worker, async_msg_type the_type, details::log_msg &&m)
@@ -149,7 +173,9 @@ private:
 
     void worker_loop_()
     {
-        while (process_next_msg_()) {};
+        while (process_next_msg_())
+        {
+        };
     }
 
     // process next message in the queue

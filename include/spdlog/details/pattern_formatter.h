@@ -549,8 +549,8 @@ public:
         compile_pattern_(pattern);
     }
 
-    pattern_formatter(const pattern_formatter &) = default;
-    pattern_formatter &operator=(const pattern_formatter &) = default;
+    pattern_formatter(const pattern_formatter &) = delete;
+    pattern_formatter &operator=(const pattern_formatter &) = delete;
     void format(const details::log_msg &msg, fmt::memory_buffer &dest) override
     {
 #ifndef SPDLOG_NO_DATETIME
