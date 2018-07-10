@@ -29,9 +29,9 @@ using namespace utils;
 void bench(int howmany, std::shared_ptr<spdlog::logger> log);
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count);
 
-int main(int , char *[])
+int main(int, char *[])
 {
-	std::srand(static_cast<unsigned>(std::time(nullptr))); // use current time as seed for random generator
+    std::srand(static_cast<unsigned>(std::time(nullptr))); // use current time as seed for random generator
     int howmany = 1000000;
     int queue_size = howmany + 2;
     int threads = 10;
@@ -91,7 +91,6 @@ int main(int , char *[])
     return EXIT_SUCCESS;
 }
 
-
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
     using namespace std::chrono;
@@ -106,10 +105,10 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
         auto start = high_resolution_clock::now();
         log->info("Hello logger: msg number {}", i);
         auto delta_nanos = chrono::duration_cast<nanoseconds>(high_resolution_clock::now() - start);
-        total_nanos+= delta_nanos;
+        total_nanos += delta_nanos;
     }
 
-    auto avg = total_nanos.count()/howmany;
+    auto avg = total_nanos.count() / howmany;
     cout << format(avg) << " ns/call" << endl;
 }
 
@@ -131,7 +130,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
                 auto start = high_resolution_clock::now();
                 log->info("Hello logger: msg number {}", j);
                 auto delta_nanos = chrono::duration_cast<nanoseconds>(high_resolution_clock::now() - start);
-                total_nanos+= delta_nanos.count();
+                total_nanos += delta_nanos.count();
             }
         }));
     }
@@ -141,9 +140,6 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
         t.join();
     };
 
-    auto avg = total_nanos/howmany;
+    auto avg = total_nanos / howmany;
     cout << format(avg) << " ns/call" << endl;
-
-
-
 }

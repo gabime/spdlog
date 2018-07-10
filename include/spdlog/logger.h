@@ -63,7 +63,7 @@ public:
     template<typename... Args>
     void critical(const char *fmt, const Args &... args);
 
-#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT    
+#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template<typename... Args>
     void log(level::level_enum lvl, const wchar_t *fmt, const Args &... args);
 
@@ -151,8 +151,8 @@ protected:
     std::atomic<size_t> msg_counter_;
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-	std::wstring_convert<std::codecvt_utf8<wchar_t>> wstring_converter_;
-	std::mutex wstring_converter_mutex_;
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> wstring_converter_;
+    std::mutex wstring_converter_mutex_;
 #endif
 };
 } // namespace spdlog

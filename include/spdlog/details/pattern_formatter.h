@@ -120,7 +120,7 @@ class c_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        //fmt::format_to(dest, "{} {} {} ", days[tm_time.tm_wday], months[tm_time.tm_mon], tm_time.tm_mday);
+        // fmt::format_to(dest, "{} {} {} ", days[tm_time.tm_wday], months[tm_time.tm_mon], tm_time.tm_mday);
         // date
         fmt_helper::append_str(days[tm_time.tm_wday], dest);
         dest.push_back(' ');
@@ -496,7 +496,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 
         // cache the millis part for the next milli.
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-        if(millis != millis_cache_timestamp_ || cached_millis_.size() == 0)
+        if (millis != millis_cache_timestamp_ || cached_millis_.size() == 0)
         {
             cached_millis_.resize(0);
             fmt_helper::pad3(static_cast<int>(millis), cached_millis_);
@@ -528,8 +528,8 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
     }
 
 private:
-    std::chrono::seconds cache_timestamp_ {0};
-    std::chrono::milliseconds::rep millis_cache_timestamp_ {0};
+    std::chrono::seconds cache_timestamp_{0};
+    std::chrono::milliseconds::rep millis_cache_timestamp_{0};
     fmt::basic_memory_buffer<char, 128> cached_datetime_;
     fmt::basic_memory_buffer<char, 8> cached_millis_;
 };

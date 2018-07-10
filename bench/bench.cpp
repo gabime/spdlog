@@ -32,7 +32,6 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int argc, char *argv[])
 {
 
-
     int howmany = 1000000;
     int queue_size = howmany + 2;
     int threads = 10;
@@ -76,7 +75,7 @@ int main(int argc, char *argv[])
 
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
         bench_mt(howmany, daily_mt, threads);
-		bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
+        bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
 
         cout << "\n*******************************************************************************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
@@ -112,7 +111,7 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
     cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
-	spdlog::drop(log->name());
+    spdlog::drop(log->name());
 }
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)

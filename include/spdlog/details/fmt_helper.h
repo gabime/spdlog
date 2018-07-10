@@ -9,14 +9,14 @@ namespace spdlog {
 namespace details {
 namespace fmt_helper {
 
-template <size_t Buffer_Size>
+template<size_t Buffer_Size>
 inline void append_str(const std::string &str, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     auto *str_ptr = str.data();
     dest.append(str_ptr, str_ptr + str.size());
 }
 
-template <size_t Buffer_Size>
+template<size_t Buffer_Size>
 inline void append_c_str(const char *c_str, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     char ch;
@@ -41,7 +41,7 @@ inline void append_int(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
     dest.append(i.data(), i.data() + i.size());
 }
 
-template <size_t Buffer_Size>
+template<size_t Buffer_Size>
 inline void pad2(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     if (n > 99)
@@ -65,7 +65,7 @@ inline void pad2(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
     fmt::format_to(dest, "{:02}", n);
 }
 
-template <size_t Buffer_Size>
+template<size_t Buffer_Size>
 inline void pad3(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     if (n > 99)
@@ -91,7 +91,7 @@ inline void pad3(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
     fmt::format_to(dest, "{:03}", n);
 }
 
-template <size_t Buffer_Size>
+template<size_t Buffer_Size>
 inline void pad6(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     // todo: maybe replace this implementation with
