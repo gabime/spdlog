@@ -30,7 +30,6 @@ struct async_msg
     log_clock::time_point time;
     size_t thread_id;
     fmt::basic_memory_buffer<char, 176> raw;
-
     size_t msg_id;
     async_logger_ptr worker_ptr;
 
@@ -39,32 +38,32 @@ struct async_msg
 
     // should only be moved in or out of the queue..
     async_msg(const async_msg &) = delete;
-#if defined(_MSC_VER) && _MSC_VER <= 1800 // support for vs2013 move
-    async_msg(async_msg &&other) SPDLOG_NOEXCEPT : msg_type(other.msg_type),
+
+	async_msg(async_msg &&other) SPDLOG_NOEXCEPT : msg_type(other.msg_type),
                                                    level(other.level),
                                                    time(other.time),
-                                                   thread_id(other.thread_id),
-                                                   raw(move(other.raw)),
+                                                   thread_id(other.thread_id),                                                   
                                                    msg_id(other.msg_id),
                                                    worker_ptr(std::move(other.worker_ptr))
     {
+        fmt_helper::append_buf(other.raw, raw);
+        other.raw.resize(0);
     }
-
+	 
     async_msg &operator=(async_msg &&other) SPDLOG_NOEXCEPT
     {
+        if (this == &other)
+            return *this;
         msg_type = other.msg_type;
         level = other.level;
         time = other.time;
-        thread_id = other.thread_id;
-        raw = std::move(other.raw);
+        thread_id = other.thread_id;        
+        raw.resize(0);
+        fmt_helper::append_buf(other.raw, raw);
         msg_id = other.msg_id;
         worker_ptr = std::move(other.worker_ptr);
-		return *this;
+        return *this;
     }
-#else
-    async_msg(async_msg &&other) = default;
-    async_msg &operator=(async_msg &&other) = default;
-#endif
 
     // construct from log_msg with given type
     async_msg(async_logger_ptr &&worker, async_msg_type the_type, details::log_msg &&m)
