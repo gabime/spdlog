@@ -7,7 +7,7 @@
 #include "stdio.h"
 namespace spdlog {
 namespace details {
-struct console_stdout_trait
+struct console_stdout_stream
 {
     static FILE *stream()
     {
@@ -21,7 +21,7 @@ struct console_stdout_trait
 #endif
 };
 
-struct console_stderr_trait
+struct console_stderr_stream
 {
     static FILE *stream()
     {
@@ -35,7 +35,7 @@ struct console_stderr_trait
 #endif
 };
 
-struct console_mutex_trait
+struct console_global_mutex
 {
     using mutex_t = std::mutex;
     static mutex_t &console_mutex()
@@ -45,7 +45,7 @@ struct console_mutex_trait
     }
 };
 
-struct console_null_mutex_trait
+struct console_global_nullmutex
 {
     using mutex_t = null_mutex;
     static mutex_t &console_mutex()

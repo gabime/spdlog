@@ -120,7 +120,16 @@ class c_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        fmt::format_to(dest, "{} {} {} ", days[tm_time.tm_wday], months[tm_time.tm_mon], tm_time.tm_mday); //
+        //fmt::format_to(dest, "{} {} {} ", days[tm_time.tm_wday], months[tm_time.tm_mon], tm_time.tm_mday);
+        // date
+        fmt_helper::append_str(days[tm_time.tm_wday], dest);
+        dest.push_back(' ');
+        fmt_helper::append_str(months[tm_time.tm_mon], dest);
+        dest.push_back(' ');
+        fmt_helper::append_int(tm_time.tm_mday, dest);
+        dest.push_back(' ');
+        // time
+
         fmt_helper::pad2(tm_time.tm_hour, dest);
         dest.push_back(':');
         fmt_helper::pad2(tm_time.tm_min, dest);
@@ -176,7 +185,6 @@ class d_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        // fmt::format_to(dest, "{:02}", tm_time.tm_mday);
         fmt_helper::pad2(tm_time.tm_mday, dest);
     }
 };
@@ -265,7 +273,7 @@ class p_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        fmt::format_to(dest, "{}", ampm(tm_time));
+        fmt_helper::append_c_str(ampm(tm_time), dest);
     }
 };
 
@@ -274,13 +282,13 @@ class r_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        // fmt::format_to(dest, "{:02}:{:02}:{:02} {}", to12h(tm_time), tm_time.tm_min, tm_time.tm_sec, ampm(tm_time));
         fmt_helper::pad2(to12h(tm_time), dest);
         dest.push_back(':');
         fmt_helper::pad2(tm_time.tm_min, dest);
         dest.push_back(':');
         fmt_helper::pad2(tm_time.tm_sec, dest);
-        fmt::format_to(dest, " {}", ampm(tm_time));
+        dest.push_back(' ');
+        fmt_helper::append_c_str(ampm(tm_time), dest);
     }
 };
 
@@ -330,23 +338,19 @@ public:
         int total_minutes = os::utc_minutes_offset(tm_time);
 #endif
         bool is_negative = total_minutes < 0;
-        char sign;
         if (is_negative)
         {
             total_minutes = -total_minutes;
-            sign = '-';
+            dest.push_back('-');
         }
         else
         {
-            sign = '+';
+            dest.push_back('+');
         }
 
-        int h = total_minutes / 60;
-        int m = total_minutes % 60;
-        dest.push_back(sign);
-        fmt_helper::pad2(h, dest);
+        fmt_helper::pad2(total_minutes / 60, dest); // hours
         dest.push_back(':');
-        fmt_helper::pad2(m, dest);
+        fmt_helper::pad2(total_minutes % 60, dest); // minutes
     }
 
 private:
@@ -371,7 +375,6 @@ class t_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-
         fmt_helper::pad6(msg.thread_id, dest);
     }
 };
@@ -390,7 +393,6 @@ class i_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-
         fmt_helper::pad6(msg.msg_id, dest);
     }
 };
@@ -462,39 +464,48 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
     {
 #ifndef SPDLOG_NO_DATETIME
 
-        // each second cache the header
+        // cache the date/time part for the next second.
         auto duration = msg.time.time_since_epoch();
-        auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
-        if (cached_header_.size() == 0 || cached_seconds_ts_ != seconds)
+        std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(duration);
+
+        if (cache_timestamp_ != seconds || cached_datetime_.size() == 0)
         {
-            cached_header_ = fmt::memory_buffer();
-            cached_header_.push_back('[');
-            fmt_helper::append_int(tm_time.tm_year + 1900, cached_header_);
-            cached_header_.push_back('-');
+            cached_datetime_.resize(0);
+            cached_datetime_.push_back('[');
+            fmt_helper::append_int(tm_time.tm_year + 1900, cached_datetime_);
+            cached_datetime_.push_back('-');
 
-            fmt_helper::pad2(tm_time.tm_mon + 1, cached_header_);
-            cached_header_.push_back('-');
+            fmt_helper::pad2(tm_time.tm_mon + 1, cached_datetime_);
+            cached_datetime_.push_back('-');
 
-            fmt_helper::pad2(tm_time.tm_mday, cached_header_);
-            cached_header_.push_back(' ');
+            fmt_helper::pad2(tm_time.tm_mday, cached_datetime_);
+            cached_datetime_.push_back(' ');
 
-            fmt_helper::pad2(tm_time.tm_hour, cached_header_);
-            cached_header_.push_back(':');
+            fmt_helper::pad2(tm_time.tm_hour, cached_datetime_);
+            cached_datetime_.push_back(':');
 
-            fmt_helper::pad2(tm_time.tm_min, cached_header_);
-            cached_header_.push_back(':');
+            fmt_helper::pad2(tm_time.tm_min, cached_datetime_);
+            cached_datetime_.push_back(':');
 
-            fmt_helper::pad2(tm_time.tm_sec, cached_header_);
-            cached_header_.push_back('.');
+            fmt_helper::pad2(tm_time.tm_sec, cached_datetime_);
+            cached_datetime_.push_back('.');
 
-            cached_seconds_ts_ = seconds;
+            cache_timestamp_ = seconds;
         }
-        fmt_helper::append_buf(cached_header_, dest);
+        fmt_helper::append_buf(cached_datetime_, dest);
 
+        // cache the millis part for the next milli.
         auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-        fmt_helper::pad3(static_cast<int>(millis), dest);
-        dest.push_back(']');
-        dest.push_back(' ');
+        if(millis != millis_cache_timestamp_ || cached_millis_.size() == 0)
+        {
+            cached_millis_.resize(0);
+            fmt_helper::pad3(millis, cached_millis_);
+            cached_millis_.push_back(']');
+            cached_millis_.push_back(' ');
+            millis_cache_timestamp_ = millis;
+        }
+
+        fmt_helper::append_buf(cached_millis_, dest);
 #else // no datetime needed
         (void)tm_time;
 #endif
@@ -517,8 +528,10 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
     }
 
 private:
-    std::chrono::seconds::rep cached_seconds_ts_{0};
-    fmt::memory_buffer cached_header_;
+    std::chrono::seconds cache_timestamp_ {0};
+    std::chrono::milliseconds::rep millis_cache_timestamp_ {0};
+    fmt::basic_memory_buffer<char, 128> cached_datetime_;
+    fmt::basic_memory_buffer<char, 8> cached_millis_;
 };
 
 } // namespace details
@@ -526,14 +539,14 @@ private:
 class pattern_formatter SPDLOG_FINAL : public formatter
 {
 public:
-    explicit pattern_formatter(const std::string &pattern, pattern_time_type pattern_time = pattern_time_type::local,
+    explicit pattern_formatter(const std::string &pattern, pattern_time_type time_type = pattern_time_type::local,
         std::string eol = spdlog::details::os::default_eol)
         : eol_(std::move(eol))
-        , pattern_time_(pattern_time)
+        , pattern_time_type_(time_type)
         , last_log_secs_(0)
     {
         std::memset(&cached_tm_, 0, sizeof(cached_tm_));
-        compile_pattern(pattern);
+        compile_pattern_(pattern);
     }
 
     pattern_formatter(const pattern_formatter &) = default;
@@ -544,7 +557,7 @@ public:
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
         if (secs != last_log_secs_)
         {
-            cached_tm_ = get_time(msg);
+            cached_tm_ = get_time_(msg);
             last_log_secs_ = secs;
         }
 #endif
@@ -558,21 +571,22 @@ public:
 
 private:
     const std::string eol_;
-    const pattern_time_type pattern_time_;
+    pattern_time_type pattern_time_type_;
     std::tm cached_tm_;
     std::chrono::seconds last_log_secs_;
 
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
-    std::tm get_time(const details::log_msg &msg)
+
+    std::tm get_time_(const details::log_msg &msg)
     {
-        if (pattern_time_ == pattern_time_type::local)
+        if (pattern_time_type_ == pattern_time_type::local)
         {
             return details::os::localtime(log_clock::to_time_t(msg.time));
         }
         return details::os::gmtime(log_clock::to_time_t(msg.time));
     }
 
-    void handle_flag(char flag)
+    void handle_flag_(char flag)
     {
         switch (flag)
         {
@@ -717,7 +731,7 @@ private:
         }
     }
 
-    void compile_pattern(const std::string &pattern)
+    void compile_pattern_(const std::string &pattern)
     {
         auto end = pattern.end();
         std::unique_ptr<details::aggregate_formatter> user_chars;
@@ -732,7 +746,7 @@ private:
                 // if(
                 if (++it != end)
                 {
-                    handle_flag(*it);
+                    handle_flag_(*it);
                 }
                 else
                 {

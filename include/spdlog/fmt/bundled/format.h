@@ -168,7 +168,7 @@ FMT_END_NAMESPACE
 #endif
 
 // A workaround for gcc 4.4 that doesn't support union members with ctors.
-#if FMT_GCC_VERSION && FMT_GCC_VERSION <= 404
+#if (FMT_GCC_VERSION && FMT_GCC_VERSION <= 404) || (FMT_MSC_VER && FMT_MSC_VER <= 1800)
 #define FMT_UNION struct
 #else
 #define FMT_UNION union
@@ -530,14 +530,6 @@ public:
 };
 
 namespace internal {
-
-// Casts nonnegative integer to unsigned.
-template<typename Int>
-FMT_CONSTEXPR typename std::make_unsigned<Int>::type to_unsigned(Int value)
-{
-    FMT_ASSERT(value >= 0, "negative value");
-    return static_cast<typename std::make_unsigned<Int>::type>(value);
-}
 
 #if FMT_SECURE_SCL
 template<typename T>
@@ -1072,6 +1064,8 @@ struct FMT_API basic_data
     static const uint64_t POW10_SIGNIFICANDS[];
     static const int16_t POW10_EXPONENTS[];
     static const char DIGITS[];
+    static const char RESET_COLOR[];
+    static const wchar_t WRESET_COLOR[];
 };
 
 #if FMT_USE_EXTERN_TEMPLATES
@@ -1172,7 +1166,7 @@ public:
             uint64_t t = ((1ULL << (32 + a)) / data::POWERS_OF_10_32[n] + 1 - n / 9);
             t = ((t * u) >> a) + n / 5 * 4;
             write_pair(0, t >> 32);
-            for (int i = 2; i < N; i += 2)
+            for (unsigned i = 2; i < N; i += 2)
             {
                 t = 100ULL * static_cast<uint32_t>(t);
                 write_pair(i, t >> 32);
@@ -1561,31 +1555,6 @@ struct align_spec : empty_spec
 template<typename Char>
 class basic_format_specs : public align_spec
 {
-private:
-    template<typename FillChar>
-    typename std::enable_if<std::is_same<FillChar, Char>::value || std::is_same<FillChar, char>::value, void>::type set(
-        fill_spec<FillChar> fill)
-    {
-        fill_ = fill.value();
-    }
-
-    void set(width_spec width)
-    {
-        width_ = width.value();
-    }
-
-    void set(type_spec type)
-    {
-        type_ = type.value();
-    }
-
-    template<typename Spec, typename... Specs>
-    void set(Spec spec, Specs... tail)
-    {
-        set(spec);
-        set(tail...);
-    }
-
 public:
     unsigned flags_;
     int precision_;
@@ -1597,16 +1566,6 @@ public:
         , precision_(-1)
         , type_(type)
     {
-    }
-
-    template<typename... FormatSpecs>
-    explicit basic_format_specs(FormatSpecs... specs)
-        : align_spec(0, ' ')
-        , flags_(0)
-        , precision_(-1)
-        , type_(0)
-    {
-        set(specs...);
     }
 
     FMT_CONSTEXPR bool flag(unsigned f) const
@@ -1929,7 +1888,22 @@ public:
     template<typename T>
     typename std::enable_if<std::is_integral<T>::value, iterator>::type operator()(T value)
     {
-        writer_.write_int(value, specs_);
+        // MSVC2013 fails to compile separate overloads for bool and char_type so
+        // use std::is_same instead.
+        if (std::is_same<T, bool>::value)
+        {
+            if (specs_.type_)
+                return (*this)(value ? 1 : 0);
+            write(value != 0);
+        }
+        else if (std::is_same<T, char_type>::value)
+        {
+            internal::handle_char_specs(specs_, char_spec_handler(*this, static_cast<char_type>(value)));
+        }
+        else
+        {
+            writer_.write_int(value, specs_);
+        }
         return out();
     }
 
@@ -1937,14 +1911,6 @@ public:
     typename std::enable_if<std::is_floating_point<T>::value, iterator>::type operator()(T value)
     {
         writer_.write_double(value, specs_);
-        return out();
-    }
-
-    iterator operator()(bool value)
-    {
-        if (specs_.type_)
-            return (*this)(value ? 1 : 0);
-        write(value);
         return out();
     }
 
@@ -1968,12 +1934,6 @@ public:
             formatter.write_char(value);
         }
     };
-
-    iterator operator()(char_type value)
-    {
-        internal::handle_char_specs(specs_, char_spec_handler(*this, value));
-        return out();
-    }
 
     struct cstring_spec_handler : internal::error_handler
     {
@@ -2047,7 +2007,7 @@ FMT_CONSTEXPR unsigned parse_nonnegative_int(Iterator &it, ErrorHandler &&eh)
             value = max_int + 1;
             break;
         }
-        value = value * 10 + (*it - '0');
+        value = value * 10 + unsigned(*it - '0');
         // Workaround for MSVC "setup_exception stack overflow" error:
         auto next = it;
         ++next;
@@ -2107,7 +2067,7 @@ public:
     {
         if (is_negative(value))
             handler_.on_error("negative width");
-        return value;
+        return static_cast<unsigned long long>(value);
     }
 
     template<typename T>
@@ -2135,7 +2095,7 @@ public:
     {
         if (is_negative(value))
             handler_.on_error("negative precision");
-        return value;
+        return static_cast<unsigned long long>(value);
     }
 
     template<typename T>
@@ -2201,7 +2161,7 @@ public:
     }
     FMT_CONSTEXPR void on_precision(unsigned precision)
     {
-        specs_.precision_ = precision;
+        specs_.precision_ = static_cast<int>(precision);
     }
     FMT_CONSTEXPR void end_precision() {}
 
@@ -2300,7 +2260,7 @@ FMT_CONSTEXPR void set_dynamic_spec(T &value, basic_format_arg<Context> arg, Err
     unsigned long long big_value = visit(Handler<ErrorHandler>(eh), arg);
     if (big_value > (std::numeric_limits<int>::max)())
         eh.on_error("number is too big");
-    value = static_cast<int>(big_value);
+    value = static_cast<T>(big_value);
 }
 
 struct auto_id
@@ -2494,7 +2454,7 @@ FMT_CONSTEXPR Iterator parse_arg_id(Iterator it, IDHandler &&handler)
     {
         c = *++it;
     } while (is_name_start(c) || ('0' <= c && c <= '9'));
-    handler(basic_string_view<char_type>(pointer_from(start), it - start));
+    handler(basic_string_view<char_type>(pointer_from(start), to_unsigned(it - start)));
     return it;
 }
 
@@ -3063,8 +3023,8 @@ private:
         }
         else if (spec.precision() > static_cast<int>(num_digits))
         {
-            size = prefix.size() + spec.precision();
-            padding = spec.precision() - num_digits;
+            size = prefix.size() + static_cast<std::size_t>(spec.precision());
+            padding = static_cast<std::size_t>(spec.precision()) - num_digits;
             fill = '0';
         }
         align_spec as = spec;
@@ -3941,8 +3901,7 @@ struct formatter<T, Char, typename std::enable_if<internal::format_type<typename
         internal::handle_dynamic_spec<internal::width_checker>(specs_.width_, specs_.width_ref, ctx);
         internal::handle_dynamic_spec<internal::precision_checker>(specs_.precision_, specs_.precision_ref, ctx);
         typedef output_range<typename FormatContext::iterator, typename FormatContext::char_type> range_type;
-        visit(arg_formatter<range_type>(ctx, specs_), internal::make_arg<FormatContext>(val));
-        return ctx.out();
+        return visit(arg_formatter<range_type>(ctx, specs_), internal::make_arg<FormatContext>(val));
     }
 
 private:
@@ -4059,7 +4018,7 @@ struct format_handler : internal::error_handler
 
     void on_text(iterator begin, iterator end)
     {
-        size_t size = end - begin;
+        auto size = internal::to_unsigned(end - begin);
         auto out = context.out();
         auto &&it = internal::reserve(out, size);
         it = std::copy_n(begin, size, it);
@@ -4226,10 +4185,10 @@ std::wstring to_wstring(const T &value)
     return str;
 }
 
-template<typename Char>
-std::basic_string<Char> to_string(const basic_memory_buffer<Char> &buffer)
+template<typename Char, std::size_t SIZE>
+std::basic_string<Char> to_string(const basic_memory_buffer<Char, SIZE> &buf)
 {
-    return std::basic_string<Char>(buffer.data(), buffer.size());
+    return std::basic_string<Char>(buf.data(), buf.size());
 }
 
 inline format_context::iterator vformat_to(internal::buffer &buf, string_view format_str, format_args args)
@@ -4244,14 +4203,14 @@ inline wformat_context::iterator vformat_to(internal::wbuffer &buf, wstring_view
     return vformat_to<arg_formatter<range>>(buf, format_str, args);
 }
 
-template<typename... Args>
-inline format_context::iterator format_to(memory_buffer &buf, string_view format_str, const Args &... args)
+template<typename... Args, std::size_t SIZE = inline_buffer_size>
+inline format_context::iterator format_to(basic_memory_buffer<char, SIZE> &buf, string_view format_str, const Args &... args)
 {
     return vformat_to(buf, format_str, make_format_args(args...));
 }
 
-template<typename... Args>
-inline wformat_context::iterator format_to(wmemory_buffer &buf, wstring_view format_str, const Args &... args)
+template<typename... Args, std::size_t SIZE = inline_buffer_size>
+inline wformat_context::iterator format_to(basic_memory_buffer<wchar_t, SIZE> &buf, wstring_view format_str, const Args &... args)
 {
     return vformat_to(buf, format_str, make_format_args<wformat_context>(args...));
 }
@@ -4274,6 +4233,12 @@ template<typename OutputIt, typename... Args>
 inline OutputIt vformat_to(OutputIt out, string_view format_str, typename format_args_t<OutputIt>::type args)
 {
     typedef output_range<OutputIt, char> range;
+    return vformat_to<arg_formatter<range>>(range(out), format_str, args);
+}
+template<typename OutputIt, typename... Args>
+inline OutputIt vformat_to(OutputIt out, wstring_view format_str, typename format_args_t<OutputIt, wchar_t>::type args)
+{
+    typedef output_range<OutputIt, wchar_t> range;
     return vformat_to<arg_formatter<range>>(range(out), format_str, args);
 }
 
@@ -4317,6 +4282,26 @@ struct format_to_n_result
     std::size_t size;
 };
 
+template<typename OutputIt>
+using format_to_n_context = typename fmt::format_context_t<fmt::internal::truncating_iterator<OutputIt>>::type;
+
+template<typename OutputIt>
+using format_to_n_args = fmt::basic_format_args<format_to_n_context<OutputIt>>;
+
+template<typename OutputIt, typename... Args>
+inline format_arg_store<format_to_n_context<OutputIt>, Args...> make_format_to_n_args(const Args &... args)
+{
+    return format_arg_store<format_to_n_context<OutputIt>, Args...>(args...);
+}
+
+template<typename OutputIt, typename... Args>
+inline format_to_n_result<OutputIt> vformat_to_n(OutputIt out, std::size_t n, string_view format_str, format_to_n_args<OutputIt> args)
+{
+    typedef internal::truncating_iterator<OutputIt> It;
+    auto it = vformat_to(It(out, n), format_str, args);
+    return {it.base(), it.count()};
+}
+
 /**
  \rst
  Formats arguments, writes up to ``n`` characters of the result to the output
@@ -4327,8 +4312,13 @@ struct format_to_n_result
 template<typename OutputIt, typename... Args>
 inline format_to_n_result<OutputIt> format_to_n(OutputIt out, std::size_t n, string_view format_str, const Args &... args)
 {
+    return vformat_to_n<OutputIt>(out, n, format_str, make_format_to_n_args<OutputIt>(args...));
+}
+template<typename OutputIt, typename... Args>
+inline format_to_n_result<OutputIt> format_to_n(OutputIt out, std::size_t n, wstring_view format_str, const Args &... args)
+{
     typedef internal::truncating_iterator<OutputIt> It;
-    auto it = vformat_to(It(out, n), format_str, make_format_args<typename format_context_t<It>::type>(args...));
+    auto it = vformat_to(It(out, n), format_str, make_format_args<typename format_context_t<It, wchar_t>::type>(args...));
     return {it.base(), it.count()};
 }
 
@@ -4361,8 +4351,8 @@ inline typename std::enable_if<internal::is_format_string<String>::value>::type 
 }
 
 /**
- Returns the number of characters in the output of
- ``format(format_str, args...)``.
+  Returns the number of characters in the output of
+  ``format(format_str, args...)``.
  */
 template<typename... Args>
 inline std::size_t formatted_size(string_view format_str, const Args &... args)
@@ -4370,6 +4360,215 @@ inline std::size_t formatted_size(string_view format_str, const Args &... args)
     auto it = format_to(internal::counting_iterator<char>(), format_str, args...);
     return it.count();
 }
+
+// Experimental color support.
+#ifdef FMT_EXTENDED_COLORS
+enum class color : uint32_t
+{
+    alice_blue = 0xF0F8FF,              // rgb(240,248,255)
+    antique_white = 0xFAEBD7,           // rgb(250,235,215)
+    aqua = 0x00FFFF,                    // rgb(0,255,255)
+    aquamarine = 0x7FFFD4,              // rgb(127,255,212)
+    azure = 0xF0FFFF,                   // rgb(240,255,255)
+    beige = 0xF5F5DC,                   // rgb(245,245,220)
+    bisque = 0xFFE4C4,                  // rgb(255,228,196)
+    black = 0x000000,                   // rgb(0,0,0)
+    blanched_almond = 0xFFEBCD,         // rgb(255,235,205)
+    blue = 0x0000FF,                    // rgb(0,0,255)
+    blue_violet = 0x8A2BE2,             // rgb(138,43,226)
+    brown = 0xA52A2A,                   // rgb(165,42,42)
+    burly_wood = 0xDEB887,              // rgb(222,184,135)
+    cadet_blue = 0x5F9EA0,              // rgb(95,158,160)
+    chartreuse = 0x7FFF00,              // rgb(127,255,0)
+    chocolate = 0xD2691E,               // rgb(210,105,30)
+    coral = 0xFF7F50,                   // rgb(255,127,80)
+    cornflower_blue = 0x6495ED,         // rgb(100,149,237)
+    cornsilk = 0xFFF8DC,                // rgb(255,248,220)
+    crimson = 0xDC143C,                 // rgb(220,20,60)
+    cyan = 0x00FFFF,                    // rgb(0,255,255)
+    dark_blue = 0x00008B,               // rgb(0,0,139)
+    dark_cyan = 0x008B8B,               // rgb(0,139,139)
+    dark_golden_rod = 0xB8860B,         // rgb(184,134,11)
+    dark_gray = 0xA9A9A9,               // rgb(169,169,169)
+    dark_green = 0x006400,              // rgb(0,100,0)
+    dark_khaki = 0xBDB76B,              // rgb(189,183,107)
+    dark_magenta = 0x8B008B,            // rgb(139,0,139)
+    dark_olive_green = 0x556B2F,        // rgb(85,107,47)
+    dark_orange = 0xFF8C00,             // rgb(255,140,0)
+    dark_orchid = 0x9932CC,             // rgb(153,50,204)
+    dark_red = 0x8B0000,                // rgb(139,0,0)
+    dark_salmon = 0xE9967A,             // rgb(233,150,122)
+    dark_sea_green = 0x8FBC8F,          // rgb(143,188,143)
+    dark_slate_blue = 0x483D8B,         // rgb(72,61,139)
+    dark_slate_gray = 0x2F4F4F,         // rgb(47,79,79)
+    dark_turquoise = 0x00CED1,          // rgb(0,206,209)
+    dark_violet = 0x9400D3,             // rgb(148,0,211)
+    deep_pink = 0xFF1493,               // rgb(255,20,147)
+    deep_sky_blue = 0x00BFFF,           // rgb(0,191,255)
+    dim_gray = 0x696969,                // rgb(105,105,105)
+    dodger_blue = 0x1E90FF,             // rgb(30,144,255)
+    fire_brick = 0xB22222,              // rgb(178,34,34)
+    floral_white = 0xFFFAF0,            // rgb(255,250,240)
+    forest_green = 0x228B22,            // rgb(34,139,34)
+    fuchsia = 0xFF00FF,                 // rgb(255,0,255)
+    gainsboro = 0xDCDCDC,               // rgb(220,220,220)
+    ghost_white = 0xF8F8FF,             // rgb(248,248,255)
+    gold = 0xFFD700,                    // rgb(255,215,0)
+    golden_rod = 0xDAA520,              // rgb(218,165,32)
+    gray = 0x808080,                    // rgb(128,128,128)
+    green = 0x008000,                   // rgb(0,128,0)
+    green_yellow = 0xADFF2F,            // rgb(173,255,47)
+    honey_dew = 0xF0FFF0,               // rgb(240,255,240)
+    hot_pink = 0xFF69B4,                // rgb(255,105,180)
+    indian_red = 0xCD5C5C,              // rgb(205,92,92)
+    indigo = 0x4B0082,                  // rgb(75,0,130)
+    ivory = 0xFFFFF0,                   // rgb(255,255,240)
+    khaki = 0xF0E68C,                   // rgb(240,230,140)
+    lavender = 0xE6E6FA,                // rgb(230,230,250)
+    lavender_blush = 0xFFF0F5,          // rgb(255,240,245)
+    lawn_green = 0x7CFC00,              // rgb(124,252,0)
+    lemon_chiffon = 0xFFFACD,           // rgb(255,250,205)
+    light_blue = 0xADD8E6,              // rgb(173,216,230)
+    light_coral = 0xF08080,             // rgb(240,128,128)
+    light_cyan = 0xE0FFFF,              // rgb(224,255,255)
+    light_golden_rod_yellow = 0xFAFAD2, // rgb(250,250,210)
+    light_gray = 0xD3D3D3,              // rgb(211,211,211)
+    light_green = 0x90EE90,             // rgb(144,238,144)
+    light_pink = 0xFFB6C1,              // rgb(255,182,193)
+    light_salmon = 0xFFA07A,            // rgb(255,160,122)
+    light_sea_green = 0x20B2AA,         // rgb(32,178,170)
+    light_sky_blue = 0x87CEFA,          // rgb(135,206,250)
+    light_slate_gray = 0x778899,        // rgb(119,136,153)
+    light_steel_blue = 0xB0C4DE,        // rgb(176,196,222)
+    light_yellow = 0xFFFFE0,            // rgb(255,255,224)
+    lime = 0x00FF00,                    // rgb(0,255,0)
+    lime_green = 0x32CD32,              // rgb(50,205,50)
+    linen = 0xFAF0E6,                   // rgb(250,240,230)
+    magenta = 0xFF00FF,                 // rgb(255,0,255)
+    maroon = 0x800000,                  // rgb(128,0,0)
+    medium_aquamarine = 0x66CDAA,       // rgb(102,205,170)
+    medium_blue = 0x0000CD,             // rgb(0,0,205)
+    medium_orchid = 0xBA55D3,           // rgb(186,85,211)
+    medium_purple = 0x9370DB,           // rgb(147,112,219)
+    medium_sea_green = 0x3CB371,        // rgb(60,179,113)
+    medium_slate_blue = 0x7B68EE,       // rgb(123,104,238)
+    medium_spring_green = 0x00FA9A,     // rgb(0,250,154)
+    medium_turquoise = 0x48D1CC,        // rgb(72,209,204)
+    medium_violet_red = 0xC71585,       // rgb(199,21,133)
+    midnight_blue = 0x191970,           // rgb(25,25,112)
+    mint_cream = 0xF5FFFA,              // rgb(245,255,250)
+    misty_rose = 0xFFE4E1,              // rgb(255,228,225)
+    moccasin = 0xFFE4B5,                // rgb(255,228,181)
+    navajo_white = 0xFFDEAD,            // rgb(255,222,173)
+    navy = 0x000080,                    // rgb(0,0,128)
+    old_lace = 0xFDF5E6,                // rgb(253,245,230)
+    olive = 0x808000,                   // rgb(128,128,0)
+    olive_drab = 0x6B8E23,              // rgb(107,142,35)
+    orange = 0xFFA500,                  // rgb(255,165,0)
+    orange_red = 0xFF4500,              // rgb(255,69,0)
+    orchid = 0xDA70D6,                  // rgb(218,112,214)
+    pale_golden_rod = 0xEEE8AA,         // rgb(238,232,170)
+    pale_green = 0x98FB98,              // rgb(152,251,152)
+    pale_turquoise = 0xAFEEEE,          // rgb(175,238,238)
+    pale_violet_red = 0xDB7093,         // rgb(219,112,147)
+    papaya_whip = 0xFFEFD5,             // rgb(255,239,213)
+    peach_puff = 0xFFDAB9,              // rgb(255,218,185)
+    peru = 0xCD853F,                    // rgb(205,133,63)
+    pink = 0xFFC0CB,                    // rgb(255,192,203)
+    plum = 0xDDA0DD,                    // rgb(221,160,221)
+    powder_blue = 0xB0E0E6,             // rgb(176,224,230)
+    purple = 0x800080,                  // rgb(128,0,128)
+    rebecca_purple = 0x663399,          // rgb(102,51,153)
+    red = 0xFF0000,                     // rgb(255,0,0)
+    rosy_brown = 0xBC8F8F,              // rgb(188,143,143)
+    royal_blue = 0x4169E1,              // rgb(65,105,225)
+    saddle_brown = 0x8B4513,            // rgb(139,69,19)
+    salmon = 0xFA8072,                  // rgb(250,128,114)
+    sandy_brown = 0xF4A460,             // rgb(244,164,96)
+    sea_green = 0x2E8B57,               // rgb(46,139,87)
+    sea_shell = 0xFFF5EE,               // rgb(255,245,238)
+    sienna = 0xA0522D,                  // rgb(160,82,45)
+    silver = 0xC0C0C0,                  // rgb(192,192,192)
+    sky_blue = 0x87CEEB,                // rgb(135,206,235)
+    slate_blue = 0x6A5ACD,              // rgb(106,90,205)
+    slate_gray = 0x708090,              // rgb(112,128,144)
+    snow = 0xFFFAFA,                    // rgb(255,250,250)
+    spring_green = 0x00FF7F,            // rgb(0,255,127)
+    steel_blue = 0x4682B4,              // rgb(70,130,180)
+    tan = 0xD2B48C,                     // rgb(210,180,140)
+    teal = 0x008080,                    // rgb(0,128,128)
+    thistle = 0xD8BFD8,                 // rgb(216,191,216)
+    tomato = 0xFF6347,                  // rgb(255,99,71)
+    turquoise = 0x40E0D0,               // rgb(64,224,208)
+    violet = 0xEE82EE,                  // rgb(238,130,238)
+    wheat = 0xF5DEB3,                   // rgb(245,222,179)
+    white = 0xFFFFFF,                   // rgb(255,255,255)
+    white_smoke = 0xF5F5F5,             // rgb(245,245,245)
+    yellow = 0xFFFF00,                  // rgb(255,255,0)
+    yellow_green = 0x9ACD32,            // rgb(154,205,50)
+};                                      // enum class color
+
+// rgb is a struct for red, green and blue colors.
+// We use rgb as name because some editors will show it as color direct in the
+// editor.
+struct rgb
+{
+    FMT_CONSTEXPR_DECL rgb()
+        : r(0)
+        , g(0)
+        , b(0)
+    {
+    }
+    FMT_CONSTEXPR_DECL rgb(uint8_t r_, uint8_t g_, uint8_t b_)
+        : r(r_)
+        , g(g_)
+        , b(b_)
+    {
+    }
+    FMT_CONSTEXPR_DECL rgb(uint32_t hex)
+        : r((hex >> 16) & 0xFF)
+        , g((hex >> 8) & 0xFF)
+        , b((hex)&0xFF)
+    {
+    }
+    FMT_CONSTEXPR_DECL rgb(color hex)
+        : r((uint32_t(hex) >> 16) & 0xFF)
+        , g((uint32_t(hex) >> 8) & 0xFF)
+        , b(uint32_t(hex) & 0xFF)
+    {
+    }
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
+};
+
+void vprint_rgb(rgb fd, string_view format, format_args args);
+void vprint_rgb(rgb fd, rgb bg, string_view format, format_args args);
+
+/**
+  Formats a string and prints it to stdout using ANSI escape sequences to
+  specify foreground color 'fd'.
+  Example:
+    fmt::print(fmt::color::red, "Elapsed time: {0:.2f} seconds", 1.23);
+ */
+template<typename... Args>
+inline void print(rgb fd, string_view format_str, const Args &... args)
+{
+    vprint_rgb(fd, format_str, make_format_args(args...));
+}
+
+/**
+  Formats a string and prints it to stdout using ANSI escape sequences to
+  specify foreground color 'fd' and background color 'bg'.
+  Example:
+    fmt::print(fmt::color::red, fmt::color::black, "Elapsed time: {0:.2f} seconds", 1.23);
+ */
+template<typename... Args>
+inline void print(rgb fd, rgb bg, string_view format_str, const Args &... args)
+{
+    vprint_rgb(fd, bg, format_str, make_format_args(args...));
+}
+#endif // FMT_EXTENDED_COLORS
 
 #if FMT_USE_USER_DEFINED_LITERALS
 namespace internal {

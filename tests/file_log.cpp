@@ -8,7 +8,7 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     prepare_logdir();
     std::string filename = "logs/simple_log";
 
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
+    auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");
 
     logger->info("Test message {}", 1);
@@ -24,7 +24,7 @@ TEST_CASE("flush_on", "[flush_on]]")
     prepare_logdir();
     std::string filename = "logs/simple_log";
 
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
+    auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");
     logger->set_level(spdlog::level::trace);
     logger->flush_on(spdlog::level::info);

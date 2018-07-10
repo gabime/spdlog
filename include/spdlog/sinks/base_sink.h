@@ -6,8 +6,8 @@
 #pragma once
 //
 // base sink templated over a mutex (either dummy or real)
-// concrete implementation should only override the sink_it_ method.
-// all locking is taken care of here so no locking needed by the implementers..
+// concrete implementation should override the sink_it_() and flush_()  methods.
+// locking is taken care of in this class - no locking needed by the implementers..
 //
 
 #include "spdlog/common.h"
@@ -23,16 +23,6 @@ class base_sink : public sink
 public:
     base_sink()
         : sink()
-    {
-    }
-
-    base_sink(const std::string &formatter_pattern)
-        : sink(formatter_pattern)
-    {
-    }
-
-    base_sink(std::unique_ptr<spdlog::formatter> sink_formatter)
-        : sink(std::move(sink_formatter))
     {
     }
 

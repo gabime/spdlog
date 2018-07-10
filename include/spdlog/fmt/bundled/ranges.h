@@ -114,12 +114,14 @@ struct is_range_ : std::false_type
 {
 };
 
+#if !FMT_MSC_VER || FMT_MSC_VER > 1800
 template<typename T>
 struct is_range_<T, typename std::conditional<false,
                         conditional_helper<decltype(internal::declval<T>().begin()), decltype(internal::declval<T>().end())>, void>::type>
     : std::true_type
 {
 };
+#endif
 
 /// tuple_size and tuple_element check.
 template<typename T>
@@ -171,7 +173,7 @@ using make_index_sequence = make_integer_sequence<std::size_t, N>;
 #endif
 
 template<class Tuple, class F, size_t... Is>
-void for_each(index_sequence<Is...>, Tuple &&tup, F &&f) noexcept
+void for_each(index_sequence<Is...>, Tuple &&tup, F &&f) FMT_NOEXCEPT
 {
     using std::get;
     // using free function get<I>(T) now.

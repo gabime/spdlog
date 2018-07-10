@@ -27,9 +27,9 @@ public:
     explicit msvc_sink() {}
 
 protected:
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &, const fmt::memory_buffer &formatted) override
     {
-        OutputDebugStringA(msg.formatted.c_str());
+        OutputDebugStringA(fmt::to_string(formatted).c_str());
     }
 
     void flush_() override {}
@@ -37,6 +37,9 @@ protected:
 
 using msvc_sink_mt = msvc_sink<std::mutex>;
 using msvc_sink_st = msvc_sink<details::null_mutex>;
+
+using windebug_sink_mt = msvc_sink_mt;
+using windebug_sink_st = msvc_sink_st;
 
 } // namespace sinks
 } // namespace spdlog

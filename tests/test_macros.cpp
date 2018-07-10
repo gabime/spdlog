@@ -9,12 +9,11 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
     prepare_logdir();
     std::string filename = "logs/simple_log";
 
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
+    auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");
     logger->set_level(spdlog::level::trace);
 
     SPDLOG_TRACE(logger, "Test message 1");
-    // SPDLOG_DEBUG(logger, "Test message 2");
     SPDLOG_DEBUG(logger, "Test message 2");
     logger->flush();
 
@@ -27,7 +26,7 @@ TEST_CASE("debug and trace with format strings", "[macros]]")
     prepare_logdir();
     std::string filename = "logs/simple_log";
 
-    auto logger = spdlog::create<spdlog::sinks::simple_file_sink_mt>("logger", filename);
+    auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");
     logger->set_level(spdlog::level::trace);
 

@@ -45,23 +45,23 @@ public:
     template<typename... Args>
     void log(level::level_enum lvl, const char *msg);
 
-    template<typename Arg1, typename... Args>
-    void trace(const char *fmt, const Arg1 &, const Args &... args);
+    template<typename... Args>
+    void trace(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
-    void debug(const char *fmt, const Arg1 &, const Args &... args);
+    template<typename... Args>
+    void debug(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
-    void info(const char *fmt, const Arg1 &, const Args &... args);
+    template<typename... Args>
+    void info(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
-    void warn(const char *fmt, const Arg1 &, const Args &... args);
+    template<typename... Args>
+    void warn(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
-    void error(const char *fmt, const Arg1 &, const Args &... args);
+    template<typename... Args>
+    void error(const char *fmt, const Args &... args);
 
-    template<typename Arg1, typename... Args>
-    void critical(const char *fmt, const Arg1 &, const Args &... args);
+    template<typename... Args>
+    void critical(const char *fmt, const Args &... args);
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template<typename... Args>
@@ -117,10 +117,10 @@ public:
 
     // create a pattern formatter all the sinks in this logger.
     // each sink gets itw own private copy of a formatter object.
-    void set_pattern(const std::string &pattern, pattern_time_type pattern_time = pattern_time_type::local);
+    void set_pattern(const std::string &pattern, pattern_time_type time_type = pattern_time_type::local);
 
-    // create a FormatterT formatter all the sinks in this logger.
-    // each sink gets itw own private copy of a formatter object.
+    // create a FormatterT formatter for each sink in this logger.
+    // each sink gets its own private copy of a formatter object.
     template<class FormatterT, typename... Args>
     void set_formatter(const Args &... args);
 

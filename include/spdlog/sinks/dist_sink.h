@@ -7,7 +7,6 @@
 
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/null_mutex.h"
-#include "spdlog/sink/base_sink.h"
 
 #include <algorithm>
 #include <memory>
@@ -18,22 +17,18 @@
 
 namespace spdlog {
 namespace sinks {
-template<class Mutex>
-class dist_sink : public base_sink<Mutex>
+
+template<typename Mutex>
+class dist_sink : public sink
 {
 public:
-    explicit dist_sink()
-        : sinks_()
-    {
-    }
+    dist_sink() = default;
     dist_sink(const dist_sink &) = delete;
     dist_sink &operator=(const dist_sink &) = delete;
 
-protected:
-    std::vector<std::shared_ptr<sink>> sinks_;
-
-    void sink_it_(const details::log_msg &msg) override
+    void log(const details::log_msg &msg) SPDLOG_FINAL override
     {
+        std::lock_guard<Mutex> lock(mutex_);
         for (auto &sink : sinks_)
         {
             if (sink->should_log(msg.level))
@@ -43,24 +38,28 @@ protected:
         }
     }
 
-    void flush_() override
+    void flush() SPDLOG_FINAL override
     {
+        std::lock_guard<Mutex> lock(mutex_);
         for (auto &sink : sinks_)
             sink->flush();
     }
 
-public:
     void add_sink(std::shared_ptr<sink> sink)
     {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        std::lock_guard<Mutex> lock(mutex_);
         sinks_.push_back(sink);
     }
 
     void remove_sink(std::shared_ptr<sink> sink)
     {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        std::lock_guard<Mutex> lock(mutex_);
         sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink), sinks_.end());
     }
+
+private:
+    Mutex mutex_;
+    std::vector<std::shared_ptr<sink>> sinks_;
 };
 
 using dist_sink_mt = dist_sink<std::mutex>;

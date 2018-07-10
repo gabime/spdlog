@@ -196,11 +196,21 @@
 
 FMT_BEGIN_NAMESPACE
 
-// An implementation of declval for pre-C++11 compilers such as gcc 4.
 namespace internal {
+
+// An implementation of declval for pre-C++11 compilers such as gcc 4.
 template<typename T>
 typename std::add_rvalue_reference<T>::type declval() FMT_NOEXCEPT;
+
+// Casts nonnegative integer to unsigned.
+template<typename Int>
+FMT_CONSTEXPR typename std::make_unsigned<Int>::type to_unsigned(Int value)
+{
+    FMT_ASSERT(value >= 0, "negative value");
+    return static_cast<typename std::make_unsigned<Int>::type>(value);
 }
+
+} // namespace internal
 
 /**
   An implementation of ``std::basic_string_view`` for pre-C++17. It provides a
@@ -242,7 +252,7 @@ public:
     FMT_CONSTEXPR basic_string_view() FMT_NOEXCEPT : data_(FMT_NULL), size_(0) {}
 
     /** Constructs a string reference object from a C string and a size. */
-    FMT_CONSTEXPR basic_string_view(const Char *s, size_t str_size) FMT_NOEXCEPT : data_(s), size_(str_size) {}
+    FMT_CONSTEXPR basic_string_view(const Char *s, size_t count) FMT_NOEXCEPT : data_(s), size_(count) {}
 
     /**
       \rst
@@ -354,11 +364,7 @@ private:
     std::size_t capacity_;
 
 protected:
-    basic_buffer(T *p = FMT_NULL, std::size_t buf_size = 0, std::size_t buf_capacity = 0) FMT_NOEXCEPT : ptr_(p),
-                                                                                                         size_(buf_size),
-                                                                                                         capacity_(buf_capacity)
-    {
-    }
+    basic_buffer(T *p = FMT_NULL, std::size_t sz = 0, std::size_t cap = 0) FMT_NOEXCEPT : ptr_(p), size_(sz), capacity_(cap) {}
 
     /** Sets the buffer data and capacity. */
     void set(T *buf_data, std::size_t buf_capacity) FMT_NOEXCEPT
@@ -418,11 +424,11 @@ public:
         size_ = new_size;
     }
 
-    /** Reserves space to store at least *buf_capacity* elements. */
-    void reserve(std::size_t buf_capacity)
+    /** Reserves space to store at least *capacity* elements. */
+    void reserve(std::size_t new_capacity)
     {
-        if (buf_capacity > capacity_)
-            grow(buf_capacity);
+        if (new_capacity > capacity_)
+            grow(new_capacity);
     }
 
     void push_back(const T &value)
@@ -893,7 +899,7 @@ public:
     // Advances the begin iterator to ``it``.
     FMT_CONSTEXPR void advance_to(iterator it)
     {
-        format_str_.remove_prefix(it - begin());
+        format_str_.remove_prefix(internal::to_unsigned(it - begin()));
     }
 
     // Returns the next argument index.
@@ -1135,13 +1141,13 @@ struct get_type
 };
 
 template<typename Context>
-FMT_CONSTEXPR uint64_t get_types()
+FMT_CONSTEXPR unsigned long long get_types()
 {
     return 0;
 }
 
 template<typename Context, typename Arg, typename... Args>
-FMT_CONSTEXPR uint64_t get_types()
+FMT_CONSTEXPR unsigned long long get_types()
 {
     return get_type<Context, Arg>::value | (get_types<Context, Args...>() << 4);
 }
@@ -1187,27 +1193,29 @@ private:
     typedef typename std::conditional<IS_PACKED, internal::value<Context>, basic_format_arg<Context>>::type value_type;
 
     // If the arguments are not packed, add one more element to mark the end.
-    value_type data_[NUM_ARGS + (IS_PACKED && NUM_ARGS != 0 ? 0 : 1)];
+    static const size_t DATA_SIZE = NUM_ARGS + (IS_PACKED && NUM_ARGS != 0 ? 0 : 1);
+    value_type data_[DATA_SIZE];
 
     friend class basic_format_args<Context>;
 
-    static FMT_CONSTEXPR int64_t get_types()
+    static FMT_CONSTEXPR long long get_types()
     {
-        return IS_PACKED ? static_cast<int64_t>(internal::get_types<Context, Args...>()) : -static_cast<int64_t>(NUM_ARGS);
+        return IS_PACKED ? static_cast<long long>(internal::get_types<Context, Args...>()) : -static_cast<long long>(NUM_ARGS);
     }
 
 public:
 #if FMT_USE_CONSTEXPR
-    static constexpr int64_t TYPES = get_types();
+    static constexpr long long TYPES = get_types();
 #else
-    static const int64_t TYPES;
+    static const long long TYPES;
 #endif
 
-#if FMT_GCC_VERSION && FMT_GCC_VERSION <= 405
-    // Workaround an array initialization bug in gcc 4.5 and earlier.
+#if (FMT_GCC_VERSION && FMT_GCC_VERSION <= 405) || (FMT_MSC_VER && FMT_MSC_VER <= 1800)
+    // Workaround array initialization issues in gcc <= 4.5 and MSVC <= 2013.
     format_arg_store(const Args &... args)
     {
-        data_ = {internal::make_arg<IS_PACKED, Context>(args)...};
+        value_type init[DATA_SIZE] = {internal::make_arg<IS_PACKED, Context>(args)...};
+        std::memcpy(data_, init, sizeof(init));
     }
 #else
     format_arg_store(const Args &... args)
@@ -1219,7 +1227,7 @@ public:
 
 #if !FMT_USE_CONSTEXPR
 template<typename Context, typename... Args>
-const int64_t format_arg_store<Context, Args...>::TYPES = get_types();
+const long long format_arg_store<Context, Args...>::TYPES = get_types();
 #endif
 
 /**
@@ -1252,7 +1260,7 @@ public:
 private:
     // To reduce compiled code size per formatting function call, types of first
     // max_packed_args arguments are passed in the types_ field.
-    uint64_t types_;
+    unsigned long long types_;
     union
     {
         // If the number of arguments is less than max_packed_args, the argument
@@ -1267,7 +1275,7 @@ private:
     typename internal::type type(unsigned index) const
     {
         unsigned shift = index * 4;
-        uint64_t mask = 0xf;
+        unsigned long long mask = 0xf;
         return static_cast<typename internal::type>((types_ & (mask << shift)) >> shift);
     }
 
@@ -1284,10 +1292,10 @@ private:
 
     format_arg do_get(size_type index) const
     {
-        int64_t signed_types = static_cast<int64_t>(types_);
+        long long signed_types = static_cast<long long>(types_);
         if (signed_types < 0)
         {
-            uint64_t num_args = -signed_types;
+            unsigned long long num_args = static_cast<unsigned long long>(-signed_types);
             return index < num_args ? args_[index] : format_arg();
         }
         format_arg arg;
@@ -1314,7 +1322,7 @@ public:
      */
     template<typename... Args>
     basic_format_args(const format_arg_store<Context, Args...> &store)
-        : types_(store.TYPES)
+        : types_(static_cast<unsigned long long>(store.TYPES))
     {
         set_data(store.data_);
     }
@@ -1328,8 +1336,8 @@ public:
 
     unsigned max_size() const
     {
-        int64_t signed_types = static_cast<int64_t>(types_);
-        return static_cast<unsigned>(signed_types < 0 ? -signed_types : static_cast<int64_t>(internal::max_packed_args));
+        long long signed_types = static_cast<long long>(types_);
+        return static_cast<unsigned>(signed_types < 0 ? -signed_types : static_cast<long long>(internal::max_packed_args));
     }
 };
 
@@ -1414,6 +1422,8 @@ inline internal::named_arg<T, wchar_t> arg(wstring_view name, const T &arg)
 template<typename S, typename T, typename Char>
 void arg(S, internal::named_arg<T, Char>) FMT_DELETED;
 
+#ifndef FMT_EXTENDED_COLORS
+// color and (v)print_colored are deprecated.
 enum color
 {
     black,
@@ -1425,27 +1435,19 @@ enum color
     cyan,
     white
 };
-
 FMT_API void vprint_colored(color c, string_view format, format_args args);
 FMT_API void vprint_colored(color c, wstring_view format, wformat_args args);
-
-/**
-  Formats a string and prints it to stdout using ANSI escape sequences to
-  specify color (experimental).
-  Example:
-    fmt::print_colored(fmt::RED, "Elapsed time: {0:.2f} seconds", 1.23);
- */
 template<typename... Args>
 inline void print_colored(color c, string_view format_str, const Args &... args)
 {
     vprint_colored(c, format_str, make_format_args(args...));
 }
-
 template<typename... Args>
 inline void print_colored(color c, wstring_view format_str, const Args &... args)
 {
     vprint_colored(c, format_str, make_format_args<wformat_context>(args...));
 }
+#endif
 
 format_context::iterator vformat_to(internal::buffer &buf, string_view format_str, format_args args);
 wformat_context::iterator vformat_to(internal::wbuffer &buf, wstring_view format_str, wformat_args args);

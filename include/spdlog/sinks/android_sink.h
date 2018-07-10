@@ -38,7 +38,7 @@ public:
 
     void log(const details::log_msg &msg) override
     {
-        const android_LogPriority priority = convert_to_android(msg.level);
+        const android_LogPriority priority = convert_to_android_(msg.level);
         fmt::memory_buffer formatted;
         if (use_raw_msg_)
         {
@@ -70,7 +70,7 @@ public:
     void flush() override {}
 
 private:
-    static android_LogPriority convert_to_android(spdlog::level::level_enum level)
+    static android_LogPriority convert_to_android_(spdlog::level::level_enum level)
     {
         switch (level)
         {

@@ -6,6 +6,7 @@
 #pragma once
 
 #include "spdlog/details/log_msg.h"
+#include "spdlog/details/pattern_formatter.h"
 #include "spdlog/formatter.h"
 
 namespace spdlog {
@@ -19,17 +20,6 @@ public:
     {
     }
 
-    explicit sink(const std::string &formatter_pattern)
-        : formatter_(std::unique_ptr<spdlog::formatter>(new pattern_formatter(formatter_pattern)))
-    {
-    }
-
-    // sink with custom formatter
-    explicit sink(std::unique_ptr<spdlog::formatter> sink_formatter)
-        : formatter_(std::move(sink_formatter))
-    {
-    }
-
     virtual ~sink() = default;
 
     virtual void log(const details::log_msg &msg) = 0;
@@ -39,10 +29,12 @@ public:
     {
         return msg_level >= level_.load(std::memory_order_relaxed);
     }
+
     void set_level(level::level_enum log_level)
     {
         level_.store(log_level);
     }
+
     level::level_enum level() const
     {
         return static_cast<spdlog::level::level_enum>(level_.load(std::memory_order_relaxed));
@@ -56,11 +48,6 @@ public:
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter)
     {
         formatter_ = std::move(sink_formatter);
-    }
-
-    spdlog::formatter *formatter()
-    {
-        return formatter_.get();
     }
 
 protected:

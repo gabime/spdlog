@@ -29,7 +29,7 @@ struct async_msg
     level::level_enum level;
     log_clock::time_point time;
     size_t thread_id;
-    fmt::basic_memory_buffer<char, 128> raw;
+    fmt::basic_memory_buffer<char, 176> raw;
 
     size_t msg_id;
     async_logger_ptr worker_ptr;
@@ -95,7 +95,7 @@ public:
         }
         for (size_t i = 0; i < threads_n; i++)
         {
-            threads_.emplace_back(std::bind(&thread_pool::worker_loop, this));
+            threads_.emplace_back(std::bind(&thread_pool::worker_loop_, this));
         }
     }
 
@@ -106,14 +106,13 @@ public:
         {
             for (size_t i = 0; i < threads_.size(); i++)
             {
-                post_async_msg(async_msg(async_msg_type::terminate), async_overflow_policy::block_retry);
+                post_async_msg_(async_msg(async_msg_type::terminate), async_overflow_policy::block);
             }
 
             for (auto &t : threads_)
             {
                 t.join();
             }
-            // std::cout << "~thread_pool()  msg_counter_: " << msg_counter_ << std::endl;
         }
         catch (...)
         {
@@ -123,12 +122,12 @@ public:
     void post_log(async_logger_ptr &&worker_ptr, details::log_msg &&msg, async_overflow_policy overflow_policy)
     {
         async_msg async_m(std::forward<async_logger_ptr>(worker_ptr), async_msg_type::log, std::forward<log_msg>(msg));
-        post_async_msg(std::move(async_m), overflow_policy);
+        post_async_msg_(std::move(async_m), overflow_policy);
     }
 
     void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy)
     {
-        post_async_msg(async_msg(std::move(worker_ptr), async_msg_type::flush), overflow_policy);
+        post_async_msg_(async_msg(std::move(worker_ptr), async_msg_type::flush), overflow_policy);
     }
 
 private:
@@ -136,9 +135,9 @@ private:
 
     std::vector<std::thread> threads_;
 
-    void post_async_msg(async_msg &&new_msg, async_overflow_policy overflow_policy)
+    void post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy)
     {
-        if (overflow_policy == async_overflow_policy::block_retry)
+        if (overflow_policy == async_overflow_policy::block)
         {
             q_.enqueue(std::move(new_msg));
         }
@@ -148,14 +147,14 @@ private:
         }
     }
 
-    void worker_loop()
+    void worker_loop_()
     {
-        while (process_next_msg()) {};
+        while (process_next_msg_()) {};
     }
 
     // process next message in the queue
     // return true if this thread should still be active (while no terminate msg was received)
-    bool process_next_msg()
+    bool process_next_msg_()
     {
         async_msg incoming_async_msg;
         bool dequeued = q_.dequeue_for(incoming_async_msg, std::chrono::seconds(10));

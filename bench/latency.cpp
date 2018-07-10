@@ -1,10 +1,10 @@
 //
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2018 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
 //
-// bench.cpp : spdlog benchmarks
+// latency.cpp : spdlog latency benchmarks
 //
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
@@ -14,7 +14,7 @@
 #include "spdlog/spdlog.h"
 #include "utils.h"
 #include <atomic>
-#include <cstdlib> // EXIT_FAILURE
+#include <cstdlib>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -29,10 +29,9 @@ using namespace utils;
 void bench(int howmany, std::shared_ptr<spdlog::logger> log);
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count);
 
-int main(int argc, char *argv[])
+int main(int , char *[])
 {
-
-
+    std::srand(std::time(nullptr)); // use current time as seed for random generator
     int howmany = 1000000;
     int queue_size = howmany + 2;
     int threads = 10;
@@ -42,15 +41,8 @@ int main(int argc, char *argv[])
     try
     {
 
-        if (argc > 1)
-            howmany = atoi(argv[1]);
-        if (argc > 2)
-            threads = atoi(argv[2]);
-        if (argc > 3)
-            queue_size = atoi(argv[3]);
-
         cout << "*******************************************************************************\n";
-        cout << "Single thread, " << format(howmany) << " iterations" << endl;
+        cout << "Single thread\n";
         cout << "*******************************************************************************\n";
 
         auto basic_st = spdlog::basic_logger_mt("basic_st", "logs/basic_st.log", true);
@@ -65,7 +57,7 @@ int main(int argc, char *argv[])
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
         cout << "\n*******************************************************************************\n";
-        cout << threads << " threads sharing same logger, " << format(howmany) << " iterations" << endl;
+        cout << threads << " threads sharing same logger\n";
         cout << "*******************************************************************************\n";
 
         auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
@@ -79,7 +71,7 @@ int main(int argc, char *argv[])
         bench(howmany, spdlog::create<null_sink_st>("null_mt"));
 
         cout << "\n*******************************************************************************\n";
-        cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
+        cout << "async logging.. " << threads << " threads sharing same logger\n";
         cout << "*******************************************************************************\n";
 
         for (int i = 0; i < 3; ++i)
@@ -99,33 +91,47 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
+
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
-    using std::chrono::high_resolution_clock;
+    using namespace std::chrono;
+    using chrono::high_resolution_clock;
+    using chrono::milliseconds;
+    using chrono::nanoseconds;
+
     cout << log->name() << "...\t\t" << flush;
-    auto start = high_resolution_clock::now();
+    nanoseconds total_nanos = nanoseconds::zero();
     for (auto i = 0; i < howmany; ++i)
     {
+        auto start = high_resolution_clock::now();
         log->info("Hello logger: msg number {}", i);
+        auto delta_nanos = chrono::duration_cast<nanoseconds>(high_resolution_clock::now() - start);
+        total_nanos+= delta_nanos;
     }
 
-    auto delta = high_resolution_clock::now() - start;
-    auto delta_d = duration_cast<duration<double>>(delta).count();
-    cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
+    auto avg = total_nanos.count()/howmany;
+    cout << format(avg) << " ns/call" << endl;
 }
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
 {
-    using std::chrono::high_resolution_clock;
+    using namespace std::chrono;
+    using chrono::high_resolution_clock;
+    using chrono::milliseconds;
+    using chrono::nanoseconds;
+
     cout << log->name() << "...\t\t" << flush;
     vector<thread> threads;
-    auto start = high_resolution_clock::now();
+    std::atomic<nanoseconds::rep> total_nanos{0};
     for (int t = 0; t < thread_count; ++t)
     {
         threads.push_back(std::thread([&]() {
             for (int j = 0; j < howmany / thread_count; j++)
             {
+                auto start = high_resolution_clock::now();
                 log->info("Hello logger: msg number {}", j);
+                auto delta_nanos = chrono::duration_cast<nanoseconds>(high_resolution_clock::now() - start);
+                total_nanos+= delta_nanos.count();
             }
         }));
     }
@@ -135,7 +141,9 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
         t.join();
     };
 
-    auto delta = high_resolution_clock::now() - start;
-    auto delta_d = duration_cast<duration<double>>(delta).count();
-    cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
+    auto avg = total_nanos/howmany;
+    cout << format(avg) << " ns/call" << endl;
+
+
+
 }

@@ -19,7 +19,7 @@
 namespace spdlog {
 
 // Default logger factory-  creates synchronous loggers
-struct create_synchronous
+struct synchronous_factory
 {
     template<typename Sink, typename... SinkArgs>
 
@@ -32,7 +32,7 @@ struct create_synchronous
     }
 };
 
-using default_factory = create_synchronous;
+using default_factory = synchronous_factory;
 
 // Create and register a logger with a templated sink type
 // The logger's level, formatter and flush level will be set according the global settings.
@@ -57,9 +57,9 @@ inline std::shared_ptr<logger> get(const std::string &name)
 // Set global formatting
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 //
-inline void set_pattern(const std::string &format_string)
+inline void set_pattern(const std::string &format_string, pattern_time_type time_type = pattern_time_type::local)
 {
-    details::registry::instance().set_pattern(format_string);
+    details::registry::instance().set_pattern(format_string, time_type);
 }
 
 //

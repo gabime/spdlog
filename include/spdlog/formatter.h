@@ -17,5 +17,3 @@ public:
     virtual void format(const details::log_msg &msg, fmt::memory_buffer &dest) = 0;
 };
 } // namespace spdlog
-
-#include "details/pattern_formatter_impl.h"
