@@ -31,7 +31,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 
 int main(int , char *[])
 {
-    std::srand(std::time(nullptr)); // use current time as seed for random generator
+	std::srand(static_cast<unsigned>(std::time(nullptr))); // use current time as seed for random generator
     int howmany = 1000000;
     int queue_size = howmany + 2;
     int threads = 10;
