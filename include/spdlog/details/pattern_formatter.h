@@ -499,7 +499,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         if(millis != millis_cache_timestamp_ || cached_millis_.size() == 0)
         {
             cached_millis_.resize(0);
-            fmt_helper::pad3(millis, cached_millis_);
+            fmt_helper::pad3(static_cast<int>(millis), cached_millis_);
             cached_millis_.push_back(']');
             cached_millis_.push_back(' ');
             millis_cache_timestamp_ = millis;
