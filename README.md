@@ -64,7 +64,7 @@ null_st...		Elapsed: 0.162708	6,145,995/sec
 basic_mt...		Elapsed: 0.854029	1,170,920/sec
 rotating_mt		Elapsed: 0.867038	1,153,351/sec
 daily_mt...		Elapsed: 0.869593	1,149,963/sec
-null_mt...		Elapsed: 0.171215	5,840,602/sec
+null_mt...		Elapsed: 0.171215	2,033,537/sec
 ```
 #### Asynchronous mode
 ```
