@@ -102,7 +102,7 @@ private:
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> android_logger(const std::string &logger_name, const std::string &tag = "spdlog")
 {
-    return return Factory::template create<sinks::android_sink>(logger_name, tag);
+    return Factory::template create<sinks::android_sink>(logger_name, tag);
 }
 
 } // namespace spdlog
