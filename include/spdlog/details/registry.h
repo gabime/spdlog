@@ -23,7 +23,7 @@ namespace spdlog {
 namespace details {
 class thread_pool;
 
-template<class Mutex>
+template<typename Mutex>
 class registry_t
 {
 public:
@@ -46,8 +46,7 @@ public:
         auto logger_name = new_logger->name();
         throw_if_exists_(logger_name);
 
-        // create default formatter if not exists
-
+        // set the global formatter pattern
         new_logger->set_formatter<pattern_formatter>(formatter_pattern_, pattern_time_type_);
 
         if (err_handler_)

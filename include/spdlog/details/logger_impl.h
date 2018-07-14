@@ -10,7 +10,7 @@
 
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
-template<class It>
+template<typename It>
 inline spdlog::logger::logger(std::string logger_name, const It &begin, const It &end)
     : name_(std::move(logger_name))
     , sinks_(begin, end)
@@ -36,7 +36,7 @@ inline spdlog::logger::logger(const std::string &logger_name, spdlog::sink_ptr s
 
 inline spdlog::logger::~logger() = default;
 
-template<class FormatterT, typename... Args>
+template<typename FormatterT, typename... Args>
 inline void spdlog::logger::set_formatter(const Args &... args)
 {
     for (auto &sink : sinks_)

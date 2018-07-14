@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "../fmt/fmt.h"
 #include "spdlog/common.h"
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"
@@ -22,7 +21,7 @@ namespace sinks {
 /*
  * Windows color console sink. Uses WriteConsoleA to write to the console with colors
  */
-template<class OutHandle, class ConsoleMutex>
+template<typename OutHandle, typename ConsoleMutex>
 class wincolor_sink : public sink
 {
 public:
@@ -35,7 +34,7 @@ public:
 
     wincolor_sink()
         : out_handle_(OutHandle::handle())
-        , mutex_(ConsoleMutex::console_mutex())
+        , mutex_(ConsoleMutex::mutex())
     {
         colors_[level::trace] = WHITE;
         colors_[level::debug] = CYAN;
@@ -89,6 +88,18 @@ public:
         // windows console always flushed?
     }
 
+    void set_pattern(const std::string &pattern) override SPDLOG_FINAL
+    {
+        std::lock_guard<mutex_t> lock(mutex_);
+        formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
+    }
+
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override SPDLOG_FINAL
+    {
+        std::lock_guard<mutex_t> lock(mutex_);
+        formatter_ = std::move(sink_formatter);
+    }
+
 private:
     using mutex_t = typename ConsoleMutex::mutex_t;
     // set color and return the orig console attributes (for resetting later)
@@ -116,11 +127,11 @@ private:
     std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 };
 
-using wincolor_stdout_sink_mt = wincolor_sink<details::console_stdout_stream, details::console_global_mutex>;
-using wincolor_stdout_sink_st = wincolor_sink<details::console_stdout_stream, details::console_global_nullmutex>;
+using wincolor_stdout_sink_mt = wincolor_sink<details::console_stdout, details::console_mutex>;
+using wincolor_stdout_sink_st = wincolor_sink<details::console_stdout, details::console_nullmutex>;
 
-using wincolor_stderr_sink_mt = wincolor_sink<details::console_stderr_stream, details::console_global_mutex>;
-using wincolor_stderr_sink_st = wincolor_sink<details::console_stderr_stream, details::console_global_nullmutex>;
+using wincolor_stderr_sink_mt = wincolor_sink<details::console_stderr, details::console_mutex>;
+using wincolor_stderr_sink_st = wincolor_sink<details::console_stderr, details::console_nullmutex>;
 
 } // namespace sinks
 } // namespace spdlog

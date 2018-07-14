@@ -31,7 +31,7 @@ public:
     logger(const std::string &name, sink_ptr single_sink);
     logger(const std::string &name, sinks_init_list sinks);
 
-    template<class It>
+    template<typename It>
     logger(std::string name, const It &begin, const It &end);
 
     virtual ~logger();
@@ -118,7 +118,7 @@ public:
 
     // create a FormatterT formatter for each sink in this logger.
     // each sink gets its own private copy of a formatter object.
-    template<class FormatterT, typename... Args>
+    template<typename FormatterT, typename... Args>
     void set_formatter(const Args &... args);
 
     void flush();

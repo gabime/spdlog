@@ -59,7 +59,8 @@ int main(int, char *[])
     }
 }
 
-#include "spdlog/sinks/stdout_color_sinks.h" // or "/sinks/stdout_sinks.h" if no colors needed
+#include "spdlog/sinks/stdout_color_sinks.h"
+// or #include "spdlog/sinks/stdout_sinks.h" if no colors needed
 void stdout_example()
 {
     // create color multi threaded logger
@@ -181,18 +182,18 @@ void err_handler_example()
 void syslog_example()
 {
     std::string ident = "spdlog-example";
-    auto syslog_logger = spdlog::syslog_logger("syslog", ident, LOG_PID);
+    auto syslog_logger = spdlog::syslog_logger_mt("syslog", ident, LOG_PID);
     syslog_logger->warn("This is warning that will end up in syslog.");
 }
 #endif
 
 // Android example
 #if defined(__ANDROID__)
-#incude "spdlog/sinks/android_sink.h"
+#include "spdlog/sinks/android_sink.h"
 void android_example()
 {
     std::string tag = "spdlog-android";
-    auto android_logger = spdlog::android_logger("android", tag);
+    auto android_logger = spdlog::android_logger_mt("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
 }
 

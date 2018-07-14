@@ -22,14 +22,14 @@ namespace sinks {
  * of the message.
  * If no color terminal detected, omit the escape codes.
  */
-template<class TargetStream, class ConsoleMutex>
+template<typename TargetStream, class ConsoleMutex>
 class ansicolor_sink : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
     ansicolor_sink()
         : target_file_(TargetStream::stream())
-        , mutex_(ConsoleMutex::console_mutex())
+        , mutex_(ConsoleMutex::mutex())
 
     {
         should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
@@ -115,6 +115,18 @@ public:
         fflush(target_file_);
     }
 
+    void set_pattern(const std::string &pattern) override SPDLOG_FINAL
+    {
+        std::lock_guard<mutex_t> lock(mutex_);
+        formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
+    }
+
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override SPDLOG_FINAL
+    {
+        std::lock_guard<mutex_t> lock(mutex_);
+        formatter_ = std::move(sink_formatter);
+    }
+
 private:
     void print_ccode_(const std::string &color_code)
     {
@@ -132,11 +144,11 @@ private:
     std::unordered_map<level::level_enum, std::string, level::level_hasher> colors_;
 };
 
-using ansicolor_stdout_sink_mt = ansicolor_sink<details::console_stdout_stream, details::console_global_mutex>;
-using ansicolor_stdout_sink_st = ansicolor_sink<details::console_stdout_stream, details::console_global_nullmutex>;
+using ansicolor_stdout_sink_mt = ansicolor_sink<details::console_stdout, details::console_mutex>;
+using ansicolor_stdout_sink_st = ansicolor_sink<details::console_stdout, details::console_nullmutex>;
 
-using ansicolor_stderr_sink_mt = ansicolor_sink<details::console_stderr_stream, details::console_global_mutex>;
-using ansicolor_stderr_sink_st = ansicolor_sink<details::console_stderr_stream, details::console_global_nullmutex>;
+using ansicolor_stderr_sink_mt = ansicolor_sink<details::console_stderr, details::console_mutex>;
+using ansicolor_stderr_sink_st = ansicolor_sink<details::console_stderr, details::console_nullmutex>;
 
 } // namespace sinks
 

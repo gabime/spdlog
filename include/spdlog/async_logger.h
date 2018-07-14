@@ -32,7 +32,7 @@ class async_logger SPDLOG_FINAL : public std::enable_shared_from_this<async_logg
     friend class details::thread_pool;
 
 public:
-    template<class It>
+    template<typename It>
     async_logger(const std::string &logger_name, const It &begin, const It &end, std::weak_ptr<details::thread_pool> tp,
         async_overflow_policy overflow_policy = async_overflow_policy::block);
 

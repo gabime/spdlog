@@ -110,6 +110,7 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
+
     cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
     spdlog::drop(log->name());
 }

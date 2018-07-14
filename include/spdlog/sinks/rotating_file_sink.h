@@ -23,7 +23,7 @@ namespace sinks {
 //
 // Rotating file sink based on size
 //
-template<class Mutex>
+template<typename Mutex>
 class rotating_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
@@ -55,8 +55,10 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &, const fmt::memory_buffer &formatted) override
+    void sink_it_(const details::log_msg &msg) override
     {
+        fmt::memory_buffer formatted;
+        sink::formatter_->format(msg, formatted);
         current_size_ += formatted.size();
         if (current_size_ > max_size_)
         {

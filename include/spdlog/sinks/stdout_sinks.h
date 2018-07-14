@@ -18,13 +18,13 @@ namespace spdlog {
 
 namespace sinks {
 
-template<class TargetStream, class ConsoleMutex>
+template<typename TargetStream, typename ConsoleMutex>
 class stdout_sink : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
     stdout_sink()
-        : mutex_(ConsoleMutex::console_mutex())
+        : mutex_(ConsoleMutex::mutex())
         , file_(TargetStream::stream())
     {
     }
@@ -45,7 +45,19 @@ public:
     void flush() override
     {
         std::lock_guard<mutex_t> lock(mutex_);
-        fflush(TargetStream::stream());
+        fflush(file_);
+    }
+
+    void set_pattern(const std::string &pattern) override SPDLOG_FINAL
+    {
+        std::lock_guard<mutex_t> lock(mutex_);
+        formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
+    }
+
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override SPDLOG_FINAL
+    {
+        std::lock_guard<mutex_t> lock(mutex_);
+        formatter_ = std::move(sink_formatter);
     }
 
 private:
@@ -53,11 +65,11 @@ private:
     FILE *file_;
 };
 
-using stdout_sink_mt = stdout_sink<details::console_stdout_stream, details::console_global_mutex>;
-using stdout_sink_st = stdout_sink<details::console_stdout_stream, details::console_global_nullmutex>;
+using stdout_sink_mt = stdout_sink<details::console_stdout, details::console_mutex>;
+using stdout_sink_st = stdout_sink<details::console_stdout, details::console_nullmutex>;
 
-using stderr_sink_mt = stdout_sink<details::console_stderr_stream, details::console_global_mutex>;
-using stderr_sink_st = stdout_sink<details::console_stderr_stream, details::console_global_nullmutex>;
+using stderr_sink_mt = stdout_sink<details::console_stderr, details::console_mutex>;
+using stderr_sink_st = stdout_sink<details::console_stderr, details::console_nullmutex>;
 
 } // namespace sinks
 

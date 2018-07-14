@@ -14,16 +14,21 @@ namespace sinks {
 class sink
 {
 public:
-    // default sink ctor with default pattern formatter
     sink()
-        : formatter_(std::unique_ptr<spdlog::formatter>(new pattern_formatter("%+")))
+        : level_(level::trace)
+        , formatter_(new pattern_formatter("%+"))
     {
     }
 
-    virtual ~sink() = default;
+    sink(std::unique_ptr<spdlog::pattern_formatter> formatter)
+        : level_(level::trace)
+        , formatter_(std::move(formatter)){};
 
+    virtual ~sink() = default;
     virtual void log(const details::log_msg &msg) = 0;
     virtual void flush() = 0;
+    virtual void set_pattern(const std::string &pattern) = 0;
+    virtual void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) = 0;
 
     bool should_log(level::level_enum msg_level) const
     {
@@ -40,18 +45,11 @@ public:
         return static_cast<spdlog::level::level_enum>(level_.load(std::memory_order_relaxed));
     }
 
-    void set_pattern(const std::string &pattern)
-    {
-        formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
-    }
-
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter)
-    {
-        formatter_ = std::move(sink_formatter);
-    }
-
 protected:
-    level_t level_{level::trace};
+    // sink log level - default is all
+    level_t level_;
+
+    // sink formatter - default is full format
     std::unique_ptr<spdlog::formatter> formatter_;
 };
 

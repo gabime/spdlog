@@ -17,7 +17,7 @@
 
 namespace spdlog {
 namespace sinks {
-template<class Mutex>
+template<typename Mutex>
 class base_sink : public sink
 {
 public:
@@ -32,9 +32,7 @@ public:
     void log(const details::log_msg &msg) SPDLOG_FINAL override
     {
         std::lock_guard<Mutex> lock(mutex_);
-        fmt::memory_buffer formatted;
-        formatter_->format(msg, formatted);
-        sink_it_(msg, formatted);
+        sink_it_(msg);
     }
 
     void flush() SPDLOG_FINAL override
@@ -43,8 +41,20 @@ public:
         flush_();
     }
 
+    void set_pattern(const std::string &pattern) SPDLOG_FINAL override
+    {
+        std::lock_guard<Mutex> lock(mutex_);
+        formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
+    }
+
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) SPDLOG_FINAL override
+    {
+        std::lock_guard<Mutex> lock(mutex_);
+        formatter_ = std::move(sink_formatter);
+    }
+
 protected:
-    virtual void sink_it_(const details::log_msg &msg, const fmt::memory_buffer &formatted) = 0;
+    virtual void sink_it_(const details::log_msg &msg) = 0;
     virtual void flush_() = 0;
     Mutex mutex_;
 };

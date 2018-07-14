@@ -5,14 +5,19 @@
 
 #include <iostream>
 
-class failing_sink : public spdlog::sinks::sink
+class failing_sink : public spdlog::sinks::base_sink<std::mutex>
 {
-    void log(const spdlog::details::log_msg &) override
+public:
+    failing_sink() = default;
+    ~failing_sink() = default;
+
+protected:
+    void sink_it_(const spdlog::details::log_msg &) override
     {
         throw std::runtime_error("some error happened during log");
     }
 
-    void flush() override
+    void flush_() override
     {
         throw std::runtime_error("some error happened during flush");
     }

@@ -20,7 +20,7 @@ namespace sinks {
 /*
  * MSVC sink (logging using OutputDebugStringA)
  */
-template<class Mutex>
+template<typename Mutex>
 class msvc_sink : public base_sink<Mutex>
 {
 public:

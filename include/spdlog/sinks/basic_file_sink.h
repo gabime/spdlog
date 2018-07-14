@@ -17,7 +17,7 @@ namespace sinks {
 /*
  * Trivial file sink with single file as target
  */
-template<class Mutex>
+template<typename Mutex>
 class basic_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
@@ -27,8 +27,10 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &, const fmt::memory_buffer &formatted) override
+    void sink_it_(const details::log_msg &msg) override
     {
+        fmt::memory_buffer formatted;
+        sink::formatter_->format(msg, formatted);
         file_helper_.write(formatted);
     }
 

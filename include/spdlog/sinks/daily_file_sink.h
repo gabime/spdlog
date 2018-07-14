@@ -39,7 +39,7 @@ struct daily_filename_calculator
 /*
  * Rotating file sink based on date. rotates at midnight
  */
-template<class Mutex, class FileNameCalc = daily_filename_calculator>
+template<typename Mutex, typename FileNameCalc = daily_filename_calculator>
 class daily_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
@@ -59,13 +59,16 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &msg, const fmt::memory_buffer &formatted) override
+    void sink_it_(const details::log_msg &msg) override
     {
+
         if (msg.time >= rotation_tp_)
         {
             file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(msg.time)));
             rotation_tp_ = next_rotation_tp_();
         }
+        fmt::memory_buffer formatted;
+        sink::formatter_->format(msg, formatted);
         file_helper_.write(formatted);
     }
 

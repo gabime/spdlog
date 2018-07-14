@@ -13,8 +13,8 @@
 
 namespace spdlog {
 namespace sinks {
-template<class Mutex>
-class ostream_sink : public base_sink<Mutex>
+template<typename Mutex>
+class ostream_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
     explicit ostream_sink(std::ostream &os, bool force_flush = false)
@@ -26,8 +26,10 @@ public:
     ostream_sink &operator=(const ostream_sink &) = delete;
 
 protected:
-    void sink_it_(const details::log_msg &msg, const fmt::memory_buffer &formatted) override
+    void sink_it_(const details::log_msg &msg) override
     {
+        fmt::memory_buffer formatted;
+        sink::formatter_->format(msg, formatted);
         ostream_.write(formatted.data(), formatted.size());
         if (force_flush_)
             ostream_.flush();

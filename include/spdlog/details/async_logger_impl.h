@@ -14,7 +14,7 @@
 #include <memory>
 #include <string>
 
-template<class It>
+template<typename It>
 inline spdlog::async_logger::async_logger(const std::string &logger_name, const It &begin, const It &end,
     std::weak_ptr<details::thread_pool> tp, async_overflow_policy overflow_policy)
     : logger(logger_name, begin, end)

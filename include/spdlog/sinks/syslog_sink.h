@@ -5,10 +5,8 @@
 
 #pragma once
 
-#include "spdlog/common.h"
-
-#include "spdlog/details/log_msg.h"
-#include "spdlog/sinks/sink.h"
+#include "spdlog/sinks/base_sink.h"
+#include "spdlog/spdlog.h"
 
 #include <array>
 #include <string>
@@ -21,7 +19,8 @@ namespace sinks {
  *
  * Locking is not needed, as `syslog()` itself is thread-safe.
  */
-class syslog_sink : public sink
+template<typename Mutex>
+class syslog_sink : public base_sink<Mutex>
 {
 public:
     //
@@ -48,12 +47,13 @@ public:
     syslog_sink(const syslog_sink &) = delete;
     syslog_sink &operator=(const syslog_sink &) = delete;
 
-    void log(const details::log_msg &msg) override
+protected:
+    void sink_it_(const details::log_msg &msg) override
     {
         ::syslog(syslog_prio_from_level(msg), "%s", fmt::to_string(msg.raw).c_str());
     }
 
-    void flush() override {}
+    void flush_() override {}
 
 private:
     std::array<int, 7> priorities_;
@@ -68,13 +68,23 @@ private:
         return priorities_[static_cast<size_t>(msg.level)];
     }
 };
+
+using syslog_sink_mt = syslog_sink<std::mutex>;
+using syslog_sink_st = syslog_sink<details::null_mutex>;
 } // namespace sinks
 
 // Create and register a syslog logger
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> syslog_logger(
+inline std::shared_ptr<logger> syslog_logger_mt(
     const std::string &logger_name, const std::string &syslog_ident = "", int syslog_option = 0, int syslog_facility = (1 << 3))
 {
-    return Factory::template create<sinks::syslog_sink>(logger_name, syslog_ident, syslog_option, syslog_facility);
+    return Factory::template create<sinks::syslog_sink_mt>(logger_name, syslog_ident, syslog_option, syslog_facility);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> syslog_logger_st(
+    const std::string &logger_name, const std::string &syslog_ident = "", int syslog_option = 0, int syslog_facility = (1 << 3))
+{
+    return Factory::template create<sinks::syslog_sink_st>(logger_name, syslog_ident, syslog_option, syslog_facility);
 }
 } // namespace spdlog

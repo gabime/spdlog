@@ -4,10 +4,14 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
+#include "spdlog/details/null_mutex.h"
 #include "stdio.h"
+#include <mutex>
+
+
 namespace spdlog {
 namespace details {
-struct console_stdout_stream
+struct console_stdout
 {
     static FILE *stream()
     {
@@ -21,7 +25,7 @@ struct console_stdout_stream
 #endif
 };
 
-struct console_stderr_stream
+struct console_stderr
 {
     static FILE *stream()
     {
@@ -35,23 +39,23 @@ struct console_stderr_stream
 #endif
 };
 
-struct console_global_mutex
+struct console_mutex
 {
     using mutex_t = std::mutex;
-    static mutex_t &console_mutex()
+    static mutex_t &mutex()
     {
-        static mutex_t mutex;
-        return mutex;
+        static mutex_t s_mutex;
+        return s_mutex;
     }
 };
 
-struct console_global_nullmutex
+struct console_nullmutex
 {
     using mutex_t = null_mutex;
-    static mutex_t &console_mutex()
+    static mutex_t &mutex()
     {
-        static mutex_t mutex;
-        return mutex;
+        static mutex_t s_mutex;
+        return s_mutex;
     }
 };
 } // namespace details
