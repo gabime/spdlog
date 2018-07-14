@@ -240,7 +240,7 @@ inline void spdlog::details::async_log_helper::worker_loop()
         {
             active = process_next_msg();
         }
-        SPDLOG_CATCH_AND_HANDLE
+        SPDLOG_CATCH_AND_HANDLE(_logger_name)
     }
     if (_worker_teardown_cb)
     {
@@ -282,7 +282,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg()
                 {
                     s->log(incoming_log_msg);
                 }
-                SPDLOG_CATCH_AND_HANDLE
+                SPDLOG_CATCH_AND_HANDLE(_logger_name)
             }
         }
         handle_flush_interval();
@@ -327,7 +327,7 @@ inline void spdlog::details::async_log_helper::flush_sinks()
         {
             s->flush();
         }
-        SPDLOG_CATCH_AND_HANDLE
+        SPDLOG_CATCH_AND_HANDLE(_logger_name)
     }
     _last_flush = os::now();
 }
