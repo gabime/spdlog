@@ -76,7 +76,9 @@ async...		Elapsed: 0.427072	2,341,527/sec
 async...		Elapsed: 0.449768	2,223,369/sec
 ```
 
-## Usage
+## Usage 
+
+#### Terminal logging
 ```c++
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -115,7 +117,8 @@ void stdout_example()
     SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
 }
 ```
-#### Basic file logger
+
+#### Simple file logger
 ```c++
 #include "spdlog/sinks/basic_file_sink.h"
 void basic_logfile_example()
@@ -132,7 +135,8 @@ void basic_logfile_example()
     }
 }
 ```
-#### Rotating example
+
+#### Rotating files
 ```c++
 #include "spdlog/sinks/rotating_file_sink.h"
 void rotating_example()
@@ -141,7 +145,7 @@ void rotating_example()
     auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
 }
 ```
-#### Daily file example
+#### Daily files
 ```c++
 
 #include "spdlog/sinks/daily_file_sink.h"
@@ -152,9 +156,9 @@ void daily_example()
 }
 
 ```
-#### Asynchronous example
-```c++
 
+#### Asynchronous logging
+```c++
 #include "spdlog/async.h"
 void async_example()
 {
@@ -171,7 +175,8 @@ void async_example()
 }
 
 ```
-#### Multi sink 
+
+#### Multi sink with different formatting per target
 ```c++
 
 // create logger with 2 targets with different log levels and formats.
@@ -191,7 +196,8 @@ void multi_sink_example()
     logger.info("this message should not appear in the console, only in the file");
 }
 ```
-#### User defined types logging
+
+#### User defined types
 ```c++
 // user defined types logging by implementing operator<<
 #include "spdlog/fmt/ostr.h" // must be included
@@ -211,6 +217,7 @@ void user_defined_example()
 }
 
 ```
+
 #### Custom error handler
 ```c++
 void err_handler_example()
@@ -221,7 +228,8 @@ void err_handler_example()
 }
 
 ```
-#### syslog example 
+
+#### syslog 
 ```c++
 #include "spdlog/sinks/syslog_sink.h"
 void syslog_example()
