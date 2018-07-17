@@ -135,7 +135,8 @@ void basic_logfile_example()
     }
 }
 ```
-hr
+<hr>
+
 #### Rotating files
 ```c++
 #include "spdlog/sinks/rotating_file_sink.h"
