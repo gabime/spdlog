@@ -117,7 +117,7 @@ void stdout_example()
     SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
 }
 ```
-<hr />
+---
 #### Simple file logger
 ```c++
 #include "spdlog/sinks/basic_file_sink.h"
