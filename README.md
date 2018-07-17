@@ -177,7 +177,7 @@ void async_example()
 
 ```
 ---
-#### Multi sink with different formatting per target
+#### Logger with multi targets - each with different format and log level
 ```c++
 
 // create logger with 2 targets with different log levels and formats.
