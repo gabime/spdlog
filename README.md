@@ -135,7 +135,7 @@ void basic_logfile_example()
     }
 }
 ```
-
+---
 #### Rotating files
 ```c++
 #include "spdlog/sinks/rotating_file_sink.h"
@@ -145,6 +145,7 @@ void rotating_example()
     auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
 }
 ```
+---
 #### Daily files
 ```c++
 
@@ -156,7 +157,7 @@ void daily_example()
 }
 
 ```
-
+---
 #### Asynchronous logging
 ```c++
 #include "spdlog/async.h"
@@ -175,7 +176,7 @@ void async_example()
 }
 
 ```
-
+---
 #### Multi sink with different formatting per target
 ```c++
 
@@ -196,7 +197,7 @@ void multi_sink_example()
     logger.info("this message should not appear in the console, only in the file");
 }
 ```
-
+---
 #### User defined types
 ```c++
 // user defined types logging by implementing operator<<
@@ -217,7 +218,7 @@ void user_defined_example()
 }
 
 ```
-
+---
 #### Custom error handler
 ```c++
 void err_handler_example()
@@ -228,7 +229,7 @@ void err_handler_example()
 }
 
 ```
-
+---
 #### syslog 
 ```c++
 #include "spdlog/sinks/syslog_sink.h"
@@ -238,9 +239,8 @@ void syslog_example()
     auto syslog_logger = spdlog::syslog_logger("syslog", ident, LOG_PID);
     syslog_logger->warn("This is warning that will end up in syslog.");
 }
-
-
 ```
+---
 #### Android example 
 ```c++
 #incude "spdlog/sinks/android_sink.h"
