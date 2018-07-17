@@ -76,9 +76,8 @@ async...		Elapsed: 0.427072	2,341,527/sec
 async...		Elapsed: 0.449768	2,223,369/sec
 ```
 
-## Usage Example
+## Usage
 ```c++
-
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 void stdout_example()
@@ -115,7 +114,9 @@ void stdout_example()
     SPDLOG_TRACE(console, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
     SPDLOG_DEBUG(console, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
 }
-
+```
+#### Basic file logger
+```c++
 #include "spdlog/sinks/basic_file_sink.h"
 void basic_logfile_example()
 {
@@ -130,13 +131,18 @@ void basic_logfile_example()
         return 1;
     }
 }
-
+```
+#### Rotating example
+```c++
 #include "spdlog/sinks/rotating_file_sink.h"
 void rotating_example()
 {
     // Create a file rotating logger with 5mb size max and 3 rotated files
     auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
 }
+```
+#### Daily file example
+```c++
 
 #include "spdlog/sinks/daily_file_sink.h"
 void daily_example()
@@ -144,6 +150,10 @@ void daily_example()
     // Create a daily logger - a new file is created every day on 2:30am
     auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
 }
+
+```
+#### Asynchronous example
+```c++
 
 #include "spdlog/async.h"
 void async_example()
@@ -159,6 +169,10 @@ void async_example()
         async_file->info("Async message #{}", i);
     }
 }
+
+```
+#### Multi sink 
+```c++
 
 // create logger with 2 targets with different log levels and formats.
 // the console will show only warnings or errors, while the file will log all.
@@ -176,6 +190,9 @@ void multi_sink_example()
     logger.warn("this should appear in both console and file");
     logger.info("this message should not appear in the console, only in the file");
 }
+```
+#### User defined types logging
+```c++
 // user defined types logging by implementing operator<<
 #include "spdlog/fmt/ostr.h" // must be included
 struct my_type
@@ -193,9 +210,9 @@ void user_defined_example()
     spdlog::get("console")->info("user defined type: {}", my_type{14});
 }
 
-//
-// custom error handler
-//
+```
+#### Custom error handler
+```c++
 void err_handler_example()
 {
     // can be set globally or per logger(logger->set_error_handler(..))
@@ -203,8 +220,9 @@ void err_handler_example()
     spdlog::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
 }
 
-// syslog example (linux/osx/freebsd)
-#ifndef _WIN32
+```
+#### syslog example 
+```c++
 #include "spdlog/sinks/syslog_sink.h"
 void syslog_example()
 {
@@ -212,10 +230,11 @@ void syslog_example()
     auto syslog_logger = spdlog::syslog_logger("syslog", ident, LOG_PID);
     syslog_logger->warn("This is warning that will end up in syslog.");
 }
-#endif
 
-// Android example
-#if defined(__ANDROID__)
+
+```
+#### Android example 
+```c++
 #incude "spdlog/sinks/android_sink.h"
 void android_example()
 {
@@ -223,9 +242,6 @@ void android_example()
     auto android_logger = spdlog::android_logger("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
 }
-
-#endif
-
 ```
 
 ## Documentation
