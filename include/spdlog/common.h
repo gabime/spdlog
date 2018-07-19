@@ -62,7 +62,7 @@ class sink;
 using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
-using formatter_ptr = std::shared_ptr<spdlog::formatter>;
+using log_err_handler = std::function<void(const std::string &err_msg)>;
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
@@ -70,7 +70,6 @@ using level_t = details::null_atomic_int;
 using level_t = std::atomic<int>;
 #endif
 
-using log_err_handler = std::function<void(const std::string &err_msg)>;
 
 // Log level enum
 namespace level {
