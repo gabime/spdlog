@@ -539,14 +539,14 @@ private:
 class pattern_formatter SPDLOG_FINAL : public formatter
 {
 public:
-    explicit pattern_formatter(const std::string &pattern, pattern_time_type time_type = pattern_time_type::local,
+    explicit pattern_formatter(std::string pattern, pattern_time_type time_type = pattern_time_type::local,
         std::string eol = spdlog::details::os::default_eol)
         : eol_(std::move(eol))
         , pattern_time_type_(time_type)
         , last_log_secs_(0)
     {
         std::memset(&cached_tm_, 0, sizeof(cached_tm_));
-        compile_pattern_(pattern);
+        compile_pattern_(std::move(pattern));
     }
 
     pattern_formatter(const pattern_formatter &) = delete;

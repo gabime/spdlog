@@ -28,8 +28,8 @@ namespace spdlog {
 class logger
 {
 public:
-    logger(const std::string &name, sink_ptr single_sink);
-    logger(const std::string &name, sinks_init_list sinks);
+    logger(std::string name, sink_ptr single_sink);
+    logger(std::string name, sinks_init_list sinks);
 
     template<typename It>
     logger(std::string name, const It &begin, const It &end);
@@ -114,7 +114,7 @@ public:
 
     // create a pattern formatter all the sinks in this logger.
     // each sink gets itw own private copy of a formatter object.
-    void set_pattern(const std::string &pattern, pattern_time_type time_type = pattern_time_type::local);
+    void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
     // create a FormatterT formatter for each sink in this logger.
     // each sink gets its own private copy of a formatter object.

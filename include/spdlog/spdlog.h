@@ -23,10 +23,10 @@ struct synchronous_factory
 {
     template<typename Sink, typename... SinkArgs>
 
-    static std::shared_ptr<spdlog::logger> create(const std::string &logger_name, SinkArgs &&... args)
+    static std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... args)
     {
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
-        auto new_logger = std::make_shared<logger>(logger_name, std::move(sink));
+        auto new_logger = std::make_shared<logger>(std::move(logger_name), std::move(sink));
         details::registry::instance().register_and_init(new_logger);
         return new_logger;
     }
@@ -39,9 +39,9 @@ using default_factory = synchronous_factory;
 // Example:
 // spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
 template<typename Sink, typename... SinkArgs>
-inline std::shared_ptr<spdlog::logger> create(const std::string &logger_name, SinkArgs &&... sink_args)
+inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... sink_args)
 {
-    return default_factory::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
+    return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
 
 //
@@ -57,9 +57,9 @@ inline std::shared_ptr<logger> get(const std::string &name)
 // Set global formatting
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 //
-inline void set_pattern(const std::string &format_string, pattern_time_type time_type = pattern_time_type::local)
+inline void set_pattern(std::string format_string, pattern_time_type time_type = pattern_time_type::local)
 {
-    details::registry::instance().set_pattern(format_string, time_type);
+    details::registry::instance().set_pattern(std::move(format_string), time_type);
 }
 
 //

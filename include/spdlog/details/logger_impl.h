@@ -23,14 +23,14 @@ inline spdlog::logger::logger(std::string logger_name, const It &begin, const It
 }
 
 // ctor with sinks as init list
-inline spdlog::logger::logger(const std::string &logger_name, sinks_init_list sinks_list)
-    : logger(logger_name, sinks_list.begin(), sinks_list.end())
+inline spdlog::logger::logger(std::string logger_name, sinks_init_list sinks_list)
+    : logger(std::move(logger_name), sinks_list.begin(), sinks_list.end())
 {
 }
 
 // ctor with single sink
-inline spdlog::logger::logger(const std::string &logger_name, spdlog::sink_ptr single_sink)
-    : logger(logger_name, {std::move(single_sink)})
+inline spdlog::logger::logger(std::string logger_name, spdlog::sink_ptr single_sink)
+    : logger(std::move(logger_name), {std::move(single_sink)})
 {
 }
 
@@ -46,9 +46,9 @@ inline void spdlog::logger::set_formatter(const Args &... args)
     }
 }
 
-inline void spdlog::logger::set_pattern(const std::string &pattern, pattern_time_type time_type)
+inline void spdlog::logger::set_pattern(std::string pattern, pattern_time_type time_type)
 {
-    set_formatter<spdlog::pattern_formatter>(pattern, time_type);
+    set_formatter<spdlog::pattern_formatter>(std::move(pattern), time_type);
 }
 
 template<typename... Args>
