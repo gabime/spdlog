@@ -44,43 +44,34 @@ inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs 
     return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
 
-//
+
 // Return an existing logger or nullptr if a logger with such name doesn't exist.
 // example: spdlog::get("my_logger")->info("hello {}", "world");
-//
 inline std::shared_ptr<logger> get(const std::string &name)
 {
     return details::registry::instance().get(name);
 }
 
-//
 // Set global formatting
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
-//
 inline void set_pattern(std::string format_string, pattern_time_type time_type = pattern_time_type::local)
 {
     details::registry::instance().set_pattern(std::move(format_string), time_type);
 }
 
-//
 // Set global logging level
-//
 inline void set_level(level::level_enum log_level)
 {
     details::registry::instance().set_level(log_level);
 }
 
-//
 // Set global flush level
-//
 inline void flush_on(level::level_enum log_level)
 {
     details::registry::instance().flush_on(log_level);
 }
 
-//
 // Set global error handler
-//
 inline void set_error_handler(log_err_handler handler)
 {
     details::registry::instance().set_error_handler(std::move(handler));
