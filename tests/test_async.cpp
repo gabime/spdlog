@@ -46,8 +46,7 @@ TEST_CASE("discard policy using factory ", "[async]")
     //auto test_sink = std::make_shared<sinks::test_sink_mt>();
     size_t queue_size = 2;
     size_t messages = 1024;
-    {
-        //auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
+    {        
         auto logger = spdlog::create_async_nb<sinks::test_sink_mt>("as2");
         for (size_t i = 0; i < messages; i++)
         {
@@ -55,9 +54,7 @@ TEST_CASE("discard policy using factory ", "[async]")
         }
         auto sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
 		REQUIRE(sink->msg_counter() < messages);
-    }
-
-    
+    }    
 }
 
 TEST_CASE("flush", "[async]")
