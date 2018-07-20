@@ -133,7 +133,7 @@ TEST_CASE("to_file", "[async]")
 
     REQUIRE(count_lines(filename) == messages);
     auto contents = file_contents(filename);
-    REQUIRE(ends_with(contents, std::string("Hello message #1023") + SPDLOG_EOL));
+    REQUIRE(ends_with(contents, std::string("Hello message #1023\n")));
 }
 
 TEST_CASE("to_file multi-workers", "[async]")
