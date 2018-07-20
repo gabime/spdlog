@@ -175,7 +175,9 @@ private:
 
     void worker_loop_()
     {
-        while (process_next_msg_()) {};
+        while (process_next_msg_())
+        {
+        };
     }
 
     // process next message in the queue
@@ -191,26 +193,25 @@ private:
 
         switch (incoming_async_msg.msg_type)
         {
-        case async_msg_type::flush:
-        {
-            incoming_async_msg.worker_ptr->backend_flush_();
-            return true;
-        }
+			case async_msg_type::flush:
+			{
+				incoming_async_msg.worker_ptr->backend_flush_();
+				return true;
+			}
 
-        case async_msg_type::terminate:
-        {
-            return false;
-        }
+			case async_msg_type::terminate:
+			{
+				return false;
+			}
 
-        default:
-        {
-            log_msg msg;
-            incoming_async_msg.to_log_msg(msg);
-            incoming_async_msg.worker_ptr->backend_log_(msg);
-            return true;
+			default:
+			{
+				log_msg msg;
+				incoming_async_msg.to_log_msg(msg);
+				incoming_async_msg.worker_ptr->backend_log_(msg);
+				return true;
+			}
         }
-        }
-        assert(false);
         return true; // should not be reached
     }
 };

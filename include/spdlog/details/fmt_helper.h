@@ -51,14 +51,14 @@ inline void pad2(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
     }
     if (n > 9) // 10-99
     {
-        dest.push_back('0' + (n / 10));
-        dest.push_back('0' + (n % 10));
+        dest.push_back('0' + static_cast<char>(n / 10));
+        dest.push_back('0' + static_cast<char>(n % 10));
         return;
     }
     if (n >= 0) // 0-9
     {
         dest.push_back('0');
-        dest.push_back('0' + n);
+        dest.push_back('0' + static_cast<char>(n));
         return;
     }
     // negatives (unlikely, but just in case, let fmt deal with it)
@@ -76,15 +76,15 @@ inline void pad3(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
     if (n > 9) // 10-99
     {
         dest.push_back('0');
-        dest.push_back('0' + n / 10);
-        dest.push_back('0' + n % 10);
+        dest.push_back('0' + static_cast<char>(n / 10));
+        dest.push_back('0' + static_cast<char>(n % 10));
         return;
     }
     if (n >= 0)
     {
         dest.push_back('0');
         dest.push_back('0');
-        dest.push_back('0' + n);
+        dest.push_back('0' + static_cast<char>(n));
         return;
     }
     // negatives (unlikely, but just in case let fmt deal with it)
