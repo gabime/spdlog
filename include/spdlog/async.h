@@ -21,9 +21,11 @@
 #include <memory>
 namespace spdlog {
 
+
 // async logger factory - creates async loggers backed with thread pool.
 // if a global thread pool doesn't already exist, create it with default queue size of 8192 items and single thread.
-struct async_factory
+template<async_overflow_policy OverflowPolicy = async_overflow_policy::block>
+struct async_factory_impl
 {
     template<typename Sink, typename... SinkArgs>
     static std::shared_ptr<async_logger> create(const std::string &logger_name, SinkArgs &&... args)
@@ -39,17 +41,28 @@ struct async_factory
         }
 
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
-        auto new_logger = std::make_shared<async_logger>(logger_name, std::move(sink), std::move(tp), async_overflow_policy::block);
+        auto new_logger = std::make_shared<async_logger>(logger_name, std::move(sink), std::move(tp), OverflowPolicy);
         registry::instance().register_and_init(new_logger);
         return new_logger;
     }
 };
+
+using async_factory = async_factory_impl<async_overflow_policy::block>;
+using async_factory_nonblock = async_factory_impl < async_overflow_policy::overrun_oldest>;
+
 
 template<typename Sink, typename... SinkArgs>
 inline std::shared_ptr<spdlog::logger> create_async(const std::string &logger_name, SinkArgs &&... sink_args)
 {
     return async_factory::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
 }
+
+template<typename Sink, typename... SinkArgs>
+inline std::shared_ptr<spdlog::logger> create_async_nb(const std::string &logger_name, SinkArgs &&... sink_args)
+{
+    return async_factory<spdlog::async_overflow_policy::overrun_oldest>::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
+}
+    
 
 // set global thread pool.
 inline void init_thread_pool(size_t q_size, size_t thread_count)

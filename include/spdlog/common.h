@@ -121,14 +121,7 @@ inline spdlog::level::level_enum from_str(const std::string &name)
 using level_hasher = std::hash<int>;
 } // namespace level
 
-//
-// Async overflow policy - block by default.
-//
-enum class async_overflow_policy
-{
-    block,         // Block until message can be enqueued
-    overrun_oldest // Discard oldest message in the queue if full when trying to add new item.
-};
+
 
 //
 // Pattern time - specific time getting to use for pattern_formatter.
