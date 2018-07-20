@@ -126,6 +126,8 @@ public:
 
     const std::vector<sink_ptr> &sinks() const;
 
+	std::vector<sink_ptr> &sinks() ;
+
     // error handler
     void set_error_handler(log_err_handler err_handler);
     log_err_handler error_handler();

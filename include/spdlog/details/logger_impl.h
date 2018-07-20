@@ -338,3 +338,8 @@ inline const std::vector<spdlog::sink_ptr> &spdlog::logger::sinks() const
 {
     return sinks_;
 }
+
+inline std::vector<spdlog::sink_ptr> &spdlog::logger::sinks() 
+{
+    return sinks_;
+}
