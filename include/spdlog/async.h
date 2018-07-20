@@ -54,13 +54,13 @@ using async_factory_nonblock = async_factory_impl < async_overflow_policy::overr
 template<typename Sink, typename... SinkArgs>
 inline std::shared_ptr<spdlog::logger> create_async(const std::string &logger_name, SinkArgs &&... sink_args)
 {
-    return template async_factory::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
+    return async_factory::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
 }
 
 template<typename Sink, typename... SinkArgs>
 inline std::shared_ptr<spdlog::logger> create_async_nb(const std::string &logger_name, SinkArgs &&... sink_args)
 {
-    return template async_factory<spdlog::async_overflow_policy::overrun_oldest>::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
+    return async_factory_nonblock::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
 }
     
 
