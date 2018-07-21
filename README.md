@@ -145,6 +145,7 @@ void rotating_example()
     auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
 }
 ```
+
 ---
 #### Daily files
 ```c++
@@ -157,6 +158,16 @@ void daily_example()
 }
 
 ```
+
+---
+#### Periodic flush
+```c++
+// periodically flush all *registered* loggers every 3 seconds:
+// warning: only use if all your loggers are thread safe!
+spdlog::flush_every(std::chrono::seconds(3));
+
+```
+
 ---
 #### Asynchronous logging
 ```c++

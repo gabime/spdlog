@@ -19,8 +19,12 @@
 #include "spdlog/details/thread_pool.h"
 
 #include <memory>
+
 namespace spdlog {
 
+namespace details {
+static const size_t default_async_q_size = 8192;
+}
 
 // async logger factory - creates async loggers backed with thread pool.
 // if a global thread pool doesn't already exist, create it with default queue size of 8192 items and single thread.
@@ -32,11 +36,11 @@ struct async_factory_impl
     {
         using details::registry;
 
-        std::lock_guard<registry::MutexT> lock(registry::instance().tp_mutex());
+        std::lock_guard<std::recursive_mutex> lock(registry::instance().tp_mutex());
         auto tp = registry::instance().get_thread_pool();
         if (tp == nullptr)
         {
-            tp = std::make_shared<details::thread_pool>(8192, 1);
+            tp = std::make_shared<details::thread_pool>(details::default_async_q_size, 1);
             registry::instance().set_thread_pool(tp);
         }
 
@@ -62,7 +66,7 @@ inline std::shared_ptr<spdlog::logger> create_async_nb(const std::string &logger
 {
     return async_factory_nonblock::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
 }
-    
+
 
 // set global thread pool.
 inline void init_thread_pool(size_t q_size, size_t thread_count)

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2037
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example", "example.vcxproj", "{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}"
 EndProject
@@ -29,6 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "details", "details", "{08E9
 		..\include\spdlog\details\null_mutex.h = ..\include\spdlog\details\null_mutex.h
 		..\include\spdlog\details\os.h = ..\include\spdlog\details\os.h
 		..\include\spdlog\details\pattern_formatter.h = ..\include\spdlog\details\pattern_formatter.h
+		..\include\spdlog\details\periodic_worker.h = ..\include\spdlog\details\periodic_worker.h
 		..\include\spdlog\details\registry.h = ..\include\spdlog\details\registry.h
 		..\include\spdlog\details\spdlog_impl.h = ..\include\spdlog\details\spdlog_impl.h
 		..\include\spdlog\details\thread_pool.h = ..\include\spdlog\details\thread_pool.h
@@ -100,17 +101,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1BF53532-C5DC-4236-B195-9E17CBE40A48}
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

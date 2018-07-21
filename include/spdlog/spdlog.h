@@ -71,6 +71,14 @@ inline void flush_on(level::level_enum log_level)
     details::registry::instance().flush_on(log_level);
 }
 
+// Start/Restart a periodic flusher thread
+// Warning: Use only if all your loggers are thread safe!
+inline void flush_every(std::chrono::seconds interval)
+{
+    details::registry::instance().flush_every(interval);
+}
+
+
 // Set global error handler
 inline void set_error_handler(log_err_handler handler)
 {

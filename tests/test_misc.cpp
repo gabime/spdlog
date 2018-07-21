@@ -1,4 +1,5 @@
 #include "includes.h"
+#include "test_sink.h"
 
 template<class T>
 std::string log_info(const T &what, spdlog::level::level_enum logger_level = spdlog::level::info)
@@ -74,4 +75,20 @@ TEST_CASE("to_level_enum", "[convert_to_level_enum]")
     REQUIRE(spdlog::level::from_str("critical") == spdlog::level::critical);
     REQUIRE(spdlog::level::from_str("off") == spdlog::level::off);
     REQUIRE(spdlog::level::from_str("null") == spdlog::level::off);
+}
+
+
+TEST_CASE("periodic flush", "[periodic_flush]")
+{
+    using namespace spdlog;
+
+    auto logger = spdlog::create<sinks::test_sink_mt>("periodic_flush");
+
+    auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
+
+    spdlog::flush_every(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    REQUIRE(test_sink->flush_counter() == 1);
+    spdlog::flush_every(std::chrono::seconds(0));
+    spdlog::drop_all();
 }

@@ -45,8 +45,14 @@ int main(int, char *[])
         // custom  error handler
         err_handler_example();
 
+        // flush all *registered* loggers using a worker thread every 3 seconds.
+		// note: registered loggers *must* be thread safe for this to work correctly!
+        spdlog::flush_every(std::chrono::seconds(3));
+
         // apply some function on all registered loggers
-        spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) { l->info("End of example."); });
+        spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) {
+            l->info("End of example.");
+        });
 
         // Release and close all loggers
         spdlog::drop_all();
@@ -172,7 +178,9 @@ void user_defined_example()
 void err_handler_example()
 {
     // can be set globally or per logger(logger->set_error_handler(..))
-    spdlog::set_error_handler([](const std::string &msg) { spdlog::get("console")->error("*** ERROR HANDLER EXAMPLE ***: {}", msg); });
+    spdlog::set_error_handler([](const std::string &msg) {
+        spdlog::get("console")->error("*** ERROR HANDLER EXAMPLE ***: {}", msg);
+    });
     spdlog::get("console")->info("some invalid message to trigger an error {}{}{}{}", 3);
 }
 

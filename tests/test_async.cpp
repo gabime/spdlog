@@ -27,34 +27,34 @@ TEST_CASE("discard policy ", "[async]")
     using namespace spdlog;
     auto test_sink = std::make_shared<sinks::test_sink_mt>();
     size_t queue_size = 2;
-    size_t messages = 1024;
-    {
-        auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
-        auto logger = std::make_shared<async_logger>("as", test_sink, tp, async_overflow_policy::overrun_oldest);
-        for (size_t i = 0; i < messages; i++)
-        {
-            logger->info("Hello message #{}", i);
-        }
-    }
+    size_t messages = 10240;
 
+    auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
+    auto logger = std::make_shared<async_logger>("as", test_sink, tp, async_overflow_policy::overrun_oldest);
+    for (size_t i = 0; i < messages; i++)
+    {
+        logger->info("Hello message");
+    }
     REQUIRE(test_sink->msg_counter() < messages);
+
 }
 
 TEST_CASE("discard policy using factory ", "[async]")
 {
     using namespace spdlog;
-    //auto test_sink = std::make_shared<sinks::test_sink_mt>();
     size_t queue_size = 2;
-    size_t messages = 1024;
-    {        
-        auto logger = spdlog::create_async_nb<sinks::test_sink_mt>("as2");
-        for (size_t i = 0; i < messages; i++)
-        {
-            logger->info("Hello message #{}", i);
-        }
-        auto sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
-		REQUIRE(sink->msg_counter() < messages);
-    }    
+    size_t messages = 10240;
+    spdlog::init_thread_pool(queue_size, 1);
+
+    auto logger = spdlog::create_async_nb<sinks::test_sink_mt>("as2");
+    for (size_t i = 0; i < messages; i++)
+    {
+        logger->info("Hello message");
+    }
+    auto sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
+    REQUIRE(sink->msg_counter() < messages);
+    spdlog::drop_all();
+
 }
 
 TEST_CASE("flush", "[async]")
@@ -73,9 +73,25 @@ TEST_CASE("flush", "[async]")
 
         logger->flush();
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    //std::this_thread::sleep_for(std::chrono::milliseconds(250));
     REQUIRE(test_sink->msg_counter() == messages);
     REQUIRE(test_sink->flush_counter() == 1);
+}
+
+
+TEST_CASE("async periodic flush", "[async]")
+{
+    using namespace spdlog;
+
+    auto logger = spdlog::create_async<sinks::test_sink_mt>("as");
+
+    auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
+
+    spdlog::flush_every(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    REQUIRE(test_sink->flush_counter() == 1);
+    spdlog::flush_every(std::chrono::seconds(0));
+    spdlog::drop_all();
 }
 
 TEST_CASE("tp->wait_empty() ", "[async]")
