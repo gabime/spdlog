@@ -77,7 +77,6 @@ TEST_CASE("to_level_enum", "[convert_to_level_enum]")
     REQUIRE(spdlog::level::from_str("null") == spdlog::level::off);
 }
 
-
 TEST_CASE("periodic flush", "[periodic_flush]")
 {
     using namespace spdlog;

@@ -8,7 +8,6 @@
 #include "stdio.h"
 #include <mutex>
 
-
 namespace spdlog {
 namespace details {
 struct console_stdout

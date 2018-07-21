@@ -9,10 +9,13 @@
 //
 // Async logging using global thread pool
 // All loggers created here share same global thread pool.
-// Each log message is pushed to a queue along withe a shared pointer to the logger.
-// If a logger deleted while having pending messages in the queue, it's actual destruction will defer
+// Each log message is pushed to a queue along withe a shared pointer to the
+// logger.
+// If a logger deleted while having pending messages in the queue, it's actual
+// destruction will defer
 // until all its messages are processed by the thread pool.
-// This is because each message in the queue holds a shared_ptr to the originating logger.
+// This is because each message in the queue holds a shared_ptr to the
+// originating logger.
 
 #include "spdlog/async_logger.h"
 #include "spdlog/details/registry.h"
@@ -27,7 +30,8 @@ static const size_t default_async_q_size = 8192;
 }
 
 // async logger factory - creates async loggers backed with thread pool.
-// if a global thread pool doesn't already exist, create it with default queue size of 8192 items and single thread.
+// if a global thread pool doesn't already exist, create it with default queue
+// size of 8192 items and single thread.
 template<async_overflow_policy OverflowPolicy = async_overflow_policy::block>
 struct async_factory_impl
 {
@@ -52,8 +56,7 @@ struct async_factory_impl
 };
 
 using async_factory = async_factory_impl<async_overflow_policy::block>;
-using async_factory_nonblock = async_factory_impl < async_overflow_policy::overrun_oldest>;
-
+using async_factory_nonblock = async_factory_impl<async_overflow_policy::overrun_oldest>;
 
 template<typename Sink, typename... SinkArgs>
 inline std::shared_ptr<spdlog::logger> create_async(const std::string &logger_name, SinkArgs &&... sink_args)
@@ -66,7 +69,6 @@ inline std::shared_ptr<spdlog::logger> create_async_nb(const std::string &logger
 {
     return async_factory_nonblock::create<Sink>(logger_name, std::forward<SinkArgs>(sink_args)...);
 }
-
 
 // set global thread pool.
 inline void init_thread_pool(size_t q_size, size_t thread_count)

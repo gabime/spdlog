@@ -17,7 +17,8 @@ inline spdlog::logger::logger(std::string logger_name, const It &begin, const It
     , level_(level::info)
     , flush_level_(level::off)
     , last_err_time_(0)
-    , msg_counter_(1) // message counter will start from 1. 0-message id will be reserved for controll messages
+    , msg_counter_(1) // message counter will start from 1. 0-message id will be
+                      // reserved for controll messages
 {
     err_handler_ = [this](const std::string &msg) { this->default_err_handler_(msg); };
 }
@@ -286,7 +287,8 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 }
 
 //
-// protected virtual called at end of each user log call (if enabled) by the line_logger
+// protected virtual called at end of each user log call (if enabled) by the
+// line_logger
 //
 inline void spdlog::logger::sink_it_(details::log_msg &msg)
 {
@@ -339,7 +341,7 @@ inline const std::vector<spdlog::sink_ptr> &spdlog::logger::sinks() const
     return sinks_;
 }
 
-inline std::vector<spdlog::sink_ptr> &spdlog::logger::sinks() 
+inline std::vector<spdlog::sink_ptr> &spdlog::logger::sinks()
 {
     return sinks_;
 }

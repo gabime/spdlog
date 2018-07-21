@@ -120,7 +120,8 @@ class c_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        // fmt::format_to(dest, "{} {} {} ", days[tm_time.tm_wday], months[tm_time.tm_mon], tm_time.tm_mday);
+        // fmt::format_to(dest, "{} {} {} ", days[tm_time.tm_wday],
+        // months[tm_time.tm_mon], tm_time.tm_mday);
         // date
         fmt_helper::append_str(days[tm_time.tm_wday], dest);
         dest.push_back(' ');
@@ -308,7 +309,8 @@ class T_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        // fmt::format_to(dest, "{:02}:{:02}:{:02}", tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec);
+        // fmt::format_to(dest, "{:02}:{:02}:{:02}", tm_time.tm_hour,
+        // tm_time.tm_min, tm_time.tm_sec);
         fmt_helper::pad2(tm_time.tm_hour, dest);
         dest.push_back(':');
         fmt_helper::pad2(tm_time.tm_min, dest);
@@ -539,8 +541,8 @@ private:
 class pattern_formatter SPDLOG_FINAL : public formatter
 {
 public:
-    explicit pattern_formatter(std::string pattern, pattern_time_type time_type = pattern_time_type::local,
-        std::string eol = spdlog::details::os::default_eol)
+    explicit pattern_formatter(
+        std::string pattern, pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol)
         : eol_(std::move(eol))
         , pattern_time_type_(time_type)
         , last_log_secs_(0)
@@ -590,7 +592,7 @@ private:
     {
         switch (flag)
         {
-            // logger name
+        // logger name
         case 'n':
             formatters_.emplace_back(new details::name_formatter());
             break;

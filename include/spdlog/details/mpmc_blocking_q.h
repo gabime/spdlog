@@ -7,8 +7,10 @@
 
 // multi producer-multi consumer blocking queue.
 // enqueue(..) - will block until room found to put the new message.
-// enqueue_nowait(..) - will return immediately with false if no room left in the queue.
-// dequeue_for(..) - will block until the queue is not empty or timeout have passed.
+// enqueue_nowait(..) - will return immediately with false if no room left in
+// the queue.
+// dequeue_for(..) - will block until the queue is not empty or timeout have
+// passed.
 
 #include "spdlog/details/circular_q.h"
 

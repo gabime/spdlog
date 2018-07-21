@@ -6,7 +6,8 @@
 #pragma once
 
 // Helper class for file sink
-// When failing to open a file, retry several times(5) with small delay between the tries(10 ms)
+// When failing to open a file, retry several times(5) with small delay between
+// the tries(10 ms)
 // Throw spdlog_ex exception on errors
 
 #include "../details/log_msg.h"
@@ -126,7 +127,8 @@ public:
     {
         auto ext_index = fname.rfind('.');
 
-        // no valid extension found - return whole path and empty string as extension
+        // no valid extension found - return whole path and empty string as
+        // extension
         if (ext_index == filename_t::npos || ext_index == 0 || ext_index == fname.size() - 1)
         {
             return std::make_tuple(fname, spdlog::filename_t());

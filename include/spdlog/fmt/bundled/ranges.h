@@ -35,8 +35,8 @@ struct formatting_base
 template<typename Char, typename Enable = void>
 struct formatting_range : formatting_base<Char>
 {
-    static FMT_CONSTEXPR_DECL const std::size_t range_length_limit =
-        FMT_RANGE_OUTPUT_LENGTH_LIMIT; // output only up to N items from the range.
+    static FMT_CONSTEXPR_DECL const std::size_t range_length_limit = FMT_RANGE_OUTPUT_LENGTH_LIMIT; // output only up to N items from the
+                                                                                                    // range.
     Char prefix;
     Char delimiter;
     Char postfix;

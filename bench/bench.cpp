@@ -48,9 +48,11 @@ int main(int argc, char *argv[])
         if (argc > 3)
             queue_size = atoi(argv[3]);
 
-        cout << "*******************************************************************************\n";
+        cout << "******************************************************************"
+                "*************\n";
         cout << "Single thread, " << format(howmany) << " iterations" << endl;
-        cout << "*******************************************************************************\n";
+        cout << "******************************************************************"
+                "*************\n";
 
         auto basic_st = spdlog::basic_logger_mt("basic_st", "logs/basic_st.log", true);
         bench(howmany, basic_st);
@@ -63,9 +65,11 @@ int main(int argc, char *argv[])
 
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
-        cout << "\n*******************************************************************************\n";
+        cout << "\n****************************************************************"
+                "***************\n";
         cout << threads << " threads sharing same logger, " << format(howmany) << " iterations" << endl;
-        cout << "*******************************************************************************\n";
+        cout << "******************************************************************"
+                "*************\n";
 
         auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
         bench_mt(howmany, basic_mt, threads);
@@ -77,9 +81,11 @@ int main(int argc, char *argv[])
         bench_mt(howmany, daily_mt, threads);
         bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
 
-        cout << "\n*******************************************************************************\n";
+        cout << "\n****************************************************************"
+                "***************\n";
         cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
-        cout << "*******************************************************************************\n";
+        cout << "******************************************************************"
+                "*************\n";
 
         for (int i = 0; i < 3; ++i)
         {

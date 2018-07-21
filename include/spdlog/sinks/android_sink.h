@@ -5,10 +5,10 @@
 
 #pragma once
 
+#include "spdlog/details/fmt_helper.h"
+#include "spdlog/details/null_mutex.h"
 #include "spdlog/details/os.h"
 #include "spdlog/sinks/base_sink.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/details/fmt_helper.h"
 
 #include <android/log.h>
 #include <chrono>
@@ -27,7 +27,7 @@ namespace sinks {
  * Android sink (logging using __android_log_write)
  */
 template<typename Mutex>
-class android_sink SPDLOG_FINAL: public base_sink<Mutex>
+class android_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
     explicit android_sink(const std::string &tag = "spdlog", bool use_raw_msg = false)
@@ -68,9 +68,7 @@ protected:
         }
     }
 
-    void flush_() override
-    {
-    }
+    void flush_() override {}
 
 private:
     static android_LogPriority convert_to_android_(spdlog::level::level_enum level)
@@ -117,5 +115,3 @@ inline std::shared_ptr<logger> android_logger_st(const std::string &logger_name,
 }
 
 } // namespace spdlog
-
-

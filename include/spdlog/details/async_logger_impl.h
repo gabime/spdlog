@@ -15,16 +15,16 @@
 #include <string>
 
 template<typename It>
-inline spdlog::async_logger::async_logger(std::string logger_name, const It &begin, const It &end,
-    std::weak_ptr<details::thread_pool> tp, async_overflow_policy overflow_policy)
+inline spdlog::async_logger::async_logger(
+    std::string logger_name, const It &begin, const It &end, std::weak_ptr<details::thread_pool> tp, async_overflow_policy overflow_policy)
     : logger(std::move(logger_name), begin, end)
     , thread_pool_(tp)
     , overflow_policy_(overflow_policy)
 {
 }
 
-inline spdlog::async_logger::async_logger(std::string logger_name, sinks_init_list sinks_list,
-    std::weak_ptr<details::thread_pool> tp, async_overflow_policy overflow_policy)
+inline spdlog::async_logger::async_logger(
+    std::string logger_name, sinks_init_list sinks_list, std::weak_ptr<details::thread_pool> tp, async_overflow_policy overflow_policy)
     : async_logger(std::move(logger_name), sinks_list.begin(), sinks_list.end(), tp, overflow_policy)
 {
 }

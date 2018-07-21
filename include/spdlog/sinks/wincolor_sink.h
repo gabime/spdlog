@@ -19,7 +19,8 @@
 namespace spdlog {
 namespace sinks {
 /*
- * Windows color console sink. Uses WriteConsoleA to write to the console with colors
+ * Windows color console sink. Uses WriteConsoleA to write to the console with
+ * colors
  */
 template<typename OutHandle, typename ConsoleMutex>
 class wincolor_sink : public sink
@@ -73,8 +74,9 @@ public:
             // in color range
             auto orig_attribs = set_console_attribs(colors_[msg.level]);
             print_range_(formatted, msg.color_range_start, msg.color_range_end);
-            ::SetConsoleTextAttribute(out_handle_, orig_attribs); // reset to orig colors
-                                                                  // after color range
+            ::SetConsoleTextAttribute(out_handle_,
+                orig_attribs); // reset to orig colors
+                               // after color range
             print_range_(formatted, msg.color_range_end, formatted.size());
         }
         else // print without colors if color range is invalid

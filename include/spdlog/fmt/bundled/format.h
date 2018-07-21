@@ -192,9 +192,9 @@ inline uint32_t clz(uint32_t x)
     _BitScanReverse(&r, x);
 
     assert(x != 0);
-    // Static analysis complains about using uninitialized data
-    // "r", but the only way that can happen is if "x" is 0,
-    // which the callers guarantee to not happen.
+// Static analysis complains about using uninitialized data
+// "r", but the only way that can happen is if "x" is 0,
+// which the callers guarantee to not happen.
 #pragma warning(suppress : 6102)
     return 31 - r;
 }
@@ -219,9 +219,9 @@ inline uint32_t clzll(uint64_t x)
 #endif
 
     assert(x != 0);
-    // Static analysis complains about using uninitialized data
-    // "r", but the only way that can happen is if "x" is 0,
-    // which the callers guarantee to not happen.
+// Static analysis complains about using uninitialized data
+// "r", but the only way that can happen is if "x" is 0,
+// which the callers guarantee to not happen.
 #pragma warning(suppress : 6102)
     return 63 - r;
 }
@@ -388,7 +388,8 @@ inline fp operator-(fp x, fp y)
 }
 
 // Computes an fp number r with r.f = x.f * y.f / pow(2, 64) rounded to nearest
-// with half-up tie breaking, r.e = x.e + y.e + 64. Result may not be normalized.
+// with half-up tie breaking, r.e = x.e + y.e + 64. Result may not be
+// normalized.
 fp operator*(fp x, fp y);
 
 // Returns cached power (of 10) c_k = c_k.f * pow(2, c_k.e) such that its
@@ -4305,7 +4306,8 @@ inline format_to_n_result<OutputIt> vformat_to_n(OutputIt out, std::size_t n, st
 /**
  \rst
  Formats arguments, writes up to ``n`` characters of the result to the output
- iterator ``out`` and returns the total output size and the iterator past the end
+ iterator ``out`` and returns the total output size and the iterator past the
+ end
  of the output range.
  \endrst
  */
@@ -4561,7 +4563,8 @@ inline void print(rgb fd, string_view format_str, const Args &... args)
   Formats a string and prints it to stdout using ANSI escape sequences to
   specify foreground color 'fd' and background color 'bg'.
   Example:
-    fmt::print(fmt::color::red, fmt::color::black, "Elapsed time: {0:.2f} seconds", 1.23);
+    fmt::print(fmt::color::red, fmt::color::black, "Elapsed time: {0:.2f}
+  seconds", 1.23);
  */
 template<typename... Args>
 inline void print(rgb fd, rgb bg, string_view format_str, const Args &... args)

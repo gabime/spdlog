@@ -5,15 +5,19 @@
 
 #pragma once
 
-// Very fast asynchronous logger (millions of logs per second on an average desktop)
-// Uses pre allocated lockfree queue for maximum throughput even under large number of threads.
+// Very fast asynchronous logger (millions of logs per second on an average
+// desktop)
+// Uses pre allocated lockfree queue for maximum throughput even under large
+// number of threads.
 // Creates a single back thread to pop messages from the queue and log them.
 //
 // Upon each log write the logger:
 //    1. Checks if its log level is enough to log the message
-//    2. Push a new copy of the message to a queue (or block the caller until space is available in the queue)
+//    2. Push a new copy of the message to a queue (or block the caller until
+//    space is available in the queue)
 //    3. will throw spdlog_ex upon log exceptions
-// Upon destruction, logs all remaining messages in the queue before destructing..
+// Upon destruction, logs all remaining messages in the queue before
+// destructing..
 
 #include "spdlog/common.h"
 #include "spdlog/logger.h"
@@ -28,7 +32,8 @@ namespace spdlog {
 enum class async_overflow_policy
 {
     block,         // Block until message can be enqueued
-    overrun_oldest // Discard oldest message in the queue if full when trying to add new item.
+    overrun_oldest // Discard oldest message in the queue if full when trying to
+                   // add new item.
 };
 
 namespace details {

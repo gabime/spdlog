@@ -5,14 +5,17 @@
 
 #pragma once
 
-// Thread safe logger (except for set_pattern(..), set_formatter(..) and set_error_handler())
+// Thread safe logger (except for set_pattern(..), set_formatter(..) and
+// set_error_handler())
 // Has name, log level, vector of std::shared sink pointers and formatter
 // Upon each log write the logger:
 // 1. Checks if its log level is enough to log the message and if yes:
 // 2. Call the underlying sinks to do the job.
-// 3. Each sink use its own private copy of a formatter to format the message and send to its destination.
+// 3. Each sink use its own private copy of a formatter to format the message
+// and send to its destination.
 //
-// The use of private formatter per sink provides the opportunity to cache some formatted data,
+// The use of private formatter per sink provides the opportunity to cache some
+// formatted data,
 // and support customize format per each sink.
 
 #include "spdlog/common.h"
@@ -126,7 +129,7 @@ public:
 
     const std::vector<sink_ptr> &sinks() const;
 
-	std::vector<sink_ptr> &sinks() ;
+    std::vector<sink_ptr> &sinks();
 
     // error handler
     void set_error_handler(log_err_handler err_handler);
@@ -138,10 +141,12 @@ protected:
 
     bool should_flush_(const details::log_msg &msg);
 
-    // default error handler: print the error to stderr with the max rate of 1 message/minute
+    // default error handler: print the error to stderr with the max rate of 1
+    // message/minute
     void default_err_handler_(const std::string &msg);
 
-    // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
+    // increment the message count (only if
+    // defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
     void incr_msg_counter_(details::log_msg &msg);
 
     const std::string name_;

@@ -36,7 +36,6 @@ TEST_CASE("discard policy ", "[async]")
         logger->info("Hello message");
     }
     REQUIRE(test_sink->msg_counter() < messages);
-
 }
 
 TEST_CASE("discard policy using factory ", "[async]")
@@ -54,7 +53,6 @@ TEST_CASE("discard policy using factory ", "[async]")
     auto sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
     REQUIRE(sink->msg_counter() < messages);
     spdlog::drop_all();
-
 }
 
 TEST_CASE("flush", "[async]")
@@ -73,11 +71,10 @@ TEST_CASE("flush", "[async]")
 
         logger->flush();
     }
-    //std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    // std::this_thread::sleep_for(std::chrono::milliseconds(250));
     REQUIRE(test_sink->msg_counter() == messages);
     REQUIRE(test_sink->flush_counter() == 1);
 }
-
 
 TEST_CASE("async periodic flush", "[async]")
 {

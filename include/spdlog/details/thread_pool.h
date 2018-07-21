@@ -40,7 +40,7 @@ struct async_msg
     // should only be moved in or out of the queue..
     async_msg(const async_msg &) = delete;
 
-    // support for vs2013 move
+// support for vs2013 move
 #if defined(_MSC_VER) && _MSC_VER <= 1800
     async_msg(async_msg &&other) SPDLOG_NOEXCEPT : msg_type(other.msg_type),
                                                    level(other.level),
@@ -114,10 +114,12 @@ public:
     thread_pool(size_t q_max_items, size_t threads_n)
         : q_(q_max_items)
     {
-        // std::cout << "thread_pool()  q_size_bytes: " << q_size_bytes << "\tthreads_n: " << threads_n << std::endl;
+        // std::cout << "thread_pool()  q_size_bytes: " << q_size_bytes <<
+        // "\tthreads_n: " << threads_n << std::endl;
         if (threads_n == 0 || threads_n > 1000)
         {
-            throw spdlog_ex("spdlog::thread_pool(): invalid threads_n param (valid range is 1-1000)");
+            throw spdlog_ex("spdlog::thread_pool(): invalid threads_n param (valid "
+                            "range is 1-1000)");
         }
         for (size_t i = 0; i < threads_n; i++)
         {
@@ -175,13 +177,12 @@ private:
 
     void worker_loop_()
     {
-        while (process_next_msg_())
-        {
-        };
+        while (process_next_msg_()) {};
     }
 
     // process next message in the queue
-    // return true if this thread should still be active (while no terminate msg was received)
+    // return true if this thread should still be active (while no terminate msg
+    // was received)
     bool process_next_msg_()
     {
         async_msg incoming_async_msg;
@@ -193,24 +194,24 @@ private:
 
         switch (incoming_async_msg.msg_type)
         {
-			case async_msg_type::flush:
-			{
-				incoming_async_msg.worker_ptr->backend_flush_();
-				return true;
-			}
+        case async_msg_type::flush:
+        {
+            incoming_async_msg.worker_ptr->backend_flush_();
+            return true;
+        }
 
-			case async_msg_type::terminate:
-			{
-				return false;
-			}
+        case async_msg_type::terminate:
+        {
+            return false;
+        }
 
-			default:
-			{
-				log_msg msg;
-				incoming_async_msg.to_log_msg(msg);
-				incoming_async_msg.worker_ptr->backend_log_(msg);
-				return true;
-			}
+        default:
+        {
+            log_msg msg;
+            incoming_async_msg.to_log_msg(msg);
+            incoming_async_msg.worker_ptr->backend_log_(msg);
+            return true;
+        }
         }
         return true; // should not be reached
     }

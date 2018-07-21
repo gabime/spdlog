@@ -236,7 +236,7 @@ inline size_t filesize(FILE *f)
 
 #else // unix
     int fd = fileno(f);
-    // 64 bits(but not in osx or cygwin, where fstat64 is deprecated)
+// 64 bits(but not in osx or cygwin, where fstat64 is deprecated)
 #if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__)) && !defined(__CYGWIN__)
     struct stat64 st;
     if (fstat64(fd, &st) == 0)
@@ -321,7 +321,8 @@ inline int utc_minutes_offset(const std::tm &tm = details::os::localtime())
 }
 
 // Return current thread id as size_t
-// It exists because the std::this_thread::get_id() is much slower(especially under VS 2013)
+// It exists because the std::this_thread::get_id() is much slower(especially
+// under VS 2013)
 inline size_t _thread_id()
 {
 #ifdef _WIN32

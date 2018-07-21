@@ -18,7 +18,8 @@ namespace spdlog {
 namespace sinks {
 
 /**
- * This sink prefixes the output with an ANSI escape sequence color code depending on the severity
+ * This sink prefixes the output with an ANSI escape sequence color code
+ * depending on the severity
  * of the message.
  * If no color terminal detected, omit the escape codes.
  */

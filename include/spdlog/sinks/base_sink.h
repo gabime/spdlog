@@ -7,7 +7,8 @@
 //
 // base sink templated over a mutex (either dummy or real)
 // concrete implementation should override the sink_it_() and flush_()  methods.
-// locking is taken care of in this class - no locking needed by the implementers..
+// locking is taken care of in this class - no locking needed by the
+// implementers..
 //
 
 #include "spdlog/common.h"

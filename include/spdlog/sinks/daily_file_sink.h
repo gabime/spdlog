@@ -84,7 +84,7 @@ private:
         return spdlog::details::os::localtime(tnow);
     }
 
-    log_clock ::time_point next_rotation_tp_()
+    log_clock::time_point next_rotation_tp_()
     {
         auto now = log_clock::now();
         tm date = now_tm(now);

@@ -14,7 +14,8 @@
 #include <mutex>
 #include <vector>
 
-// Distribution sink (mux). Stores a vector of sinks which get called when log is called
+// Distribution sink (mux). Stores a vector of sinks which get called when log
+// is called
 
 namespace spdlog {
 namespace sinks {

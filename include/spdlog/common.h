@@ -70,7 +70,6 @@ using level_t = details::null_atomic_int;
 using level_t = std::atomic<int>;
 #endif
 
-
 // Log level enum
 namespace level {
 enum level_enum
@@ -120,8 +119,6 @@ inline spdlog::level::level_enum from_str(const std::string &name)
 
 using level_hasher = std::hash<int>;
 } // namespace level
-
-
 
 //
 // Pattern time - specific time getting to use for pattern_formatter.

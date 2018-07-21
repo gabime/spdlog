@@ -11,8 +11,8 @@
 // This class is thread safe
 
 #include "spdlog/common.h"
-#include "spdlog/logger.h"
 #include "spdlog/details/periodic_worker.h"
+#include "spdlog/logger.h"
 
 #include <chrono>
 #include <functional>

@@ -12,14 +12,13 @@
 //    creates the thread on construction.
 //    stops and joins the thread on destruction.
 
-#include <mutex>
 #include <atomic>
-#include <condition_variable>
 #include <chrono>
+#include <condition_variable>
 #include <functional>
+#include <mutex>
 
-namespace spdlog
-{
+namespace spdlog {
 namespace details {
 
 class periodic_worker
@@ -34,16 +33,14 @@ public:
             return;
         }
         active_ = true;
-        flusher_thread_ = std::thread([callback_fun, interval, this]()
-        {
+        flusher_thread_ = std::thread([callback_fun, interval, this]() {
             using std::chrono::steady_clock;
 
             auto last_flush_tp = steady_clock::now();
             for (;;)
             {
                 std::unique_lock<std::mutex> lock(this->mutex_);
-                this->cv_.wait_for(lock, interval, [callback_fun, interval, last_flush_tp, this]
-                {
+                this->cv_.wait_for(lock, interval, [callback_fun, interval, last_flush_tp, this] {
                     return !this->active_ || (steady_clock::now() - last_flush_tp) >= interval;
                 });
                 if (!this->active_)
@@ -56,7 +53,7 @@ public:
         });
     }
 
-    periodic_worker(const periodic_worker&) = delete;
+    periodic_worker(const periodic_worker &) = delete;
     periodic_worker &operator=(const periodic_worker &) = delete;
 
     // stop the back thread and join it
@@ -76,5 +73,5 @@ private:
     std::mutex mutex_;
     std::condition_variable cv_;
 };
-}
-}
+} // namespace details
+} // namespace spdlog

@@ -60,7 +60,8 @@ private:
     void operator<<(null);
 };
 
-// Checks if T has a user-defined operator<< (e.g. not a member of std::ostream).
+// Checks if T has a user-defined operator<< (e.g. not a member of
+// std::ostream).
 template<typename T, typename Char>
 class is_streamable
 {
@@ -74,7 +75,8 @@ private:
     typedef decltype(test<T>(0)) result;
 
 public:
-    // std::string operator<< is not considered user-defined because we handle strings
+    // std::string operator<< is not considered user-defined because we handle
+    // strings
     // specially.
     static const bool value = result::value && !std::is_same<T, std::string>::value;
 };

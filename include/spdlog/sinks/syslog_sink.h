@@ -57,7 +57,8 @@ protected:
 
 private:
     std::array<int, 7> priorities_;
-    // must store the ident because the man says openlog might use the pointer as is and not a string copy
+    // must store the ident because the man says openlog might use the pointer as
+    // is and not a string copy
     const std::string ident_;
 
     //

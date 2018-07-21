@@ -320,7 +320,8 @@ FMT_FUNC fp get_cached_power(int min_exponent, int &pow10_exponent)
     int index = static_cast<int>(std::ceil((min_exponent + fp::significand_size - 1) * one_over_log2_10));
     // Decimal exponent of the first (smallest) cached power of 10.
     const int first_dec_exp = -348;
-    // Difference between two consecutive decimal exponents in cached powers of 10.
+    // Difference between two consecutive decimal exponents in cached powers of
+    // 10.
     const int dec_exp_step = 8;
     index = (index - first_dec_exp - 1) / dec_exp_step + 1;
     pow10_exponent = first_dec_exp + index * dec_exp_step;

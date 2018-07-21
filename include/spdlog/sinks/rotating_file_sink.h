@@ -98,7 +98,8 @@ private:
             if (details::file_helper::file_exists(src) && details::os::rename(src, target) != 0)
             {
                 // if failed try again after small delay.
-                // this is a workaround to a windows issue, where very high rotation rates sometimes fail (because of antivirus?).
+                // this is a workaround to a windows issue, where very high rotation
+                // rates sometimes fail (because of antivirus?).
                 details::os::sleep_for_millis(20);
                 details::os::remove(target);
                 if (details::os::rename(src, target) != 0)

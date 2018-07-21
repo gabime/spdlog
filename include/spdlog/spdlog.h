@@ -35,17 +35,19 @@ struct synchronous_factory
 using default_factory = synchronous_factory;
 
 // Create and register a logger with a templated sink type
-// The logger's level, formatter and flush level will be set according the global settings.
+// The logger's level, formatter and flush level will be set according the
+// global settings.
 // Example:
-// spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
+// spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11,
+// 59);
 template<typename Sink, typename... SinkArgs>
 inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... sink_args)
 {
     return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
 
-
-// Return an existing logger or nullptr if a logger with such name doesn't exist.
+// Return an existing logger or nullptr if a logger with such name doesn't
+// exist.
 // example: spdlog::get("my_logger")->info("hello {}", "world");
 inline std::shared_ptr<logger> get(const std::string &name)
 {
@@ -77,7 +79,6 @@ inline void flush_every(std::chrono::seconds interval)
 {
     details::registry::instance().flush_every(interval);
 }
-
 
 // Set global error handler
 inline void set_error_handler(log_err_handler handler)
@@ -113,7 +114,8 @@ inline void drop_all()
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Trace & Debug can be switched on/off at compile time for zero cost debug statements.
+// Trace & Debug can be switched on/off at compile time for zero cost debug
+// statements.
 // Uncomment SPDLOG_DEBUG_ON/SPDLOG_TRACE_ON in tweakme.h to enable.
 // SPDLOG_TRACE(..) will also print current file and line.
 //
@@ -130,7 +132,9 @@ inline void drop_all()
 #ifdef _MSC_VER
 #define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] " __VA_ARGS__)
 #else
-#define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ] " __VA_ARGS__)
+#define SPDLOG_TRACE(logger, ...)                                                                                                          \
+    logger->trace("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ]"                                                                       \
+                                                                " " __VA_ARGS__)
 #endif
 #else
 #define SPDLOG_TRACE(logger, ...) (void)0
