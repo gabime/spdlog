@@ -26,7 +26,6 @@ class periodic_worker
 public:
     periodic_worker(std::function<void()> callback_fun, std::chrono::seconds interval)
     {
-
         if (interval == std::chrono::seconds::zero())
         {
             active_ = false;
