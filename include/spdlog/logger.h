@@ -114,24 +114,19 @@ public:
     void set_level(level::level_enum log_level);
     level::level_enum level() const;
     const std::string &name() const;
-
-    // create a pattern formatter all the sinks in this logger.
-    // each sink gets itw own private copy of a formatter object.
-    void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
-
-    // create a FormatterT formatter for each sink in this logger.
-    // each sink gets its own private copy of a formatter object.
-    template<typename FormatterT, typename... Args>
-    void set_formatter(const Args &... args);
-
+    
+	// set formatting for the sinks in this logger.
+	// each sink will get a seperate instance of the formatter object.
+	void set_formatter(std::unique_ptr<formatter> formatter);
+    void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);		
+	
     void flush();
     void flush_on(level::level_enum log_level);
 
     const std::vector<sink_ptr> &sinks() const;
 
     std::vector<sink_ptr> &sinks();
-
-    // error handler
+   
     void set_error_handler(log_err_handler err_handler);
     log_err_handler error_handler();
 

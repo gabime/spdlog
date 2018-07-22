@@ -541,18 +541,25 @@ private:
 class pattern_formatter SPDLOG_FINAL : public formatter
 {
 public:
-    explicit pattern_formatter(
-        std::string pattern, pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol)
-        : eol_(std::move(eol))
-        , pattern_time_type_(time_type)
-        , last_log_secs_(0)
-    {
-        std::memset(&cached_tm_, 0, sizeof(cached_tm_));
-        compile_pattern_(std::move(pattern));
-    }
+	explicit pattern_formatter(
+		std::string pattern, pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol)
+		: pattern_(std::move(pattern))
+		, eol_(std::move(eol))
+		, pattern_time_type_(time_type)
+		, last_log_secs_(0)
+	{
+		std::memset(&cached_tm_, 0, sizeof(cached_tm_));
+		compile_pattern_(pattern_);
+	}
 
-    pattern_formatter(const pattern_formatter &) = delete;
-    pattern_formatter &operator=(const pattern_formatter &) = delete;
+	pattern_formatter(const pattern_formatter &other) = delete;	
+	pattern_formatter &operator=(const pattern_formatter &other) = delete;
+	
+	virtual std::unique_ptr<formatter> clone() const override
+	{
+		return std::unique_ptr<formatter>(new pattern_formatter(pattern_, pattern_time_type_, eol_));
+	}
+
     void format(const details::log_msg &msg, fmt::memory_buffer &dest) override
     {
 #ifndef SPDLOG_NO_DATETIME
@@ -572,7 +579,8 @@ public:
     }
 
 private:
-    const std::string eol_;
+	std::string pattern_;
+    std::string eol_;
     pattern_time_type pattern_time_type_;
     std::tm cached_tm_;
     std::chrono::seconds last_log_secs_;
@@ -734,9 +742,10 @@ private:
     }
 
     void compile_pattern_(const std::string &pattern)
-    {
+    {		
         auto end = pattern.end();
         std::unique_ptr<details::aggregate_formatter> user_chars;
+		formatters_.clear();
         for (auto it = pattern.begin(); it != end; ++it)
         {
             if (*it == '%')

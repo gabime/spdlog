@@ -48,7 +48,7 @@ public:
         throw_if_exists_(logger_name);
 
         // set the global formatter pattern
-        new_logger->set_formatter<pattern_formatter>(formatter_pattern_, pattern_time_type_);
+        new_logger->set_formatter(formatter_->clone());
 
         if (err_handler_)
         {
@@ -81,16 +81,17 @@ public:
         return tp_;
     }
 
-    void set_pattern(const std::string &pattern, pattern_time_type time_type)
-    {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
-        formatter_pattern_ = pattern;
-        pattern_time_type_ = time_type;
-        for (auto &l : loggers_)
-        {
-            l.second->set_pattern(pattern, time_type);
-        }
-    }
+    
+	// Set global formatter. Each sink in each logger will get a clone of this object
+	void set_formatter(std::unique_ptr<formatter> formatter)	
+	{
+		std::lock_guard<Mutex> lock(loggers_mutex_);		
+		formatter_ = std::move(formatter);
+		for (auto &l : loggers_)
+		{
+			l.second->set_formatter(formatter_->clone());
+		}
+	}
 
     void set_level(level::level_enum log_level)
     {
@@ -195,8 +196,7 @@ private:
     Mutex loggers_mutex_;
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
-    std::string formatter_pattern_ = "%+";
-    pattern_time_type pattern_time_type_ = pattern_time_type::local;
+	std::unique_ptr<formatter> formatter_{ new pattern_formatter("%+") };    
     level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;
     log_err_handler err_handler_;

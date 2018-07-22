@@ -38,8 +38,7 @@ using default_factory = synchronous_factory;
 // The logger's level, formatter and flush level will be set according the
 // global settings.
 // Example:
-// spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11,
-// 59);
+// spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
 template<typename Sink, typename... SinkArgs>
 inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... sink_args)
 {
@@ -54,11 +53,17 @@ inline std::shared_ptr<logger> get(const std::string &name)
     return details::registry::instance().get(name);
 }
 
-// Set global formatting
-// example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
-inline void set_pattern(std::string format_string, pattern_time_type time_type = pattern_time_type::local)
+// Set global formatter. Each sink in each logger will get a clone of this object
+inline void set_formatter(std::unique_ptr<spdlog::formatter> formatter)
 {
-    details::registry::instance().set_pattern(std::move(format_string), time_type);
+	details::registry::instance().set_formatter(std::move(formatter));
+}
+
+// Set global format string. 
+// example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
+inline void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local)
+{
+	set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern, time_type)));
 }
 
 // Set global logging level
