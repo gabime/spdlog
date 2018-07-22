@@ -47,7 +47,7 @@ protected:
     }
     size_t msg_counter_{0};
     size_t flush_counter_{0};
-    std::chrono::milliseconds delay_{0};
+    std::chrono::milliseconds delay_{std::chrono::milliseconds::zero()};
 };
 
 using test_sink_mt = test_sink<std::mutex>;

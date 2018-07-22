@@ -169,7 +169,7 @@ public:
     }
 
 private:
-    registry_t<Mutex>() = default;
+    registry_t<Mutex>() : formatter_(new pattern_formatter("%+")){}
 
     ~registry_t<Mutex>()
     {
@@ -196,7 +196,8 @@ private:
     Mutex loggers_mutex_;
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
-	std::unique_ptr<formatter> formatter_{ new pattern_formatter("%+") };    
+	//std::unique_ptr<formatter> formatter_{ new pattern_formatter("%+") };
+    std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;
     log_err_handler err_handler_;
