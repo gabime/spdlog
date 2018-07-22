@@ -75,43 +75,43 @@ static int to12h(const tm &t)
 }
 
 // Abbreviated weekday name
-static const std::string days[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+static const char* days[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 class a_formatter : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        fmt_helper::append_str(days[tm_time.tm_wday], dest);
+        fmt_helper::append_c_str(days[tm_time.tm_wday], dest);
     }
 };
 
 // Full weekday name
-static const std::string full_days[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+static const char* full_days[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 class A_formatter : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        fmt_helper::append_str(full_days[tm_time.tm_wday], dest);
+        fmt_helper::append_c_str(full_days[tm_time.tm_wday], dest);
     }
 };
 
 // Abbreviated month
-static const std::string months[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
+static const char* months[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
 class b_formatter : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        fmt_helper::append_str(months[tm_time.tm_mon], dest);
+        fmt_helper::append_c_str(months[tm_time.tm_mon], dest);
     }
 };
 
 // Full month name
-static const std::string full_months[]{
+static const char* full_months[]{
     "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 class B_formatter : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        fmt_helper::append_str(full_months[tm_time.tm_mon], dest);
+        fmt_helper::append_c_str(full_months[tm_time.tm_mon], dest);
     }
 };
 
