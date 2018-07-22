@@ -17,6 +17,7 @@
 #include <condition_variable>
 #include <functional>
 #include <mutex>
+#include <thread>
 
 namespace spdlog {
 namespace details {
