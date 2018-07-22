@@ -37,13 +37,12 @@ inline spdlog::logger::logger(std::string logger_name, spdlog::sink_ptr single_s
 
 inline spdlog::logger::~logger() = default;
 
-
 inline void spdlog::logger::set_formatter(std::unique_ptr<spdlog::formatter> f)
 {
-	for (auto &sink : sinks_)
-	{
-		sink->set_formatter(f->clone());
-	}
+    for (auto &sink : sinks_)
+    {
+        sink->set_formatter(f->clone());
+    }
 }
 
 inline void spdlog::logger::set_pattern(std::string pattern, pattern_time_type time_type)

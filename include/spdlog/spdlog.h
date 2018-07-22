@@ -56,14 +56,14 @@ inline std::shared_ptr<logger> get(const std::string &name)
 // Set global formatter. Each sink in each logger will get a clone of this object
 inline void set_formatter(std::unique_ptr<spdlog::formatter> formatter)
 {
-	details::registry::instance().set_formatter(std::move(formatter));
+    details::registry::instance().set_formatter(std::move(formatter));
 }
 
-// Set global format string. 
+// Set global format string.
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 inline void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local)
 {
-	set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern, time_type)));
+    set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern, time_type)));
 }
 
 // Set global logging level

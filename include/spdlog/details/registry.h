@@ -81,17 +81,16 @@ public:
         return tp_;
     }
 
-    
-	// Set global formatter. Each sink in each logger will get a clone of this object
-	void set_formatter(std::unique_ptr<formatter> formatter)	
-	{
-		std::lock_guard<Mutex> lock(loggers_mutex_);		
-		formatter_ = std::move(formatter);
-		for (auto &l : loggers_)
-		{
-			l.second->set_formatter(formatter_->clone());
-		}
-	}
+    // Set global formatter. Each sink in each logger will get a clone of this object
+    void set_formatter(std::unique_ptr<formatter> formatter)
+    {
+        std::lock_guard<Mutex> lock(loggers_mutex_);
+        formatter_ = std::move(formatter);
+        for (auto &l : loggers_)
+        {
+            l.second->set_formatter(formatter_->clone());
+        }
+    }
 
     void set_level(level::level_enum log_level)
     {
@@ -169,7 +168,10 @@ public:
     }
 
 private:
-    registry_t<Mutex>() : formatter_(new pattern_formatter("%+")){}
+    registry_t<Mutex>()
+        : formatter_(new pattern_formatter("%+"))
+    {
+    }
 
     ~registry_t<Mutex>()
     {
@@ -196,7 +198,7 @@ private:
     Mutex loggers_mutex_;
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
-	//std::unique_ptr<formatter> formatter_{ new pattern_formatter("%+") };
+    // std::unique_ptr<formatter> formatter_{ new pattern_formatter("%+") };
     std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;
