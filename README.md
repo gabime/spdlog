@@ -76,9 +76,8 @@ async...		Elapsed: 0.427072	2,341,527/sec
 async...		Elapsed: 0.449768	2,223,369/sec
 ```
 
-## Usage 
+## Usage samples
 
-#### Terminal logging
 ```c++
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
