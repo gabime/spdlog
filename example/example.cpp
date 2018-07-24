@@ -23,6 +23,7 @@ void syslog_example();
 
 int main(int, char *[])
 {
+
     try
     {
         // console logging example
@@ -52,8 +53,8 @@ int main(int, char *[])
         // apply some function on all registered loggers
         spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) { l->info("End of example."); });
 
-        // Release and close all loggers
-        spdlog::drop_all();
+        // release any threads created by spdlog, and drop all loggers in the registry.
+        spdlog::shutdown();
     }
     // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
     catch (const spdlog::spdlog_ex &ex)
@@ -69,7 +70,7 @@ void stdout_example()
 {
     // create color multi threaded logger
     auto console = spdlog::stdout_color_mt("console");
-    console->info("Welcome to spdlog!");
+    console->info("Welcome to spdlog version {}.{}.{} !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
     console->error("Some error message with arg: {}", 1);
 
     auto err_logger = spdlog::stderr_color_mt("stderr");

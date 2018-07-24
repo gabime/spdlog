@@ -72,16 +72,16 @@ public:
         tp_ = std::move(tp);
     }
 
-	// create tp only if not exists already 
-	std::shared_ptr<thread_pool> create_tp_once(size_t queue_size, size_t n_threads)
-	{
-		std::lock_guard<std::mutex> lock(tp_mutex_);
-		if (tp_ == nullptr)
-		{
-			tp_ = std::make_shared<details::thread_pool>(queue_size, n_threads);
-		}		
-		return tp_;
-	}
+    // create tp only if not exists already
+    std::shared_ptr<thread_pool> create_tp_once(size_t queue_size, size_t n_threads)
+    {
+        std::lock_guard<std::mutex> lock(tp_mutex_);
+        if (tp_ == nullptr)
+        {
+            tp_ = std::make_shared<details::thread_pool>(queue_size, n_threads);
+        }
+        return tp_;
+    }
 
     std::shared_ptr<thread_pool> get_tp()
     {
@@ -146,14 +146,14 @@ public:
         }
     }
 
-	void flush_all()
-	{				
-		std::lock_guard<std::mutex> lock(logger_map_mutex_);
-		for (auto &l : loggers_)
-		{
-			l.second->flush();
-		}
-	}
+    void flush_all()
+    {
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        for (auto &l : loggers_)
+        {
+            l.second->flush();
+        }
+    }
 
     void drop(const std::string &logger_name)
     {
@@ -175,14 +175,14 @@ public:
             periodic_flusher_.reset();
         }
 
-		drop_all();
+        drop_all();
 
         {
             std::lock_guard<std::mutex> lock(tp_mutex_);
             tp_.reset();
         }
     }
-    
+
     static registry &instance()
     {
         static registry s_instance;
@@ -208,10 +208,10 @@ private:
             throw spdlog_ex("logger with name '" + logger_name + "' already exists");
         }
     }
-   
+
     std::mutex logger_map_mutex_, flusher_mutex_;
     std::mutex tp_mutex_;
-    std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;    
+    std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
     std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;

@@ -10,6 +10,7 @@
 #include "spdlog/common.h"
 #include "spdlog/details/registry.h"
 #include "spdlog/logger.h"
+#include "spdlog/version.h"
 
 #include <chrono>
 #include <functional>
@@ -120,7 +121,7 @@ inline void drop_all()
 // stop any running threads started by spdlog and clean registry loggers
 inline void shutdown()
 {
-	details::registry::instance().shutdown();
+    details::registry::instance().shutdown();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

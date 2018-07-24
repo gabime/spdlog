@@ -38,11 +38,11 @@ struct async_factory_impl
     template<typename Sink, typename... SinkArgs>
     static std::shared_ptr<async_logger> create(const std::string &logger_name, SinkArgs &&... args)
     {
-        using details::registry;				
+        using details::registry;
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
 
-		// create default tp if not already exists.
-		auto tp = registry::instance().create_tp_once(details::default_async_q_size, 1);
+        // create default tp if not already exists.
+        auto tp = registry::instance().create_tp_once(details::default_async_q_size, 1);
         auto new_logger = std::make_shared<async_logger>(logger_name, std::move(sink), std::move(tp), OverflowPolicy);
         registry::instance().register_and_init(new_logger);
         return new_logger;
@@ -66,9 +66,9 @@ inline std::shared_ptr<spdlog::logger> create_async_nb(const std::string &logger
 
 // set global thread pool.
 inline void init_thread_pool(size_t q_size, size_t thread_count)
-{        
+{
     auto tp = std::make_shared<details::thread_pool>(q_size, thread_count);
-	details::registry::instance().set_tp(std::move(tp));
+    details::registry::instance().set_tp(std::move(tp));
 }
 
 // get the global thread pool.
