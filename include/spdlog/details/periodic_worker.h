@@ -12,7 +12,6 @@
 //    creates the thread on construction.
 //    stops and joins the thread on destruction.
 
-#include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <functional>
@@ -55,16 +54,20 @@ public:
     // stop the back thread and join it
     ~periodic_worker()
     {
-        if (active_)
+        if (!active_)
         {
-            active_ = false;
-            cv_.notify_one();
-            flusher_thread_.join();
+           return;
         }
+        {
+            std::lock_guard<std::mutex> lock(mutex_);
+            active_ = false;
+        }
+        cv_.notify_one();   
+        flusher_thread_.join();
     }
 
 private:
-    std::atomic<bool> active_;
+    bool active_;
     std::thread flusher_thread_;
     std::mutex mutex_;
     std::condition_variable cv_;
