@@ -118,7 +118,7 @@ inline void drop_all()
 }
 
 // stop any running threads started by spdlog and clean registry loggers
-void shutdown()
+inline void shutdown()
 {
 	details::registry::instance().shutdown();
 }
