@@ -117,6 +117,12 @@ inline void drop_all()
     details::registry::instance().drop_all();
 }
 
+// stop any running threads started by spdlog and clean registry loggers
+void shutdown()
+{
+	details::registry::instance().shutdown();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Trace & Debug can be switched on/off at compile time for zero cost debug

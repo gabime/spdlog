@@ -38,17 +38,11 @@ struct async_factory_impl
     template<typename Sink, typename... SinkArgs>
     static std::shared_ptr<async_logger> create(const std::string &logger_name, SinkArgs &&... args)
     {
-        using details::registry;
-
-        std::lock_guard<std::recursive_mutex> lock(registry::instance().tp_mutex());
-        auto tp = registry::instance().get_thread_pool();
-        if (tp == nullptr)
-        {
-            tp = std::make_shared<details::thread_pool>(details::default_async_q_size, 1);
-            registry::instance().set_thread_pool(tp);
-        }
-
+        using details::registry;				
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
+
+		// create default tp if not already exists.
+		auto tp = registry::instance().create_tp_once(details::default_async_q_size, 1);
         auto new_logger = std::make_shared<async_logger>(logger_name, std::move(sink), std::move(tp), OverflowPolicy);
         registry::instance().register_and_init(new_logger);
         return new_logger;
@@ -72,16 +66,14 @@ inline std::shared_ptr<spdlog::logger> create_async_nb(const std::string &logger
 
 // set global thread pool.
 inline void init_thread_pool(size_t q_size, size_t thread_count)
-{
-    using details::registry;
-    using details::thread_pool;
-    auto tp = std::make_shared<thread_pool>(q_size, thread_count);
-    registry::instance().set_thread_pool(std::move(tp));
+{        
+    auto tp = std::make_shared<details::thread_pool>(q_size, thread_count);
+	details::registry::instance().set_tp(std::move(tp));
 }
 
 // get the global thread pool.
 inline std::shared_ptr<spdlog::details::thread_pool> thread_pool()
 {
-    return details::registry::instance().get_thread_pool();
+    return details::registry::instance().get_tp();
 }
 } // namespace spdlog

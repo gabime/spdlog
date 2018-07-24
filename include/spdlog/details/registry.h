@@ -24,18 +24,15 @@ namespace spdlog {
 namespace details {
 class thread_pool;
 
-template<typename Mutex>
-class registry_t
+class registry
 {
 public:
-    using MutexT = Mutex;
-
-    registry_t<Mutex>(const registry_t<Mutex> &) = delete;
-    registry_t<Mutex> &operator=(const registry_t<Mutex> &) = delete;
+    registry(const registry &) = delete;
+    registry &operator=(const registry &) = delete;
 
     void register_logger(std::shared_ptr<logger> new_logger)
     {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         auto logger_name = new_logger->name();
         throw_if_exists_(logger_name);
         loggers_[logger_name] = new_logger;
@@ -43,7 +40,7 @@ public:
 
     void register_and_init(std::shared_ptr<logger> new_logger)
     {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         auto logger_name = new_logger->name();
         throw_if_exists_(logger_name);
 
@@ -58,33 +55,44 @@ public:
         new_logger->set_level(level_);
         new_logger->flush_on(flush_level_);
 
-        // Add to registry
+        // add to registry
         loggers_[logger_name] = new_logger;
     }
 
     std::shared_ptr<logger> get(const std::string &logger_name)
     {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         auto found = loggers_.find(logger_name);
         return found == loggers_.end() ? nullptr : found->second;
     }
 
-    void set_thread_pool(std::shared_ptr<thread_pool> tp)
+    void set_tp(std::shared_ptr<thread_pool> tp)
     {
-        std::lock_guard<decltype(tp_mutex_)> lock(tp_mutex_);
+        std::lock_guard<std::mutex> lock(tp_mutex_);
         tp_ = std::move(tp);
     }
 
-    std::shared_ptr<thread_pool> get_thread_pool()
+	// create tp only if not exists already 
+	std::shared_ptr<thread_pool> create_tp_once(size_t queue_size, size_t n_threads)
+	{
+		std::lock_guard<std::mutex> lock(tp_mutex_);
+		if (tp_ == nullptr)
+		{
+			tp_ = std::make_shared<details::thread_pool>(queue_size, n_threads);
+		}		
+		return tp_;
+	}
+
+    std::shared_ptr<thread_pool> get_tp()
     {
-        std::lock_guard<decltype(tp_mutex_)> lock(tp_mutex_);
+        std::lock_guard<std::mutex> lock(tp_mutex_);
         return tp_;
     }
 
     // Set global formatter. Each sink in each logger will get a clone of this object
     void set_formatter(std::unique_ptr<formatter> formatter)
     {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         formatter_ = std::move(formatter);
         for (auto &l : loggers_)
         {
@@ -94,7 +102,7 @@ public:
 
     void set_level(level::level_enum log_level)
     {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
         {
             l.second->set_level(log_level);
@@ -104,7 +112,7 @@ public:
 
     void flush_on(level::level_enum log_level)
     {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
         {
             l.second->flush_on(log_level);
@@ -114,13 +122,14 @@ public:
 
     void flush_every(std::chrono::seconds interval)
     {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
-        std::function<void()> clbk(std::bind(&registry_t::flush_all, this));
+        std::lock_guard<std::mutex> lock(flusher_mutex_);
+        std::function<void()> clbk(std::bind(&registry::flush_all, this));
         periodic_flusher_.reset(new periodic_worker(clbk, interval));
     }
 
     void set_error_handler(log_err_handler handler)
     {
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
         {
             l.second->set_error_handler(handler);
@@ -130,52 +139,66 @@ public:
 
     void apply_all(std::function<void(std::shared_ptr<logger>)> fun)
     {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
         {
             fun(l.second);
         }
     }
 
+	void flush_all()
+	{				
+		std::lock_guard<std::mutex> lock(logger_map_mutex_);
+		for (auto &l : loggers_)
+		{
+			l.second->flush();
+		}
+	}
+
     void drop(const std::string &logger_name)
     {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         loggers_.erase(logger_name);
     }
 
     void drop_all()
     {
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        loggers_.clear();
+    }
+
+    // clean all reasources and threads started by the registry
+    void shutdown()
+    {
         {
-            std::lock_guard<Mutex> lock(loggers_mutex_);
-            loggers_.clear();
+            std::lock_guard<std::mutex> lock(flusher_mutex_);
+            periodic_flusher_.reset();
         }
 
+		drop_all();
+
         {
-            std::lock_guard<decltype(tp_mutex_)> lock(tp_mutex_);
+            std::lock_guard<std::mutex> lock(tp_mutex_);
             tp_.reset();
         }
     }
-
-    std::recursive_mutex &tp_mutex()
+    
+    static registry &instance()
     {
-        return tp_mutex_;
-    }
-
-    static registry_t<Mutex> &instance()
-    {
-        static registry_t<Mutex> s_instance;
+        static registry s_instance;
         return s_instance;
     }
 
 private:
-    registry_t<Mutex>()
+    registry()
         : formatter_(new pattern_formatter("%+"))
     {
     }
 
-    ~registry_t<Mutex>()
+    ~registry()
     {
-        periodic_flusher_.reset();
+        /*std::lock_guard<std::mutex> lock(flusher_mutex_);
+        periodic_flusher_.reset();*/
     }
 
     void throw_if_exists_(const std::string &logger_name)
@@ -185,20 +208,10 @@ private:
             throw spdlog_ex("logger with name '" + logger_name + "' already exists");
         }
     }
-
-    void flush_all()
-    {
-        std::lock_guard<Mutex> lock(loggers_mutex_);
-        for (auto &l : loggers_)
-        {
-            l.second->flush();
-        }
-    }
-
-    Mutex loggers_mutex_;
-    std::recursive_mutex tp_mutex_;
-    std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
-    // std::unique_ptr<formatter> formatter_{ new pattern_formatter("%+") };
+   
+    std::mutex logger_map_mutex_, flusher_mutex_;
+    std::mutex tp_mutex_;
+    std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;    
     std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;
@@ -206,14 +219,6 @@ private:
     std::shared_ptr<thread_pool> tp_;
     std::unique_ptr<periodic_worker> periodic_flusher_;
 };
-
-#ifdef SPDLOG_NO_REGISTRY_MUTEX
-#include "spdlog/details/null_mutex.h"
-using registry = registry_t<spdlog::details::null_mutex>;
-#else
-#include <mutex>
-using registry = registry_t<std::mutex>;
-#endif
 
 } // namespace details
 } // namespace spdlog
