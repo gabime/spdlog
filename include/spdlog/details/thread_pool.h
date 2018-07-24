@@ -85,7 +85,7 @@ struct async_msg
     {
     }
 
-    async_msg(async_msg_type the_type)
+    explicit async_msg(async_msg_type the_type)
         : async_msg(nullptr, the_type, details::log_msg())
     {
     }
