@@ -34,21 +34,17 @@ public:
         }
         active_ = true;
         flusher_thread_ = std::thread([callback_fun, interval, this]() {
-            using std::chrono::steady_clock;
-
-            auto last_flush_tp = steady_clock::now();
             for (;;)
             {
                 std::unique_lock<std::mutex> lock(this->mutex_);
-                this->cv_.wait_for(lock, interval, [callback_fun, interval, last_flush_tp, this] {
-                    return !this->active_ || (steady_clock::now() - last_flush_tp) >= interval;
+                bool should_terminate = this->cv_.wait_for(lock, interval, [this] {
+                    return !this->active_;
                 });
-                if (!this->active_)
+                if (should_terminate)
                 {
                     break;
                 }
                 callback_fun();
-                last_flush_tp = steady_clock::now();
             }
         });
     }
