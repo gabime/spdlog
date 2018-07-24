@@ -5,8 +5,6 @@
 
 #pragma once
 
-#define SPDLOG_VERSION "1.0.0-rc"
-
 #include "spdlog/tweakme.h"
 
 #include <atomic>
