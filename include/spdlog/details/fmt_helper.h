@@ -68,9 +68,16 @@ inline void pad2(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 template<size_t Buffer_Size>
 inline void pad3(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
-    if (n > 99)
+    if (n > 999)
     {
         append_int(n, dest);
+        return;
+    }
+
+    if (n > 99) // 100-999
+    {
+        append_int(n / 100, dest);
+        pad2(n % 100, dest);
         return;
     }
     if (n > 9) // 10-99
@@ -94,46 +101,13 @@ inline void pad3(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 template<size_t Buffer_Size>
 inline void pad6(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
-    // todo: maybe replace this implementation with
-    // pad3(n / 1000, dest);
-    // pad3(n % 1000, dest);
-
     if (n > 99999)
     {
         append_int(n, dest);
         return;
     }
-    if (n > 9999)
-    {
-        dest.push_back('0');
-    }
-    else if (n > 999)
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-    }
-    else if (n > 99)
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-    }
-    else if (n > 9)
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-    }
-    else // 0-9
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back('0');
-    }
-    append_int(n, dest);
+    pad3(static_cast<int>(n / 1000), dest);
+    pad3(static_cast<int>(n % 1000), dest);
 }
 
 } // namespace fmt_helper

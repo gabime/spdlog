@@ -108,7 +108,7 @@ class thread_pool
 {
 public:
     using item_type = async_msg;
-    using q_type = details::mpmc_blocking_queue<item_type>;    
+    using q_type = details::mpmc_blocking_queue<item_type>;
 
     thread_pool(size_t q_max_items, size_t threads_n)
         : q_(q_max_items)

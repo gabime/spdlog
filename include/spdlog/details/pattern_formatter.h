@@ -69,7 +69,7 @@ static const char *ampm(const tm &t)
     return t.tm_hour >= 12 ? "PM" : "AM";
 }
 
-static int to12h(const tm &t)
+static unsigned int to12h(const tm &t)
 {
     return t.tm_hour > 12 ? t.tm_hour - 12 : t.tm_hour;
 }
@@ -231,9 +231,11 @@ class e_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
+        using namespace std::chrono;
         auto duration = msg.time.time_since_epoch();
-        auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-        fmt_helper::pad3(static_cast<int>(millis), dest);
+        auto secs = duration_cast<seconds>(duration);
+        auto millis = duration_cast<milliseconds>(duration) - duration_cast<milliseconds>(secs);
+        fmt_helper::pad3(static_cast<int>(millis.count()), dest);
     }
 };
 
@@ -464,13 +466,14 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
+        using namespace std::chrono;
 #ifndef SPDLOG_NO_DATETIME
 
         // cache the date/time part for the next second.
         auto duration = msg.time.time_since_epoch();
-        std::chrono::seconds seconds = std::chrono::duration_cast<std::chrono::seconds>(duration);
+        auto secs = duration_cast<seconds>(duration);
 
-        if (cache_timestamp_ != seconds || cached_datetime_.size() == 0)
+        if (cache_timestamp_ != secs || cached_datetime_.size() == 0)
         {
             cached_datetime_.resize(0);
             cached_datetime_.push_back('[');
@@ -492,22 +495,15 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
             fmt_helper::pad2(tm_time.tm_sec, cached_datetime_);
             cached_datetime_.push_back('.');
 
-            cache_timestamp_ = seconds;
+            cache_timestamp_ = secs;
         }
         fmt_helper::append_buf(cached_datetime_, dest);
 
-        // cache the millis part for the next milli.
-        auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() % 1000;
-        if (millis != millis_cache_timestamp_ || cached_millis_.size() == 0)
-        {
-            cached_millis_.resize(0);
-            fmt_helper::pad3(static_cast<int>(millis), cached_millis_);
-            cached_millis_.push_back(']');
-            cached_millis_.push_back(' ');
-            millis_cache_timestamp_ = millis;
-        }
+        auto millis = duration_cast<milliseconds>(duration) - duration_cast<milliseconds>(secs);
+        fmt_helper::pad3(static_cast<int>(millis.count()), dest);
+        dest.push_back(']');
+        dest.push_back(' ');
 
-        fmt_helper::append_buf(cached_millis_, dest);
 #else // no datetime needed
         (void)tm_time;
 #endif
@@ -531,9 +527,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 
 private:
     std::chrono::seconds cache_timestamp_{0};
-    std::chrono::milliseconds::rep millis_cache_timestamp_{0};
     fmt::basic_memory_buffer<char, 128> cached_datetime_;
-    fmt::basic_memory_buffer<char, 8> cached_millis_;
 };
 
 } // namespace details
