@@ -117,7 +117,7 @@ inline void pad6(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 // e.g.
 // fraction<std::milliseconds>(tp) -> will return the millis part of the second
 template<typename ToDuration>
-ToDuration time_fraction(const log_clock::time_point &tp)
+inline ToDuration time_fraction(const log_clock::time_point &tp)
 {
     using namespace std::chrono;
     auto duration = tp.time_since_epoch();
