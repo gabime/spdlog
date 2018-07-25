@@ -1,6 +1,6 @@
 CXX	?= g++
 CXXFLAGS	= -march=native -Wall -Wextra -pedantic -std=c++11 -pthread -I../include -fmax-errors=1
-CXX_RELEASE_FLAGS = -O3
+CXX_RELEASE_FLAGS = -Ofast -flto
 
 
 binaries=bench latency
