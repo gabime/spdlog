@@ -231,10 +231,7 @@ class e_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        using namespace std::chrono;
-        auto duration = msg.time.time_since_epoch();
-        auto secs = duration_cast<seconds>(duration);
-        auto millis = duration_cast<milliseconds>(duration) - duration_cast<milliseconds>(secs);
+        auto millis = fmt_helper::time_fraction<std::chrono::milliseconds>(msg.time);
         fmt_helper::pad3(static_cast<int>(millis.count()), dest);
     }
 };
@@ -244,9 +241,8 @@ class f_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        auto duration = msg.time.time_since_epoch();
-        auto micros = std::chrono::duration_cast<std::chrono::microseconds>(duration).count() % 1000000;
-        fmt_helper::pad6(static_cast<int>(micros), dest);
+        auto micros = fmt_helper::time_fraction<std::chrono::microseconds>(msg.time);
+        fmt_helper::pad6(static_cast<int>(micros.count()), dest);
     }
 };
 
@@ -255,12 +251,12 @@ class F_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        auto duration = msg.time.time_since_epoch();
-        auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(duration).count() % 1000000000;
-        fmt::format_to(dest, "{:09}", ns);
+        auto ns = fmt_helper::time_fraction<std::chrono::nanoseconds>(msg.time);
+        fmt::format_to(dest, "{:09}", ns.count());
     }
 };
 
+// seconds since epoch
 class E_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
@@ -499,7 +495,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
         }
         fmt_helper::append_buf(cached_datetime_, dest);
 
-        auto millis = duration_cast<milliseconds>(duration) - duration_cast<milliseconds>(secs);
+        auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
         fmt_helper::pad3(static_cast<int>(millis.count()), dest);
         dest.push_back(']');
         dest.push_back(' ');
