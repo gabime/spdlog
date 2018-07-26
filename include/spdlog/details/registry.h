@@ -72,7 +72,6 @@ public:
         tp_ = std::move(tp);
     }
 
- 
     std::shared_ptr<thread_pool> get_tp()
     {
         std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
@@ -173,7 +172,7 @@ public:
         }
     }
 
-	std::recursive_mutex &tp_mutex()
+    std::recursive_mutex &tp_mutex()
     {
         return tp_mutex_;
     }
@@ -183,7 +182,6 @@ public:
         static registry s_instance;
         return s_instance;
     }
-	
 
 private:
     registry()
@@ -206,7 +204,7 @@ private:
     }
 
     std::mutex logger_map_mutex_, flusher_mutex_;
-    std::recursive_mutex tp_mutex_;    
+    std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
     std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = level::info;
