@@ -117,7 +117,7 @@ void stdout_example()
 }
 ```
 ---
-#### Simple file logger
+#### Basic file logger
 ```c++
 #include "spdlog/sinks/basic_file_sink.h"
 void basic_logfile_example()
