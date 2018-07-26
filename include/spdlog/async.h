@@ -22,6 +22,7 @@
 #include "spdlog/details/thread_pool.h"
 
 #include <memory>
+#include <mutex>
 
 namespace spdlog {
 
@@ -38,13 +39,20 @@ struct async_factory_impl
     template<typename Sink, typename... SinkArgs>
     static std::shared_ptr<async_logger> create(const std::string &logger_name, SinkArgs &&... args)
     {
-        using details::registry;
-        auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
+        auto &registry_inst = details::registry::instance();
 
-        // create default tp if not already exists.
-        auto tp = registry::instance().create_tp_once(details::default_async_q_size, 1);
+		//create global thread pool if not already exists..
+        std::lock_guard<std::recursive_mutex>(registry_inst.tp_mutex());
+        auto tp = registry_inst.get_tp();
+        if (tp == nullptr)
+        {
+            tp = std::make_shared<details::thread_pool>(details::default_async_q_size, 1);
+            registry_inst.set_tp(tp);
+        }
+
+        auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
         auto new_logger = std::make_shared<async_logger>(logger_name, std::move(sink), std::move(tp), OverflowPolicy);
-        registry::instance().register_and_init(new_logger);
+        registry_inst.register_and_init(new_logger);
         return new_logger;
     }
 };

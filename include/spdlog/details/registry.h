@@ -68,24 +68,14 @@ public:
 
     void set_tp(std::shared_ptr<thread_pool> tp)
     {
-        std::lock_guard<std::mutex> lock(tp_mutex_);
+        std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
         tp_ = std::move(tp);
     }
 
-    // create tp only if not exists already
-    std::shared_ptr<thread_pool> create_tp_once(size_t queue_size, size_t n_threads)
-    {
-        std::lock_guard<std::mutex> lock(tp_mutex_);
-        if (tp_ == nullptr)
-        {
-            tp_ = std::make_shared<details::thread_pool>(queue_size, n_threads);
-        }
-        return tp_;
-    }
-
+ 
     std::shared_ptr<thread_pool> get_tp()
     {
-        std::lock_guard<std::mutex> lock(tp_mutex_);
+        std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
         return tp_;
     }
 
@@ -178,9 +168,14 @@ public:
         drop_all();
 
         {
-            std::lock_guard<std::mutex> lock(tp_mutex_);
+            std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
             tp_.reset();
         }
+    }
+
+	std::recursive_mutex &tp_mutex()
+    {
+        return tp_mutex_;
     }
 
     static registry &instance()
@@ -188,6 +183,7 @@ public:
         static registry s_instance;
         return s_instance;
     }
+	
 
 private:
     registry()
@@ -210,7 +206,7 @@ private:
     }
 
     std::mutex logger_map_mutex_, flusher_mutex_;
-    std::mutex tp_mutex_;
+    std::recursive_mutex tp_mutex_;    
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
     std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = level::info;
