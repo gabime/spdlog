@@ -44,17 +44,18 @@ class daily_file_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time
-    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute)
+    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false)
         : base_filename_(std::move(base_filename))
         , rotation_h_(rotation_hour)
         , rotation_m_(rotation_minute)
+        , truncate_(truncate)
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
         {
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
         auto now = log_clock::now();
-        file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(now)));
+        file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(now)), truncate_);
         rotation_tp_ = next_rotation_tp_();
     }
 
@@ -64,7 +65,7 @@ protected:
 
         if (msg.time >= rotation_tp_)
         {
-            file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(msg.time)));
+            file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(msg.time)), truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
         fmt::memory_buffer formatted;
@@ -104,6 +105,7 @@ private:
     int rotation_m_;
     log_clock::time_point rotation_tp_;
     details::file_helper file_helper_;
+    bool truncate_;
 };
 
 using daily_file_sink_mt = daily_file_sink<std::mutex>;
@@ -115,14 +117,14 @@ using daily_file_sink_st = daily_file_sink<details::null_mutex>;
 // factory functions
 //
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0)
+inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false)
 {
-    return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute);
+    return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, truncate);
 }
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0)
+inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false)
 {
-    return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute);
+    return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute, truncate);
 }
 } // namespace spdlog
