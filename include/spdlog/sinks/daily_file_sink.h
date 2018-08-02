@@ -55,7 +55,7 @@ public:
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
         auto now = log_clock::now();
-        open_file(now);
+        file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(now)), truncate_);
         rotation_tp_ = next_rotation_tp_();
     }
 
@@ -65,7 +65,7 @@ protected:
 
         if (msg.time >= rotation_tp_)
         {
-            open_file(msg.time);
+            file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(msg.time)), truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
         fmt::memory_buffer formatted;
@@ -79,11 +79,6 @@ protected:
     }
 
 private:
-    void open_file(log_clock::time_point tp)
-    {
-        file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(tp)), truncate_);
-    }
-
     tm now_tm(log_clock::time_point tp)
     {
         time_t tnow = log_clock::to_time_t(tp);
