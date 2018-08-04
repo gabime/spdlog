@@ -66,7 +66,6 @@ int main(int argc, char *argv[])
         if (argc > 4)
             iters = atoi(argv[4]);
 
-
         console->info("-------------------------------------------------");
         console->info("Messages: {:14n}", howmany);
         console->info("Threads : {:14n}", threads);

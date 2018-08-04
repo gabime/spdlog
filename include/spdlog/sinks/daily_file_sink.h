@@ -117,13 +117,15 @@ using daily_file_sink_st = daily_file_sink<details::null_mutex>;
 // factory functions
 //
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false)
+inline std::shared_ptr<logger> daily_logger_mt(
+    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false)
 {
     return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, truncate);
 }
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false)
+inline std::shared_ptr<logger> daily_logger_st(
+    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false)
 {
     return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute, truncate);
 }
