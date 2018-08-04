@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2018
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "example", "example.vcxproj", "{9E5AB93A-0CCE-4BAC-9FCB-0FC9CB5EB8D2}"
 EndProject
@@ -14,6 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "spdlog", "spdlog", "{7FC6AB
 		..\include\spdlog\logger.h = ..\include\spdlog\logger.h
 		..\include\spdlog\spdlog.h = ..\include\spdlog\spdlog.h
 		..\include\spdlog\tweakme.h = ..\include\spdlog\tweakme.h
+		..\include\spdlog\version.h = ..\include\spdlog\version.h
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "details", "details", "{08E93803-E650-42D9-BBB4-3C16979F850E}"
