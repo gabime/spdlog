@@ -14,6 +14,7 @@ include(GNUInstallDirs)
 #---------------------------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
     set(CMAKE_CXX_FLAGS "-Wall -O3 ${CMAKE_CXX_FLAGS}")
@@ -23,6 +24,7 @@ endif()
 # spdlog target
 #---------------------------------------------------------------------------------------
 add_library(spdlog INTERFACE)
+add_library(spdlog::spdlog ALIAS spdlog)
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
 cmake_dependent_option(SPDLOG_BUILD_TESTING

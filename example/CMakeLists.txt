@@ -24,10 +24,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(SpdlogExamples CXX)
 
-if(TARGET spdlog)
-  # Part of the main project
-  add_library(spdlog::spdlog ALIAS spdlog)
-else()
+if(NOT TARGET spdlog)
   # Stand-alone build
   find_package(spdlog CONFIG REQUIRED)
 endif()
@@ -37,13 +34,10 @@ find_package(Threads REQUIRED)
 add_executable(example example.cpp)
 target_link_libraries(example spdlog::spdlog Threads::Threads)
 
-add_executable(benchmark bench.cpp)
-target_link_libraries(benchmark spdlog::spdlog Threads::Threads)
-
 add_executable(multisink multisink.cpp)
 target_link_libraries(multisink spdlog::spdlog Threads::Threads)
 
 enable_testing()
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
-add_test(NAME RunExample COMMAND example)
-add_test(NAME RunBenchmark COMMAND benchmark)
+add_test(NAME example COMMAND example)
+add_test(NAME multisink COMMAND multisink)
