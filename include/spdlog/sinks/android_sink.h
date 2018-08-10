@@ -43,11 +43,11 @@ protected:
         fmt::memory_buffer formatted;
         if (use_raw_msg_)
         {
-            fmt_helper::append_buf(msg.raw, formatted);
+            details::fmt_helper::append_buf(msg.raw, formatted);
         }
         else
         {
-            formatter_->format(msg, formatted);
+            sink::formatter_->format(msg, formatted);
         }
         formatted.push_back('\0');
         const char *msg_output = formatted.data();
