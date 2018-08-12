@@ -38,6 +38,14 @@ addons: &clang35
       - ubuntu-toolchain-r-test
       - llvm-toolchain-precise-3.5
 
+addons: &clang6
+  apt:
+    packages:
+      - clang-6.0
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty-6.0
+
 matrix:
   include:
     # Test gcc-4.8: C++11, Build=Debug/Release
@@ -76,15 +84,15 @@ matrix:
       os: linux
       addons: *clang35
 
-      # Test gcc-7: C++11, Build=Debug, ASAN=On
-    - env: GCC_VERSION=7 BUILD_TYPE=Debug CPP=11 ASAN=On
+      # Test clang-6.0: C++11, Build=Debug, ASAN=On
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 ASAN=On
       os: linux
-      addons: *gcc7
+      addons: *clang6
 
-      # Test gcc-7: C++11, Build=Debug, TSAN=On
-    - env: GCC_VERSION=7 BUILD_TYPE=Debug CPP=11 TSAN=On
+      # Test clang-6.0: C++11, Build=Debug, TSAN=On
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 TSAN=On
       os: linux
-      addons: *gcc7
+      addons: *clang6
 
 before_install:
   - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
