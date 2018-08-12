@@ -42,6 +42,7 @@ addons: &clang6
   apt:
     packages:
       - clang-6.0
+      - valgrind
     sources:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-trusty-6.0
