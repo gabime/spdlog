@@ -13,14 +13,6 @@ addons: &gcc48
     sources:
       - ubuntu-toolchain-r-test
 
-addons: &gcc49
-  apt:
-    packages:
-      - g++-4.9
-      - valgrind
-    sources:
-      - ubuntu-toolchain-r-test
-
 addons: &gcc7
   apt:
     packages:
@@ -58,15 +50,6 @@ matrix:
       os: linux
       addons: *gcc48
 
-    # Test gcc-4.9: C++11, Build=Debug/Release
-    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug CPP=11
-      os: linux
-      addons: *gcc49
-
-    - env: GCC_VERSION=4.9 BUILD_TYPE=Release CPP=11
-      os: linux
-      addons: *gcc49
-
     # Test gcc-7: C++11, Build=Debug/Release
     - env: GCC_VERSION=7 BUILD_TYPE=Debug CPP=11
       os: linux
@@ -90,11 +73,6 @@ matrix:
       os: linux
       addons: *clang6
 
-      # Test clang-6.0: C++11, Build=Debug, TSAN=On
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 TSAN=On
-      os: linux
-      addons: *clang6
-
 before_install:
   - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
   - if [ -n "$CLANG_VERSION" ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
@@ -114,13 +92,11 @@ install:
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
       -DCMAKE_CXX_STANDARD=$CPP \
       -DSPDLOG_BUILD_EXAMPLES=ON \
-      -DSPDLOG_SANITIZE_THREAD=$TSAN \
       -DSPDLOG_SANITIZE_ADDRESS=$ASAN
   - VERBOSE=1 make -j2
 
 script:
-  - export TSAN_OPTIONS=verbosity=1
-  - if [ "$ASAN" != "On" ] && [ "$TSAN" != "On" ]; then CTEST_FLAGS="-DExperimentalMemCheck"; fi
+  - if [ "$ASAN" != "On" ]; then CTEST_FLAGS="-DExperimentalMemCheck"; fi
   - ctest -j2 -VV $CTEST_FLAGS
 
 notifications:
