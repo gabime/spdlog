@@ -93,7 +93,7 @@ install:
       -DCMAKE_CXX_STANDARD=$CPP \
       -DSPDLOG_BUILD_EXAMPLES=ON \
       -DSPDLOG_SANITIZE_ADDRESS=$ASAN
-  - VERBOSE=1 make -j2
+  -  make VERBOSE=1-j2
 
 script:
   - if [ "$ASAN" != "On" ]; then CTEST_FLAGS="-DExperimentalMemCheck"; fi
