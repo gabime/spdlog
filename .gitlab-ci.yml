@@ -1,0 +1,94 @@
+image: ubuntu:bionic
+
+stages:
+  - build
+
+variables:
+  CPP: 11
+  BUILD_EXAMPLES: "On"
+
+.build: &build
+  stage: build
+  before_script:
+    - |
+      if [ -n "${GCC_VERSION}" ]; then
+        export CXX="g++-${GCC_VERSION}"
+        export CC="gcc-${GCC_VERSION}"
+        export SPDLOG_COMPILER="$CXX"
+      fi
+    - |
+      if [ -n "${CLANG_VERSION}" ]; then
+        export CXX="clang++-${CLANG_VERSION}"
+        export CC="clang-${CLANG_VERSION}"
+        export SPDLOG_COMPILER="$CC"
+      fi
+    - apt update && apt install -y --no-install-recommends cmake make valgrind $SPDLOG_COMPILER
+    - cmake --version
+    - valgrind --version
+  script:
+    - mkdir -p build && cd build
+    - |
+      cmake .. \
+        --warn-uninitialized \
+        -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
+        -DCMAKE_CXX_STANDARD=${CPP} \
+        -DSPDLOG_BUILD_EXAMPLES=${BUILD_EXAMPLES} \
+        -DSPDLOG_SANITIZE_ADDRESS=${ASAN}
+    - VERBOSE=1 make -j2
+    - if [ "${ASAN}" != "On" ]; then CTEST_FLAGS="-DExperimentalMemCheck"; fi
+    - ctest -j2 -VV $CTEST_FLAGS
+
+build:debug_gcc_4_8:
+  <<: *build
+  variables:
+    GCC_VERSION: "4.8"
+    BUILD_TYPE: "Debug"
+
+build:release_gcc_4_8:
+  <<: *build
+  variables:
+    GCC_VERSION: "4.8"
+    BUILD_TYPE: "Release"
+
+build:debug_gcc_8:
+  <<: *build
+  variables:
+    GCC_VERSION: "8"
+    BUILD_TYPE: "Debug"
+
+build:release_gcc_8:
+  <<: *build
+  variables:
+    GCC_VERSION: "8"
+    BUILD_TYPE: "Release"
+
+build:debug_clang_3_9:
+  <<: *build
+  variables:
+    CLANG_VERSION: "3.9"
+    BUILD_TYPE: "Debug"
+
+build:release_clang_3_9:
+  <<: *build
+  variables:
+    CLANG_VERSION: "3.9"
+    BUILD_TYPE: "Release"
+
+build:debug_clang_6:
+  <<: *build
+  variables:
+    CLANG_VERSION: "6.0"
+    BUILD_TYPE: "Debug"
+
+build:release_clang_6:
+  <<: *build
+  variables:
+    CLANG_VERSION: "6.0"
+    BUILD_TYPE: "Release"
+
+build:debug_clang_6_asan:
+  <<: *build
+  variables:
+    CLANG_VERSION: "6.0"
+    BUILD_TYPE: "Debug"
+    ASAN: "On"
