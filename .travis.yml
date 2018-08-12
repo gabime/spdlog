@@ -2,6 +2,7 @@
 # - Louis Dionne's Hana: https://github.com/ldionne/hana
 # - Paul Fultz II's FIT: https://github.com/pfultz2/Fit
 # - Eric Niebler's range-v3: https://github.com/ericniebler/range-v3
+sudo: required
 language: cpp
 
 addons: &gcc48
@@ -96,14 +97,20 @@ before_install:
   - valgrind --version
 
 install:
-  - if [ "$ASAN" == "On" ]; then export CXX_FLAGS="${CXX_FLAGS} -fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize=signed-integer-overflow -fuse-ld=gold"; fi
-  - if [ "$TSAN" == "On" ]; then export CXX_FLAGS="${CXX_FLAGS} -fsanitize=thread -fno-omit-frame-pointer -fuse-ld=gold"; fi
   - cd ${TRAVIS_BUILD_DIR}
   - mkdir -p build && cd build
-  - cmake .. -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_CXX_STANDARD=$CPP -DCMAKE_CXX_FLAGS="${CXX_FLAGS}" -DSPDLOG_BUILD_EXAMPLES=ON --warn-uninitialized
+  - |
+    cmake .. \
+      --warn-uninitialized \
+      -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
+      -DCMAKE_CXX_STANDARD=$CPP \
+      -DSPDLOG_BUILD_EXAMPLES=ON \
+      -DSPDLOG_SANITIZE_THREAD=$TSAN \
+      -DSPDLOG_SANITIZE_ADDRESS=$ASAN
   - VERBOSE=1 make -j2
 
 script:
+  - export TSAN_OPTIONS=verbosity=1
   - if [ "$ASAN" != "On" ] && [ "$TSAN" != "On" ]; then CTEST_FLAGS="-DExperimentalMemCheck"; fi
   - ctest -j2 -VV $CTEST_FLAGS
 
