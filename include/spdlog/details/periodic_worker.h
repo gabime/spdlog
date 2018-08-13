@@ -12,29 +12,25 @@
 //    creates the thread on construction.
 //    stops and joins the thread on destruction.
 
-#include <chrono>
-#include <condition_variable>
-#include <functional>
-#include <mutex>
-#include <thread>
 namespace spdlog {
 namespace details {
+
 
 class periodic_worker
 {
 public:
-    periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval)
+    periodic_worker(const std::function<void()> &callback_fun, chrono::seconds interval)
     {
-        active_ = (interval > std::chrono::seconds::zero());
+        active_ = (interval > chrono::seconds::zero());
         if (!active_)
         {
             return;
         }
 
-        worker_thread_ = std::thread([this, callback_fun, interval]() {
+        worker_thread_ = thread([this, callback_fun, interval]() {
             for (;;)
             {
-                std::unique_lock<std::mutex> lock(this->mutex_);
+                unique_lock<mutex> lock(this->mutex_);
                 if (this->cv_.wait_for(lock, interval, [this] { return !this->active_; }))
                 {
                     return; // active_ == false, so exit this thread
@@ -53,7 +49,7 @@ public:
         if (worker_thread_.joinable())
         {
             {
-                std::lock_guard<std::mutex> lock(mutex_);
+                lock_guard<mutex> lock(mutex_);
                 active_ = false;
             }
             cv_.notify_one();
@@ -63,9 +59,9 @@ public:
 
 private:
     bool active_;
-    std::thread worker_thread_;
-    std::mutex mutex_;
-    std::condition_variable cv_;
+    thread worker_thread_;
+    mutex mutex_;
+    condition_variable cv_;
 };
 } // namespace details
 } // namespace spdlog

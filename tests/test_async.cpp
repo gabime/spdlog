@@ -84,10 +84,10 @@ TEST_CASE("async periodic flush", "[async]")
 
     auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
 
-    spdlog::flush_every(std::chrono::seconds(1));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    spdlog::flush_every(chrono::seconds(1));
+    spdlog::details::os::sleep_for_millis(1100);
     REQUIRE(test_sink->flush_counter() == 1);
-    spdlog::flush_every(std::chrono::seconds(0));
+    spdlog::flush_every(chrono::seconds(0));
     spdlog::drop_all();
 }
 
@@ -95,7 +95,7 @@ TEST_CASE("tp->wait_empty() ", "[async]")
 {
     using namespace spdlog;
     auto test_sink = std::make_shared<sinks::test_sink_mt>();
-    test_sink->set_delay(std::chrono::milliseconds(5));
+    test_sink->set_delay(chrono::milliseconds(5));
     size_t messages = 100;
 
     auto tp = std::make_shared<details::thread_pool>(messages, 2);
@@ -114,6 +114,8 @@ TEST_CASE("tp->wait_empty() ", "[async]")
 TEST_CASE("multi threads", "[async]")
 {
     using namespace spdlog;
+    using spdlog::details::thread;
+
     auto test_sink = std::make_shared<sinks::test_sink_mt>();
     size_t queue_size = 128;
     size_t messages = 256;
@@ -122,7 +124,7 @@ TEST_CASE("multi threads", "[async]")
         auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
         auto logger = std::make_shared<async_logger>("as", test_sink, tp, async_overflow_policy::block);
 
-        std::vector<std::thread> threads;
+        std::vector<thread> threads;
         for (size_t i = 0; i < n_threads; i++)
         {
             threads.emplace_back([logger, messages] {

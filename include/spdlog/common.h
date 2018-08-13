@@ -8,7 +8,26 @@
 #include "spdlog/tweakme.h"
 
 #include <atomic>
-#include <chrono>
+
+#if defined(__MINGW32__)
+# define SPDLOG_USE_BOOST_THREAD
+# define SPDLOG_USE_BOOST_CHRONO
+#endif
+
+#if defined(SPDLOG_USE_BOOST_THREAD)
+# define SPDLOG_USE_BOOST_CHRONO
+# include <boost/thread.hpp>
+#else
+# include <mutex>
+# include <thread>
+# include <condition_variable>
+#endif
+#if defined(SPDLOG_USE_BOOST_CHRONO)
+# include <boost/chrono.hpp>
+#else
+# include <chrono>
+#endif
+
 #include <functional>
 #include <initializer_list>
 #include <memory>
@@ -57,7 +76,36 @@ namespace sinks {
 class sink;
 }
 
-using log_clock = std::chrono::system_clock;
+// choose thread/mutex 'implementation'
+#if defined(SPDLOG_USE_BOOST_THREAD)
+// import into namespace spdlog
+namespace details {
+    using boost::condition_variable;
+    using boost::thread;
+    using boost::unique_lock;
+} // namespace details
+using boost::recursive_mutex;
+using boost::lock_guard;
+using boost::mutex;
+#else
+namespace details {
+    using std::condition_variable;
+    using std::thread;
+    using std::unique_lock;
+} // namespace details
+using std::recursive_mutex;
+using std::lock_guard;
+using std::mutex;
+#endif
+
+// choose chrono implementation
+#if defined(SPDLOG_USE_BOOST_CHRONO)
+namespace chrono = boost::chrono;
+#else
+namespace chrono = std::chrono;
+#endif
+
+using log_clock = chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using log_err_handler = std::function<void(const std::string &err_msg)>;

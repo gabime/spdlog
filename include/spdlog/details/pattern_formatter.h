@@ -11,15 +11,6 @@
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/formatter.h"
 
-#include <array>
-#include <chrono>
-#include <ctime>
-#include <memory>
-#include <mutex>
-#include <string>
-#include <thread>
-#include <utility>
-#include <vector>
 
 namespace spdlog {
 namespace details {
@@ -231,7 +222,7 @@ class e_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        auto millis = fmt_helper::time_fraction<std::chrono::milliseconds>(msg.time);
+        auto millis = fmt_helper::time_fraction<chrono::milliseconds>(msg.time);
         fmt_helper::pad3(static_cast<int>(millis.count()), dest);
     }
 };
@@ -241,7 +232,7 @@ class f_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        auto micros = fmt_helper::time_fraction<std::chrono::microseconds>(msg.time);
+        auto micros = fmt_helper::time_fraction<chrono::microseconds>(msg.time);
         fmt_helper::pad6(static_cast<size_t>(micros.count()), dest);
     }
 };
@@ -251,7 +242,7 @@ class F_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        auto ns = fmt_helper::time_fraction<std::chrono::nanoseconds>(msg.time);
+        auto ns = fmt_helper::time_fraction<chrono::nanoseconds>(msg.time);
         fmt::format_to(dest, "{:09}", ns.count());
     }
 };
@@ -262,7 +253,7 @@ class E_formatter SPDLOG_FINAL : public flag_formatter
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
         auto duration = msg.time.time_since_epoch();
-        auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
+        auto seconds = chrono::duration_cast<chrono::seconds>(duration).count();
         fmt_helper::append_int(seconds, dest);
     }
 };
@@ -321,7 +312,7 @@ class T_formatter SPDLOG_FINAL : public flag_formatter
 class z_formatter SPDLOG_FINAL : public flag_formatter
 {
 public:
-    const std::chrono::seconds cache_refresh = std::chrono::seconds(5);
+    const chrono::seconds cache_refresh = chrono::seconds(5);
 
     z_formatter() = default;
     z_formatter(const z_formatter &) = delete;
@@ -354,7 +345,7 @@ public:
     }
 
 private:
-    log_clock::time_point last_update_{std::chrono::seconds(0)};
+    log_clock::time_point last_update_{chrono::seconds(0)};
 #ifdef _WIN32
     int offset_minutes_{0};
 
@@ -462,7 +453,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        using namespace std::chrono;
+        using namespace chrono;
 #ifndef SPDLOG_NO_DATETIME
 
         // cache the date/time part for the next second.
@@ -522,7 +513,7 @@ class full_formatter SPDLOG_FINAL : public flag_formatter
     }
 
 private:
-    std::chrono::seconds cache_timestamp_{0};
+    chrono::seconds cache_timestamp_{0};
     fmt::basic_memory_buffer<char, 128> cached_datetime_;
 };
 
@@ -553,7 +544,7 @@ public:
     void format(const details::log_msg &msg, fmt::memory_buffer &dest) override
     {
 #ifndef SPDLOG_NO_DATETIME
-        auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
+        auto secs = chrono::duration_cast<chrono::seconds>(msg.time.time_since_epoch());
         if (secs != last_log_secs_)
         {
             cached_tm_ = get_time_(msg);
@@ -573,7 +564,7 @@ private:
     std::string eol_;
     pattern_time_type pattern_time_type_;
     std::tm cached_tm_;
-    std::chrono::seconds last_log_secs_;
+    chrono::seconds last_log_secs_;
 
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
 

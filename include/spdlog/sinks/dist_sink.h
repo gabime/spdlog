@@ -9,10 +9,6 @@
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/null_mutex.h"
 
-#include <algorithm>
-#include <memory>
-#include <mutex>
-#include <vector>
 
 // Distribution sink (mux). Stores a vector of sinks which get called when log
 // is called
@@ -30,13 +26,13 @@ public:
 
     void add_sink(std::shared_ptr<sink> sink)
     {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         sinks_.push_back(sink);
     }
 
     void remove_sink(std::shared_ptr<sink> sink)
     {
-        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink), sinks_.end());
     }
 
@@ -61,7 +57,7 @@ protected:
     std::vector<std::shared_ptr<sink>> sinks_;
 };
 
-using dist_sink_mt = dist_sink<std::mutex>;
+using dist_sink_mt = dist_sink<mutex>;
 using dist_sink_st = dist_sink<details::null_mutex>;
 
 } // namespace sinks

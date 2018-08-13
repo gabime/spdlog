@@ -9,8 +9,6 @@
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/spdlog.h"
 
-#include <mutex>
-#include <string>
 
 namespace spdlog {
 namespace sinks {
@@ -43,7 +41,7 @@ private:
     details::file_helper file_helper_;
 };
 
-using basic_file_sink_mt = basic_file_sink<std::mutex>;
+using basic_file_sink_mt = basic_file_sink<mutex>;
 using basic_file_sink_st = basic_file_sink<details::null_mutex>;
 
 } // namespace sinks

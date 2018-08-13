@@ -5,14 +5,11 @@
 
 #pragma once
 
+#include "spdlog/spdlog.h"
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"
-#include "spdlog/spdlog.h"
 
-#include <cstdio>
-#include <memory>
-#include <mutex>
-#include <spdlog/details/console_globals.h>
+#include "spdlog/details/console_globals.h"
 
 namespace spdlog {
 
@@ -35,7 +32,7 @@ public:
 
     void log(const details::log_msg &msg) override
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         fmt::memory_buffer formatted;
         formatter_->format(msg, formatted);
         fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
@@ -44,19 +41,19 @@ public:
 
     void flush() override
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         fflush(file_);
     }
 
     void set_pattern(const std::string &pattern) override
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
     }
 
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         formatter_ = std::move(sink_formatter);
     }
 

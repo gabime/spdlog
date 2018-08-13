@@ -81,7 +81,7 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 
 TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
 {
-    using sink_type = spdlog::sinks::daily_file_sink<std::mutex, spdlog::sinks::daily_filename_calculator>;
+    using sink_type = spdlog::sinks::daily_file_sink<spdlog::mutex, spdlog::sinks::daily_filename_calculator>;
 
     prepare_logdir();
     // calculate filename (time based)
@@ -113,7 +113,7 @@ struct custom_daily_file_name_calculator
 
 TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
 {
-    using sink_type = spdlog::sinks::daily_file_sink<std::mutex, custom_daily_file_name_calculator>;
+    using sink_type = spdlog::sinks::daily_file_sink<spdlog::mutex, custom_daily_file_name_calculator>;
 
     prepare_logdir();
     // calculate filename (time based)

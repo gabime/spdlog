@@ -18,12 +18,10 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <thread>
 
-using namespace std;
-using namespace std::chrono;
 using namespace spdlog;
 using namespace spdlog::sinks;
+using namespace std;
 using namespace utils;
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log);
@@ -106,7 +104,7 @@ int main(int argc, char *argv[])
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
-    using std::chrono::high_resolution_clock;
+    using chrono::high_resolution_clock;
     cout << log->name() << "...\t\t" << flush;
     auto start = high_resolution_clock::now();
     for (auto i = 0; i < howmany; ++i)
@@ -115,7 +113,7 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
     }
 
     auto delta = high_resolution_clock::now() - start;
-    auto delta_d = duration_cast<duration<double>>(delta).count();
+    auto delta_d = spdlog::chrono::duration_cast<spdlog::chrono::duration<double>>(delta).count();
 
     cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
     spdlog::drop(log->name());
@@ -123,13 +121,13 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
 {
-    using std::chrono::high_resolution_clock;
+    using spdlog::chrono::high_resolution_clock;
     cout << log->name() << "...\t\t" << flush;
-    vector<thread> threads;
+    vector<spdlog::details::thread> threads;
     auto start = high_resolution_clock::now();
     for (int t = 0; t < thread_count; ++t)
     {
-        threads.push_back(std::thread([&]() {
+        threads.push_back(spdlog::details::thread([&]() {
             for (int j = 0; j < howmany / thread_count; j++)
             {
                 log->info("Hello logger: msg number {}", j);
@@ -143,6 +141,6 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
     };
 
     auto delta = high_resolution_clock::now() - start;
-    auto delta_d = duration_cast<duration<double>>(delta).count();
+    auto delta_d = spdlog::chrono::duration_cast<spdlog::chrono::duration<double>>(delta).count();
     cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
 }

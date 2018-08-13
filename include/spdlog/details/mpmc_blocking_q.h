@@ -14,8 +14,6 @@
 
 #include "spdlog/details/circular_q.h"
 
-#include <condition_variable>
-#include <mutex>
 
 namespace spdlog {
 namespace details {
@@ -35,7 +33,7 @@ public:
     void enqueue(T &&item)
     {
         {
-            std::unique_lock<std::mutex> lock(queue_mutex_);
+            std::unique_lock<mutex> lock(queue_mutex_);
             pop_cv_.wait(lock, [this] { return !this->q_.full(); });
             q_.push_back(std::move(item));
         }
@@ -46,7 +44,7 @@ public:
     void enqueue_nowait(T &&item)
     {
         {
-            std::unique_lock<std::mutex> lock(queue_mutex_);
+            std::unique_lock<mutex> lock(queue_mutex_);
             q_.push_back(std::move(item));
         }
         push_cv_.notify_one();
@@ -54,10 +52,10 @@ public:
 
     // try to dequeue item. if no item found. wait upto timeout and try again
     // Return true, if succeeded dequeue item, false otherwise
-    bool dequeue_for(T &popped_item, std::chrono::milliseconds wait_duration)
+    bool dequeue_for(T &popped_item, chrono::milliseconds wait_duration)
     {
         {
-            std::unique_lock<std::mutex> lock(queue_mutex_);
+            std::unique_lock<mutex> lock(queue_mutex_);
             if (!push_cv_.wait_for(lock, wait_duration, [this] { return !this->q_.empty(); }))
             {
                 return false;
@@ -75,7 +73,7 @@ public:
     // try to enqueue and block if no room left
     void enqueue(T &&item)
     {
-        std::unique_lock<std::mutex> lock(queue_mutex_);
+        unique_lock<mutex> lock(queue_mutex_);
         pop_cv_.wait(lock, [this] { return !this->q_.full(); });
         q_.push_back(std::move(item));
         push_cv_.notify_one();
@@ -84,16 +82,16 @@ public:
     // enqueue immediately. overrun oldest message in the queue if no room left.
     void enqueue_nowait(T &&item)
     {
-        std::unique_lock<std::mutex> lock(queue_mutex_);
+        unique_lock<mutex> lock(queue_mutex_);
         q_.push_back(std::move(item));
         push_cv_.notify_one();
     }
 
     // try to dequeue item. if no item found. wait upto timeout and try again
     // Return true, if succeeded dequeue item, false otherwise
-    bool dequeue_for(T &popped_item, std::chrono::milliseconds wait_duration)
+    bool dequeue_for(T &popped_item, chrono::milliseconds wait_duration)
     {
-        std::unique_lock<std::mutex> lock(queue_mutex_);
+        unique_lock<mutex> lock(queue_mutex_);
         if (!push_cv_.wait_for(lock, wait_duration, [this] { return !this->q_.empty(); }))
         {
             return false;
@@ -106,9 +104,9 @@ public:
 #endif
 
 private:
-    std::mutex queue_mutex_;
-    std::condition_variable push_cv_;
-    std::condition_variable pop_cv_;
+    mutex queue_mutex_;
+    condition_variable push_cv_;
+    condition_variable pop_cv_;
     spdlog::details::circular_q<T> q_;
 };
 } // namespace details

@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-class failing_sink : public spdlog::sinks::base_sink<std::mutex>
+class failing_sink : public spdlog::sinks::base_sink<spdlog::mutex>
 {
 public:
     failing_sink() = default;

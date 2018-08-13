@@ -6,7 +6,6 @@
 
 #include "spdlog/details/null_mutex.h"
 #include <cstdio>
-#include <mutex>
 
 namespace spdlog {
 namespace details {
@@ -40,7 +39,7 @@ struct console_stderr
 
 struct console_mutex
 {
-    using mutex_t = std::mutex;
+    using mutex_t = mutex;
     static mutex_t &mutex()
     {
         static mutex_t s_mutex;

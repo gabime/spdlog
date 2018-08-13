@@ -18,10 +18,8 @@
 #include <iostream>
 #include <memory>
 #include <string>
-#include <thread>
 
 using namespace std;
-using namespace std::chrono;
 using namespace spdlog;
 using namespace spdlog::sinks;
 using namespace utils;
@@ -99,10 +97,9 @@ int main(int, char *[])
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
-    using namespace std::chrono;
-    using chrono::high_resolution_clock;
-    using chrono::milliseconds;
-    using chrono::nanoseconds;
+    using spdlog::chrono::high_resolution_clock;
+    using spdlog::chrono::milliseconds;
+    using spdlog::chrono::nanoseconds;
 
     cout << log->name() << "...\t\t" << flush;
     nanoseconds total_nanos = nanoseconds::zero();
@@ -120,22 +117,24 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
 {
-    using namespace std::chrono;
-    using chrono::high_resolution_clock;
-    using chrono::milliseconds;
-    using chrono::nanoseconds;
+
+    using spdlog::chrono::high_resolution_clock;
+    using spdlog::chrono::milliseconds;
+    using spdlog::chrono::nanoseconds;
+    using spdlog::chrono::duration_cast;
+    using spdlog::details::thread;
 
     cout << log->name() << "...\t\t" << flush;
     vector<thread> threads;
     std::atomic<nanoseconds::rep> total_nanos{0};
     for (int t = 0; t < thread_count; ++t)
     {
-        threads.push_back(std::thread([&]() {
+        threads.push_back(thread([&]() {
             for (int j = 0; j < howmany / thread_count; j++)
             {
                 auto start = high_resolution_clock::now();
                 log->info("Hello logger: msg number {}", j);
-                auto delta_nanos = chrono::duration_cast<nanoseconds>(high_resolution_clock::now() - start);
+                auto delta_nanos = duration_cast<nanoseconds>(high_resolution_clock::now() - start);
                 total_nanos += delta_nanos.count();
             }
         }));

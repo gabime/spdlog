@@ -32,25 +32,25 @@ public:
 
     void log(const details::log_msg &msg) SPDLOG_FINAL
     {
-        std::lock_guard<Mutex> lock(mutex_);
+        lock_guard<Mutex> lock(mutex_);
         sink_it_(msg);
     }
 
     void flush() SPDLOG_FINAL override
     {
-        std::lock_guard<Mutex> lock(mutex_);
+        lock_guard<Mutex> lock(mutex_);
         flush_();
     }
 
     void set_pattern(const std::string &pattern) SPDLOG_FINAL override
     {
-        std::lock_guard<Mutex> lock(mutex_);
+        lock_guard<Mutex> lock(mutex_);
         formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
     }
 
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) SPDLOG_FINAL override
     {
-        std::lock_guard<Mutex> lock(mutex_);
+        lock_guard<Mutex> lock(mutex_);
         formatter_ = std::move(sink_formatter);
     }
 

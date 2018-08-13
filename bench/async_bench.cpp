@@ -113,7 +113,11 @@ void thread_fun(std::shared_ptr<spdlog::logger> logger, int howmany)
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> logger, int thread_count)
 {
-    using std::chrono::high_resolution_clock;
+    using spdlog::chrono::high_resolution_clock;
+    using spdlog::chrono::duration_cast;
+    using spdlog::chrono::duration;
+    using spdlog::details::thread;
+
     vector<thread> threads;
     auto start = high_resolution_clock::now();
 
@@ -122,9 +126,9 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> logger, int thread_co
     for (int t = 0; t < thread_count; ++t)
     {
         if (t == 0 && msgs_per_thread_mod)
-            threads.push_back(std::thread(thread_fun, logger, msgs_per_thread + msgs_per_thread_mod));
+            threads.push_back(thread(thread_fun, logger, msgs_per_thread + msgs_per_thread_mod));
         else
-            threads.push_back(std::thread(thread_fun, logger, msgs_per_thread));
+            threads.push_back(thread(thread_fun, logger, msgs_per_thread));
     }
 
     for (auto &t : threads)

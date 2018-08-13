@@ -5,12 +5,9 @@
 
 #pragma once
 
-#include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
+#include "spdlog/details/null_mutex.h"
 
-#include <chrono>
-#include <mutex>
-#include <thread>
 
 namespace spdlog {
 namespace sinks {
@@ -29,7 +26,7 @@ public:
         return flush_counter_;
     }
 
-    void set_delay(std::chrono::milliseconds delay)
+    void set_delay(spdlog::chrono::milliseconds delay)
     {
         delay_ = delay;
     }
@@ -38,7 +35,7 @@ protected:
     void sink_it_(const details::log_msg &) override
     {
         msg_counter_++;
-        std::this_thread::sleep_for(delay_);
+        spdlog::details::os::sleep_for_millis(delay_.count());
     }
 
     void flush_() override
@@ -47,10 +44,10 @@ protected:
     }
     size_t msg_counter_{0};
     size_t flush_counter_{0};
-    std::chrono::milliseconds delay_{std::chrono::milliseconds::zero()};
+    spdlog::chrono::milliseconds delay_{spdlog::chrono::milliseconds::zero()};
 };
 
-using test_sink_mt = test_sink<std::mutex>;
+using test_sink_mt = test_sink<spdlog::mutex>;
 using test_sink_st = test_sink<details::null_mutex>;
 
 } // namespace sinks

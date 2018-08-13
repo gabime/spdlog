@@ -22,10 +22,6 @@
 #include "spdlog/common.h"
 #include "spdlog/logger.h"
 
-#include <chrono>
-#include <memory>
-#include <string>
-
 namespace spdlog {
 
 // Async overflow policy - block by default.

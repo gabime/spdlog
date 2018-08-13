@@ -1,6 +1,5 @@
 project(spdlog-utests CXX)
 enable_testing()
-find_package(Threads REQUIRED)
 
 set(SPDLOG_UTESTS_SOURCES
     errors.cpp
@@ -17,7 +16,6 @@ set(SPDLOG_UTESTS_SOURCES
     main.cpp)
 
 add_executable(${PROJECT_NAME} ${SPDLOG_UTESTS_SOURCES})
-target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 
 add_test(NAME ${PROJECT_NAME} COMMAND ${PROJECT_NAME})

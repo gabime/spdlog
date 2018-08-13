@@ -22,9 +22,6 @@
 #include "spdlog/formatter.h"
 #include "spdlog/sinks/sink.h"
 
-#include <memory>
-#include <string>
-#include <vector>
 
 namespace spdlog {
 
@@ -154,7 +151,7 @@ protected:
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     std::wstring_convert<std::codecvt_utf8<wchar_t>> wstring_converter_;
-    std::mutex wstring_converter_mutex_;
+    mutex wstring_converter_mutex_;
 #endif
 };
 } // namespace spdlog

@@ -12,10 +12,6 @@
 #include "spdlog/logger.h"
 #include "spdlog/version.h"
 
-#include <chrono>
-#include <functional>
-#include <memory>
-#include <string>
 
 namespace spdlog {
 
@@ -81,7 +77,7 @@ inline void flush_on(level::level_enum log_level)
 
 // Start/Restart a periodic flusher thread
 // Warning: Use only if all your loggers are thread safe!
-inline void flush_every(std::chrono::seconds interval)
+inline void flush_every(chrono::seconds interval)
 {
     details::registry::instance().flush_every(interval);
 }

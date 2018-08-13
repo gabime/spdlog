@@ -10,11 +10,6 @@
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/spdlog.h"
 
-#include <chrono>
-#include <cstdio>
-#include <ctime>
-#include <mutex>
-#include <string>
 
 namespace spdlog {
 namespace sinks {
@@ -97,7 +92,7 @@ private:
         {
             return rotation_time;
         }
-        return {rotation_time + std::chrono::hours(24)};
+        return {rotation_time + chrono::hours(24)};
     }
 
     filename_t base_filename_;
@@ -108,7 +103,7 @@ private:
     bool truncate_;
 };
 
-using daily_file_sink_mt = daily_file_sink<std::mutex>;
+using daily_file_sink_mt = daily_file_sink<mutex>;
 using daily_file_sink_st = daily_file_sink<details::null_mutex>;
 
 } // namespace sinks

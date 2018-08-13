@@ -4,10 +4,8 @@
 #include "spdlog/details/mpmc_blocking_q.h"
 #include "spdlog/details/os.h"
 
-#include <chrono>
-#include <memory>
-#include <thread>
-#include <vector>
+// #include <memory>
+// #include <vector>
 
 namespace spdlog {
 namespace details {
@@ -160,7 +158,7 @@ public:
 private:
     q_type q_;
 
-    std::vector<std::thread> threads_;
+    std::vector<thread> threads_;
 
     void post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy)
     {
@@ -185,7 +183,7 @@ private:
     bool process_next_msg_()
     {
         async_msg incoming_async_msg;
-        bool dequeued = q_.dequeue_for(incoming_async_msg, std::chrono::seconds(10));
+        bool dequeued = q_.dequeue_for(incoming_async_msg, chrono::seconds(10));
         if (!dequeued)
         {
             return true;
