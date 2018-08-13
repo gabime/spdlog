@@ -48,7 +48,7 @@ int main(int, char *[])
 
         // flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
-        spdlog::flush_every(std::chrono::seconds(3));
+        spdlog::flush_every(spdlog::chrono::seconds(3));
 
         // apply some function on all registered loggers
         spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) { l->info("End of example."); });

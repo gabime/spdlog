@@ -360,7 +360,11 @@ inline size_t thread_id()
 inline void sleep_for_millis(int milliseconds)
 {
 #if defined(_WIN32)
+# ifdef SPDLOG_USE_BOOST_THREAD
+    boost::this_thread::sleep_for(chrono::milliseconds(milliseconds));
+# else
     ::Sleep(milliseconds);
+# endif
 #else
     std::this_thread::sleep_for(chrono::milliseconds(milliseconds));
 #endif
