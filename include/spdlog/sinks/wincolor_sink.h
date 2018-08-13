@@ -10,10 +10,6 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/sink.h"
 
-#include <memory>
-#include <mutex>
-#include <string>
-#include <unordered_map>
 #include <wincon.h>
 
 namespace spdlog {
@@ -57,13 +53,13 @@ public:
     // change the color for the given level
     void set_color(level::level_enum level, WORD color)
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         colors_[level] = color;
     }
 
     void log(const details::log_msg &msg) SPDLOG_FINAL override
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         fmt::memory_buffer formatted;
         formatter_->format(msg, formatted);
         if (msg.color_range_end > msg.color_range_start)
@@ -92,13 +88,13 @@ public:
 
     void set_pattern(const std::string &pattern) override SPDLOG_FINAL
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
     }
 
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override SPDLOG_FINAL
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         formatter_ = std::move(sink_formatter);
     }
 

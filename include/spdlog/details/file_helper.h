@@ -13,12 +13,6 @@
 #include "../details/log_msg.h"
 #include "../details/os.h"
 
-#include <cerrno>
-#include <chrono>
-#include <cstdio>
-#include <string>
-#include <thread>
-#include <tuple>
 
 namespace spdlog {
 namespace details {

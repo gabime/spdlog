@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
 
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
@@ -185,7 +183,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const
     try
     {
         {
-            std::lock_guard<std::mutex> lock(wstring_converter_mutex_);
+            lock_guard<mutex> lock(wstring_converter_mutex_);
             utf8_string = wstring_converter_.to_bytes(fmt);
         }
         log(lvl, utf8_string.c_str(), args...);

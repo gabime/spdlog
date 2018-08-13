@@ -8,7 +8,6 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
 
-#include <mutex>
 
 namespace spdlog {
 namespace sinks {
@@ -21,7 +20,7 @@ protected:
     void flush_() override {}
 };
 
-using null_sink_mt = null_sink<std::mutex>;
+using null_sink_mt = null_sink<mutex>;
 using null_sink_st = null_sink<details::null_mutex>;
 
 } // namespace sinks

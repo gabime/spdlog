@@ -14,11 +14,6 @@
 #include "spdlog/details/periodic_worker.h"
 #include "spdlog/logger.h"
 
-#include <chrono>
-#include <functional>
-#include <memory>
-#include <string>
-#include <unordered_map>
 
 namespace spdlog {
 namespace details {
@@ -32,7 +27,7 @@ public:
 
     void register_logger(std::shared_ptr<logger> new_logger)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         auto logger_name = new_logger->name();
         throw_if_exists_(logger_name);
         loggers_[logger_name] = std::move(new_logger);
@@ -40,7 +35,7 @@ public:
 
     void register_and_init(std::shared_ptr<logger> new_logger)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         auto logger_name = new_logger->name();
         throw_if_exists_(logger_name);
 
@@ -61,27 +56,27 @@ public:
 
     std::shared_ptr<logger> get(const std::string &logger_name)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         auto found = loggers_.find(logger_name);
         return found == loggers_.end() ? nullptr : found->second;
     }
 
     void set_tp(std::shared_ptr<thread_pool> tp)
     {
-        std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
+        lock_guard<recursive_mutex> lock(tp_mutex_);
         tp_ = std::move(tp);
     }
 
     std::shared_ptr<thread_pool> get_tp()
     {
-        std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
+        lock_guard<recursive_mutex> lock(tp_mutex_);
         return tp_;
     }
 
     // Set global formatter. Each sink in each logger will get a clone of this object
     void set_formatter(std::unique_ptr<formatter> formatter)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         formatter_ = std::move(formatter);
         for (auto &l : loggers_)
         {
@@ -91,7 +86,7 @@ public:
 
     void set_level(level::level_enum log_level)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
         {
             l.second->set_level(log_level);
@@ -101,7 +96,7 @@ public:
 
     void flush_on(level::level_enum log_level)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
         {
             l.second->flush_on(log_level);
@@ -109,16 +104,16 @@ public:
         flush_level_ = log_level;
     }
 
-    void flush_every(std::chrono::seconds interval)
+    void flush_every(chrono::seconds interval)
     {
-        std::lock_guard<std::mutex> lock(flusher_mutex_);
+        lock_guard<mutex> lock(flusher_mutex_);
         std::function<void()> clbk = std::bind(&registry::flush_all, this);
         periodic_flusher_.reset(new periodic_worker(clbk, interval));
     }
 
     void set_error_handler(log_err_handler handler)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
         {
             l.second->set_error_handler(handler);
@@ -128,7 +123,7 @@ public:
 
     void apply_all(const std::function<void(const std::shared_ptr<logger>)> &fun)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
         {
             fun(l.second);
@@ -137,7 +132,7 @@ public:
 
     void flush_all()
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
         {
             l.second->flush();
@@ -146,13 +141,13 @@ public:
 
     void drop(const std::string &logger_name)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         loggers_.erase(logger_name);
     }
 
     void drop_all()
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        lock_guard<mutex> lock(logger_map_mutex_);
         loggers_.clear();
     }
 
@@ -160,19 +155,19 @@ public:
     void shutdown()
     {
         {
-            std::lock_guard<std::mutex> lock(flusher_mutex_);
+            lock_guard<mutex> lock(flusher_mutex_);
             periodic_flusher_.reset();
         }
 
         drop_all();
 
         {
-            std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
+            lock_guard<recursive_mutex> lock(tp_mutex_);
             tp_.reset();
         }
     }
 
-    std::recursive_mutex &tp_mutex()
+    recursive_mutex &tp_mutex()
     {
         return tp_mutex_;
     }
@@ -199,8 +194,8 @@ private:
         }
     }
 
-    std::mutex logger_map_mutex_, flusher_mutex_;
-    std::recursive_mutex tp_mutex_;
+    mutex logger_map_mutex_, flusher_mutex_;
+    recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
     std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = level::info;

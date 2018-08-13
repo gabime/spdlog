@@ -10,9 +10,6 @@
 
 #include "spdlog/details/thread_pool.h"
 
-#include <chrono>
-#include <memory>
-#include <string>
 
 template<typename It>
 inline spdlog::async_logger::async_logger(

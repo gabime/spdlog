@@ -4,18 +4,12 @@
 //
 
 #pragma once
+#include "spdlog/spdlog.h"
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/sinks/base_sink.h"
-#include "spdlog/spdlog.h"
 
-#include <cerrno>
-#include <chrono>
-#include <ctime>
-#include <mutex>
-#include <string>
-#include <tuple>
 
 namespace spdlog {
 namespace sinks {
@@ -119,7 +113,7 @@ private:
     details::file_helper file_helper_;
 };
 
-using rotating_file_sink_mt = rotating_file_sink<std::mutex>;
+using rotating_file_sink_mt = rotating_file_sink<mutex>;
 using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
 
 } // namespace sinks

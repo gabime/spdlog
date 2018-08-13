@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <atomic>
 // null, no cost dummy "mutex" and dummy "atomic" int
 
 namespace spdlog {

@@ -8,8 +8,6 @@
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/spdlog.h"
 
-#include <array>
-#include <string>
 #include <syslog.h>
 
 namespace spdlog {
@@ -70,7 +68,7 @@ private:
     }
 };
 
-using syslog_sink_mt = syslog_sink<std::mutex>;
+using syslog_sink_mt = syslog_sink<mutex>;
 using syslog_sink_st = syslog_sink<details::null_mutex>;
 } // namespace sinks
 

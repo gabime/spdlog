@@ -8,8 +8,6 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
 
-#include <mutex>
-#include <ostream>
 
 namespace spdlog {
 namespace sinks {
@@ -44,7 +42,7 @@ protected:
     bool force_flush_;
 };
 
-using ostream_sink_mt = ostream_sink<std::mutex>;
+using ostream_sink_mt = ostream_sink<mutex>;
 using ostream_sink_st = ostream_sink<details::null_mutex>;
 
 } // namespace sinks

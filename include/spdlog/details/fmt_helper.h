@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "chrono"
 #include "spdlog/fmt/fmt.h"
 
 // Some fmt helpers to efficiently format and pad ints and strings
@@ -119,7 +118,7 @@ inline void pad6(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 template<typename ToDuration>
 inline ToDuration time_fraction(const log_clock::time_point &tp)
 {
-    using namespace std::chrono;
+    using namespace chrono;
     auto duration = tp.time_since_epoch();
     auto secs = duration_cast<seconds>(duration);
     return duration_cast<ToDuration>(duration) - duration_cast<ToDuration>(secs);

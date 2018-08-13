@@ -9,10 +9,6 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/os.h"
 
-#include <memory>
-#include <mutex>
-#include <string>
-#include <unordered_map>
 
 namespace spdlog {
 namespace sinks {
@@ -50,7 +46,7 @@ public:
 
     void set_color(level::level_enum color_level, const std::string &color)
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         colors_[color_level] = color;
     }
 
@@ -84,11 +80,11 @@ public:
     const std::string on_cyan = "\033[46m";
     const std::string on_white = "\033[47m";
 
-    void log(const details::log_msg &msg) override
+    void log(const details::log_msg &msg) SPDLOG_FINAL override
     {
         // Wrap the originally formatted message in color codes.
         // If color is not supported in the terminal, log as is instead.
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
 
         fmt::memory_buffer formatted;
         formatter_->format(msg, formatted);
@@ -112,19 +108,19 @@ public:
 
     void flush() override
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         fflush(target_file_);
     }
 
     void set_pattern(const std::string &pattern) SPDLOG_FINAL
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
     }
 
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override
     {
-        std::lock_guard<mutex_t> lock(mutex_);
+        lock_guard<mutex_t> lock(mutex_);
         formatter_ = std::move(sink_formatter);
     }
 

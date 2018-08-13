@@ -7,7 +7,6 @@
 #include "../common.h"
 
 #include <algorithm>
-#include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -16,7 +15,6 @@
 #include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <thread>
 
 #ifdef _WIN32
 
@@ -63,8 +61,8 @@ inline spdlog::log_clock::time_point now()
 #if defined __linux__ && defined SPDLOG_CLOCK_COARSE
     timespec ts;
     ::clock_gettime(CLOCK_REALTIME_COARSE, &ts);
-    return std::chrono::time_point<log_clock, typename log_clock::duration>(
-        std::chrono::duration_cast<typename log_clock::duration>(std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec)));
+    return chrono::time_point<log_clock, typename log_clock::duration>(
+        chrono::duration_cast<typename log_clock::duration>(chrono::seconds(ts.tv_sec) + chrono::nanoseconds(ts.tv_nsec)));
 
 #else
     return log_clock::now();
@@ -341,7 +339,7 @@ inline size_t _thread_id()
     pthread_threadid_np(nullptr, &tid);
     return static_cast<size_t>(tid);
 #else // Default to standard C++11 (other Unix)
-    return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
+    return static_cast<size_t>(std::hash<thread::id>()(std::this_thread::get_id()));
 #endif
 }
 
@@ -364,7 +362,7 @@ inline void sleep_for_millis(int milliseconds)
 #if defined(_WIN32)
     ::Sleep(milliseconds);
 #else
-    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+    std::this_thread::sleep_for(chrono::milliseconds(milliseconds));
 #endif
 }
 
