@@ -24,6 +24,10 @@
 cmake_minimum_required(VERSION 3.1)
 project(SpdlogBench CXX)
 
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+endif()
+
 if(NOT TARGET spdlog)
   # Stand-alone build
   find_package(spdlog CONFIG REQUIRED)
@@ -32,13 +36,15 @@ endif()
 find_package(Threads REQUIRED)
 
 add_executable(bench bench.cpp)
-target_link_libraries(bench spdlog::spdlog Threads::Threads)
+target_link_libraries(bench spdlog::spdlog Threads::Threads -flto)
 
 add_executable(async_bench async_bench.cpp)
 target_link_libraries(async_bench spdlog::spdlog Threads::Threads)
 
 add_executable(latency latency.cpp)
 target_link_libraries(latency spdlog::spdlog Threads::Threads)
+
+
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 
