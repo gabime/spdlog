@@ -32,10 +32,10 @@ endif()
 find_package(Threads REQUIRED)
 
 add_executable(example example.cpp)
-target_link_libraries(example spdlog::spdlog Threads::Threads)
+target_link_libraries(example spdlog::spdlog)
 
 add_executable(multisink multisink.cpp)
-target_link_libraries(multisink spdlog::spdlog Threads::Threads)
+target_link_libraries(multisink spdlog::spdlog)
 
 enable_testing()
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")

@@ -57,6 +57,14 @@ target_include_directories(
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
+#Setting thread dependency to Target spdlog, neded for examples,bench,tests
+IF ( MINGW )
+FIND_PACKAGE( Boost 1.62  REQUIRED COMPONENTS thread)
+target_link_libraries(spdlog INTERFACE Boost::thread )
+else()
+find_package(Threads REQUIRED)
+target_link_libraries(spdlog INTERFACE Threads::Threads )
+endif()
 
 set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 

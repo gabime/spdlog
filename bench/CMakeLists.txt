@@ -33,16 +33,15 @@ if(NOT TARGET spdlog)
   find_package(spdlog CONFIG REQUIRED)
 endif()
 
-find_package(Threads REQUIRED)
 
 add_executable(bench bench.cpp)
-target_link_libraries(bench spdlog::spdlog Threads::Threads -flto)
+target_link_libraries(bench spdlog::spdlog)
 
 add_executable(async_bench async_bench.cpp)
-target_link_libraries(async_bench spdlog::spdlog Threads::Threads)
+target_link_libraries(async_bench spdlog::spdlog)
 
 add_executable(latency latency.cpp)
-target_link_libraries(latency spdlog::spdlog Threads::Threads)
+target_link_libraries(latency spdlog::spdlog)
 
 
 
