@@ -21,11 +21,13 @@ class test_sink : public base_sink<Mutex>
 public:
     size_t msg_counter()
     {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         return msg_counter_;
     }
 
     size_t flush_counter()
     {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         return flush_counter_;
     }
 
