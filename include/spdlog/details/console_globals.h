@@ -5,14 +5,14 @@
 //
 
 #include "spdlog/details/null_mutex.h"
-#include "stdio.h"
+#include <cstdio>
 #include <mutex>
 
 namespace spdlog {
 namespace details {
 struct console_stdout
 {
-    static FILE *stream()
+    static std::FILE *stream()
     {
         return stdout;
     }
@@ -26,7 +26,7 @@ struct console_stdout
 
 struct console_stderr
 {
-    static FILE *stream()
+    static std::FILE *stream()
     {
         return stderr;
     }

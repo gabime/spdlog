@@ -69,7 +69,7 @@ static const char *ampm(const tm &t)
     return t.tm_hour >= 12 ? "PM" : "AM";
 }
 
-static unsigned int to12h(const tm &t)
+static int to12h(const tm &t)
 {
     return t.tm_hour > 12 ? t.tm_hour - 12 : t.tm_hour;
 }
@@ -242,7 +242,7 @@ class f_formatter SPDLOG_FINAL : public flag_formatter
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
         auto micros = fmt_helper::time_fraction<std::chrono::microseconds>(msg.time);
-        fmt_helper::pad6(static_cast<int>(micros.count()), dest);
+        fmt_helper::pad6(static_cast<size_t>(micros.count()), dest);
     }
 };
 
@@ -745,7 +745,6 @@ private:
                 {
                     formatters_.push_back(std::move(user_chars));
                 }
-                // if(
                 if (++it != end)
                 {
                     handle_flag_(*it);

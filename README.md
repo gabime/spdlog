@@ -28,7 +28,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 ## Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
 * Headers only, just copy and use.
-* Feature rich [call style](#usage-example) using the excellent [fmt](https://github.com/fmtlib/fmt) library.
+* Feature rich using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * Fast asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Conditional Logging

@@ -122,7 +122,7 @@ public:
         }
         for (size_t i = 0; i < threads_n; i++)
         {
-            threads_.emplace_back(std::bind(&thread_pool::worker_loop_, this));
+            threads_.emplace_back(&thread_pool::worker_loop_, this);
         }
     }
 

@@ -138,8 +138,8 @@ public:
         : runtime_error(msg)
     {
     }
-    spdlog_ex(std::string msg, int last_errno)
-        : runtime_error(std::move(msg))
+    spdlog_ex(const std::string &msg, int last_errno)
+        : runtime_error(msg)
         , last_errno_(last_errno)
     {
     }

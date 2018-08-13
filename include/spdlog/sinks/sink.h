@@ -20,7 +20,7 @@ public:
     {
     }
 
-    sink(std::unique_ptr<spdlog::pattern_formatter> formatter)
+    explicit sink(std::unique_ptr<spdlog::pattern_formatter> formatter)
         : level_(level::trace)
         , formatter_(std::move(formatter)){};
 

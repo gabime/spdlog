@@ -23,7 +23,7 @@ namespace details {
 class periodic_worker
 {
 public:
-    periodic_worker(std::function<void()> callback_fun, std::chrono::seconds interval)
+    periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval)
     {
         active_ = (interval > std::chrono::seconds::zero());
         if (!active_)

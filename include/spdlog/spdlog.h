@@ -64,7 +64,7 @@ inline void set_formatter(std::unique_ptr<spdlog::formatter> formatter)
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 inline void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local)
 {
-    set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern, time_type)));
+    set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
 }
 
 // Set global logging level
@@ -101,9 +101,9 @@ inline void register_logger(std::shared_ptr<logger> logger)
 // Apply a user defined function on all registered loggers
 // Example:
 // spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->flush();});
-inline void apply_all(std::function<void(std::shared_ptr<logger>)> fun)
+inline void apply_all(const std::function<void(std::shared_ptr<logger>)> &fun)
 {
-    details::registry::instance().apply_all(std::move(fun));
+    details::registry::instance().apply_all(fun);
 }
 
 // Drop the reference to the given logger

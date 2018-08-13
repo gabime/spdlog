@@ -47,7 +47,7 @@ inline void spdlog::async_logger::sink_it_(details::log_msg &msg)
     }
     else
     {
-        throw spdlog_ex("async log: thread pool doens't exist anymore");
+        throw spdlog_ex("async log: thread pool doesn't exist anymore");
     }
 }
 
