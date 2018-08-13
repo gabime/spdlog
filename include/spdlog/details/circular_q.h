@@ -6,6 +6,8 @@
 // cirucal q view of std::vector.
 #pragma once
 
+#include <vector>
+
 namespace spdlog {
 namespace details {
 template<typename T>
