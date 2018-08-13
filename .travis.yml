@@ -71,6 +71,16 @@ matrix:
     - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=On
       os: linux
       addons: *clang6
+      
+      # Test clang-6.0: C++11, Build=Debug, TSAN=On
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 TSAN=On
+      os: linux
+      addons: *clang6
+      
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 TSAN=On
+      os: linux
+      addons: *clang6
+
 
 before_install:
   - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
@@ -86,7 +96,8 @@ install:
       -DCMAKE_CXX_STANDARD=$CPP \
       -DSPDLOG_BUILD_EXAMPLES=ON \
       -DSPDLOG_BUILD_BENCH=OFF \
-      -DSPDLOG_SANITIZE_ADDRESS=$ASAN
+      -DSPDLOG_SANITIZE_ADDRESS=$ASAN \
+      -DSPDLOG_SANITIZE_THREAD=$ASAN
   -  make VERBOSE=1 -j2
 
 before_script:
