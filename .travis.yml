@@ -64,20 +64,20 @@ matrix:
       addons: *clang35
 
       # Test clang-6.0: C++11, Build=Debug, ASAN=On
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 ASAN=On
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
       os: linux
       addons: *clang6
       
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=On
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
       os: linux
       addons: *clang6
       
       # Test clang-6.0: C++11, Build=Debug, TSAN=On
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 TSAN=On
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 ASAN=Off TSAN=On
       os: linux
       addons: *clang6
       
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 TSAN=On
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=On
       os: linux
       addons: *clang6
 
@@ -97,7 +97,7 @@ install:
       -DSPDLOG_BUILD_EXAMPLES=ON \
       -DSPDLOG_BUILD_BENCH=OFF \
       -DSPDLOG_SANITIZE_ADDRESS=$ASAN \
-      -DSPDLOG_SANITIZE_THREAD=$ASAN
+      -DSPDLOG_SANITIZE_THREAD=$TSAN
   -  make VERBOSE=1 -j2
 
 before_script:
