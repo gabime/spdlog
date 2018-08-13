@@ -81,19 +81,19 @@ class sink;
 // import into namespace spdlog
 namespace details {
     using boost::condition_variable;
-    using boost::recursive_mutex;
     using boost::thread;
     using boost::unique_lock;
 } // namespace details
+using boost::recursive_mutex;
 using boost::lock_guard;
 using boost::mutex;
 #else
 namespace details {
     using std::condition_variable;
-    using std::recursive_mutex;
     using std::thread;
     using std::unique_lock;
 } // namespace details
+using std::recursive_mutex;
 using std::lock_guard;
 using std::mutex;
 #endif

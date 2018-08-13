@@ -40,7 +40,7 @@ struct async_factory_impl
         auto &registry_inst = details::registry::instance();
 
         // create global thread pool if not already exists..
-        lock_guard<std::recursive_mutex> tp_lock(registry_inst.tp_mutex());
+        lock_guard<recursive_mutex> tp_lock(registry_inst.tp_mutex());
         auto tp = registry_inst.get_tp();
         if (tp == nullptr)
         {
