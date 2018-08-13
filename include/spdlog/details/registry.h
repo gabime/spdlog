@@ -112,7 +112,7 @@ public:
     void flush_every(std::chrono::seconds interval)
     {
         std::lock_guard<std::mutex> lock(flusher_mutex_);
-        std::function<void()> clbk(std::bind(&registry::flush_all, this));
+        std::function<void()> clbk = std::bind(&registry::flush_all, this);
         periodic_flusher_.reset(new periodic_worker(clbk, interval));
     }
 

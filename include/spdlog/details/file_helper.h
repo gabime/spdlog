@@ -136,7 +136,7 @@ public:
 
         // treat casese like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"
         auto folder_index = fname.rfind(details::os::folder_sep);
-        if (folder_index != fname.npos && folder_index >= ext_index - 1)
+        if (folder_index != filename_t::npos && folder_index >= ext_index - 1)
         {
             return std::make_tuple(fname, spdlog::filename_t());
         }
