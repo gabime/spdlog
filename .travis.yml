@@ -82,11 +82,17 @@ matrix:
       addons: *clang6
 
 
-before_install:
+before_script:
   - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
   - if [ -n "$CLANG_VERSION" ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
+  - which $CXX
+  - which $CC
+  - which valgrind
+  - $CXX --version
+  - cmake --version
+  - valgrind --version
 
-install:
+script:
   - cd ${TRAVIS_BUILD_DIR}
   - mkdir -p build && cd build
   - |
@@ -98,18 +104,10 @@ install:
       -DSPDLOG_BUILD_BENCH=OFF \
       -DSPDLOG_SANITIZE_ADDRESS=$ASAN \
       -DSPDLOG_SANITIZE_THREAD=$TSAN
-  -  make VERBOSE=1 -j2
-
-before_script:
-  - which $CXX
-  - which $CC
-  - which valgrind
-  - $CXX --version
-  - cmake --version
-  - valgrind --version
-
-script:  
+  - make VERBOSE=1 -j2
   - ctest -j2 --output-on-failure
+
+
 
 notifications:
   email: false
