@@ -166,20 +166,7 @@ spdlog::flush_every(std::chrono::seconds(3));
 
 ```
 
----
-#### Asynchronous logging
-```c++
-#include "spdlog/async.h"
-void async_example()
-{
-    // default thread pool settings can be modified *before* creating the async logger:
-    // spdlog::init_thread_pool(8192, 1); // queue with 8k items and 1 backing thread.
-    auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt");
-    // alternatively:
-    // auto async_file = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("async_file_logger", "logs/async_log.txt");   
-}
 
-```
 ---
 #### Logger with multi sinks - each with different format and log level
 ```c++
@@ -203,9 +190,29 @@ void multi_sink_example()
 ```
 
 ---
-#### Async logger with multi sinks  
+#### Asynchronous logging
+```c++
+#include "spdlog/async.h"
+#include "spdlog/sinks/basic_file_sink.h"
+void async_example()
+{
+    // default thread pool settings can be modified *before* creating the async logger:
+    // spdlog::init_thread_pool(8192, 1); // queue with 8k items and 1 backing thread.
+    auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt");
+    // alternatively:
+    // auto async_file = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("async_file_logger", "logs/async_log.txt");   
+}
+
+```
+
+---
+#### Asynchronous logger with multi sinks  
 ```c++
 // create asynchronous logger with 2 sinks.
+
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/rotating_file_sink.h"
+
 void multi_sink_example2()
 {
     spdlog::init_thread_pool(8192, 1);
