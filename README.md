@@ -208,8 +208,6 @@ void async_example()
 ---
 #### Asynchronous logger with multi sinks  
 ```c++
-// create asynchronous logger with 2 sinks.
-
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 
