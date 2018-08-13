@@ -54,17 +54,17 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 Single thread, 1,000,000 iterations
 *******************************************************************************
 basic_st...		    Elapsed: 0.226664	4,411,806/sec
-rotating_st...		Elapsed: 0.214339	4,665,499/sec
+rotating_st...	 	Elapsed: 0.214339	4,665,499/sec
 daily_st...		    Elapsed: 0.211292	4,732,797/sec
-null_st...		    Elapsed: 0.102815	9,726,227/sec
+null_st...		     Elapsed: 0.102815	9,726,227/sec
 
 *******************************************************************************
 10 threads sharing same logger, 1,000,000 iterations
 *******************************************************************************
 basic_mt...		    Elapsed: 0.882268	1,133,441/sec
-rotating_mt...		Elapsed: 0.875515	1,142,184/sec
+rotating_mt...		 Elapsed: 0.875515	1,142,184/sec
 daily_mt...		    Elapsed: 0.879573	1,136,915/sec
-null_mt...		    Elapsed: 0.220114	4,543,105/sec
+null_mt...		     Elapsed: 0.220114	4,543,105/sec
 ``` 
 #### Asynchronous mode
 ```
