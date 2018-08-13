@@ -84,7 +84,8 @@ public:
     const std::string on_cyan = "\033[46m";
     const std::string on_white = "\033[47m";
 
-    void log(const details::log_msg &msg) SPDLOG_FINAL {
+    void log(const details::log_msg &msg) SPDLOG_FINAL override
+    {
         // Wrap the originally formatted message in color codes.
         // If color is not supported in the terminal, log as is instead.
         std::lock_guard<mutex_t> lock(mutex_);
