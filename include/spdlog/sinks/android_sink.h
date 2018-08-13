@@ -30,8 +30,8 @@ template<typename Mutex>
 class android_sink SPDLOG_FINAL : public base_sink<Mutex>
 {
 public:
-    explicit android_sink(const std::string &tag = "spdlog", bool use_raw_msg = false)
-        : tag_(tag)
+    explicit android_sink(std::string tag = "spdlog", bool use_raw_msg = false)
+        : tag_(std::move(tag))
         , use_raw_msg_(use_raw_msg)
     {
     }
