@@ -33,7 +33,7 @@ TEST_CASE("apply_all"
     spdlog::register_logger(logger2);
 
     int counter = 0;
-    spdlog::apply_all([&counter](std::shared_ptr<spdlog::logger> l) { counter++; });
+    spdlog::apply_all([&counter](std::shared_ptr<spdlog::logger> ) { counter++; });
     REQUIRE(counter == 2);
 
     counter = 0;
