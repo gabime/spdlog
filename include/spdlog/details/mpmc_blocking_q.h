@@ -30,6 +30,11 @@ public:
     {
     }
 
+    int overrun_counter() const
+    {
+      return q_.overrun_counter();
+    }
+
 #ifndef __MINGW32__
     // try to enqueue and block if no room left
     void enqueue(T &&item)

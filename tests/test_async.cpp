@@ -7,6 +7,7 @@ TEST_CASE("basic async test ", "[async]")
 {
     using namespace spdlog;
     auto test_sink = std::make_shared<sinks::test_sink_mt>();
+    int overrun_counter = 0;
     size_t queue_size = 128;
     size_t messages = 256;
     {
@@ -17,9 +18,11 @@ TEST_CASE("basic async test ", "[async]")
             logger->info("Hello message #{}", i);
         }
         logger->flush();
+        overrun_counter = tp->overrun_counter();
     }
     REQUIRE(test_sink->msg_counter() == messages);
     REQUIRE(test_sink->flush_counter() == 1);
+    REQUIRE(overrun_counter == 0);
 }
 
 TEST_CASE("discard policy ", "[async]")
@@ -37,6 +40,7 @@ TEST_CASE("discard policy ", "[async]")
         logger->info("Hello message");
     }
     REQUIRE(test_sink->msg_counter() < messages);
+    REQUIRE(tp->overrun_counter() > 0);
 }
 
 TEST_CASE("discard policy using factory ", "[async]")
