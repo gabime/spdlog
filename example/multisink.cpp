@@ -4,7 +4,6 @@
 #include <iostream>
 #include <memory>
 
-namespace spd = spdlog;
 int main(int, char *[])
 {
     bool enable_debug = true;
@@ -39,7 +38,7 @@ int main(int, char *[])
         spdlog::drop_all();
     }
     // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
-    catch (const spd::spdlog_ex &ex)
+    catch (const spdlog::spdlog_ex &ex)
     {
         std::cout << "Log init failed: " << ex.what() << std::endl;
         return 1;
