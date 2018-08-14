@@ -56,7 +56,7 @@ public:
 
     size_t overrun_counter() const
     {
-      return overrun_counter_;
+        return overrun_counter_;
     }
 
 private:
