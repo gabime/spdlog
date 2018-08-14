@@ -93,13 +93,13 @@ TEST_CASE("full_queue", "[mpmc_blocking_q]")
 
     for(int i = 1; i < static_cast<int>(q_size); i++)
     {
-        int item;
+        int item=-1;
         q.dequeue_for(item, milliseconds(0));
         REQUIRE(item == i);
     }
-    
+
     // last item pushed has overridden the oldest.
-    int item;
+    int item=-1;
     q.dequeue_for(item, milliseconds(0));
     REQUIRE(item == 123456);
 }
