@@ -14,7 +14,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_macros.cpp
     utils.cpp
     utils.h
-    main.cpp)
+    main.cpp test_mpmc_q.cpp)
 
 add_executable(${PROJECT_NAME} ${SPDLOG_UTESTS_SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
