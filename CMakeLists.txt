@@ -12,13 +12,11 @@ include(GNUInstallDirs)
 #---------------------------------------------------------------------------------------
 # set default build to release
 #---------------------------------------------------------------------------------------
-if (NOT CMAKE_BUILD_TYPE)
+if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
 endif()
 
-message("Build type: " ${CMAKE_BUILD_TYPE})
-
-
+message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 #---------------------------------------------------------------------------------------
 # compiler config
@@ -28,9 +26,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS "-Wall -Wextra ${CMAKE_CXX_FLAGS}")
+    add_compile_options("-Wall")
+    add_compile_options("-Wextra")
 endif()
-
 
 #---------------------------------------------------------------------------------------
 # address sanitizers check
