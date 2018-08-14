@@ -31,6 +31,7 @@ public:
         if (tail_ == head_) // overrun last item if full
         {
             head_ = (head_ + 1) % max_items_;
+            ++overrun_counter_;
         }
     }
 
@@ -53,12 +54,19 @@ public:
         return ((tail_ + 1) % max_items_) == head_;
     }
 
+    size_t overrun_counter() const
+    {
+      return overrun_counter_;
+    }
+
 private:
     size_t max_items_;
     typename std::vector<T>::size_type head_ = 0;
     typename std::vector<T>::size_type tail_ = 0;
 
     std::vector<T> v_;
+
+    size_t overrun_counter_ = 0;
 };
 } // namespace details
 } // namespace spdlog

@@ -30,6 +30,12 @@ public:
     {
     }
 
+    size_t overrun_counter() const
+    {
+      std::unique_lock<std::mutex> lock(queue_mutex_);
+      return q_.overrun_counter();
+    }
+
 #ifndef __MINGW32__
     // try to enqueue and block if no room left
     void enqueue(T &&item)
