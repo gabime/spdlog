@@ -7,7 +7,7 @@ TEST_CASE("basic async test ", "[async]")
 {
     using namespace spdlog;
     auto test_sink = std::make_shared<sinks::test_sink_mt>();
-    int overrun_counter = 0;
+    size_t overrun_counter = 0;
     size_t queue_size = 128;
     size_t messages = 256;
     {

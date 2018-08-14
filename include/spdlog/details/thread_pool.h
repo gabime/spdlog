@@ -157,7 +157,7 @@ public:
         post_async_msg_(async_msg(std::move(worker_ptr), async_msg_type::flush), overflow_policy);
     }
 
-    int overrun_counter() const
+    size_t overrun_counter() const
     {
       return q_.overrun_counter();
     }

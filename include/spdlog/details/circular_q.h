@@ -54,7 +54,7 @@ public:
         return ((tail_ + 1) % max_items_) == head_;
     }
 
-    int overrun_counter() const
+    size_t overrun_counter() const
     {
       return overrun_counter_;
     }
@@ -66,7 +66,7 @@ private:
 
     std::vector<T> v_;
 
-    int overrun_counter_ = 0;
+    size_t overrun_counter_ = 0;
 };
 } // namespace details
 } // namespace spdlog

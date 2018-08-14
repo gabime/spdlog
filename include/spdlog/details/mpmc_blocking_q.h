@@ -30,7 +30,7 @@ public:
     {
     }
 
-    int overrun_counter() const
+    size_t overrun_counter() const
     {
       return q_.overrun_counter();
     }
