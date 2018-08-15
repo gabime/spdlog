@@ -37,6 +37,7 @@ target_link_libraries(example spdlog::spdlog Threads::Threads)
 add_executable(multisink multisink.cpp)
 target_link_libraries(multisink spdlog::spdlog Threads::Threads)
 
-enable_testing()
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
+
+enable_testing()
 add_test(NAME example COMMAND example)
