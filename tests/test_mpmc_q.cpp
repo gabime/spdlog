@@ -1,8 +1,8 @@
 #include "includes.h"
 
 using namespace std::chrono;
-using std::chrono::system_clock;
 using std::chrono::milliseconds;
+using std::chrono::system_clock;
 
 system_clock::time_point now_millis()
 {
@@ -20,8 +20,7 @@ TEST_CASE("dequeue-empty-nowait", "[mpmc_blocking_q]")
     auto millis_1 = now_millis();
 
     REQUIRE(rv == false);
-    REQUIRE((millis_1-millis_0) <= tolerance_wait);
-
+    REQUIRE((millis_1 - millis_0) <= tolerance_wait);
 }
 
 TEST_CASE("dequeue-empty-wait", "[mpmc_blocking_q]")
@@ -43,7 +42,6 @@ TEST_CASE("dequeue-empty-wait", "[mpmc_blocking_q]")
     REQUIRE(delta_ms <= wait_ms + tolerance_wait);
 }
 
-
 TEST_CASE("enqueue_nowait", "[mpmc_blocking_q]")
 {
 
@@ -57,7 +55,7 @@ TEST_CASE("enqueue_nowait", "[mpmc_blocking_q]")
     auto millis_0 = now_millis();
     q.enqueue_nowait(2);
     auto millis_1 = now_millis();
-    REQUIRE((millis_1-millis_0) <= tolerance_wait);
+    REQUIRE((millis_1 - millis_0) <= tolerance_wait);
     REQUIRE(q.overrun_counter() == 1);
 }
 
@@ -83,7 +81,7 @@ TEST_CASE("full_queue", "[mpmc_blocking_q]")
 {
     size_t q_size = 100;
     spdlog::details::mpmc_blocking_queue<int> q(q_size);
-    for(int i = 0; i < static_cast<int>(q_size); i++)
+    for (int i = 0; i < static_cast<int>(q_size); i++)
     {
         q.enqueue(std::move(i));
     }
@@ -91,15 +89,15 @@ TEST_CASE("full_queue", "[mpmc_blocking_q]")
     q.enqueue_nowait(123456);
     REQUIRE(q.overrun_counter() == 1);
 
-    for(int i = 1; i < static_cast<int>(q_size); i++)
+    for (int i = 1; i < static_cast<int>(q_size); i++)
     {
-        int item=-1;
+        int item = -1;
         q.dequeue_for(item, milliseconds(0));
         REQUIRE(item == i);
     }
 
     // last item pushed has overridden the oldest.
-    int item=-1;
+    int item = -1;
     q.dequeue_for(item, milliseconds(0));
     REQUIRE(item == 123456);
 }
