@@ -43,7 +43,7 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         for (auto &sink : sinks_)
         {
             if (sink->should_log(msg.level))
@@ -55,6 +55,7 @@ protected:
 
     void flush_() override
     {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         for (auto &sink : sinks_)
             sink->flush();
     }
