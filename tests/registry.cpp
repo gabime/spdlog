@@ -62,7 +62,7 @@ TEST_CASE("drop_all"
     spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name2);
     spdlog::drop_all();
     REQUIRE_FALSE(spdlog::get(tested_logger_name));
-    REQUIRE_FALSE(spdlog::get(tested_logger_name));
+    REQUIRE_FALSE(spdlog::get(tested_logger_name2));
 }
 
 TEST_CASE("drop non existing"
