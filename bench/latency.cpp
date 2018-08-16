@@ -35,8 +35,8 @@ int main(int, char *[])
     int howmany = 1000000;
     int queue_size = howmany + 2;
     int threads = 10;
-    int file_size = 30 * 1024 * 1024;
-    int rotating_files = 5;
+    size_t file_size = 30 * 1024 * 1024;
+    size_t rotating_files = 5;
 
     try
     {
@@ -82,7 +82,7 @@ int main(int, char *[])
 
         for (int i = 0; i < 3; ++i)
         {
-            spdlog::init_thread_pool(queue_size, 1);
+            spdlog::init_thread_pool(static_cast<size_t>(queue_size), 1);
             auto as = spdlog::basic_logger_mt<spdlog::async_factory>("async", "logs/basic_async.log", true);
             bench_mt(howmany, as, threads);
             spdlog::drop("async");
