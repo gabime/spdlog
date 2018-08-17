@@ -83,8 +83,8 @@ matrix:
       addons: *clang6
 
       # osx
-      - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
-        os: osx
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
+      os: osx
 
 
 
