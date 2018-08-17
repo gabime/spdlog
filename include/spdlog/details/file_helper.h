@@ -146,7 +146,7 @@ public:
     }
 
 private:
-    FILE *fd_{nullptr};
+    std::FILE *fd_{nullptr};
     filename_t _filename;
 };
 } // namespace details
