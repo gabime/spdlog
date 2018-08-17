@@ -39,6 +39,7 @@ addons: &clang6
       - ubuntu-toolchain-r-test
       - llvm-toolchain-trusty-6.0
 
+
 matrix:
   include:
     # Test gcc-4.8: C++11, Build=Debug/Release
@@ -81,10 +82,18 @@ matrix:
       os: linux
       addons: *clang6
 
+      # osx
+      - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
+        os: osx
+
+
+
+
 
 before_script:
   - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
   - if [ -n "$CLANG_VERSION" ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; export CXX="clang++" CC="clang"; fi
   - which $CXX
   - which $CC
   - which valgrind
