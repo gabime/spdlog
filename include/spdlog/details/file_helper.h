@@ -10,8 +10,8 @@
 // the tries(10 ms)
 // Throw spdlog_ex exception on errors
 
-#include "../details/log_msg.h"
-#include "../details/os.h"
+#include "spdlog/details/log_msg.h"
+#include "spdlog/details/os.h"
 
 #include <cerrno>
 #include <chrono>
