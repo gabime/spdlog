@@ -12,7 +12,7 @@ static milliseconds millis_from(const test_clock::time_point &tp0)
 TEST_CASE("dequeue-empty-nowait", "[mpmc_blocking_q]")
 {
     size_t q_size = 100;
-    milliseconds tolerance_wait(30);
+    milliseconds tolerance_wait(10);
     spdlog::details::mpmc_blocking_queue<int> q(q_size);
     int popped_item;
 
@@ -30,7 +30,7 @@ TEST_CASE("dequeue-empty-wait", "[mpmc_blocking_q]")
 
     size_t q_size = 100;
     milliseconds wait_ms(250);
-    milliseconds tolerance_wait(30);
+    milliseconds tolerance_wait(100);
 
     spdlog::details::mpmc_blocking_queue<int> q(q_size);
     int popped_item;
@@ -50,7 +50,7 @@ TEST_CASE("enqueue_nowait", "[mpmc_blocking_q]")
 
     size_t q_size = 1;
     spdlog::details::mpmc_blocking_queue<int> q(q_size);
-    milliseconds tolerance_wait(30);
+    milliseconds tolerance_wait(10);
 
     q.enqueue(1);
     REQUIRE(q.overrun_counter() == 0);
