@@ -81,14 +81,7 @@ matrix:
       # osx
     - env: BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
       os: osx
-
-    - env: BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
-      os: osx
-
-    - env: BUILD_TYPE=Debug CPP=11 ASAN=Off TSAN=On
-      os: osx
-
-
+    
 
 
 
