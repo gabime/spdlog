@@ -9,7 +9,6 @@ addons: &gcc48
   apt:
     packages:
       - g++-4.8
-      - valgrind
     sources:
       - ubuntu-toolchain-r-test
 
@@ -17,7 +16,6 @@ addons: &gcc7
   apt:
     packages:
       - g++-7
-      - valgrind
     sources:
       - ubuntu-toolchain-r-test
 
@@ -25,7 +23,6 @@ addons: &clang35
   apt:
     packages:
       - clang-3.5
-      - valgrind
     sources:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-precise-3.5
@@ -34,7 +31,6 @@ addons: &clang6
   apt:
     packages:
       - clang-6.0
-      - valgrind
     sources:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-trusty-6.0
@@ -96,10 +92,8 @@ before_script:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export CXX="clang++" CC="clang"; fi
   - which $CXX
   - which $CC
-  - which valgrind
   - $CXX --version
   - cmake --version
-  - valgrind --version
 
 script:
   - cd ${TRAVIS_BUILD_DIR}
