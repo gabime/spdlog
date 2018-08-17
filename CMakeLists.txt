@@ -30,6 +30,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     add_compile_options("-Wextra")
     add_compile_options("-Wconversion")
     add_compile_options("-pedantic")
+    add_compile_options("-Wfatal-errors")
     
 endif()
 
