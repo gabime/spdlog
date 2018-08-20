@@ -5,8 +5,11 @@
 
 #pragma once
 
+#include "spdlog/details/fmt_helper.h"
+
 #include <memory>
 #include <string>
+
 
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
@@ -76,8 +79,8 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
     }
     try
     {
-        details::log_msg log_msg(&name_, lvl);
-        fmt::format_to(log_msg.raw, "{}", msg);
+        details::log_msg log_msg(&name_, lvl);        
+		details::fmt_helper::append_c_str(msg, log_msg.raw);
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
