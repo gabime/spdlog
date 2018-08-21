@@ -12,7 +12,6 @@
 #include <cstdio>
 #include <memory>
 #include <mutex>
-#include <spdlog/details/console_globals.h>
 
 namespace spdlog {
 
