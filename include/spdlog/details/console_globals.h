@@ -8,6 +8,10 @@
 #include <cstdio>
 #include <mutex>
 
+#ifdef _WIN32
+#include "spdlog/details/os.h"
+#endif
+
 namespace spdlog {
 namespace details {
 struct console_stdout
