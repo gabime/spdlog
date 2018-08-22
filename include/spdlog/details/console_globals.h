@@ -9,7 +9,16 @@
 #include <mutex>
 
 #ifdef _WIN32
-#include "spdlog/details/os.h"
+
+#ifndef NOMINMAX
+#define NOMINMAX // prevent windows redefining min/max
+#endif
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <windows.h>
 #endif
 
 namespace spdlog {
