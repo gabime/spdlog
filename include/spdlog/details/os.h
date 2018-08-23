@@ -159,9 +159,9 @@ inline bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mod
 {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES
-    *fp = _wfsopen((filename.c_str()), mode.c_str(), _SH_DENYWR);
+    *fp = _wfsopen((filename.c_str()), mode.c_str(), _SH_DENYNO);
 #else
-    *fp = _fsopen((filename.c_str()), mode.c_str(), _SH_DENYWR);
+    *fp = _fsopen((filename.c_str()), mode.c_str(), _SH_DENYNO);
 #endif
 #else // unix
     *fp = fopen((filename.c_str()), mode.c_str());
