@@ -5,7 +5,7 @@
 
 #pragma once
 
-// Helper class for file sink.
+// Helper class for file sinks.
 // When failing to open a file, retry several times(5) with delay interval (10 ms).
 // Throw spdlog_ex exception on errors.
 
