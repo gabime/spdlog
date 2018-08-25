@@ -18,6 +18,7 @@ void multi_sink_example();
 void user_defined_example();
 void err_handler_example();
 void syslog_example();
+void clone_example();
 
 #include "spdlog/spdlog.h"
 
@@ -33,6 +34,8 @@ int main(int, char *[])
         basic_example();
         rotating_example();
         daily_example();
+
+        clone_example();
 
         // async logging using a backing thread pool
         async_example();
@@ -56,7 +59,7 @@ int main(int, char *[])
         // release any threads created by spdlog, and drop all loggers in the registry.
         spdlog::shutdown();
     }
-    // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
+        // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
     catch (const spdlog::spdlog_ex &ex)
     {
         std::cout << "Log init failed: " << ex.what() << std::endl;
@@ -120,6 +123,14 @@ void daily_example()
 {
     // Create a daily logger - a new file is created every day on 2:30am
     auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
+}
+
+// clone a logger and give it new name.
+// Useful for creating component/subsystem loggers from some "root" logger
+void clone_example()
+{
+    auto network_logger = spdlog::get("console")->clone("network");
+    network_logger->info("Logging network stuff..");
 }
 
 #include "spdlog/async.h"
