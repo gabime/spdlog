@@ -2,12 +2,11 @@
 
 using namespace std::chrono;
 using std::chrono::milliseconds;
-using test_clock = std::chrono::high_resolution_clock ;
-
+using test_clock = std::chrono::high_resolution_clock;
 
 static milliseconds millis_from(const test_clock::time_point &tp0)
 {
-    return std::chrono::duration_cast<milliseconds>(test_clock::now()-tp0);
+    return std::chrono::duration_cast<milliseconds>(test_clock::now() - tp0);
 }
 TEST_CASE("dequeue-empty-nowait", "[mpmc_blocking_q]")
 {

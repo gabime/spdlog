@@ -59,7 +59,7 @@ int main(int, char *[])
         // release any threads created by spdlog, and drop all loggers in the registry.
         spdlog::shutdown();
     }
-        // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
+    // Exceptions will only be thrown upon failed logger or sink construction (not during logging)
     catch (const spdlog::spdlog_ex &ex)
     {
         std::cout << "Log init failed: " << ex.what() << std::endl;

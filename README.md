@@ -161,6 +161,18 @@ void daily_example()
 ---
 #### Periodic flush
 ```c++
+// clone a logger and give it new name.
+// Useful for creating subsystem loggers from some "root" logger
+void clone_example()
+{
+    auto network_logger = spdlog::get("console")->clone("network");
+    network_logger->info("Logging network stuff..");
+}
+```
+
+---
+#### Cloning loggers for
+```c++
 // periodically flush all *registered* loggers every 3 seconds:
 // warning: only use if all your loggers are thread safe!
 spdlog::flush_every(std::chrono::seconds(3));

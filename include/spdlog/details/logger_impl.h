@@ -10,7 +10,6 @@
 #include <memory>
 #include <string>
 
-
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
 template<typename It>
@@ -79,8 +78,8 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
     }
     try
     {
-        details::log_msg log_msg(&name_, lvl);        
-		details::fmt_helper::append_c_str(msg, log_msg.raw);
+        details::log_msg log_msg(&name_, lvl);
+        details::fmt_helper::append_c_str(msg, log_msg.raw);
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -275,7 +274,6 @@ inline spdlog::level::level_enum spdlog::logger::flush_level() const
 {
     return static_cast<spdlog::level::level_enum>(flush_level_.load(std::memory_order_relaxed));
 }
-
 
 inline bool spdlog::logger::should_flush_(const details::log_msg &msg)
 {

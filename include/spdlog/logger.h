@@ -115,7 +115,6 @@ public:
     level::level_enum level() const;
     const std::string &name() const;
 
-
     // set formatting for the sinks in this logger.
     // each sink will get a seperate instance of the formatter object.
     void set_formatter(std::unique_ptr<formatter> formatter);

@@ -6,8 +6,8 @@
 #include <cstdio>
 #include <exception>
 #include <fstream>
-#include <ostream>
 #include <iostream>
+#include <ostream>
 #include <string>
 
 #define SPDLOG_TRACE_ON
