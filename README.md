@@ -159,7 +159,7 @@ void daily_example()
 ```
 
 ---
-#### Periodic flush
+#### Cloning loggers
 ```c++
 // clone a logger and give it new name.
 // Useful for creating subsystem loggers from some "root" logger
@@ -171,7 +171,7 @@ void clone_example()
 ```
 
 ---
-#### Cloning loggers for
+#### Periodic flush
 ```c++
 // periodically flush all *registered* loggers every 3 seconds:
 // warning: only use if all your loggers are thread safe!
