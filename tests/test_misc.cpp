@@ -91,3 +91,48 @@ TEST_CASE("periodic flush", "[periodic_flush]")
     spdlog::flush_every(std::chrono::seconds(0));
     spdlog::drop_all();
 }
+
+
+TEST_CASE("clone", "[clone]")
+{
+    using namespace spdlog;
+
+    auto logger = spdlog::create<sinks::test_sink_mt>("orig");
+    auto cloned = logger->clone("clone");
+
+    REQUIRE(cloned->name() == "clone");
+    REQUIRE(logger->sinks() == cloned->sinks());
+    REQUIRE(logger->level() == cloned->level());
+    REQUIRE(logger->flush_level() == cloned->flush_level());
+    logger->info("Some message 1");
+    cloned->info("Some message 2");
+
+    auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(cloned->sinks()[0]);
+    REQUIRE(test_sink->msg_counter() == 2);
+
+    spdlog::drop_all();
+}
+
+TEST_CASE("clone async", "[clone]")
+{
+    using namespace spdlog;
+
+    auto logger = spdlog::create_async<sinks::test_sink_mt>("orig");
+    auto cloned = logger->clone("clone");
+
+    REQUIRE(cloned->name() == "clone");
+    REQUIRE(logger->sinks() == cloned->sinks());
+    REQUIRE(logger->level() == cloned->level());
+    REQUIRE(logger->flush_level() == cloned->flush_level());
+
+    logger->info("Some message 1");
+    cloned->info("Some message 2");
+
+    spdlog::details::os::sleep_for_millis(10);
+
+    auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(cloned->sinks()[0]);
+    REQUIRE(test_sink->msg_counter() == 2);
+
+
+    spdlog::drop_all();
+}

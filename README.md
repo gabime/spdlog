@@ -159,7 +159,7 @@ void daily_example()
 ```
 
 ---
-#### Cloning loggers
+#### Cloning loggers 
 ```c++
 // clone a logger and give it new name.
 // Useful for creating subsystem loggers from some "root" logger
