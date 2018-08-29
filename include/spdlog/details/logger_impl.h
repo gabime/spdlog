@@ -357,5 +357,5 @@ inline std::shared_ptr<spdlog::logger> spdlog::logger::clone(std::string logger_
     cloned->set_level(this->level());
     cloned->flush_on(this->flush_level());
     cloned->set_error_handler(this->error_handler());
-    return std::move(cloned);
+    return cloned;
 }
