@@ -165,7 +165,7 @@ void daily_example()
 // Useful for creating subsystem loggers from some "root" logger
 void clone_example()
 {
-    auto network_logger = spdlog::get("console")->clone("network");
+    auto network_logger = spdlog::get("root")->clone("network");
     network_logger->info("Logging network stuff..");
 }
 ```
