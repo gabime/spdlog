@@ -198,6 +198,13 @@ private:
 
         switch (incoming_async_msg.msg_type)
         {
+        case async_msg_type::log:
+        {
+            log_msg msg;
+            incoming_async_msg.to_log_msg(msg);
+            incoming_async_msg.worker_ptr->backend_log_(msg);
+            return true;
+        }
         case async_msg_type::flush:
         {
             incoming_async_msg.worker_ptr->backend_flush_();
@@ -208,16 +215,9 @@ private:
         {
             return false;
         }
-
-        default:
-        {
-            log_msg msg;
-            incoming_async_msg.to_log_msg(msg);
-            incoming_async_msg.worker_ptr->backend_log_(msg);
-            return true;
         }
-        }
-        return true; // should not be reached
+        assert(false && "Unexpected async_msg_type");
+        return true;
     }
 };
 

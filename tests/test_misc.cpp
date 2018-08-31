@@ -92,7 +92,6 @@ TEST_CASE("periodic flush", "[periodic_flush]")
     spdlog::drop_all();
 }
 
-
 TEST_CASE("clone", "[clone]")
 {
     using namespace spdlog;
@@ -132,7 +131,6 @@ TEST_CASE("clone async", "[clone]")
 
     auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(cloned->sinks()[0]);
     REQUIRE(test_sink->msg_counter() == 2);
-
 
     spdlog::drop_all();
 }
