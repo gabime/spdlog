@@ -547,7 +547,7 @@ public:
 
     std::unique_ptr<formatter> clone() const override
     {
-        return std::unique_ptr<formatter>(new pattern_formatter(pattern_, pattern_time_type_, eol_));
+        return spdlog::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_);
     }
 
     void format(const details::log_msg &msg, fmt::memory_buffer &dest) override
@@ -588,146 +588,145 @@ private:
 
     void handle_flag_(char flag)
     {
-        using flag_formatter_ptr = std::unique_ptr<details::flag_formatter>;
         switch (flag)
         {
         // logger name
         case 'n':
-            formatters_.push_back(flag_formatter_ptr(new details::name_formatter()));
+            formatters_.push_back(make_unique<details::name_formatter>());
             break;
 
         case 'l':
-            formatters_.push_back(flag_formatter_ptr(new details::level_formatter()));
+            formatters_.push_back(make_unique<details::level_formatter>());
             break;
 
         case 'L':
-            formatters_.push_back(flag_formatter_ptr(new details::short_level_formatter()));
+            formatters_.push_back(make_unique<details::short_level_formatter>());
             break;
 
         case ('t'):
-            formatters_.push_back(flag_formatter_ptr(new details::t_formatter()));
+            formatters_.push_back(make_unique<details::t_formatter>());
             break;
 
         case ('v'):
-            formatters_.push_back(flag_formatter_ptr(new details::v_formatter()));
+            formatters_.push_back(make_unique<details::v_formatter>());
             break;
 
         case ('a'):
-            formatters_.push_back(flag_formatter_ptr(new details::a_formatter()));
+            formatters_.push_back(make_unique<details::a_formatter>());
             break;
 
         case ('A'):
-            formatters_.push_back(flag_formatter_ptr(new details::A_formatter()));
+            formatters_.push_back(make_unique<details::A_formatter>());
             break;
 
         case ('b'):
         case ('h'):
-            formatters_.push_back(flag_formatter_ptr(new details::b_formatter()));
+            formatters_.push_back(make_unique<details::b_formatter>());
             break;
 
         case ('B'):
-            formatters_.push_back(flag_formatter_ptr(new details::B_formatter()));
+            formatters_.push_back(make_unique<details::B_formatter>());
             break;
         case ('c'):
-            formatters_.push_back(flag_formatter_ptr(new details::c_formatter()));
+            formatters_.push_back(make_unique<details::c_formatter>());
             break;
 
         case ('C'):
-            formatters_.push_back(flag_formatter_ptr(new details::C_formatter()));
+            formatters_.push_back(make_unique<details::C_formatter>());
             break;
 
         case ('Y'):
-            formatters_.push_back(flag_formatter_ptr(new details::Y_formatter()));
+            formatters_.push_back(make_unique<details::Y_formatter>());
             break;
 
         case ('D'):
         case ('x'):
-            formatters_.push_back(flag_formatter_ptr(new details::D_formatter()));
+            formatters_.push_back(make_unique<details::D_formatter>());
             break;
 
         case ('m'):
-            formatters_.push_back(flag_formatter_ptr(new details::m_formatter()));
+            formatters_.push_back(make_unique<details::m_formatter>());
             break;
 
         case ('d'):
-            formatters_.push_back(flag_formatter_ptr(new details::d_formatter()));
+            formatters_.push_back(make_unique<details::d_formatter>());
             break;
 
         case ('H'):
-            formatters_.push_back(flag_formatter_ptr(new details::H_formatter()));
+            formatters_.push_back(make_unique<details::H_formatter>());
             break;
 
         case ('I'):
-            formatters_.push_back(flag_formatter_ptr(new details::I_formatter()));
+            formatters_.push_back(make_unique<details::I_formatter>());
             break;
 
         case ('M'):
-            formatters_.push_back(flag_formatter_ptr(new details::M_formatter()));
+            formatters_.push_back(make_unique<details::M_formatter>());
             break;
 
         case ('S'):
-            formatters_.push_back(flag_formatter_ptr(new details::S_formatter()));
+            formatters_.push_back(make_unique<details::S_formatter>());
             break;
 
         case ('e'):
-            formatters_.push_back(flag_formatter_ptr(new details::e_formatter()));
+            formatters_.push_back(make_unique<details::e_formatter>());
             break;
 
         case ('f'):
-            formatters_.push_back(flag_formatter_ptr(new details::f_formatter()));
+            formatters_.push_back(make_unique<details::f_formatter>());
             break;
         case ('F'):
-            formatters_.push_back(flag_formatter_ptr(new details::F_formatter()));
+            formatters_.push_back(make_unique<details::F_formatter>());
             break;
 
         case ('E'):
-            formatters_.push_back(flag_formatter_ptr(new details::E_formatter()));
+            formatters_.push_back(make_unique<details::E_formatter>());
             break;
 
         case ('p'):
-            formatters_.push_back(flag_formatter_ptr(new details::p_formatter()));
+            formatters_.push_back(make_unique<details::p_formatter>());
             break;
 
         case ('r'):
-            formatters_.push_back(flag_formatter_ptr(new details::r_formatter()));
+            formatters_.push_back(make_unique<details::r_formatter>());
             break;
 
         case ('R'):
-            formatters_.push_back(flag_formatter_ptr(new details::R_formatter()));
+            formatters_.push_back(make_unique<details::R_formatter>());
             break;
 
         case ('T'):
         case ('X'):
-            formatters_.push_back(flag_formatter_ptr(new details::T_formatter()));
+            formatters_.push_back(make_unique<details::T_formatter>());
             break;
 
         case ('z'):
-            formatters_.push_back(flag_formatter_ptr(new details::z_formatter()));
+            formatters_.push_back(make_unique<details::z_formatter>());
             break;
 
         case ('+'):
-            formatters_.push_back(flag_formatter_ptr(new details::full_formatter()));
+            formatters_.push_back(make_unique<details::full_formatter>());
             break;
 
         case ('P'):
-            formatters_.push_back(flag_formatter_ptr(new details::pid_formatter()));
+            formatters_.push_back(make_unique<details::pid_formatter>());
             break;
 
         case ('i'):
-            formatters_.push_back(flag_formatter_ptr(new details::i_formatter()));
+            formatters_.push_back(make_unique<details::i_formatter>());
             break;
 
         case ('^'):
-            formatters_.push_back(flag_formatter_ptr(new details::color_start_formatter()));
+            formatters_.push_back(make_unique<details::color_start_formatter>());
             break;
 
         case ('$'):
-            formatters_.push_back(flag_formatter_ptr(new details::color_stop_formatter()));
+            formatters_.push_back(make_unique<details::color_stop_formatter>());
             break;
 
         default: // Unknown flag appears as is
-            formatters_.push_back(flag_formatter_ptr(new details::ch_formatter('%')));
-            formatters_.push_back(flag_formatter_ptr(new details::ch_formatter(flag)));
+            formatters_.push_back(make_unique<details::ch_formatter>('%'));
+            formatters_.push_back(make_unique<details::ch_formatter>(flag));
             break;
         }
     }
@@ -758,7 +757,7 @@ private:
             {
                 if (!user_chars)
                 {
-                    user_chars = std::unique_ptr<details::aggregate_formatter>(new details::aggregate_formatter());
+                    user_chars = spdlog::make_unique<details::aggregate_formatter>();
                 }
                 user_chars->add_ch(*it);
             }
