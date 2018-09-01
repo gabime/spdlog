@@ -16,7 +16,7 @@
 
 #include <chrono>
 #include <functional>
-#include <memory>
+#include <memory
 #include <string>
 #include <unordered_map>
 
@@ -113,7 +113,7 @@ public:
     {
         std::lock_guard<std::mutex> lock(flusher_mutex_);
         std::function<void()> clbk = std::bind(&registry::flush_all, this);
-        periodic_flusher_ = make_unique<periodic_worker>(clbk, interval);
+        periodic_flusher_ = spdlog::make_unique<periodic_worker>(clbk, interval);
     }
 
     void set_error_handler(log_err_handler handler)
