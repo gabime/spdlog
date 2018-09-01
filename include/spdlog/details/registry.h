@@ -16,7 +16,7 @@
 
 #include <chrono>
 #include <functional>
-#include <memory
+#include <memory>
 #include <string>
 #include <unordered_map>
 
