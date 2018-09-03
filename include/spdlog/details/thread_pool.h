@@ -64,8 +64,8 @@ struct async_msg
         return *this;
     }
 #else // (_MSC_VER) && _MSC_VER <= 1800
-    async_msg(async_msg &&other) = default;
-    async_msg &operator=(async_msg &&other) = default;
+    async_msg(async_msg &&) = default;
+    async_msg &operator=(async_msg &&) = default;
 #endif
 
     // construct from log_msg with given type
