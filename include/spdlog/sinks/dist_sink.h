@@ -40,6 +40,12 @@ public:
         sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink), sinks_.end());
     }
 
+    void set_sinks(std::vector<std::shared_ptr<sink>> sinks)
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        sinks_ = std::move(sinks);
+    }
+
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
