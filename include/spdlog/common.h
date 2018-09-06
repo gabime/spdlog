@@ -100,6 +100,7 @@ inline const char *to_short_c_str(spdlog::level::level_enum l)
 {
     return short_level_names[l];
 }
+
 inline spdlog::level::level_enum from_str(const std::string &name)
 {
     static std::unordered_map<std::string, level_enum> name_to_level = // map string->level
@@ -131,35 +132,28 @@ enum class pattern_time_type
 //
 // Log exception
 //
-class spdlog_ex : public std::runtime_error
+class spdlog_ex : public std::exception
 {
 public:
     explicit spdlog_ex(const std::string &msg)
-        : runtime_error(msg)
+        : msg_(msg)
     {
     }
-    spdlog_ex(std::string msg, int last_errno)
-        : runtime_error(std::move(msg))
-        , last_errno_(last_errno)
+
+    spdlog_ex(const std::string &msg, int last_errno)
     {
+        fmt::memory_buffer outbuf;
+        fmt::format_system_error(outbuf, last_errno, msg);
+        msg_ = fmt::to_string(outbuf);
     }
+
     const char *what() const SPDLOG_NOEXCEPT override
     {
-        if (last_errno_)
-        {
-            fmt::memory_buffer buf;
-            std::string msg(runtime_error::what());
-            fmt::format_system_error(buf, last_errno_, msg);
-            return fmt::to_string(buf).c_str();
-        }
-        else
-        {
-            return runtime_error::what();
-        }
+        return msg_.c_str();
     }
 
 private:
-    int last_errno_{0};
+    std::string msg_;
 };
 
 //
@@ -180,4 +174,17 @@ using filename_t = std::string;
     {                                                                                                                                      \
         err_handler_("Unknown exeption in logger");                                                                                        \
     }
+
+//
+// make_unique support
+//
+#if __cplusplus >= 201402L // C++14 and beyond
+using std::make_unique;
+#else
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args &&... args)
+{
+    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+#endif
 } // namespace spdlog

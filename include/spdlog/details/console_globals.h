@@ -5,14 +5,27 @@
 //
 
 #include "spdlog/details/null_mutex.h"
-#include "stdio.h"
+#include <cstdio>
 #include <mutex>
+
+#ifdef _WIN32
+
+#ifndef NOMINMAX
+#define NOMINMAX // prevent windows redefining min/max
+#endif
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <windows.h>
+#endif
 
 namespace spdlog {
 namespace details {
 struct console_stdout
 {
-    static FILE *stream()
+    static std::FILE *stream()
     {
         return stdout;
     }
@@ -26,7 +39,7 @@ struct console_stdout
 
 struct console_stderr
 {
-    static FILE *stream()
+    static std::FILE *stream()
     {
         return stderr;
     }

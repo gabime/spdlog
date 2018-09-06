@@ -22,7 +22,7 @@
 # *************************************************************************/
 
 cmake_minimum_required(VERSION 3.1)
-project(SpdlogExamples CXX)
+project(SpdlogBench CXX)
 
 if(NOT TARGET spdlog)
   # Stand-alone build
@@ -31,13 +31,13 @@ endif()
 
 find_package(Threads REQUIRED)
 
-add_executable(example example.cpp)
-target_link_libraries(example spdlog::spdlog Threads::Threads)
+add_executable(bench bench.cpp)
+target_link_libraries(bench spdlog::spdlog Threads::Threads)
 
-add_executable(multisink multisink.cpp)
-target_link_libraries(multisink spdlog::spdlog Threads::Threads)
+add_executable(async_bench async_bench.cpp)
+target_link_libraries(async_bench spdlog::spdlog Threads::Threads)
+
+add_executable(latency latency.cpp)
+target_link_libraries(latency spdlog::spdlog Threads::Threads)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
-
-enable_testing()
-add_test(NAME example COMMAND example)

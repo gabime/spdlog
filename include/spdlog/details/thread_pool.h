@@ -64,8 +64,8 @@ struct async_msg
         return *this;
     }
 #else // (_MSC_VER) && _MSC_VER <= 1800
-    async_msg(async_msg &&other) = default;
-    async_msg &operator=(async_msg &&other) = default;
+    async_msg(async_msg &&) = default;
+    async_msg &operator=(async_msg &&) = default;
 #endif
 
     // construct from log_msg with given type
@@ -122,7 +122,7 @@ public:
         }
         for (size_t i = 0; i < threads_n; i++)
         {
-            threads_.emplace_back(std::bind(&thread_pool::worker_loop_, this));
+            threads_.emplace_back(&thread_pool::worker_loop_, this);
         }
     }
 
@@ -155,6 +155,11 @@ public:
     void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy)
     {
         post_async_msg_(async_msg(std::move(worker_ptr), async_msg_type::flush), overflow_policy);
+    }
+
+    size_t overrun_counter()
+    {
+        return q_.overrun_counter();
     }
 
 private:
@@ -193,6 +198,13 @@ private:
 
         switch (incoming_async_msg.msg_type)
         {
+        case async_msg_type::log:
+        {
+            log_msg msg;
+            incoming_async_msg.to_log_msg(msg);
+            incoming_async_msg.worker_ptr->backend_log_(msg);
+            return true;
+        }
         case async_msg_type::flush:
         {
             incoming_async_msg.worker_ptr->backend_flush_();
@@ -203,16 +215,9 @@ private:
         {
             return false;
         }
-
-        default:
-        {
-            log_msg msg;
-            incoming_async_msg.to_log_msg(msg);
-            incoming_async_msg.worker_ptr->backend_log_(msg);
-            return true;
         }
-        }
-        return true; // should not be reached
+        assert(false && "Unexpected async_msg_type");
+        return true;
     }
 };
 

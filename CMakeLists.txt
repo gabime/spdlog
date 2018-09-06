@@ -4,27 +4,50 @@
 #
 
 cmake_minimum_required(VERSION 3.1)
-project(spdlog VERSION 1.0.0 LANGUAGES CXX)
+project(spdlog VERSION 1.1.0 LANGUAGES CXX)
 include(CTest)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
+
+#---------------------------------------------------------------------------------------
+# set default build to release
+#---------------------------------------------------------------------------------------
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
+endif()
+
+message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 #---------------------------------------------------------------------------------------
 # compiler config
 #---------------------------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    set(CMAKE_CXX_FLAGS "-Wall -O3 ${CMAKE_CXX_FLAGS}")
+    add_compile_options("-Wall")
+    add_compile_options("-Wextra")
+    add_compile_options("-Wconversion")
+    add_compile_options("-pedantic")
+    add_compile_options("-Wfatal-errors")
+    
 endif()
+
+#---------------------------------------------------------------------------------------
+# address sanitizers check
+#---------------------------------------------------------------------------------------
+include(cmake/sanitizers.cmake)
 
 #---------------------------------------------------------------------------------------
 # spdlog target
 #---------------------------------------------------------------------------------------
 add_library(spdlog INTERFACE)
+add_library(spdlog::spdlog ALIAS spdlog)
 
-option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
+option(SPDLOG_BUILD_EXAMPLES "Build examples" ON)
+option(SPDLOG_BUILD_BENCH "Build benchmarks" ON)
+
 cmake_dependent_option(SPDLOG_BUILD_TESTING
     "Build spdlog tests" ON
     "BUILD_TESTING" OFF
@@ -45,6 +68,10 @@ endif()
 
 if(SPDLOG_BUILD_TESTING)
     add_subdirectory(tests)
+endif()
+
+if(SPDLOG_BUILD_BENCH)
+    add_subdirectory(bench)
 endif()
 
 #---------------------------------------------------------------------------------------

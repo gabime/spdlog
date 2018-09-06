@@ -30,7 +30,7 @@ protected:
     {
         fmt::memory_buffer formatted;
         sink::formatter_->format(msg, formatted);
-        ostream_.write(formatted.data(), formatted.size());
+        ostream_.write(formatted.data(), static_cast<std::streamsize>(formatted.size()));
         if (force_flush_)
             ostream_.flush();
     }

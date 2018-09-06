@@ -12,14 +12,13 @@
 #include <cstdio>
 #include <memory>
 #include <mutex>
-#include <spdlog/details/console_globals.h>
 
 namespace spdlog {
 
 namespace sinks {
 
 template<typename TargetStream, typename ConsoleMutex>
-class stdout_sink : public sink
+class stdout_sink SPDLOG_FINAL : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
@@ -28,7 +27,7 @@ public:
         , file_(TargetStream::stream())
     {
     }
-    ~stdout_sink() = default;
+    ~stdout_sink() override = default;
 
     stdout_sink(const stdout_sink &other) = delete;
     stdout_sink &operator=(const stdout_sink &other) = delete;
@@ -48,13 +47,13 @@ public:
         fflush(file_);
     }
 
-    void set_pattern(const std::string &pattern) override SPDLOG_FINAL
+    void set_pattern(const std::string &pattern) override
     {
         std::lock_guard<mutex_t> lock(mutex_);
         formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
     }
 
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override SPDLOG_FINAL
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override
     {
         std::lock_guard<mutex_t> lock(mutex_);
         formatter_ = std::move(sink_formatter);

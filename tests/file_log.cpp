@@ -33,7 +33,7 @@ TEST_CASE("flush_on", "[flush_on]]")
 
     logger->info("Test message {}", 1);
     logger->info("Test message {}", 2);
-    logger->flush();
+
     REQUIRE(file_contents(filename) == std::string("Should not be flushed\nTest message 1\nTest message 2\n"));
     REQUIRE(count_lines(filename) == 3);
 }

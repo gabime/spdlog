@@ -120,15 +120,21 @@ public:
     void set_formatter(std::unique_ptr<formatter> formatter);
     void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
+    // flush functions
     void flush();
     void flush_on(level::level_enum log_level);
+    level::level_enum flush_level() const;
 
+    // sinks
     const std::vector<sink_ptr> &sinks() const;
-
     std::vector<sink_ptr> &sinks();
 
+    // error handler
     void set_error_handler(log_err_handler err_handler);
     log_err_handler error_handler();
+
+    // create new logger with same sinks and configuration.
+    virtual std::shared_ptr<logger> clone(std::string logger_name);
 
 protected:
     virtual void sink_it_(details::log_msg &msg);

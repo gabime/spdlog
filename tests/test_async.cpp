@@ -7,6 +7,7 @@ TEST_CASE("basic async test ", "[async]")
 {
     using namespace spdlog;
     auto test_sink = std::make_shared<sinks::test_sink_mt>();
+    size_t overrun_counter = 0;
     size_t queue_size = 128;
     size_t messages = 256;
     {
@@ -17,17 +18,20 @@ TEST_CASE("basic async test ", "[async]")
             logger->info("Hello message #{}", i);
         }
         logger->flush();
+        overrun_counter = tp->overrun_counter();
     }
     REQUIRE(test_sink->msg_counter() == messages);
     REQUIRE(test_sink->flush_counter() == 1);
+    REQUIRE(overrun_counter == 0);
 }
 
 TEST_CASE("discard policy ", "[async]")
 {
     using namespace spdlog;
     auto test_sink = std::make_shared<sinks::test_sink_mt>();
-    size_t queue_size = 2;
-    size_t messages = 10240;
+    test_sink->set_delay(std::chrono::milliseconds(1));
+    size_t queue_size = 4;
+    size_t messages = 1024;
 
     auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
     auto logger = std::make_shared<async_logger>("as", test_sink, tp, async_overflow_policy::overrun_oldest);
@@ -36,22 +40,26 @@ TEST_CASE("discard policy ", "[async]")
         logger->info("Hello message");
     }
     REQUIRE(test_sink->msg_counter() < messages);
+    REQUIRE(tp->overrun_counter() > 0);
 }
 
 TEST_CASE("discard policy using factory ", "[async]")
 {
     using namespace spdlog;
-    size_t queue_size = 2;
-    size_t messages = 10240;
+    size_t queue_size = 4;
+    size_t messages = 1024;
     spdlog::init_thread_pool(queue_size, 1);
 
     auto logger = spdlog::create_async_nb<sinks::test_sink_mt>("as2");
+    auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
+    test_sink->set_delay(std::chrono::milliseconds(1));
+
     for (size_t i = 0; i < messages; i++)
     {
         logger->info("Hello message");
     }
-    auto sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
-    REQUIRE(sink->msg_counter() < messages);
+
+    REQUIRE(test_sink->msg_counter() < messages);
     spdlog::drop_all();
 }
 

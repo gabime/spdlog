@@ -3,6 +3,7 @@
 Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.org/gabime/spdlog.svg?branch=master)](https://travis-ci.org/gabime/spdlog)&nbsp; [![Build status](https://ci.appveyor.com/api/projects/status/d2jnxclg20vd0o50?svg=true)](https://ci.appveyor.com/project/gabime/spdlog)
 
 
+
 ## Install
 #### Just copy the headers:
 
@@ -28,7 +29,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 ## Features
 * Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
 * Headers only, just copy and use.
-* Feature rich [call style](#usage-example) using the excellent [fmt](https://github.com/fmtlib/fmt) library.
+* Feature rich using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * Fast asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Conditional Logging
@@ -53,27 +54,28 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 *******************************************************************************
 Single thread, 1,000,000 iterations
 *******************************************************************************
-basic_st...		Elapsed: 0.231041	4,328,228/sec
-rotating...             Elapsed: 0.233466	4,283,282/sec
-daily_st...		Elapsed: 0.244491	4,090,136/sec
-null_st...		Elapsed: 0.162708	6,145,995/sec
+basic_st...		    Elapsed: 0.226664	4,411,806/sec
+rotating_st...	 	    Elapsed: 0.214339	4,665,499/sec
+daily_st...		    Elapsed: 0.211292	4,732,797/sec
+null_st...		    Elapsed: 0.102815	9,726,227/sec
 
 *******************************************************************************
 10 threads sharing same logger, 1,000,000 iterations
 *******************************************************************************
-basic_mt...		Elapsed: 0.854029	1,170,920/sec
-rotating_mt		Elapsed: 0.867038	1,153,351/sec
-daily_mt...		Elapsed: 0.869593	1,149,963/sec
-null_mt...		Elapsed: 0.171215	2,033,537/sec
-```
+basic_mt...		    Elapsed: 0.882268	1,133,441/sec
+rotating_mt...              Elapsed: 0.875515	1,142,184/sec
+daily_mt...		    Elapsed: 0.879573	1,136,915/sec
+null_mt...		    Elapsed: 0.220114	4,543,105/sec
+``` 
 #### Asynchronous mode
 ```
 *******************************************************************************
 10 threads sharing same logger, 1,000,000 iterations 
 *******************************************************************************
-async...		Elapsed: 0.442731	2,258,706/sec
-async...		Elapsed: 0.427072	2,341,527/sec
-async...		Elapsed: 0.449768	2,223,369/sec
+async...		Elapsed: 0.429088	2,330,524/sec
+async...		Elapsed: 0.411501	2,430,126/sec
+async...		Elapsed: 0.428979	2,331,116/sec
+
 ```
 
 ## Usage samples
@@ -158,6 +160,18 @@ void daily_example()
 ```
 
 ---
+#### Cloning loggers 
+```c++
+// clone a logger and give it new name.
+// Useful for creating subsystem loggers from some "root" logger
+void clone_example()
+{
+    auto network_logger = spdlog::get("root")->clone("network");
+    network_logger->info("Logging network stuff..");
+}
+```
+
+---
 #### Periodic flush
 ```c++
 // periodically flush all *registered* loggers every 3 seconds:
@@ -166,22 +180,9 @@ spdlog::flush_every(std::chrono::seconds(3));
 
 ```
 
----
-#### Asynchronous logging
-```c++
-#include "spdlog/async.h"
-void async_example()
-{
-    // default thread pool settings can be modified *before* creating the async logger:
-    // spdlog::init_thread_pool(8192, 1); // queue with 8k items and 1 backing thread.
-    auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt");
-    // alternatively:
-    // auto async_file = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("async_file_logger", "logs/async_log.txt");   
-}
 
-```
 ---
-#### Logger with multi targets - each with different format and log level
+#### Logger with multi sinks - each with different format and log level
 ```c++
 
 // create logger with 2 targets with different log levels and formats.
@@ -201,6 +202,40 @@ void multi_sink_example()
     logger.info("this message should not appear in the console, only in the file");
 }
 ```
+
+---
+#### Asynchronous logging
+```c++
+#include "spdlog/async.h"
+#include "spdlog/sinks/basic_file_sink.h"
+void async_example()
+{
+    // default thread pool settings can be modified *before* creating the async logger:
+    // spdlog::init_thread_pool(8192, 1); // queue with 8k items and 1 backing thread.
+    auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt");
+    // alternatively:
+    // auto async_file = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("async_file_logger", "logs/async_log.txt");   
+}
+
+```
+
+---
+#### Asynchronous logger with multi sinks  
+```c++
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/rotating_file_sink.h"
+
+void multi_sink_example2()
+{
+    spdlog::init_thread_pool(8192, 1);
+    auto stdout_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt >();
+    auto rotating_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>("mylog.txt", 1024*1024*10, 3);
+    std::vector<spdlog::sink_ptr> sinks {stdout_sink, rotating_sink};
+    auto logger = std::make_shared<spdlog::async_logger>("loggername", sinks.begin(), sinks.end(), spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+    spdlog::register_logger(logger);
+}
+```
+ 
 ---
 #### User defined types
 ```c++
@@ -240,7 +275,7 @@ void err_handler_example()
 void syslog_example()
 {
     std::string ident = "spdlog-example";
-    auto syslog_logger = spdlog::syslog_logger("syslog", ident, LOG_PID);
+    auto syslog_logger = spdlog::syslog_logger_mt("syslog", ident, LOG_PID);
     syslog_logger->warn("This is warning that will end up in syslog.");
 }
 ```

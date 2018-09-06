@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <exception>
 #include <fstream>
+#include <iostream>
 #include <ostream>
 #include <string>
 

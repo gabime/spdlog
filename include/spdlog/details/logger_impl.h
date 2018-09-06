@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "spdlog/details/fmt_helper.h"
+
 #include <memory>
 #include <string>
 
@@ -77,7 +79,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
     try
     {
         details::log_msg log_msg(&name_, lvl);
-        fmt::format_to(log_msg.raw, "{}", msg);
+        details::fmt_helper::append_c_str(msg, log_msg.raw);
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -268,6 +270,11 @@ inline void spdlog::logger::flush_on(level::level_enum log_level)
     flush_level_.store(log_level);
 }
 
+inline spdlog::level::level_enum spdlog::logger::flush_level() const
+{
+    return static_cast<spdlog::level::level_enum>(flush_level_.load(std::memory_order_relaxed));
+}
+
 inline bool spdlog::logger::should_flush_(const details::log_msg &msg)
 {
     auto flush_level = flush_level_.load(std::memory_order_relaxed);
@@ -342,4 +349,13 @@ inline const std::vector<spdlog::sink_ptr> &spdlog::logger::sinks() const
 inline std::vector<spdlog::sink_ptr> &spdlog::logger::sinks()
 {
     return sinks_;
+}
+
+inline std::shared_ptr<spdlog::logger> spdlog::logger::clone(std::string logger_name)
+{
+    auto cloned = std::make_shared<spdlog::logger>(std::move(logger_name), sinks_.begin(), sinks_.end());
+    cloned->set_level(this->level());
+    cloned->flush_on(this->flush_level());
+    cloned->set_error_handler(this->error_handler());
+    return cloned;
 }

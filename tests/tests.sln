@@ -56,7 +56,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sinks", "sinks", "{093AE34A
 		..\include\spdlog\sinks\ansicolor_sink.h = ..\include\spdlog\sinks\ansicolor_sink.h
 		..\include\spdlog\sinks\base_sink.h = ..\include\spdlog\sinks\base_sink.h
 		..\include\spdlog\sinks\dist_sink.h = ..\include\spdlog\sinks\dist_sink.h
-		..\include\spdlog\sinks\file_sinks.h = ..\include\spdlog\sinks\file_sinks.h
 		..\include\spdlog\sinks\msvc_sink.h = ..\include\spdlog\sinks\msvc_sink.h
 		..\include\spdlog\sinks\null_sink.h = ..\include\spdlog\sinks\null_sink.h
 		..\include\spdlog\sinks\ostream_sink.h = ..\include\spdlog\sinks\ostream_sink.h
@@ -65,7 +64,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sinks", "sinks", "{093AE34A
 		..\include\spdlog\sinks\stdout_sinks.h = ..\include\spdlog\sinks\stdout_sinks.h
 		..\include\spdlog\sinks\syslog_sink.h = ..\include\spdlog\sinks\syslog_sink.h
 		..\include\spdlog\sinks\wincolor_sink.h = ..\include\spdlog\sinks\wincolor_sink.h
-		..\include\spdlog\sinks\windebug_sink.h = ..\include\spdlog\sinks\windebug_sink.h
 	EndProjectSection
 EndProject
 Global

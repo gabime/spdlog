@@ -24,8 +24,8 @@ class syslog_sink : public base_sink<Mutex>
 {
 public:
     //
-    syslog_sink(const std::string &ident = "", int syslog_option = 0, int syslog_facility = LOG_USER)
-        : ident_(ident)
+    explicit syslog_sink(std::string ident = "", int syslog_option = 0, int syslog_facility = LOG_USER)
+        : ident_(std::move(ident))
     {
         priorities_[static_cast<size_t>(level::trace)] = LOG_DEBUG;
         priorities_[static_cast<size_t>(level::debug)] = LOG_DEBUG;

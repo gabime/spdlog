@@ -35,7 +35,7 @@ public:
         std::lock_guard<std::mutex> lock(logger_map_mutex_);
         auto logger_name = new_logger->name();
         throw_if_exists_(logger_name);
-        loggers_[logger_name] = new_logger;
+        loggers_[logger_name] = std::move(new_logger);
     }
 
     void register_and_init(std::shared_ptr<logger> new_logger)
@@ -56,7 +56,7 @@ public:
         new_logger->flush_on(flush_level_);
 
         // add to registry
-        loggers_[logger_name] = new_logger;
+        loggers_[logger_name] = std::move(new_logger);
     }
 
     std::shared_ptr<logger> get(const std::string &logger_name)
@@ -112,8 +112,8 @@ public:
     void flush_every(std::chrono::seconds interval)
     {
         std::lock_guard<std::mutex> lock(flusher_mutex_);
-        std::function<void()> clbk(std::bind(&registry::flush_all, this));
-        periodic_flusher_.reset(new periodic_worker(clbk, interval));
+        std::function<void()> clbk = std::bind(&registry::flush_all, this);
+        periodic_flusher_ = spdlog::make_unique<periodic_worker>(clbk, interval);
     }
 
     void set_error_handler(log_err_handler handler)
@@ -126,7 +126,7 @@ public:
         err_handler_ = handler;
     }
 
-    void apply_all(std::function<void(std::shared_ptr<logger>)> fun)
+    void apply_all(const std::function<void(const std::shared_ptr<logger>)> &fun)
     {
         std::lock_guard<std::mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
@@ -189,11 +189,7 @@ private:
     {
     }
 
-    ~registry()
-    {
-        /*std::lock_guard<std::mutex> lock(flusher_mutex_);
-        periodic_flusher_.reset();*/
-    }
+    ~registry() = default;
 
     void throw_if_exists_(const std::string &logger_name)
     {
