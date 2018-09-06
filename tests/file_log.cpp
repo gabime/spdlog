@@ -60,7 +60,7 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
     prepare_logdir();
     size_t max_size = 1024 * 10;
     std::string basename = "logs/rotating_log";
-    auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 1);
+    auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 1, true);
     for (int i = 0; i < 10; ++i)
         logger->info("Test message {}", i);
 
