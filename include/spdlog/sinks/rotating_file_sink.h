@@ -86,30 +86,36 @@ private:
         for (auto i = max_files_; i > 0; --i)
         {
             filename_t src = calc_filename(base_filename_, i - 1);
+            if (!details::file_helper::file_exists(src))
+            {
+                continue;
+            }
             filename_t target = calc_filename(base_filename_, i);
 
-            if (details::file_helper::file_exists(target))
+            if (!rename_file(src, target))
             {
-                if (details::os::remove(target) != 0)
-                {
-                    throw spdlog_ex("rotating_file_sink: failed removing " + filename_to_str(target), errno);
-                }
-            }
-            if (details::file_helper::file_exists(src) && details::os::rename(src, target) != 0)
-            {
-                // if failed try again after small delay.
+                // if failed try again after a small delay.
                 // this is a workaround to a windows issue, where very high rotation
-                // rates sometimes fail (because of antivirus?).
-                details::os::sleep_for_millis(20);
-                details::os::remove(target);
-                if (details::os::rename(src, target) != 0)
+                // rates can cause the rename to fail with permission denied (because of antivirus?).
+                details::os::sleep_for_millis(100);
+                if (!rename_file(src, target))
                 {
+                    file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
                     throw spdlog_ex(
                         "rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
                 }
             }
         }
         file_helper_.reopen(true);
+    }
+
+    // delete the target if exists, and rename the src file  to target
+    // return true on success, false otherwise.
+    bool rename_file(const filename_t &src_filename, const filename_t &target_filename)
+    {
+        // try to delete the target file in case it already exists.
+        (void)details::os::remove(target_filename);
+        return details::os::rename(src_filename, target_filename) == 0;
     }
 
     filename_t base_filename_;
