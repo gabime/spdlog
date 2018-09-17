@@ -8,6 +8,7 @@
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/os.h"
+#include "spdlog/sinks/sink.h"
 
 #include <memory>
 #include <mutex>
