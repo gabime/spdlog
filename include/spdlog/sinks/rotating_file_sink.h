@@ -101,7 +101,10 @@ private:
                 // this is a workaround to a windows issue, where very high rotation
                 // rates sometimes fail (because of antivirus?).
                 details::os::sleep_for_millis(20);
-                details::os::remove(target);
+                if (details::os::remove(target) != 0)
+                {
+                    throw spdlog_ex("rotating_file_sink: failed removing " + filename_to_str(target), errno);
+                }
                 if (details::os::rename(src, target) != 0)
                 {
                     throw spdlog_ex(
