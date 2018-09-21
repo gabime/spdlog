@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
         cout << "******************************************************************"
                 "*************\n";
 
-        auto basic_st = spdlog::basic_logger_mt("basic_st", "logs/basic_st.log", true);
+        auto basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
         bench(howmany, basic_st);
 
         auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
