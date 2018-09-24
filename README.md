@@ -53,28 +53,26 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 *******************************************************************************
 Single thread, 1,000,000 iterations
 *******************************************************************************
-basic_st...		    Elapsed: 0.226664	4,411,806/sec
-rotating_st...	 	    Elapsed: 0.214339	4,665,499/sec
-daily_st...		    Elapsed: 0.211292	4,732,797/sec
-null_st...		    Elapsed: 0.102815	9,726,227/sec
-
+basic_st...             Elapsed: 0.181652       5,505,042/sec
+rotating_st...          Elapsed: 0.181781       5,501,117/sec
+daily_st...             Elapsed: 0.187595       5,330,630/sec
+null_st...              Elapsed: 0.0504704      19,813,602/sec
 *******************************************************************************
 10 threads sharing same logger, 1,000,000 iterations
 *******************************************************************************
-basic_mt...		    Elapsed: 0.882268	1,133,441/sec
-rotating_mt...              Elapsed: 0.875515	1,142,184/sec
-daily_mt...		    Elapsed: 0.879573	1,136,915/sec
-null_mt...		    Elapsed: 0.220114	4,543,105/sec
+basic_mt...             Elapsed: 0.616035       1,623,284/sec
+rotating_mt...          Elapsed: 0.620344       1,612,008/sec
+daily_mt...             Elapsed: 0.648353       1,542,369/sec
+null_mt...              Elapsed: 0.151972       6,580,166/sec
 ``` 
 #### Asynchronous mode
 ```
 *******************************************************************************
 10 threads sharing same logger, 1,000,000 iterations 
 *******************************************************************************
-async...		Elapsed: 0.429088	2,330,524/sec
-async...		Elapsed: 0.411501	2,430,126/sec
-async...		Elapsed: 0.428979	2,331,116/sec
-
+async...                Elapsed: 0.350066       2,856,606/sec
+async...                Elapsed: 0.314865       3,175,960/sec
+async...                Elapsed: 0.349851       2,858,358/sec
 ```
 
 ## Usage samples
