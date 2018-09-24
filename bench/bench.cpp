@@ -32,7 +32,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 int main(int argc, char *argv[])
 {
 
-    int howmany = 1000000;
+    int howmany = 100000;
     int queue_size = howmany + 2;
     int threads = 10;
     size_t file_size = 30 * 1024 * 1024;
@@ -54,11 +54,19 @@ int main(int argc, char *argv[])
         cout << "******************************************************************"
                 "*************\n";
 
-        auto basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
-        bench(howmany, basic_st);
+
+         bench(howmany, spdlog::create<null_sink_st>("null_st"));
+         return 0;
 
         auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
         bench(howmany, rotating_st);
+
+         return 0;
+        auto basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
+        bench(howmany, basic_st);
+
+        //auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
+        //bench(howmany, rotating_st);
 
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st.log");
         bench(howmany, daily_st);
@@ -103,15 +111,17 @@ int main(int argc, char *argv[])
     }
     return EXIT_SUCCESS;
 }
+#include "spdlog/extra/to_hex.h"
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
     using std::chrono::high_resolution_clock;
     cout << log->name() << "...\t\t" << flush;
+    char buf[1024];
     auto start = high_resolution_clock::now();
     for (auto i = 0; i < howmany; ++i)
     {
-        log->info("Hello logger: msg number {}", i);
+        log->info("Hello logger: msg number {}", spdlog::to_hex(buf));
     }
 
     auto delta = high_resolution_clock::now() - start;

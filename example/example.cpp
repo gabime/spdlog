@@ -14,6 +14,7 @@ void basic_example();
 void rotating_example();
 void daily_example();
 void async_example();
+void binary_example();
 void multi_sink_example();
 void user_defined_example();
 void err_handler_example();
@@ -40,6 +41,9 @@ int main(int, char *[])
         // async logging using a backing thread pool
         async_example();
 
+        // log binary data
+        binary_example();
+        
         // a logger can have multiple targets with different formats
         multi_sink_example();
 
@@ -97,6 +101,7 @@ void stdout_example()
     // Customize msg format for all loggers
     spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
     console->info("This an info message with custom format");
+    spdlog::set_pattern("%+"); // back to default format
 
     // Compile time log levels
     // define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON
@@ -146,6 +151,30 @@ void async_example()
     {
         async_file->info("Async message #{}", i);
     }
+}
+
+// log binary data as hex.
+// many types of std::container<char> types can be used.
+// ranges are supported too.
+// format flags:
+// {:X} - print in uppercase.
+// {:s} - don't separate each byte with space.
+// {:p} - don't print the position on each line start.
+// {:n} - don't split the output to lines.
+
+#include "spdlog/fmt/bin_to_hex.h"
+
+void binary_example()
+{
+    auto console = spdlog::get("console");
+    std::array<char, 80> buf;
+    console->info("Binary example: {}", spdlog::to_hex(buf));
+    console->info("Another binary example:{:n}", spdlog::to_hex(std::begin(buf), std::begin(buf)+10));
+    // more examples:
+    // logger->info("uppercase: {:X}", spdlog::to_hex(buf));
+    // logger->info("uppercase, no delimiters: {:Xs}", spdlog::to_hex(buf));
+    // logger->info("uppercase, no delimiters, no position info: {:Xsp}", spdlog::to_hex(buf));
+
 }
 
 // create logger with 2 targets with different log levels and formats
