@@ -32,7 +32,6 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 * Feature rich using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * Fast asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
-* Conditional Logging
 * Multi/Single threaded loggers.
 * Various log targets:
     * Rotating log files.
@@ -42,7 +41,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
     * Windows debugger (```OutputDebugString(..)```)
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Severity based filtering - threshold levels can be modified in runtime as well as in compile time.
-
+* Binary to hex conversion and logging. 
 
 
 ## Benchmarks
@@ -180,6 +179,33 @@ spdlog::flush_every(std::chrono::seconds(3));
 
 ```
 
+---
+#### Binary logging
+```c++
+// log binary data as hex.
+// many types of std::container<char> types can be used.
+// ranges are supported too.
+// format flags:
+// {:X} - print in uppercase.
+// {:s} - don't separate each byte with space.
+// {:p} - don't print the position on each line start.
+// {:n} - don't split the output to lines.
+
+#include "spdlog/fmt/bin_to_hex.h"
+
+void binary_example()
+{
+    auto console = spdlog::get("console");
+    std::array<char, 80> buf;
+    console->info("Binary example: {}", spdlog::to_hex(buf));
+    console->info("Another binary example:{:n}", spdlog::to_hex(std::begin(buf), std::begin(buf) + 10));
+    // more examples:
+    // logger->info("uppercase: {:X}", spdlog::to_hex(buf));
+    // logger->info("uppercase, no delimiters: {:Xs}", spdlog::to_hex(buf));
+    // logger->info("uppercase, no delimiters, no position info: {:Xsp}", spdlog::to_hex(buf));
+}
+
+```
 
 ---
 #### Logger with multi sinks - each with different format and log level
