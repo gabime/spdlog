@@ -135,8 +135,6 @@ TEST_CASE("clone async", "[clone]")
     spdlog::drop_all();
 }
 
-
-
 #include "spdlog/fmt/bin_to_hex.h"
 
 TEST_CASE("to_hex", "[to_hex]")
@@ -145,7 +143,7 @@ TEST_CASE("to_hex", "[to_hex]")
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
     spdlog::logger oss_logger("oss", oss_sink);
 
-    std::vector<unsigned char> v {9, 0xa, 0xb, 0xc, 0xff, 0xff};
+    std::vector<unsigned char> v{9, 0xa, 0xb, 0xc, 0xff, 0xff};
     oss_logger.info("{}", spdlog::to_hex(v));
 
     auto output = oss.str();
@@ -158,7 +156,7 @@ TEST_CASE("to_hex_upper", "[to_hex]")
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
     spdlog::logger oss_logger("oss", oss_sink);
 
-    std::vector<unsigned char> v {9, 0xa, 0xb, 0xc, 0xff, 0xff};
+    std::vector<unsigned char> v{9, 0xa, 0xb, 0xc, 0xff, 0xff};
     oss_logger.info("{:X}", spdlog::to_hex(v));
 
     auto output = oss.str();
@@ -171,7 +169,7 @@ TEST_CASE("to_hex_no_delimiter", "[to_hex]")
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
     spdlog::logger oss_logger("oss", oss_sink);
 
-    std::vector<unsigned char> v {9, 0xa, 0xb, 0xc, 0xff, 0xff};
+    std::vector<unsigned char> v{9, 0xa, 0xb, 0xc, 0xff, 0xff};
     oss_logger.info("{:sX}", spdlog::to_hex(v));
 
     auto output = oss.str();

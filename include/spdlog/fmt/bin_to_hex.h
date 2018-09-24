@@ -21,7 +21,6 @@
 // char buf[128];
 // logger->info("Some buffer {:X}", spdlog::to_hex(std::begin(buf), std::end(buf)));
 
-
 namespace spdlog {
 namespace details {
 
@@ -30,20 +29,27 @@ class bytes_range
 {
 public:
     bytes_range(It range_begin, It range_end)
-      : begin_(range_begin), end_(range_end)
-    {}
+        : begin_(range_begin)
+        , end_(range_end)
+    {
+    }
 
-    It begin() const {return begin_;}
-    It end() const {return end_;}
+    It begin() const
+    {
+        return begin_;
+    }
+    It end() const
+    {
+        return end_;
+    }
 
 private:
     It begin_, end_;
-
 };
 } // namespace details
 
 // create a bytes_range that wraps the given container
-template <typename Container>
+template<typename Container>
 inline details::bytes_range<typename Container::const_iterator> to_hex(const Container &container)
 {
     static_assert(sizeof(typename Container::value_type) == 1, "sizeof(Container::value_type) != 1");
@@ -57,7 +63,6 @@ inline details::bytes_range<It> to_hex(const It range_begin, const It range_end)
 {
     return details::bytes_range<It>(range_begin, range_end);
 }
-
 
 } // namespace spdlog
 
@@ -83,18 +88,18 @@ struct formatter<spdlog::details::bytes_range<T>>
         {
             switch (*it)
             {
-                case 'X':
-                    use_uppercase = true;
-                    break;
-                case 's':
-                    put_delimiters = false;
-                    break;
-                case 'p':
-                    put_positions = false;
-                    break;
-                case 'n':
-                    put_newlines = false;
-                    break;
+            case 'X':
+                use_uppercase = true;
+                break;
+            case 's':
+                put_delimiters = false;
+                break;
+            case 'p':
+                put_positions = false;
+                break;
+            case 'n':
+                put_newlines = false;
+                break;
             }
 
             ++it;
@@ -114,7 +119,7 @@ struct formatter<spdlog::details::bytes_range<T>>
         std::size_t column = line_size;
         auto inserter = ctx.begin();
 
-        for (auto &item:the_range)
+        for (auto &item : the_range)
         {
             auto ch = static_cast<unsigned char>(item);
             pos++;
@@ -126,7 +131,7 @@ struct formatter<spdlog::details::bytes_range<T>>
                 // put first byte without delimiter in front of it
                 *inserter++ = hex_chars[(ch >> 4) & 0x0f];
                 *inserter++ = hex_chars[ch & 0x0f];
-                column+= 2;
+                column += 2;
                 continue;
             }
 
@@ -138,7 +143,7 @@ struct formatter<spdlog::details::bytes_range<T>>
 
             *inserter++ = hex_chars[(ch >> 4) & 0x0f];
             *inserter++ = hex_chars[ch & 0x0f];
-            column+= 2;
+            column += 2;
         }
         return inserter;
     }
@@ -155,7 +160,7 @@ struct formatter<spdlog::details::bytes_range<T>>
 
         if (put_positions)
         {
-            fmt::format_to(inserter, "{:<04X}: ", pos-1);
+            fmt::format_to(inserter, "{:<04X}: ", pos - 1);
             return 7;
         }
         else

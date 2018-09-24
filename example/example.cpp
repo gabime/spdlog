@@ -43,7 +43,7 @@ int main(int, char *[])
 
         // log binary data
         binary_example();
-        
+
         // a logger can have multiple targets with different formats
         multi_sink_example();
 
@@ -169,12 +169,11 @@ void binary_example()
     auto console = spdlog::get("console");
     std::array<char, 80> buf;
     console->info("Binary example: {}", spdlog::to_hex(buf));
-    console->info("Another binary example:{:n}", spdlog::to_hex(std::begin(buf), std::begin(buf)+10));
+    console->info("Another binary example:{:n}", spdlog::to_hex(std::begin(buf), std::begin(buf) + 10));
     // more examples:
     // logger->info("uppercase: {:X}", spdlog::to_hex(buf));
     // logger->info("uppercase, no delimiters: {:Xs}", spdlog::to_hex(buf));
     // logger->info("uppercase, no delimiters, no position info: {:Xsp}", spdlog::to_hex(buf));
-
 }
 
 // create logger with 2 targets with different log levels and formats
