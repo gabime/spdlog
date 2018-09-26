@@ -129,8 +129,8 @@ enum class pattern_time_type
 class spdlog_ex : public std::exception
 {
 public:
-    explicit spdlog_ex(const std::string &msg)
-        : msg_(msg)
+    explicit spdlog_ex(std::string msg)
+        : msg_(std::move(msg))
     {
     }
 
