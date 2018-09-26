@@ -137,7 +137,7 @@ public:
     virtual std::shared_ptr<logger> clone(std::string logger_name);
 
 protected:
-    virtual void sink_it_(details::log_msg &msg);
+    virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
 
     bool should_flush_(const details::log_msg &msg);
