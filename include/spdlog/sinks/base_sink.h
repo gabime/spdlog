@@ -22,11 +22,7 @@ template<typename Mutex>
 class base_sink : public sink
 {
 public:
-    base_sink()
-        : sink()
-    {
-    }
-
+    base_sink() = default;
     base_sink(const base_sink &) = delete;
     base_sink &operator=(const base_sink &) = delete;
 
