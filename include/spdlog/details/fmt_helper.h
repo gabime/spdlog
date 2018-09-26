@@ -115,7 +115,8 @@ inline void pad6(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 template<typename ToDuration>
 inline ToDuration time_fraction(const log_clock::time_point &tp)
 {
-    using namespace std::chrono;
+    using std::chrono::duration_cast;
+    using std::chrono::seconds;
     auto duration = tp.time_since_epoch();
     auto secs = duration_cast<seconds>(duration);
     return duration_cast<ToDuration>(duration) - duration_cast<ToDuration>(secs);
