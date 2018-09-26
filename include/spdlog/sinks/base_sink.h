@@ -56,7 +56,7 @@ protected:
 
     virtual void set_pattern_(const std::string &pattern)
     {
-        set_formatter_(spdlog::make_unique<spdlog::pattern_formatter>(pattern));
+        set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern));
     }
 
     virtual void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter)
