@@ -18,7 +18,7 @@ namespace sinks {
  * Trivial file sink with single file as target
  */
 template<typename Mutex>
-class basic_file_sink SPDLOG_FINAL : public base_sink<Mutex>
+class basic_file_sink final : public base_sink<Mutex>
 {
 public:
     explicit basic_file_sink(const filename_t &filename, bool truncate = false)

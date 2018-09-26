@@ -40,7 +40,7 @@ struct daily_filename_calculator
  * Rotating file sink based on date. rotates at midnight
  */
 template<typename Mutex, typename FileNameCalc = daily_filename_calculator>
-class daily_file_sink SPDLOG_FINAL : public base_sink<Mutex>
+class daily_file_sink final : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time

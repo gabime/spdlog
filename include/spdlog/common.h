@@ -32,13 +32,6 @@
 #define SPDLOG_CONSTEXPR constexpr
 #endif
 
-// final keyword support. On by default. See tweakme.h
-#if defined(SPDLOG_NO_FINAL)
-#define SPDLOG_FINAL
-#else
-#define SPDLOG_FINAL final
-#endif
-
 #if defined(__GNUC__) || defined(__clang__)
 #define SPDLOG_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER)
