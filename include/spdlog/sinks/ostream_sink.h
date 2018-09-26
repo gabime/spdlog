@@ -14,7 +14,7 @@
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>
-class ostream_sink SPDLOG_FINAL : public base_sink<Mutex>
+class ostream_sink final : public base_sink<Mutex>
 {
 public:
     explicit ostream_sink(std::ostream &os, bool force_flush = false)
