@@ -62,7 +62,25 @@ protected:
     void flush_() override
     {
         for (auto &sink : sinks_)
+        {
             sink->flush();
+        }
+    }
+
+
+    void set_pattern_(const std::string &pattern) override
+    {
+        set_formatter_(spdlog::make_unique<spdlog::pattern_formatter>(pattern));
+    }
+
+
+    void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter) override
+    {
+        base_sink<Mutex>::formatter_ = std::move(sink_formatter);
+        for (auto &sink : sinks_)
+        {
+            sink->set_formatter(base_sink<Mutex>::formatter_ ->clone());
+        }
     }
     std::vector<std::shared_ptr<sink>> sinks_;
 };
