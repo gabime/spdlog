@@ -49,7 +49,8 @@ inline void spdlog::logger::set_formatter(std::unique_ptr<spdlog::formatter> f)
 
 inline void spdlog::logger::set_pattern(std::string pattern, pattern_time_type time_type)
 {
-    set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
+    auto new_formatter = spdlog::make_unique<spdlog::pattern_formatter>(std::move(pattern), time_type);
+    set_formatter(std::move(new_formatter));
 }
 
 template<typename... Args>
