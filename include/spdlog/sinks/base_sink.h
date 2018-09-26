@@ -26,25 +26,25 @@ public:
     base_sink(const base_sink &) = delete;
     base_sink &operator=(const base_sink &) = delete;
 
-    void log(const details::log_msg &msg) final override
+    void log(const details::log_msg &msg) final
     {
         std::lock_guard<Mutex> lock(mutex_);
         sink_it_(msg);
     }
 
-    void flush() final override
+    void flush() final
     {
         std::lock_guard<Mutex> lock(mutex_);
         flush_();
     }
 
-    void set_pattern(const std::string &pattern) final override
+    void set_pattern(const std::string &pattern) final
     {
         std::lock_guard<Mutex> lock(mutex_);
         set_pattern_(pattern);
     }
 
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) final override
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) final
     {
         std::lock_guard<Mutex> lock(mutex_);
         set_formatter_(std::move(sink_formatter));
