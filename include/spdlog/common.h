@@ -14,8 +14,8 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
 #include <type_traits>
+#include <unordered_map>
 
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #include <codecvt>
@@ -169,7 +169,6 @@ using filename_t = std::string;
         err_handler_("Unknown exeption in logger");                                                                                        \
     }
 
-
 namespace details {
 // make_unique support for pre c++14
 
@@ -179,7 +178,7 @@ using std::make_unique;
 template<typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args &&... args)
 {
-    static_assert(!std::is_array<T>::value, "arrays to not supported" );
+    static_assert(!std::is_array<T>::value, "arrays to not supported");
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 #endif
