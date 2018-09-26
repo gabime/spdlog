@@ -462,7 +462,10 @@ class full_formatter final : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        using namespace std::chrono;
+        using std::chrono::duration_cast;
+        using std::chrono::seconds;
+        using std::chrono::milliseconds;
+
 #ifndef SPDLOG_NO_DATETIME
 
         // cache the date/time part for the next second.
