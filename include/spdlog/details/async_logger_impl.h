@@ -67,7 +67,7 @@ inline void spdlog::async_logger::flush_()
 //
 // backend functions - called from the thread pool to do the actual job
 //
-inline void spdlog::async_logger::backend_log_(details::log_msg &incoming_log_msg)
+inline void spdlog::async_logger::backend_log_(const details::log_msg &incoming_log_msg)
 {
     try
     {

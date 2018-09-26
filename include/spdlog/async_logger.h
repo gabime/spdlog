@@ -61,7 +61,7 @@ protected:
     void sink_it_(details::log_msg &msg) override;
     void flush_() override;
 
-    void backend_log_(details::log_msg &incoming_log_msg);
+    void backend_log_(const details::log_msg &incoming_log_msg);
     void backend_flush_();
 
 private:
