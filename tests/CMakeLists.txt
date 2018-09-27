@@ -17,7 +17,7 @@ set(SPDLOG_UTESTS_SOURCES
     main.cpp
     test_mpmc_q.cpp
     test_sink.h
-)
+    test_fmt_helper.cpp)
 
 add_executable(${PROJECT_NAME} ${SPDLOG_UTESTS_SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
