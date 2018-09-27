@@ -474,7 +474,7 @@ class full_formatter final : public flag_formatter
 
         if (cache_timestamp_ != secs || cached_datetime_.size() == 0)
         {
-            cached_datetime_.resize(0);
+            cached_datetime_.clear();
             cached_datetime_.push_back('[');
             fmt_helper::append_int(tm_time.tm_year + 1900, cached_datetime_);
             cached_datetime_.push_back('-');
