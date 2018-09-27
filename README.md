@@ -27,7 +27,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
  * Android
 
 ## Features
-* Very fast - performance is the primary goal (see [benchmarks](#benchmarks) below).
+* Very fast (see [benchmarks](#benchmarks) below).
 * Headers only, just copy and use.
 * Feature rich using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * Fast asynchronous mode (optional)
