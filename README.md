@@ -128,7 +128,7 @@ void basic_logfile_example()
     catch (const spdlog::spdlog_ex &ex)
     {
         std::cout << "Log init failed: " << ex.what() << std::endl;
-        return 1;
+        return;
     }
 }
 ```
