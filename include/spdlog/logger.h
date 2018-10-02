@@ -25,6 +25,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <locale>
 
 namespace spdlog {
 
@@ -146,8 +147,7 @@ protected:
     // message/minute
     void default_err_handler_(const std::string &msg);
 
-    // increment the message count (only if
-    // defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
+    // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
     void incr_msg_counter_(details::log_msg &msg);
 
     const std::string name_;
@@ -157,11 +157,6 @@ protected:
     log_err_handler err_handler_;
     std::atomic<time_t> last_err_time_;
     std::atomic<size_t> msg_counter_;
-
-#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> wstring_converter_;
-    std::mutex wstring_converter_mutex_;
-#endif
 };
 } // namespace spdlog
 
