@@ -87,6 +87,9 @@ class is_like_std_string {
     !std::is_void<decltype(check<T>(FMT_NULL))>::value;
 };
 
+template <typename Char>
+struct is_like_std_string<fmt::basic_string_view<Char>> : std::true_type {};
+
 template <typename... Ts>
 struct conditional_helper {};
 

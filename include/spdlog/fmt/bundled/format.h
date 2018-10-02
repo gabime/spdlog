@@ -51,6 +51,12 @@
 # define FMT_ICC_VERSION 0
 #endif
 
+#ifdef __NVCC__
+# define FMT_CUDA_VERSION (__CUDACC_VER_MAJOR__ * 100 + __CUDACC_VER_MINOR__)
+#else
+# define FMT_CUDA_VERSION 0
+#endif
+
 #include "core.h"
 
 #if FMT_GCC_VERSION >= 406 || FMT_CLANG_VERSION
@@ -114,17 +120,23 @@ FMT_END_NAMESPACE
 #endif
 
 #ifndef FMT_USE_USER_DEFINED_LITERALS
-// For Intel's compiler both it and the system gcc/msc must support UDLs.
+// For Intel's compiler and NVIDIA's compiler both it and the system gcc/msc
+// must support UDLs.
 # if (FMT_HAS_FEATURE(cxx_user_literals) || \
       FMT_GCC_VERSION >= 407 || FMT_MSC_VER >= 1900) && \
-      (!FMT_ICC_VERSION || FMT_ICC_VERSION >= 1500)
+      (!(FMT_ICC_VERSION || FMT_CUDA_VERSION) || \
+       FMT_ICC_VERSION >= 1500 || FMT_CUDA_VERSION >= 700)
 #  define FMT_USE_USER_DEFINED_LITERALS 1
 # else
 #  define FMT_USE_USER_DEFINED_LITERALS 0
 # endif
 #endif
 
-#if FMT_USE_USER_DEFINED_LITERALS && FMT_ICC_VERSION == 0 && \
+// EDG C++ Front End based compilers (icc, nvcc) do not currently support UDL
+// templates.
+#if FMT_USE_USER_DEFINED_LITERALS && \
+    FMT_ICC_VERSION == 0 && \
+    FMT_CUDA_VERSION == 0 && \
     ((FMT_GCC_VERSION >= 600 && __cplusplus >= 201402L) || \
     (defined(FMT_CLANG_VERSION) && FMT_CLANG_VERSION >= 304))
 # define FMT_UDL_TEMPLATE 1
@@ -1153,54 +1165,6 @@ FMT_API void format_windows_error(fmt::internal::buffer &out, int error_code,
 template <typename T = void>
 struct null {};
 }  // namespace internal
-
-struct monostate {};
-
-/**
-  \rst
-  Visits an argument dispatching to the appropriate visit method based on
-  the argument type. For example, if the argument type is ``double`` then
-  ``vis(value)`` will be called with the value of type ``double``.
-  \endrst
- */
-template <typename Visitor, typename Context>
-FMT_CONSTEXPR typename internal::result_of<Visitor(int)>::type
-    visit(Visitor &&vis, const basic_format_arg<Context> &arg) {
-  typedef typename Context::char_type char_type;
-  switch (arg.type_) {
-  case internal::none_type:
-    break;
-  case internal::named_arg_type:
-    FMT_ASSERT(false, "invalid argument type");
-    break;
-  case internal::int_type:
-    return vis(arg.value_.int_value);
-  case internal::uint_type:
-    return vis(arg.value_.uint_value);
-  case internal::long_long_type:
-    return vis(arg.value_.long_long_value);
-  case internal::ulong_long_type:
-    return vis(arg.value_.ulong_long_value);
-  case internal::bool_type:
-    return vis(arg.value_.int_value != 0);
-  case internal::char_type:
-    return vis(static_cast<char_type>(arg.value_.int_value));
-  case internal::double_type:
-    return vis(arg.value_.double_value);
-  case internal::long_double_type:
-    return vis(arg.value_.long_double_value);
-  case internal::cstring_type:
-    return vis(arg.value_.string.value);
-  case internal::string_type:
-    return vis(basic_string_view<char_type>(
-                 arg.value_.string.value, arg.value_.string.size));
-  case internal::pointer_type:
-    return vis(arg.value_.pointer);
-  case internal::custom_type:
-    return vis(typename basic_format_arg<Context>::handle(arg.value_.custom));
-  }
-  return vis(monostate());
-}
 
 enum alignment {
   ALIGN_DEFAULT, ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER, ALIGN_NUMERIC
@@ -3231,8 +3195,8 @@ struct formatter<
       specs_.precision_, specs_.precision_ref, ctx);
     typedef output_range<typename FormatContext::iterator,
                          typename FormatContext::char_type> range_type;
-    return visit(arg_formatter<range_type>(ctx, &specs_),
-                 internal::make_arg<FormatContext>(val));
+    return fmt::visit(arg_formatter<range_type>(ctx, &specs_),
+                      internal::make_arg<FormatContext>(val));
   }
 
  private:
@@ -3292,8 +3256,8 @@ class dynamic_formatter {
       checker.end_precision();
     typedef output_range<typename FormatContext::iterator,
                          typename FormatContext::char_type> range;
-    visit(arg_formatter<range>(ctx, &specs_),
-          internal::make_arg<FormatContext>(val));
+    fmt::visit(arg_formatter<range>(ctx, &specs_),
+               internal::make_arg<FormatContext>(val));
     return ctx.out();
   }
 
@@ -3493,16 +3457,17 @@ inline wformat_context::iterator vformat_to(
   return vformat_to<arg_formatter<range>>(buf, format_str, args);
 }
 
-template <typename String, typename... Args,
-          std::size_t SIZE = inline_buffer_size>
-inline format_context::iterator format_to(
-    basic_memory_buffer<char, SIZE> &buf, const String &format_str,
+template <
+    typename String, typename... Args,
+    std::size_t SIZE = inline_buffer_size,
+    typename Char = typename internal::format_string_traits<String>::char_type>
+inline typename buffer_context<Char>::type::iterator format_to(
+    basic_memory_buffer<Char, SIZE> &buf, const String &format_str,
     const Args & ... args) {
   internal::check_format_string<Args...>(format_str);
-  typedef typename internal::format_string_traits<String>::char_type char_t;
   return vformat_to(
-        buf, basic_string_view<char_t>(format_str),
-        make_format_args<typename buffer_context<char_t>::type>(args...));
+        buf, basic_string_view<Char>(format_str),
+        make_format_args<typename buffer_context<Char>::type>(args...));
 }
 
 template <typename OutputIt, typename Char = char>
@@ -3725,10 +3690,13 @@ FMT_END_NAMESPACE
 #if defined(FMT_STRING_ALIAS) && FMT_STRING_ALIAS
 /**
   \rst
-  Constructs a compile-time format string.
+  Constructs a compile-time format string. This macro is disabled by default to
+  prevent potential name collisions. To enable it define ``FMT_STRING_ALIAS`` to
+  1 before including ``fmt/format.h``.
 
   **Example**::
 
+    #define FMT_STRING_ALIAS 1
     #include <fmt/format.h>
     // A compile-time error because 'd' is an invalid specifier for strings.
     std::string s = format(fmt("{:d}"), "foo");

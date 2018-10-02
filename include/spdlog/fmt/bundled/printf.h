@@ -133,7 +133,7 @@ class arg_converter: public function<void> {
 // unsigned).
 template <typename T, typename Context, typename Char>
 void convert_arg(basic_format_arg<Context> &arg, Char type) {
-  visit(arg_converter<T, Context>(arg, type), arg);
+  fmt::visit(arg_converter<T, Context>(arg, type), arg);
 }
 
 // Converts an integer argument to char for printf.
@@ -454,7 +454,7 @@ unsigned basic_printf_context<OutputIt, Char, AF>::parse_header(
   } else if (*it == '*') {
     ++it;
     spec.width_ =
-        visit(internal::printf_width_handler<char_type>(spec), get_arg(it));
+        fmt::visit(internal::printf_width_handler<char_type>(spec), get_arg(it));
   }
   return arg_index;
 }
@@ -490,14 +490,14 @@ void basic_printf_context<OutputIt, Char, AF>::format() {
       } else if (*it == '*') {
         ++it;
         spec.precision_ =
-            visit(internal::printf_precision_handler(), get_arg(it));
+            fmt::visit(internal::printf_precision_handler(), get_arg(it));
       } else {
         spec.precision_ = 0;
       }
     }
 
     format_arg arg = get_arg(it, arg_index);
-    if (spec.flag(HASH_FLAG) && visit(internal::is_zero_int(), arg))
+    if (spec.flag(HASH_FLAG) && fmt::visit(internal::is_zero_int(), arg))
       spec.flags_ &= ~internal::to_unsigned<int>(HASH_FLAG);
     if (spec.fill_ == '0') {
       if (arg.is_arithmetic())
@@ -551,7 +551,7 @@ void basic_printf_context<OutputIt, Char, AF>::format() {
         break;
       case 'c':
         // TODO: handle wchar_t better?
-        visit(internal::char_converter<basic_printf_context>(arg), arg);
+        fmt::visit(internal::char_converter<basic_printf_context>(arg), arg);
         break;
       }
     }
@@ -559,7 +559,7 @@ void basic_printf_context<OutputIt, Char, AF>::format() {
     start = it;
 
     // Format argument.
-    visit(AF(buffer, spec, *this), arg);
+    fmt::visit(AF(buffer, spec, *this), arg);
   }
   buffer.append(pointer_from(start), pointer_from(it));
 }

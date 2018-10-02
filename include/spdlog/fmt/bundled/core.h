@@ -16,7 +16,7 @@
 #include <type_traits>
 
 // The fmt library version in the form major * 10000 + minor * 100 + patch.
-#define FMT_VERSION 50200
+#define FMT_VERSION 50201
 
 #ifdef __has_feature
 # define FMT_HAS_FEATURE(x) __has_feature(x)
@@ -340,9 +340,22 @@ class basic_format_arg;
 template <typename Context>
 class basic_format_args;
 
+template <typename T>
+struct no_formatter_error : std::false_type {};
+
 // A formatter for objects of type T.
 template <typename T, typename Char = char, typename Enable = void>
-struct formatter;
+struct formatter {
+  static_assert(no_formatter_error<T>::value,
+    "don't know how to format the type, include fmt/ostream.h if it provides "
+    "an operator<< that should be used");
+
+  // The following functions are not defined intentionally.
+  template <typename ParseContext>
+  typename ParseContext::iterator parse(ParseContext &);
+  template <typename FormatContext>
+  auto format(const T &val, FormatContext &ctx) -> decltype(ctx.out());
+};
 
 template <typename T, typename Char, typename Enable = void>
 struct convert_to_int {
@@ -754,6 +767,54 @@ class basic_format_arg {
   bool is_integral() const { return internal::is_integral(type_); }
   bool is_arithmetic() const { return internal::is_arithmetic(type_); }
 };
+
+struct monostate {};
+
+/**
+  \rst
+  Visits an argument dispatching to the appropriate visit method based on
+  the argument type. For example, if the argument type is ``double`` then
+  ``vis(value)`` will be called with the value of type ``double``.
+  \endrst
+ */
+template <typename Visitor, typename Context>
+FMT_CONSTEXPR typename internal::result_of<Visitor(int)>::type
+    visit(Visitor &&vis, const basic_format_arg<Context> &arg) {
+  typedef typename Context::char_type char_type;
+  switch (arg.type_) {
+  case internal::none_type:
+    break;
+  case internal::named_arg_type:
+    FMT_ASSERT(false, "invalid argument type");
+    break;
+  case internal::int_type:
+    return vis(arg.value_.int_value);
+  case internal::uint_type:
+    return vis(arg.value_.uint_value);
+  case internal::long_long_type:
+    return vis(arg.value_.long_long_value);
+  case internal::ulong_long_type:
+    return vis(arg.value_.ulong_long_value);
+  case internal::bool_type:
+    return vis(arg.value_.int_value != 0);
+  case internal::char_type:
+    return vis(static_cast<char_type>(arg.value_.int_value));
+  case internal::double_type:
+    return vis(arg.value_.double_value);
+  case internal::long_double_type:
+    return vis(arg.value_.long_double_value);
+  case internal::cstring_type:
+    return vis(arg.value_.string.value);
+  case internal::string_type:
+    return vis(basic_string_view<char_type>(
+                 arg.value_.string.value, arg.value_.string.size));
+  case internal::pointer_type:
+    return vis(arg.value_.pointer);
+  case internal::custom_type:
+    return vis(typename basic_format_arg<Context>::handle(arg.value_.custom));
+  }
+  return vis(monostate());
+}
 
 // Parsing context consisting of a format string range being parsed and an
 // argument counter for automatic indexing.
@@ -1382,8 +1443,7 @@ inline std::basic_string<
   typedef typename buffer_context<char_t>::type context_t;
   format_arg_store<context_t, Args...> as{args...};
   return internal::vformat(
-        basic_string_view<char_t>(format_str),
-        basic_format_args<context_t>(as));
+      basic_string_view<char_t>(format_str), basic_format_args<context_t>(as));
 }
 
 FMT_API void vprint(std::FILE *f, string_view format_str, format_args args);
