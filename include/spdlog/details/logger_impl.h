@@ -193,7 +193,7 @@ inline void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer 
     }
     else
     {
-        throw spdlog::spdlog_ex("Failed converting to utf8", errno);
+        throw spdlog::spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
     }
 }
 
