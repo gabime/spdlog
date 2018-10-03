@@ -68,6 +68,9 @@ public:
     void critical(const char *fmt, const Args &... args);
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+#ifndef _WIN32
+#error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
+#else
     template<typename... Args>
     void log(level::level_enum lvl, const wchar_t *fmt, const Args &... args);
 
@@ -88,6 +91,7 @@ public:
 
     template<typename... Args>
     void critical(const wchar_t *fmt, const Args &... args);
+#endif // _WIN32
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     template<typename T>

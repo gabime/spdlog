@@ -175,7 +175,7 @@ inline void spdlog::logger::critical(const T &msg)
 }
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-static_assert(_WIN32, "SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows");
+
 inline void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer &target)
 {
     int wbuf_size = static_cast<int>(wbuf.size());
