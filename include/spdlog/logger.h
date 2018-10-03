@@ -22,10 +22,10 @@
 #include "spdlog/formatter.h"
 #include "spdlog/sinks/sink.h"
 
+#include <locale>
 #include <memory>
 #include <string>
 #include <vector>
-#include <locale>
 
 namespace spdlog {
 

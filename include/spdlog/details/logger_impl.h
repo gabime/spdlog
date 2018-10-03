@@ -185,7 +185,7 @@ inline void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer 
     }
 
     auto result_size = ::WideCharToMultiByte(CP_UTF8, 0, wbuf.data(), wbuf_size, NULL, 0, NULL, NULL);
-    
+
     if (result_size > 0)
     {
         target.resize(result_size);
@@ -197,7 +197,6 @@ inline void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer 
     }
 }
 
-
 template<typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
 {
@@ -208,10 +207,10 @@ inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const
 
     try
     {
-		// format to wmemory_buffer and convert to utf8
+        // format to wmemory_buffer and convert to utf8
         details::log_msg log_msg(&name_, lvl);
         fmt::wmemory_buffer wbuf;
-        fmt::format_to(wbuf, fmt, args...);        		
+        fmt::format_to(wbuf, fmt, args...);
         wbuf_to_utf8buf(wbuf, log_msg.raw);
         sink_it_(log_msg);
     }
