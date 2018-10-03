@@ -13,7 +13,7 @@
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
 template<typename It>
-inline spdlog::logger::logger(std::string logger_name, const It &begin, const It &end)
+inline spdlog::logger::logger(std::string logger_name, It begin, It end)
     : name_(std::move(logger_name))
     , sinks_(begin, end)
     , level_(level::info)

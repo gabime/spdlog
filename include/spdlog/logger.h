@@ -36,7 +36,7 @@ public:
     logger(std::string name, sinks_init_list sinks);
 
     template<typename It>
-    logger(std::string name, const It &begin, const It &end);
+    logger(std::string name, It begin, It end);
 
     virtual ~logger();
 
