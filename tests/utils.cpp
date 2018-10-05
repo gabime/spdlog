@@ -8,12 +8,12 @@ void prepare_logdir()
     system("del /F /Q logs\\*");
 #else
     auto rv = system("mkdir -p logs");
-    if(rv != 0)
+    if (rv != 0)
     {
         throw std::runtime_error("Failed to mkdir -p logs");
     }
     rv = system("rm -f logs/*");
-    if(rv != 0)
+    if (rv != 0)
     {
         throw std::runtime_error("Failed to rm -f logs/*");
     }
@@ -64,5 +64,4 @@ bool ends_with(std::string const &value, std::string const &ending)
         return false;
     }
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
-
 }
