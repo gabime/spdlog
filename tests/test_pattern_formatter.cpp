@@ -20,9 +20,6 @@ TEST_CASE("custom eol", "[pattern_formatter]")
 {
     std::string msg = "Hello custom eol test";
     std::string eol = ";)";
-    // auto formatter = std::make_shared<spdlog::pattern_formatter>("%v", spdlog::pattern_time_type::local, ";)");
-    std::unique_ptr<spdlog::formatter>(new spdlog::pattern_formatter("%v", spdlog::pattern_time_type::local, ";)"));
-
     REQUIRE(log_to_str(msg, "%v", spdlog::pattern_time_type::local, ";)") == msg + eol);
 }
 
