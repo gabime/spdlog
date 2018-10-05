@@ -358,7 +358,7 @@ inline void spdlog::logger::default_err_handler_(const std::string &msg)
     fmt::print(stderr, "[*** LOG ERROR ***] [{}] [{}] {}\n", date_buf, name(), msg);
 }
 
-inline void spdlog::logger::incr_msg_counter_(details::log_msg &msg)
+inline void spdlog::logger::incr_msg_counter_(const details::log_msg &msg)
 {
     msg.msg_id = msg_counter_.fetch_add(1, std::memory_order_relaxed);
 }

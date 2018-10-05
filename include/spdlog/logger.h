@@ -152,7 +152,7 @@ protected:
     void default_err_handler_(const std::string &msg);
 
     // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
-    void incr_msg_counter_(details::log_msg &msg);
+    void incr_msg_counter_(const details::log_msg &msg);
 
     const std::string name_;
     std::vector<sink_ptr> sinks_;
