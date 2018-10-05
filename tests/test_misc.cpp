@@ -175,3 +175,19 @@ TEST_CASE("to_hex_no_delimiter", "[to_hex]")
     auto output = oss.str();
     REQUIRE(ends_with(output, "0000: 090A0B0CFFFF" + std::string(spdlog::details::os::default_eol)));
 }
+
+TEST_CASE("message_counter", "[message_counter]")
+{
+    std::ostringstream oss;
+    auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+    spdlog::logger oss_logger("oss", oss_sink);
+    oss_logger.set_pattern("%i %v");
+
+    oss_logger.info("Hello");
+    REQUIRE(oss.str() == "000001 Hello" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
+    oss_logger.info("Hello again");
+
+    REQUIRE(oss.str() == "000002 Hello again" + std::string(spdlog::details::os::default_eol));
+}

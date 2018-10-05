@@ -12,6 +12,7 @@
 
 #define SPDLOG_TRACE_ON
 #define SPDLOG_DEBUG_ON
+#define SPDLOG_ENABLE_MESSAGE_COUNTER
 
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"

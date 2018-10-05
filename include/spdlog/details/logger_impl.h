@@ -317,7 +317,7 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 // protected virtual called at end of each user log call (if enabled) by the
 // line_logger
 //
-inline void spdlog::logger::sink_it_(const details::log_msg &msg)
+inline void spdlog::logger::sink_it_(details::log_msg &msg)
 {
 #if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
     incr_msg_counter_(msg);
