@@ -67,7 +67,7 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-		today_filename_ = FileNameCalc::calc_filename(base_filename_, now_tm(msg.time));
+        today_filename_ = FileNameCalc::calc_filename(base_filename_, now_tm(msg.time));
 
         if (msg.time >= rotation_tp_)
         {
@@ -78,12 +78,12 @@ protected:
         fmt::memory_buffer formatted;
         sink::formatter_->format(msg, formatted);
 
-		current_size_ += formatted.size();
-		if (current_size_ > max_size_)
-		{
-			rotate_();
-			current_size_ = formatted.size();
-		}
+        current_size_ += formatted.size();
+        if (current_size_ > max_size_)
+        {
+            rotate_();
+            current_size_ = formatted.size();
+        }
 
         file_helper_.write(formatted);
     }
@@ -115,71 +115,71 @@ private:
         return {rotation_time + std::chrono::hours(24)};
     }
 
-	// Rotate files:
-	// log.txt -> log.1.txt
-	// log.1.txt -> log.2.txt
-	// log.2.txt -> log.3.txt
-	// log.3.txt -> log.4.txt
-	void rotate_()
-	{
-		using details::os::filename_to_str;
-		file_helper_.close();
-		for (auto i = max_files_; i >= 0; --i)
-		{
-			filename_t src = calc_filename(today_filename_, i);
-			if (!details::file_helper::file_exists(src))
-			{
-				continue;
-			}
-			filename_t target = calc_filename(today_filename_, i + 1);
+    // Rotate files:
+    // log.txt -> log.1.txt
+    // log.1.txt -> log.2.txt
+    // log.2.txt -> log.3.txt
+    // log.3.txt -> log.4.txt
+    void rotate_()
+    {
+        using details::os::filename_to_str;
+        file_helper_.close();
+        for (auto i = max_files_; i >= 0; --i)
+        {
+            filename_t src = calc_filename(today_filename_, i);
+            if (!details::file_helper::file_exists(src))
+            {
+                continue;
+            }
+            filename_t target = calc_filename(today_filename_, i + 1);
 
-			if (!rename_file(src, target))
-			{
-				// if failed try again after a small delay.
-				// this is a workaround to a windows issue, where very high rotation
-				// rates can cause the rename to fail with permission denied (because of antivirus?).
-				details::os::sleep_for_millis(100);
-				if (!rename_file(src, target))
-				{
-					file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
-					throw spdlog_ex(
-						"rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
-				}
-			}
-		}
-		++max_files_;
-		file_helper_.reopen(true);
-	}
+            if (!rename_file(src, target))
+            {
+                // if failed try again after a small delay.
+                // this is a workaround to a windows issue, where very high rotation
+                // rates can cause the rename to fail with permission denied (because of antivirus?).
+                details::os::sleep_for_millis(100);
+                if (!rename_file(src, target))
+                {
+                    file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
+                    throw spdlog_ex(
+                        "rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+                }
+            }
+        }
+        ++max_files_;
+        file_helper_.reopen(true);
+    }
 
-	// delete the target if exists, and rename the src file  to target
-	// return true on success, false otherwise.
-	bool rename_file(const filename_t &src_filename, const filename_t &target_filename)
-	{
-		// try to delete the target file in case it already exists.
-		(void)details::os::remove(target_filename);
-		return details::os::rename(src_filename, target_filename) == 0;
-	}
+    // delete the target if exists, and rename the src file  to target
+    // return true on success, false otherwise.
+    bool rename_file(const filename_t &src_filename, const filename_t &target_filename)
+    {
+        // try to delete the target file in case it already exists.
+        (void)details::os::remove(target_filename);
+        return details::os::rename(src_filename, target_filename) == 0;
+    }
 
-	static filename_t calc_filename(const filename_t &filename, std::size_t index)
-	{
-		typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
-		if (index != 0u)
-		{
-			filename_t basename, ext;
-			std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-			fmt::format_to(w, SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
-		}
-		else
-		{
-			fmt::format_to(w, SPDLOG_FILENAME_T("{}"), filename);
-		}
-		return fmt::to_string(w);
-	}
+    static filename_t calc_filename(const filename_t &filename, std::size_t index)
+    {
+        typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
+        if (index != 0u)
+        {
+            filename_t basename, ext;
+            std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
+            fmt::format_to(w, SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
+        }
+        else
+        {
+            fmt::format_to(w, SPDLOG_FILENAME_T("{}"), filename);
+        }
+        return fmt::to_string(w);
+    }
 
-	std::size_t max_size_;
-	std::size_t max_files_;
-	std::size_t current_size_;
-	filename_t today_filename_;
+    std::size_t max_size_;
+    std::size_t max_files_;
+    std::size_t current_size_;
+    filename_t today_filename_;
     filename_t base_filename_;
     int rotation_h_;
     int rotation_m_;
