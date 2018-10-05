@@ -32,7 +32,7 @@ public:
     // create daily file sink which rotates on given time
 	daily_rotating_file_sink(filename_t base_filename, std::size_t max_size, int rotation_hour, int rotation_minute, bool truncate = false)
         : base_filename_(std::move(base_filename))
-		, max_size_(max_size)
+        , max_size_(max_size)
         , rotation_h_(rotation_hour)
         , rotation_m_(rotation_minute)
         , truncate_(truncate)
@@ -41,10 +41,21 @@ public:
         {
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
+	
         auto now = log_clock::now();
-        file_helper_.open(calc_filename(base_filename_, now_tm(now)), truncate_);
+        today_filename_ = calc_filename(base_filename_, now_tm(now));
+        for (max_files_ = 0; ; ++max_files_)
+        {
+            filename_t src = calc_filename(today_filename_, max_files_);
+            if (!details::file_helper::file_exists(src))
+            {
+                break;
+            }
+        }
+
+        file_helper_.open(today_filename_, truncate_);
         rotation_tp_ = next_rotation_tp_();
-		current_size_ = file_helper_.size(); // expensive. called only once
+        current_size_ = file_helper_.size(); // expensive. called only once
     }
 
 protected:
@@ -107,14 +118,15 @@ private:
     {
         using details::os::filename_to_str;
         file_helper_.close();
-        for (auto i = max_files_; i >= 0; --i)
+        ++max_files_;
+        for (auto i = max_files_; i > 0; --i)
         {
-            filename_t src = calc_filename(today_filename_, i);
+            filename_t src = calc_filename(today_filename_, i - 1);
             if (!details::file_helper::file_exists(src))
             {
                 continue;
             }
-            filename_t target = calc_filename(today_filename_, i + 1);
+            filename_t target = calc_filename(today_filename_, i);
 
             if (!rename_file(src, target))
             {
@@ -130,7 +142,6 @@ private:
                 }
             }
         }
-        ++max_files_;
         file_helper_.reopen(true);
     }
 
