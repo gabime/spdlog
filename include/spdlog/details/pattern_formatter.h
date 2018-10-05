@@ -714,11 +714,11 @@ private:
         case ('P'):
             formatters_.push_back(details::make_unique<details::pid_formatter>());
             break;
-
+#ifdef SPDLOG_ENABLE_MESSAGE_COUNTER
         case ('i'):
             formatters_.push_back(details::make_unique<details::i_formatter>());
             break;
-
+#endif
         case ('^'):
             formatters_.push_back(details::make_unique<details::color_start_formatter>());
             break;

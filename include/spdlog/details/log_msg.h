@@ -39,7 +39,7 @@ struct log_msg
     log_clock::time_point time;
     size_t thread_id;
     fmt::memory_buffer raw;
-    size_t msg_id{0};
+    size_t msg_id;
 
     // info about wrapping the formatted text with color (updated by pattern_formatter).
     mutable size_t color_range_start{0};
