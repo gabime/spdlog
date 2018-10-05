@@ -151,7 +151,7 @@ public:
 
     void post_log(async_logger_ptr &&worker_ptr, details::log_msg &&msg, async_overflow_policy overflow_policy)
     {
-        async_msg async_m(std::move(worker_ptr), async_msg_type::log, std::forward<log_msg>(msg));
+        async_msg async_m(std::move(worker_ptr), async_msg_type::log, std::move(msg));
         post_async_msg_(std::move(async_m), overflow_policy);
     }
 
