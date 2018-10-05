@@ -35,6 +35,7 @@ int count_lines(const char *filename)
         if ('\n' == ch)
             counter++;
     }
+    fclose(infile);
 
     return counter;
 }
