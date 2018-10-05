@@ -23,26 +23,9 @@ namespace spdlog {
 namespace sinks {
 
 /*
- * Generator of daily log file names in format basename.YYYY-MM-DD.ext
- */
-struct daily_filename_calculator
-{
-    // Create filename for the form basename.YYYY-MM-DD
-    static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
-    {
-        filename_t basename, ext;
-        std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
-        fmt::format_to(
-            w, SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
-        return fmt::to_string(w);
-    }
-};
-
-/*
  * Rotating file sink based on date. rotates at midnight
  */
-template<typename Mutex, typename FileNameCalc = daily_filename_calculator>
+template<typename Mutex>
 class daily_rotating_file_sink final : public base_sink<Mutex>
 {
 public:
@@ -59,7 +42,7 @@ public:
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
         auto now = log_clock::now();
-        file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(now)), truncate_);
+        file_helper_.open(calc_filename(base_filename_, now_tm(now)), truncate_);
         rotation_tp_ = next_rotation_tp_();
 		current_size_ = file_helper_.size(); // expensive. called only once
     }
@@ -67,7 +50,7 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        today_filename_ = FileNameCalc::calc_filename(base_filename_, now_tm(msg.time));
+        today_filename_ = calc_filename(base_filename_, now_tm(msg.time));
 
         if (msg.time >= rotation_tp_)
         {
@@ -160,6 +143,17 @@ private:
         return details::os::rename(src_filename, target_filename) == 0;
     }
 
+    // Create filename for the form basename.YYYY-MM-DD
+    static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
+    {
+        filename_t basename, ext;
+        std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
+        fmt::format_to(
+            w, SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
+        return fmt::to_string(w);
+    }
+    
     static filename_t calc_filename(const filename_t &filename, std::size_t index)
     {
         typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
