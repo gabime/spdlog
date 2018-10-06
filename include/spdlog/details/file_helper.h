@@ -22,50 +22,6 @@
 namespace spdlog {
 namespace details {
 
-/*
- * Generator of log file names
- */
-struct filename_calculator
-{
-    // Create filename for the form basename.YYYY-MM-DD
-    static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
-    {
-        filename_t basename, ext;
-        std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
-        fmt::format_to(
-            w, SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
-        return fmt::to_string(w);
-    }
-    
-    // calc filename according to index and file extension if exists.
-    // e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
-    static filename_t calc_filename(const filename_t &filename, std::size_t index)
-    {
-        typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
-        if (index != 0u)
-        {
-            filename_t basename, ext;
-            std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-            fmt::format_to(w, SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
-        }
-        else
-        {
-            fmt::format_to(w, SPDLOG_FILENAME_T("{}"), filename);
-        }
-        return fmt::to_string(w);
-    }
-
-    // delete the target if exists, and rename the src file  to target
-    // return true on success, false otherwise.
-    static bool rename_file(const filename_t &src_filename, const filename_t &target_filename)
-    {
-        // try to delete the target file in case it already exists.
-        (void)details::os::remove(target_filename);
-        return details::os::rename(src_filename, target_filename) == 0;
-    }
-};
-
 class file_helper
 {
 
@@ -191,6 +147,50 @@ public:
 private:
     std::FILE *fd_{nullptr};
     filename_t _filename;
+};
+
+/*
+ * Generator of log file names
+ */
+struct filename_calculator
+{
+    // Create filename for the form basename.YYYY-MM-DD
+    static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
+    {
+        filename_t basename, ext;
+        std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
+        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
+        fmt::format_to(
+            w, SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
+        return fmt::to_string(w);
+    }
+    
+    // calc filename according to index and file extension if exists.
+    // e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
+    static filename_t calc_filename(const filename_t &filename, std::size_t index)
+    {
+        typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
+        if (index != 0u)
+        {
+            filename_t basename, ext;
+            std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
+            fmt::format_to(w, SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
+        }
+        else
+        {
+            fmt::format_to(w, SPDLOG_FILENAME_T("{}"), filename);
+        }
+        return fmt::to_string(w);
+    }
+
+    // delete the target if exists, and rename the src file  to target
+    // return true on success, false otherwise.
+    static bool rename_file(const filename_t &src_filename, const filename_t &target_filename)
+    {
+        // try to delete the target file in case it already exists.
+        (void)details::os::remove(target_filename);
+        return details::os::rename(src_filename, target_filename) == 0;
+    }
 };
 } // namespace details
 } // namespace spdlog
