@@ -81,7 +81,7 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 
 TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
 {
-    using sink_type = spdlog::sinks::daily_file_sink<std::mutex, spdlog::sinks::daily_filename_calculator>;
+    using sink_type = spdlog::sinks::daily_file_sink<std::mutex, spdlog::details::filename_calculator>;
 
     prepare_logdir();
     // calculate filename (time based)
@@ -139,19 +139,19 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
 
 TEST_CASE("rotating_file_sink::calc_filename1", "[rotating_file_sink]]")
 {
-    auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename("rotated.txt", 3);
+    auto filename = spdlog::details::filename_calculator::calc_filename("rotated.txt", 3);
     REQUIRE(filename == "rotated.3.txt");
 }
 
 TEST_CASE("rotating_file_sink::calc_filename2", "[rotating_file_sink]]")
 {
-    auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename("rotated", 3);
+    auto filename = spdlog::details::filename_calculator::calc_filename("rotated", 3);
     REQUIRE(filename == "rotated.3");
 }
 
 TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
 {
-    auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename("rotated.txt", 0);
+    auto filename = spdlog::details::filename_calculator::calc_filename("rotated.txt", 0);
     REQUIRE(filename == "rotated.txt");
 }
 
@@ -162,7 +162,7 @@ TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
 TEST_CASE("daily_file_sink::daily_filename_calculator", "[daily_file_sink]]")
 {
     // daily_YYYY-MM-DD_hh-mm.txt
-    auto filename = spdlog::sinks::daily_filename_calculator::calc_filename("daily.txt", spdlog::details::os::localtime());
+    auto filename = spdlog::details::filename_calculator::calc_filename("daily.txt", spdlog::details::os::localtime());
     // date regex based on https://www.regular-expressions.info/dates.html
     std::regex re(R"(^daily_(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.txt$)");
     std::smatch match;
