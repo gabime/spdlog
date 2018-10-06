@@ -22,19 +22,29 @@
 namespace spdlog {
 namespace sinks {
 
+struct daily_rotating_config
+{
+    filename_t base_filename;
+    std::size_t max_size;
+    std::size_t max_files;
+    std::chrono::hours rotation_hour;
+    std::chrono::minutes rotation_minute;
+}
+
 /*
  * Rotating file sink based on date. rotates at midnight
  */
-template<typename Mutex>
+template<typename Mutex, typename FileNameCalc = details::filename_calculator>
 class daily_rotating_file_sink final : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time
-	daily_rotating_file_sink(filename_t base_filename, std::size_t max_size, int rotation_hour, int rotation_minute, bool truncate = false)
-        : base_filename_(std::move(base_filename))
-        , max_size_(max_size)
-        , rotation_h_(rotation_hour)
-        , rotation_m_(rotation_minute)
+	daily_rotating_file_sink(daily_rotating_config config, bool truncate = false)
+        : base_filename_(std::move(config.base_filename))
+        , max_size_(config.max_size)
+        , max_files_(config.max_files)
+        , rotation_h_(config.rotation_hour)
+        , rotation_m_(config.rotation_minute)
         , truncate_(truncate)
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
@@ -43,16 +53,7 @@ public:
         }
 	
         auto now = log_clock::now();
-        today_filename_ = calc_filename(base_filename_, now_tm(now));
-        for (max_files_ = 0; ; ++max_files_)
-        {
-            filename_t src = calc_filename(today_filename_, max_files_);
-            if (!details::file_helper::file_exists(src))
-            {
-                break;
-            }
-        }
-
+        today_filename_ = FileNameCalc::calc_filename(base_filename_, now_tm(now));
         file_helper_.open(today_filename_, truncate_);
         rotation_tp_ = next_rotation_tp_();
         current_size_ = file_helper_.size(); // expensive. called only once
@@ -63,7 +64,7 @@ protected:
     {
         if (msg.time >= rotation_tp_)
         {
-            today_filename_ = calc_filename(base_filename_, now_tm(msg.time));
+            today_filename_ = FileNameCalc::calc_filename(base_filename_, now_tm(msg.time));
             file_helper_.open(today_filename_, truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
@@ -112,28 +113,27 @@ private:
     // log.txt -> log.1.txt
     // log.1.txt -> log.2.txt
     // log.2.txt -> log.3.txt
-    // log.3.txt -> log.4.txt
+    // log.3.txt -> delete
     void rotate_()
     {
         using details::os::filename_to_str;
         file_helper_.close();
-        ++max_files_;
         for (auto i = max_files_; i > 0; --i)
         {
-            filename_t src = calc_filename(today_filename_, i - 1);
+            filename_t src = FileNameCalc::calc_filename(today_filename_, i - 1);
             if (!details::file_helper::file_exists(src))
             {
                 continue;
             }
-            filename_t target = calc_filename(today_filename_, i);
+            filename_t target = FileNameCalc::calc_filename(today_filename_, i);
 
-            if (!rename_file(src, target))
+            if (!FileNameCalc::rename_file(src, target))
             {
                 // if failed try again after a small delay.
                 // this is a workaround to a windows issue, where very high rotation
                 // rates can cause the rename to fail with permission denied (because of antivirus?).
                 details::os::sleep_for_millis(100);
-                if (!rename_file(src, target))
+                if (!FileNameCalc::rename_file(src, target))
                 {
                     file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
                     throw spdlog_ex(
@@ -142,42 +142,6 @@ private:
             }
         }
         file_helper_.reopen(true);
-    }
-
-    // delete the target if exists, and rename the src file  to target
-    // return true on success, false otherwise.
-    bool rename_file(const filename_t &src_filename, const filename_t &target_filename)
-    {
-        // try to delete the target file in case it already exists.
-        (void)details::os::remove(target_filename);
-        return details::os::rename(src_filename, target_filename) == 0;
-    }
-
-    // Create filename for the form basename.YYYY-MM-DD
-    static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
-    {
-        filename_t basename, ext;
-        std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
-        fmt::format_to(
-            w, SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
-        return fmt::to_string(w);
-    }
-    
-    static filename_t calc_filename(const filename_t &filename, std::size_t index)
-    {
-        typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
-        if (index != 0u)
-        {
-            filename_t basename, ext;
-            std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
-            fmt::format_to(w, SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
-        }
-        else
-        {
-            fmt::format_to(w, SPDLOG_FILENAME_T("{}"), filename);
-        }
-        return fmt::to_string(w);
     }
 
     std::size_t max_size_;
@@ -202,15 +166,15 @@ using daily_rotating_file_sink_st = daily_rotating_file_sink<details::null_mutex
 //
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> daily_rotating_logger_mt(
-    const std::string &logger_name, const filename_t &filename, std::size_t max_size, int hour = 0, int minute = 0, bool truncate = false)
+    const std::string &logger_name, const daily_rotating_config &config, bool truncate = false)
 {
-    return Factory::template create<sinks::daily_rotating_file_sink_mt>(logger_name, filename, max_size, hour, minute, truncate);
+    return Factory::template create<sinks::daily_rotating_file_sink_mt>(logger_name, config, truncate);
 }
 
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> daily_rotating_logger_st(
-    const std::string &logger_name, const filename_t &filename, std::size_t max_size, int hour = 0, int minute = 0, bool truncate = false)
+    const std::string &logger_name, const daily_rotating_config &config, bool truncate = false)
 {
-    return Factory::template create<sinks::daily_rotating_file_sink_st>(logger_name, filename, max_size, hour, minute, truncate);
+    return Factory::template create<sinks::daily_rotating_file_sink_st>(logger_name, config, truncate);
 }
 } // namespace spdlog
