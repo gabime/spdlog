@@ -29,7 +29,7 @@ struct daily_rotating_config
     std::size_t max_files;
     std::chrono::hours rotation_hour;
     std::chrono::minutes rotation_minute;
-}
+};
 
 /*
  * Rotating file sink based on date. rotates at midnight
@@ -47,7 +47,7 @@ public:
         , rotation_m_(config.rotation_minute)
         , truncate_(truncate)
     {
-        if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
+        if (rotation_h_.count() < 0 || rotation_h_.count() > 23 || rotation_m_.count() < 0 || rotation_m_.count() > 59)
         {
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
@@ -98,8 +98,8 @@ private:
     {
         auto now = log_clock::now();
         tm date = now_tm(now);
-        date.tm_hour = rotation_h_;
-        date.tm_min = rotation_m_;
+        date.tm_hour = rotation_h_.count();
+        date.tm_min = rotation_m_.count();
         date.tm_sec = 0;
         auto rotation_time = log_clock::from_time_t(std::mktime(&date));
         if (rotation_time > now)
@@ -149,8 +149,8 @@ private:
     std::size_t current_size_;
     filename_t today_filename_;
     filename_t base_filename_;
-    int rotation_h_;
-    int rotation_m_;
+    std::chrono::hours rotation_h_;
+    std::chrono::minutes rotation_m_;
     log_clock::time_point rotation_tp_;
     details::file_helper file_helper_;
     bool truncate_;
@@ -166,14 +166,14 @@ using daily_rotating_file_sink_st = daily_rotating_file_sink<details::null_mutex
 //
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> daily_rotating_logger_mt(
-    const std::string &logger_name, const daily_rotating_config &config, bool truncate = false)
+    const std::string &logger_name, const sinks::daily_rotating_config &config, bool truncate = false)
 {
     return Factory::template create<sinks::daily_rotating_file_sink_mt>(logger_name, config, truncate);
 }
 
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> daily_rotating_logger_st(
-    const std::string &logger_name, const daily_rotating_config &config, bool truncate = false)
+    const std::string &logger_name, const sinks::daily_rotating_config &config, bool truncate = false)
 {
     return Factory::template create<sinks::daily_rotating_file_sink_st>(logger_name, config, truncate);
 }
