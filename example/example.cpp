@@ -163,7 +163,6 @@ void async_example()
 // {:n} - don't split the output to lines.
 
 #include "spdlog/fmt/bin_to_hex.h"
-
 void binary_example()
 {
     auto console = spdlog::get("console");
