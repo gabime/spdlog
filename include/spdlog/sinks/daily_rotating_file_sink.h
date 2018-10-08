@@ -54,6 +54,17 @@ public:
 	
         auto now = log_clock::now();
         today_filename_ = FileNameCalc::calc_filename(base_filename_, now_tm(now));
+
+        // calculate the amount of current backups
+        for (current_files_ = 0; ; ++current_files_)
+        {
+            filename_t src = FileNameCalc::calc_filename(today_filename_, current_files_);
+            if (!details::file_helper::file_exists(src))
+            {
+                break;
+            }
+        }
+
         file_helper_.open(today_filename_, truncate_);
         rotation_tp_ = next_rotation_tp_();
         current_size_ = file_helper_.size(); // expensive. called only once
@@ -118,7 +129,13 @@ private:
     {
         using details::os::filename_to_str;
         file_helper_.close();
-        for (auto i = max_files_; i > 0; --i)
+
+        // update amount of file
+        if (++current_files_ > max_files_)
+        {
+            current_files_ = max_files_;
+        }
+        for (auto i = current_files_; i > 0; --i)
         {
             filename_t src = FileNameCalc::calc_filename(today_filename_, i - 1);
             if (!details::file_helper::file_exists(src))
@@ -147,6 +164,7 @@ private:
     std::size_t max_size_;
     std::size_t max_files_;
     std::size_t current_size_;
+    std::size_t current_files_;
     filename_t today_filename_;
     filename_t base_filename_;
     std::chrono::hours rotation_h_;
