@@ -57,7 +57,7 @@ namespace spdlog {
 namespace details {
 namespace os {
 
-inline spdlog::log_clock::time_point now() noexcept
+inline spdlog::log_clock::time_point now() SPDLOG_NOEXCEPT
 {
 
 #if defined __linux__ && defined SPDLOG_CLOCK_COARSE
@@ -70,7 +70,7 @@ inline spdlog::log_clock::time_point now() noexcept
     return log_clock::now();
 #endif
 }
-inline std::tm localtime(const std::time_t &time_tt) noexcept
+inline std::tm localtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT
 {
 
 #ifdef _WIN32
@@ -83,13 +83,13 @@ inline std::tm localtime(const std::time_t &time_tt) noexcept
     return tm;
 }
 
-inline std::tm localtime() noexcept
+inline std::tm localtime() SPDLOG_NOEXCEPT
 {
     std::time_t now_t = time(nullptr);
     return localtime(now_t);
 }
 
-inline std::tm gmtime(const std::time_t &time_tt) noexcept
+inline std::tm gmtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT
 {
 
 #ifdef _WIN32
@@ -102,7 +102,7 @@ inline std::tm gmtime(const std::time_t &time_tt) noexcept
     return tm;
 }
 
-inline std::tm gmtime() noexcept
+inline std::tm gmtime() SPDLOG_NOEXCEPT
 {
     std::time_t now_t = time(nullptr);
     return gmtime(now_t);
@@ -166,7 +166,7 @@ inline bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mod
     return *fp == nullptr;
 }
 
-inline int remove(const filename_t &filename) noexcept
+inline int remove(const filename_t &filename) SPDLOG_NOEXCEPT
 {
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
     return _wremove(filename.c_str());
@@ -175,7 +175,7 @@ inline int remove(const filename_t &filename) noexcept
 #endif
 }
 
-inline int rename(const filename_t &filename1, const filename_t &filename2) noexcept
+inline int rename(const filename_t &filename1, const filename_t &filename2) SPDLOG_NOEXCEPT
 {
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
     return _wrename(filename1.c_str(), filename2.c_str());
@@ -185,7 +185,7 @@ inline int rename(const filename_t &filename1, const filename_t &filename2) noex
 }
 
 // Return if file exists
-inline bool file_exists(const filename_t &filename)  noexcept
+inline bool file_exists(const filename_t &filename)  SPDLOG_NOEXCEPT
 {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES
@@ -313,7 +313,7 @@ inline int utc_minutes_offset(const std::tm &tm = details::os::localtime())
 // Return current thread id as size_t
 // It exists because the std::this_thread::get_id() is much slower(especially
 // under VS 2013)
-inline size_t _thread_id() noexcept
+inline size_t _thread_id() SPDLOG_NOEXCEPT
 {
 #ifdef _WIN32
     return static_cast<size_t>(::GetCurrentThreadId());
@@ -336,7 +336,7 @@ inline size_t _thread_id() noexcept
 }
 
 // Return current thread id as size_t (from thread local storage)
-inline size_t thread_id() noexcept
+inline size_t thread_id() SPDLOG_NOEXCEPT
 {
 #if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt) ||                       \
     (defined(__clang__) && !__has_feature(cxx_thread_local))
@@ -349,7 +349,7 @@ inline size_t thread_id() noexcept
 
 // This is avoid msvc issue in sleep_for that happens if the clock changes.
 // See https://github.com/gabime/spdlog/issues/609
-inline void sleep_for_millis(int milliseconds) noexcept
+inline void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT
 {
 #if defined(_WIN32)
     ::Sleep(milliseconds);
@@ -386,7 +386,7 @@ inline int pid()
 
 // Determine if the terminal supports colors
 // Source: https://github.com/agauniyal/rang/
-inline bool is_color_terminal() noexcept
+inline bool is_color_terminal() SPDLOG_NOEXCEPT
 {
 #ifdef _WIN32
     return true;
@@ -408,7 +408,7 @@ inline bool is_color_terminal() noexcept
 
 // Detrmine if the terminal attached
 // Source: https://github.com/agauniyal/rang/
-inline bool in_terminal(FILE *file) noexcept
+inline bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
 {
 
 #ifdef _WIN32

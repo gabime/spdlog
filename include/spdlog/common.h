@@ -85,17 +85,17 @@ static const char *level_names[] SPDLOG_LEVEL_NAMES;
 
 static const char *short_level_names[]{"T", "D", "I", "W", "E", "C", "O"};
 
-inline const char *to_c_str(spdlog::level::level_enum l) noexcept
+inline const char *to_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
     return level_names[l];
 }
 
-inline const char *to_short_c_str(spdlog::level::level_enum l) noexcept
+inline const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
     return short_level_names[l];
 }
 
-inline spdlog::level::level_enum from_str(const std::string &name) noexcept
+inline spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT
 {
     static std::unordered_map<std::string, level_enum> name_to_level = // map string->level
         {{level_names[0], level::trace},                               // trace
