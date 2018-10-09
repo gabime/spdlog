@@ -107,16 +107,16 @@ inline std::tm gmtime() noexcept
     std::time_t now_t = time(nullptr);
     return gmtime(now_t);
 }
-inline bool operator==(const std::tm &tm1, const std::tm &tm2) noexcept
-{
-    return (tm1.tm_sec == tm2.tm_sec && tm1.tm_min == tm2.tm_min && tm1.tm_hour == tm2.tm_hour && tm1.tm_mday == tm2.tm_mday &&
-            tm1.tm_mon == tm2.tm_mon && tm1.tm_year == tm2.tm_year && tm1.tm_isdst == tm2.tm_isdst);
-}
-
-inline bool operator!=(const std::tm &tm1, const std::tm &tm2) noexcept
-{
-    return !(tm1 == tm2);
-}
+//inline bool operator==(const std::tm &tm1, const std::tm &tm2) noexcept
+//{
+//    return (tm1.tm_sec == tm2.tm_sec && tm1.tm_min == tm2.tm_min && tm1.tm_hour == tm2.tm_hour && tm1.tm_mday == tm2.tm_mday &&
+//            tm1.tm_mon == tm2.tm_mon && tm1.tm_year == tm2.tm_year && tm1.tm_isdst == tm2.tm_isdst);
+//}
+//
+//inline bool operator!=(const std::tm &tm1, const std::tm &tm2) noexcept
+//{
+//    return !(tm1 == tm2);
+//}
 
 // eol definition
 #if !defined(SPDLOG_EOL)
