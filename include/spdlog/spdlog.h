@@ -5,12 +5,16 @@
 // spdlog main header file.
 // see example.cpp for usage example
 
+#ifndef SPDLOG_H
+#define SPDLOG_H
 #pragma once
 
 #include "spdlog/common.h"
 #include "spdlog/details/registry.h"
 #include "spdlog/logger.h"
 #include "spdlog/version.h"
+
+#include "spdlog/default_logger.h"
 
 #include <chrono>
 #include <functional>
@@ -142,11 +146,13 @@ inline void shutdown()
 #define SPDLOG_STR_H(x) #x
 #define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
 #ifdef _MSC_VER
-#define SPDLOG_TRACE(logger, ...) logger->trace("[ " __FILE__ "(" SPDLOG_STR_HELPER(__LINE__) ") ] " __VA_ARGS__)
+#define SPDLOG_TRACE(logger, ...)                                                                                                          \
+    logger->trace("[ "__FILE__                                                                                                             \
+                  "(" SPDLOG_STR_HELPER(__LINE__) ")] " __VA_ARGS__)
 #else
 #define SPDLOG_TRACE(logger, ...)                                                                                                          \
-    logger->trace("[ " __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) " ]"                                                                       \
-                                                                " " __VA_ARGS__)
+    logger->trace("[" __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) "]"                                                                         \
+                                                               " " __VA_ARGS__)
 #endif
 #else
 #define SPDLOG_TRACE(logger, ...) (void)0
@@ -159,3 +165,5 @@ inline void shutdown()
 #endif
 
 } // namespace spdlog
+
+#endif // #define SPDLOG_H
