@@ -215,15 +215,20 @@ private:
     registry()
         : formatter_(new pattern_formatter("%+"))
     {
-        // create default logger (stdout_color_mt).
+
+#ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
+        // create default logger (ansicolor_stdout_sink_mt or wincolor_stdout_sink_mt in windows).
 #ifdef _WIN32
         auto color_sink = std::make_shared<sinks::wincolor_stdout_sink_mt>();
 #else
         auto color_sink = std::make_shared<sinks::ansicolor_stdout_sink_mt>();
 #endif
-        SPDLOG_CONSTEXPR const char *default_logger_name = "";
+
+        const char *default_logger_name = "";
         default_logger_ = std::make_shared<spdlog::logger>(default_logger_name, std::move(color_sink));
         loggers_[default_logger_name] = default_logger_;
+
+#endif // SPDLOG_DISABLE_DEFAULT_LOGGER
     }
 
     ~registry() = default;
