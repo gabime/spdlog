@@ -508,10 +508,13 @@ class full_formatter final : public flag_formatter
 #endif
 
 #ifndef SPDLOG_NO_NAME
-        dest.push_back('[');
-        fmt_helper::append_str(*msg.logger_name, dest);
-        dest.push_back(']');
-        dest.push_back(' ');
+        if (!msg.logger_name->empty())
+        {
+            dest.push_back('[');
+            fmt_helper::append_str(*msg.logger_name, dest);
+            dest.push_back(']');
+            dest.push_back(' ');
+        }
 #endif
 
         dest.push_back('[');

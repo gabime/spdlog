@@ -111,8 +111,8 @@ struct formatter<spdlog::details::bytes_range<T>>
     template<typename FormatContext, typename Container>
     auto format(const spdlog::details::bytes_range<Container> &the_range, FormatContext &ctx) -> decltype(ctx.out())
     {
-        constexpr const char *hex_upper = "0123456789ABCDEF";
-        constexpr const char *hex_lower = "0123456789abcdef";
+        SPDLOG_CONSTEXPR const char *hex_upper = "0123456789ABCDEF";
+        SPDLOG_CONSTEXPR const char *hex_lower = "0123456789abcdef";
         const char *hex_chars = use_uppercase ? hex_upper : hex_lower;
 
         std::size_t pos = 0;

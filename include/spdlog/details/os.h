@@ -185,7 +185,7 @@ inline int rename(const filename_t &filename1, const filename_t &filename2) SPDL
 }
 
 // Return if file exists
-inline bool file_exists(const filename_t &filename)  SPDLOG_NOEXCEPT
+inline bool file_exists(const filename_t &filename) SPDLOG_NOEXCEPT
 {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES

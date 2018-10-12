@@ -5,6 +5,10 @@
 
 #pragma once
 
+#ifndef SPDLOG_H
+#error "spdlog.h must be included before this file."
+#endif
+
 #include "base_sink.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/null_mutex.h"

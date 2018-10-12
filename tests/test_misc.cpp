@@ -191,3 +191,42 @@ TEST_CASE("message_counter", "[message_counter]")
 
     REQUIRE(oss.str() == "000002 Hello again" + std::string(spdlog::details::os::default_eol));
 }
+
+TEST_CASE("default logger API", "[default logger]")
+{
+    std::ostringstream oss;
+    auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+
+    spdlog::set_default_logger(std::make_shared<spdlog::logger>("oss", oss_sink));
+    spdlog::get()->set_pattern("%v");
+
+    spdlog::get()->set_level(spdlog::level::trace);
+    spdlog::trace("hello trace");
+    REQUIRE(oss.str() == "hello trace" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
+    spdlog::debug("hello debug");
+    REQUIRE(oss.str() == "hello debug" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
+    spdlog::info("Hello");
+    REQUIRE(oss.str() == "Hello" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
+    spdlog::warn("Hello again {}", 2);
+    REQUIRE(oss.str() == "Hello again 2" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
+    spdlog::error(123);
+    REQUIRE(oss.str() == "123" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
+    spdlog::critical(std::string("some string"));
+    REQUIRE(oss.str() == "some string" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
+    spdlog::set_level(spdlog::level::info);
+    spdlog::debug("should not be logged");
+    REQUIRE(oss.str().empty());
+    spdlog::drop_all();
+}
