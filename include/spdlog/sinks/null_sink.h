@@ -5,6 +5,10 @@
 
 #pragma once
 
+#ifndef SPDLOG_H
+#error "spdlog.h must be included before this file."
+#endif
+
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
 
@@ -25,4 +29,17 @@ using null_sink_mt = null_sink<std::mutex>;
 using null_sink_st = null_sink<details::null_mutex>;
 
 } // namespace sinks
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> null_logger_mt(const std::string &logger_name)
+{
+    return Factory::template create<sinks::null_sink_mt>(logger_name);
+}
+
+template<typename Factory = default_factory>
+inline std::shared_ptr<logger> null_logger_st(const std::string &logger_name)
+{
+    return Factory::template create<sinks::null_sink_st>(logger_name);
+}
+
 } // namespace spdlog

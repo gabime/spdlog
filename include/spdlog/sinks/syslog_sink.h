@@ -5,8 +5,11 @@
 
 #pragma once
 
+#ifndef SPDLOG_H
+#error "spdlog.h must be included before this file."
+#endif
+
 #include "spdlog/sinks/base_sink.h"
-#include "spdlog/spdlog.h"
 
 #include <array>
 #include <string>

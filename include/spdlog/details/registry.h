@@ -14,6 +14,14 @@
 #include "spdlog/details/periodic_worker.h"
 #include "spdlog/logger.h"
 
+// support for the default stdout color logger
+#ifdef _WIN32
+#include "spdlog/sinks/wincolor_sink.h"
+#else
+#include "spdlog/sinks/ansicolor_sink.h"
+
+#endif
+
 #include <chrono>
 #include <functional>
 #include <memory>
@@ -64,6 +72,25 @@ public:
         std::lock_guard<std::mutex> lock(logger_map_mutex_);
         auto found = loggers_.find(logger_name);
         return found == loggers_.end() ? nullptr : found->second;
+    }
+
+    std::shared_ptr<logger> get_default_logger() const
+    {
+        return default_logger_;
+    }
+
+    // set default logger.
+    // default logger is stored in default_logger_ (for faster retrieval) and in the map of existing loggers.
+    void set_default_logger(std::shared_ptr<logger> new_default_logger)
+    {
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        // remove previous default logger from the map
+        if (default_logger_ != nullptr)
+        {
+            loggers_.erase(default_logger_->name());
+        }
+        loggers_[new_default_logger->name()] = new_default_logger;
+        default_logger_ = std::move(new_default_logger);
     }
 
     void set_tp(std::shared_ptr<thread_pool> tp)
@@ -154,6 +181,7 @@ public:
     {
         std::lock_guard<std::mutex> lock(logger_map_mutex_);
         loggers_.clear();
+        default_logger_.reset();
     }
 
     // clean all reasources and threads started by the registry
@@ -187,6 +215,15 @@ private:
     registry()
         : formatter_(new pattern_formatter("%+"))
     {
+        // create default logger (stdout_color_mt).
+#ifdef _WIN32
+        auto color_sink = std::make_shared<sinks::wincolor_stdout_sink_mt>();
+#else
+        auto color_sink = std::make_shared<sinks::ansicolor_stdout_sink_mt>();
+#endif
+        SPDLOG_CONSTEXPR const char *default_logger_name = "";
+        default_logger_ = std::make_shared<spdlog::logger>(default_logger_name, std::move(color_sink));
+        loggers_[default_logger_name] = default_logger_;
     }
 
     ~registry() = default;
@@ -208,6 +245,7 @@ private:
     log_err_handler err_handler_;
     std::shared_ptr<thread_pool> tp_;
     std::unique_ptr<periodic_worker> periodic_flusher_;
+    std::shared_ptr<logger> default_logger_;
 };
 
 } // namespace details

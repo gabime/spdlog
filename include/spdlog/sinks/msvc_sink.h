@@ -5,6 +5,10 @@
 
 #pragma once
 
+#ifndef SPDLOG_H
+#error "spdlog.h must be included before this file."
+#endif
+
 #if defined(_WIN32)
 
 #include "spdlog/details/null_mutex.h"

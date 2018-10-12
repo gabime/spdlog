@@ -14,8 +14,6 @@
 #include "spdlog/logger.h"
 #include "spdlog/version.h"
 
-#include "spdlog/default_logger.h"
-
 #include <chrono>
 #include <functional>
 #include <memory>
@@ -128,19 +126,173 @@ inline void shutdown()
     details::registry::instance().shutdown();
 }
 
-///////////////////////////////////////////////////////////////////////////////
 //
-// Trace & Debug can be switched on/off at compile time for zero cost debug
-// statements.
+// API for using default logger (stdout_color_mt),
+// e.g: spdlog::info("Message {}", 1);
+//
+// The default logger object can be accessed using the spdlog::get():
+// For example, to add another sink to it:
+// spdlog::get()->sinks()->push_back(some_sink);
+//
+// The default logger can replaced using spdlog::set_default_logger(new_logger).
+// For example, to replace it with a file logger:
+// spdlog::set_default_logger(std::move(spdlog::basic_logger_st("mylog.txt"));
+//
+
+// Return the default logger
+// inline std::shared_ptr<spdlog::logger> get()
+//{
+//    return details::registry::instance().get_default_logger();
+//}
+
+inline std::shared_ptr<spdlog::logger> get()
+{
+    return details::registry::instance().get_default_logger();
+}
+
+inline void set_default_logger(std::shared_ptr<spdlog::logger> default_logger)
+{
+    details::registry::instance().set_default_logger(std::move(default_logger));
+}
+
+template<typename... Args>
+inline void log(level::level_enum lvl, const char *fmt, const Args &... args)
+{
+    get()->log(lvl, fmt, args...);
+}
+
+template<typename... Args>
+inline void trace(const char *fmt, const Args &... args)
+{
+    get()->trace(fmt, args...);
+}
+
+template<typename... Args>
+inline void debug(const char *fmt, const Args &... args)
+{
+    get()->debug(fmt, args...);
+}
+
+template<typename... Args>
+inline void info(const char *fmt, const Args &... args)
+{
+    get()->info(fmt, args...);
+}
+
+template<typename... Args>
+inline void warn(const char *fmt, const Args &... args)
+{
+    get()->warn(fmt, args...);
+}
+
+template<typename... Args>
+inline void error(const char *fmt, const Args &... args)
+{
+    get()->error(fmt, args...);
+}
+
+template<typename... Args>
+inline void critical(const char *fmt, const Args &... args)
+{
+    get()->critical(fmt, args...);
+}
+
+template<typename T>
+inline void log(level::level_enum lvl, const T &msg)
+{
+    get()->log(lvl, msg);
+}
+
+template<typename T>
+inline void trace(const T &msg)
+{
+    get()->trace(msg);
+}
+
+template<typename T>
+inline void debug(const T &msg)
+{
+    get()->debug(msg);
+}
+
+template<typename T>
+inline void info(const T &msg)
+{
+    get()->info(msg);
+}
+
+template<typename T>
+inline void warn(const T &msg)
+{
+    get()->warn(msg);
+}
+
+template<typename T>
+inline void error(const T &msg)
+{
+    get()->error(msg);
+}
+
+template<typename T>
+inline void critical(const T &msg)
+{
+    get()->critical(msg);
+}
+
+#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+template<typename... Args>
+inline void log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+{
+    get()->log(lvl, fmt, args...);
+}
+
+template<typename... Args>
+inline void trace(const wchar_t *fmt, const Args &... args)
+{
+    get()->trace(fmt, args...);
+}
+
+template<typename... Args>
+inline void debug(const wchar_t *fmt, const Args &... args)
+{
+    get()->debug(fmt, args...);
+}
+
+template<typename... Args>
+inline void info(const wchar_t *fmt, const Args &... args)
+{
+    get()->info(fmt, args...);
+}
+
+template<typename... Args>
+inline void warn(const wchar_t *fmt, const Args &... args)
+{
+    get()->warn(fmt, args...);
+}
+
+template<typename... Args>
+inline void error(const wchar_t *fmt, const Args &... args)
+{
+    get()->error(fmt, args...);
+}
+
+template<typename... Args>
+inline void critical(const wchar_t *fmt, const Args &... args)
+{
+    get()->critical(fmt, args...);
+}
+
+#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
+
+//
+// Trace & Debug can be switched on/off at compile time with zero cost.
 // Uncomment SPDLOG_DEBUG_ON/SPDLOG_TRACE_ON in tweakme.h to enable.
 // SPDLOG_TRACE(..) will also print current file and line.
 //
 // Example:
 // spdlog::set_level(spdlog::level::trace);
-// SPDLOG_TRACE(my_logger, "some trace message");
 // SPDLOG_TRACE(my_logger, "another trace message {} {}", 1, 2);
-// SPDLOG_DEBUG(my_logger, "some debug message {} {}", 3, 4);
-///////////////////////////////////////////////////////////////////////////////
+//
 
 #ifdef SPDLOG_TRACE_ON
 #define SPDLOG_STR_H(x) #x
@@ -165,5 +317,4 @@ inline void shutdown()
 #endif
 
 } // namespace spdlog
-
-#endif // #define SPDLOG_H
+#endif // SPDLOG_H

@@ -12,8 +12,7 @@ TEST_CASE("register_drop", "[registry]")
     REQUIRE_THROWS_AS(spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name), const spdlog::spdlog_ex &);
 }
 
-TEST_CASE("explicit register"
-          "[registry]")
+TEST_CASE("explicit register", "[registry]")
 {
     spdlog::drop_all();
     auto logger = std::make_shared<spdlog::logger>(tested_logger_name, std::make_shared<spdlog::sinks::null_sink_st>());
@@ -23,8 +22,7 @@ TEST_CASE("explicit register"
     REQUIRE_THROWS_AS(spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name), const spdlog::spdlog_ex &);
 }
 
-TEST_CASE("apply_all"
-          "[registry]")
+TEST_CASE("apply_all", "[registry]")
 {
     spdlog::drop_all();
     auto logger = std::make_shared<spdlog::logger>(tested_logger_name, std::make_shared<spdlog::sinks::null_sink_st>());
@@ -45,8 +43,7 @@ TEST_CASE("apply_all"
     REQUIRE(counter == 1);
 }
 
-TEST_CASE("drop"
-          "[registry]")
+TEST_CASE("drop", "[registry]")
 {
     spdlog::drop_all();
     spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name);
@@ -54,8 +51,7 @@ TEST_CASE("drop"
     REQUIRE_FALSE(spdlog::get(tested_logger_name));
 }
 
-TEST_CASE("drop_all"
-          "[registry]")
+TEST_CASE("drop_all", "[registry]")
 {
     spdlog::drop_all();
     spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name);
@@ -65,13 +61,20 @@ TEST_CASE("drop_all"
     REQUIRE_FALSE(spdlog::get(tested_logger_name2));
 }
 
-TEST_CASE("drop non existing"
-          "[registry]")
+TEST_CASE("drop non existing", "[registry]")
 {
     spdlog::drop_all();
     spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name);
     spdlog::drop("some_name");
     REQUIRE_FALSE(spdlog::get("some_name"));
     REQUIRE(spdlog::get(tested_logger_name));
+    spdlog::drop_all();
+}
+
+TEST_CASE("default logger", "[registry]")
+{
+    spdlog::drop_all();
+    spdlog::set_default_logger(std::move(spdlog::null_logger_st(tested_logger_name)));
+    REQUIRE(spdlog::get(tested_logger_name) == spdlog::get());
     spdlog::drop_all();
 }

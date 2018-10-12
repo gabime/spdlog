@@ -6,12 +6,14 @@
 //
 // latency.cpp : spdlog latency benchmarks
 //
+
+#include "spdlog/spdlog.h"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
-#include "spdlog/spdlog.h"
+
 #include "utils.h"
 #include <atomic>
 #include <cstdlib>
