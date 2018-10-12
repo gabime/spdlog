@@ -99,6 +99,16 @@ public:
         tp_ = std::move(tp);
     }
 
+    void set_default(std::shared_ptr<logger> logger)
+    {
+        default_logger_ = std::move(logger);
+    }
+
+    std::shared_ptr<logger> get_default()
+    {
+        return default_logger_;
+    }
+
     std::shared_ptr<thread_pool> get_tp()
     {
         std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
@@ -244,6 +254,7 @@ private:
     std::mutex logger_map_mutex_, flusher_mutex_;
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
+    std::shared_ptr<logger> default_logger_;
     std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;

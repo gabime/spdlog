@@ -21,6 +21,7 @@ void user_defined_example();
 void err_handler_example();
 void syslog_example();
 void clone_example();
+void default_logger_example();
 
 #define SPDLOG_TRACE_ON
 #define SPDLOG_DEBUG_ON
@@ -53,6 +54,10 @@ int main(int, char *[])
         rotating_example();
         daily_example();
         clone_example();
+
+        default_logger_example();
+
+        // async logging using a backing thread pool
         async_example();
         binary_example();
         multi_sink_example();
@@ -117,6 +122,13 @@ void clone_example()
 {
     auto network_logger = spdlog::get()->clone("network");
     network_logger->info("Logging network stuff..");
+}
+
+void default_logger_example()
+{
+    auto logger = spdlog::get("console");
+    spdlog::set_default(logger);
+    spdlog::get_default()->warn("Default logger message...");
 }
 
 #include "spdlog/async.h"
