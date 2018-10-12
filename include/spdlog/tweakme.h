@@ -125,7 +125,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Uncomment to disable default logger creation.
-// This might save some small initialization time
+// This might save some (very) small initialization time if no default logger is needed.
 //
 // #define SPDLOG_DISABLE_DEFAULT_LOGGER
 ///////////////////////////////////////////////////////////////////////////////
