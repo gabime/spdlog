@@ -54,6 +54,23 @@ inline std::shared_ptr<logger> get(const std::string &name)
     return details::registry::instance().get(name);
 }
 
+// Return default logger instance when no explicitly defined
+// example: spdlog::get_default()->info("hello {}", "world");
+inline std::shared_ptr<logger> get_default()
+{
+    return details::registry::instance().get_default();
+}
+
+// Sets logger passed in parameter as default logger that will be returned
+// when calling get_default() function
+// example:
+// auto logger = spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
+// spdlog::set_default(logger);
+inline void set_default(std::shared_ptr<logger> logger)
+{
+    details::registry::instance().set_default(std::move(logger));
+}
+
 // Set global formatter. Each sink in each logger will get a clone of this object
 inline void set_formatter(std::unique_ptr<spdlog::formatter> formatter)
 {
