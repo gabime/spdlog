@@ -498,8 +498,13 @@ class full_formatter final : public flag_formatter
         }
         fmt_helper::append_buf(cached_datetime_, dest);
 
+#ifdef SPDLOG_HIGH_RES
+        auto micros = fmt_helper::time_fraction<microseconds>(msg.time);
+        fmt_helper::pad6(static_cast<int>(micros.count()), dest);
+#else
         auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
         fmt_helper::pad3(static_cast<int>(millis.count()), dest);
+#endif
         dest.push_back(']');
         dest.push_back(' ');
 
