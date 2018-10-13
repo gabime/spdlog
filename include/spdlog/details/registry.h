@@ -75,13 +75,23 @@ public:
         return found == loggers_.end() ? nullptr : found->second;
     }
 
-    std::shared_ptr<logger> get_default_logger() const
+    std::shared_ptr<logger> default_logger()
     {
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         return default_logger_;
     }
 
+    // Return raw ptr to the default logger.
+    // To be used directly by the spdlog default api (e.g. spdlog::info)
+    // This make the default API faster, but cannot be used concurrently with set_default_logger().
+    // e.g do not call set_default_logger() from one thread while calling spdlog::info() from another.
+    logger *get_default_raw()
+    {
+        return default_logger_.get();
+    }
+
     // set default logger.
-    // default logger is stored in default_logger_ (for faster retrieval) and in the map of existing loggers.
+    // default logger is stored in default_logger_ (for faster retrieval) and in the loggers_ map.
     void set_default_logger(std::shared_ptr<logger> new_default_logger)
     {
         std::lock_guard<std::mutex> lock(logger_map_mutex_);
@@ -90,7 +100,10 @@ public:
         {
             loggers_.erase(default_logger_->name());
         }
-        loggers_[new_default_logger->name()] = new_default_logger;
+        if (new_default_logger != nullptr)
+        {
+            loggers_[new_default_logger->name()] = new_default_logger;
+        }
         default_logger_ = std::move(new_default_logger);
     }
 
@@ -176,6 +189,10 @@ public:
     {
         std::lock_guard<std::mutex> lock(logger_map_mutex_);
         loggers_.erase(logger_name);
+        if (default_logger_ && default_logger_->name() == logger_name)
+        {
+            default_logger_.reset();
+        }
     }
 
     void drop_all()

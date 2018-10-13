@@ -23,7 +23,7 @@ void syslog_example();
 void clone_example();
 
 #define SPDLOG_TRACE_ON
-#define SPDLOG_DEBUG_ON
+
 #include "spdlog/spdlog.h"
 
 int main(int, char *[])
@@ -115,7 +115,7 @@ void daily_example()
 // Useful for creating component/subsystem loggers from some "root" logger.
 void clone_example()
 {
-    auto network_logger = spdlog::get()->clone("network");
+    auto network_logger = spdlog::default_logger()->clone("network");
     network_logger->info("Logging network stuff..");
 }
 
@@ -156,10 +156,10 @@ void binary_example()
 }
 
 // Compile time log levels.
-// Must define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON to turn them on.
+// Must define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON before including spdlog.h to turn them on.
 void trace_example()
 {
-    auto logger = spdlog::get();
+    auto logger = spdlog::get("file_logger");
     SPDLOG_TRACE(logger, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
     SPDLOG_DEBUG(logger, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
 }

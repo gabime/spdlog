@@ -25,7 +25,6 @@ namespace spdlog {
 struct synchronous_factory
 {
     template<typename Sink, typename... SinkArgs>
-
     static std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... args)
     {
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
@@ -126,28 +125,29 @@ inline void shutdown()
     details::registry::instance().shutdown();
 }
 
-//
 // API for using default logger (stdout_color_mt),
 // e.g: spdlog::info("Message {}", 1);
 //
-// The default logger object can be accessed using the spdlog::get():
+// The default logger object can be accessed using the spdlog::default_logger():
 // For example, to add another sink to it:
-// spdlog::get()->sinks()->push_back(some_sink);
+// spdlog::default_logger()->sinks()->push_back(some_sink);
 //
 // The default logger can replaced using spdlog::set_default_logger(new_logger).
-// For example, to replace it with a file logger:
-// spdlog::set_default_logger(std::move(spdlog::basic_logger_st("mylog.txt"));
+// For example, to replace it with a file logger.
 //
+// IMPORTANT:
+// The default API is thread safe (for _mt loggers), but:
+// set_default_logger() *should not* be used concurrently with the default API.
+// e.g do not call set_default_logger() from one thread while calling spdlog::info() from another.
 
-// Return the default logger
-// inline std::shared_ptr<spdlog::logger> get()
-//{
-//    return details::registry::instance().get_default_logger();
-//}
-
-inline std::shared_ptr<spdlog::logger> get()
+inline std::shared_ptr<spdlog::logger> default_logger()
 {
-    return details::registry::instance().get_default_logger();
+    return details::registry::instance().default_logger();
+}
+
+inline spdlog::logger *default_logger_raw()
+{
+    return details::registry::instance().get_default_raw();
 }
 
 inline void set_default_logger(std::shared_ptr<spdlog::logger> default_logger)
@@ -158,128 +158,128 @@ inline void set_default_logger(std::shared_ptr<spdlog::logger> default_logger)
 template<typename... Args>
 inline void log(level::level_enum lvl, const char *fmt, const Args &... args)
 {
-    get()->log(lvl, fmt, args...);
+    default_logger_raw()->log(lvl, fmt, args...);
 }
 
 template<typename... Args>
 inline void trace(const char *fmt, const Args &... args)
 {
-    get()->trace(fmt, args...);
+    default_logger_raw()->trace(fmt, args...);
 }
 
 template<typename... Args>
 inline void debug(const char *fmt, const Args &... args)
 {
-    get()->debug(fmt, args...);
+    default_logger_raw()->debug(fmt, args...);
 }
 
 template<typename... Args>
 inline void info(const char *fmt, const Args &... args)
 {
-    get()->info(fmt, args...);
+    default_logger_raw()->info(fmt, args...);
 }
 
 template<typename... Args>
 inline void warn(const char *fmt, const Args &... args)
 {
-    get()->warn(fmt, args...);
+    default_logger_raw()->warn(fmt, args...);
 }
 
 template<typename... Args>
 inline void error(const char *fmt, const Args &... args)
 {
-    get()->error(fmt, args...);
+    default_logger_raw()->error(fmt, args...);
 }
 
 template<typename... Args>
 inline void critical(const char *fmt, const Args &... args)
 {
-    get()->critical(fmt, args...);
+    default_logger_raw()->critical(fmt, args...);
 }
 
 template<typename T>
 inline void log(level::level_enum lvl, const T &msg)
 {
-    get()->log(lvl, msg);
+    default_logger_raw()->log(lvl, msg);
 }
 
 template<typename T>
 inline void trace(const T &msg)
 {
-    get()->trace(msg);
+    default_logger_raw()->trace(msg);
 }
 
 template<typename T>
 inline void debug(const T &msg)
 {
-    get()->debug(msg);
+    default_logger_raw()->debug(msg);
 }
 
 template<typename T>
 inline void info(const T &msg)
 {
-    get()->info(msg);
+    default_logger_raw()->info(msg);
 }
 
 template<typename T>
 inline void warn(const T &msg)
 {
-    get()->warn(msg);
+    default_logger_raw()->warn(msg);
 }
 
 template<typename T>
 inline void error(const T &msg)
 {
-    get()->error(msg);
+    default_logger_raw()->error(msg);
 }
 
 template<typename T>
 inline void critical(const T &msg)
 {
-    get()->critical(msg);
+    default_logger_raw()->critical(msg);
 }
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 template<typename... Args>
 inline void log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
 {
-    get()->log(lvl, fmt, args...);
+    default_logger_raw()->log(lvl, fmt, args...);
 }
 
 template<typename... Args>
 inline void trace(const wchar_t *fmt, const Args &... args)
 {
-    get()->trace(fmt, args...);
+    default_logger_raw()->trace(fmt, args...);
 }
 
 template<typename... Args>
 inline void debug(const wchar_t *fmt, const Args &... args)
 {
-    get()->debug(fmt, args...);
+    default_logger_raw()->debug(fmt, args...);
 }
 
 template<typename... Args>
 inline void info(const wchar_t *fmt, const Args &... args)
 {
-    get()->info(fmt, args...);
+    default_logger_raw()->info(fmt, args...);
 }
 
 template<typename... Args>
 inline void warn(const wchar_t *fmt, const Args &... args)
 {
-    get()->warn(fmt, args...);
+    default_logger_raw()->warn(fmt, args...);
 }
 
 template<typename... Args>
 inline void error(const wchar_t *fmt, const Args &... args)
 {
-    get()->error(fmt, args...);
+    default_logger_raw()->error(fmt, args...);
 }
 
 template<typename... Args>
 inline void critical(const wchar_t *fmt, const Args &... args)
 {
-    get()->critical(fmt, args...);
+    default_logger_raw()->critical(fmt, args...);
 }
 
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT

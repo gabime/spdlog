@@ -10,7 +10,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_pattern_formatter.cpp
     test_async.cpp
     includes.h
-    registry.cpp
+    test_registry.cpp
     test_macros.cpp
     utils.cpp
     utils.h
