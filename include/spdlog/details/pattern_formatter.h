@@ -571,7 +571,7 @@ public:
             f->format(msg, cached_tm_, dest);
         }
         // write eol
-        details::fmt_helper::append_str(eol_, dest);
+        details::fmt_helper::append_c_str(eol_.c_str(), dest);
     }
 
 private:
