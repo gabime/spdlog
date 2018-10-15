@@ -123,9 +123,9 @@ class c_formatter final : public flag_formatter
         // fmt::format_to(dest, "{} {} {} ", days[tm_time.tm_wday],
         // months[tm_time.tm_mon], tm_time.tm_mday);
         // date
-        fmt_helper::append_str(days[tm_time.tm_wday], dest);
+        fmt_helper::append_c_str(days[tm_time.tm_wday], dest);
         dest.push_back(' ');
-        fmt_helper::append_str(months[tm_time.tm_mon], dest);
+        fmt_helper::append_c_str(months[tm_time.tm_mon], dest);
         dest.push_back(' ');
         fmt_helper::append_int(tm_time.tm_mday, dest);
         dest.push_back(' ');
