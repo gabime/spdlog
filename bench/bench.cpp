@@ -54,7 +54,6 @@ int main(int argc, char *argv[])
         spdlog::info("Single thread, {:n} iterations", howmany);
         spdlog::info("**************************************************************");
 
-
         auto basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
         bench(howmany, std::move(basic_st));
 
