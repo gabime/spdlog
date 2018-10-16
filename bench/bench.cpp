@@ -16,7 +16,6 @@
 #include "utils.h"
 #include <atomic>
 #include <cstdlib> // EXIT_FAILURE
-#include <iostream>
 #include <memory>
 #include <string>
 #include <thread>
@@ -34,6 +33,7 @@ void bench_default_api(int howmany, std::shared_ptr<spdlog::logger> log);
 int main(int argc, char *argv[])
 {
 
+    spdlog::default_logger()->set_pattern("[%^%l%$] %v");
     int howmany = 1000000;
     int queue_size = howmany + 2;
     int threads = 10;
@@ -50,11 +50,10 @@ int main(int argc, char *argv[])
         if (argc > 3)
             queue_size = atoi(argv[3]);
 
-        cout << "******************************************************************"
-                "*************\n";
-        cout << "Single thread, " << format(howmany) << " iterations" << endl;
-        cout << "******************************************************************"
-                "*************\n";
+        spdlog::info("**************************************************************");
+        spdlog::info("Single thread, {:n} iterations", howmany);
+        spdlog::info("**************************************************************");
+
 
         auto basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
         bench(howmany, std::move(basic_st));
@@ -68,11 +67,9 @@ int main(int argc, char *argv[])
 
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
-        cout << "******************************************************************"
-                "*************\n";
-        cout << "Default API. Single thread, " << format(howmany) << " iterations" << endl;
-        cout << "******************************************************************"
-                "*************\n";
+        spdlog::info("**************************************************************");
+        spdlog::info("Default API. Single thread, {:n} iterations", howmany);
+        spdlog::info("**************************************************************");
 
         basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
         bench_default_api(howmany, std::move(basic_st));
@@ -85,11 +82,9 @@ int main(int argc, char *argv[])
 
         bench_default_api(howmany, spdlog::create<null_sink_st>("null_st"));
 
-        cout << "\n****************************************************************"
-                "***************\n";
-        cout << threads << " threads sharing same logger, " << format(howmany) << " iterations" << endl;
-        cout << "******************************************************************"
-                "*************\n";
+        spdlog::info("**************************************************************");
+        spdlog::info("{:n} threads sharing same logger, {:n} iterations", threads, howmany);
+        spdlog::info("**************************************************************");
 
         auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
         bench_mt(howmany, std::move(basic_mt), threads);
@@ -101,11 +96,9 @@ int main(int argc, char *argv[])
         bench_mt(howmany, std::move(daily_mt), threads);
         bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
 
-        cout << "\n****************************************************************"
-                "***************\n";
-        cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
-        cout << "******************************************************************"
-                "*************\n";
+        spdlog::info("**************************************************************");
+        spdlog::info("Asyncronous.. {:n} threads sharing same logger, {:n} iterations", threads, howmany);
+        spdlog::info("**************************************************************");
 
         for (int i = 0; i < 3; ++i)
         {
@@ -116,8 +109,7 @@ int main(int argc, char *argv[])
     }
     catch (std::exception &ex)
     {
-        std::cerr << "Error: " << ex.what() << std::endl;
-        perror("Last error");
+        spdlog::error(ex.what());
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
@@ -126,7 +118,6 @@ int main(int argc, char *argv[])
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
     using std::chrono::high_resolution_clock;
-    cout << log->name() << "...\t\t" << flush;
     auto start = high_resolution_clock::now();
     for (auto i = 0; i < howmany; ++i)
     {
@@ -136,14 +127,13 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
 
-    cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
-    spdlog::drop_all();
+    spdlog::info("{:<16} Elapsed: {:0.2f} secs {:>16n}/sec", log->name(), delta_d, int(howmany / delta_d));
+    spdlog::drop(log->name());
 }
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
 {
     using std::chrono::high_resolution_clock;
-    cout << log->name() << "...\t\t" << flush;
     vector<thread> threads;
     auto start = high_resolution_clock::now();
     for (int t = 0; t < thread_count; ++t)
@@ -163,14 +153,14 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
-    spdlog::drop_all();
+    spdlog::info("{:<16} Elapsed: {:0.2f} secs {:>16n}/sec", log->name(), delta_d, int(howmany / delta_d));
+    spdlog::drop(log->name());
 }
 
 void bench_default_api(int howmany, std::shared_ptr<spdlog::logger> log)
 {
     using std::chrono::high_resolution_clock;
-    cout << log->name() << "...\t\t" << flush;
+    auto orig_default = spdlog::default_logger();
     spdlog::set_default_logger(log);
     auto start = high_resolution_clock::now();
     for (auto i = 0; i < howmany; ++i)
@@ -180,7 +170,7 @@ void bench_default_api(int howmany, std::shared_ptr<spdlog::logger> log)
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-
-    cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
-    spdlog::drop_all();
+    spdlog::drop(log->name());
+    spdlog::set_default_logger(std::move(orig_default));
+    spdlog::info("{:<16} Elapsed: {:0.2f} secs {:>16n}/sec", log->name(), delta_d, int(howmany / delta_d));
 }
