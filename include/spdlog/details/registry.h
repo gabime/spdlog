@@ -202,7 +202,7 @@ public:
         default_logger_.reset();
     }
 
-    // clean all reasources and threads started by the registry
+    // clean all resources and threads started by the registry
     void shutdown()
     {
         {
