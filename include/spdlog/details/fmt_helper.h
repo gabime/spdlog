@@ -5,6 +5,7 @@
 #pragma once
 
 #include "chrono"
+#include "spdlog/details/log_msg.h"
 #include "spdlog/fmt/fmt.h"
 
 // Some fmt helpers to efficiently format and pad ints and strings
@@ -38,6 +39,17 @@ inline void append_int(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     fmt::format_int i(n);
     dest.append(i.data(), i.data() + i.size());
+}
+
+template<size_t Buffer_Size>
+inline void append_msg(const details::log_msg &msg, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+{
+    auto *c_buf = msg.c_string.data();
+    if (c_buf != nullptr) {
+        dest.append(c_buf, c_buf + msg.c_string.size());
+    } else {
+        append_buf(msg.raw, dest);
+    }
 }
 
 template<size_t Buffer_Size>

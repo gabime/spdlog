@@ -1,5 +1,6 @@
 #pragma once
 
+#include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/mpmc_blocking_q.h"
 #include "spdlog/details/os.h"
@@ -77,7 +78,7 @@ struct async_msg
         , msg_id(m.msg_id)
         , worker_ptr(std::move(worker))
     {
-        fmt_helper::append_buf(m.raw, raw);
+        fmt_helper::append_msg(m, raw);
     }
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
