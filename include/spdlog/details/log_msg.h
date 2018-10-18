@@ -35,9 +35,9 @@ struct log_msg
     log_msg &operator=(log_msg &&other) = delete;
 
     const std::string *logger_name{nullptr};
-    level::level_enum level;
+    level::level_enum level {level::off};
     log_clock::time_point time;
-    size_t thread_id;
+    size_t thread_id {0};
     fmt::memory_buffer raw;
     size_t msg_id;
 
