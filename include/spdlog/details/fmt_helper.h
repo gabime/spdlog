@@ -24,7 +24,10 @@ template<size_t Buffer_Size>
 inline void append_string_view(fmt::string_view view, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     auto *buf_ptr = view.data();
-    dest.append(buf_ptr, buf_ptr + view.size());
+    if(buf_ptr != nullptr)
+    {
+        dest.append(buf_ptr, buf_ptr + view.size());
+    }
 }
 
 template<typename T, size_t Buffer_Size>
