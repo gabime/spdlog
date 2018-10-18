@@ -13,20 +13,6 @@ namespace spdlog {
 namespace details {
 namespace fmt_helper {
 
-template<size_t Buffer_Size>
-inline void append_str(const std::string &str, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
-{
-    auto *str_ptr = str.data();
-    dest.append(str_ptr, str_ptr + str.size());
-}
-
-template<size_t Buffer_Size>
-inline void append_c_str(const char *c_str, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
-{
-    auto len = std::char_traits<char>::length(c_str);
-    dest.append(c_str, c_str + len);
-}
-
 template<size_t Buffer_Size1, size_t Buffer_Size2>
 inline void append_buf(const fmt::basic_memory_buffer<char, Buffer_Size1> &buf, fmt::basic_memory_buffer<char, Buffer_Size2> &dest)
 {
@@ -34,22 +20,18 @@ inline void append_buf(const fmt::basic_memory_buffer<char, Buffer_Size1> &buf, 
     dest.append(buf_ptr, buf_ptr + buf.size());
 }
 
+template<size_t Buffer_Size>
+inline void append_string_view(fmt::string_view view, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+{
+    auto *buf_ptr = view.data();
+    dest.append(buf_ptr, buf_ptr + view.size());
+}
+
 template<typename T, size_t Buffer_Size>
 inline void append_int(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     fmt::format_int i(n);
     dest.append(i.data(), i.data() + i.size());
-}
-
-template<size_t Buffer_Size>
-inline void append_msg(const details::log_msg &msg, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
-{
-    auto *c_buf = msg.c_string.data();
-    if (c_buf != nullptr) {
-        dest.append(c_buf, c_buf + msg.c_string.size());
-    } else {
-        append_buf(msg.raw, dest);
-    }
 }
 
 template<size_t Buffer_Size>

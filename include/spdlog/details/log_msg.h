@@ -17,7 +17,7 @@ struct log_msg
 {
     log_msg() = default;
 
-    log_msg(const std::string *loggers_name, level::level_enum lvl)
+    log_msg(const std::string *loggers_name, level::level_enum lvl, fmt::string_view view)
         : logger_name(loggers_name)
         , level(lvl)
 #ifndef SPDLOG_NO_DATETIME
@@ -26,27 +26,31 @@ struct log_msg
 
 #ifndef SPDLOG_NO_THREAD_ID
         , thread_id(os::thread_id())
+        , payload(view)
 #endif
     {
     }
 
-    log_msg(const log_msg &other) = delete;
-    log_msg(log_msg &&other) = delete;
-    log_msg &operator=(log_msg &&other) = delete;
+    log_msg(const log_msg &other) = default;
+    log_msg(log_msg &&other) = default;
+    log_msg &operator=(log_msg &&other) = default;
 
     const std::string *logger_name{nullptr};
-    level::level_enum level {level::off};
+    level::level_enum level{level::off};
     log_clock::time_point time;
-    size_t thread_id {0};
-    fmt::memory_buffer raw;
-    // if c_string.data() is not nullptr, c_string should be used as the message
-    // instead of raw above 
-    fmt::string_view c_string;
+    size_t thread_id{0};
     size_t msg_id;
 
     // info about wrapping the formatted text with color (updated by pattern_formatter).
     mutable size_t color_range_start{0};
     mutable size_t color_range_end{0};
+
+    operator fmt::string_view() const SPDLOG_NOEXCEPT
+    {
+        return payload;
+    }
+
+    const fmt::string_view payload;
 };
 } // namespace details
 } // namespace spdlog

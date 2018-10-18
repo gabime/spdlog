@@ -53,12 +53,7 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        if (msg.c_string.data() != nullptr)
-        {
-            ::syslog(syslog_prio_from_level(msg), "%.*s", static_cast<int>(msg.c_string.size()), msg.c_string.data());
-        } else {
-            ::syslog(syslog_prio_from_level(msg), "%s", fmt::to_string(msg.raw).c_str());
-        }
+        ::syslog(syslog_prio_from_level(msg), "%s", fmt::to_string(msg).c_str());
     }
 
     void flush_() override {}

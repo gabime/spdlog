@@ -60,9 +60,12 @@ TEST_CASE("date MM/DD/YY ", "[pattern_formatter]")
 TEST_CASE("color range test1", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%v%$", spdlog::pattern_time_type::local, "\n");
-    spdlog::details::log_msg msg;
-    fmt::format_to(msg.raw, "Hello");
+
+    fmt::memory_buffer buf;
+    fmt::format_to(buf, "Hello");
     fmt::memory_buffer formatted;
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, fmt::string_view(buf.data(), buf.size()));
     formatter->format(msg, formatted);
     REQUIRE(msg.color_range_start == 0);
     REQUIRE(msg.color_range_end == 5);
@@ -93,8 +96,9 @@ TEST_CASE("color range test3", "[pattern_formatter]")
 TEST_CASE("color range test4", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("XX%^YYY%$", spdlog::pattern_time_type::local, "\n");
-    spdlog::details::log_msg msg;
-    fmt::format_to(msg.raw, "ignored");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, "ignored");
+
     fmt::memory_buffer formatted;
     formatter->format(msg, formatted);
     REQUIRE(msg.color_range_start == 2);

@@ -231,22 +231,3 @@ TEST_CASE("default logger API", "[default logger]")
     spdlog::drop_all();
     spdlog::set_pattern("%v");
 }
-
-TEST_CASE("C string", "[c_string]")
-{
-    std::ostringstream oss;
-    auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
-
-    spdlog::logger oss_logger("oss", oss_sink);
-    oss_logger.set_level(spdlog::level::debug);
-    oss_logger.set_pattern("*** %v");
-
-    const char *test_string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit massa nunc";
-
-    oss_logger.log(spdlog::level::debug, test_string);
-    REQUIRE(oss.str() == "*** " + std::string(test_string) + std::string(spdlog::details::os::default_eol));
-
-    oss.str("");
-    oss_logger.logn(spdlog::level::debug, test_string, 11);
-    REQUIRE(oss.str() == "*** " + std::string(test_string, 11) + std::string(spdlog::details::os::default_eol));
-}

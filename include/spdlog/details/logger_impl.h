@@ -63,8 +63,9 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
 
     try
     {
-        details::log_msg log_msg(&name_, lvl);
-        fmt::format_to(log_msg.raw, fmt, args...);
+        fmt::memory_buffer buf;
+        fmt::format_to(buf, fmt, args...);
+        details::log_msg log_msg(&name_, lvl, fmt::string_view(buf.data(), buf.size()));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -72,19 +73,14 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
 
 inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
 {
-    logn(lvl, msg, std::char_traits<char>::length(msg));
-}
-
-inline void spdlog::logger::logn(level::level_enum lvl, const char *msg, size_t msg_len)
-{
     if (!should_log(lvl))
     {
         return;
     }
+
     try
     {
-        details::log_msg log_msg(&name_, lvl);
-        log_msg.c_string = fmt::string_view(msg, msg_len);
+        details::log_msg log_msg(&name_, lvl, msg);
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -99,8 +95,9 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
     }
     try
     {
-        details::log_msg log_msg(&name_, lvl);
-        fmt::format_to(log_msg.raw, "{}", msg);
+        fmt::memory_buffer buf;
+        fmt::format_to(buf, "{}", msg);
+        details::log_msg log_msg(&name_, lvl, fmt::string_view(buf.data(), buf.size()));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
