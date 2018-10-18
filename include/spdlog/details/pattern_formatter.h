@@ -401,7 +401,7 @@ class v_formatter final : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        fmt_helper::append_buf(msg.raw, dest);
+        fmt_helper::append_msg(msg, dest);
     }
 };
 
@@ -524,7 +524,7 @@ class full_formatter final : public flag_formatter
         msg.color_range_end = dest.size();
         dest.push_back(']');
         dest.push_back(' ');
-        fmt_helper::append_buf(msg.raw, dest);
+        fmt_helper::append_msg(msg, dest);
     }
 
 private:

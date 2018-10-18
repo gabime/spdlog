@@ -39,6 +39,9 @@ struct log_msg
     log_clock::time_point time;
     size_t thread_id {0};
     fmt::memory_buffer raw;
+    // if c_string.data() is not nullptr, c_string should be used as the message
+    // instead of raw above 
+    fmt::string_view c_string;
     size_t msg_id;
 
     // info about wrapping the formatted text with color (updated by pattern_formatter).

@@ -20,7 +20,7 @@ inline spdlog::logger::logger(std::string logger_name, It begin, It end)
     , flush_level_(level::off)
     , last_err_time_(0)
     , msg_counter_(1) // message counter will start from 1. 0-message id will be
-                      // reserved for controll messages
+                      // reserved for control messages
 {
     err_handler_ = [this](const std::string &msg) { this->default_err_handler_(msg); };
 }
@@ -70,8 +70,12 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
     SPDLOG_CATCH_AND_HANDLE
 }
 
-template<typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
+{
+    logn(lvl, msg, std::char_traits<char>::length(msg));
+}
+
+inline void spdlog::logger::logn(level::level_enum lvl, const char *msg, size_t msg_len)
 {
     if (!should_log(lvl))
     {
@@ -80,7 +84,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
     try
     {
         details::log_msg log_msg(&name_, lvl);
-        details::fmt_helper::append_c_str(msg, log_msg.raw);
+        log_msg.c_string = fmt::string_view(msg, msg_len);
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
