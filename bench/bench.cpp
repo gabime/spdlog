@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
         bench_default_api(howmany, spdlog::create<null_sink_st>("null_st"));
 
         spdlog::info("**************************************************************");
-        spdlog::info("C-string. Single thread, {:n} iterations", howmany);
+        spdlog::info("C-string (500 bytes). Single thread, {:n} iterations", howmany);
         spdlog::info("**************************************************************");
 
         basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_cs.log", true);
