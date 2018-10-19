@@ -404,7 +404,7 @@ class v_formatter final : public flag_formatter
 {
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        fmt_helper::append_string_view(msg, dest);
+        fmt_helper::append_string_view(msg.payload, dest);
     }
 };
 
@@ -530,7 +530,7 @@ class full_formatter final : public flag_formatter
         dest.push_back(']');
         dest.push_back(' ');
         // fmt_helper::append_string_view(msg.msg(), dest);
-        fmt_helper::append_string_view(msg, dest);
+        fmt_helper::append_string_view(msg.payload, dest);
     }
 
 private:

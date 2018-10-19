@@ -78,7 +78,7 @@ struct async_msg
         , msg_id(m.msg_id)
         , worker_ptr(std::move(worker))
     {
-        fmt_helper::append_string_view(m, raw);
+        fmt_helper::append_string_view(m.payload, raw);
     }
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)

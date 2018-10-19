@@ -45,11 +45,6 @@ struct log_msg
     mutable size_t color_range_start{0};
     mutable size_t color_range_end{0};
 
-    operator fmt::string_view() const SPDLOG_NOEXCEPT
-    {
-        return payload;
-    }
-
     const fmt::string_view payload;
 };
 } // namespace details
