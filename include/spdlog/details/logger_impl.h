@@ -63,9 +63,10 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
 
     try
     {
+        using details::fmt_helper::to_string_view;
         fmt::memory_buffer buf;
         fmt::format_to(buf, fmt, args...);
-        details::log_msg log_msg(&name_, lvl, fmt::string_view(buf.data(), buf.size()));
+        details::log_msg log_msg(&name_, lvl, to_string_view(buf));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -95,9 +96,10 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
     }
     try
     {
+        using details::fmt_helper::to_string_view;
         fmt::memory_buffer buf;
         fmt::format_to(buf, "{}", msg);
-        details::log_msg log_msg(&name_, lvl, fmt::string_view(buf.data(), buf.size()));
+        details::log_msg log_msg(&name_, lvl, to_string_view(buf));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -209,11 +211,14 @@ inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const
     try
     {
         // format to wmemory_buffer and convert to utf8
-        details::log_msg log_msg(&name_, lvl);
+        using details::fmt_helper::to_string_view;
         fmt::wmemory_buffer wbuf;
         fmt::format_to(wbuf, fmt, args...);
-        wbuf_to_utf8buf(wbuf, log_msg.raw);
+        fmt::memory_buffer buf;
+        wbuf_to_utf8buf(wbuf, buf);
+        details::log_msg log_msg(&name_, lvl, to_string_view(buf));
         sink_it_(log_msg);
+
     }
     SPDLOG_CATCH_AND_HANDLE
 }

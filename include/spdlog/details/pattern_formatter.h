@@ -83,7 +83,6 @@ class a_formatter : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        // fmt_helper::append_string_view(days[tm_time.tm_wday], dest);
         fmt_helper::append_string_view(days[tm_time.tm_wday], dest);
     }
 };
@@ -94,7 +93,6 @@ class A_formatter : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        // fmt_helper::append_string_view(full_days[tm_time.tm_wday], dest);
         fmt_helper::append_string_view(full_days[tm_time.tm_wday], dest);
     }
 };
@@ -105,7 +103,6 @@ class b_formatter : public flag_formatter
 {
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        // fmt_helper::append_string_view(months[tm_time.tm_mon], dest);
         fmt_helper::append_string_view(months[tm_time.tm_mon], dest);
     }
 };

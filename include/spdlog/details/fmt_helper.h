@@ -13,6 +13,11 @@ namespace spdlog {
 namespace details {
 namespace fmt_helper {
 
+template<size_t Buffer_Size>
+inline fmt::string_view to_string_view(const fmt::basic_memory_buffer<char, Buffer_Size> &buf) SPDLOG_NOEXCEPT
+{
+    return fmt::string_view(buf.data(), buf.size());
+}
 template<size_t Buffer_Size1, size_t Buffer_Size2>
 inline void append_buf(const fmt::basic_memory_buffer<char, Buffer_Size1> &buf, fmt::basic_memory_buffer<char, Buffer_Size2> &dest)
 {
