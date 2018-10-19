@@ -147,7 +147,7 @@ void async_example()
 void binary_example()
 {
     std::vector<char> buf;
-    for(int i = 0; i < 80; i++)
+    for (int i = 0; i < 80; i++)
     {
         buf.push_back(static_cast<char>(i & 0xff));
     }

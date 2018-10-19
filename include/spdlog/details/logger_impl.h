@@ -218,7 +218,6 @@ inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const
         wbuf_to_utf8buf(wbuf, buf);
         details::log_msg log_msg(&name_, lvl, to_string_view(buf));
         sink_it_(log_msg);
-
     }
     SPDLOG_CATCH_AND_HANDLE
 }
