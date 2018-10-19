@@ -146,7 +146,11 @@ void async_example()
 #include "spdlog/fmt/bin_to_hex.h"
 void binary_example()
 {
-    std::array<char, 80> buf;
+    std::vector<char> buf;
+    for(int i = 0; i < 80; i++)
+    {
+        buf.push_back(static_cast<char>(i & 0xff));
+    }
     spdlog::info("Binary example: {}", spdlog::to_hex(buf));
     spdlog::info("Another binary example:{:n}", spdlog::to_hex(std::begin(buf), std::begin(buf) + 10));
     // more examples:
