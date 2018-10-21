@@ -81,13 +81,13 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
 
     try
     {
-        details::log_msg log_msg(&name_, lvl, spdlog::string_view_type(msg));
+        details::log_msg log_msg(&name_, lvl, spdlog::string_view_t(msg));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
 }
 
-template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_type>::value, T>::type *>
+template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
 inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
 {
     if (!should_log(lvl))
@@ -96,13 +96,13 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
     }
     try
     {
-        details::log_msg log_msg(&name_, lvl, spdlog::string_view_type(msg));
+        details::log_msg log_msg(&name_, lvl, spdlog::string_view_t(msg));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
 }
 
-template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_type>::value, T>::type *>
+template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
 inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
 {
     if (!should_log(lvl))

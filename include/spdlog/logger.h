@@ -94,11 +94,11 @@ public:
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     // T can be statically converted to string_view
-    template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_type>::value, T>::type * = nullptr>
+    template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(level::level_enum lvl, const T &);
 
     // T cannot be statically converted to string_view
-    template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_type>::value, T>::type * = nullptr>
+    template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(level::level_enum lvl, const T &);
 
     template<typename T>

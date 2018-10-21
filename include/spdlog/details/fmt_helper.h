@@ -14,9 +14,9 @@ namespace details {
 namespace fmt_helper {
 
 template<size_t Buffer_Size>
-inline spdlog::string_view_type to_string_view(const fmt::basic_memory_buffer<char, Buffer_Size> &buf) SPDLOG_NOEXCEPT
+inline spdlog::string_view_t to_string_view(const fmt::basic_memory_buffer<char, Buffer_Size> &buf) SPDLOG_NOEXCEPT
 {
-    return spdlog::string_view_type(buf.data(), buf.size());
+    return spdlog::string_view_t(buf.data(), buf.size());
 }
 template<size_t Buffer_Size1, size_t Buffer_Size2>
 inline void append_buf(const fmt::basic_memory_buffer<char, Buffer_Size1> &buf, fmt::basic_memory_buffer<char, Buffer_Size2> &dest)
@@ -26,7 +26,7 @@ inline void append_buf(const fmt::basic_memory_buffer<char, Buffer_Size1> &buf, 
 }
 
 template<size_t Buffer_Size>
-inline void append_string_view(spdlog::string_view_type view, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+inline void append_string_view(spdlog::string_view_t view, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     auto *buf_ptr = view.data();
     if (buf_ptr != nullptr)

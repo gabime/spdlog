@@ -17,7 +17,7 @@ struct log_msg
 {
     log_msg() = default;
 
-    log_msg(const std::string *loggers_name, level::level_enum lvl, string_view_type view)
+    log_msg(const std::string *loggers_name, level::level_enum lvl, string_view_t view)
         : logger_name(loggers_name)
         , level(lvl)
 #ifndef SPDLOG_NO_DATETIME
@@ -44,7 +44,7 @@ struct log_msg
     mutable size_t color_range_start{0};
     mutable size_t color_range_end{0};
 
-    const string_view_type payload;
+    const string_view_t payload;
 };
 } // namespace details
 } // namespace spdlog
