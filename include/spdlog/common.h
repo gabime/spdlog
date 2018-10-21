@@ -56,6 +56,13 @@ using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using log_err_handler = std::function<void(const std::string &err_msg)>;
 
+// string_view type - either std::string_view or fmt::string_view (pre c++17)
+#if defined(FMT_USE_STD_STRING_VIEW)
+using string_view_type = std::string_view;
+#else
+using string_view_type = fmt::string_view;
+#endif
+
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
 #else

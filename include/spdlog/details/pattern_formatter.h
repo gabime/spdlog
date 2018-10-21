@@ -39,7 +39,7 @@ class name_formatter : public flag_formatter
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
         // fmt_helper::append_str(*msg.logger_name, dest);
-        fmt_helper::append_string_view(*msg.logger_name, dest);
+        fmt_helper::append_string_view(string_view_type(*msg.logger_name), dest);
     }
 };
 
@@ -49,6 +49,7 @@ class level_formatter : public flag_formatter
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
         // fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
+        spdlog::string_view_type t("SSSSSSS");
         fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
     }
 };
