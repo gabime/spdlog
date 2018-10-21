@@ -47,9 +47,7 @@ public:
     void log(level::level_enum lvl, const char *fmt, const Args &... args);
 
     void log(level::level_enum lvl, const char *msg);
-
-    void logn(level::level_enum lvl, const char *msg, size_t msg_len);
-
+   
     template<typename... Args>
     void trace(const char *fmt, const Args &... args);
 
