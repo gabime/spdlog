@@ -45,8 +45,7 @@ public:
 
     template<typename... Args>
     void log(level::level_enum lvl, const char *fmt, const Args &... args);
-
-	template<>
+	
     void log(level::level_enum lvl, const char *msg);
    
     template<typename... Args>

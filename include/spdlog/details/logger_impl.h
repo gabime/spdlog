@@ -71,7 +71,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
     }
     SPDLOG_CATCH_AND_HANDLE
 }
-template<>
+
 inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
 {
     if (!should_log(lvl))
