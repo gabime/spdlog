@@ -65,7 +65,7 @@ TEST_CASE("color range test1", "[pattern_formatter]")
     fmt::format_to(buf, "Hello");
     fmt::memory_buffer formatted;
     std::string logger_name = "test";
-    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, fmt::string_view(buf.data(), buf.size()));
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, spdlog::string_view_t(buf.data(), buf.size()));
     formatter->format(msg, formatted);
     REQUIRE(msg.color_range_start == 0);
     REQUIRE(msg.color_range_end == 5);
