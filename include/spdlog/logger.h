@@ -46,6 +46,7 @@ public:
     template<typename... Args>
     void log(level::level_enum lvl, const char *fmt, const Args &... args);
 
+	template<>
     void log(level::level_enum lvl, const char *msg);
    
     template<typename... Args>
@@ -93,7 +94,12 @@ public:
 #endif // _WIN32
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
-    template<typename T>
+	// T can be statically converted to string_view
+    template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_type>::value, T>::type * = nullptr>
+    void log(level::level_enum lvl, const T &);
+
+	// T cannot be statically converted to string_view 
+	template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_type>::value, T>::type * = nullptr>
     void log(level::level_enum lvl, const T &);
 
     template<typename T>
