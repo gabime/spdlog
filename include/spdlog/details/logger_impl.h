@@ -293,7 +293,7 @@ inline void spdlog::logger::set_error_handler(spdlog::log_err_handler err_handle
     err_handler_ = std::move(err_handler);
 }
 
-inline spdlog::log_err_handler spdlog::logger::error_handler()
+inline spdlog::log_err_handler spdlog::logger::error_handler() const
 {
     return err_handler_;
 }

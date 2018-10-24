@@ -140,7 +140,7 @@ public:
 
     // error handler
     void set_error_handler(log_err_handler err_handler);
-    log_err_handler error_handler();
+    log_err_handler error_handler() const;
 
     // create new logger with same sinks and configuration.
     virtual std::shared_ptr<logger> clone(std::string logger_name);
