@@ -52,12 +52,6 @@ void prepare_logdir()
 #endif
 }
 
-
-void add_rate(benchmark::State &state)
-{
-    state.counters["Rate"] = benchmark::Counter(1, benchmark::Counter::kIsIterationInvariantRate);
-}
-
 void bench_c_string(benchmark::State& state, std::shared_ptr<spdlog::logger> logger)
 {
     const char *msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum pharetra metus cursus "
@@ -71,7 +65,7 @@ void bench_c_string(benchmark::State& state, std::shared_ptr<spdlog::logger> log
     {
         logger->info(msg);
     }
-    add_rate(state);
+
 }
 
 void bench_logger(benchmark::State& state, std::shared_ptr<spdlog::logger> logger)
@@ -80,10 +74,7 @@ void bench_logger(benchmark::State& state, std::shared_ptr<spdlog::logger> logge
     for (auto _ : state)
     {
         logger->info("Hello logger: msg number {}...............", ++i);
-
     }
-    add_rate(state);
-
 }
 
 
@@ -100,6 +91,7 @@ int main(int argc, char *argv[])
     size_t file_size = 30 * 1024 * 1024;
     size_t rotating_files = 5;
     int n_threads = 10;
+    int iters = 1000000;
 
     prepare_logdir();
 
@@ -108,55 +100,69 @@ int main(int argc, char *argv[])
     //
     auto null_logger = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_st>());
 
-    benchmark::RegisterBenchmark("null_sink_st-500_bytes_cstr", bench_c_string, null_logger);
-    benchmark::RegisterBenchmark("null_sink_st", bench_logger, null_logger);
-    benchmark::RegisterBenchmark("null_sink_st", bench_logger, null_logger)->UseRealTime();
+    benchmark::RegisterBenchmark("null_sink_st-500_bytes_cstr", bench_c_string, null_logger)
+           ->UseRealTime()
+           ->Iterations(iters);
+    benchmark::RegisterBenchmark("null_sink_st", bench_logger, null_logger)
+            ->UseRealTime()
+            ->Iterations(iters);
 
     // basic_st
     auto basic_st = spdlog::basic_logger_st("basic_st", "logs_bench/basic_st.log", true);
-    benchmark::RegisterBenchmark("basic_st", bench_logger, std::move(basic_st));
-    benchmark::RegisterBenchmark("basic_st", bench_logger, std::move(basic_st))->UseRealTime();
+    benchmark::RegisterBenchmark("basic_st", bench_logger, std::move(basic_st))
+            ->UseRealTime()
+            ->Iterations(iters);
     spdlog::drop("basic_st");
 
 
     // rotating st
     auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs_bench/rotating_st.log", file_size, rotating_files);
-    benchmark::RegisterBenchmark("rotating_st", bench_logger, std::move(rotating_st));
-    benchmark::RegisterBenchmark("rotating_st", bench_logger, std::move(rotating_st))->UseRealTime();
+    benchmark::RegisterBenchmark("rotating_st", bench_logger, std::move(rotating_st))
+            ->UseRealTime()
+            ->Iterations(iters);
     spdlog::drop("rotating_st");
 
 
     // daily st
     auto daily_st = spdlog::daily_logger_mt("daily_st", "logs_bench/daily_st.log");
-    benchmark::RegisterBenchmark("daily_st", bench_logger, std::move(daily_st));
-    benchmark::RegisterBenchmark("daily_st", bench_logger, std::move(daily_st))->UseRealTime();
+    benchmark::RegisterBenchmark("daily_st", bench_logger, std::move(daily_st))
+            ->UseRealTime()
+            ->Iterations(iters);
     spdlog::drop("daily_st");
 
     //
     // Multi threaded bench, 10 using same logger concurrently
     //
     auto null_logger_mt = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_mt>());
-    benchmark::RegisterBenchmark("null_sink_mt", bench_logger, null_logger_mt)->Threads(n_threads);
-    benchmark::RegisterBenchmark("null_sink_mt", bench_logger, null_logger_mt)->Threads(n_threads)->UseRealTime();
+    benchmark::RegisterBenchmark("null_sink_mt", bench_logger, null_logger_mt)
+            ->Threads(n_threads)
+            ->UseRealTime()
+            ->Iterations(iters/n_threads);
 
     // basic_mt
     auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs_bench/basic_mt.log", true);
-    benchmark::RegisterBenchmark("basic_mt", bench_logger, std::move(basic_mt))->Threads(n_threads);
-    benchmark::RegisterBenchmark("basic_mt", bench_logger, std::move(basic_mt))->Threads(n_threads)->UseRealTime();
+    benchmark::RegisterBenchmark("basic_mt", bench_logger, std::move(basic_mt))
+            ->Threads(n_threads)
+            ->UseRealTime()
+            ->Iterations(iters/n_threads);
     spdlog::drop("basic_mt");
 
 
     // rotating mt
     auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs_bench/rotating_mt.log", file_size, rotating_files);
-    benchmark::RegisterBenchmark("rotating_mt", bench_logger, std::move(rotating_mt))->Threads(n_threads);
-    benchmark::RegisterBenchmark("rotating_mt", bench_logger, std::move(rotating_mt))->Threads(n_threads)->UseRealTime();
+    benchmark::RegisterBenchmark("rotating_mt", bench_logger, std::move(rotating_mt))
+            ->Threads(n_threads)
+            ->UseRealTime()
+            ->Iterations(iters/n_threads);
     spdlog::drop("rotating_mt");
 
 
     // daily mt
     auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs_bench/daily_mt.log");
-    benchmark::RegisterBenchmark("daily_mt", bench_logger, std::move(daily_mt))->Threads(n_threads);
-    benchmark::RegisterBenchmark("daily_mt", bench_logger, std::move(daily_mt))->Threads(n_threads)->UseRealTime();
+    benchmark::RegisterBenchmark("daily_mt", bench_logger, std::move(daily_mt))
+            ->Threads(n_threads)
+            ->UseRealTime()
+            ->Iterations(iters/n_threads);
     spdlog::drop("daily_mt");
 
     benchmark::Initialize(&argc, argv);
