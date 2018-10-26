@@ -38,6 +38,7 @@ add_executable(async_bench async_bench.cpp)
 target_link_libraries(async_bench spdlog::spdlog Threads::Threads)
 
 add_executable(latency latency.cpp)
+set(CMAKE_CXX_STANDARD_LIBRARIES -lbenchmark)
 target_link_libraries(latency spdlog::spdlog Threads::Threads)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
