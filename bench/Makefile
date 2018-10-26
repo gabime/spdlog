@@ -1,5 +1,5 @@
 CXX	?= g++
-CXXFLAGS	= -march=native -Wall -Wextra -pedantic -std=c++11 -pthread -I../include -fmax-errors=1 
+CXXFLAGS	= -march=native -Wall -Wextra -pedantic -Wconversion -std=c++11 -pthread -I../include -fmax-errors=1 
 CXX_RELEASE_FLAGS = -Ofast -flto -Wl,--no-as-needed
 
 
