@@ -128,3 +128,27 @@
 //
 // #define SPDLOG_DISABLE_DEFAULT_LOGGER
 ///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Install spd_clock_t compatible with chrono clock to be used by spdlog
+//
+// // example of custom clock that has std::chrono compatible interface
+// struct custom_clock
+// {
+//     typedef chrono::nanoseconds                        duration;
+//     typedef duration::rep                              rep;
+//     typedef duration::period                           period;
+//     typedef chrono::time_point<system_clock, duration> time_point;
+//
+//     /// set true if clock increases at uniform rate
+//     static constexpr bool is_steady = false;
+//
+//     /// \return time_point representing now in nanosecond precision
+//     /// as specified in duration typedef
+//     static time_point now() noexcept;
+//
+//     static std::time_t to_time_t(const time_point& __t) noexcept;
+// };
+#include <chrono>
+using spd_clock_t = std::chrono::system_clock;
+///////////////////////////////////////////////////////////////////////////////
