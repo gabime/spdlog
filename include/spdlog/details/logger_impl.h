@@ -96,7 +96,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
     }
     try
     {
-        details::log_msg log_msg(&name_, lvl, static_cast<spdlog::string_view_t>(msg));
+        details::log_msg log_msg(&name_, lvl, msg);
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
