@@ -94,6 +94,7 @@ int main(int argc, char *argv[])
                 spdlog::info("Line count OK ({:n})\n", count);
             }
         }
+        spdlog::shutdown();
     }
     catch (std::exception &ex)
     {
@@ -101,6 +102,7 @@ int main(int argc, char *argv[])
         perror("Last error");
         return 1;
     }
+
     return 0;
 }
 
