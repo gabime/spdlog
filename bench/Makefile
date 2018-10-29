@@ -22,6 +22,6 @@ latency: latency.cpp
 .PHONY: clean
 
 clean:
-	rm -f *.o logs/* $(binaries)
+	rm -f *.o logs/* latecy_logs $(binaries)
 
 rebuild: clean all
