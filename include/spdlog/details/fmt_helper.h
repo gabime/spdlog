@@ -5,7 +5,6 @@
 #pragma once
 
 #include "chrono"
-#include "spdlog/details/log_msg.h"
 #include "spdlog/fmt/fmt.h"
 
 // Some fmt helpers to efficiently format and pad ints and strings
