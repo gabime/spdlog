@@ -82,12 +82,17 @@ struct async_msg
     }
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
-        : async_msg(std::move(worker), the_type, details::log_msg())
+        : msg_type(the_type)
+        , level(level::off)
+        , time()
+        , thread_id(0)
+        , msg_id(0)
+        , worker_ptr(std::move(worker))
     {
     }
 
     explicit async_msg(async_msg_type the_type)
-        : async_msg(nullptr, the_type, details::log_msg())
+        : async_msg(nullptr, the_type)
     {
     }
 

@@ -75,7 +75,8 @@ TEST_CASE("color range test1", "[pattern_formatter]")
 TEST_CASE("color range test2", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%$", spdlog::pattern_time_type::local, "\n");
-    spdlog::details::log_msg msg;
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, "");
     fmt::memory_buffer formatted;
     formatter->format(msg, formatted);
     REQUIRE(msg.color_range_start == 0);
@@ -86,7 +87,8 @@ TEST_CASE("color range test2", "[pattern_formatter]")
 TEST_CASE("color range test3", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("%^***%$");
-    spdlog::details::log_msg msg;
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, "ignored");
     fmt::memory_buffer formatted;
     formatter->format(msg, formatted);
     REQUIRE(msg.color_range_start == 0);
@@ -109,7 +111,8 @@ TEST_CASE("color range test4", "[pattern_formatter]")
 TEST_CASE("color range test5", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("**%^");
-    spdlog::details::log_msg msg;
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, "ignored");
     fmt::memory_buffer formatted;
     formatter->format(msg, formatted);
     REQUIRE(msg.color_range_start == 2);
@@ -119,7 +122,8 @@ TEST_CASE("color range test5", "[pattern_formatter]")
 TEST_CASE("color range test6", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("**%$");
-    spdlog::details::log_msg msg;
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, "ignored");
     fmt::memory_buffer formatted;
     formatter->format(msg, formatted);
     REQUIRE(msg.color_range_start == 0);
