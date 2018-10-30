@@ -67,7 +67,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
         fmt::memory_buffer buf;
         fmt::format_to(buf, fmt, args...);
         details::log_msg log_msg(&name_, lvl, to_string_view(buf));
-        sink_it_(log_msg);
+        sink_it_(std::move(log_msg));
     }
     SPDLOG_CATCH_AND_HANDLE
 }
@@ -82,7 +82,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
     try
     {
         details::log_msg log_msg(&name_, lvl, spdlog::string_view_t(msg));
-        sink_it_(log_msg);
+       sink_it_(std::move(log_msg));
     }
     SPDLOG_CATCH_AND_HANDLE
 }
@@ -97,7 +97,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
     try
     {
         details::log_msg log_msg(&name_, lvl, msg);
-        sink_it_(log_msg);
+        sink_it_(std::move(log_msg));
     }
     SPDLOG_CATCH_AND_HANDLE
 }
@@ -115,7 +115,7 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
         fmt::memory_buffer buf;
         fmt::format_to(buf, "{}", msg);
         details::log_msg log_msg(&name_, lvl, to_string_view(buf));
-        sink_it_(log_msg);
+        sink_it_(std::move(log_msg));
     }
     SPDLOG_CATCH_AND_HANDLE
 }
@@ -337,7 +337,7 @@ inline bool spdlog::logger::should_log(spdlog::level::level_enum msg_level) cons
 // protected virtual called at end of each user log call (if enabled) by the
 // line_logger
 //
-inline void spdlog::logger::sink_it_(details::log_msg &msg)
+inline void spdlog::logger::sink_it_(details::log_msg &&msg)
 {
 #if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
     incr_msg_counter_(msg);
