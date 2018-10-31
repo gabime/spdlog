@@ -43,7 +43,7 @@ inline void spdlog::async_logger::sink_it_(details::log_msg &msg)
 #endif
     if (auto pool_ptr = thread_pool_.lock())
     {
-        pool_ptr->post_log(shared_from_this(), std::move(msg), overflow_policy_);
+        pool_ptr->post_log(shared_from_this(), msg, overflow_policy_);
     }
     else
     {
