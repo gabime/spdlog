@@ -47,13 +47,8 @@ public:
         loggers_[logger_name] = std::move(new_logger);
     }
 
-    void register_and_init(std::shared_ptr<logger> new_logger)
+    void init_with_global_defaults(std::shared_ptr<logger> new_logger)
     {
-        std::lock_guard<std::mutex> lock(logger_map_mutex_);
-        auto logger_name = new_logger->name();
-        throw_if_exists_(logger_name);
-
-        // set the global formatter pattern
         new_logger->set_formatter(formatter_->clone());
 
         if (err_handler_)
@@ -63,9 +58,6 @@ public:
 
         new_logger->set_level(level_);
         new_logger->flush_on(flush_level_);
-
-        // add to registry
-        loggers_[logger_name] = std::move(new_logger);
     }
 
     std::shared_ptr<logger> get(const std::string &logger_name)

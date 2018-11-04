@@ -29,7 +29,10 @@ struct synchronous_factory
     {
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
         auto new_logger = std::make_shared<logger>(std::move(logger_name), std::move(sink));
-        details::registry::instance().register_and_init(new_logger);
+        details::registry::instance().init_with_global_defaults(new_logger);
+#ifndef SPDLOG_DISABLE_GLOBAL_REGISTRATION
+        details::registry::instance().register_logger(new_logger);
+#endif
         return new_logger;
     }
 };
