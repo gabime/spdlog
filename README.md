@@ -305,7 +305,7 @@ void syslog_example()
 ---
 #### Android example 
 ```c++
-#incude "spdlog/sinks/android_sink.h"
+#include "spdlog/sinks/android_sink.h"
 void android_example()
 {
     std::string tag = "spdlog-android";
