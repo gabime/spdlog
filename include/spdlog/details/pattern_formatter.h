@@ -545,9 +545,7 @@ public:
         : pattern_(std::move(pattern))
         , eol_(std::move(eol))
         , pattern_time_type_(time_type)
-        , last_log_secs_(0)
     {
-        std::memset(&cached_tm_, 0, sizeof(cached_tm_));
         compile_pattern_(pattern_);
     }
 
@@ -563,15 +561,17 @@ public:
     {
 #ifndef SPDLOG_NO_DATETIME
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
-        if (secs != last_log_secs_)
+        thread_local std::chrono::seconds last_log_secs{0};
+        thread_local std::tm cached_tm{};
+        if (secs != last_log_secs)
         {
-            cached_tm_ = get_time_(msg);
-            last_log_secs_ = secs;
+            cached_tm = get_time_(msg);
+            last_log_secs = secs;
         }
 #endif
         for (auto &f : formatters_)
         {
-            f->format(msg, cached_tm_, dest);
+            f->format(msg, cached_tm, dest);
         }
         // write eol
         details::fmt_helper::append_string_view(eol_, dest);
@@ -581,8 +581,6 @@ private:
     std::string pattern_;
     std::string eol_;
     pattern_time_type pattern_time_type_;
-    std::tm cached_tm_;
-    std::chrono::seconds last_log_secs_;
 
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
 
