@@ -62,7 +62,8 @@ public:
 
         if (automatic_registration_)
         {
-            register_logger(new_logger);
+            throw_if_exists_(new_logger->name());
+            loggers_[new_logger->name()] = std::move(new_logger);
         }
     }
 
