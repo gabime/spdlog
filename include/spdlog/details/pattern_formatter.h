@@ -48,29 +48,29 @@ struct padding_info
 class scoped_pad
 {
 public:
-    scoped_pad(size_t wrapped_size, padding_info &padinfo, fmt::memory_buffer &dest):
-        padinfo_(padinfo)
+    scoped_pad(size_t wrapped_size, padding_info &padinfo, fmt::memory_buffer &dest)
+        : padinfo_(padinfo)
         , dest_(dest)
     {
 
-        if(padinfo_.width_ <= wrapped_size)
+        if (padinfo_.width_ <= wrapped_size)
         {
             total_pad_ = 0;
             return;
         }
 
-        total_pad_= padinfo.width_ - wrapped_size;
+        total_pad_ = padinfo.width_ - wrapped_size;
         if (padinfo_.side_ == padding_info::left)
         {
             pad_it(total_pad_);
             total_pad_ = 0;
         }
-        else if(padinfo_.side_ == padding_info::center)
+        else if (padinfo_.side_ == padding_info::center)
         {
-            auto half_pad = total_pad_/ 2;
+            auto half_pad = total_pad_ / 2;
             auto reminder = total_pad_ & 1;
             pad_it(half_pad);
-            total_pad_= half_pad + reminder; // for the right side
+            total_pad_ = half_pad + reminder; // for the right side
         }
     }
 
@@ -81,7 +81,7 @@ public:
 
     ~scoped_pad()
     {
-        if(total_pad_)
+        if (total_pad_)
         {
             pad_it(total_pad_);
         }
@@ -90,11 +90,10 @@ public:
 private:
     void pad_it(size_t count)
     {
-        //count = std::min(count, spaces_.size());
+        // count = std::min(count, spaces_.size());
         assert(count <= spaces_.size());
         fmt_helper::append_string_view(string_view_t(spaces_.data(), count), dest_);
     }
-
 
     const padding_info &padinfo_;
     fmt::memory_buffer &dest_;
@@ -870,12 +869,11 @@ public:
     }
 
     // use by default full formatter for if pattern is not given
-    explicit pattern_formatter(
-            pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol)
-            : pattern_()
-            , eol_(std::move(eol))
-            , pattern_time_type_(time_type)
-            , last_log_secs_(0)
+    explicit pattern_formatter(pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol)
+        : pattern_()
+        , eol_(std::move(eol))
+        , pattern_time_type_(time_type)
+        , last_log_secs_(0)
     {
         std::memset(&cached_tm_, 0, sizeof(cached_tm_));
         formatters_.push_back(details::make_unique<details::full_formatter>(details::padding_info()));
