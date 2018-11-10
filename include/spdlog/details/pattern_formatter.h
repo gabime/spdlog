@@ -25,6 +25,7 @@
 namespace spdlog {
 namespace details {
 
+// padding information.
 struct padding_info
 {
     enum pad_side
@@ -42,21 +43,36 @@ struct padding_info
     }
     const size_t width_ = 0;
     const pad_side side_ = left;
-    const char fill_ = '.';
 };
 
 class scoped_pad
 {
 public:
-    scoped_pad(size_t text_size, padding_info &padinfo, fmt::memory_buffer &dest)
-        : text_size_(text_size)
-        , padinfo_(padinfo)
+
+    static const size_t max_width = 128;
+
+    scoped_pad(size_t wrapped_size, padding_info &padinfo, fmt::memory_buffer &dest):
+        padinfo_(padinfo)
         , dest_(dest)
+        , nchars_(padinfo_.width_ > wrapped_size ? padinfo_.width_ - wrapped_size : 0)
     {
-        // if (padinfo_.pad_left_)
-        if (padinfo_.side_ == padding_info::left || padinfo_.side_ == padding_info::center)
+
+        if(nchars_ == 0)
         {
-            pad(true);
+            return;
+        }
+
+        if (padinfo_.side_ == padding_info::left)
+        {
+            pad_it(nchars_);
+            nchars_ = 0;
+            return;
+        }
+        else if(padinfo_.side_ == padding_info::center)
+        {
+
+            pad_it(nchars_/ 2);
+            return;
         }
     }
 
@@ -67,35 +83,36 @@ public:
 
     ~scoped_pad()
     {
-        if (padinfo_.side_ == padding_info::right || padinfo_.side_ == padding_info::center)
-        {
-            pad(false);
-        }
-    }
 
-private:
-    void pad(bool is_left_side)
-    {
-        if (padinfo_.width_ <= text_size_)
+        if(nchars_ == 0)
         {
             return;
         }
 
-        auto howmany = padinfo_.width_ - text_size_;
-        if (padinfo_.side_ == padding_info::center)
+        if (padinfo_.side_ == padding_info::right)
         {
-            auto reminder = is_left_side ? howmany % 2 : 0;
-            howmany = (howmany / 2) + reminder;
+            pad_it(nchars_);
         }
-        for (size_t i = 0; i < howmany; i++)
+        else // padinfo_.side_ == padding_info::center
         {
-            dest_.push_back(padinfo_.fill_);
+
+            pad_it( (nchars_/ 2) + (nchars_% 2) ) ;
         }
     }
 
-    const size_t text_size_;
+private:
+    void pad_it(size_t count)
+    {
+        //count = std::min(count, spaces_.size());
+        fmt_helper::append_string_view(string_view_t(spaces_.data(), count), dest_);
+    }
+
+
     const padding_info &padinfo_;
     fmt::memory_buffer &dest_;
+    size_t nchars_;
+    string_view_t spaces_ = "                                                                "
+                             "                                                                ";
 };
 
 class flag_formatter
@@ -664,7 +681,7 @@ public:
     {
         const size_t field_size = 6;
         scoped_pad p(field_size, padinfo_, dest);
-        fmt_helper::pad6(details::os::pid(), dest);
+        fmt_helper::pad6(static_cast<size_t>(details::os::pid()), dest);
     }
 };
 
@@ -1065,7 +1082,7 @@ private:
     details::padding_info handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end)
     {
         using details::padding_info;
-        const size_t max_width = 4096;
+        using details::scoped_pad;
 
         if (it == end)
         {
@@ -1099,7 +1116,7 @@ private:
             auto digit = static_cast<size_t>(*it - '0');
             width = width * 10 + digit;
         }
-        return details::padding_info{std::min(width, max_width), side};
+        return details::padding_info{std::min(width, scoped_pad::max_width), side};
     }
 
     void compile_pattern_(const std::string &pattern)
