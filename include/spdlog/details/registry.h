@@ -231,7 +231,7 @@ public:
 
 private:
     registry()
-        : formatter_(new pattern_formatter("%+"))
+        : formatter_(new pattern_formatter())
     {
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER

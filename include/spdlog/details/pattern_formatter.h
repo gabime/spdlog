@@ -869,6 +869,18 @@ public:
         compile_pattern_(pattern_);
     }
 
+    // use by default full formatter for if pattern is not given
+    explicit pattern_formatter(
+            pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol)
+            : pattern_()
+            , eol_(std::move(eol))
+            , pattern_time_type_(time_type)
+            , last_log_secs_(0)
+    {
+        std::memset(&cached_tm_, 0, sizeof(cached_tm_));
+        formatters_.push_back(details::make_unique<details::full_formatter>(details::padding_info()));
+    }
+
     pattern_formatter(const pattern_formatter &other) = delete;
     pattern_formatter &operator=(const pattern_formatter &other) = delete;
 
