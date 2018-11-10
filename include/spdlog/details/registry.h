@@ -47,13 +47,9 @@ public:
         loggers_[logger_name] = std::move(new_logger);
     }
 
-    void register_and_init(std::shared_ptr<logger> new_logger)
+    void initialize_logger(std::shared_ptr<logger> new_logger)
     {
         std::lock_guard<std::mutex> lock(logger_map_mutex_);
-        auto logger_name = new_logger->name();
-        throw_if_exists_(logger_name);
-
-        // set the global formatter pattern
         new_logger->set_formatter(formatter_->clone());
 
         if (err_handler_)
@@ -64,8 +60,11 @@ public:
         new_logger->set_level(level_);
         new_logger->flush_on(flush_level_);
 
-        // add to registry
-        loggers_[logger_name] = std::move(new_logger);
+        if (automatic_registration_)
+        {
+            throw_if_exists_(new_logger->name());
+            loggers_[new_logger->name()] = std::move(new_logger);
+        }
     }
 
     std::shared_ptr<logger> get(const std::string &logger_name)
@@ -223,6 +222,12 @@ public:
         return tp_mutex_;
     }
 
+    void set_automatic_registration(bool automatic_regsistration)
+    {
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        automatic_registration_ = automatic_regsistration;
+    }
+
     static registry &instance()
     {
         static registry s_instance;
@@ -269,6 +274,7 @@ private:
     std::shared_ptr<thread_pool> tp_;
     std::unique_ptr<periodic_worker> periodic_flusher_;
     std::shared_ptr<logger> default_logger_;
+    bool automatic_registration_ = true;
 };
 
 } // namespace details
