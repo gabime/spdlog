@@ -48,31 +48,29 @@ struct padding_info
 class scoped_pad
 {
 public:
-
-    static const size_t max_width = 128;
-
     scoped_pad(size_t wrapped_size, padding_info &padinfo, fmt::memory_buffer &dest):
         padinfo_(padinfo)
         , dest_(dest)
-        , nchars_(padinfo_.width_ > wrapped_size ? padinfo_.width_ - wrapped_size : 0)
     {
 
-        if(nchars_ == 0)
+        if(padinfo_.width_ <= wrapped_size)
         {
+            nchars_ = 0;
             return;
         }
 
+        nchars_= padinfo.width_ - wrapped_size;
         if (padinfo_.side_ == padding_info::left)
         {
             pad_it(nchars_);
             nchars_ = 0;
-            return;
         }
         else if(padinfo_.side_ == padding_info::center)
         {
-
-            pad_it(nchars_/ 2);
-            return;
+            auto half_chars = nchars_/ 2;
+            auto reminder = nchars_ % 2;
+            pad_it(half_chars);
+            nchars_= half_chars + reminder; //for the right side
         }
     }
 
@@ -83,20 +81,9 @@ public:
 
     ~scoped_pad()
     {
-
-        if(nchars_ == 0)
-        {
-            return;
-        }
-
-        if (padinfo_.side_ == padding_info::right)
+        if(nchars_)
         {
             pad_it(nchars_);
-        }
-        else // padinfo_.side_ == padding_info::center
-        {
-
-            pad_it( (nchars_/ 2) + (nchars_% 2) ) ;
         }
     }
 
@@ -104,6 +91,7 @@ private:
     void pad_it(size_t count)
     {
         //count = std::min(count, spaces_.size());
+        assert(count <= spaces_.size());
         fmt_helper::append_string_view(string_view_t(spaces_.data(), count), dest_);
     }
 
@@ -112,7 +100,7 @@ private:
     fmt::memory_buffer &dest_;
     size_t nchars_;
     string_view_t spaces_ = "                                                                "
-                             "                                                                ";
+                            "                                                                ";
 };
 
 class flag_formatter
@@ -1083,7 +1071,7 @@ private:
     {
         using details::padding_info;
         using details::scoped_pad;
-
+        const size_t max_width = 128;
         if (it == end)
         {
             return padding_info();
@@ -1116,7 +1104,7 @@ private:
             auto digit = static_cast<size_t>(*it - '0');
             width = width * 10 + digit;
         }
-        return details::padding_info{std::min(width, scoped_pad::max_width), side};
+        return details::padding_info{std::min(width, max_width), side};
     }
 
     void compile_pattern_(const std::string &pattern)
