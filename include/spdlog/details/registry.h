@@ -49,6 +49,7 @@ public:
 
     void initialize_logger(std::shared_ptr<logger> new_logger)
     {
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         new_logger->set_formatter(formatter_->clone());
 
         if (err_handler_)
@@ -222,6 +223,7 @@ public:
 
     void set_automatic_registration(bool automatic_regsistration)
     {
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
         automatic_registration_ = automatic_regsistration;
     }
 
