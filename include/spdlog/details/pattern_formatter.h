@@ -55,22 +55,22 @@ public:
 
         if(padinfo_.width_ <= wrapped_size)
         {
-            nchars_ = 0;
+            total_pad_ = 0;
             return;
         }
 
-        nchars_= padinfo.width_ - wrapped_size;
+        total_pad_= padinfo.width_ - wrapped_size;
         if (padinfo_.side_ == padding_info::left)
         {
-            pad_it(nchars_);
-            nchars_ = 0;
+            pad_it(total_pad_);
+            total_pad_ = 0;
         }
         else if(padinfo_.side_ == padding_info::center)
         {
-            auto half_chars = nchars_/ 2;
-            auto reminder = nchars_ % 2;
-            pad_it(half_chars);
-            nchars_= half_chars + reminder; //for the right side
+            auto half_pad = total_pad_/ 2;
+            auto reminder = total_pad_ & 1;
+            pad_it(half_pad);
+            total_pad_= half_pad + reminder; // for the right side
         }
     }
 
@@ -81,9 +81,9 @@ public:
 
     ~scoped_pad()
     {
-        if(nchars_)
+        if(total_pad_)
         {
-            pad_it(nchars_);
+            pad_it(total_pad_);
         }
     }
 
@@ -98,7 +98,7 @@ private:
 
     const padding_info &padinfo_;
     fmt::memory_buffer &dest_;
-    size_t nchars_;
+    size_t total_pad_;
     string_view_t spaces_ = "                                                                "
                             "                                                                ";
 };
