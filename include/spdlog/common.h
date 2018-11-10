@@ -166,16 +166,6 @@ using filename_t = std::wstring;
 using filename_t = std::string;
 #endif
 
-#define SPDLOG_CATCH_AND_HANDLE                                                                                                            \
-    catch (const std::exception &ex)                                                                                                       \
-    {                                                                                                                                      \
-        err_handler_(ex.what());                                                                                                           \
-    }                                                                                                                                      \
-    catch (...)                                                                                                                            \
-    {                                                                                                                                      \
-        err_handler_("Unknown exeption in logger");                                                                                        \
-    }
-
 namespace details {
 // make_unique support for pre c++14
 

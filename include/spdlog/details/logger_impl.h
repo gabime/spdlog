@@ -10,6 +10,16 @@
 #include <memory>
 #include <string>
 
+#define SPDLOG_CATCH_AND_HANDLE                                                                                                            \
+    catch (const std::exception &ex)                                                                                                       \
+    {                                                                                                                                      \
+        err_handler_(ex.what());                                                                                                           \
+    }                                                                                                                                      \
+    catch (...)                                                                                                                            \
+    {                                                                                                                                      \
+        err_handler_("Unknown exeption in logger");                                                                                        \
+    }
+
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
 template<typename It>
