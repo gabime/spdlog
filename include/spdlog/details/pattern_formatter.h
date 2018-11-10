@@ -876,7 +876,7 @@ public:
         , last_log_secs_(0)
     {
         std::memset(&cached_tm_, 0, sizeof(cached_tm_));
-        formatters_.push_back(details::make_unique<details::full_formatter>(details::padding_info()));
+        formatters_.push_back(details::make_unique<details::full_formatter>(details::padding_info{}));
     }
 
     pattern_formatter(const pattern_formatter &other) = delete;
@@ -1084,7 +1084,7 @@ private:
         const size_t max_width = 128;
         if (it == end)
         {
-            return padding_info();
+            return padding_info{};
         }
 
         padding_info::pad_side side;
@@ -1105,10 +1105,10 @@ private:
 
         if (it == end || !std::isdigit(static_cast<unsigned char>(*it)))
         {
-            return padding_info(0, side);
+            return padding_info{0, side};
         }
 
-        size_t width = static_cast<size_t>(*it - '0');
+        auto width = static_cast<size_t>(*it - '0');
         for (++it; it != end && std::isdigit(static_cast<unsigned char>(*it)); ++it)
         {
             auto digit = static_cast<size_t>(*it - '0');
