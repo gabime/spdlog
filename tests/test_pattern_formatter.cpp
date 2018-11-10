@@ -181,22 +181,16 @@ TEST_CASE("center_padded_short", "[pattern_formatter]")
 
 TEST_CASE("left_padded_huge", "[pattern_formatter]")
 {
-    REQUIRE(log_to_str("Some message", "[%-300n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester                                                                                                                  ]"
-                                                                                                " Some message\n");
+    REQUIRE(
+        log_to_str("Some message", "[%-300n] %v", spdlog::pattern_time_type::local, "\n") ==
+        "[pattern_tester                                                                                                                  ]"
+        " Some message\n");
 }
 
 TEST_CASE("left_padded_max", "[pattern_formatter]")
 {
-    REQUIRE(log_to_str("Some message", "[%-128n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester                                                                                                                  ]"
-                                                                                                 " Some message\n");
+    REQUIRE(
+        log_to_str("Some message", "[%-128n] %v", spdlog::pattern_time_type::local, "\n") ==
+        "[pattern_tester                                                                                                                  ]"
+        " Some message\n");
 }
-//
-//TEST_CASE("right_padded_huge", "[pattern_formatter]")
-//{
-//    REQUIRE(log_to_str("Some message", "[%-3n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester] Some message\n");
-//}
-//
-//TEST_CASE("center_padded_huge", "[pattern_formatter]")
-//{
-//    REQUIRE(log_to_str("Some message", "[%=3n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester] Some message\n");
-//}

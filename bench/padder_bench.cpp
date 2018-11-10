@@ -3,10 +3,6 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-//
-// latency.cpp : spdlog latency benchmarks
-//
-
 #include "benchmark/benchmark.h"
 
 #include "spdlog/spdlog.h"
@@ -31,10 +27,7 @@ void bench_scoped_pad(benchmark::State &state, size_t wrapped_size, spdlog::deta
 
 int main(int argc, char *argv[])
 {
-
     using spdlog::details::padding_info;
-    spdlog::set_pattern("[tid %t] %v");
-
     std::vector<size_t> sizes = {0, 2, 4, 8, 16, 32, 64, 128};
 
     for (auto size : sizes)
