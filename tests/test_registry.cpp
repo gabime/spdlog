@@ -109,4 +109,5 @@ TEST_CASE("disable automatic registration", "[registry]")
     // but make sure they are still initialized according to global defaults
     REQUIRE(logger1->level() == log_level);
     REQUIRE(logger2->level() == log_level);
+    spdlog::set_level(spdlog::level::info);
 }
