@@ -42,9 +42,7 @@ public:
     void register_logger(std::shared_ptr<logger> new_logger)
     {
         std::lock_guard<std::mutex> lock(logger_map_mutex_);
-        auto logger_name = new_logger->name();
-        throw_if_exists_(logger_name);
-        loggers_[logger_name] = std::move(new_logger);
+        register_logger_(std::move(new_logger));
     }
 
     void initialize_logger(std::shared_ptr<logger> new_logger)
@@ -62,8 +60,7 @@ public:
 
         if (automatic_registration_)
         {
-            throw_if_exists_(new_logger->name());
-            loggers_[new_logger->name()] = std::move(new_logger);
+            register_logger_(std::move(new_logger));
         }
     }
 
@@ -262,6 +259,13 @@ private:
         {
             throw spdlog_ex("logger with name '" + logger_name + "' already exists");
         }
+    }
+
+    void register_logger_(std::shared_ptr<logger> new_logger)
+    {
+        auto logger_name = new_logger->name();
+        throw_if_exists_(logger_name);
+        loggers_[logger_name] = std::move(new_logger);
     }
 
     std::mutex logger_map_mutex_, flusher_mutex_;
