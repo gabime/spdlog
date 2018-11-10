@@ -29,7 +29,7 @@ struct synchronous_factory
     {
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
         auto new_logger = std::make_shared<logger>(std::move(logger_name), std::move(sink));
-        details::registry::instance().register_and_init(new_logger);
+        details::registry::instance().initialize_logger(new_logger);
         return new_logger;
     }
 };
@@ -123,6 +123,12 @@ inline void drop_all()
 inline void shutdown()
 {
     details::registry::instance().shutdown();
+}
+
+// Automatic registration of loggers when using spdlog::create() or spdlog::create_async
+inline void set_automatic_registration(bool automatic_registation)
+{
+    details::registry::instance().set_automatic_registration(automatic_registation);
 }
 
 // API for using default logger (stdout_color_mt),
