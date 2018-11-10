@@ -52,10 +52,7 @@ struct async_factory_impl
 
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
         auto new_logger = std::make_shared<async_logger>(std::move(logger_name), std::move(sink), std::move(tp), OverflowPolicy);
-        registry_inst.init_with_global_defaults(new_logger);
-#ifndef SPDLOG_DISABLE_GLOBAL_REGISTRATION
-        registry_inst.register_logger(new_logger);
-#endif
+        registry_inst.initialize_logger(new_logger);
         return new_logger;
     }
 };
