@@ -22,7 +22,8 @@ void err_handler_example();
 void syslog_example();
 void clone_example();
 
-#define SPDLOG_TRACE_ON
+// activate compile time macros to be debug or above
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 
 #include "spdlog/spdlog.h"
 
@@ -160,12 +161,18 @@ void binary_example()
 }
 
 // Compile time log levels.
-// Must define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON before including spdlog.h to turn them on.
+// define SPDLOG_ACTIVE_LEVEL to required level (e.g. SPDLOG_LEVEL_TRACE)
 void trace_example()
 {
+
+    // trace from default logger
+    SPDLOG_TRACE("Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
+    // debug from default logger
+    SPDLOG_DEBUG("Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
+
+    // trace from logger object
     auto logger = spdlog::get("file_logger");
-    SPDLOG_TRACE(logger, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
-    SPDLOG_DEBUG(logger, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
+    SPDLOG_LOGGER_TRACE(logger, "another trace message");
 }
 
 // A logger with multiple sinks (stdout and file) - each with a different format and log level.
