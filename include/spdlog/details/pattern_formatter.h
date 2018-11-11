@@ -98,8 +98,9 @@ private:
     const padding_info &padinfo_;
     fmt::memory_buffer &dest_;
     size_t total_pad_;
-    string_view_t spaces_ {"                                                                "
-                           "                                                                ", 128};
+    string_view_t spaces_{"                                                                "
+                          "                                                                ",
+        128};
 };
 
 class flag_formatter

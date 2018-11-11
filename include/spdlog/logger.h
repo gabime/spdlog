@@ -158,13 +158,15 @@ protected:
     // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
     void incr_msg_counter_(details::log_msg &msg);
 
+    // const spdlog::level_t default_level_{static_cast<level::level_enum>(SPDLOG_ACTIVE_LEVEL)};
     const std::string name_;
+
     std::vector<sink_ptr> sinks_;
-    spdlog::level_t level_;
-    spdlog::level_t flush_level_;
-    log_err_handler err_handler_;
-    std::atomic<time_t> last_err_time_;
-    std::atomic<size_t> msg_counter_;
+    spdlog::level_t level_{static_cast<level::level_enum>(SPDLOG_ACTIVE_LEVEL)};
+    spdlog::level_t flush_level_{level::off};
+    log_err_handler err_handler_{[this](const std::string &msg) { this->default_err_handler_(msg); }};
+    std::atomic<time_t> last_err_time_{0};
+    std::atomic<size_t> msg_counter_{1};
 };
 } // namespace spdlog
 

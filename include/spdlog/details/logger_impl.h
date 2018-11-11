@@ -17,7 +17,7 @@
     }                                                                                                                                      \
     catch (...)                                                                                                                            \
     {                                                                                                                                      \
-        err_handler_("Unknown exeption in logger");                                                                                        \
+        err_handler_("Unknown exception in logger");                                                                                       \
     }
 
 // create logger with given name, sinks and the default pattern formatter
@@ -26,13 +26,7 @@ template<typename It>
 inline spdlog::logger::logger(std::string logger_name, It begin, It end)
     : name_(std::move(logger_name))
     , sinks_(begin, end)
-    , level_(level::info)
-    , flush_level_(level::off)
-    , last_err_time_(0)
-    , msg_counter_(1) // message counter will start from 1. 0-message id will be
-                      // reserved for control messages
 {
-    err_handler_ = [this](const std::string &msg) { this->default_err_handler_(msg); };
 }
 
 // ctor with sinks as init list
