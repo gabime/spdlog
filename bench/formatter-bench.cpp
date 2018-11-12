@@ -50,8 +50,7 @@ void bench_formatters()
     for(auto &flag:all_flags)
     {
         auto pattern = std::string("%") + flag;
-        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
-
+        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern)->Iterations(2500000);
     }
 
     // complex patterns
@@ -62,7 +61,7 @@ void bench_formatters()
     };
     for(auto &pattern:patterns)
     {
-        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
+        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern)->Iterations(2500000);
     }
 }
 

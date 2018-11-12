@@ -110,6 +110,19 @@ inline void pad6(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
     pad3(static_cast<int>(n % 1000), dest);
 }
 
+
+template<size_t Buffer_Size>
+inline void pad9(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+{
+    if (n > 99999999)
+    {
+        append_int(n, dest);
+        return;
+    }
+    pad6(static_cast<int>(n / 1000), dest);
+    pad3(static_cast<int>(n % 1000), dest);
+}
+
 // return fraction of a second of the given time_point.
 // e.g.
 // fraction<std::milliseconds>(tp) -> will return the millis part of the second

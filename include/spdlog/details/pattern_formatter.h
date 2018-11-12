@@ -486,7 +486,8 @@ public:
         scoped_pad p(field_size, padinfo_, dest);
 
         auto ns = fmt_helper::time_fraction<std::chrono::nanoseconds>(msg.time);
-        fmt::format_to(dest, "{:09}", ns.count());
+        fmt_helper::pad9(static_cast<size_t>(ns.count()), dest);
+
     }
 };
 
