@@ -153,8 +153,8 @@ protected:
 
     bool should_flush_(const details::log_msg &msg);
 
-    // default error handler: print the error to stderr with the max rate of 1
-    // message/minute
+    // default error handler.
+    // print the error to stderr with the max rate of 1 message/minute.
     void default_err_handler_(const std::string &msg);
 
     // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
