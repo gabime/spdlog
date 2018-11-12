@@ -196,7 +196,6 @@ TEST_CASE("left_padded_max", "[pattern_formatter]")
         " Some message\n");
 }
 
-
 TEST_CASE("clone-default-formatter", "[pattern_formatter]")
 {
     auto formatter_1 = std::make_shared<spdlog::pattern_formatter>();
@@ -227,7 +226,6 @@ TEST_CASE("clone-default-formatter2", "[pattern_formatter]")
     REQUIRE( fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
 }
 
-
 TEST_CASE("clone-formatter", "[pattern_formatter]")
 {
     auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("%D %X [%] [%n] %v");
@@ -241,8 +239,6 @@ TEST_CASE("clone-formatter", "[pattern_formatter]")
     formatter_2->format(msg, formatted_2);
     REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
 }
-
-
 
 
 TEST_CASE("clone-formatter-2", "[pattern_formatter]")
