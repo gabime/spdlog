@@ -3,7 +3,7 @@ CXXFLAGS	= -march=native -Wall -Wextra -pedantic -Wconversion -std=c++11 -pthrea
 CXX_RELEASE_FLAGS = -O3 -flto -Wl,--no-as-needed
 
 
-binaries=bench.cpp async_bench latency padder_bench
+binaries=bench async_bench latency formatter-bench
 
 all: $(binaries)
 
@@ -19,8 +19,8 @@ latency: latency.cpp
 	$(CXX) latency.cpp -o latency $(CXXFLAGS) $(CXX_RELEASE_FLAGS) -lbenchmark
 
 
-padder_bench: padder_bench.cpp
-	$(CXX) padder_bench.cpp -o padder_bench $(CXXFLAGS) $(CXX_RELEASE_FLAGS) -lbenchmark
+formatter-bench: formatter-bench.cpp
+	$(CXX) formatter-bench.cpp -o formatter-bench $(CXXFLAGS) $(CXX_RELEASE_FLAGS) -lbenchmark
 
 
 .PHONY: clean

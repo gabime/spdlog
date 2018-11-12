@@ -42,8 +42,8 @@ set(CMAKE_CXX_STANDARD_LIBRARIES -lbenchmark)
 target_link_libraries(latency spdlog::spdlog Threads::Threads)
 
 
-add_executable(padder_bench padder_bench.cpp)
+add_executable(formatter-bench formatter-bench.cpp)
 set(CMAKE_CXX_STANDARD_LIBRARIES -lbenchmark)
-target_link_libraries(padder_bench spdlog::spdlog Threads::Threads)
+target_link_libraries(formatter-bench spdlog::spdlog Threads::Threads)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
