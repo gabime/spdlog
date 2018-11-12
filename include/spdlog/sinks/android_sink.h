@@ -47,7 +47,7 @@ protected:
         fmt::memory_buffer formatted;
         if (use_raw_msg_)
         {
-            details::fmt_helper::append_buf(msg.raw, formatted);
+            details::fmt_helper::append_string_view(msg.payload, formatted);
         }
         else
         {

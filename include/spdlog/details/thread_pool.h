@@ -1,5 +1,6 @@
 #pragma once
 
+#include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/mpmc_blocking_q.h"
 #include "spdlog/details/os.h"
@@ -69,7 +70,7 @@ struct async_msg
 #endif
 
     // construct from log_msg with given type
-    async_msg(async_logger_ptr &&worker, async_msg_type the_type, details::log_msg &&m)
+    async_msg(async_logger_ptr &&worker, async_msg_type the_type, details::log_msg &m)
         : msg_type(the_type)
         , level(m.level)
         , time(m.time)
@@ -77,30 +78,34 @@ struct async_msg
         , msg_id(m.msg_id)
         , worker_ptr(std::move(worker))
     {
-        fmt_helper::append_buf(m.raw, raw);
+        fmt_helper::append_string_view(m.payload, raw);
     }
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
-        : async_msg(std::move(worker), the_type, details::log_msg())
+        : msg_type(the_type)
+        , level(level::off)
+        , time()
+        , thread_id(0)
+        , msg_id(0)
+        , worker_ptr(std::move(worker))
     {
     }
 
     explicit async_msg(async_msg_type the_type)
-        : async_msg(nullptr, the_type, details::log_msg())
+        : async_msg(nullptr, the_type)
     {
     }
 
     // copy into log_msg
-    void to_log_msg(log_msg &msg)
+    log_msg to_log_msg()
     {
-        msg.logger_name = &worker_ptr->name();
-        msg.level = level;
+        log_msg msg(&worker_ptr->name(), level, string_view_t(raw.data(), raw.size()));
         msg.time = time;
         msg.thread_id = thread_id;
-        fmt_helper::append_buf(raw, msg.raw);
         msg.msg_id = msg_id;
         msg.color_range_start = 0;
         msg.color_range_end = 0;
+        return msg;
     }
 };
 
@@ -158,9 +163,9 @@ public:
     thread_pool(const thread_pool &) = delete;
     thread_pool &operator=(thread_pool &&) = delete;
 
-    void post_log(async_logger_ptr &&worker_ptr, details::log_msg &&msg, async_overflow_policy overflow_policy)
+    void post_log(async_logger_ptr &&worker_ptr, details::log_msg &msg, async_overflow_policy overflow_policy)
     {
-        async_msg async_m(std::move(worker_ptr), async_msg_type::log, std::move(msg));
+        async_msg async_m(std::move(worker_ptr), async_msg_type::log, msg);
         post_async_msg_(std::move(async_m), overflow_policy);
     }
 
@@ -230,8 +235,7 @@ private:
         {
         case async_msg_type::log:
         {
-            log_msg msg;
-            incoming_async_msg.to_log_msg(msg);
+            auto msg = incoming_async_msg.to_log_msg();
             incoming_async_msg.worker_ptr->backend_log_(msg);
             return true;
         }

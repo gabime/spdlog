@@ -29,7 +29,7 @@ struct synchronous_factory
     {
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
         auto new_logger = std::make_shared<logger>(std::move(logger_name), std::move(sink));
-        details::registry::instance().register_and_init(new_logger);
+        details::registry::instance().initialize_logger(new_logger);
         return new_logger;
     }
 };
@@ -123,6 +123,12 @@ inline void drop_all()
 inline void shutdown()
 {
     details::registry::instance().shutdown();
+}
+
+// Automatic registration of loggers when using spdlog::create() or spdlog::create_async
+inline void set_automatic_registration(bool automatic_registation)
+{
+    details::registry::instance().set_automatic_registration(automatic_registation);
 }
 
 // API for using default logger (stdout_color_mt),
@@ -285,35 +291,56 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 //
-// Trace & Debug can be switched on/off at compile time with zero cost.
-// Uncomment SPDLOG_DEBUG_ON/SPDLOG_TRACE_ON in tweakme.h to enable.
-// SPDLOG_TRACE(..) will also print current file and line.
-//
-// Example:
-// spdlog::set_level(spdlog::level::trace);
-// SPDLOG_TRACE(my_logger, "another trace message {} {}", 1, 2);
+// compile time macros.
+// can be enabled/disabled using SPDLOG_ACTIVE_LEVEL (info by default).
 //
 
-#ifdef SPDLOG_TRACE_ON
-#define SPDLOG_STR_H(x) #x
-#define SPDLOG_STR_HELPER(x) SPDLOG_STR_H(x)
-#ifdef _MSC_VER
-#define SPDLOG_TRACE(logger, ...)                                                                                                          \
-    logger->trace("[ "__FILE__                                                                                                             \
-                  "(" SPDLOG_STR_HELPER(__LINE__) ")] " __VA_ARGS__)
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
+#define SPDLOG_LOGGER_TRACE(logger, ...) logger->trace(__VA_ARGS__)
+#define SPDLOG_TRACE(...) spdlog::trace(__VA_ARGS__)
 #else
-#define SPDLOG_TRACE(logger, ...)                                                                                                          \
-    logger->trace("[" __FILE__ ":" SPDLOG_STR_HELPER(__LINE__) "]"                                                                         \
-                                                               " " __VA_ARGS__)
-#endif
-#else
-#define SPDLOG_TRACE(logger, ...) (void)0
+#define SPDLOG_LOGGER_TRACE(logger, ...) (void)0
+#define SPDLOG_TRACE(...) (void)0
 #endif
 
-#ifdef SPDLOG_DEBUG_ON
-#define SPDLOG_DEBUG(logger, ...) logger->debug(__VA_ARGS__)
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG
+#define SPDLOG_LOGGER_DEBUG(logger, ...) logger->debug(__VA_ARGS__)
+#define SPDLOG_DEBUG(...) spdlog::debug(__VA_ARGS__)
 #else
-#define SPDLOG_DEBUG(logger, ...) (void)0
+#define SPDLOG_LOGGER_DEBUG(logger, ...) (void)0
+#define SPDLOG_DEBUG(...) (void)0
+#endif
+
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_INFO
+#define SPDLOG_LOGGER_INFO(logger, ...) logger->info(__VA_ARGS__)
+#define SPDLOG_INFO(...) spdlog::info(__VA_ARGS__)
+#else
+#define SPDLOG_LOGGER_INFO(logger, ...) (void)0
+#define SPDLOG_INFO(...) (void)0
+#endif
+
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_WARN
+#define SPDLOG_LOGGER_WARN(logger, ...) logger->warn(__VA_ARGS__)
+#define SPDLOG_WARN(...) spdlog::warn(__VA_ARGS__)
+#else
+#define SPDLOG_LOGGER_WARN(logger, ...) (void)0
+#define SPDLOG_WARN(...) (void)0
+#endif
+
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_ERROR
+#define SPDLOG_LOGGER_ERROR(logger, ...) logger->error(__VA_ARGS__)
+#define SPDLOG_ERROR(...) spdlog::error(__VA_ARGS__)
+#else
+#define SPDLOG_LOGGER_ERROR(logger, ...) (void)0
+#define SPDLOG_ERROR(...) (void)0
+#endif
+
+#if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
+#define SPDLOG_LOGGER_CRITICAL(logger, ...) logger->critical(__VA_ARGS__)
+#define SPDLOG_CRITICAL(...) spdlog::critical(__VA_ARGS__)
+#else
+#define SPDLOG_LOGGER_CRITICAL(logger, ...) (void)0
+#define SPDLOG_CRITICAL(...) (void)0
 #endif
 
 } // namespace spdlog

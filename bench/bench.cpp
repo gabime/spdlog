@@ -29,6 +29,7 @@ using namespace utils;
 void bench(int howmany, std::shared_ptr<spdlog::logger> log);
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count);
 void bench_default_api(int howmany, std::shared_ptr<spdlog::logger> log);
+void bench_c_string(int howmany, std::shared_ptr<spdlog::logger> log);
 
 int main(int argc, char *argv[])
 {
@@ -80,6 +81,21 @@ int main(int argc, char *argv[])
         bench_default_api(howmany, std::move(daily_st));
 
         bench_default_api(howmany, spdlog::create<null_sink_st>("null_st"));
+
+        spdlog::info("**************************************************************");
+        spdlog::info("C-string (500 bytes). Single thread, {:n} iterations", howmany);
+        spdlog::info("**************************************************************");
+
+        basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_cs.log", true);
+        bench_c_string(howmany, std::move(basic_st));
+
+        rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_cs.log", file_size, rotating_files);
+        bench_c_string(howmany, std::move(rotating_st));
+
+        daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_cs.log");
+        bench_c_string(howmany, std::move(daily_st));
+
+        bench_c_string(howmany, spdlog::create<null_sink_st>("null_st"));
 
         spdlog::info("**************************************************************");
         spdlog::info("{:n} threads sharing same logger, {:n} iterations", threads, howmany);
@@ -165,6 +181,29 @@ void bench_default_api(int howmany, std::shared_ptr<spdlog::logger> log)
     for (auto i = 0; i < howmany; ++i)
     {
         spdlog::info("Hello logger: msg number {}", i);
+    }
+
+    auto delta = high_resolution_clock::now() - start;
+    auto delta_d = duration_cast<duration<double>>(delta).count();
+    spdlog::drop(log->name());
+    spdlog::set_default_logger(std::move(orig_default));
+    spdlog::info("{:<16} Elapsed: {:0.2f} secs {:>16n}/sec", log->name(), delta_d, int(howmany / delta_d));
+}
+
+void bench_c_string(int howmany, std::shared_ptr<spdlog::logger> log)
+{
+    const char *msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum pharetra metus cursus "
+                      "lacus placerat congue. Nulla egestas, mauris a tincidunt tempus, enim lectus volutpat mi, eu consequat sem "
+                      "libero nec massa. In dapibus ipsum a diam rhoncus gravida. Etiam non dapibus eros. Donec fringilla dui sed "
+                      "augue pretium, nec scelerisque est maximus. Nullam convallis, sem nec blandit maximus, nisi turpis ornare "
+                      "nisl, sit amet volutpat neque massa eu odio. Maecenas malesuada quam ex, posuere congue nibh turpis duis.";
+    using std::chrono::high_resolution_clock;
+    auto orig_default = spdlog::default_logger();
+    spdlog::set_default_logger(log);
+    auto start = high_resolution_clock::now();
+    for (auto i = 0; i < howmany; ++i)
+    {
+        spdlog::log(level::info, msg);
     }
 
     auto delta = high_resolution_clock::now() - start;

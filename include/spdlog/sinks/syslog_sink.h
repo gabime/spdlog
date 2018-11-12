@@ -53,7 +53,7 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        ::syslog(syslog_prio_from_level(msg), "%s", fmt::to_string(msg.raw).c_str());
+        ::syslog(syslog_prio_from_level(msg), "%s", fmt::to_string(msg.payload).c_str());
     }
 
     void flush_() override {}

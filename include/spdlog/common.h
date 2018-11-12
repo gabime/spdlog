@@ -56,23 +56,42 @@ using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using log_err_handler = std::function<void(const std::string &err_msg)>;
 
+// string_view type - either std::string_view or fmt::string_view (pre c++17)
+#if defined(FMT_USE_STD_STRING_VIEW)
+using string_view_t = std::string_view;
+#else
+using string_view_t = fmt::string_view;
+#endif
+
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
 #else
 using level_t = std::atomic<int>;
 #endif
 
+#define SPDLOG_LEVEL_TRACE 0
+#define SPDLOG_LEVEL_DEBUG 1
+#define SPDLOG_LEVEL_INFO 2
+#define SPDLOG_LEVEL_WARN 3
+#define SPDLOG_LEVEL_ERROR 4
+#define SPDLOG_LEVEL_CRITICAL 5
+#define SPDLOG_LEVEL_OFF 6
+
+#if !defined(SPDLOG_ACTIVE_LEVEL)
+#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+#endif
+
 // Log level enum
 namespace level {
 enum level_enum
 {
-    trace = 0,
-    debug = 1,
-    info = 2,
-    warn = 3,
-    err = 4,
-    critical = 5,
-    off = 6
+    trace = SPDLOG_LEVEL_TRACE,
+    debug = SPDLOG_LEVEL_DEBUG,
+    info = SPDLOG_LEVEL_INFO,
+    warn = SPDLOG_LEVEL_WARN,
+    err = SPDLOG_LEVEL_ERROR,
+    critical = SPDLOG_LEVEL_CRITICAL,
+    off = SPDLOG_LEVEL_OFF,
 };
 
 #if !defined(SPDLOG_LEVEL_NAMES)
@@ -158,16 +177,6 @@ using filename_t = std::wstring;
 #else
 using filename_t = std::string;
 #endif
-
-#define SPDLOG_CATCH_AND_HANDLE                                                                                                            \
-    catch (const std::exception &ex)                                                                                                       \
-    {                                                                                                                                      \
-        err_handler_(ex.what());                                                                                                           \
-    }                                                                                                                                      \
-    catch (...)                                                                                                                            \
-    {                                                                                                                                      \
-        err_handler_("Unknown exeption in logger");                                                                                        \
-    }
 
 namespace details {
 // make_unique support for pre c++14

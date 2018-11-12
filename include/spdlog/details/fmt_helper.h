@@ -13,24 +13,25 @@ namespace details {
 namespace fmt_helper {
 
 template<size_t Buffer_Size>
-inline void append_str(const std::string &str, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+inline spdlog::string_view_t to_string_view(const fmt::basic_memory_buffer<char, Buffer_Size> &buf) SPDLOG_NOEXCEPT
 {
-    auto *str_ptr = str.data();
-    dest.append(str_ptr, str_ptr + str.size());
+    return spdlog::string_view_t(buf.data(), buf.size());
 }
-
-template<size_t Buffer_Size>
-inline void append_c_str(const char *c_str, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
-{
-    auto len = std::char_traits<char>::length(c_str);
-    dest.append(c_str, c_str + len);
-}
-
 template<size_t Buffer_Size1, size_t Buffer_Size2>
 inline void append_buf(const fmt::basic_memory_buffer<char, Buffer_Size1> &buf, fmt::basic_memory_buffer<char, Buffer_Size2> &dest)
 {
     auto *buf_ptr = buf.data();
     dest.append(buf_ptr, buf_ptr + buf.size());
+}
+
+template<size_t Buffer_Size>
+inline void append_string_view(spdlog::string_view_t view, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+{
+    auto *buf_ptr = view.data();
+    if (buf_ptr != nullptr)
+    {
+        dest.append(buf_ptr, buf_ptr + view.size());
+    }
 }
 
 template<typename T, size_t Buffer_Size>

@@ -22,8 +22,6 @@ void err_handler_example();
 void syslog_example();
 void clone_example();
 
-#define SPDLOG_TRACE_ON
-
 #include "spdlog/spdlog.h"
 
 int main(int, char *[])
@@ -146,7 +144,11 @@ void async_example()
 #include "spdlog/fmt/bin_to_hex.h"
 void binary_example()
 {
-    std::array<char, 80> buf;
+    std::vector<char> buf;
+    for (int i = 0; i < 80; i++)
+    {
+        buf.push_back(static_cast<char>(i & 0xff));
+    }
     spdlog::info("Binary example: {}", spdlog::to_hex(buf));
     spdlog::info("Another binary example:{:n}", spdlog::to_hex(std::begin(buf), std::begin(buf) + 10));
     // more examples:
@@ -156,12 +158,18 @@ void binary_example()
 }
 
 // Compile time log levels.
-// Must define SPDLOG_DEBUG_ON or SPDLOG_TRACE_ON before including spdlog.h to turn them on.
+// define SPDLOG_ACTIVE_LEVEL to required level (e.g. SPDLOG_LEVEL_TRACE)
 void trace_example()
 {
+
+    // trace from default logger
+    SPDLOG_TRACE("Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
+    // debug from default logger
+    SPDLOG_DEBUG("Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
+
+    // trace from logger object
     auto logger = spdlog::get("file_logger");
-    SPDLOG_TRACE(logger, "Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
-    SPDLOG_DEBUG(logger, "Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
+    SPDLOG_LOGGER_TRACE(logger, "another trace message");
 }
 
 // A logger with multiple sinks (stdout and file) - each with a different format and log level.
