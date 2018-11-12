@@ -62,8 +62,8 @@ void bench_logger(benchmark::State &state, std::shared_ptr<spdlog::logger> logge
 void bench_disabled_macro(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
 {
     int i = 0;
-    benchmark::DoNotOptimize(i); //prevent unused warnings
-    benchmark::DoNotOptimize(logger); //prevent unused warnings
+    benchmark::DoNotOptimize(i);      // prevent unused warnings
+    benchmark::DoNotOptimize(logger); // prevent unused warnings
     for (auto _ : state)
     {
         SPDLOG_LOGGER_DEBUG(logger, "Hello logger: msg number {}...............", i++);

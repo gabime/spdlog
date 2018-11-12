@@ -290,7 +290,10 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
-// compile time level. defaults to info
+//
+// compile time macros.
+// can be enabled/disabled using SPDLOG_ACTIVE_LEVEL (info by default).
+//
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
 #define SPDLOG_LOGGER_TRACE(logger, ...) logger->trace(__VA_ARGS__)

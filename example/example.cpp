@@ -22,9 +22,6 @@ void err_handler_example();
 void syslog_example();
 void clone_example();
 
-// activate compile time macros to be debug or above
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
-
 #include "spdlog/spdlog.h"
 
 int main(int, char *[])

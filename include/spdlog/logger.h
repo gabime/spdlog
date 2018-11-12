@@ -121,6 +121,8 @@ public:
 
     bool should_log(level::level_enum msg_level) const;
     void set_level(level::level_enum log_level);
+
+    static level::level_enum default_level();
     level::level_enum level() const;
     const std::string &name() const;
 
@@ -158,11 +160,9 @@ protected:
     // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
     void incr_msg_counter_(details::log_msg &msg);
 
-    // const spdlog::level_t default_level_{static_cast<level::level_enum>(SPDLOG_ACTIVE_LEVEL)};
     const std::string name_;
-
     std::vector<sink_ptr> sinks_;
-    spdlog::level_t level_{static_cast<level::level_enum>(SPDLOG_ACTIVE_LEVEL)};
+    spdlog::level_t level_{spdlog::logger::default_level()};
     spdlog::level_t flush_level_{level::off};
     log_err_handler err_handler_{[this](const std::string &msg) { this->default_err_handler_(msg); }};
     std::atomic<time_t> last_err_time_{0};

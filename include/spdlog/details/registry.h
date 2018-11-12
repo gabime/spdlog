@@ -272,7 +272,7 @@ private:
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
     std::unique_ptr<formatter> formatter_;
-    level::level_enum level_ = level::info;
+    level::level_enum level_ = spdlog::logger::default_level();
     level::level_enum flush_level_ = level::off;
     log_err_handler err_handler_;
     std::shared_ptr<thread_pool> tp_;
