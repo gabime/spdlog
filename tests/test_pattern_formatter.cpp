@@ -16,6 +16,7 @@ static std::string log_to_str(const std::string &msg, const Args &... args)
     return oss.str();
 }
 
+
 TEST_CASE("custom eol", "[pattern_formatter]")
 {
     std::string msg = "Hello custom eol test";
@@ -193,4 +194,36 @@ TEST_CASE("left_padded_max", "[pattern_formatter]")
         log_to_str("Some message", "[%-128n] %v", spdlog::pattern_time_type::local, "\n") ==
         "[pattern_tester                                                                                                                  ]"
         " Some message\n");
+}
+
+
+TEST_CASE("clone-default-formatter", "[pattern_formatter]")
+{
+    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>();
+    auto formatter_2 = formatter_1->clone();
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, "some message");
+
+    fmt::memory_buffer formatted_1;
+    fmt::memory_buffer formatted_2;
+    formatter_1->format(msg, formatted_1);
+    formatter_2->format(msg, formatted_2);
+
+
+    REQUIRE( fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
+}
+
+
+TEST_CASE("clone-formatter", "[pattern_formatter]")
+{
+    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("%D %X [%] %v [%n] %v");
+    auto formatter_2 = formatter_1->clone();
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, "some message");
+
+    fmt::memory_buffer formatted_1;
+    fmt::memory_buffer formatted_2;
+    formatter_1->format(msg, formatted_1);
+    formatter_2->format(msg, formatted_2);
+    REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
 }

@@ -92,7 +92,7 @@ TEST_CASE("periodic flush", "[periodic_flush]")
     spdlog::drop_all();
 }
 
-TEST_CASE("clone", "[clone]")
+TEST_CASE("clone-logger", "[clone]")
 {
     using namespace spdlog;
 
