@@ -230,9 +230,27 @@ TEST_CASE("clone-default-formatter2", "[pattern_formatter]")
 
 TEST_CASE("clone-formatter", "[pattern_formatter]")
 {
-    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("%D %X [%] %v [%n] %v");
+    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("%D %X [%] [%n] %v");
     auto formatter_2 = formatter_1->clone();
     std::string logger_name = "test";
+    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, "some message");
+
+    fmt::memory_buffer formatted_1;
+    fmt::memory_buffer formatted_2;
+    formatter_1->format(msg, formatted_1);
+    formatter_2->format(msg, formatted_2);
+    REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
+}
+
+
+
+
+TEST_CASE("clone-formatter-2", "[pattern_formatter]")
+{
+    using spdlog::pattern_time_type;
+    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("%D %X [%] [%n] %v", pattern_time_type::utc, "xxxxxx\n");
+    auto formatter_2 = formatter_1->clone();
+    std::string logger_name = "test2";
     spdlog::details::log_msg msg(&logger_name, spdlog::level::info, "some message");
 
     fmt::memory_buffer formatted_1;
