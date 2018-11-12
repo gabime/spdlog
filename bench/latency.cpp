@@ -59,6 +59,18 @@ void bench_logger(benchmark::State &state, std::shared_ptr<spdlog::logger> logge
     }
 }
 
+void bench_disabled_macro(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
+{
+    int i = 0;
+    benchmark::DoNotOptimize(i); //prevent unused warnings
+    benchmark::DoNotOptimize(logger); //prevent unused warnings
+    for (auto _ : state)
+    {
+        SPDLOG_LOGGER_DEBUG(logger, "Hello logger: msg number {}...............", i++);
+        SPDLOG_DEBUG("Hello logger: msg number {}...............", i++);
+    }
+}
+
 int main(int argc, char *argv[])
 {
 
@@ -74,14 +86,14 @@ int main(int argc, char *argv[])
 
     prepare_logdir();
 
-    // Single threaded benchmarks
+    // disabled loggers
     auto disabled_logger = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_mt>());
     disabled_logger->set_level(spdlog::level::off);
-    benchmark::RegisterBenchmark("disabled-level", bench_logger, disabled_logger)->UseRealTime();
+    benchmark::RegisterBenchmark("disabled-at-compile-time", bench_disabled_macro, disabled_logger);
+    benchmark::RegisterBenchmark("disabled-at-runtime", bench_logger, disabled_logger);
 
     auto null_logger_st = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_st>());
-    benchmark::RegisterBenchmark("null_sink_st (500_bytes c_str)", bench_c_string, std::move(null_logger_st))->UseRealTime();
-
+    benchmark::RegisterBenchmark("null_sink_st (500_bytes c_str)", bench_c_string, std::move(null_logger_st));
     benchmark::RegisterBenchmark("null_sink_st", bench_logger, null_logger_st);
 
     // basic_st
