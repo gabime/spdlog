@@ -871,7 +871,7 @@ public:
 
     // use by default full formatter for if pattern is not given
     explicit pattern_formatter(pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol)
-        : pattern_()
+        : pattern_("%+")
         , eol_(std::move(eol))
         , pattern_time_type_(time_type)
         , last_log_secs_(0)
