@@ -338,8 +338,7 @@ inline size_t _thread_id() SPDLOG_NOEXCEPT
 // Return current thread id as size_t (from thread local storage)
 inline size_t thread_id() SPDLOG_NOEXCEPT
 {
-#if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt) ||                       \
-    (defined(__clang__) && !__has_feature(cxx_thread_local))
+#if defined(SPDLOG_NO_TLS)
     return _thread_id();
 #else // cache thread id in tls
     static thread_local const size_t tid = _thread_id();
@@ -383,6 +382,7 @@ inline int pid()
     return static_cast<int>(::getpid());
 #endif
 }
+
 
 // Determine if the terminal supports colors
 // Source: https://github.com/agauniyal/rang/
