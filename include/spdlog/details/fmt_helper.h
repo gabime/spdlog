@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include "chrono"
+#include <chrono>
+#include <type_traits>
 #include "spdlog/fmt/fmt.h"
 
 // Some fmt helpers to efficiently format and pad ints and strings
@@ -41,87 +42,64 @@ inline void append_int(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
     dest.append(i.data(), i.data() + i.size());
 }
 
+
+
+template<typename T, size_t Buffer_Size>
+inline void append_uint(T n, unsigned int width, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+{
+    static_assert(std::is_unsigned<T>::value, "append_uint must get unsigned T");
+    auto digits = fmt::internal::count_digits(n);
+    if(width > digits)
+    {
+        const char* zeroes = "0000000000000000000";
+        dest.append(zeroes, zeroes + width-digits);
+    }
+    append_int(n, dest);
+}
+
 template<size_t Buffer_Size>
 inline void pad2(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     if (n > 99)
     {
         append_int(n, dest);
-        return;
     }
-    if (n > 9) // 10-99
+    else if (n > 9) // 10-99
     {
         dest.push_back(static_cast<char>('0' + n / 10));
         dest.push_back(static_cast<char>('0' + n % 10));
-        return;
     }
-    if (n >= 0) // 0-9
+    else if (n >= 0) // 0-9
     {
         dest.push_back('0');
         dest.push_back(static_cast<char>('0' + n));
-        return;
     }
-    // negatives (unlikely, but just in case, let fmt deal with it)
-    fmt::format_to(dest, "{:02}", n);
+    else    // negatives (unlikely, but just in case, let fmt deal with it)
+    {
+        fmt::format_to(dest, "{:02}", n);
+    }
 }
 
-template<size_t Buffer_Size>
-inline void pad3(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+template<typename T, size_t Buffer_Size>
+inline void pad3(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
-    if (n > 999)
-    {
-        append_int(n, dest);
-        return;
-    }
-
-    if (n > 99) // 100-999
-    {
-        dest.push_back(static_cast<char>('0' + n / 100));
-        pad2(n % 100, dest);
-        return;
-    }
-    if (n > 9) // 10-99
-    {
-        dest.push_back('0');
-        dest.push_back(static_cast<char>('0' + n / 10));
-        dest.push_back(static_cast<char>('0' + n % 10));
-        return;
-    }
-    if (n >= 0)
-    {
-        dest.push_back('0');
-        dest.push_back('0');
-        dest.push_back(static_cast<char>('0' + n));
-        return;
-    }
-    // negatives (unlikely, but just in case let fmt deal with it)
-    fmt::format_to(dest, "{:03}", n);
+    append_uint(n, 3, dest);
 }
 
-template<size_t Buffer_Size>
-inline void pad6(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+
+template<typename T, size_t Buffer_Size>
+inline void pad6(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
-    if (n > 99999)
-    {
-        append_int(n, dest);
-        return;
-    }
-    pad3(static_cast<int>(n / 1000), dest);
-    pad3(static_cast<int>(n % 1000), dest);
+    append_uint(n, 6, dest);
 }
 
-
-template<size_t Buffer_Size>
-inline void pad9(size_t n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+template<typename T, size_t Buffer_Size>
+inline void pad9(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
-    if (n > 99999999)
-    {
-        append_int(n, dest);
-        return;
-    }
-    pad6(static_cast<int>(n / 1000), dest);
-    pad3(static_cast<int>(n % 1000), dest);
+    append_uint(n, 9, dest);
 }
+
+
 
 // return fraction of a second of the given time_point.
 // e.g.

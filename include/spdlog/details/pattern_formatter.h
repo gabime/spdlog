@@ -452,7 +452,7 @@ public:
         scoped_pad p(field_size, padinfo_, dest);
 
         auto millis = fmt_helper::time_fraction<std::chrono::milliseconds>(msg.time);
-        fmt_helper::pad3(static_cast<int>(millis.count()), dest);
+        fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
     }
 };
 
@@ -818,7 +818,7 @@ public:
         fmt_helper::append_buf(cached_datetime_, dest);
 
         auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
-        fmt_helper::pad3(static_cast<int>(millis.count()), dest);
+        fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
         dest.push_back(']');
         dest.push_back(' ');
 
