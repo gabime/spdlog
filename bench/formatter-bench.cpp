@@ -50,8 +50,16 @@ void bench_formatters()
     for(auto &flag:all_flags)
     {
         auto pattern = std::string("%") + flag;
-        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern)->Iterations(2500000);
+        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
+        //bench left padding
+        pattern = std::string("%16") + flag;
+        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
+
+        //bench center padding
+        pattern = std::string("%=16") + flag;
+        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
     }
+
 
     // complex patterns
     std::vector<std::string> patterns = {
@@ -65,34 +73,19 @@ void bench_formatters()
     }
 }
 
-void bench_padders()
-{
-    using spdlog::details::padding_info;
-    std::vector<size_t> sizes = {0, 2, 4, 8, 16, 32, 64, 128};
-
-    for (auto size : sizes)
-    {
-        size_t wrapped_size = 8;
-        size_t padding_size = wrapped_size + size;
-
-        std::string title = "scoped_pad::left::" + std::to_string(size);
-
-        benchmark::RegisterBenchmark(title.c_str(), bench_scoped_pad, wrapped_size, padding_info(padding_size, padding_info::left));
-
-        title = "scoped_pad::right::" + std::to_string(size);
-        benchmark::RegisterBenchmark(title.c_str(), bench_scoped_pad, wrapped_size, padding_info(padding_size, padding_info::right));
-
-        title = "scoped_pad::center::" + std::to_string(size);
-        benchmark::RegisterBenchmark(title.c_str(), bench_scoped_pad, wrapped_size, padding_info(padding_size, padding_info::center));
-    }
-}
-
-
 
 int main(int argc, char *argv[])
 {
-    bench_formatters();
-    //bench_padders();
+
+    if(argc > 1) //bench given pattern
+    {
+        std::string pattern = argv[1];
+        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
+    }
+    else //bench all flags
+    {
+        bench_formatters();
+    }
     benchmark::Initialize(&argc, argv);
     benchmark::RunSpecifiedBenchmarks();
 }
