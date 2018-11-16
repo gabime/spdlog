@@ -16,7 +16,6 @@ static std::string log_to_str(const std::string &msg, const Args &... args)
     return oss.str();
 }
 
-
 TEST_CASE("custom eol", "[pattern_formatter]")
 {
     std::string msg = "Hello custom eol test";
@@ -208,7 +207,7 @@ TEST_CASE("clone-default-formatter", "[pattern_formatter]")
     formatter_1->format(msg, formatted_1);
     formatter_2->format(msg, formatted_2);
 
-    REQUIRE( fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
+    REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
 }
 
 TEST_CASE("clone-default-formatter2", "[pattern_formatter]")
@@ -223,7 +222,7 @@ TEST_CASE("clone-default-formatter2", "[pattern_formatter]")
     formatter_1->format(msg, formatted_1);
     formatter_2->format(msg, formatted_2);
 
-    REQUIRE( fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
+    REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
 }
 
 TEST_CASE("clone-formatter", "[pattern_formatter]")
@@ -239,7 +238,6 @@ TEST_CASE("clone-formatter", "[pattern_formatter]")
     formatter_2->format(msg, formatted_2);
     REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
 }
-
 
 TEST_CASE("clone-formatter-2", "[pattern_formatter]")
 {
