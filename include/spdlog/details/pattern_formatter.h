@@ -653,9 +653,9 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 6;
+        const size_t field_size = fmt::internal::count_digits(msg.thread_id);
         scoped_pad p(field_size, padinfo_, dest);
-        fmt_helper::pad6(msg.thread_id, dest);
+        fmt_helper::append_int(msg.thread_id, dest);
     }
 };
 
@@ -668,9 +668,10 @@ public:
 
     void format(const details::log_msg &, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 6;
+        const auto pid = static_cast<uint32_t>(details::os::pid());
+        const size_t field_size = fmt::internal::count_digits(pid);
         scoped_pad p(field_size, padinfo_, dest);
-        fmt_helper::pad6(static_cast<size_t>(details::os::pid()), dest);
+        fmt_helper::append_int(pid, dest);
     }
 };
 

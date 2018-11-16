@@ -43,20 +43,6 @@ inline void append_int(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 }
 
 
-
-template<typename T, size_t Buffer_Size>
-inline void append_uint(T n, unsigned int width, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
-{
-    static_assert(std::is_unsigned<T>::value, "append_uint must get unsigned T");
-    auto digits = fmt::internal::count_digits(n);
-    if(width > digits)
-    {
-        const char* zeroes = "0000000000000000000";
-        dest.append(zeroes, zeroes + width-digits);
-    }
-    append_int(n, dest);
-}
-
 template<size_t Buffer_Size>
 inline void pad2(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
@@ -80,23 +66,38 @@ inline void pad2(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
     }
 }
 
+
+
+template<typename T, size_t Buffer_Size>
+inline void pad_uint(T n, unsigned int width, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
+{
+    static_assert(std::is_unsigned<T>::value, "append_uint must get unsigned T");
+    auto digits = fmt::internal::count_digits(n);
+    if(width > digits)
+    {
+        const char* zeroes = "0000000000000000000";
+        dest.append(zeroes, zeroes + width-digits);
+    }
+    append_int(n, dest);
+}
+
 template<typename T, size_t Buffer_Size>
 inline void pad3(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
-    append_uint(n, 3, dest);
+    pad_uint(n, 3, dest);
 }
 
 
 template<typename T, size_t Buffer_Size>
 inline void pad6(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
-    append_uint(n, 6, dest);
+    pad_uint(n, 6, dest);
 }
 
 template<typename T, size_t Buffer_Size>
 inline void pad9(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
-    append_uint(n, 9, dest);
+    pad_uint(n, 9, dest);
 }
 
 
