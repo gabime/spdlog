@@ -8,7 +8,7 @@ void test_pad2(int n, const char *expected)
     REQUIRE(fmt::to_string(buf) == expected);
 }
 
-void test_pad3(int n, const char *expected)
+void test_pad3(uint32_t n, const char *expected)
 {
     fmt::memory_buffer buf;
     spdlog::details::fmt_helper::pad3(n, buf);
@@ -46,7 +46,6 @@ TEST_CASE("pad3", "[fmt_helper]")
     test_pad3(23, "023");
     test_pad3(123, "123");
     test_pad3(1234, "1234");
-    test_pad3(-5, "-05");
 }
 
 TEST_CASE("pad6", "[fmt_helper]")
@@ -60,10 +59,9 @@ TEST_CASE("pad6", "[fmt_helper]")
     test_pad6(123456, "123456");
 }
 
-
 TEST_CASE("pad9", "[fmt_helper]")
 {
-    test_pad9(0,"000000000");
+    test_pad9(0, "000000000");
     test_pad9(3, "000000003");
     test_pad9(23, "000000023");
     test_pad9(123, "000000123");
