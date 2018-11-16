@@ -41,6 +41,13 @@
 #define SPDLOG_DEPRECATED
 #endif
 
+// disable thread local on msvc 2013
+#ifndef SPDLOG_NO_TLS
+#if (defined(_MSC_VER) && (_MSC_VER < 1900))
+#define SPDLOG_NO_TLS 1
+#endif
+#endif
+
 #include "spdlog/fmt/fmt.h"
 
 namespace spdlog {
