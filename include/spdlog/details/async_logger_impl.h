@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef ASYNC_LOGGER_IMPL_H
+#define ASYNC_LOGGER_IMPL_H
 
 // Async Logger implementation
 // Use an async_sink (queue per logger) to perform the logging in a worker thread
@@ -93,3 +94,4 @@ inline void spdlog::async_logger::_sink_it(details::log_msg &msg)
         throw;
     }
 }
+#endif

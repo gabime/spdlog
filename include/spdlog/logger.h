@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef LOGGER_H
+#define LOGGER_H
 
 // Thread safe logger (except for set_pattern(..), set_formatter(..) and set_error_handler())
 // Has name, log level, vector of std::shared sink pointers and formatter
@@ -150,3 +151,4 @@ protected:
 } // namespace spdlog
 
 #include "details/logger_impl.h"
+#endif

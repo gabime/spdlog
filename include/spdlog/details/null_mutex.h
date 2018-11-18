@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef NULL_MUTEX_H
+#define NULL_MUTEX_H
 
 #include <atomic>
 // null, no cost dummy "mutex" and dummy "atomic" int
@@ -43,3 +44,4 @@ struct null_atomic_int
 
 } // namespace details
 } // namespace spdlog
+#endif

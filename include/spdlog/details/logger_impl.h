@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef LOGGER_IMPL_H
+#define LOGGER_IMPL_H
 
 #include "../logger.h"
 
@@ -346,3 +347,4 @@ inline const std::vector<spdlog::sink_ptr> &spdlog::logger::sinks() const
 {
     return _sinks;
 }
+#endif

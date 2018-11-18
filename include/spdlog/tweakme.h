@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef TWEAKME_H
+#define TWEAKME_H
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -141,3 +142,4 @@
 //
 // #define SPDLOG_LEVEL_NAMES { "MY TRACE", "MY DEBUG", "MY INFO", "MY WARNING", "MY ERROR", "MY CRITICAL", "OFF" }
 ///////////////////////////////////////////////////////////////////////////////
+#endif

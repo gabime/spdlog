@@ -2,8 +2,8 @@
 // Copyright(c) 2015 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
-
-#pragma once
+#ifndef COMMON_H
+#define COMMON_H
 
 #define SPDLOG_VERSION "0.17.0"
 
@@ -186,3 +186,4 @@ using filename_t = std::string;
         _err_handler("Unknown exeption in logger");                                                                                        \
     }
 } // namespace spdlog
+#endif

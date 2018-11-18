@@ -3,7 +3,9 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef BASE_SINK_H
+#define BASE_SINK_H
+
 //
 // base sink templated over a mutex (either dummy or real)
 // concrete implementation should only override the _sink_it method.
@@ -47,3 +49,4 @@ protected:
 };
 } // namespace sinks
 } // namespace spdlog
+#endif

@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef MSVC_SINK_H
+#define MSVC_SINK_H
 
 #if defined(_WIN32)
 
@@ -41,4 +42,5 @@ using msvc_sink_st = msvc_sink<details::null_mutex>;
 } // namespace sinks
 } // namespace spdlog
 
+#endif
 #endif

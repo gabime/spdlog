@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef WINDEBUG_SINK_H
+#define WINDEBUG_SINK_H
 
 #if defined(_WIN32)
 
@@ -24,4 +25,5 @@ using windebug_sink_st = msvc_sink_st;
 } // namespace sinks
 } // namespace spdlog
 
+#endif
 #endif

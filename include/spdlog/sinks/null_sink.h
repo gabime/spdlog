@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef NULL_SINK_H
+#define NULL_SINK_H
 
 #include "../details/null_mutex.h"
 #include "base_sink.h"
@@ -27,3 +28,4 @@ using null_sink_st = null_sink<details::null_mutex>;
 
 } // namespace sinks
 } // namespace spdlog
+#endif

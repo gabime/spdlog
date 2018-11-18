@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef ANSICOLOR_SINK_H
+#define ANSICOLOR_SINK_H
 
 #include "../common.h"
 #include "../details/os.h"
@@ -148,3 +149,4 @@ using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::null_mutex>;
 
 } // namespace sinks
 } // namespace spdlog
+#endif

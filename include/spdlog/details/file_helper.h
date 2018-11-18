@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef FILE_HELPER_H
+#define FILE_HELPER_H
 
 // Helper class for file sink
 // When failing to open a file, retry several times(5) with small delay between the tries(10 ms)
@@ -149,3 +150,4 @@ private:
 };
 } // namespace details
 } // namespace spdlog
+#endif

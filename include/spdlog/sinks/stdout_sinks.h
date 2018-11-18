@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef STDOUT_SINKS_H
+#define STDOUT_SINKS_H
 
 #include "../details/null_mutex.h"
 #include "base_sink.h"
@@ -77,3 +78,4 @@ using stderr_sink_st = stderr_sink<details::null_mutex>;
 
 } // namespace sinks
 } // namespace spdlog
+#endif

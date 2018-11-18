@@ -2,8 +2,8 @@
 // Copyright(c) 2015 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
-
-#pragma once
+#ifndef ASYNC_LOGGER_H
+#define ASYNC_LOGGER_H
 
 // Very fast asynchronous logger (millions of logs per second on an average desktop)
 // Uses pre allocated lockfree queue for maximum throughput even under large number of threads.
@@ -70,3 +70,4 @@ private:
 } // namespace spdlog
 
 #include "details/async_logger_impl.h"
+#endif

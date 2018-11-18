@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef PATTERN_FORMATTER_IMPL_H
+#define PATTERN_FORMATTER_IMPL_H
 
 #include "../details/log_msg.h"
 #include "../details/os.h"
@@ -705,3 +706,4 @@ inline void spdlog::pattern_formatter::format(details::log_msg &msg)
     // write eol
     msg.formatted << _eol;
 }
+#endif

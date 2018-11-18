@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef ANDROID_SINK_H
+#define ANDROID_SINK_H
 
 #if defined(__ANDROID__)
 
@@ -88,4 +89,5 @@ private:
 } // namespace sinks
 } // namespace spdlog
 
+#endif
 #endif

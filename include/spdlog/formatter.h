@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef FORMATTER_H
+#define FORMATTER_H
 
 #include "details/log_msg.h"
 
@@ -44,3 +45,4 @@ private:
 } // namespace spdlog
 
 #include "details/pattern_formatter_impl.h"
+#endif

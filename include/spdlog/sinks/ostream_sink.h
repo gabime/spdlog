@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef OSTREAM_SINK_H
+#define OSTREAM_SINK_H
 
 #include "../details/null_mutex.h"
 #include "base_sink.h"
@@ -47,3 +48,4 @@ using ostream_sink_st = ostream_sink<details::null_mutex>;
 
 } // namespace sinks
 } // namespace spdlog
+#endif

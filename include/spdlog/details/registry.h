@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef REGISTRY_H
+#define REGISTRY_H
 
 // Loggers registy of unique name->logger pointer
 // An attempt to create a logger with an already existing name will be ignored
@@ -261,3 +262,4 @@ using registry = registry_t<std::mutex>;
 
 } // namespace details
 } // namespace spdlog
+#endif

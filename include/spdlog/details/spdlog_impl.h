@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef SPDLOG_IMPL_H
+#define SPDLOG_IMPL_H
 
 //
 // Global registry functions
@@ -276,3 +277,4 @@ inline void spdlog::drop_all()
 {
     details::registry::instance().drop_all();
 }
+#endif

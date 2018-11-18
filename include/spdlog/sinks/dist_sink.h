@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef DIST_SINK_H
+#define DIST_SINK_H
 
 #include "../details/log_msg.h"
 #include "../details/null_mutex.h"
@@ -75,3 +76,4 @@ using dist_sink_st = dist_sink<details::null_mutex>;
 
 } // namespace sinks
 } // namespace spdlog
+#endif

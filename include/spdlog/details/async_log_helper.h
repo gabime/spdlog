@@ -10,7 +10,8 @@
 // then the client call will block until there is more room.
 //
 
-#pragma once
+#ifndef ASYNC_LOG_HELPER_H
+#define ASYNC_LOG_HELPER_H
 
 #include "../common.h"
 #include "../details/log_msg.h"
@@ -331,3 +332,4 @@ inline void spdlog::details::async_log_helper::flush_sinks()
     }
     _last_flush = os::now();
 }
+#endif

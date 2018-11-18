@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef LOG_MSG_H
+#define LOG_MSG_H
 
 #include "../common.h"
 #include "../details/os.h"
@@ -46,3 +47,4 @@ struct log_msg
 };
 } // namespace details
 } // namespace spdlog
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef STEP_FILE_SINK_H
+#define STEP_FILE_SINK_H
 
 #include "../../details/file_helper.h"
 #include "../../details/null_mutex.h"
@@ -214,3 +215,4 @@ using step_file_sink_st = step_file_sink<details::null_mutex>;
 
 } // namespace sinks
 } // namespace spdlog
+#endif

@@ -1,5 +1,3 @@
-#pragma once
-
 //
 // Copyright(c) 2018 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
@@ -10,6 +8,9 @@
 // enqueue(..) - will block until room found to put the new message
 // enqueue_nowait(..) - will return immediatly with false if no room left in the queue
 // dequeue_for(..) - will block until the queue is not empty or timeout passed
+
+#ifndef MPMC_BLOCKING_Q_H
+#define MPMC_BLOCKING_Q_H
 
 #include <condition_variable>
 #include <mutex>
@@ -82,3 +83,4 @@ private:
 };
 } // namespace details
 } // namespace spdlog
+#endif

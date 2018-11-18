@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef SYSLOG_SINK_H
+#define SYSLOG_SINK_H
 
 #include "../common.h"
 
@@ -73,4 +74,5 @@ private:
 } // namespace sinks
 } // namespace spdlog
 
+#endif
 #endif

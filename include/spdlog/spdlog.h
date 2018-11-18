@@ -5,7 +5,8 @@
 // spdlog main header file.
 // see example.cpp for usage example
 
-#pragma once
+#ifndef SPDLOG_H
+#define SPDLOG_H
 
 #include "common.h"
 #include "logger.h"
@@ -202,3 +203,4 @@ void drop_all();
 } // namespace spdlog
 
 #include "details/spdlog_impl.h"
+#endif

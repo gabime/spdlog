@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef SINK_H
+#define SINK_H
 
 #include "../details/log_msg.h"
 
@@ -42,3 +43,4 @@ inline level::level_enum sink::level() const
 
 } // namespace sinks
 } // namespace spdlog
+#endif

@@ -3,7 +3,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#pragma once
+#ifndef WINCOLOR_SINK_H
+#define WINCOLOR_SINK_H
 
 #include "../common.h"
 #include "../details/null_mutex.h"
@@ -142,3 +143,4 @@ using wincolor_stderr_sink_st = wincolor_stderr_sink<details::null_mutex>;
 
 } // namespace sinks
 } // namespace spdlog
+#endif

@@ -2,7 +2,9 @@
 // Copyright(c) 2015 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
-#pragma once
+
+#ifndef OS_H
+#define OS_H
 
 #include "../common.h"
 
@@ -429,3 +431,4 @@ inline bool in_terminal(FILE *file)
 } // namespace os
 } // namespace details
 } // namespace spdlog
+#endif
