@@ -153,6 +153,13 @@ inline bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mod
 #else
     *fp = _fsopen((filename.c_str()), mode.c_str(), _SH_DENYNO);
 #endif
+
+	// Make sure the file handle is never inherited by child processes created using CreateProcess().
+	// Otherwise, file rotation will fail since the file is left open by the child process.
+	auto fn = _fileno(*fp);
+	auto handle = HANDLE(_get_osfhandle(fn));
+	::SetHandleInformation(handle, HANDLE_FLAG_INHERIT, 0);
+
 #else // unix
     *fp = fopen((filename.c_str()), mode.c_str());
 #endif
