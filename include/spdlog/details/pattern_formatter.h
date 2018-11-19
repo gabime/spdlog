@@ -652,7 +652,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const auto field_size = fmt::internal::count_digits(static_cast<uint64_t>(msg.thread_id));
+        const auto field_size = fmt_helper::count_digits(msg.thread_id);
         scoped_pad p(field_size, padinfo_, dest);
         fmt_helper::append_int(msg.thread_id, dest);
     }

@@ -18,6 +18,7 @@ inline spdlog::string_view_t to_string_view(const fmt::basic_memory_buffer<char,
 {
     return spdlog::string_view_t(buf.data(), buf.size());
 }
+
 template<size_t Buffer_Size1, size_t Buffer_Size2>
 inline void append_buf(const fmt::basic_memory_buffer<char, Buffer_Size1> &buf, fmt::basic_memory_buffer<char, Buffer_Size2> &dest)
 {
@@ -40,6 +41,13 @@ inline void append_int(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     fmt::format_int i(n);
     dest.append(i.data(), i.data() + i.size());
+}
+
+template<typename T>
+inline unsigned count_digits(T n)
+{
+    using count_type = std::conditional<(sizeof(std::size_t) > sizeof(std::uint32_t)), std::uint64_t, std::uint32_t>::type;
+    return fmt::internal::count_digits(static_cast<count_type>(n));
 }
 
 template<size_t Buffer_Size>
@@ -69,7 +77,7 @@ template<typename T, size_t Buffer_Size>
 inline void pad_uint(T n, unsigned int width, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
     static_assert(std::is_unsigned<T>::value, "append_uint must get unsigned T");
-    auto digits = fmt::internal::count_digits(static_cast<uint64_t>(n));
+    auto digits = count_digits(n);
     if (width > digits)
     {
         const char *zeroes = "0000000000000000000";
