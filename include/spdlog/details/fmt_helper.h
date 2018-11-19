@@ -46,7 +46,7 @@ inline void append_int(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 template<typename T>
 inline unsigned count_digits(T n)
 {
-    using count_type = std::conditional<(sizeof(T) > sizeof(std::uint32_t)), std::uint64_t, std::uint32_t>::type;
+    using count_type = typename std::conditional<(sizeof(T) > sizeof(std::uint32_t)), std::uint64_t, std::uint32_t>::type;
     return fmt::internal::count_digits(static_cast<count_type>(n));
 }
 
