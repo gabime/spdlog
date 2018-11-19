@@ -487,7 +487,6 @@ public:
 
         auto ns = fmt_helper::time_fraction<std::chrono::nanoseconds>(msg.time);
         fmt_helper::pad9(static_cast<size_t>(ns.count()), dest);
-
     }
 };
 
@@ -653,7 +652,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = fmt::internal::count_digits(msg.thread_id);
+        const auto field_size = fmt_helper::count_digits(msg.thread_id);
         scoped_pad p(field_size, padinfo_, dest);
         fmt_helper::append_int(msg.thread_id, dest);
     }
