@@ -36,7 +36,7 @@ TEST_CASE("basic_logging ", "[basic_logging]")
 
 TEST_CASE("log_levels", "[log_levels]")
 {
-    REQUIRE(log_info("Hello", spdlog::level::err) == "");
+    REQUIRE(log_info("Hello", spdlog::level::error) == "");
     REQUIRE(log_info("Hello", spdlog::level::critical) == "");
     REQUIRE(log_info("Hello", spdlog::level::info) == "Hello");
     REQUIRE(log_info("Hello", spdlog::level::debug) == "Hello");
@@ -49,7 +49,7 @@ TEST_CASE("to_c_str", "[convert_to_c_str]")
     REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::debug)) == "debug");
     REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::info)) == "info");
     REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::warn)) == "warning");
-    REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::err)) == "error");
+    REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::error)) == "error");
     REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::critical)) == "critical");
     REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::off)) == "off");
 }
@@ -60,7 +60,7 @@ TEST_CASE("to_short_c_str", "[convert_to_short_c_str]")
     REQUIRE(std::string(spdlog::level::to_short_c_str(spdlog::level::debug)) == "D");
     REQUIRE(std::string(spdlog::level::to_short_c_str(spdlog::level::info)) == "I");
     REQUIRE(std::string(spdlog::level::to_short_c_str(spdlog::level::warn)) == "W");
-    REQUIRE(std::string(spdlog::level::to_short_c_str(spdlog::level::err)) == "E");
+    REQUIRE(std::string(spdlog::level::to_short_c_str(spdlog::level::error)) == "E");
     REQUIRE(std::string(spdlog::level::to_short_c_str(spdlog::level::critical)) == "C");
     REQUIRE(std::string(spdlog::level::to_short_c_str(spdlog::level::off)) == "O");
 }
@@ -71,7 +71,7 @@ TEST_CASE("to_level_enum", "[convert_to_level_enum]")
     REQUIRE(spdlog::level::from_str("debug") == spdlog::level::debug);
     REQUIRE(spdlog::level::from_str("info") == spdlog::level::info);
     REQUIRE(spdlog::level::from_str("warning") == spdlog::level::warn);
-    REQUIRE(spdlog::level::from_str("error") == spdlog::level::err);
+    REQUIRE(spdlog::level::from_str("error") == spdlog::level::error);
     REQUIRE(spdlog::level::from_str("critical") == spdlog::level::critical);
     REQUIRE(spdlog::level::from_str("off") == spdlog::level::off);
     REQUIRE(spdlog::level::from_str("null") == spdlog::level::off);

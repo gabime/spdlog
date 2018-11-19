@@ -96,7 +96,7 @@ enum level_enum
     debug = SPDLOG_LEVEL_DEBUG,
     info = SPDLOG_LEVEL_INFO,
     warn = SPDLOG_LEVEL_WARN,
-    err = SPDLOG_LEVEL_ERROR,
+    error = SPDLOG_LEVEL_ERROR,
     critical = SPDLOG_LEVEL_CRITICAL,
     off = SPDLOG_LEVEL_OFF,
 };
@@ -128,7 +128,7 @@ inline spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCE
             {level_names[1], level::debug},                            // debug
             {level_names[2], level::info},                             // info
             {level_names[3], level::warn},                             // warn
-            {level_names[4], level::err},                              // err
+            {level_names[4], level::error},                            // error
             {level_names[5], level::critical},                         // critical
             {level_names[6], level::off}};                             // off
 

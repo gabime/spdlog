@@ -43,7 +43,7 @@ public:
         colors_[level::debug] = cyan;
         colors_[level::info] = green;
         colors_[level::warn] = yellow + bold;
-        colors_[level::err] = red + bold;
+        colors_[level::error] = red + bold;
         colors_[level::critical] = bold + on_red;
         colors_[level::off] = reset;
     }

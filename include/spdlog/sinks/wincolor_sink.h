@@ -45,7 +45,7 @@ public:
         colors_[level::debug] = CYAN;
         colors_[level::info] = GREEN;
         colors_[level::warn] = YELLOW | BOLD;
-        colors_[level::err] = RED | BOLD;                         // red bold
+        colors_[level::error] = RED | BOLD;                         // red bold
         colors_[level::critical] = BACKGROUND_RED | WHITE | BOLD; // white bold on red background
         colors_[level::off] = 0;
     }

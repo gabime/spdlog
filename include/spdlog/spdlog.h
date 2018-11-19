@@ -295,49 +295,67 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 // can be enabled/disabled using SPDLOG_ACTIVE_LEVEL (info by default).
 //
 
+#define SPDLOG_LOGGER_GENERIC(logger, log_level, ...)                                                                                      \
+    do                                                                                                                                     \
+    {                                                                                                                                      \
+        if (logger->should_log(spdlog::level::log_level))                                                                                  \
+        {                                                                                                                                  \
+            logger->log_level(__VA_ARGS__);                                                                                                \
+        }                                                                                                                                  \
+    } while (0)
+
+#define SPDLOG_GENERIC(log_level, ...)                                                                                                     \
+    do                                                                                                                                     \
+    {                                                                                                                                      \
+        if (logger->should_log(spdlog::level::log_level))                                                                                  \
+        {                                                                                                                                  \
+            spdlog::log_level(__VA_ARGS__);                                                                                                \
+        }                                                                                                                                  \
+    } while (0)
+
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
-#define SPDLOG_LOGGER_TRACE(logger, ...) logger->trace(__VA_ARGS__)
-#define SPDLOG_TRACE(...) spdlog::trace(__VA_ARGS__)
+#define SPDLOG_LOGGER_TRACE(logger, ...) SPDLOG_LOGGER_GENERIC(logger, trace, __VA_ARGS__)
+#define SPDLOG_TRACE(...) SPDLOG_GENERIC(trace, __VA_ARGS__)
 #else
 #define SPDLOG_LOGGER_TRACE(logger, ...) (void)0
 #define SPDLOG_TRACE(...) (void)0
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG
-#define SPDLOG_LOGGER_DEBUG(logger, ...) logger->debug(__VA_ARGS__)
-#define SPDLOG_DEBUG(...) spdlog::debug(__VA_ARGS__)
+#define SPDLOG_LOGGER_DEBUG(logger, ...) SPDLOG_LOGGER_GENERIC(logger, debug, __VA_ARGS__)
+#define SPDLOG_DEBUG(...) SPDLOG_GENERIC(debug, __VA_ARGS__)
 #else
 #define SPDLOG_LOGGER_DEBUG(logger, ...) (void)0
 #define SPDLOG_DEBUG(...) (void)0
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_INFO
-#define SPDLOG_LOGGER_INFO(logger, ...) logger->info(__VA_ARGS__)
-#define SPDLOG_INFO(...) spdlog::info(__VA_ARGS__)
+#define SPDLOG_LOGGER_INFO(logger, ...) SPDLOG_LOGGER_GENERIC(logger, info, __VA_ARGS__)
+#define SPDLOG_INFO(...) SPDLOG_GENERIC(info, __VA_ARGS__)
 #else
 #define SPDLOG_LOGGER_INFO(logger, ...) (void)0
 #define SPDLOG_INFO(...) (void)0
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_WARN
-#define SPDLOG_LOGGER_WARN(logger, ...) logger->warn(__VA_ARGS__)
-#define SPDLOG_WARN(...) spdlog::warn(__VA_ARGS__)
+#define SPDLOG_LOGGER_WARN(logger, ...) SPDLOG_LOGGER_GENERIC(logger, warn, __VA_ARGS__)
+#define SPDLOG_WARN(...) SPDLOG_GENERIC(warn, __VA_ARGS__)
 #else
 #define SPDLOG_LOGGER_WARN(logger, ...) (void)0
 #define SPDLOG_WARN(...) (void)0
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_ERROR
-#define SPDLOG_LOGGER_ERROR(logger, ...) logger->error(__VA_ARGS__)
-#define SPDLOG_ERROR(...) spdlog::error(__VA_ARGS__)
+#define SPDLOG_LOGGER_ERROR(logger, ...) SPDLOG_LOGGER_GENERIC(logger, error, __VA_ARGS__)
+#define SPDLOG_ERROR(...) SPDLOG_GENERIC(error, __VA_ARGS__)
 #else
 #define SPDLOG_LOGGER_ERROR(logger, ...) (void)0
 #define SPDLOG_ERROR(...) (void)0
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
-#define SPDLOG_LOGGER_CRITICAL(logger, ...) logger->critical(__VA_ARGS__)
-#define SPDLOG_CRITICAL(...) spdlog::critical(__VA_ARGS__)
+#define SPDLOG_LOGGER_CRITICAL(logger, ...) SPDLOG_LOGGER_GENERIC(logger, critical, __VA_ARGS__)
+#define SPDLOG_CRITICAL(...) SPDLOG_GENERIC(critical, __VA_ARGS__)
 #else
 #define SPDLOG_LOGGER_CRITICAL(logger, ...) (void)0
 #define SPDLOG_CRITICAL(...) (void)0

@@ -151,7 +151,7 @@ inline void spdlog::logger::warn(const char *fmt, const Args &... args)
 template<typename... Args>
 inline void spdlog::logger::error(const char *fmt, const Args &... args)
 {
-    log(level::err, fmt, args...);
+    log(level::error, fmt, args...);
 }
 
 template<typename... Args>
@@ -187,7 +187,7 @@ inline void spdlog::logger::warn(const T &msg)
 template<typename T>
 inline void spdlog::logger::error(const T &msg)
 {
-    log(level::err, msg);
+    log(level::error, msg);
 }
 
 template<typename T>
@@ -268,7 +268,7 @@ inline void spdlog::logger::warn(const wchar_t *fmt, const Args &... args)
 template<typename... Args>
 inline void spdlog::logger::error(const wchar_t *fmt, const Args &... args)
 {
-    log(level::err, fmt, args...);
+    log(level::error, fmt, args...);
 }
 
 template<typename... Args>

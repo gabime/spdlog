@@ -34,7 +34,7 @@ public:
         priorities_[static_cast<size_t>(level::debug)] = LOG_DEBUG;
         priorities_[static_cast<size_t>(level::info)] = LOG_INFO;
         priorities_[static_cast<size_t>(level::warn)] = LOG_WARNING;
-        priorities_[static_cast<size_t>(level::err)] = LOG_ERR;
+        priorities_[static_cast<size_t>(level::error)] = LOG_ERR;
         priorities_[static_cast<size_t>(level::critical)] = LOG_CRIT;
         priorities_[static_cast<size_t>(level::off)] = LOG_INFO;
 
