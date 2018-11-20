@@ -448,11 +448,17 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 3;
-        scoped_pad p(field_size, padinfo_, dest);
-
         auto millis = fmt_helper::time_fraction<std::chrono::milliseconds>(msg.time);
-        fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
+        if (padinfo_.width_)
+        {
+            const size_t field_size = 3;
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
+        }
+        else
+        {
+            fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
+        }
     }
 };
 
@@ -465,11 +471,17 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 6;
-        scoped_pad p(field_size, padinfo_, dest);
-
         auto micros = fmt_helper::time_fraction<std::chrono::microseconds>(msg.time);
-        fmt_helper::pad6(static_cast<size_t>(micros.count()), dest);
+        if (padinfo_.width_)
+        {
+            const size_t field_size = 6;
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::pad6(static_cast<size_t>(micros.count()), dest);
+        }
+        else
+        {
+            fmt_helper::pad6(static_cast<size_t>(micros.count()), dest);
+        }
     }
 };
 
@@ -482,11 +494,17 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 9;
-        scoped_pad p(field_size, padinfo_, dest);
-
         auto ns = fmt_helper::time_fraction<std::chrono::nanoseconds>(msg.time);
-        fmt_helper::pad9(static_cast<size_t>(ns.count()), dest);
+        if (padinfo_.width_)
+        {
+            const size_t field_size = 9;
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::pad9(static_cast<size_t>(ns.count()), dest);
+        }
+        else
+        {
+            fmt_helper::pad9(static_cast<size_t>(ns.count()), dest);
+        }
     }
 };
 
@@ -652,9 +670,16 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const auto field_size = fmt_helper::count_digits(msg.thread_id);
-        scoped_pad p(field_size, padinfo_, dest);
-        fmt_helper::append_int(msg.thread_id, dest);
+        if (padinfo_.width_)
+        {
+            const auto field_size = fmt_helper::count_digits(msg.thread_id);
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::append_int(msg.thread_id, dest);
+        }
+        else
+        {
+            fmt_helper::append_int(msg.thread_id, dest);
+        }
     }
 };
 
@@ -668,9 +693,16 @@ public:
     void format(const details::log_msg &, const std::tm &, fmt::memory_buffer &dest) override
     {
         const auto pid = static_cast<uint32_t>(details::os::pid());
-        const size_t field_size = fmt::internal::count_digits(pid);
-        scoped_pad p(field_size, padinfo_, dest);
-        fmt_helper::append_int(pid, dest);
+        if (padinfo_.width_)
+        {
+            const size_t field_size = fmt::internal::count_digits(pid);
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::append_int(pid, dest);
+        }
+        else
+        {
+            fmt_helper::append_int(pid, dest);
+        }
     }
 };
 
