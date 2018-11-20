@@ -3,27 +3,46 @@ CXXFLAGS	=  -D_WIN32_WINNT=0x600 -march=native -Wall -Wextra -Wshadow -pedantic 
 CXX_RELEASE_FLAGS = -O3 
 CXX_DEBUG_FLAGS= -g 
 
+BIN_PATH = bin/
+DEBUG_PATH = $(BIN_PATH)debug/
 
-all:	example bench
-debug: example-debug bench-debug
 
-example: example.cpp
-	$(CXX) example.cpp -o example $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+all:	basic_log.exe daily_log.exe rotating_log.exe console_log.exe bench.exe
+debug:	console_log-debug.exe basic_log-debug.exe daily_log-debug.exe rotating_log-debug.exe bench-debug.exe
 
-bench: bench.cpp
-	$(CXX) bench.cpp -o bench $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+basic_log.exe: basic_log.cpp
+	$(CXX) $^ -o $(BIN_PATH)$@ $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+
+daily_log.exe: daily_log.cpp
+	$(CXX) $^ -o $(BIN_PATH)$@ $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+
+rotating_log.exe: rotating_log.cpp
+	$(CXX) $^ -o $(BIN_PATH)$@ $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+
+console_log.exe: console_log.cpp
+	$(CXX) $^ -o $(BIN_PATH)$@ $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
+
+bench.exe: bench.cpp
+	$(CXX) $^ -o $(BIN_PATH)$@ $(CXXFLAGS) $(CXX_RELEASE_FLAGS)
 	
 
-example-debug: example.cpp
-	$(CXX) example.cpp -o example-debug $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
+basic_log-debug.exe: basic_log.cpp
+	$(CXX) $^ -o $(DEBUG_PATH)$@ $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
 	
-bench-debug: bench.cpp
-	$(CXX) bench.cpp -o bench-debug $(CXXFLAGS) $(CXX_DEBUG_FLAGS)	
-
-
+daily_log-debug.exe: daily_log.cpp
+	$(CXX) $^ -o $(DEBUG_PATH)$@ $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
+	
+rotating_log-debug.exe: rotating_log.cpp
+	$(CXX) $^ -o $(DEBUG_PATH)$@ $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
+	
+console_log-debug.exe: console_log.cpp
+	$(CXX) $^ -o $(DEBUG_PATH)$@ $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
+	
+bench-debug.exe: bench.cpp
+	$(CXX) $^ -o $(DEBUG_PATH)$@ $(CXXFLAGS) $(CXX_DEBUG_FLAGS)
 
 clean:
-	rm -f *.o logs/*.txt example example-debug bench bench-debug 
+	rm -f *.o $(BIN_PATH)logs/* $(DEBUG_PATH)logs/* $(BIN_PATH)*.exe $(DEBUG_PATH)*-debug.exe
 
 
 rebuild: clean all

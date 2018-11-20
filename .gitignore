@@ -39,7 +39,10 @@ build/*
 
 # example  files
 example/*
-!example/example.cpp
+!example/console_log.cpp
+!example/basic_log.cpp
+!example/daily_log.cpp
+!example/rotating_log.cpp
 !example/bench.cpp
 !example/utils.h
 !example/Makefile*
@@ -48,6 +51,11 @@ example/*
 !example/CMakeLists.txt
 !example/multisink.cpp
 !example/jni
+!example/bin
+!example/bin/logs
+!example/bin/debug
+!example/bin/debug/logs
+
 
 # generated files
 generated

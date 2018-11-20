@@ -13,6 +13,7 @@
 #include "spdlog/spdlog.h"
 
 #include <iostream>
+#include <string>
 #include <memory>
 
 void async_example();
@@ -39,23 +40,6 @@ int main(int, char *[])
         console->info("{:<30}", "left aligned");
 
         spd::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name) function");
-
-        // Create basic file logger (not rotated)
-        auto my_logger = spd::basic_logger_mt("basic_logger", "logs/basic-log.txt");
-        my_logger->info("Some log message");
-
-        // Create a file rotating logger with 5mb size max and 3 rotated files
-        auto rotating_logger = spd::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
-        for (int i = 0; i < 10; ++i)
-        {
-            rotating_logger->info("{} * {} equals {:>10}", i, i, i * i);
-        }
-
-        // Create a daily logger - a new file is created every day on 2:30am
-        auto daily_logger = spd::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
-        // trigger flush if the log severity is error or higher
-        daily_logger->flush_on(spd::level::err);
-        daily_logger->info(123.44);
 
         // Customize msg format for all messages
         spd::set_pattern("[%^+++%$] [%H:%M:%S %z] [thread %t] %v");
