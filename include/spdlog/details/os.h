@@ -383,7 +383,6 @@ inline int pid()
 #endif
 }
 
-
 // Determine if the terminal supports colors
 // Source: https://github.com/agauniyal/rang/
 inline bool is_color_terminal() SPDLOG_NOEXCEPT

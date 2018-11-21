@@ -21,18 +21,16 @@ void bench_scoped_pad(benchmark::State &state, size_t wrapped_size, spdlog::deta
     }
 }
 
-
 void bench_formatter(benchmark::State &state, std::string pattern)
 {
     auto formatter = spdlog::details::make_unique<spdlog::pattern_formatter>(pattern);
     fmt::memory_buffer dest;
     std::string logger_name = "logger-name";
-    const char* text = "Hello. This is some message with length of 80                                   ";
-
+    const char *text = "Hello. This is some message with length of 80                                   ";
 
     spdlog::details::log_msg msg(&logger_name, spdlog::level::info, text);
-//    formatter->format(msg, dest);
-//    printf("%s\n", fmt::to_string(dest).c_str());
+    //    formatter->format(msg, dest);
+    //    printf("%s\n", fmt::to_string(dest).c_str());
 
     for (auto _ : state)
     {
@@ -47,46 +45,43 @@ void bench_formatters()
     // basic patterns(single flag)
     std::string all_flags = "+vtPnlLaAbBcCYDmdHIMSefFprRTXzEi%";
     std::vector<std::string> basic_patterns;
-    for(auto &flag:all_flags)
+    for (auto &flag : all_flags)
     {
         auto pattern = std::string("%") + flag;
         benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
-        //bench left padding
+        // bench left padding
         pattern = std::string("%16") + flag;
         benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
 
-        //bench center padding
+        // bench center padding
         pattern = std::string("%=16") + flag;
         benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
     }
 
-
     // complex patterns
     std::vector<std::string> patterns = {
-            "[%D %X] [%l] [%n] %v",
-            "[%Y-%m-%d %H:%M:%S.%e] [%l] [%n] %v",
-            "[%Y-%m-%d %H:%M:%S.%e] [%l] [%n] [%t] %v",
+        "[%D %X] [%l] [%n] %v",
+        "[%Y-%m-%d %H:%M:%S.%e] [%l] [%n] %v",
+        "[%Y-%m-%d %H:%M:%S.%e] [%l] [%n] [%t] %v",
     };
-    for(auto &pattern:patterns)
+    for (auto &pattern : patterns)
     {
         benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern)->Iterations(2500000);
     }
 }
 
-
 int main(int argc, char *argv[])
 {
 
-    if(argc > 1) //bench given pattern
+    if (argc > 1) // bench given pattern
     {
         std::string pattern = argv[1];
         benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
     }
-    else //bench all flags
+    else // bench all flags
     {
         bench_formatters();
     }
     benchmark::Initialize(&argc, argv);
     benchmark::RunSpecifiedBenchmarks();
 }
-

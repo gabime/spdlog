@@ -303,7 +303,6 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 // SPDLOG_LEVEL_OFF
 //
 
-
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
 #define SPDLOG_LOGGER_TRACE(logger, ...) logger->trace(__VA_ARGS__)
 #define SPDLOG_TRACE(...) spdlog::trace(__VA_ARGS__)
