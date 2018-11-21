@@ -291,9 +291,18 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 //
-// compile time macros.
-// can be enabled/disabled using SPDLOG_ACTIVE_LEVEL (info by default).
+// enable/disable log calls at compile time according to global level.
 //
+// define SPDLOG_ACTIVE_LEVEL to one of those (before including spdlog.h):
+// SPDLOG_LEVEL_TRACE,
+// SPDLOG_LEVEL_DEBUG,
+// SPDLOG_LEVEL_INFO,
+// SPDLOG_LEVEL_WARN,
+// SPDLOG_LEVEL_ERROR,
+// SPDLOG_LEVEL_CRITICAL,
+// SPDLOG_LEVEL_OFF
+//
+
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
 #define SPDLOG_LOGGER_TRACE(logger, ...) logger->trace(__VA_ARGS__)
