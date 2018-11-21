@@ -729,8 +729,14 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        scoped_pad p(msg.payload, padinfo_, dest);
-        fmt_helper::append_string_view(msg.payload, dest);
+        if(padinfo_.width_) {
+            scoped_pad p(msg.payload, padinfo_, dest);
+            fmt_helper::append_string_view(msg.payload, dest);
+        }
+        else
+        {
+            fmt_helper::append_string_view(msg.payload, dest);
+        }
     }
 };
 
