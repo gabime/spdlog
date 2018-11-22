@@ -188,8 +188,8 @@ using filename_t = std::string;
 struct source_loc
 {
     SPDLOG_CONSTEXPR source_loc()
-        : filename("")
-        , line(0)
+        : filename{""}
+        , line{0}
     {
     }
     SPDLOG_CONSTEXPR source_loc(const char *filename, int line)
