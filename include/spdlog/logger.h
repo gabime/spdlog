@@ -46,7 +46,12 @@ public:
     template<typename... Args>
     void log(level::level_enum lvl, const char *fmt, const Args &... args);
 
+    template<typename... Args>
+    void log(source_loc loc, level::level_enum lvl, const char *fmt, const Args &... args);
+
     void log(level::level_enum lvl, const char *msg);
+
+    void log(source_loc loc, level::level_enum lvl, const char *msg);
 
     template<typename... Args>
     void trace(const char *fmt, const Args &... args);
@@ -74,6 +79,9 @@ public:
     void log(level::level_enum lvl, const wchar_t *fmt, const Args &... args);
 
     template<typename... Args>
+    void log(source_location soruce, level::level_enum lvl, const wchar_t *fmt, const Args &... args);
+
+    template<typename... Args>
     void trace(const wchar_t *fmt, const Args &... args);
 
     template<typename... Args>
@@ -97,9 +105,17 @@ public:
     template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(level::level_enum lvl, const T &);
 
+        // T can be statically converted to string_view
+        template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
+        void log(source_loc loc, level::level_enum lvl, const T &);
+
     // T cannot be statically converted to string_view
     template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(level::level_enum lvl, const T &);
+
+    // T cannot be statically converted to string_view
+    template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
+    void log(source_loc loc, level::level_enum lvl, const T &);
 
     template<typename T>
     void trace(const T &msg);

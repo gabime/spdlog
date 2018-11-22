@@ -808,6 +808,68 @@ public:
     }
 };
 
+// print soruce location
+class source_location_formatter final : public flag_formatter
+{
+public:
+    explicit source_location_formatter(padding_info padinfo)
+            : flag_formatter(padinfo){};
+
+void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+{
+    if(padinfo_.width_)
+    {
+        const auto text_size = std::char_traits<char>::length(msg.source.filename)
+                               + fmt_helper::count_digits(msg.source.line)
+                               +1;
+        scoped_pad p(text_size, padinfo_, dest);
+        fmt_helper::append_string_view(msg.source.filename, dest);
+        dest.push_back(':');
+        fmt_helper::append_int(msg.source.line, dest);
+    }
+    else
+    {
+        fmt_helper::append_string_view(msg.source.filename, dest);
+        dest.push_back(':');
+        fmt_helper::append_int(msg.source.line, dest);
+    }
+}
+};
+// print soruce filename
+class source_filename_formatter final : public flag_formatter
+{
+public:
+    explicit source_filename_formatter(padding_info padinfo)
+            : flag_formatter(padinfo){};
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+        scoped_pad p(msg.source.filename, padinfo_, dest);
+        fmt_helper::append_string_view(msg.source.filename, dest);
+    }
+};
+
+class source_linenum_formatter final : public flag_formatter
+{
+public:
+    explicit source_linenum_formatter(padding_info padinfo)
+            : flag_formatter(padinfo){};
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+
+        if(padinfo_.width_) {
+            const size_t field_size = fmt::internal::count_digits(msg.source.line);
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::append_int(msg.source.line, dest);
+        }
+        else
+        {
+            fmt_helper::append_int(msg.source.line, dest);
+        }
+    }
+};
+
 // Full info formatter
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
 class full_formatter final : public flag_formatter
@@ -1100,6 +1162,18 @@ private:
 
         case ('$'):
             formatters_.push_back(details::make_unique<details::color_stop_formatter>(padding));
+            break;
+
+        case ('@'):
+            formatters_.push_back(details::make_unique<details::source_location_formatter>(padding));
+            break;
+
+        case ('s'):
+            formatters_.push_back(details::make_unique<details::source_filename_formatter>(padding));
+            break;
+
+        case ('#'):
+            formatters_.push_back(details::make_unique<details::source_linenum_formatter>(padding));
             break;
 
         case ('%'):
