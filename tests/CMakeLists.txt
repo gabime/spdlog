@@ -4,7 +4,7 @@ find_package(Threads REQUIRED)
 
 set(SPDLOG_UTESTS_SOURCES
     test_errors.cpp
-    file_helper.cpp
+    test_file_helper.cpp
     test_file_logging.cpp
     test_misc.cpp
     test_pattern_formatter.cpp
