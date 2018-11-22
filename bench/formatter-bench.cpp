@@ -28,7 +28,7 @@ void bench_formatter(benchmark::State &state, std::string pattern)
     std::string logger_name = "logger-name";
     const char *text = "Hello. This is some message with length of 80                                   ";
 
-    spdlog::details::log_msg msg(&logger_name, spdlog::level::info, text);
+    spdlog::details::log_msg msg(spdlog::source_loc{__FILE__, __LINE__}, &logger_name, spdlog::level::info, text);
     //    formatter->format(msg, dest);
     //    printf("%s\n", fmt::to_string(dest).c_str());
 
