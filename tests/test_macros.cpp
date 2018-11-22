@@ -33,7 +33,6 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
 
     REQUIRE(ends_with(file_contents(filename), "Test message 4\n"));
     REQUIRE(count_lines(filename) == 2);
-
 }
 
 TEST_CASE("disable param evaluation", "[macros]")

@@ -57,7 +57,6 @@ inline void spdlog::logger::set_pattern(std::string pattern, pattern_time_type t
     set_formatter(std::move(new_formatter));
 }
 
-
 template<typename... Args>
 inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const char *fmt, const Args &... args)
 {
@@ -77,11 +76,10 @@ inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const 
     SPDLOG_CATCH_AND_HANDLE
 }
 
-
 template<typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Args &... args)
 {
-   log(source_loc{}, lvl, fmt, args...);
+    log(source_loc{}, lvl, fmt, args...);
 }
 
 inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const char *msg)

@@ -105,9 +105,9 @@ public:
     template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(level::level_enum lvl, const T &);
 
-        // T can be statically converted to string_view
-        template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
-        void log(source_loc loc, level::level_enum lvl, const T &);
+    // T can be statically converted to string_view
+    template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
+    void log(source_loc loc, level::level_enum lvl, const T &);
 
     // T cannot be statically converted to string_view
     template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>

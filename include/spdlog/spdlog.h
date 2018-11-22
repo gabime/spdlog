@@ -309,7 +309,6 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 // SPDLOG_LEVEL_OFF
 //
 
-
 #define SPDLOG_LOGGER_LOG(logger, level, ...) logger->log(spdlog::source_loc{__FILE__, __LINE__}, level, __VA_ARGS__)
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE

@@ -67,7 +67,6 @@ int main(int argc, char *argv[])
 
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
-
         spdlog::info("**************************************************************");
         spdlog::info("C-string (400 bytes). Single thread, {:n} iterations", howmany);
         spdlog::info("**************************************************************");

@@ -185,12 +185,19 @@ using filename_t = std::wstring;
 using filename_t = std::string;
 #endif
 
-
 struct source_loc
 {
-    SPDLOG_CONSTEXPR  source_loc(): filename(""), line(0) {}
-    SPDLOG_CONSTEXPR source_loc(const char *filename, int line) : filename(filename), line(line) {}
-    const char* const filename ;
+    SPDLOG_CONSTEXPR source_loc()
+        : filename("")
+        , line(0)
+    {
+    }
+    SPDLOG_CONSTEXPR source_loc(const char *filename, int line)
+        : filename(filename)
+        , line(line)
+    {
+    }
+    const char *const filename;
     const uint32_t line;
 };
 
