@@ -197,8 +197,13 @@ struct source_loc
         , line(line)
     {
     }
-    const char *const filename;
-    const uint32_t line;
+//
+//    source_loc (const source_loc&) = default;
+//    source_loc& operator=(const source_loc&) = default;
+//    source_loc& operator=(source_loc&&) = default;
+
+    const char *filename;
+    uint32_t line;
 };
 
 namespace details {
