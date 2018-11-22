@@ -24,6 +24,16 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
 
     REQUIRE(ends_with(file_contents(filename), "Test message 2\n"));
     REQUIRE(count_lines(filename) == 1);
+
+    spdlog::set_default_logger(logger);
+
+    SPDLOG_TRACE("Test message 3");
+    SPDLOG_DEBUG("Test message {}", 4);
+    logger->flush();
+
+    REQUIRE(ends_with(file_contents(filename), "Test message 4\n"));
+    REQUIRE(count_lines(filename) == 2);
+
 }
 
 TEST_CASE("disable param evaluation", "[macros]")
