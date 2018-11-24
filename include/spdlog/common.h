@@ -198,7 +198,7 @@ struct source_loc
     {
     }
     
-	SPDLOG_CONSTEXPR bool empty() const
+	SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT
 	{
 		return line == 0;
 	}

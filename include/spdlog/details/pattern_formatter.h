@@ -817,10 +817,10 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        if (msg.source.empty()) 
-		{	
-			return;
-		}
+        if (msg.source.empty())
+        {
+            return;
+        }
         if (padinfo_.width_)
         {
             const auto text_size = std::char_traits<char>::length(msg.source.filename) + fmt_helper::count_digits(msg.source.line) + 1;
@@ -846,7 +846,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        if (msg.source.empty()) 
+        if (msg.source.empty())
         {
             return;
         }
@@ -863,7 +863,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        if (msg.source.empty()) 
+        if (msg.source.empty())
         {
             return;
         }
@@ -891,11 +891,12 @@ public:
     }
 
     void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) override
-    {
+    {        
         using std::chrono::duration_cast;
         using std::chrono::milliseconds;
         using std::chrono::seconds;
-
+        
+		
 #ifndef SPDLOG_NO_DATETIME
 
         // cache the date/time part for the next second.
@@ -930,8 +931,9 @@ public:
 
         auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
         fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
-        dest.push_back(']');
-        dest.push_back(' ');
+
+		SPDLOG_CONSTEXPR string_view_t closing_bracket{"] "};        
+        fmt_helper::append_string_view(closing_bracket, dest);
 
 #else // no datetime needed
         (void)tm_time;
@@ -943,8 +945,7 @@ public:
             dest.push_back('[');
             // fmt_helper::append_str(*msg.logger_name, dest);
             fmt_helper::append_string_view(*msg.logger_name, dest);
-            dest.push_back(']');
-            dest.push_back(' ');
+            fmt_helper::append_string_view(closing_bracket, dest);
         }
 #endif
 
@@ -954,8 +955,17 @@ public:
         // fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
         fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
         msg.color_range_end = dest.size();
-        dest.push_back(']');
-        dest.push_back(' ');
+        fmt_helper::append_string_view(closing_bracket, dest);
+		
+		// add soruce location if present 
+		if (!msg.source.empty())
+		{
+            dest.push_back('[');
+            fmt_helper::append_string_view(msg.source.filename, dest);
+            dest.push_back(':');
+            fmt_helper::append_int(msg.source.line, dest);
+            fmt_helper::append_string_view(closing_bracket, dest);
+		}
         // fmt_helper::append_string_view(msg.msg(), dest);
         fmt_helper::append_string_view(msg.payload, dest);
     }
@@ -1040,11 +1050,11 @@ private:
     {
         switch (flag)
         {
-	
-        case ('+'): // default formatter 
+
+        case ('+'): // default formatter
             formatters_.push_back(details::make_unique<details::full_formatter>(padding));
             break;
-        
+
         case 'n': // logger name
             formatters_.push_back(details::make_unique<details::name_formatter>(padding));
             break;
