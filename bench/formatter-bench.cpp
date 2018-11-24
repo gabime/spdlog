@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     spdlog::set_pattern("[%^%l%$] %v");
     if(argc != 2)
     {
-        spdlog::error("Usage: {} format-flag (or \"all\" to bench all)", argv[0]);
+        spdlog::error("Usage: {} pattern (or \"all\" to bench all)", argv[0]);
         exit(1);
     }
 
