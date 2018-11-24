@@ -107,13 +107,13 @@ enum level_enum
         "trace", "debug", "info", "warning", "error", "critical", "off"                                                                    \
     }
 #endif
-static const char *level_names[] SPDLOG_LEVEL_NAMES;
 
+static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 static const char *short_level_names[]{"T", "D", "I", "W", "E", "C", "O"};
 
-inline const char *to_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
+inline string_view_t& to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
-    return level_names[l];
+    return level_string_views[l];
 }
 
 inline const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
@@ -123,17 +123,16 @@ inline const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 
 inline spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT
 {
-    static std::unordered_map<std::string, level_enum> name_to_level = // map string->level
-        {{level_names[0], level::trace},                               // trace
-            {level_names[1], level::debug},                            // debug
-            {level_names[2], level::info},                             // info
-            {level_names[3], level::warn},                             // warn
-            {level_names[4], level::err},                              // err
-            {level_names[5], level::critical},                         // critical
-            {level_names[6], level::off}};                             // off
-
-    auto lvl_it = name_to_level.find(name);
-    return lvl_it != name_to_level.end() ? lvl_it->second : level::off;
+    int level = 0;
+    for(const auto &level_str : level_string_views)
+    {
+        if(level_str == name)
+        {
+            return static_cast<level::level_enum>(level);
+        }
+        level++;
+    }
+    return level::off;
 }
 
 using level_hasher = std::hash<int>;

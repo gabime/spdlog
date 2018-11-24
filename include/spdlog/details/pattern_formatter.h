@@ -159,7 +159,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        string_view_t level_name{level::to_c_str(msg.level)};
+        string_view_t &level_name = level::to_string_view(msg.level);
         if (padinfo_.enabled())
         {
             scoped_pad p(level_name, padinfo_, dest);
@@ -969,7 +969,7 @@ public:
         // wrap the level name with color
         msg.color_range_start = dest.size();
         // fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
-        fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
+        fmt_helper::append_string_view(level::to_string_view(msg.level), dest);
         msg.color_range_end = dest.size();
         dest.push_back(']');
         dest.push_back(' ');
