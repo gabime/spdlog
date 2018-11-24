@@ -41,6 +41,11 @@ struct padding_info
         , side_(side)
     {
     }
+
+    bool enabled() const
+    {
+        return width_ != 0;
+    }
     const size_t width_ = 0;
     const pad_side side_ = left;
 };
@@ -131,8 +136,15 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        scoped_pad p(*msg.logger_name, padinfo_, dest);
-        fmt_helper::append_string_view(*msg.logger_name, dest);
+        if (padinfo_.enabled())
+        {
+            scoped_pad p(*msg.logger_name, padinfo_, dest);
+            fmt_helper::append_string_view(*msg.logger_name, dest);
+        }
+        else
+        {
+            fmt_helper::append_string_view(*msg.logger_name, dest);
+        }
     }
 };
 
@@ -148,8 +160,15 @@ public:
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
         string_view_t level_name{level::to_c_str(msg.level)};
-        scoped_pad p(level_name, padinfo_, dest);
-        fmt_helper::append_string_view(level_name, dest);
+        if (padinfo_.enabled())
+        {
+            scoped_pad p(level_name, padinfo_, dest);
+            fmt_helper::append_string_view(level_name, dest);
+        }
+        else
+        {
+            fmt_helper::append_string_view(level_name, dest);
+        }
     }
 };
 
@@ -337,7 +356,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 4;
+        const size_t field_size = 4;		
         scoped_pad p(field_size, padinfo_, dest);
         fmt_helper::append_int(tm_time.tm_year + 1900, dest);
     }
@@ -449,7 +468,7 @@ public:
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
         auto millis = fmt_helper::time_fraction<std::chrono::milliseconds>(msg.time);
-        if (padinfo_.width_)
+        if (padinfo_.enabled())
         {
             const size_t field_size = 3;
             scoped_pad p(field_size, padinfo_, dest);
@@ -472,7 +491,7 @@ public:
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
         auto micros = fmt_helper::time_fraction<std::chrono::microseconds>(msg.time);
-        if (padinfo_.width_)
+        if (padinfo_.enabled())
         {
             const size_t field_size = 6;
             scoped_pad p(field_size, padinfo_, dest);
@@ -495,7 +514,7 @@ public:
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
         auto ns = fmt_helper::time_fraction<std::chrono::nanoseconds>(msg.time);
-        if (padinfo_.width_)
+        if (padinfo_.enabled())
         {
             const size_t field_size = 9;
             scoped_pad p(field_size, padinfo_, dest);
@@ -519,7 +538,6 @@ public:
     {
         const size_t field_size = 10;
         scoped_pad p(field_size, padinfo_, dest);
-
         auto duration = msg.time.time_since_epoch();
         auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
         fmt_helper::append_int(seconds, dest);
@@ -590,7 +608,6 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-
         const size_t field_size = 8;
         scoped_pad p(field_size, padinfo_, dest);
 
@@ -670,7 +687,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        if (padinfo_.width_)
+        if (padinfo_.enabled())
         {
             const auto field_size = fmt_helper::count_digits(msg.thread_id);
             scoped_pad p(field_size, padinfo_, dest);
@@ -693,7 +710,7 @@ public:
     void format(const details::log_msg &, const std::tm &, fmt::memory_buffer &dest) override
     {
         const auto pid = static_cast<uint32_t>(details::os::pid());
-        if (padinfo_.width_)
+        if (padinfo_.enabled())
         {
             const size_t field_size = fmt::internal::count_digits(pid);
             scoped_pad p(field_size, padinfo_, dest);
@@ -729,7 +746,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        if (padinfo_.width_)
+        if (padinfo_.enabled())
         {
             scoped_pad p(msg.payload, padinfo_, dest);
             fmt_helper::append_string_view(msg.payload, dest);
@@ -821,7 +838,7 @@ public:
         {
             return;
         }
-        if (padinfo_.width_)
+        if (padinfo_.enabled())
         {
             const auto text_size = std::char_traits<char>::length(msg.source.filename) + fmt_helper::count_digits(msg.source.line) + 1;
             scoped_pad p(text_size, padinfo_, dest);
@@ -867,7 +884,7 @@ public:
         {
             return;
         }
-        if (padinfo_.width_)
+        if (padinfo_.enabled())
         {
             const size_t field_size = fmt::internal::count_digits(msg.source.line);
             scoped_pad p(field_size, padinfo_, dest);
@@ -891,12 +908,11 @@ public:
     }
 
     void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) override
-    {        
+    {
         using std::chrono::duration_cast;
         using std::chrono::milliseconds;
         using std::chrono::seconds;
-        
-		
+
 #ifndef SPDLOG_NO_DATETIME
 
         // cache the date/time part for the next second.
@@ -932,7 +948,7 @@ public:
         auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
         fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
 
-		SPDLOG_CONSTEXPR string_view_t closing_bracket{"] "};        
+        SPDLOG_CONSTEXPR string_view_t closing_bracket{"] "};
         fmt_helper::append_string_view(closing_bracket, dest);
 
 #else // no datetime needed
@@ -956,16 +972,16 @@ public:
         fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
         msg.color_range_end = dest.size();
         fmt_helper::append_string_view(closing_bracket, dest);
-		
-		// add soruce location if present 
-		if (!msg.source.empty())
-		{
+
+        // add soruce location if present
+        if (!msg.source.empty())
+        {
             dest.push_back('[');
             fmt_helper::append_string_view(msg.source.filename, dest);
             dest.push_back(':');
             fmt_helper::append_int(msg.source.line, dest);
             fmt_helper::append_string_view(closing_bracket, dest);
-		}
+        }
         // fmt_helper::append_string_view(msg.msg(), dest);
         fmt_helper::append_string_view(msg.payload, dest);
     }
