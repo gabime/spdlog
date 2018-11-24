@@ -947,9 +947,8 @@ public:
 
         auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
         fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
-
-        string_view_t closing_bracket{"] ", 2};
-        fmt_helper::append_string_view(closing_bracket, dest);
+        dest.push_back(']');
+        dest.push_back(' ');
 
 #else // no datetime needed
         (void)tm_time;
@@ -961,7 +960,8 @@ public:
             dest.push_back('[');
             // fmt_helper::append_str(*msg.logger_name, dest);
             fmt_helper::append_string_view(*msg.logger_name, dest);
-            fmt_helper::append_string_view(closing_bracket, dest);
+            dest.push_back(']');
+            dest.push_back(' ');
         }
 #endif
 
@@ -971,16 +971,18 @@ public:
         // fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
         fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
         msg.color_range_end = dest.size();
-        fmt_helper::append_string_view(closing_bracket, dest);
+        dest.push_back(']');
+        dest.push_back(' ');
 
-        // add soruce location if present
+        // add source location if present
         if (!msg.source.empty())
         {
             dest.push_back('[');
             fmt_helper::append_string_view(msg.source.filename, dest);
             dest.push_back(':');
             fmt_helper::append_int(msg.source.line, dest);
-            fmt_helper::append_string_view(closing_bracket, dest);
+            dest.push_back(']');
+            dest.push_back(' ');
         }
         // fmt_helper::append_string_view(msg.msg(), dest);
         fmt_helper::append_string_view(msg.payload, dest);
