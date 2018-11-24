@@ -1040,153 +1040,156 @@ private:
     {
         switch (flag)
         {
-        // logger name
-        case 'n':
+	
+        case ('+'): // default formatter 
+            formatters_.push_back(details::make_unique<details::full_formatter>(padding));
+            break;
+        
+        case 'n': // logger name
             formatters_.push_back(details::make_unique<details::name_formatter>(padding));
             break;
 
-        case 'l':
+        case 'l': // level
             formatters_.push_back(details::make_unique<details::level_formatter>(padding));
             break;
 
-        case 'L':
+        case 'L': // short level
             formatters_.push_back(details::make_unique<details::short_level_formatter>(padding));
             break;
 
-        case ('t'):
+        case ('t'): // thread id
             formatters_.push_back(details::make_unique<details::t_formatter>(padding));
             break;
 
-        case ('v'):
+        case ('v'): // the message text
             formatters_.push_back(details::make_unique<details::v_formatter>(padding));
             break;
 
-        case ('a'):
+        case ('a'): // weekday
             formatters_.push_back(details::make_unique<details::a_formatter>(padding));
             break;
 
-        case ('A'):
+        case ('A'): // short weekday
             formatters_.push_back(details::make_unique<details::A_formatter>(padding));
             break;
 
         case ('b'):
-        case ('h'):
+        case ('h'): // month
             formatters_.push_back(details::make_unique<details::b_formatter>(padding));
             break;
 
-        case ('B'):
+        case ('B'): // short month
             formatters_.push_back(details::make_unique<details::B_formatter>(padding));
             break;
-        case ('c'):
+
+        case ('c'): // datetime
             formatters_.push_back(details::make_unique<details::c_formatter>(padding));
             break;
 
-        case ('C'):
+        case ('C'): // year 2 digits
             formatters_.push_back(details::make_unique<details::C_formatter>(padding));
             break;
 
-        case ('Y'):
+        case ('Y'): // year 4 digits
             formatters_.push_back(details::make_unique<details::Y_formatter>(padding));
             break;
 
         case ('D'):
-        case ('x'):
+        case ('x'): // datetime MM/DD/YY
             formatters_.push_back(details::make_unique<details::D_formatter>(padding));
             break;
 
-        case ('m'):
+        case ('m'): // month 1-12
             formatters_.push_back(details::make_unique<details::m_formatter>(padding));
             break;
 
-        case ('d'):
+        case ('d'): // day of month 1-31
             formatters_.push_back(details::make_unique<details::d_formatter>(padding));
             break;
 
-        case ('H'):
+        case ('H'): // hours 24
             formatters_.push_back(details::make_unique<details::H_formatter>(padding));
             break;
 
-        case ('I'):
+        case ('I'): // hours 12
             formatters_.push_back(details::make_unique<details::I_formatter>(padding));
             break;
 
-        case ('M'):
+        case ('M'): // minutes
             formatters_.push_back(details::make_unique<details::M_formatter>(padding));
             break;
 
-        case ('S'):
+        case ('S'): // seconds
             formatters_.push_back(details::make_unique<details::S_formatter>(padding));
             break;
 
-        case ('e'):
+        case ('e'): // milliseconds
             formatters_.push_back(details::make_unique<details::e_formatter>(padding));
             break;
 
-        case ('f'):
+        case ('f'): // microseconds
             formatters_.push_back(details::make_unique<details::f_formatter>(padding));
             break;
-        case ('F'):
+
+        case ('F'): // nanoseconds
             formatters_.push_back(details::make_unique<details::F_formatter>(padding));
             break;
 
-        case ('E'):
+        case ('E'): // seconds since epoch
             formatters_.push_back(details::make_unique<details::E_formatter>(padding));
             break;
 
-        case ('p'):
+        case ('p'): // am/pm
             formatters_.push_back(details::make_unique<details::p_formatter>(padding));
             break;
 
-        case ('r'):
+        case ('r'): // 12 hour clock 02:55:02 pm
             formatters_.push_back(details::make_unique<details::r_formatter>(padding));
             break;
 
-        case ('R'):
+        case ('R'): // 24-hour HH:MM time
             formatters_.push_back(details::make_unique<details::R_formatter>(padding));
             break;
 
         case ('T'):
-        case ('X'):
+        case ('X'): // ISO 8601 time format (HH:MM:SS)
             formatters_.push_back(details::make_unique<details::T_formatter>(padding));
             break;
 
-        case ('z'):
+        case ('z'): // timezone
             formatters_.push_back(details::make_unique<details::z_formatter>(padding));
             break;
 
-        case ('+'):
-            formatters_.push_back(details::make_unique<details::full_formatter>(padding));
-            break;
-
-        case ('P'):
+        case ('P'): // pid
             formatters_.push_back(details::make_unique<details::pid_formatter>(padding));
             break;
+
 #ifdef SPDLOG_ENABLE_MESSAGE_COUNTER
         case ('i'):
             formatters_.push_back(details::make_unique<details::i_formatter>(padding));
             break;
 #endif
-        case ('^'):
+        case ('^'): // color range start
             formatters_.push_back(details::make_unique<details::color_start_formatter>(padding));
             break;
 
-        case ('$'):
+        case ('$'): // color range end
             formatters_.push_back(details::make_unique<details::color_stop_formatter>(padding));
             break;
 
-        case ('@'):
+        case ('@'): // source location (filename:filenumber)
             formatters_.push_back(details::make_unique<details::source_location_formatter>(padding));
             break;
 
-        case ('s'):
+        case ('s'): // source filename
             formatters_.push_back(details::make_unique<details::source_filename_formatter>(padding));
             break;
 
-        case ('#'):
+        case ('#'): // source line number
             formatters_.push_back(details::make_unique<details::source_linenum_formatter>(padding));
             break;
 
-        case ('%'):
+        case ('%'): // % char
             formatters_.push_back(details::make_unique<details::ch_formatter>('%'));
             break;
 
