@@ -47,13 +47,13 @@ void bench_formatters()
     {
         auto pattern = std::string("%") + flag;
         benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
-        // bench left padding
-        pattern = std::string("%16") + flag;
-        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
 
-        // bench center padding
-        pattern = std::string("%=16") + flag;
-        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
+//        pattern = std::string("%16") + flag;
+//        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
+//
+//        // bench center padding
+//        pattern = std::string("%=16") + flag;
+//        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
     }
 
     // complex patterns
