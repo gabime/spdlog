@@ -111,7 +111,7 @@ enum level_enum
 static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 static const char *short_level_names[]{"T", "D", "I", "W", "E", "C", "O"};
 
-inline string_view_t& to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
+inline string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
     return level_string_views[l];
 }
@@ -124,9 +124,9 @@ inline const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 inline spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT
 {
     int level = 0;
-    for(const auto &level_str : level_string_views)
+    for (const auto &level_str : level_string_views)
     {
-        if(level_str == name)
+        if (level_str == name)
         {
             return static_cast<level::level_enum>(level);
         }
@@ -196,11 +196,11 @@ struct source_loc
         , line(line)
     {
     }
-    
-	SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT
-	{
-		return line == 0;
-	}
+
+    SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT
+    {
+        return line == 0;
+    }
     const char *filename;
     uint32_t line;
 };

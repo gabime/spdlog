@@ -356,7 +356,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 4;		
+        const size_t field_size = 4;
         scoped_pad p(field_size, padinfo_, dest);
         fmt_helper::append_int(tm_time.tm_year + 1900, dest);
     }
