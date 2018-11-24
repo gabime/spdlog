@@ -948,7 +948,7 @@ public:
         auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
         fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
 
-        SPDLOG_CONSTEXPR string_view_t closing_bracket{"] "};
+        string_view_t closing_bracket{"] ", 2};
         fmt_helper::append_string_view(closing_bracket, dest);
 
 #else // no datetime needed
