@@ -161,11 +161,10 @@ void binary_example()
 // define SPDLOG_ACTIVE_LEVEL to required level (e.g. SPDLOG_LEVEL_TRACE)
 void trace_example()
 {
-
     // trace from default logger
-    SPDLOG_TRACE("Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
+    SPDLOG_TRACE("Some trace message.. {} ,{}", 1, 3.23);
     // debug from default logger
-    SPDLOG_DEBUG("Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
+    SPDLOG_DEBUG("Some debug message.. {} ,{}", 1, 3.23);
 
     // trace from logger object
     auto logger = spdlog::get("file_logger");
