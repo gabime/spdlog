@@ -197,11 +197,11 @@ struct source_loc
         , line(line)
     {
     }
-    //
-    //    source_loc (const source_loc&) = default;
-    //    source_loc& operator=(const source_loc&) = default;
-    //    source_loc& operator=(source_loc&&) = default;
-
+    
+	SPDLOG_CONSTEXPR bool empty() const
+	{
+		return line == 0;
+	}
     const char *filename;
     uint32_t line;
 };

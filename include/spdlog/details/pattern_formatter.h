@@ -817,6 +817,10 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
+        if (msg.source.empty()) 
+		{	
+			return;
+		}
         if (padinfo_.width_)
         {
             const auto text_size = std::char_traits<char>::length(msg.source.filename) + fmt_helper::count_digits(msg.source.line) + 1;
@@ -842,6 +846,10 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
+        if (msg.source.empty()) 
+        {
+            return;
+        }
         scoped_pad p(msg.source.filename, padinfo_, dest);
         fmt_helper::append_string_view(msg.source.filename, dest);
     }
@@ -855,7 +863,10 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-
+        if (msg.source.empty()) 
+        {
+            return;
+        }
         if (padinfo_.width_)
         {
             const size_t field_size = fmt::internal::count_digits(msg.source.line);

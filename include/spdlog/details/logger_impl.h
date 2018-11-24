@@ -243,7 +243,7 @@ inline void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer 
 }
 
 template<typename... Args>
-inline void spdlog::logger::log(source_location source, level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const wchar_t *fmt, const Args &... args)
 {
     if (!should_log(lvl))
     {
@@ -267,7 +267,7 @@ inline void spdlog::logger::log(source_location source, level::level_enum lvl, c
 template<typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
 {
-    log(source_location{}, lvl, fmt, args...);
+    log(source_loc{}, lvl, fmt, args...);
 }
 
 template<typename... Args>
