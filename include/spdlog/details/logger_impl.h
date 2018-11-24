@@ -390,7 +390,7 @@ inline void spdlog::logger::sink_it_(details::log_msg &msg)
 
     if (should_flush_(msg))
     {
-        flush();
+        flush_();
     }
 }
 
