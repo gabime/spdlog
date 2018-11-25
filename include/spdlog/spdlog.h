@@ -296,6 +296,10 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
+} // namespace spdlog
+
+
+
 //
 // enable/disable log calls at compile time according to global level.
 //
@@ -357,5 +361,4 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 #define SPDLOG_CRITICAL(...) (void)0
 #endif
 
-} // namespace spdlog
 #endif // SPDLOG_H
