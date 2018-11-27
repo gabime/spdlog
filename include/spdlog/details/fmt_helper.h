@@ -76,7 +76,7 @@ inline void pad2(int n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 template<typename T, size_t Buffer_Size>
 inline void pad_uint(T n, unsigned int width, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 {
-    static_assert(std::is_unsigned<T>::value, "append_uint must get unsigned T");
+    static_assert(std::is_unsigned<T>::value, "pad_uint must get unsigned T");
     auto digits = count_digits(n);
     if (width > digits)
     {
