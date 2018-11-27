@@ -210,10 +210,10 @@ inline size_t filesize(FILE *f)
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = _fileno(f);
 #if _WIN64 // 64 bits
-    struct _stat64 st;
-    if (_fstat64(fd, &st) == 0)
+    __int64 ret = _filelengthi64(fd);
+    if (ret >= 0)
     {
-        return st.st_size;
+        return static_cast<size_t>(ret);
     }
 
 #else // windows 32 bits
