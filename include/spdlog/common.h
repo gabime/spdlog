@@ -193,7 +193,7 @@ struct source_loc
     }
     SPDLOG_CONSTEXPR source_loc(const char *filename, int line)
         : filename(filename)
-        , line(line)
+        , line(static_cast<uint32_t>(line))
     {
     }
 

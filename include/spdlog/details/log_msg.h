@@ -37,7 +37,6 @@ struct log_msg
     }
 
     log_msg(const log_msg &other) = default;
-    log_msg &operator=(const log_msg &other) = default;
 
     const std::string *logger_name{nullptr};
     level::level_enum level{level::off};
