@@ -52,23 +52,8 @@ endif()
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 
-# Logic for enabling tests: If the user does not explicitly
-# specify the value of the SPDLOG_BUILD_TESTING variable then the
-# logic is simpler to reason about: that is, testing will be
-# built if and only if BUILD_TESTING is ON and we are a Master
-# Project. On the other hand, if the user overrides the value of
-# SPDLOG_BUILD_TESTING then it can get a bit more tricky due to
-# caching.
-
-cmake_dependent_option(SPDLOG_BUILD_TESTING
-    "Build spdlog tests" ${SPDLOG_MASTER_PROJECT}
-    "BUILD_TESTING" OFF
-)
-if(SPDLOG_BUILD_TESTING)
-    # Include CTest conditionally since it will enable BUILD_TESTING.
-    include(CTest)
-endif()
 
 target_include_directories(
     spdlog
@@ -83,7 +68,8 @@ if(SPDLOG_BUILD_EXAMPLES)
     add_subdirectory(example)
 endif()
 
-if(SPDLOG_BUILD_TESTING)
+if(SPDLOG_BUILD_TESTS)
+    include(CTest)
     add_subdirectory(tests)
 endif()
 
