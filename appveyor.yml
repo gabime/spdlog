@@ -31,5 +31,4 @@ build_script:
     cmake --build . --config %BUILD_TYPE%
 
 test_script:
-- cmd: cd build
 - ctest -VV -C "%BUILD_TYPE%"
