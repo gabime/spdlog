@@ -3033,7 +3033,7 @@ class format_int {
 
   // Formats value in reverse and returns a pointer to the beginning.
   char *format_decimal(unsigned long long value) {
-    char *ptr = buffer_ + BUFFER_SIZE - 1;
+    char *ptr = buffer_ + static_cast<unsigned>(BUFFER_SIZE) - 1;
     while (value >= 100) {
       // Integer division is slow so do it for a group of two digits instead
       // of for every digit. The idea comes from the talk by Alexandrescu
