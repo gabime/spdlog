@@ -5,7 +5,6 @@
 
 cmake_minimum_required(VERSION 3.1)
 project(spdlog VERSION 1.3.0 LANGUAGES CXX)
-include(CTest)
 include(CMakeDependentOption)
 include(GNUInstallDirs)
 
@@ -53,11 +52,8 @@ endif()
 
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 
-cmake_dependent_option(SPDLOG_BUILD_TESTING
-    "Build spdlog tests" ${SPDLOG_MASTER_PROJECT}
-    "BUILD_TESTING" OFF
-)
 
 target_include_directories(
     spdlog
@@ -72,7 +68,8 @@ if(SPDLOG_BUILD_EXAMPLES)
     add_subdirectory(example)
 endif()
 
-if(SPDLOG_BUILD_TESTING)
+if(SPDLOG_BUILD_TESTS)
+    include(CTest)
     add_subdirectory(tests)
 endif()
 
