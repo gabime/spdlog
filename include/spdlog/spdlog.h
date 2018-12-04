@@ -314,7 +314,7 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 //
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
-#define SPDLOG_LOGGER_TRACE(logger, ...) logger->log(spdlog::source_loc{__FILE__, __LINE__}, spdlog::level::trace, __VA_ARGS__)
+#define SPDLOG_LOGGER_TRACE(logger, ...) logger->log(spdlog::source_loc{SPDLOG_FILE_BASENAME, __LINE__}, spdlog::level::trace, __VA_ARGS__)
 #define SPDLOG_TRACE(...) SPDLOG_LOGGER_TRACE(spdlog::default_logger_raw(), __VA_ARGS__)
 #else
 #define SPDLOG_LOGGER_TRACE(logger, ...) (void)0

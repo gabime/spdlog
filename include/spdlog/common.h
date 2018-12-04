@@ -14,6 +14,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <cstring>
 #include <type_traits>
 #include <unordered_map>
 
@@ -23,6 +24,8 @@
 #endif
 
 #include "spdlog/details/null_mutex.h"
+
+#include "spdlog/fmt/fmt.h"
 
 // visual studio upto 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
@@ -48,7 +51,19 @@
 #endif
 #endif
 
-#include "spdlog/fmt/fmt.h"
+
+// Get the basename of __FILE__ (at compile time if possible) 
+#if FMT_HAS_FEATURE(__builtin_strrchr) 
+#define SPDLOG_STRRCHR(str, sep) __builtin_strrchr(str, sep)
+#else
+#define SPDLOG_STRRCHR(str, sep) strrchr(str, sep)
+#endif //__builtin_strrchr not defined
+
+#ifdef _WIN32
+#define SPDLOG_FILE_BASENAME SPDLOG_STRRCHR("\\" __FILE__, '\\') + 1
+#else
+#define SPDLOG_FILE_BASENAME SPDLOG_STRRCHR("/" __FILE__, '/') + 1
+#endif
 
 namespace spdlog {
 
