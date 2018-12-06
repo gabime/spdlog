@@ -73,8 +73,7 @@ void bench_disabled_macro(benchmark::State &state, std::shared_ptr<spdlog::logge
 
 int main(int argc, char *argv[])
 {
-
-    spdlog::set_pattern("[tid %t] %v");
+    
     using spdlog::sinks::basic_file_sink_mt;
     using spdlog::sinks::basic_file_sink_st;
     using spdlog::sinks::null_sink_mt;
