@@ -78,7 +78,7 @@ public:
     void log(level::level_enum lvl, const wchar_t *fmt, const Args &... args);
 
     template<typename... Args>
-    void log(source_loc soruce, level::level_enum lvl, const wchar_t *fmt, const Args &... args);
+    void log(source_loc source, level::level_enum lvl, const wchar_t *fmt, const Args &... args);
 
     template<typename... Args>
     void trace(const wchar_t *fmt, const Args &... args);
