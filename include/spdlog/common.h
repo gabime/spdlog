@@ -60,9 +60,9 @@
 #endif //__builtin_strrchr not defined
 
 #ifdef _WIN32
-#define SPDLOG_FILE_BASENAME SPDLOG_STRRCHR("\\" __FILE__, '\\') + 1
+#define SPDLOG_FILE_BASENAME(file) SPDLOG_STRRCHR("\\" file, '\\') + 1
 #else
-#define SPDLOG_FILE_BASENAME SPDLOG_STRRCHR("/" __FILE__, '/') + 1
+#define SPDLOG_FILE_BASENAME(file) SPDLOG_STRRCHR("/" file, '/') + 1
 #endif
 
 namespace spdlog {
