@@ -761,7 +761,6 @@ public:
 class ch_formatter final : public flag_formatter
 {
 public:
-public:
     explicit ch_formatter(char ch)
         : ch_(ch)
     {
@@ -825,7 +824,7 @@ public:
     }
 };
 
-// print soruce location
+// print source location
 class source_location_formatter final : public flag_formatter
 {
 public:
@@ -854,7 +853,7 @@ public:
         }
     }
 };
-// print soruce filename
+// print source filename
 class source_filename_formatter final : public flag_formatter
 {
 public:
