@@ -53,7 +53,11 @@ endif()
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
+if(SPDLOG_FMT_EXTERNAL)
+    find_package(fmt REQUIRED CONFIG)
+endif()
 
 target_include_directories(
     spdlog
@@ -61,6 +65,11 @@ target_include_directories(
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
+
+if(SPDLOG_FMT_EXTERNAL)
+    target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
+    target_link_libraries(spdlog INTERFACE fmt::fmt)
+endif()
 
 set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
@@ -85,7 +94,8 @@ set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 set(include_install_dir "${CMAKE_INSTALL_INCLUDEDIR}")
 set(pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
 set(version_config "${CMAKE_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
-set(project_config "${PROJECT_NAME}Config.cmake")
+set(project_config "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
+set(targets_config "${PROJECT_NAME}Targets.cmake")
 set(pkg_config "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
 set(targets_export_name "${PROJECT_NAME}Targets")
 set(namespace "${PROJECT_NAME}::")
@@ -98,6 +108,8 @@ write_basic_package_version_file(
 
 # configure pkg config file
 configure_file("cmake/spdlog.pc.in" "${pkg_config}" @ONLY)
+# configure spdlogConfig.cmake file
+configure_file("cmake/Config.cmake.in" "${project_config}" @ONLY)
 
 # install targets
 install(
@@ -111,9 +123,9 @@ install(
     DESTINATION "${include_install_dir}"
 )
 
-# install project version file
+# install project config and version file
 install(
-    FILES "${version_config}"
+    FILES "${project_config}" "${version_config}"
     DESTINATION "${config_install_dir}"
 )
 
@@ -123,19 +135,19 @@ install(
     DESTINATION "${pkgconfig_install_dir}"
 )
 
-# install project config file
+# install targets config file
 install(
     EXPORT "${targets_export_name}"
     NAMESPACE "${namespace}"
     DESTINATION "${config_install_dir}"
-    FILE ${project_config}
+    FILE ${targets_config}
 )
 
-# export build directory config file
+# export build directory targets file
 export(
     EXPORT ${targets_export_name}
     NAMESPACE "${namespace}"
-    FILE ${project_config}
+    FILE ${targets_config}
 )
 
 # register project in CMake user registry
