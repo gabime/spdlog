@@ -136,12 +136,14 @@ int safe_strerror(
             ERANGE : result;
     }
 
+#if !FMT_MSC_VER
     // Fallback to strerror if strerror_r and strerror_s are not available.
     int fallback(internal::null<>) {
       errno = 0;
       buffer_ = strerror(error_code_);
       return errno;
     }
+#endif
 
    public:
     dispatcher(int err_code, char *&buf, std::size_t buf_size)
@@ -170,7 +172,7 @@ void format_error_code(internal::buffer &out, int error_code,
     abs_value = 0 - abs_value;
     ++error_code_size;
   }
-  error_code_size += internal::count_digits(abs_value);
+  error_code_size += internal::to_unsigned(internal::count_digits(abs_value));
   writer w(out);
   if (message.size() <= inline_buffer_size - error_code_size) {
     w.write(message);
@@ -192,34 +194,39 @@ void report_error(FormatFunc func, int error_code,
 }
 }  // namespace
 
-#if !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
-class locale {
- private:
-  std::locale locale_;
-
- public:
-  explicit locale(std::locale loc = std::locale()) : locale_(loc) {}
-  std::locale get() { return locale_; }
-};
-
-FMT_FUNC size_t internal::count_code_points(u8string_view s) {
+FMT_FUNC size_t internal::count_code_points(basic_string_view<char8_t> s) {
   const char8_t *data = s.data();
-  int num_code_points = 0;
+  size_t num_code_points = 0;
   for (size_t i = 0, size = s.size(); i != size; ++i) {
-    if ((data[i].value & 0xc0) != 0x80)
+    if ((data[i] & 0xc0) != 0x80)
       ++num_code_points;
   }
   return num_code_points;
 }
 
+#if !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
+namespace internal {
+
+template <typename Locale>
+locale_ref::locale_ref(const Locale &loc) : locale_(&loc) {
+  static_assert(std::is_same<Locale, std::locale>::value, "");
+}
+
+template <typename Locale>
+Locale locale_ref::get() const {
+  static_assert(std::is_same<Locale, std::locale>::value, "");
+  return locale_ ? *static_cast<const std::locale*>(locale_) : std::locale();
+}
+
 template <typename Char>
-FMT_FUNC Char internal::thousands_sep(locale_provider *lp) {
-  std::locale loc = lp ? lp->locale().get() : std::locale();
-  return std::use_facet<std::numpunct<Char>>(loc).thousands_sep();
+FMT_FUNC Char thousands_sep_impl(locale_ref loc) {
+  return std::use_facet<std::numpunct<Char> >(
+    loc.get<std::locale>()).thousands_sep();
+}
 }
 #else
 template <typename Char>
-FMT_FUNC Char internal::thousands_sep(locale_provider *lp) {
+FMT_FUNC Char internal::thousands_sep_impl(locale_ref) {
   return FMT_STATIC_THOUSANDS_SEPARATOR;
 }
 #endif
@@ -236,19 +243,19 @@ FMT_FUNC void system_error::init(
 namespace internal {
 template <typename T>
 int char_traits<char>::format_float(
-    char *buffer, std::size_t size, const char *format, int precision, T value) {
+    char *buf, std::size_t size, const char *format, int precision, T value) {
   return precision < 0 ?
-      FMT_SNPRINTF(buffer, size, format, value) :
-      FMT_SNPRINTF(buffer, size, format, precision, value);
+      FMT_SNPRINTF(buf, size, format, value) :
+      FMT_SNPRINTF(buf, size, format, precision, value);
 }
 
 template <typename T>
 int char_traits<wchar_t>::format_float(
-    wchar_t *buffer, std::size_t size, const wchar_t *format, int precision,
+    wchar_t *buf, std::size_t size, const wchar_t *format, int precision,
     T value) {
   return precision < 0 ?
-      FMT_SWPRINTF(buffer, size, format, value) :
-      FMT_SWPRINTF(buffer, size, format, precision, value);
+      FMT_SWPRINTF(buf, size, format, value) :
+      FMT_SWPRINTF(buf, size, format, precision, value);
 }
 
 template <typename T>
@@ -337,6 +344,8 @@ const int16_t basic_data<T>::POW10_EXPONENTS[] = {
     827,   853,   880,   907,   933,   960,   986,  1013,  1039,  1066
 };
 
+template <typename T> const char basic_data<T>::FOREGROUND_COLOR[] = "\x1b[38;2;";
+template <typename T> const char basic_data<T>::BACKGROUND_COLOR[] = "\x1b[48;2;";
 template <typename T> const char basic_data<T>::RESET_COLOR[] = "\x1b[0m";
 template <typename T> const wchar_t basic_data<T>::WRESET_COLOR[] = L"\x1b[0m";
 
@@ -363,7 +372,7 @@ class fp {
     sizeof(significand_type) * char_size;
 
   fp(): f(0), e(0) {}
-  fp(uint64_t f, int e): f(f), e(e) {}
+  fp(uint64_t f_val, int e_val): f(f_val), e(e_val) {}
 
   // Constructs fp from an IEEE754 double. It is a template to prevent compile
   // errors on platforms where double is not IEEE754.
@@ -454,19 +463,28 @@ FMT_FUNC fp get_cached_power(int min_exponent, int &pow10_exponent) {
   return fp(data::POW10_SIGNIFICANDS[index], data::POW10_EXPONENTS[index]);
 }
 
+FMT_FUNC bool grisu2_round(
+    char *buf, int &size, int max_digits, uint64_t delta,
+    uint64_t remainder, uint64_t exp, uint64_t diff, int &exp10) {
+  while (remainder < diff && delta - remainder >= exp &&
+        (remainder + exp < diff || diff - remainder > remainder + exp - diff)) {
+    --buf[size - 1];
+    remainder += exp;
+  }
+  if (size > max_digits) {
+    --size;
+    ++exp10;
+    if (buf[size] >= '5')
+      return false;
+  }
+  return true;
+}
+
 // Generates output using Grisu2 digit-gen algorithm.
-FMT_FUNC void grisu2_gen_digits(
-    const fp &scaled_value, const fp &scaled_upper, uint64_t delta,
-    char *buffer, size_t &size, int &dec_exp) {
-  internal::fp one(1ull << -scaled_upper.e, scaled_upper.e);
-  // hi (p1 in Grisu) contains the most significant digits of scaled_upper.
-  // hi = floor(scaled_upper / one).
-  uint32_t hi = static_cast<uint32_t>(scaled_upper.f >> -one.e);
-  // lo (p2 in Grisu) contains the least significants digits of scaled_upper.
-  // lo = scaled_upper mod 1.
-  uint64_t lo = scaled_upper.f & (one.f - 1);
-  size = 0;
-  auto exp = count_digits(hi);  // kappa in Grisu.
+FMT_FUNC bool grisu2_gen_digits(
+    char *buf, int &size, uint32_t hi, uint64_t lo, int &exp,
+    uint64_t delta, const fp &one, const fp &diff, int max_digits) {
+  // Generate digits for the most significant part (hi).
   while (exp > 0) {
     uint32_t digit = 0;
     // This optimization by miloyip reduces the number of integer divisions by
@@ -486,145 +504,29 @@ FMT_FUNC void grisu2_gen_digits(
       FMT_ASSERT(false, "invalid number of digits");
     }
     if (digit != 0 || size != 0)
-      buffer[size++] = static_cast<char>('0' + digit);
+      buf[size++] = static_cast<char>('0' + digit);
     --exp;
     uint64_t remainder = (static_cast<uint64_t>(hi) << -one.e) + lo;
-    if (remainder <= delta) {
-      dec_exp += exp;
-      // TODO: use scaled_value
-      (void)scaled_value;
-      return;
+    if (remainder <= delta || size > max_digits) {
+      return grisu2_round(
+            buf, size, max_digits, delta, remainder,
+            static_cast<uint64_t>(data::POWERS_OF_10_32[exp]) << -one.e,
+            diff.f, exp);
     }
   }
+  // Generate digits for the least significant part (lo).
   for (;;) {
     lo *= 10;
     delta *= 10;
     char digit = static_cast<char>(lo >> -one.e);
     if (digit != 0 || size != 0)
-      buffer[size++] = static_cast<char>('0' + digit);
+      buf[size++] = static_cast<char>('0' + digit);
     lo &= one.f - 1;
     --exp;
-    if (lo < delta) {
-      dec_exp += exp;
-      return;
+    if (lo < delta || size > max_digits) {
+      return grisu2_round(buf, size, max_digits, delta, lo, one.f,
+                          diff.f * data::POWERS_OF_10_32[-exp], exp);
     }
-  }
-}
-
-FMT_FUNC void grisu2_format_positive(double value, char *buffer, size_t &size,
-                                     int &dec_exp) {
-  FMT_ASSERT(value > 0, "value is nonpositive");
-  fp fp_value(value);
-  fp lower, upper;  // w^- and w^+ in the Grisu paper.
-  fp_value.compute_boundaries(lower, upper);
-  // Find a cached power of 10 close to 1 / upper.
-  const int min_exp = -60;  // alpha in Grisu.
-  auto dec_pow = get_cached_power(  // \tilde{c}_{-k} in Grisu.
-      min_exp - (upper.e + fp::significand_size), dec_exp);
-  dec_exp = -dec_exp;
-  fp_value.normalize();
-  fp scaled_value = fp_value * dec_pow;
-  fp scaled_lower = lower * dec_pow;  // \tilde{M}^- in Grisu.
-  fp scaled_upper = upper * dec_pow;  // \tilde{M}^+ in Grisu.
-  ++scaled_lower.f;  // \tilde{M}^- + 1 ulp -> M^-_{\uparrow}.
-  --scaled_upper.f;  // \tilde{M}^+ - 1 ulp -> M^+_{\downarrow}.
-  uint64_t delta = scaled_upper.f - scaled_lower.f;
-  grisu2_gen_digits(scaled_value, scaled_upper, delta, buffer, size, dec_exp);
-}
-
-FMT_FUNC void round(char *buffer, size_t &size, int &exp,
-                    int digits_to_remove) {
-  size -= to_unsigned(digits_to_remove);
-  exp += digits_to_remove;
-  int digit = buffer[size] - '0';
-  // TODO: proper rounding and carry
-  if (digit > 5 || (digit == 5 && (digits_to_remove > 1 ||
-                                   (buffer[size - 1] - '0') % 2) != 0)) {
-    ++buffer[size - 1];
-  }
-}
-
-// Writes the exponent exp in the form "[+-]d{1,3}" to buffer.
-FMT_FUNC char *write_exponent(char *buffer, int exp) {
-  FMT_ASSERT(-1000 < exp && exp < 1000, "exponent out of range");
-  if (exp < 0) {
-    *buffer++ = '-';
-    exp = -exp;
-  } else {
-    *buffer++ = '+';
-  }
-  if (exp >= 100) {
-    *buffer++ = static_cast<char>('0' + exp / 100);
-    exp %= 100;
-    const char *d = data::DIGITS + exp * 2;
-    *buffer++ = d[0];
-    *buffer++ = d[1];
-  } else {
-    const char *d = data::DIGITS + exp * 2;
-    *buffer++ = d[0];
-    *buffer++ = d[1];
-  }
-  return buffer;
-}
-
-FMT_FUNC void format_exp_notation(
-    char *buffer, size_t &size, int exp, int precision, bool upper) {
-  // Insert a decimal point after the first digit and add an exponent.
-  std::memmove(buffer + 2, buffer + 1, size - 1);
-  buffer[1] = '.';
-  exp += static_cast<int>(size) - 1;
-  int num_digits = precision - static_cast<int>(size) + 1;
-  if (num_digits > 0) {
-    std::uninitialized_fill_n(buffer + size + 1, num_digits, '0');
-    size += to_unsigned(num_digits);
-  } else if (num_digits < 0) {
-    round(buffer, size, exp, -num_digits);
-  }
-  char *p = buffer + size + 1;
-  *p++ = upper ? 'E' : 'e';
-  size = to_unsigned(write_exponent(p, exp) - buffer);
-}
-
-// Prettifies the output of the Grisu2 algorithm.
-// The number is given as v = buffer * 10^exp.
-FMT_FUNC void grisu2_prettify(char *buffer, size_t &size, int exp,
-                              int precision, bool upper) {
-  // pow(10, full_exp - 1) <= v <= pow(10, full_exp).
-  int int_size = static_cast<int>(size);
-  int full_exp = int_size + exp;
-  const int exp_threshold = 21;
-  if (int_size <= full_exp && full_exp <= exp_threshold) {
-    // 1234e7 -> 12340000000[.0+]
-    std::uninitialized_fill_n(buffer + int_size, full_exp - int_size, '0');
-    char *p = buffer + full_exp;
-    if (precision > 0) {
-      *p++ = '.';
-      std::uninitialized_fill_n(p, precision, '0');
-      p += precision;
-    }
-    size = to_unsigned(p - buffer);
-  } else if (0 < full_exp && full_exp <= exp_threshold) {
-    // 1234e-2 -> 12.34[0+]
-    int fractional_size = -exp;
-    std::memmove(buffer + full_exp + 1, buffer + full_exp,
-                 to_unsigned(fractional_size));
-    buffer[full_exp] = '.';
-    int num_zeros = precision - fractional_size;
-    if (num_zeros > 0) {
-      std::uninitialized_fill_n(buffer + size + 1, num_zeros, '0');
-      size += to_unsigned(num_zeros);
-    }
-    ++size;
-  } else if (-6 < full_exp && full_exp <= 0) {
-    // 1234e-6 -> 0.001234
-    int offset = 2 - full_exp;
-    std::memmove(buffer + offset, buffer, size);
-    buffer[0] = '0';
-    buffer[1] = '.';
-    std::uninitialized_fill_n(buffer + 2, -full_exp, '0');
-    size = to_unsigned(int_size + offset);
-  } else {
-    format_exp_notation(buffer, size, exp, precision, upper);
   }
 }
 
@@ -636,58 +538,270 @@ FMT_FUNC void grisu2_prettify(char *buffer, size_t &size, int exp,
 # define FMT_FALLTHROUGH
 #endif
 
-// Formats a nonnegative value using Grisu2 algorithm. Grisu2 doesn't give any
-// guarantees on the shortness of the result.
-FMT_FUNC void grisu2_format(double value, char *buffer, size_t &size, char type,
-                            int precision, bool write_decimal_point) {
-  FMT_ASSERT(value >= 0, "value is negative");
-  int dec_exp = 0;  // K in Grisu.
-  if (value > 0) {
-    grisu2_format_positive(value, buffer, size, dec_exp);
+struct gen_digits_params {
+  int num_digits;
+  bool fixed;
+  bool upper;
+  bool trailing_zeros;
+};
+
+struct prettify_handler {
+  char *data;
+  ptrdiff_t size;
+  buffer &buf;
+
+  explicit prettify_handler(buffer &b, ptrdiff_t n)
+    : data(b.data()), size(n), buf(b) {}
+  ~prettify_handler() {
+    assert(buf.size() >= to_unsigned(size));
+    buf.resize(to_unsigned(size));
+  }
+
+  template <typename F>
+  void insert(ptrdiff_t pos, ptrdiff_t n, F f) {
+    std::memmove(data + pos + n, data + pos, to_unsigned(size - pos));
+    f(data + pos);
+    size += n;
+  }
+
+  void insert(ptrdiff_t pos, char c) {
+    std::memmove(data + pos + 1, data + pos, to_unsigned(size - pos));
+    data[pos] = c;
+    ++size;
+  }
+
+  void append(ptrdiff_t n, char c) {
+    std::uninitialized_fill_n(data + size, n, c);
+    size += n;
+  }
+
+  void append(char c) { data[size++] = c; }
+
+  void remove_trailing(char c) {
+    while (data[size - 1] == c) --size;
+  }
+};
+
+// Writes the exponent exp in the form "[+-]d{2,3}" to buffer.
+template <typename Handler>
+FMT_FUNC void write_exponent(int exp, Handler &&h) {
+  FMT_ASSERT(-1000 < exp && exp < 1000, "exponent out of range");
+  if (exp < 0) {
+    h.append('-');
+    exp = -exp;
   } else {
-    *buffer = '0';
-    size = 1;
+    h.append('+');
   }
-  const int default_precision = 6;
-  if (precision < 0)
-    precision = default_precision;
-  bool upper = false;
-  switch (type) {
-  case 'G':
-    upper = true;
-    FMT_FALLTHROUGH
-  case '\0': case 'g': {
-    int digits_to_remove = static_cast<int>(size) - precision;
-    if (digits_to_remove > 0) {
-      round(buffer, size, dec_exp, digits_to_remove);
-      // Remove trailing zeros.
-      while (size > 0 && buffer[size - 1] == '0') {
-        --size;
-        ++dec_exp;
-      }
-    }
-    precision = 0;
-    break;
+  if (exp >= 100) {
+    h.append(static_cast<char>('0' + exp / 100));
+    exp %= 100;
+    const char *d = data::DIGITS + exp * 2;
+    h.append(d[0]);
+    h.append(d[1]);
+  } else {
+    const char *d = data::DIGITS + exp * 2;
+    h.append(d[0]);
+    h.append(d[1]);
   }
-  case 'F':
-    upper = true;
-    FMT_FALLTHROUGH
-  case 'f': {
-    int digits_to_remove = -dec_exp - precision;
-    if (digits_to_remove > 0) {
-      if (digits_to_remove >= static_cast<int>(size))
-        digits_to_remove = static_cast<int>(size) - 1;
-      round(buffer, size, dec_exp, digits_to_remove);
-    }
-    break;
+}
+
+struct fill {
+  size_t n;
+  void operator()(char *buf) const {
+    buf[0] = '0';
+    buf[1] = '.';
+    std::uninitialized_fill_n(buf + 2, n, '0');
   }
-  case 'e': case 'E':
-    format_exp_notation(buffer, size, dec_exp, precision, type == 'E');
+};
+
+// The number is given as v = f * pow(10, exp), where f has size digits.
+template <typename Handler>
+FMT_FUNC void grisu2_prettify(const gen_digits_params &params,
+                              int size, int exp, Handler &&handler) {
+  if (!params.fixed) {
+    // Insert a decimal point after the first digit and add an exponent.
+    handler.insert(1, '.');
+    exp += size - 1;
+    if (size < params.num_digits)
+      handler.append(params.num_digits - size, '0');
+    handler.append(params.upper ? 'E' : 'e');
+    write_exponent(exp, handler);
     return;
   }
-  if (write_decimal_point && precision < 1)
-    precision = 1;
-  grisu2_prettify(buffer, size, dec_exp, precision, upper);
+  // pow(10, full_exp - 1) <= v <= pow(10, full_exp).
+  int full_exp = size + exp;
+  const int exp_threshold = 21;
+  if (size <= full_exp && full_exp <= exp_threshold) {
+    // 1234e7 -> 12340000000[.0+]
+    handler.append(full_exp - size, '0');
+    int num_zeros = params.num_digits - full_exp;
+    if (num_zeros > 0 && params.trailing_zeros) {
+      handler.append('.');
+      handler.append(num_zeros, '0');
+    }
+  } else if (full_exp > 0) {
+    // 1234e-2 -> 12.34[0+]
+    handler.insert(full_exp, '.');
+    if (!params.trailing_zeros) {
+      // Remove trailing zeros.
+      handler.remove_trailing('0');
+    } else if (params.num_digits > size) {
+      // Add trailing zeros.
+      ptrdiff_t num_zeros = params.num_digits - size;
+      handler.append(num_zeros, '0');
+    }
+  } else {
+    // 1234e-6 -> 0.001234
+    handler.insert(0, 2 - full_exp, fill{to_unsigned(-full_exp)});
+  }
+}
+
+struct char_counter {
+  ptrdiff_t size;
+
+  template <typename F>
+  void insert(ptrdiff_t, ptrdiff_t n, F) { size += n; }
+  void insert(ptrdiff_t, char) { ++size; }
+  void append(ptrdiff_t n, char) { size += n; }
+  void append(char) { ++size; }
+  void remove_trailing(char) {}
+};
+
+// Converts format specifiers into parameters for digit generation and computes
+// output buffer size for a number in the range [pow(10, exp - 1), pow(10, exp)
+// or 0 if exp == 1.
+FMT_FUNC gen_digits_params process_specs(const core_format_specs &specs,
+                                         int exp, buffer &buf) {
+  auto params = gen_digits_params();
+  int num_digits = specs.precision >= 0 ? specs.precision : 6;
+  switch (specs.type) {
+  case 'G':
+    params.upper = true;
+    FMT_FALLTHROUGH
+  case '\0': case 'g':
+    params.trailing_zeros = (specs.flags & HASH_FLAG) != 0;
+    if (-4 <= exp && exp < num_digits + 1) {
+      params.fixed = true;
+      if (!specs.type && params.trailing_zeros && exp >= 0)
+        num_digits = exp + 1;
+    }
+    break;
+  case 'F':
+    params.upper = true;
+    FMT_FALLTHROUGH
+  case 'f': {
+    params.fixed = true;
+    params.trailing_zeros = true;
+    int adjusted_min_digits = num_digits + exp;
+    if (adjusted_min_digits > 0)
+      num_digits = adjusted_min_digits;
+    break;
+  }
+  case 'E':
+    params.upper = true;
+    FMT_FALLTHROUGH
+  case 'e':
+    ++num_digits;
+    break;
+  }
+  params.num_digits = num_digits;
+  char_counter counter{num_digits};
+  grisu2_prettify(params, params.num_digits, exp - num_digits, counter);
+  buf.resize(to_unsigned(counter.size));
+  return params;
+}
+
+template <typename Double>
+FMT_FUNC typename std::enable_if<sizeof(Double) == sizeof(uint64_t), bool>::type
+    grisu2_format(Double value, buffer &buf, core_format_specs specs) {
+  FMT_ASSERT(value >= 0, "value is negative");
+  if (value == 0) {
+    gen_digits_params params = process_specs(specs, 1, buf);
+    const size_t size = 1;
+    buf[0] = '0';
+    grisu2_prettify(params, size, 0, prettify_handler(buf, size));
+    return true;
+  }
+
+  fp fp_value(value);
+  fp lower, upper;  // w^- and w^+ in the Grisu paper.
+  fp_value.compute_boundaries(lower, upper);
+
+  // Find a cached power of 10 close to 1 / upper and use it to scale upper.
+  const int min_exp = -60;  // alpha in Grisu.
+  int cached_exp = 0;  // K in Grisu.
+  auto cached_pow = get_cached_power(  // \tilde{c}_{-k} in Grisu.
+      min_exp - (upper.e + fp::significand_size), cached_exp);
+  cached_exp = -cached_exp;
+  upper = upper * cached_pow;  // \tilde{M}^+ in Grisu.
+  --upper.f;  // \tilde{M}^+ - 1 ulp -> M^+_{\downarrow}.
+  fp one(1ull << -upper.e, upper.e);
+  // hi (p1 in Grisu) contains the most significant digits of scaled_upper.
+  // hi = floor(upper / one).
+  uint32_t hi = static_cast<uint32_t>(upper.f >> -one.e);
+  int exp = count_digits(hi);  // kappa in Grisu.
+  gen_digits_params params = process_specs(specs, cached_exp + exp, buf);
+  fp_value.normalize();
+  fp scaled_value = fp_value * cached_pow;
+  lower = lower * cached_pow;  // \tilde{M}^- in Grisu.
+  ++lower.f;  // \tilde{M}^- + 1 ulp -> M^-_{\uparrow}.
+  uint64_t delta = upper.f - lower.f;
+  fp diff = upper - scaled_value; // wp_w in Grisu.
+  // lo (p2 in Grisu) contains the least significants digits of scaled_upper.
+  // lo = supper % one.
+  uint64_t lo = upper.f & (one.f - 1);
+  int size = 0;
+  if (!grisu2_gen_digits(buf.data(), size, hi, lo, exp, delta, one, diff,
+                         params.num_digits)) {
+    buf.clear();
+    return false;
+  }
+  grisu2_prettify(params, size, cached_exp + exp, prettify_handler(buf, size));
+  return true;
+}
+
+template <typename Double>
+void sprintf_format(Double value, internal::buffer &buf,
+                    core_format_specs spec) {
+  // Buffer capacity must be non-zero, otherwise MSVC's vsnprintf_s will fail.
+  FMT_ASSERT(buf.capacity() != 0, "empty buffer");
+
+  // Build format string.
+  enum { MAX_FORMAT_SIZE = 10}; // longest format: %#-*.*Lg
+  char format[MAX_FORMAT_SIZE];
+  char *format_ptr = format;
+  *format_ptr++ = '%';
+  if (spec.has(HASH_FLAG))
+    *format_ptr++ = '#';
+  if (spec.precision >= 0) {
+    *format_ptr++ = '.';
+    *format_ptr++ = '*';
+  }
+  if (std::is_same<Double, long double>::value)
+    *format_ptr++ = 'L';
+  *format_ptr++ = spec.type;
+  *format_ptr = '\0';
+
+  // Format using snprintf.
+  char *start = FMT_NULL;
+  for (;;) {
+    std::size_t buffer_size = buf.capacity();
+    start = &buf[0];
+    int result = internal::char_traits<char>::format_float(
+        start, buffer_size, format, spec.precision, value);
+    if (result >= 0) {
+      unsigned n = internal::to_unsigned(result);
+      if (n < buf.capacity()) {
+        buf.resize(n);
+        break;  // The buffer is large enough - continue with formatting.
+      }
+      buf.reserve(n + 1);
+    } else {
+      // If result is negative we ask to increase the capacity by at least 1,
+      // but as std::vector, the buffer grows exponentially.
+      buf.reserve(buf.capacity() + 1);
+    }
+  }
 }
 }  // namespace internal
 
@@ -812,11 +926,6 @@ FMT_FUNC void format_system_error(
   format_error_code(out, error_code, message);
 }
 
-template <typename Char>
-void basic_fixed_buffer<Char>::grow(std::size_t) {
-  FMT_THROW(std::runtime_error("buffer overflow"));
-}
-
 FMT_FUNC void internal::error_handler::on_error(const char *message) {
   FMT_THROW(format_error(message));
 }
@@ -835,13 +944,14 @@ FMT_FUNC void report_windows_error(
 
 FMT_FUNC void vprint(std::FILE *f, string_view format_str, format_args args) {
   memory_buffer buffer;
-  vformat_to(buffer, format_str, args);
+  internal::vformat_to(buffer, format_str,
+                       basic_format_args<buffer_context<char>::type>(args));
   std::fwrite(buffer.data(), 1, buffer.size(), f);
 }
 
 FMT_FUNC void vprint(std::FILE *f, wstring_view format_str, wformat_args args) {
   wmemory_buffer buffer;
-  vformat_to(buffer, format_str, args);
+  internal::vformat_to(buffer, format_str, args);
   std::fwrite(buffer.data(), sizeof(wchar_t), buffer.size(), f);
 }
 
@@ -852,10 +962,6 @@ FMT_FUNC void vprint(string_view format_str, format_args args) {
 FMT_FUNC void vprint(wstring_view format_str, wformat_args args) {
   vprint(stdout, format_str, args);
 }
-
-#if !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
-FMT_FUNC locale locale_provider::locale() { return fmt::locale(); }
-#endif
 
 FMT_END_NAMESPACE
 
