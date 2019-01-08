@@ -81,12 +81,12 @@ static void test_split_ext(const char *fname, const char *expect_base, const cha
     std::replace(expected_base.begin(), expected_base.end(), '/', '\\');
 #endif
     spdlog::filename_t basename, ext;
-    std::tie(basename, ext) = file_helper::split_by_extenstion(filename);
+    std::tie(basename, ext) = file_helper::split_by_extension(filename);
     REQUIRE(basename == expected_base);
     REQUIRE(ext == expected_ext);
 }
 
-TEST_CASE("file_helper_split_by_extenstion", "[file_helper::split_by_extenstion()]]")
+TEST_CASE("file_helper_split_by_extension", "[file_helper::split_by_extension()]]")
 {
     test_split_ext("mylog.txt", "mylog", ".txt");
     test_split_ext(".mylog.txt", ".mylog", ".txt");
