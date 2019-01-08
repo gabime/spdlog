@@ -712,7 +712,7 @@ public:
         const auto pid = static_cast<uint32_t>(details::os::pid());
         if (padinfo_.enabled())
         {
-            const size_t field_size = fmt::internal::count_digits(pid);
+            auto field_size = fmt_helper::count_digits(pid);
             scoped_pad p(field_size, padinfo_, dest);
             fmt_helper::append_int(pid, dest);
         }
@@ -885,7 +885,7 @@ public:
         }
         if (padinfo_.enabled())
         {
-            const size_t field_size = fmt::internal::count_digits(msg.source.line);
+            auto field_size = fmt_helper::count_digits(msg.source.line);
             scoped_pad p(field_size, padinfo_, dest);
             fmt_helper::append_int(msg.source.line, dest);
         }
