@@ -910,9 +910,6 @@ public:
         }
         scoped_pad p(msg.source.funcname, padinfo_, dest);
         fmt_helper::append_string_view(msg.source.funcname, dest);
-#ifdef SPDLOG_FUNCTION_SUFFIX
-        fmt_helper::append_string_view(SPDLOG_FUNCTION_SUFFIX, dest);
-#endif
     }
 };
 
