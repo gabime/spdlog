@@ -64,6 +64,10 @@
 #define SPDLOG_FILE_BASENAME(file) SPDLOG_STRRCHR("/" file, '/') + 1
 #endif
 
+#ifndef SPDLOG_FUNCTION
+#define SPDLOG_FUNCTION __FUNCTION__
+#endif
+
 namespace spdlog {
 
 class formatter;
