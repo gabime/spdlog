@@ -51,7 +51,6 @@
 #endif
 #endif
 
-
 // Get the basename of __FILE__ (at compile time if possible)
 #if FMT_HAS_FEATURE(__builtin_strrchr)
 #define SPDLOG_STRRCHR(str, sep) __builtin_strrchr(str, sep)

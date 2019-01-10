@@ -48,12 +48,12 @@ void bench_formatters()
         auto pattern = std::string("%") + flag;
         benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
 
-//        pattern = std::string("%16") + flag;
-//        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
-//
-//        // bench center padding
-//        pattern = std::string("%=16") + flag;
-//        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
+        //        pattern = std::string("%16") + flag;
+        //        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
+        //
+        //        // bench center padding
+        //        pattern = std::string("%=16") + flag;
+        //        benchmark::RegisterBenchmark(pattern.c_str(), bench_formatter, pattern);
     }
 
     // complex patterns
@@ -72,14 +72,14 @@ int main(int argc, char *argv[])
 {
 
     spdlog::set_pattern("[%^%l%$] %v");
-    if(argc != 2)
+    if (argc != 2)
     {
         spdlog::error("Usage: {} <pattern> (or \"all\" to bench all)", argv[0]);
         exit(1);
     }
 
     std::string pattern = argv[1];
-    if(pattern == "all")
+    if (pattern == "all")
     {
         bench_formatters();
     }
