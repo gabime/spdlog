@@ -52,8 +52,8 @@
 #endif
 
 
-// Get the basename of __FILE__ (at compile time if possible) 
-#if FMT_HAS_FEATURE(__builtin_strrchr) 
+// Get the basename of __FILE__ (at compile time if possible)
+#if FMT_HAS_FEATURE(__builtin_strrchr)
 #define SPDLOG_STRRCHR(str, sep) __builtin_strrchr(str, sep)
 #else
 #define SPDLOG_STRRCHR(str, sep) strrchr(str, sep)
@@ -204,11 +204,13 @@ struct source_loc
     SPDLOG_CONSTEXPR source_loc()
         : filename{""}
         , line{0}
+        , funcname{""}
     {
     }
-    SPDLOG_CONSTEXPR source_loc(const char *filename, int line)
+    SPDLOG_CONSTEXPR source_loc(const char *filename, int line, const char *funcname)
         : filename{filename}
         , line{static_cast<uint32_t>(line)}
+        , funcname{funcname}
     {
     }
 
@@ -218,6 +220,7 @@ struct source_loc
     }
     const char *filename;
     uint32_t line;
+    const char *funcname;
 };
 
 namespace details {

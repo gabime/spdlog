@@ -895,6 +895,23 @@ public:
         }
     }
 };
+// print source funcname
+class source_funcname_formatter final : public flag_formatter
+{
+public:
+    explicit source_funcname_formatter(padding_info padinfo)
+        : flag_formatter(padinfo){};
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+        if (msg.source.empty())
+        {
+            return;
+        }
+        scoped_pad p(msg.source.funcname, padinfo_, dest);
+        fmt_helper::append_string_view(msg.source.funcname, dest);
+    }
+};
 
 // Full info formatter
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
@@ -1214,6 +1231,10 @@ private:
 
         case ('#'): // source line number
             formatters_.push_back(details::make_unique<details::source_linenum_formatter>(padding));
+            break;
+
+        case ('!'): // source funcname
+            formatters_.push_back(details::make_unique<details::source_funcname_formatter>(padding));
             break;
 
         case ('%'): // % char

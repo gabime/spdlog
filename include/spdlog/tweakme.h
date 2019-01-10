@@ -134,3 +134,12 @@
 //
 // #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 ///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Uncomment (and change if desired) macro to use for function names.
+// This is compiler dependent.
+// __PRETTY_FUNCTION__ might be nicer in clang/gcc, and __FUNCTION__ in msvc.
+// Defaults to __FUNCTION__ (should work on all compilers) if not defined.
+//
+// #define SPDLOG_FUNCTION __PRETTY_FUNCTION__
+///////////////////////////////////////////////////////////////////////////////
