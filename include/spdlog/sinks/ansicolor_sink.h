@@ -5,9 +5,14 @@
 
 #pragma once
 
+#ifndef SPDLOG_H
+#error "spdlog.h must be included before this file."
+#endif
+
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/os.h"
+#include "spdlog/sinks/sink.h"
 
 #include <memory>
 #include <mutex>
@@ -24,7 +29,7 @@ namespace sinks {
  * If no color terminal detected, omit the escape codes.
  */
 template<typename TargetStream, class ConsoleMutex>
-class ansicolor_sink SPDLOG_FINAL : public sink
+class ansicolor_sink final : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
@@ -116,7 +121,7 @@ public:
         fflush(target_file_);
     }
 
-    void set_pattern(const std::string &pattern) SPDLOG_FINAL
+    void set_pattern(const std::string &pattern) final
     {
         std::lock_guard<mutex_t> lock(mutex_);
         formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));

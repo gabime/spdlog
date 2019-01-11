@@ -16,7 +16,7 @@ class sink
 public:
     sink()
         : level_(level::trace)
-        , formatter_(new pattern_formatter("%+"))
+        , formatter_(new pattern_formatter())
     {
     }
 

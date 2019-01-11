@@ -5,6 +5,10 @@
 
 #pragma once
 
+#ifndef SPDLOG_H
+#error "spdlog.h must be included before this file."
+#endif
+
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
 
@@ -14,7 +18,7 @@
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>
-class ostream_sink SPDLOG_FINAL : public base_sink<Mutex>
+class ostream_sink final : public base_sink<Mutex>
 {
 public:
     explicit ostream_sink(std::ostream &os, bool force_flush = false)
@@ -32,7 +36,9 @@ protected:
         sink::formatter_->format(msg, formatted);
         ostream_.write(formatted.data(), static_cast<std::streamsize>(formatted.size()));
         if (force_flush_)
+        {
             ostream_.flush();
+        }
     }
 
     void flush_() override

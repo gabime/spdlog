@@ -122,7 +122,7 @@ public:
     // ".mylog" => (".mylog". "")
     // "my_folder/.mylog" => ("my_folder/.mylog", "")
     // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
-    static std::tuple<filename_t, filename_t> split_by_extenstion(const spdlog::filename_t &fname)
+    static std::tuple<filename_t, filename_t> split_by_extension(const spdlog::filename_t &fname)
     {
         auto ext_index = fname.rfind('.');
 

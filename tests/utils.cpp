@@ -8,8 +8,15 @@ void prepare_logdir()
     system("del /F /Q logs\\*");
 #else
     auto rv = system("mkdir -p logs");
+    if (rv != 0)
+    {
+        throw std::runtime_error("Failed to mkdir -p logs");
+    }
     rv = system("rm -f logs/*");
-    (void)rv;
+    if (rv != 0)
+    {
+        throw std::runtime_error("Failed to rm -f logs/*");
+    }
 #endif
 }
 
@@ -17,7 +24,9 @@ std::string file_contents(const std::string &filename)
 {
     std::ifstream ifs(filename);
     if (!ifs)
+    {
         throw std::runtime_error("Failed open file ");
+    }
     return std::string((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
 }
 
@@ -25,7 +34,9 @@ std::size_t count_lines(const std::string &filename)
 {
     std::ifstream ifs(filename);
     if (!ifs)
+    {
         throw std::runtime_error("Failed open file ");
+    }
 
     std::string line;
     size_t counter = 0;
@@ -38,7 +49,9 @@ std::size_t get_filesize(const std::string &filename)
 {
     std::ifstream ifs(filename, std::ifstream::ate | std::ifstream::binary);
     if (!ifs)
+    {
         throw std::runtime_error("Failed open file ");
+    }
 
     return static_cast<std::size_t>(ifs.tellg());
 }
@@ -47,6 +60,8 @@ std::size_t get_filesize(const std::string &filename)
 bool ends_with(std::string const &value, std::string const &ending)
 {
     if (ending.size() > value.size())
+    {
         return false;
+    }
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }

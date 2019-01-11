@@ -40,13 +40,13 @@ namespace details {
 class thread_pool;
 }
 
-class async_logger SPDLOG_FINAL : public std::enable_shared_from_this<async_logger>, public logger
+class async_logger final : public std::enable_shared_from_this<async_logger>, public logger
 {
     friend class details::thread_pool;
 
 public:
     template<typename It>
-    async_logger(std::string logger_name, const It &begin, const It &end, std::weak_ptr<details::thread_pool> tp,
+    async_logger(std::string logger_name, It begin, It end, std::weak_ptr<details::thread_pool> tp,
         async_overflow_policy overflow_policy = async_overflow_policy::block);
 
     async_logger(std::string logger_name, sinks_init_list sinks_list, std::weak_ptr<details::thread_pool> tp,
@@ -61,7 +61,7 @@ protected:
     void sink_it_(details::log_msg &msg) override;
     void flush_() override;
 
-    void backend_log_(details::log_msg &incoming_log_msg);
+    void backend_log_(const details::log_msg &incoming_log_msg);
     void backend_flush_();
 
 private:

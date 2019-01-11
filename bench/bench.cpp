@@ -6,16 +6,16 @@
 //
 // bench.cpp : spdlog benchmarks
 //
+#include "spdlog/spdlog.h"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
-#include "spdlog/spdlog.h"
+
 #include "utils.h"
 #include <atomic>
 #include <cstdlib> // EXIT_FAILURE
-#include <iostream>
 #include <memory>
 #include <string>
 #include <thread>
@@ -28,10 +28,13 @@ using namespace utils;
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log);
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count);
+void bench_default_api(int howmany, std::shared_ptr<spdlog::logger> log);
+void bench_c_string(int howmany, std::shared_ptr<spdlog::logger> log);
 
 int main(int argc, char *argv[])
 {
 
+    spdlog::default_logger()->set_pattern("[%^%l%$] %v");
     int howmany = 1000000;
     int queue_size = howmany + 2;
     int threads = 10;
@@ -48,57 +51,65 @@ int main(int argc, char *argv[])
         if (argc > 3)
             queue_size = atoi(argv[3]);
 
-        cout << "******************************************************************"
-                "*************\n";
-        cout << "Single thread, " << format(howmany) << " iterations" << endl;
-        cout << "******************************************************************"
-                "*************\n";
+        spdlog::info("**************************************************************");
+        spdlog::info("Single thread, {:n} iterations", howmany);
+        spdlog::info("**************************************************************");
 
-        auto basic_st = spdlog::basic_logger_mt("basic_st", "logs/basic_st.log", true);
-        bench(howmany, basic_st);
+        auto basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
+        bench(howmany, std::move(basic_st));
 
+        basic_st.reset();
         auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
-        bench(howmany, rotating_st);
+        bench(howmany, std::move(rotating_st));
 
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st.log");
-        bench(howmany, daily_st);
+        bench(howmany, std::move(daily_st));
 
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
-        cout << "\n****************************************************************"
-                "***************\n";
-        cout << threads << " threads sharing same logger, " << format(howmany) << " iterations" << endl;
-        cout << "******************************************************************"
-                "*************\n";
+        spdlog::info("**************************************************************");
+        spdlog::info("C-string (400 bytes). Single thread, {:n} iterations", howmany);
+        spdlog::info("**************************************************************");
+
+        basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_cs.log", true);
+        bench_c_string(howmany, std::move(basic_st));
+
+        rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_cs.log", file_size, rotating_files);
+        bench_c_string(howmany, std::move(rotating_st));
+
+        daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_cs.log");
+        bench_c_string(howmany, std::move(daily_st));
+
+        bench_c_string(howmany, spdlog::create<null_sink_st>("null_st"));
+
+        spdlog::info("**************************************************************");
+        spdlog::info("{:n} threads sharing same logger, {:n} iterations", threads, howmany);
+        spdlog::info("**************************************************************");
 
         auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
-        bench_mt(howmany, basic_mt, threads);
+        bench_mt(howmany, std::move(basic_mt), threads);
 
         auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt.log", file_size, rotating_files);
-        bench_mt(howmany, rotating_mt, threads);
+        bench_mt(howmany, std::move(rotating_mt), threads);
 
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
-        bench_mt(howmany, daily_mt, threads);
+        bench_mt(howmany, std::move(daily_mt), threads);
         bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
 
-        cout << "\n****************************************************************"
-                "***************\n";
-        cout << "async logging.. " << threads << " threads sharing same logger, " << format(howmany) << " iterations " << endl;
-        cout << "******************************************************************"
-                "*************\n";
+        spdlog::info("**************************************************************");
+        spdlog::info("Asyncronous.. {:n} threads sharing same logger, {:n} iterations", threads, howmany);
+        spdlog::info("**************************************************************");
 
         for (int i = 0; i < 3; ++i)
         {
             spdlog::init_thread_pool(static_cast<size_t>(queue_size), 1);
             auto as = spdlog::basic_logger_mt<spdlog::async_factory>("async", "logs/basic_async.log", true);
-            bench_mt(howmany, as, threads);
-            spdlog::drop("async");
+            bench_mt(howmany, std::move(as), threads);
         }
     }
     catch (std::exception &ex)
     {
-        std::cerr << "Error: " << ex.what() << std::endl;
-        perror("Last error");
+        spdlog::error(ex.what());
         return EXIT_FAILURE;
     }
     return EXIT_SUCCESS;
@@ -107,7 +118,6 @@ int main(int argc, char *argv[])
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
     using std::chrono::high_resolution_clock;
-    cout << log->name() << "...\t\t" << flush;
     auto start = high_resolution_clock::now();
     for (auto i = 0; i < howmany; ++i)
     {
@@ -117,14 +127,13 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
 
-    cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
+    spdlog::info("{:<16} Elapsed: {:0.2f} secs {:>16n}/sec", log->name(), delta_d, int(howmany / delta_d));
     spdlog::drop(log->name());
 }
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
 {
     using std::chrono::high_resolution_clock;
-    cout << log->name() << "...\t\t" << flush;
     vector<thread> threads;
     auto start = high_resolution_clock::now();
     for (int t = 0; t < thread_count; ++t)
@@ -144,5 +153,47 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    cout << "Elapsed: " << delta_d << "\t" << format(int(howmany / delta_d)) << "/sec" << endl;
+    spdlog::info("{:<16} Elapsed: {:0.2f} secs {:>16n}/sec", log->name(), delta_d, int(howmany / delta_d));
+    spdlog::drop(log->name());
+}
+
+void bench_default_api(int howmany, std::shared_ptr<spdlog::logger> log)
+{
+    using std::chrono::high_resolution_clock;
+    auto orig_default = spdlog::default_logger();
+    spdlog::set_default_logger(log);
+    auto start = high_resolution_clock::now();
+    for (auto i = 0; i < howmany; ++i)
+    {
+        spdlog::info("Hello logger: msg number {}", i);
+    }
+
+    auto delta = high_resolution_clock::now() - start;
+    auto delta_d = duration_cast<duration<double>>(delta).count();
+    spdlog::drop(log->name());
+    spdlog::set_default_logger(std::move(orig_default));
+    spdlog::info("{:<16} Elapsed: {:0.2f} secs {:>16n}/sec", log->name(), delta_d, int(howmany / delta_d));
+}
+
+void bench_c_string(int howmany, std::shared_ptr<spdlog::logger> log)
+{
+    const char *msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum pharetra metus cursus "
+                      "lacus placerat congue. Nulla egestas, mauris a tincidunt tempus, enim lectus volutpat mi, eu consequat sem "
+                      "libero nec massa. In dapibus ipsum a diam rhoncus gravida. Etiam non dapibus eros. Donec fringilla dui sed "
+                      "augue pretium, nec scelerisque est maximus. Nullam convallis, sem nec blandit maximus, nisi turpis ornare "
+                      "nisl, sit amet volutpat neque massa eu odio. Maecenas malesuada quam ex, posuere congue nibh turpis duis.";
+    using std::chrono::high_resolution_clock;
+    auto orig_default = spdlog::default_logger();
+    spdlog::set_default_logger(log);
+    auto start = high_resolution_clock::now();
+    for (auto i = 0; i < howmany; ++i)
+    {
+        spdlog::log(level::info, msg);
+    }
+
+    auto delta = high_resolution_clock::now() - start;
+    auto delta_d = duration_cast<duration<double>>(delta).count();
+    spdlog::drop(log->name());
+    spdlog::set_default_logger(std::move(orig_default));
+    spdlog::info("{:<16} Elapsed: {:0.2f} secs {:>16n}/sec", log->name(), delta_d, int(howmany / delta_d));
 }

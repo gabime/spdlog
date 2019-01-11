@@ -4,10 +4,14 @@
 //
 
 #pragma once
+
+#ifndef SPDLOG_H
+#error "spdlog.h must be included before this file."
+#endif
+
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
-#include "spdlog/spdlog.h"
 
 #include <mutex>
 #include <string>
@@ -18,7 +22,7 @@ namespace sinks {
  * Trivial file sink with single file as target
  */
 template<typename Mutex>
-class basic_file_sink SPDLOG_FINAL : public base_sink<Mutex>
+class basic_file_sink final : public base_sink<Mutex>
 {
 public:
     explicit basic_file_sink(const filename_t &filename, bool truncate = false)

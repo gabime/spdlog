@@ -29,7 +29,7 @@ TEST_CASE("dequeue-empty-wait", "[mpmc_blocking_q]")
 
     size_t q_size = 100;
     milliseconds wait_ms(250);
-    milliseconds tolerance_wait(100);
+    milliseconds tolerance_wait(50);
 
     spdlog::details::mpmc_blocking_queue<int> q(q_size);
     int popped_item;
@@ -40,7 +40,7 @@ TEST_CASE("dequeue-empty-wait", "[mpmc_blocking_q]")
     REQUIRE(rv == false);
 
     INFO("Delta " << delta_ms.count() << " millis");
-    REQUIRE(delta_ms >= wait_ms);
+    REQUIRE(delta_ms >= wait_ms - tolerance_wait);
     REQUIRE(delta_ms <= wait_ms + tolerance_wait);
 }
 

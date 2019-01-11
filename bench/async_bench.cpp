@@ -6,10 +6,11 @@
 //
 // bench.cpp : spdlog benchmarks
 //
+#include "spdlog/spdlog.h"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/spdlog.h"
+
 #include "utils.h"
 #include <atomic>
 #include <iostream>
@@ -35,6 +36,7 @@ int count_lines(const char *filename)
         if ('\n' == ch)
             counter++;
     }
+    fclose(infile);
 
     return counter;
 }
@@ -48,11 +50,10 @@ int main(int argc, char *argv[])
 
     try
     {
-        auto console = spdlog::stdout_color_mt("console");
         if (argc == 1)
         {
-            console->set_pattern("%v");
-            console->info("Usage: {} <message_count> <threads> <q_size> <iterations>", argv[0]);
+            spdlog::set_pattern("%v");
+            spdlog::info("Usage: {} <message_count> <threads> <q_size> <iterations>", argv[0]);
             return 0;
         }
 
@@ -66,12 +67,12 @@ int main(int argc, char *argv[])
         if (argc > 4)
             iters = atoi(argv[4]);
 
-        console->info("-------------------------------------------------");
-        console->info("Messages: {:14n}", howmany);
-        console->info("Threads : {:14n}", threads);
-        console->info("Queue   : {:14n}", queue_size);
-        console->info("Iters   : {:>14n}", iters);
-        console->info("-------------------------------------------------");
+        spdlog::info("-------------------------------------------------");
+        spdlog::info("Messages: {:14n}", howmany);
+        spdlog::info("Threads : {:14n}", threads);
+        spdlog::info("Queue   : {:14n}", queue_size);
+        spdlog::info("Iters   : {:>14n}", iters);
+        spdlog::info("-------------------------------------------------");
 
         const char *filename = "logs/basic_async.log";
 
@@ -85,14 +86,15 @@ int main(int argc, char *argv[])
 
             if (count != howmany)
             {
-                console->error("Test failed. {} has {:n} lines instead of {:n}", filename, count, howmany);
+                spdlog::error("Test failed. {} has {:n} lines instead of {:n}", filename, count, howmany);
                 exit(1);
             }
             else
             {
-                console->info("Line count OK ({:n})\n", count);
+                spdlog::info("Line count OK ({:n})\n", count);
             }
         }
+        spdlog::shutdown();
     }
     catch (std::exception &ex)
     {
@@ -100,6 +102,7 @@ int main(int argc, char *argv[])
         perror("Last error");
         return 1;
     }
+
     return 0;
 }
 
@@ -134,5 +137,5 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> logger, int thread_co
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    spdlog::get("console")->info("Elapsed: {} secs\t {:n}/sec", delta_d, int(howmany / delta_d));
+    spdlog::info("Elapsed: {} secs\t {:n}/sec", delta_d, int(howmany / delta_d));
 }

@@ -10,19 +10,23 @@
 #include <memory>
 #include <string>
 
+#define SPDLOG_CATCH_AND_HANDLE                                                                                                            \
+    catch (const std::exception &ex)                                                                                                       \
+    {                                                                                                                                      \
+        err_handler_(ex.what());                                                                                                           \
+    }                                                                                                                                      \
+    catch (...)                                                                                                                            \
+    {                                                                                                                                      \
+        err_handler_("Unknown exception in logger");                                                                                       \
+    }
+
 // create logger with given name, sinks and the default pattern formatter
 // all other ctors will call this one
 template<typename It>
-inline spdlog::logger::logger(std::string logger_name, const It &begin, const It &end)
+inline spdlog::logger::logger(std::string logger_name, It begin, It end)
     : name_(std::move(logger_name))
     , sinks_(begin, end)
-    , level_(level::info)
-    , flush_level_(level::off)
-    , last_err_time_(0)
-    , msg_counter_(1) // message counter will start from 1. 0-message id will be
-                      // reserved for controll messages
 {
-    err_handler_ = [this](const std::string &msg) { this->default_err_handler_(msg); };
 }
 
 // ctor with sinks as init list
@@ -49,12 +53,37 @@ inline void spdlog::logger::set_formatter(std::unique_ptr<spdlog::formatter> f)
 
 inline void spdlog::logger::set_pattern(std::string pattern, pattern_time_type time_type)
 {
-    set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
+    auto new_formatter = details::make_unique<spdlog::pattern_formatter>(std::move(pattern), time_type);
+    set_formatter(std::move(new_formatter));
+}
+
+template<typename... Args>
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const char *fmt, const Args &... args)
+{
+    if (!should_log(lvl))
+    {
+        return;
+    }
+
+    try
+    {
+        using details::fmt_helper::to_string_view;
+        fmt::memory_buffer buf;
+        fmt::format_to(buf, fmt, args...);
+        details::log_msg log_msg(source, &name_, lvl, to_string_view(buf));
+        sink_it_(log_msg);
+    }
+    SPDLOG_CATCH_AND_HANDLE
 }
 
 template<typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Args &... args)
 {
+    log(source_loc{}, lvl, fmt, args...);
+}
+
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const char *msg)
+{
     if (!should_log(lvl))
     {
         return;
@@ -62,31 +91,19 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
 
     try
     {
-        details::log_msg log_msg(&name_, lvl);
-        fmt::format_to(log_msg.raw, fmt, args...);
+        details::log_msg log_msg(source, &name_, lvl, spdlog::string_view_t(msg));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
 }
 
-template<typename... Args>
 inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
 {
-    if (!should_log(lvl))
-    {
-        return;
-    }
-    try
-    {
-        details::log_msg log_msg(&name_, lvl);
-        details::fmt_helper::append_c_str(msg, log_msg.raw);
-        sink_it_(log_msg);
-    }
-    SPDLOG_CATCH_AND_HANDLE
+    log(source_loc{}, lvl, msg);
 }
 
-template<typename T>
-inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
+template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const T &msg)
 {
     if (!should_log(lvl))
     {
@@ -94,11 +111,40 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
     }
     try
     {
-        details::log_msg log_msg(&name_, lvl);
-        fmt::format_to(log_msg.raw, "{}", msg);
+        details::log_msg log_msg(source, &name_, lvl, msg);
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
+}
+
+template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
+inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
+{
+    log(source_loc{}, lvl, msg);
+}
+
+template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const T &msg)
+{
+    if (!should_log(lvl))
+    {
+        return;
+    }
+    try
+    {
+        using details::fmt_helper::to_string_view;
+        fmt::memory_buffer buf;
+        fmt::format_to(buf, "{}", msg);
+        details::log_msg log_msg(source, &name_, lvl, to_string_view(buf));
+        sink_it_(log_msg);
+    }
+    SPDLOG_CATCH_AND_HANDLE
+}
+
+template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
+inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
+{
+    log(source_loc{}, lvl, msg);
 }
 
 template<typename... Args>
@@ -174,25 +220,54 @@ inline void spdlog::logger::critical(const T &msg)
 }
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+
+inline void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer &target)
+{
+    int wbuf_size = static_cast<int>(wbuf.size());
+    if (wbuf_size == 0)
+    {
+        return;
+    }
+
+    auto result_size = ::WideCharToMultiByte(CP_UTF8, 0, wbuf.data(), wbuf_size, NULL, 0, NULL, NULL);
+
+    if (result_size > 0)
+    {
+        target.resize(result_size);
+        ::WideCharToMultiByte(CP_UTF8, 0, wbuf.data(), wbuf_size, &target.data()[0], result_size, NULL, NULL);
+    }
+    else
+    {
+        throw spdlog::spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
+    }
+}
+
 template<typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const wchar_t *fmt, const Args &... args)
 {
     if (!should_log(lvl))
     {
         return;
     }
 
-    decltype(wstring_converter_)::byte_string utf8_string;
-
     try
     {
-        {
-            std::lock_guard<std::mutex> lock(wstring_converter_mutex_);
-            utf8_string = wstring_converter_.to_bytes(fmt);
-        }
-        log(lvl, utf8_string.c_str(), args...);
+        // format to wmemory_buffer and convert to utf8
+        using details::fmt_helper::to_string_view;
+        fmt::wmemory_buffer wbuf;
+        fmt::format_to(wbuf, fmt, args...);
+        fmt::memory_buffer buf;
+        wbuf_to_utf8buf(wbuf, buf);
+        details::log_msg log_msg(source, &name_, lvl, to_string_view(buf));
+        sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
+}
+
+template<typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+{
+    log(source_loc{}, lvl, fmt, args...);
 }
 
 template<typename... Args>
@@ -251,7 +326,7 @@ inline void spdlog::logger::set_error_handler(spdlog::log_err_handler err_handle
     err_handler_ = std::move(err_handler);
 }
 
-inline spdlog::log_err_handler spdlog::logger::error_handler()
+inline spdlog::log_err_handler spdlog::logger::error_handler() const
 {
     return err_handler_;
 }
@@ -279,6 +354,11 @@ inline bool spdlog::logger::should_flush_(const details::log_msg &msg)
 {
     auto flush_level = flush_level_.load(std::memory_order_relaxed);
     return (msg.level >= flush_level) && (msg.level != level::off);
+}
+
+inline spdlog::level::level_enum spdlog::logger::default_level()
+{
+    return static_cast<spdlog::level::level_enum>(SPDLOG_ACTIVE_LEVEL);
 }
 
 inline spdlog::level::level_enum spdlog::logger::level() const
@@ -310,7 +390,7 @@ inline void spdlog::logger::sink_it_(details::log_msg &msg)
 
     if (should_flush_(msg))
     {
-        flush();
+        flush_();
     }
 }
 

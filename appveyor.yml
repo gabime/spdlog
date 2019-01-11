@@ -26,7 +26,9 @@ build_script:
 
     set PATH=C:\mingw-w64\i686-5.3.0-posix-dwarf-rt_v4-rev0\mingw32\bin;%PATH%
 
-    cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+    cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DSPDLOG_BUILD_BENCH=OFF
 
     cmake --build . --config %BUILD_TYPE%
-test: off
+
+test_script:
+- ctest -VV -C "%BUILD_TYPE%"

@@ -5,6 +5,10 @@
 
 #pragma once
 
+#ifndef SPDLOG_H
+#error "spdlog.h must be included before this file."
+#endif
+
 #include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/os.h"
@@ -27,7 +31,7 @@ namespace sinks {
  * Android sink (logging using __android_log_write)
  */
 template<typename Mutex>
-class android_sink SPDLOG_FINAL : public base_sink<Mutex>
+class android_sink final : public base_sink<Mutex>
 {
 public:
     explicit android_sink(std::string tag = "spdlog", bool use_raw_msg = false)
@@ -43,7 +47,7 @@ protected:
         fmt::memory_buffer formatted;
         if (use_raw_msg_)
         {
-            details::fmt_helper::append_buf(msg.raw, formatted);
+            details::fmt_helper::append_string_view(msg.payload, formatted);
         }
         else
         {

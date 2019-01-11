@@ -22,41 +22,47 @@ template<typename Mutex>
 class base_sink : public sink
 {
 public:
-    base_sink()
-        : sink()
-    {
-    }
-
+    base_sink() = default;
     base_sink(const base_sink &) = delete;
     base_sink &operator=(const base_sink &) = delete;
 
-    void log(const details::log_msg &msg) SPDLOG_FINAL
+    void log(const details::log_msg &msg) final
     {
         std::lock_guard<Mutex> lock(mutex_);
         sink_it_(msg);
     }
 
-    void flush() SPDLOG_FINAL override
+    void flush() final
     {
         std::lock_guard<Mutex> lock(mutex_);
         flush_();
     }
 
-    void set_pattern(const std::string &pattern) SPDLOG_FINAL override
+    void set_pattern(const std::string &pattern) final
     {
         std::lock_guard<Mutex> lock(mutex_);
-        formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
+        set_pattern_(pattern);
     }
 
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) SPDLOG_FINAL override
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) final
     {
         std::lock_guard<Mutex> lock(mutex_);
-        formatter_ = std::move(sink_formatter);
+        set_formatter_(std::move(sink_formatter));
     }
 
 protected:
     virtual void sink_it_(const details::log_msg &msg) = 0;
     virtual void flush_() = 0;
+
+    virtual void set_pattern_(const std::string &pattern)
+    {
+        set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern));
+    }
+
+    virtual void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter)
+    {
+        formatter_ = std::move(sink_formatter);
+    }
     Mutex mutex_;
 };
 } // namespace sinks
