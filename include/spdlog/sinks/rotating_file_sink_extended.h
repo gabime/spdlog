@@ -97,7 +97,7 @@ private:
         if (base_datetime_ext_.length() > 0)
         {
             filename_t basename, ext;
-            std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
+            std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
             fmt::format_to(wt, SPDLOG_FILENAME_T("{}_{}{}"), basename, formated_time(), ext);
             filename = fmt::to_string(wt);
         }
@@ -105,13 +105,13 @@ private:
         if (index != 0u)
         {
             filename_t basename, ext;
-            std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
+            std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
             fmt::format_to(w, SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
         }
         else
         {
             filename_t basename, ext;
-            std::tie(basename, ext) = details::file_helper::split_by_extenstion(filename);
+            std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
             fmt::format_to(w, SPDLOG_FILENAME_T("{}.{}{}"), basename, index, ext);
         }
 
