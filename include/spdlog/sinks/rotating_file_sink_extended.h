@@ -13,6 +13,7 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/sinks/base_sink.h"
+#include "spdlog/sinks/daily_file_sink.h"
 
 #include <chrono>
 #include <cstdio>
@@ -100,6 +101,11 @@ private:
             std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
             fmt::format_to(wt, SPDLOG_FILENAME_T("{}_{}{}"), basename, formated_time(), ext);
             filename = fmt::to_string(wt);
+        }
+        else
+        {
+            auto now = log_clock::now();
+            filename = daily_filename_calculator::calc_filename(base_filename_, now);
         }
 
         if (index != 0u)
