@@ -21,6 +21,7 @@ void user_defined_example();
 void err_handler_example();
 void syslog_example();
 void clone_example();
+void rotating_example_extended();
 
 #include "spdlog/spdlog.h"
 
@@ -57,6 +58,7 @@ int main(int, char *[])
         user_defined_example();
         err_handler_example();
         trace_example();
+        rotating_example_extended();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -185,6 +187,45 @@ void multi_sink_example()
     logger.set_level(spdlog::level::debug);
     logger.warn("this should appear in both console and file");
     logger.info("this message should not appear in the console, only in the file");
+}
+
+#include "spdlog/sinks/rotating_file_sink_extended.h"
+void rotating_example_extended()
+{
+    // get current time
+    auto now = spdlog::log_clock::now();
+    auto tnow = spdlog::log_clock::to_time_t(now);
+    auto lnow = spdlog::details::os::localtime(tnow);
+
+    int rotation_minute = (lnow.tm_min + 1) % 60;
+    int rotation_hour = lnow.tm_min < 1 ? lnow.tm_hour++ % 24 : lnow.tm_hour;
+    int wait_time = 60 - lnow.tm_sec + 1;
+
+    // create logger with size 128 bytes
+    // will rotate files when size is reached
+    // will create new file in 2 minutes regardless of size
+
+    // max files will apply to files with the same name
+    // if not date is needed in filename pass is as empty string (or wstring)
+    // auto rotating_logger = spdlog::rotating_logger_extended_st(
+    //    "rotating_daily_logger", "logs/rotating_daily.txt", "", 128, 5, rotation_hour, rotation_minute);
+    auto rotating_logger = spdlog::rotating_logger_extended_st(
+        "rotating_daily_logger", "logs/rotating_daily.txt", "%Y-%m-%d_%H-%M", 128, 5, rotation_hour, rotation_minute);
+
+    // set only message to be printed for more precision when writing
+    rotating_logger->set_pattern("%v");
+    rotating_logger->set_level(spdlog::level::debug);
+
+    rotating_logger->log(spdlog::level::debug, "Message 1: 60 bytes: junk data to fill up to 60 bytes.......");
+    rotating_logger->log(spdlog::level::debug, "Message 2: 60 bytes: junk data to fill up to 60 bytes.......");
+    // overflow, next message will go in new file
+    rotating_logger->log(spdlog::level::debug, "Message 3: 60 bytes: junk data to fill up to 60 bytes.......");
+
+    // wait to pass the roration minute
+    spdlog::details::os::sleep_for_millis(1000 * wait_time);
+
+    // daily rotation, next message will go in new file regardless old file has 60 bytes in it and will not overflow
+    rotating_logger->log(spdlog::level::debug, "Message 4: 60 bytes: junk data to fill up to 60 bytes.......");
 }
 
 // User defined types logging by implementing operator<<
