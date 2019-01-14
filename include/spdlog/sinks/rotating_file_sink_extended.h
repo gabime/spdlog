@@ -24,7 +24,7 @@
 namespace spdlog {
 namespace sinks {
 
-template<typename Mutex>
+template<typename Mutex, typename FileNameCalc = daily_filename_calculator>
 class rotating_file_sink_extended final : public sinks::base_sink<Mutex>
 {
 public:
@@ -55,7 +55,7 @@ public:
             throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
 
-        file_helper_.open(calc_filename(0));
+        file_helper_.open(calc_filename_(0));
         current_size_ = file_helper_.size(); // expensive. called only once
         rotation_tp_ = next_rotation_tp_();
     }
@@ -69,7 +69,7 @@ protected:
 
         if (daily_rotate_ && msg.time >= rotation_tp_)
         {
-            file_helper_.open(calc_filename(0));
+            file_helper_.open(calc_filename_(0));
             rotation_tp_ = next_rotation_tp_();
             current_size_ = formatted.size();
         }
@@ -89,7 +89,7 @@ protected:
     }
 
 private:
-    filename_t calc_filename(std::size_t index)
+    filename_t calc_filename_(std::size_t index)
     {
         typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
         typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type wt;
@@ -105,7 +105,7 @@ private:
         else
         {
             auto now = log_clock::now();
-            filename = daily_filename_calculator::calc_filename(base_filename_, now);
+            filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
         }
 
         if (index != 0u)
@@ -128,7 +128,7 @@ private:
     {
         rotate_files_();
         file_helper_.close();
-        file_helper_.open(calc_filename(0));
+        file_helper_.open(calc_filename_(0));
     }
 
     void rotate_files_()
@@ -137,12 +137,12 @@ private:
         file_helper_.close();
         for (auto i = max_files_; i > 0; --i)
         {
-            filename_t src = calc_filename(i - 1);
+            filename_t src = calc_filename_(i - 1);
             if (!details::file_helper::file_exists(src))
             {
                 continue;
             }
-            filename_t target = calc_filename(i);
+            filename_t target = calc_filename_(i);
 
             if (!rename_file(src, target))
             {
