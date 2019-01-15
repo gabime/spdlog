@@ -36,7 +36,7 @@ public:
         , max_files_(max_files)
         , daily_rotate_(false)
     {
-        file_helper_.open(calc_filename(0));
+        file_helper_.open(calc_filename_(0));
         current_size_ = file_helper_.size(); // expensive. called only once
     }
 
