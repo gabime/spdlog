@@ -6,7 +6,7 @@
 #pragma once
 
 #ifndef SPDLOG_H
-#error "spdlog.h must be included before this file."
+#include "spdlog/spdlog.h"
 #endif
 
 #include "spdlog/details/file_helper.h"
