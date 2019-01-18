@@ -137,7 +137,7 @@ class buffered_file {
   buffered_file() FMT_NOEXCEPT : file_(FMT_NULL) {}
 
   // Destroys the object closing the file it represents if any.
-  FMT_API ~buffered_file() FMT_DTOR_NOEXCEPT;
+  FMT_API ~buffered_file() FMT_NOEXCEPT;
 
  private:
   buffered_file(const buffered_file &) = delete;
@@ -223,7 +223,7 @@ class file {
   }
 
   // Destroys the object closing the file it represents if any.
-  FMT_API ~file() FMT_DTOR_NOEXCEPT;
+  FMT_API ~file() FMT_NOEXCEPT;
 
   // Returns the file descriptor.
   int descriptor() const FMT_NOEXCEPT { return fd_; }

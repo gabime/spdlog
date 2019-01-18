@@ -41,6 +41,11 @@ struct padding_info
         , side_(side)
     {
     }
+
+    bool enabled() const
+    {
+        return width_ != 0;
+    }
     const size_t width_ = 0;
     const pad_side side_ = left;
 };
@@ -131,8 +136,15 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        scoped_pad p(*msg.logger_name, padinfo_, dest);
-        fmt_helper::append_string_view(*msg.logger_name, dest);
+        if (padinfo_.enabled())
+        {
+            scoped_pad p(*msg.logger_name, padinfo_, dest);
+            fmt_helper::append_string_view(*msg.logger_name, dest);
+        }
+        else
+        {
+            fmt_helper::append_string_view(*msg.logger_name, dest);
+        }
     }
 };
 
@@ -147,9 +159,16 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        string_view_t level_name{level::to_c_str(msg.level)};
-        scoped_pad p(level_name, padinfo_, dest);
-        fmt_helper::append_string_view(level_name, dest);
+        string_view_t &level_name = level::to_string_view(msg.level);
+        if (padinfo_.enabled())
+        {
+            scoped_pad p(level_name, padinfo_, dest);
+            fmt_helper::append_string_view(level_name, dest);
+        }
+        else
+        {
+            fmt_helper::append_string_view(level_name, dest);
+        }
     }
 };
 
@@ -448,11 +467,17 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 3;
-        scoped_pad p(field_size, padinfo_, dest);
-
         auto millis = fmt_helper::time_fraction<std::chrono::milliseconds>(msg.time);
-        fmt_helper::pad3(static_cast<int>(millis.count()), dest);
+        if (padinfo_.enabled())
+        {
+            const size_t field_size = 3;
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
+        }
+        else
+        {
+            fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
+        }
     }
 };
 
@@ -465,11 +490,17 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 6;
-        scoped_pad p(field_size, padinfo_, dest);
-
         auto micros = fmt_helper::time_fraction<std::chrono::microseconds>(msg.time);
-        fmt_helper::pad6(static_cast<size_t>(micros.count()), dest);
+        if (padinfo_.enabled())
+        {
+            const size_t field_size = 6;
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::pad6(static_cast<size_t>(micros.count()), dest);
+        }
+        else
+        {
+            fmt_helper::pad6(static_cast<size_t>(micros.count()), dest);
+        }
     }
 };
 
@@ -482,11 +513,17 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 9;
-        scoped_pad p(field_size, padinfo_, dest);
-
         auto ns = fmt_helper::time_fraction<std::chrono::nanoseconds>(msg.time);
-        fmt::format_to(dest, "{:09}", ns.count());
+        if (padinfo_.enabled())
+        {
+            const size_t field_size = 9;
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::pad9(static_cast<size_t>(ns.count()), dest);
+        }
+        else
+        {
+            fmt_helper::pad9(static_cast<size_t>(ns.count()), dest);
+        }
     }
 };
 
@@ -501,7 +538,6 @@ public:
     {
         const size_t field_size = 10;
         scoped_pad p(field_size, padinfo_, dest);
-
         auto duration = msg.time.time_since_epoch();
         auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
         fmt_helper::append_int(seconds, dest);
@@ -572,7 +608,6 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-
         const size_t field_size = 8;
         scoped_pad p(field_size, padinfo_, dest);
 
@@ -652,9 +687,16 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 6;
-        scoped_pad p(field_size, padinfo_, dest);
-        fmt_helper::pad6(msg.thread_id, dest);
+        if (padinfo_.enabled())
+        {
+            const auto field_size = fmt_helper::count_digits(msg.thread_id);
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::append_int(msg.thread_id, dest);
+        }
+        else
+        {
+            fmt_helper::append_int(msg.thread_id, dest);
+        }
     }
 };
 
@@ -667,9 +709,17 @@ public:
 
     void format(const details::log_msg &, const std::tm &, fmt::memory_buffer &dest) override
     {
-        const size_t field_size = 6;
-        scoped_pad p(field_size, padinfo_, dest);
-        fmt_helper::pad6(static_cast<size_t>(details::os::pid()), dest);
+        const auto pid = static_cast<uint32_t>(details::os::pid());
+        if (padinfo_.enabled())
+        {
+            auto field_size = fmt_helper::count_digits(pid);
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::append_int(pid, dest);
+        }
+        else
+        {
+            fmt_helper::append_int(pid, dest);
+        }
     }
 };
 
@@ -696,14 +746,20 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
-        scoped_pad p(msg.payload, padinfo_, dest);
-        fmt_helper::append_string_view(msg.payload, dest);
+        if (padinfo_.enabled())
+        {
+            scoped_pad p(msg.payload, padinfo_, dest);
+            fmt_helper::append_string_view(msg.payload, dest);
+        }
+        else
+        {
+            fmt_helper::append_string_view(msg.payload, dest);
+        }
     }
 };
 
 class ch_formatter final : public flag_formatter
 {
-public:
 public:
     explicit ch_formatter(char ch)
         : ch_(ch)
@@ -768,6 +824,95 @@ public:
     }
 };
 
+// print source location
+class source_location_formatter final : public flag_formatter
+{
+public:
+    explicit source_location_formatter(padding_info padinfo)
+        : flag_formatter(padinfo){};
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+        if (msg.source.empty())
+        {
+            return;
+        }
+        if (padinfo_.enabled())
+        {
+            const auto text_size = std::char_traits<char>::length(msg.source.filename) + fmt_helper::count_digits(msg.source.line) + 1;
+            scoped_pad p(text_size, padinfo_, dest);
+            fmt_helper::append_string_view(msg.source.filename, dest);
+            dest.push_back(':');
+            fmt_helper::append_int(msg.source.line, dest);
+        }
+        else
+        {
+            fmt_helper::append_string_view(msg.source.filename, dest);
+            dest.push_back(':');
+            fmt_helper::append_int(msg.source.line, dest);
+        }
+    }
+};
+// print source filename
+class source_filename_formatter final : public flag_formatter
+{
+public:
+    explicit source_filename_formatter(padding_info padinfo)
+        : flag_formatter(padinfo){};
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+        if (msg.source.empty())
+        {
+            return;
+        }
+        scoped_pad p(msg.source.filename, padinfo_, dest);
+        fmt_helper::append_string_view(msg.source.filename, dest);
+    }
+};
+
+class source_linenum_formatter final : public flag_formatter
+{
+public:
+    explicit source_linenum_formatter(padding_info padinfo)
+        : flag_formatter(padinfo){};
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+        if (msg.source.empty())
+        {
+            return;
+        }
+        if (padinfo_.enabled())
+        {
+            auto field_size = fmt_helper::count_digits(msg.source.line);
+            scoped_pad p(field_size, padinfo_, dest);
+            fmt_helper::append_int(msg.source.line, dest);
+        }
+        else
+        {
+            fmt_helper::append_int(msg.source.line, dest);
+        }
+    }
+};
+// print source funcname
+class source_funcname_formatter final : public flag_formatter
+{
+public:
+    explicit source_funcname_formatter(padding_info padinfo)
+        : flag_formatter(padinfo){};
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+        if (msg.source.empty())
+        {
+            return;
+        }
+        scoped_pad p(msg.source.funcname, padinfo_, dest);
+        fmt_helper::append_string_view(msg.source.funcname, dest);
+    }
+};
+
 // Full info formatter
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
 class full_formatter final : public flag_formatter
@@ -817,7 +962,7 @@ public:
         fmt_helper::append_buf(cached_datetime_, dest);
 
         auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
-        fmt_helper::pad3(static_cast<int>(millis.count()), dest);
+        fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
         dest.push_back(']');
         dest.push_back(' ');
 
@@ -840,10 +985,21 @@ public:
         // wrap the level name with color
         msg.color_range_start = dest.size();
         // fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
-        fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
+        fmt_helper::append_string_view(level::to_string_view(msg.level), dest);
         msg.color_range_end = dest.size();
         dest.push_back(']');
         dest.push_back(' ');
+
+        // add source location if present
+        if (!msg.source.empty())
+        {
+            dest.push_back('[');
+            fmt_helper::append_string_view(msg.source.filename, dest);
+            dest.push_back(':');
+            fmt_helper::append_int(msg.source.line, dest);
+            dest.push_back(']');
+            dest.push_back(' ');
+        }
         // fmt_helper::append_string_view(msg.msg(), dest);
         fmt_helper::append_string_view(msg.payload, dest);
     }
@@ -928,141 +1084,160 @@ private:
     {
         switch (flag)
         {
-        // logger name
-        case 'n':
+
+        case ('+'): // default formatter
+            formatters_.push_back(details::make_unique<details::full_formatter>(padding));
+            break;
+
+        case 'n': // logger name
             formatters_.push_back(details::make_unique<details::name_formatter>(padding));
             break;
 
-        case 'l':
+        case 'l': // level
             formatters_.push_back(details::make_unique<details::level_formatter>(padding));
             break;
 
-        case 'L':
+        case 'L': // short level
             formatters_.push_back(details::make_unique<details::short_level_formatter>(padding));
             break;
 
-        case ('t'):
+        case ('t'): // thread id
             formatters_.push_back(details::make_unique<details::t_formatter>(padding));
             break;
 
-        case ('v'):
+        case ('v'): // the message text
             formatters_.push_back(details::make_unique<details::v_formatter>(padding));
             break;
 
-        case ('a'):
+        case ('a'): // weekday
             formatters_.push_back(details::make_unique<details::a_formatter>(padding));
             break;
 
-        case ('A'):
+        case ('A'): // short weekday
             formatters_.push_back(details::make_unique<details::A_formatter>(padding));
             break;
 
         case ('b'):
-        case ('h'):
+        case ('h'): // month
             formatters_.push_back(details::make_unique<details::b_formatter>(padding));
             break;
 
-        case ('B'):
+        case ('B'): // short month
             formatters_.push_back(details::make_unique<details::B_formatter>(padding));
             break;
-        case ('c'):
+
+        case ('c'): // datetime
             formatters_.push_back(details::make_unique<details::c_formatter>(padding));
             break;
 
-        case ('C'):
+        case ('C'): // year 2 digits
             formatters_.push_back(details::make_unique<details::C_formatter>(padding));
             break;
 
-        case ('Y'):
+        case ('Y'): // year 4 digits
             formatters_.push_back(details::make_unique<details::Y_formatter>(padding));
             break;
 
         case ('D'):
-        case ('x'):
+        case ('x'): // datetime MM/DD/YY
             formatters_.push_back(details::make_unique<details::D_formatter>(padding));
             break;
 
-        case ('m'):
+        case ('m'): // month 1-12
             formatters_.push_back(details::make_unique<details::m_formatter>(padding));
             break;
 
-        case ('d'):
+        case ('d'): // day of month 1-31
             formatters_.push_back(details::make_unique<details::d_formatter>(padding));
             break;
 
-        case ('H'):
+        case ('H'): // hours 24
             formatters_.push_back(details::make_unique<details::H_formatter>(padding));
             break;
 
-        case ('I'):
+        case ('I'): // hours 12
             formatters_.push_back(details::make_unique<details::I_formatter>(padding));
             break;
 
-        case ('M'):
+        case ('M'): // minutes
             formatters_.push_back(details::make_unique<details::M_formatter>(padding));
             break;
 
-        case ('S'):
+        case ('S'): // seconds
             formatters_.push_back(details::make_unique<details::S_formatter>(padding));
             break;
 
-        case ('e'):
+        case ('e'): // milliseconds
             formatters_.push_back(details::make_unique<details::e_formatter>(padding));
             break;
 
-        case ('f'):
+        case ('f'): // microseconds
             formatters_.push_back(details::make_unique<details::f_formatter>(padding));
             break;
-        case ('F'):
+
+        case ('F'): // nanoseconds
             formatters_.push_back(details::make_unique<details::F_formatter>(padding));
             break;
 
-        case ('E'):
+        case ('E'): // seconds since epoch
             formatters_.push_back(details::make_unique<details::E_formatter>(padding));
             break;
 
-        case ('p'):
+        case ('p'): // am/pm
             formatters_.push_back(details::make_unique<details::p_formatter>(padding));
             break;
 
-        case ('r'):
+        case ('r'): // 12 hour clock 02:55:02 pm
             formatters_.push_back(details::make_unique<details::r_formatter>(padding));
             break;
 
-        case ('R'):
+        case ('R'): // 24-hour HH:MM time
             formatters_.push_back(details::make_unique<details::R_formatter>(padding));
             break;
 
         case ('T'):
-        case ('X'):
+        case ('X'): // ISO 8601 time format (HH:MM:SS)
             formatters_.push_back(details::make_unique<details::T_formatter>(padding));
             break;
 
-        case ('z'):
+        case ('z'): // timezone
             formatters_.push_back(details::make_unique<details::z_formatter>(padding));
             break;
 
-        case ('+'):
-            formatters_.push_back(details::make_unique<details::full_formatter>(padding));
-            break;
-
-        case ('P'):
+        case ('P'): // pid
             formatters_.push_back(details::make_unique<details::pid_formatter>(padding));
             break;
+
 #ifdef SPDLOG_ENABLE_MESSAGE_COUNTER
         case ('i'):
             formatters_.push_back(details::make_unique<details::i_formatter>(padding));
             break;
 #endif
-        case ('^'):
+        case ('^'): // color range start
             formatters_.push_back(details::make_unique<details::color_start_formatter>(padding));
             break;
 
-        case ('$'):
+        case ('$'): // color range end
             formatters_.push_back(details::make_unique<details::color_stop_formatter>(padding));
             break;
 
-        case ('%'):
+        case ('@'): // source location (filename:filenumber)
+            formatters_.push_back(details::make_unique<details::source_location_formatter>(padding));
+            break;
+
+        case ('s'): // source filename
+            formatters_.push_back(details::make_unique<details::source_filename_formatter>(padding));
+            break;
+
+        case ('#'): // source line number
+            formatters_.push_back(details::make_unique<details::source_linenum_formatter>(padding));
+            break;
+
+        case ('!'): // source funcname
+            formatters_.push_back(details::make_unique<details::source_funcname_formatter>(padding));
+            break;
+
+        case ('%'): // % char
             formatters_.push_back(details::make_unique<details::ch_formatter>('%'));
             break;
 

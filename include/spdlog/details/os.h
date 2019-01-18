@@ -210,10 +210,10 @@ inline size_t filesize(FILE *f)
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = _fileno(f);
 #if _WIN64 // 64 bits
-    struct _stat64 st;
-    if (_fstat64(fd, &st) == 0)
+    __int64 ret = _filelengthi64(fd);
+    if (ret >= 0)
     {
-        return st.st_size;
+        return static_cast<size_t>(ret);
     }
 
 #else // windows 32 bits
@@ -338,8 +338,7 @@ inline size_t _thread_id() SPDLOG_NOEXCEPT
 // Return current thread id as size_t (from thread local storage)
 inline size_t thread_id() SPDLOG_NOEXCEPT
 {
-#if defined(SPDLOG_DISABLE_TID_CACHING) || (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt) ||                       \
-    (defined(__clang__) && !__has_feature(cxx_thread_local))
+#if defined(SPDLOG_NO_TLS)
     return _thread_id();
 #else // cache thread id in tls
     static thread_local const size_t tid = _thread_id();

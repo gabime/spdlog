@@ -31,7 +31,7 @@ int main(int, char *[])
     spdlog::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
     spdlog::info("Support for floats {:03.2f}", 1.23456);
     spdlog::info("Positional args are {1} {0}..", "too", "supported");
-    spdlog::info("{:>8} aligned, {:>8} aligned", "right", "left");
+    spdlog::info("{:>8} aligned, {:<8} aligned", "right", "left");
 
     // Runtime log levels
     spdlog::set_level(spdlog::level::info); // Set global log level to info
@@ -161,11 +161,10 @@ void binary_example()
 // define SPDLOG_ACTIVE_LEVEL to required level (e.g. SPDLOG_LEVEL_TRACE)
 void trace_example()
 {
-
     // trace from default logger
-    SPDLOG_TRACE("Enabled only #ifdef SPDLOG_TRACE_ON..{} ,{}", 1, 3.23);
+    SPDLOG_TRACE("Some trace message.. {} ,{}", 1, 3.23);
     // debug from default logger
-    SPDLOG_DEBUG("Enabled only #ifdef SPDLOG_DEBUG_ON.. {} ,{}", 1, 3.23);
+    SPDLOG_DEBUG("Some debug message.. {} ,{}", 1, 3.23);
 
     // trace from logger object
     auto logger = spdlog::get("file_logger");

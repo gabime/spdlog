@@ -14,6 +14,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <cstring>
 #include <type_traits>
 #include <unordered_map>
 
@@ -23,6 +24,8 @@
 #endif
 
 #include "spdlog/details/null_mutex.h"
+
+#include "spdlog/fmt/fmt.h"
 
 // visual studio upto 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
@@ -41,7 +44,29 @@
 #define SPDLOG_DEPRECATED
 #endif
 
-#include "spdlog/fmt/fmt.h"
+// disable thread local on msvc 2013
+#ifndef SPDLOG_NO_TLS
+#if (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt)
+#define SPDLOG_NO_TLS 1
+#endif
+#endif
+
+// Get the basename of __FILE__ (at compile time if possible)
+#if FMT_HAS_FEATURE(__builtin_strrchr)
+#define SPDLOG_STRRCHR(str, sep) __builtin_strrchr(str, sep)
+#else
+#define SPDLOG_STRRCHR(str, sep) strrchr(str, sep)
+#endif //__builtin_strrchr not defined
+
+#ifdef _WIN32
+#define SPDLOG_FILE_BASENAME(file) SPDLOG_STRRCHR("\\" file, '\\') + 1
+#else
+#define SPDLOG_FILE_BASENAME(file) SPDLOG_STRRCHR("/" file, '/') + 1
+#endif
+
+#ifndef SPDLOG_FUNCTION
+#define SPDLOG_FUNCTION __FUNCTION__
+#endif
 
 namespace spdlog {
 
@@ -100,13 +125,13 @@ enum level_enum
         "trace", "debug", "info", "warning", "error", "critical", "off"                                                                    \
     }
 #endif
-static const char *level_names[] SPDLOG_LEVEL_NAMES;
 
+static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 static const char *short_level_names[]{"T", "D", "I", "W", "E", "C", "O"};
 
-inline const char *to_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
+inline string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
-    return level_names[l];
+    return level_string_views[l];
 }
 
 inline const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
@@ -116,17 +141,16 @@ inline const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 
 inline spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT
 {
-    static std::unordered_map<std::string, level_enum> name_to_level = // map string->level
-        {{level_names[0], level::trace},                               // trace
-            {level_names[1], level::debug},                            // debug
-            {level_names[2], level::info},                             // info
-            {level_names[3], level::warn},                             // warn
-            {level_names[4], level::err},                              // err
-            {level_names[5], level::critical},                         // critical
-            {level_names[6], level::off}};                             // off
-
-    auto lvl_it = name_to_level.find(name);
-    return lvl_it != name_to_level.end() ? lvl_it->second : level::off;
+    int level = 0;
+    for (const auto &level_str : level_string_views)
+    {
+        if (level_str == name)
+        {
+            return static_cast<level::level_enum>(level);
+        }
+        level++;
+    }
+    return level::off;
 }
 
 using level_hasher = std::hash<int>;
@@ -177,6 +201,30 @@ using filename_t = std::wstring;
 #else
 using filename_t = std::string;
 #endif
+
+struct source_loc
+{
+    SPDLOG_CONSTEXPR source_loc()
+        : filename{""}
+        , line{0}
+        , funcname{""}
+    {
+    }
+    SPDLOG_CONSTEXPR source_loc(const char *filename, int line, const char *funcname)
+        : filename{filename}
+        , line{static_cast<uint32_t>(line)}
+        , funcname{funcname}
+    {
+    }
+
+    SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT
+    {
+        return line == 0;
+    }
+    const char *filename;
+    uint32_t line;
+    const char *funcname;
+};
 
 namespace details {
 // make_unique support for pre c++14

@@ -68,22 +68,7 @@ int main(int argc, char *argv[])
         bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
         spdlog::info("**************************************************************");
-        spdlog::info("Default API. Single thread, {:n} iterations", howmany);
-        spdlog::info("**************************************************************");
-
-        basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
-        bench_default_api(howmany, std::move(basic_st));
-
-        rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
-        bench_default_api(howmany, std::move(rotating_st));
-
-        daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st.log");
-        bench_default_api(howmany, std::move(daily_st));
-
-        bench_default_api(howmany, spdlog::create<null_sink_st>("null_st"));
-
-        spdlog::info("**************************************************************");
-        spdlog::info("C-string (500 bytes). Single thread, {:n} iterations", howmany);
+        spdlog::info("C-string (400 bytes). Single thread, {:n} iterations", howmany);
         spdlog::info("**************************************************************");
 
         basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_cs.log", true);

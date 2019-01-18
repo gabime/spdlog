@@ -83,7 +83,7 @@ TEST_CASE("drop non existing", "[registry]")
 TEST_CASE("default logger", "[registry]")
 {
     spdlog::drop_all();
-    spdlog::set_default_logger(std::move(spdlog::null_logger_st(tested_logger_name)));
+    spdlog::set_default_logger(spdlog::null_logger_st(tested_logger_name));
     REQUIRE(spdlog::get(tested_logger_name) == spdlog::default_logger());
     spdlog::drop_all();
 }
@@ -110,4 +110,5 @@ TEST_CASE("disable automatic registration", "[registry]")
     REQUIRE(logger1->level() == log_level);
     REQUIRE(logger2->level() == log_level);
     spdlog::set_level(spdlog::level::info);
+    spdlog::set_automatic_registration(true);
 }

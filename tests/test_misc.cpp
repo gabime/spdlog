@@ -43,15 +43,15 @@ TEST_CASE("log_levels", "[log_levels]")
     REQUIRE(log_info("Hello", spdlog::level::trace) == "Hello");
 }
 
-TEST_CASE("to_c_str", "[convert_to_c_str]")
+TEST_CASE("level_to_string_view", "[convert_to_string_view")
 {
-    REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::trace)) == "trace");
-    REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::debug)) == "debug");
-    REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::info)) == "info");
-    REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::warn)) == "warning");
-    REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::err)) == "error");
-    REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::critical)) == "critical");
-    REQUIRE(std::string(spdlog::level::to_c_str(spdlog::level::off)) == "off");
+    REQUIRE(spdlog::level::to_string_view(spdlog::level::trace) == "trace");
+    REQUIRE(spdlog::level::to_string_view(spdlog::level::debug) == "debug");
+    REQUIRE(spdlog::level::to_string_view(spdlog::level::info) == "info");
+    REQUIRE(spdlog::level::to_string_view(spdlog::level::warn) == "warning");
+    REQUIRE(spdlog::level::to_string_view(spdlog::level::err) == "error");
+    REQUIRE(spdlog::level::to_string_view(spdlog::level::critical) == "critical");
+    REQUIRE(spdlog::level::to_string_view(spdlog::level::off) == "off");
 }
 
 TEST_CASE("to_short_c_str", "[convert_to_short_c_str]")
@@ -86,7 +86,7 @@ TEST_CASE("periodic flush", "[periodic_flush]")
     auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
 
     spdlog::flush_every(std::chrono::seconds(1));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1250));
     REQUIRE(test_sink->flush_counter() == 1);
     spdlog::flush_every(std::chrono::seconds(0));
     spdlog::drop_all();

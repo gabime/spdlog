@@ -58,7 +58,7 @@ inline void spdlog::logger::set_pattern(std::string pattern, pattern_time_type t
 }
 
 template<typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Args &... args)
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const char *fmt, const Args &... args)
 {
     if (!should_log(lvl))
     {
@@ -70,13 +70,19 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Ar
         using details::fmt_helper::to_string_view;
         fmt::memory_buffer buf;
         fmt::format_to(buf, fmt, args...);
-        details::log_msg log_msg(&name_, lvl, to_string_view(buf));
+        details::log_msg log_msg(source, &name_, lvl, to_string_view(buf));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
 }
 
-inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
+template<typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const char *fmt, const Args &... args)
+{
+    log(source_loc{}, lvl, fmt, args...);
+}
+
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const char *msg)
 {
     if (!should_log(lvl))
     {
@@ -85,7 +91,27 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
 
     try
     {
-        details::log_msg log_msg(&name_, lvl, spdlog::string_view_t(msg));
+        details::log_msg log_msg(source, &name_, lvl, spdlog::string_view_t(msg));
+        sink_it_(log_msg);
+    }
+    SPDLOG_CATCH_AND_HANDLE
+}
+
+inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
+{
+    log(source_loc{}, lvl, msg);
+}
+
+template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const T &msg)
+{
+    if (!should_log(lvl))
+    {
+        return;
+    }
+    try
+    {
+        details::log_msg log_msg(source, &name_, lvl, msg);
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -94,20 +120,11 @@ inline void spdlog::logger::log(level::level_enum lvl, const char *msg)
 template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
 inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
 {
-    if (!should_log(lvl))
-    {
-        return;
-    }
-    try
-    {
-        details::log_msg log_msg(&name_, lvl, msg);
-        sink_it_(log_msg);
-    }
-    SPDLOG_CATCH_AND_HANDLE
+    log(source_loc{}, lvl, msg);
 }
 
 template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
-inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const T &msg)
 {
     if (!should_log(lvl))
     {
@@ -118,10 +135,16 @@ inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
         using details::fmt_helper::to_string_view;
         fmt::memory_buffer buf;
         fmt::format_to(buf, "{}", msg);
-        details::log_msg log_msg(&name_, lvl, to_string_view(buf));
+        details::log_msg log_msg(source, &name_, lvl, to_string_view(buf));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
+}
+
+template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type *>
+inline void spdlog::logger::log(level::level_enum lvl, const T &msg)
+{
+    log(source_loc{}, lvl, msg);
 }
 
 template<typename... Args>
@@ -220,7 +243,7 @@ inline void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer 
 }
 
 template<typename... Args>
-inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const wchar_t *fmt, const Args &... args)
 {
     if (!should_log(lvl))
     {
@@ -235,10 +258,16 @@ inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const
         fmt::format_to(wbuf, fmt, args...);
         fmt::memory_buffer buf;
         wbuf_to_utf8buf(wbuf, buf);
-        details::log_msg log_msg(&name_, lvl, to_string_view(buf));
+        details::log_msg log_msg(source, &name_, lvl, to_string_view(buf));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
+}
+
+template<typename... Args>
+inline void spdlog::logger::log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+{
+    log(source_loc{}, lvl, fmt, args...);
 }
 
 template<typename... Args>
@@ -361,7 +390,7 @@ inline void spdlog::logger::sink_it_(details::log_msg &msg)
 
     if (should_flush_(msg))
     {
-        flush();
+        flush_();
     }
 }
 

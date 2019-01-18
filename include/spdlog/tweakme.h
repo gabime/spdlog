@@ -45,13 +45,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-// Uncomment to prevent spdlog from caching thread ids in thread local storage.
-// By default spdlog saves thread ids in tls to gain a few micros for each call.
+// Uncomment to prevent spdlog from using thread local storage.
 //
 // WARNING: if your program forks, UNCOMMENT this flag to prevent undefined
 // thread ids in the children logs.
 //
-// #define SPDLOG_DISABLE_TID_CACHING
+// #define SPDLOG_NO_TLS
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -134,4 +133,13 @@
 // Macros like SPDLOG_DEBUG(..), SPDLOG_INFO(..)  will expand to empty statements if not enabled
 //
 // #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Uncomment (and change if desired) macro to use for function names.
+// This is compiler dependent.
+// __PRETTY_FUNCTION__ might be nicer in clang/gcc, and __FUNCTION__ in msvc.
+// Defaults to __FUNCTION__ (should work on all compilers) if not defined.
+//
+// #define SPDLOG_FUNCTION __PRETTY_FUNCTION__
 ///////////////////////////////////////////////////////////////////////////////
