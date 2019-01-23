@@ -63,6 +63,11 @@ public:
         rotation_tp_ = next_rotation_tp_();
     }
 
+    const filename_t &filename() const
+    {
+        return file_helper_.filename();
+    }
+
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
