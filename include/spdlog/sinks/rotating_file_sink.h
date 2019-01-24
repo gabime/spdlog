@@ -36,15 +36,12 @@ public:
         , max_size_(max_size)
         , max_files_(max_files)
     {
-        if (rotate_on_open)
-        {
-            rotate_(false);
-        }
-        else
-        {
-            file_helper_.open(calc_filename(base_filename_, 0));
-        }
+        file_helper_.open(calc_filename(base_filename_, 0));
         current_size_ = file_helper_.size(); // expensive. called only once
+        if (rotate_on_open && current_size_ > 0)
+        {
+            rotate_();
+        }
     }
 
     // calc filename according to index and file extension if exists.
@@ -95,7 +92,7 @@ private:
     // log.1.txt -> log.2.txt
     // log.2.txt -> log.3.txt
     // log.3.txt -> delete
-    void rotate_(bool reopen=true)
+    void rotate_()
     {
         using details::os::filename_to_str;
         file_helper_.close();
@@ -123,14 +120,7 @@ private:
                 }
             }
         }
-        if (reopen)
-        {
-            file_helper_.reopen(true);
-        }
-        else
-        {
-            file_helper_.open(base_filename_, true);
-        }
+        file_helper_.reopen(true);
     }
 
     // delete the target if exists, and rename the src file  to target
