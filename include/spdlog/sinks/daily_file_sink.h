@@ -6,7 +6,7 @@
 #pragma once
 
 #ifndef SPDLOG_H
-#error "spdlog.h must be included before this file."
+#include "spdlog/spdlog.h"
 #endif
 
 #include "spdlog/details/file_helper.h"
@@ -61,6 +61,11 @@ public:
         auto now = log_clock::now();
         file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(now)), truncate_);
         rotation_tp_ = next_rotation_tp_();
+    }
+
+    const filename_t &filename() const
+    {
+        return file_helper_.filename();
     }
 
 protected:

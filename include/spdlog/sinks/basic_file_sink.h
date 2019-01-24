@@ -6,7 +6,7 @@
 #pragma once
 
 #ifndef SPDLOG_H
-#error "spdlog.h must be included before this file."
+#include "spdlog/spdlog.h"
 #endif
 
 #include "spdlog/details/file_helper.h"
@@ -28,6 +28,11 @@ public:
     explicit basic_file_sink(const filename_t &filename, bool truncate = false)
     {
         file_helper_.open(filename, truncate);
+    }
+
+    const filename_t &filename() const
+    {
+        return file_helper_.filename();
     }
 
 protected:

@@ -25,9 +25,9 @@ struct log_msg
 
 #ifndef SPDLOG_NO_THREAD_ID
         , thread_id(os::thread_id())
+#endif
         , source(loc)
         , payload(view)
-#endif
     {
     }
 
