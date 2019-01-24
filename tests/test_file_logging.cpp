@@ -38,7 +38,7 @@ TEST_CASE("flush_on", "[flush_on]]")
     REQUIRE(count_lines(filename) == 3);
 }
 
-TEST_CASE("rotating_file_logger", "[rotating_logger]]")
+TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 {
     prepare_logdir();
     size_t max_size = 1024 * 10;
@@ -55,7 +55,7 @@ TEST_CASE("rotating_file_logger", "[rotating_logger]]")
     REQUIRE(count_lines(filename) == 10);
 }
 
-TEST_CASE("rotating_file_logger2", "[rotating_logger2]]")
+TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 {
     prepare_logdir();
     size_t max_size = 1024 * 10;
