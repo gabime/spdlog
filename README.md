@@ -101,7 +101,10 @@ int main()
     // define SPDLOG_ACTIVE_LEVEL to desired level
     SPDLOG_TRACE("Some trace message with param {}", {});
     SPDLOG_DEBUG("Some debug message");
-        
+    
+    // Set the default logger to file logger
+    auto file_logger = spdlog::basic_logger_mt("basic_logger", "logs/basic.txt");
+    spdlog::set_default_logger(file_logger);            
 }
 ```
 #### create stdout/stderr logger object
