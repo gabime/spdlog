@@ -210,10 +210,10 @@ struct source_loc
         , funcname{""}
     {
     }
-    SPDLOG_CONSTEXPR source_loc(const char *filename, int line, const char *funcname)
-        : filename{filename}
-        , line{static_cast<uint32_t>(line)}
-        , funcname{funcname}
+    SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
+        : filename{filename_in}
+        , line{static_cast<uint32_t>(line_in)}
+        , funcname{funcname_in}
     {
     }
 
