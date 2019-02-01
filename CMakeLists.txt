@@ -20,7 +20,7 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 #---------------------------------------------------------------------------------------
 # compiler config
 #---------------------------------------------------------------------------------------
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -30,6 +30,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     add_compile_options("-Wconversion")
     add_compile_options("-pedantic")
     add_compile_options("-Wfatal-errors")
+    add_compile_options("-Wshadow")
 endif()
 
 #---------------------------------------------------------------------------------------
