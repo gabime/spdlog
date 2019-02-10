@@ -143,3 +143,21 @@
 //
 // #define SPDLOG_FUNCTION __PRETTY_FUNCTION__
 ///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Uncomment to use custom thread identifier type.
+//
+// WARNING: Custom thread id getter should be used when thread_t is not
+// convertible to size_t (which is default type) or values should be received
+// from another source, e.g. pthread identifiers under Linux.
+//
+// WARNING: If custom thread_t is not convertible to size_t and custom thread
+// id printer code is not set then compile-time assert will fail. Use 
+// SPDLOG_CUSTOM_THREAD_ID_PRINTER macro to provide corresponding code to print
+// thread id. This code will be placed inside t_formatter (for '%t') in
+// details/pattern_formatter.h.
+//
+// #define SPDLOG_CUSTOM_THREAD_T custom_type
+// #define SPDLOG_CUSTOM_THREAD_ID_GETTER custom_type_get_func()
+// #define SPDLOG_CUSTOM_THREAD_ID_PRINTER {  } // see t_formatter::format
+///////////////////////////////////////////////////////////////////////////////

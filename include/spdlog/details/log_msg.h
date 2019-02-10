@@ -41,7 +41,7 @@ struct log_msg
     const std::string *logger_name{nullptr};
     level::level_enum level{level::off};
     log_clock::time_point time;
-    size_t thread_id{0};
+    details::os::thread_t thread_id{};
     size_t msg_id{0};
 
     // wrapping the formatted text with color (updated by pattern_formatter).

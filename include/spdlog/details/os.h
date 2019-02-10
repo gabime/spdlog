@@ -310,38 +310,49 @@ inline int utc_minutes_offset(const std::tm &tm = details::os::localtime())
 #endif
 }
 
-// Return current thread id as size_t
+#if defined(SPDLOG_CUSTOM_THREAD_T)
+using thread_t = SPDLOG_CUSTOM_THREAD_T;
+#else
+using thread_t = size_t;
+#endif
+
+// Return current thread id as thread_t
 // It exists because the std::this_thread::get_id() is much slower(especially
 // under VS 2013)
-inline size_t _thread_id() SPDLOG_NOEXCEPT
+inline thread_t _thread_id() SPDLOG_NOEXCEPT
 {
+#if defined(SPDLOG_CUSTOM_THREAD_ID_GETTER)
+    return SPDLOG_CUSTOM_THREAD_ID_GETTER;
+#else
 #ifdef _WIN32
-    return static_cast<size_t>(::GetCurrentThreadId());
+    return static_cast<thread_t>(::GetCurrentThreadId());
 #elif __linux__
+
 #if defined(__ANDROID__) && defined(__ANDROID_API__) && (__ANDROID_API__ < 21)
 #define SYS_gettid __NR_gettid
 #endif
-    return static_cast<size_t>(syscall(SYS_gettid));
+    return static_cast<thread_t>(syscall(SYS_gettid));
 #elif __FreeBSD__
     long tid;
     thr_self(&tid);
-    return static_cast<size_t>(tid);
+    return static_cast<thread_t>(tid);
 #elif __APPLE__
     uint64_t tid;
     pthread_threadid_np(nullptr, &tid);
-    return static_cast<size_t>(tid);
+    return static_cast<thread_t>(tid);
 #else // Default to standard C++11 (other Unix)
-    return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
+    return static_cast<thread_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
+#endif
 #endif
 }
 
-// Return current thread id as size_t (from thread local storage)
-inline size_t thread_id() SPDLOG_NOEXCEPT
+// Return current thread id as thread_t (from thread local storage)
+inline thread_t thread_id() SPDLOG_NOEXCEPT
 {
 #if defined(SPDLOG_NO_TLS)
     return _thread_id();
 #else // cache thread id in tls
-    static thread_local const size_t tid = _thread_id();
+    static thread_local const thread_t tid = _thread_id();
     return tid;
 #endif
 }

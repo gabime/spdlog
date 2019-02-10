@@ -687,6 +687,13 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
+#if defined(SPDLOG_CUSTOM_THREAD_ID_PRINTER)
+        SPDLOG_CUSTOM_THREAD_ID_PRINTER
+#else
+        using used_thread_t = decltype(msg.thread_id);
+        static_assert(std::is_convertible<used_thread_t, size_t>::value,
+                      "custom thread_t is not convertible to size_t, use SPDLOG_CUSTOM_THREAD_ID_PRINTER macro");
+
         if (padinfo_.enabled())
         {
             const auto field_size = fmt_helper::count_digits(msg.thread_id);
@@ -697,6 +704,7 @@ public:
         {
             fmt_helper::append_int(msg.thread_id, dest);
         }
+#endif
     }
 };
 
