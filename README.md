@@ -313,7 +313,7 @@ void syslog_example()
 void android_example()
 {
     std::string tag = "spdlog-android";
-    auto android_logger = spdlog::android_logger("android", tag);
+    auto android_logger = spdlog::android_logger_mt("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
 }
 ```
