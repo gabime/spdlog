@@ -125,9 +125,12 @@ enum level_enum
         "trace", "debug", "info", "warning", "error", "critical", "off"                                                                    \
     }
 #endif
-
 static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
-static const char *short_level_names[]{"T", "D", "I", "W", "E", "C", "O"};
+
+#if !defined(SPDLOG_SHORT_LEVEL_NAMES)
+#define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
+#endif
+static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
 inline string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
