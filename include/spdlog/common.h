@@ -80,6 +80,7 @@ using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using log_err_handler = std::function<void(const std::string &err_msg)>;
+using log_custom_flags = std::unordered_map<char, std::string>;
 
 // string_view type - either std::string_view or fmt::string_view (pre c++17)
 #if defined(FMT_USE_STD_STRING_VIEW)

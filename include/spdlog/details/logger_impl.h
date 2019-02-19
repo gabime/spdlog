@@ -70,8 +70,9 @@ inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const 
         using details::fmt_helper::to_string_view;
         fmt::memory_buffer buf;
         fmt::format_to(buf, fmt, args...);
-        details::log_msg log_msg(source, &name_, lvl, to_string_view(buf));
+        details::log_msg log_msg(source, &name_, lvl, &custom_flags_, to_string_view(buf));
         sink_it_(log_msg);
+
     }
     SPDLOG_CATCH_AND_HANDLE
 }
@@ -91,7 +92,7 @@ inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const 
 
     try
     {
-        details::log_msg log_msg(source, &name_, lvl, spdlog::string_view_t(msg));
+        details::log_msg log_msg(source, &name_, lvl, &custom_flags_, spdlog::string_view_t(msg));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -117,7 +118,7 @@ inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const 
     }
     try
     {
-        details::log_msg log_msg(source, &name_, lvl, msg);
+        details::log_msg log_msg(source, &name_, lvl, &custom_flags_, msg);
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -135,7 +136,7 @@ inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const 
         using details::fmt_helper::to_string_view;
         fmt::memory_buffer buf;
         fmt::format_to(buf, "{}", msg);
-        details::log_msg log_msg(source, &name_, lvl, to_string_view(buf));
+        details::log_msg log_msg(source, &name_, lvl, &custom_flags_, to_string_view(buf));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -252,7 +253,7 @@ inline void spdlog::logger::log(source_loc source, level::level_enum lvl, const 
         fmt::format_to(wbuf, fmt, args...);
         fmt::memory_buffer buf;
         wbuf_to_utf8buf(wbuf, buf);
-        details::log_msg log_msg(source, &name_, lvl, to_string_view(buf));
+        details::log_msg log_msg(source, &name_, lvl, &custom_flags_, to_string_view(buf));
         sink_it_(log_msg);
     }
     SPDLOG_CATCH_AND_HANDLE
@@ -313,6 +314,30 @@ inline const std::string &spdlog::logger::name() const
 inline void spdlog::logger::set_level(spdlog::level::level_enum log_level)
 {
     level_.store(log_level);
+}
+
+inline void spdlog::logger::set_custom_flag(char flag, const std::string& value)
+{
+    custom_flags_[flag] = value;
+}
+
+inline const std::string& spdlog::logger::get_custom_flag(char flag) const
+{
+    auto it = custom_flags_.find(flag);
+    if (it != custom_flags_.end())
+    {
+        return it->second;
+    }
+    else
+    {
+        static std::string empty;
+        return empty;
+    }
+}
+
+inline const spdlog::log_custom_flags &spdlog::logger::custom_flags() const
+{
+    return custom_flags_;
 }
 
 inline void spdlog::logger::set_error_handler(spdlog::log_err_handler err_handler)

@@ -99,6 +99,18 @@ inline void register_logger(std::shared_ptr<logger> logger)
     details::registry::instance().register_logger(std::move(logger));
 }
 
+// Set custom flag
+inline void set_custom_flag(char flag, const std::string value)
+{
+    details::registry::instance().set_custom_flag(flag, std::move(value));
+}
+
+// Get custom flag
+inline const std::string &get_custom_flag(char flag)
+{
+    return details::registry::instance().get_custom_flag(flag);
+}
+
 // Apply a user defined function on all registered loggers
 // Example:
 // spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->flush();});

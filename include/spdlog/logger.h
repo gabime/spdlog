@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2015-2108 Gabi Melman.
+// Copyright(c) 2015-2019 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
@@ -24,6 +24,7 @@
 
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace spdlog {
@@ -133,6 +134,11 @@ public:
     void set_level(level::level_enum log_level);
 
     static level::level_enum default_level();
+
+    void set_custom_flag(char flag, const std::string& value);
+    const std::string &get_custom_flag(char flag) const;
+    const log_custom_flags &custom_flags() const;
+
     level::level_enum level() const;
     const std::string &name() const;
 
@@ -177,6 +183,7 @@ protected:
     log_err_handler err_handler_{[this](const std::string &msg) { this->default_err_handler_(msg); }};
     std::atomic<time_t> last_err_time_{0};
     std::atomic<size_t> msg_counter_{1};
+    log_custom_flags custom_flags_;
 };
 } // namespace spdlog
 

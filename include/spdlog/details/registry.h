@@ -198,6 +198,28 @@ public:
         default_logger_.reset();
     }
 
+    void set_custom_flag(char flag, const std::string& value)
+    {
+        std::lock_guard<std::mutex> lock(logger_map_mutex_);
+        for (auto& l : loggers_)
+            l.second->set_custom_flag(flag, value);
+        custom_flags_[flag] = value;
+    }
+
+    const std::string& get_custom_flag(char flag)
+    {
+        auto it = custom_flags_.find(flag);
+        if (it != custom_flags_.end())
+        {
+            return it->second;
+        }
+        else
+        {
+            static std::string empty;
+            return empty;
+        }
+    }
+
     // clean all resources and threads started by the registry
     void shutdown()
     {
@@ -279,6 +301,7 @@ private:
     std::unique_ptr<periodic_worker> periodic_flusher_;
     std::shared_ptr<logger> default_logger_;
     bool automatic_registration_ = true;
+    spdlog::log_custom_flags custom_flags_;
 };
 
 } // namespace details

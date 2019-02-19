@@ -10,15 +10,17 @@
 
 #include <string>
 #include <utility>
+#include <unordered_map>
 
 namespace spdlog {
 namespace details {
 struct log_msg
 {
 
-    log_msg(source_loc loc, const std::string *loggers_name, level::level_enum lvl, string_view_t view)
+    log_msg(source_loc loc, const std::string *loggers_name, level::level_enum lvl, const log_custom_flags *flags, string_view_t view)
         : logger_name(loggers_name)
         , level(lvl)
+        , custom_flags(flags)
 #ifndef SPDLOG_NO_DATETIME
         , time(os::now())
 #endif
@@ -31,8 +33,8 @@ struct log_msg
     {
     }
 
-    log_msg(const std::string *loggers_name, level::level_enum lvl, string_view_t view)
-        : log_msg(source_loc{}, loggers_name, lvl, view)
+    log_msg(const std::string *loggers_name, level::level_enum lvl, const log_custom_flags *flags, string_view_t view)
+        : log_msg(source_loc{}, loggers_name, lvl, flags, view)
     {
     }
 
@@ -40,6 +42,7 @@ struct log_msg
 
     const std::string *logger_name{nullptr};
     level::level_enum level{level::off};
+    const spdlog::log_custom_flags *custom_flags{nullptr};
     log_clock::time_point time;
     size_t thread_id{0};
     size_t msg_id{0};

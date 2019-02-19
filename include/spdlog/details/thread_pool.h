@@ -104,7 +104,7 @@ struct async_msg
     // copy into log_msg
     log_msg to_log_msg()
     {
-        log_msg msg(&worker_ptr->name(), level, string_view_t(raw.data(), raw.size()));
+        log_msg msg(&worker_ptr->name(), level, &worker_ptr->custom_flags(), string_view_t(raw.data(), raw.size()));
         msg.time = time;
         msg.thread_id = thread_id;
         msg.msg_id = msg_id;

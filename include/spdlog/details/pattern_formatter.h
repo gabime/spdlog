@@ -777,6 +777,38 @@ private:
     char ch_;
 };
 
+class custom_formatter final : public flag_formatter
+{
+public:
+    explicit custom_formatter(padding_info padinfo, char flag)
+        : flag_formatter(padinfo), flag_(flag){};
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+        auto it = msg.custom_flags->find(flag_);
+        if (it != msg.custom_flags->end())
+        {
+            if (padinfo_.enabled())
+            {
+                scoped_pad p(it->second.size(), padinfo_, dest);
+                fmt_helper::append_string_view(it->second, dest);
+            }
+            else
+            {
+                fmt_helper::append_string_view(it->second, dest);
+            }
+        }
+        else
+        {
+            dest.push_back('%');
+            dest.push_back(flag_);
+        }
+    }
+
+private:
+    char flag_;
+};
+
 // aggregate user chars to display as is
 class aggregate_formatter final : public flag_formatter
 {
@@ -1241,11 +1273,8 @@ private:
             formatters_.push_back(details::make_unique<details::ch_formatter>('%'));
             break;
 
-        default: // Unknown flag appears as is
-            auto unknown_flag = details::make_unique<details::aggregate_formatter>();
-            unknown_flag->add_ch('%');
-            unknown_flag->add_ch(flag);
-            formatters_.push_back((std::move(unknown_flag)));
+        default: // Unknown flag is either a custom flag or appears as is
+            formatters_.push_back(details::make_unique<details::custom_formatter>(padding, flag));
             break;
         }
     }
