@@ -54,6 +54,7 @@ option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_LIST_HEADERS_AS_SOURCES "List headers as source files for IDE use." OFF)
 
 if(SPDLOG_FMT_EXTERNAL AND NOT TARGET fmt::fmt)
     find_package(fmt REQUIRED CONFIG)
@@ -72,6 +73,11 @@ if(SPDLOG_FMT_EXTERNAL)
 endif()
 
 set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+if(SPDLOG_LIST_HEADERS_AS_SOURCES)
+    file(GLOB_RECURSE spdlog_include_SRCS "${HEADER_BASE}/*.h")
+    target_sources(spdlog INTERFACE ${spdlog_include_SRCS})
+endif()
 
 if(SPDLOG_BUILD_EXAMPLES)
     add_subdirectory(example)
@@ -155,6 +161,3 @@ export(
 export(PACKAGE ${PROJECT_NAME})
 
 endif()
-
-file(GLOB_RECURSE spdlog_include_SRCS "${HEADER_BASE}/*.h")
-add_custom_target(spdlog_headers_for_ide SOURCES ${spdlog_include_SRCS})
