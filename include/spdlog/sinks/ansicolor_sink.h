@@ -133,7 +133,7 @@ public:
         formatter_ = std::move(sink_formatter);
     }
 
-    bool colors_enabled()
+    bool should_color()
     {
         return should_do_colors_;
     }
