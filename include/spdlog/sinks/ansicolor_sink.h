@@ -133,6 +133,11 @@ public:
         formatter_ = std::move(sink_formatter);
     }
 
+    bool should_color()
+    {
+        return should_do_colors_;
+    }
+
 private:
     void print_ccode_(const std::string &color_code)
     {
