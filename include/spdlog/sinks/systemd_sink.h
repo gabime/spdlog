@@ -1,5 +1,5 @@
 //
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2019 ZVYAGIN.Alexander@gmail.com
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
