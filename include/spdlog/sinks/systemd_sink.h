@@ -59,8 +59,9 @@ protected:
     {
         if( sd_journal_print(
                 syslog_level(msg.level),
-                "%s",
-                fmt::to_string(msg.payload).c_str()
+                "%.*s",
+                static_cast<int>(msg.payload.size()),
+                msg.payload.data()
             )
         )
             throw spdlog_ex("Failed writing to systemd");
