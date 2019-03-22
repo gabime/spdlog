@@ -1,6 +1,6 @@
 CXX	?= g++
 CXXFLAGS	=  -Wall  -pedantic -std=c++11 -pthread -Wconversion -O3 -I../include -fmax-errors=1
-LDPFALGS = -pthread
+LDPFALGS = -pthread -lsystemd
 
 CPP_FILES := $(wildcard *.cpp)
 OBJ_FILES := $(addprefix ./,$(notdir $(CPP_FILES:.cpp=.o)))
