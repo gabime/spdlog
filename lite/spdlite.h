@@ -75,7 +75,7 @@ public:
         log(lite::level::trace, fmt, args...);
     }
 
-    void trace_f(const char *printf_format, ...);
+    void trace_printf(const char *format, ...);
 
     //
     // debug
@@ -91,7 +91,7 @@ public:
         log(lite::level::debug, fmt, args...);
     }
 
-    void debug_f(const char *printf_format, ...);
+    void debug_printf(const char *format, ...);
 
     //
     // info
@@ -107,7 +107,7 @@ public:
         log(lite::level::info, fmt, args...);
     }
 
-    void info_f(const char *printf_format, ...);
+    void info_printf(const char *format, ...);
 
     //
     // warn
@@ -123,7 +123,7 @@ public:
         log(lite::level::warn, fmt, args...);
     }
 
-    void warn_f(const char *printf_format, ...);
+    void warn_printf(const char *format, ...);
 
     //
     // error
@@ -139,7 +139,7 @@ public:
         log(lite::level::err, fmt, args...);
     }
 
-    void error_f(const char *printf_format, ...);
+    void error_printf(const char *format, ...);
 
     //
     // critical
@@ -155,7 +155,7 @@ public:
         log(lite::level::critical, fmt, args...);
     }
 
-    void critical_f(const char *printf_format, ...);
+    void critical_printf(const char *format, ...);
 
     //
     // setters/getters
