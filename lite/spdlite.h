@@ -21,12 +21,16 @@
 #define SPDLITE_LEVEL_CRITICAL 5
 #define SPDLITE_LEVEL_OFF 6
 
-#define SPDLITE_LOGGER_CALL(logger, level, ...)                                                                                            \
-    if (logger.should_log(level))                                                                                                          \
-    logger.log(level, __VA_ARGS__)
+
+#define SPDLITE_LOGGER_CALL(logger, level, ...)  logger.log(level, __VA_ARGS__)
+
+//with source info
+#define SPDLITE_LOGGER_CALL2(logger, level, ...)                                                                                            \
+    logger.log(spdlog::lite::src_loc{__FILE__, __LINE__, __FUNCTION__}, level, __VA_ARGS__)
+
 
 #if SPDLITE_ACTIVE_LEVEL <= SPDLITE_LEVEL_TRACE
-#define SPDLITE_LOGGER_TRACE(logger, ...) SPDLITE_LOGGER_CALL(logger, spdlog::lite::level::trace, __VA_ARGS__)
+#define SPDLITE_LOGGER_TRACE(logger, ...) SPDLITE_LOGGER_CALL2(logger, spdlog::lite::level::trace, __VA_ARGS__)
 #define SPDLITE_TRACE(...) SPDLITE_LOGGER_TRACE(spdlog::lite::default_logger(), __VA_ARGS__)
 #else
 #define SPDLITE_LOGGER_TRACE(logger, ...) (void)0
@@ -90,9 +94,13 @@ enum class level
 
 struct src_loc
 {
-    const char *filename;
-    int line;
-    const char *funcname;
+    src_loc() = default;
+    src_loc(const char *filename, int line, const char *funcname):
+        filename(filename), line(line), funcname(funcname){}
+
+    const char *filename = nullptr;
+    int line = 0;
+    const char *funcname = nullptr;
 };
 
 class logger
@@ -100,7 +108,7 @@ class logger
 public:
     logger() = default;
 
-    logger(std::shared_ptr<spdlog::logger> impl);
+    explicit logger(std::shared_ptr<spdlog::logger> impl);
     logger(const logger &) = default;
     logger(logger &&) = default;
     logger &operator=(const logger &) = default;
@@ -108,18 +116,6 @@ public:
     ~logger() = default;
 
     bool should_log(spdlog::lite::level lvl) const noexcept;
-
-    template<typename... Args>
-    void log(spdlog::lite::level lvl, const char *fmt, const Args &... args)
-    {
-        if (!should_log(lvl))
-        {
-            return;
-        }
-        fmt::memory_buffer formatted_buf;
-        fmt::format_to(formatted_buf, fmt, args...);
-        log_formatted_(lvl, formatted_buf);
-    }
 
     template<typename... Args>
     void log(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const char *fmt, const Args &... args)
@@ -130,7 +126,13 @@ public:
         }
         fmt::memory_buffer formatted_buf;
         fmt::format_to(formatted_buf, fmt, args...);
-        log_formatted_src(src, lvl, formatted_buf);
+        log_formatted_(src, lvl, formatted_buf);
+    }
+
+    template<typename... Args>
+    void log(spdlog::lite::level lvl, const char *fmt, const Args &... args)
+    {
+        log(spdlog::lite::src_loc{}, lvl, fmt, args...);
     }
 
     template<typename... Args>
@@ -139,13 +141,7 @@ public:
         log(spdlog::lite::level::trace, fmt, args...);
     }
 
-    template<typename... Args>
-    void trace(const char *source_file, int source_line, const char *source_func, const char *fmt, const Args &... args)
-    {
-        spdlog::lite::src_loc src{source_file, source_line, source_func};
-        log(src, spdlog::lite::level::trace, fmt, args...);
-    }
-
+    
     template<typename... Args>
     void debug(const char *fmt, const Args &... args)
     {
@@ -193,8 +189,9 @@ public:
 protected:
     std::shared_ptr<spdlog::logger> impl_;
     void log_formatted_(spdlog::lite::level lvl, const fmt::memory_buffer &formatted);
-    void log_formatted_src(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const fmt::memory_buffer &formatted);
+    void log_formatted_(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const fmt::memory_buffer &formatted);
 };
+
 spdlog::lite::logger &default_logger();
 
 template<typename... Args>
