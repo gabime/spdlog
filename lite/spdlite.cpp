@@ -125,6 +125,11 @@ void spdlog::lite::logger::set_pattern(std::string pattern)
     impl_->set_pattern(std::move(pattern));
 }
 
+spdlog::lite::logger spdlog::lite::logger::clone(std::string logger_name)
+{
+    return spdlog::lite::logger(impl_->clone(std::move(logger_name)));
+}
+
 void spdlog::lite::logger::log_formatted_(spdlog::lite::level lvl, const fmt::memory_buffer &formatted)
 {
     auto spd_level = to_spdlog_level(lvl);
