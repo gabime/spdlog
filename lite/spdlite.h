@@ -77,10 +77,22 @@
 #define SPDLITE_CRITICAL(...) (void)0
 #endif
 
+
+
+
+
 namespace spdlog {
 class logger;
 
 namespace lite {
+
+// string_view type - either std::string_view or fmt::string_view (pre c++17)
+#if defined(FMT_USE_STD_STRING_VIEW)
+        using string_view_t = std::string_view;
+#else
+        using string_view_t = fmt::string_view;
+#endif
+
 enum class level
 {
     trace = SPDLITE_LEVEL_TRACE,
@@ -135,17 +147,28 @@ public:
         log(spdlog::lite::src_loc{}, lvl, fmt, args...);
     }
 
+
     template<typename... Args>
     void trace(const char *fmt, const Args &... args)
     {
         log(spdlog::lite::level::trace, fmt, args...);
     }
 
-    
+    void trace(const char* msg)
+    {
+        log_string_view_(spdlog::lite::level::trace, msg);
+    }
+
+
     template<typename... Args>
     void debug(const char *fmt, const Args &... args)
     {
         log(spdlog::lite::level::debug, fmt, args...);
+    }
+
+    void debug(const char* msg)
+    {
+        log_string_view_(spdlog::lite::level::debug, msg);
     }
 
     template<typename... Args>
@@ -154,10 +177,21 @@ public:
         log(spdlog::lite::level::info, fmt, args...);
     }
 
+    void info(const char* msg)
+    {
+        log_string_view_(spdlog::lite::level::info, msg);
+    }
+
+
     template<typename... Args>
     void warn(const char *fmt, const Args &... args)
     {
         log(spdlog::lite::level::warn, fmt, args...);
+    }
+
+    void warn(const char* msg)
+    {
+        log_string_view_(spdlog::lite::level::warn, msg);
     }
 
     template<typename... Args>
@@ -166,11 +200,21 @@ public:
         log(spdlog::lite::level::err, fmt, args...);
     }
 
+    void error(const char* msg)
+    {
+        log_string_view_(spdlog::lite::level::err, msg);
+    }
+
     template<typename... Args>
     void critical(const char *fmt, const Args &... args)
     {
         log(spdlog::lite::level::critical, fmt, args...);
     }
+    void critical(const char* msg)
+    {
+        log_string_view_(spdlog::lite::level::critical, msg);
+    }
+
 
     std::string name() const;
 
@@ -188,8 +232,10 @@ public:
 
 protected:
     std::shared_ptr<spdlog::logger> impl_;
-    void log_formatted_(spdlog::lite::level lvl, const fmt::memory_buffer &formatted);
     void log_formatted_(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const fmt::memory_buffer &formatted);
+    void log_string_view_(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const string_view_t &sv);
+    void log_string_view_(spdlog::lite::level lvl, const string_view_t &sv);
+
 };
 
 spdlog::lite::logger &default_logger();
@@ -199,6 +245,7 @@ void trace(const char *fmt, const Args &... args)
 {
     default_logger().trace(fmt, args...);
 }
+
 template<typename... Args>
 void debug(const char *fmt, const Args &... args)
 {
