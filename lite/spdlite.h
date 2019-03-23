@@ -174,6 +174,11 @@ public:
     //
     void set_pattern(std::string pattern);
 
+    //
+    //clone with new name
+    //
+    spdlog::lite::logger clone(std::string logger_name);
+
 protected:
     std::shared_ptr<spdlog::logger> impl_;
     void log_formatted_(lite::level lvl, const fmt::memory_buffer &formatted);
