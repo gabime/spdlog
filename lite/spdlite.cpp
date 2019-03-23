@@ -28,65 +28,63 @@ void spdlog::lite::logger::log(spdlog::lite::level lvl, const string_view_t &sv)
     impl_->log(spd_level, sv);
 }
 
-
-void spdlog::lite::logger::log_printf(spdlog::lite::level lvl, const char* format, va_list args)
+void spdlog::lite::logger::log_printf(spdlog::lite::level lvl, const char *format, va_list args)
 {
     char buffer[500];
-    auto size = vsnprintf (buffer, sizeof(buffer),format, args);
-    if(size < 0)
+    auto size = vsnprintf(buffer, sizeof(buffer), format, args);
+    if (size < 0)
     {
         size = snprintf(buffer, sizeof(buffer), "invalid format (%s)", format);
     }
     log(lvl, string_view_t{buffer, static_cast<size_t>(size)});
 }
 
-
 void spdlog::lite::logger::trace_f(const char *format, ...)
 {
     va_list args;
-    va_start (args, format);
+    va_start(args, format);
     log_printf(lite::level::trace, format, args);
-    va_end (args);
+    va_end(args);
 }
 
 void spdlog::lite::logger::debug_f(const char *format, ...)
 {
     va_list args;
-    va_start (args, format);
+    va_start(args, format);
     log_printf(lite::level::debug, format, args);
-    va_end (args);
+    va_end(args);
 }
 
 void spdlog::lite::logger::info_f(const char *format, ...)
 {
     va_list args;
-    va_start (args, format);
+    va_start(args, format);
     log_printf(lite::level::info, format, args);
-    va_end (args);
+    va_end(args);
 }
 
 void spdlog::lite::logger::warn_f(const char *format, ...)
 {
     va_list args;
-    va_start (args, format);
+    va_start(args, format);
     log_printf(lite::level::warn, format, args);
-    va_end (args);
+    va_end(args);
 }
 
 void spdlog::lite::logger::error_f(const char *format, ...)
 {
     va_list args;
-    va_start (args, format);
+    va_start(args, format);
     log_printf(lite::level::err, format, args);
-    va_end (args);
+    va_end(args);
 }
 
 void spdlog::lite::logger::critical_f(const char *format, ...)
 {
     va_list args;
-    va_start (args, format);
+    va_start(args, format);
     log_printf(lite::level::critical, format, args);
-    va_end (args);
+    va_end(args);
 }
 
 void spdlog::lite::logger::set_level(spdlog::lite::level level)
@@ -138,5 +136,3 @@ spdlog::lite::logger &spdlog::lite::default_logger()
     static spdlog::lite::logger s_default(spdlog::default_logger());
     return s_default;
 }
-
-

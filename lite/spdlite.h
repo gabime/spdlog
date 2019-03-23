@@ -31,7 +31,6 @@ enum class level
     off
 };
 
-
 class logger
 {
 public:
@@ -60,7 +59,7 @@ public:
 
     // log string view
     void log(spdlog::lite::level lvl, const string_view_t &sv);
-    void log_printf(spdlog::lite::level lvl, const char* format, va_list args);
+    void log_printf(spdlog::lite::level lvl, const char *format, va_list args);
 
     //
     // trace
@@ -76,7 +75,7 @@ public:
         log(spdlog::lite::level::trace, fmt, args...);
     }
 
-    void trace_f(const char *printf_format, ...); 
+    void trace_f(const char *printf_format, ...);
 
     //
     // debug
@@ -92,7 +91,7 @@ public:
         log(spdlog::lite::level::debug, fmt, args...);
     }
 
-    void debug_f(const char *printf_format, ...); 
+    void debug_f(const char *printf_format, ...);
 
     //
     // info
@@ -124,7 +123,7 @@ public:
         log(spdlog::lite::level::warn, fmt, args...);
     }
 
-    void warn_f(const char *printf_format, ...); 
+    void warn_f(const char *printf_format, ...);
 
     //
     // error
@@ -134,14 +133,13 @@ public:
         log(spdlog::lite::level::err, string_view_t(msg));
     }
 
-
     template<typename... Args>
     void error(const char *fmt, const Args &... args)
     {
         log(spdlog::lite::level::err, fmt, args...);
     }
 
-    void error_f(const char *printf_format, ...); 
+    void error_f(const char *printf_format, ...);
 
     //
     // critical
@@ -157,7 +155,7 @@ public:
         log(spdlog::lite::level::critical, fmt, args...);
     }
 
-    void critical_f(const char *printf_format, ...); 
+    void critical_f(const char *printf_format, ...);
 
     //
     // setters/getters
@@ -177,7 +175,6 @@ public:
 protected:
     std::shared_ptr<spdlog::logger> impl_;
     void log_formatted_(spdlog::lite::level lvl, const fmt::memory_buffer &formatted);
-
 };
 
 spdlog::lite::logger &default_logger();
