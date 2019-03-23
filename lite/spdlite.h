@@ -8,69 +8,6 @@
 #include <string>
 #include "spdlog/fmt/fmt.h"
 
-//
-// enable/disable log calls at compile time according to global level.
-//
-// define SPDLITE_ACTIVE_LEVEL to one of those (before including lite.h):
-
-#define SPDLITE_LEVEL_TRACE 0
-#define SPDLITE_LEVEL_DEBUG 1
-#define SPDLITE_LEVEL_INFO 2
-#define SPDLITE_LEVEL_WARN 3
-#define SPDLITE_LEVEL_ERROR 4
-#define SPDLITE_LEVEL_CRITICAL 5
-#define SPDLITE_LEVEL_OFF 6
-
-#define SPDLITE_LOGGER_CALL(logger, level, ...) logger.log(level, __VA_ARGS__)
-
-#if SPDLITE_ACTIVE_LEVEL <= SPDLITE_LEVEL_TRACE
-#define SPDLITE_LOGGER_TRACE(logger, ...) SPDLITE_LOGGER_CALL(logger, spdlog::lite::level::trace, __VA_ARGS__)
-#define SPDLITE_TRACE(...) SPDLITE_LOGGER_TRACE(spdlog::lite::default_logger(), __VA_ARGS__)
-#else
-#define SPDLITE_LOGGER_TRACE(logger, ...) (void)0
-#define SPDLITE_TRACE(...) (void)0
-#endif
-
-#if SPDLITE_ACTIVE_LEVEL <= SPDLITE_LEVEL_DEBUG
-#define SPDLITE_LOGGER_DEBUG(logger, ...) SPDLITE_LOGGER_CALL(logger, spdlog::lite::level::debug, __VA_ARGS__)
-#define SPDLITE_DEBUG(...) SPDLITE_LOGGER_DEBUG(spdlog::lite::default_logger(), __VA_ARGS__)
-#else
-#define SPDLITE_LOGGER_DEBUG(logger, ...) (void)0
-#define SPDLITE_DEBUG(...) (void)0
-#endif
-
-#if SPDLITE_ACTIVE_LEVEL <= SPDLITE_LEVEL_INFO
-#define SPDLITE_LOGGER_INFO(logger, ...) SPDLITE_LOGGER_CALL(logger, spdlog::lite::level::info, __VA_ARGS__)
-#define SPDLITE_INFO(...) SPDLITE_LOGGER_INFO(spdlog::lite::default_logger(), __VA_ARGS__)
-#else
-#define SPDLITE_LOGGER_INFO(logger, ...) (void)0
-#define SPDLITE_INFO(...) (void)0
-#endif
-
-#if SPDLITE_ACTIVE_LEVEL <= SPDLITE_LEVEL_WARN
-#define SPDLITE_LOGGER_WARN(logger, ...) SPDLITE_LOGGER_CALL(logger, spdlog::lite::level::warn, __VA_ARGS__)
-#define SPDLITE_WARN(...) SPDLITE_LOGGER_WARN(spdlog::lite::default_logger(), __VA_ARGS__)
-#else
-#define SPDLITE_LOGGER_WARN(logger, ...) (void)0
-#define SPDLITE_WARN(...) (void)0
-#endif
-
-#if SPDLITE_ACTIVE_LEVEL <= SPDLITE_LEVEL_ERROR
-#define SPDLITE_LOGGER_ERROR(logger, ...) SPDLITE_LOGGER_CALL(logger, spdlog::lite::level::err, __VA_ARGS__)
-#define SPDLITE_ERROR(...) SPDLITE_LOGGER_ERROR(spdlog::lite::default_logger(), __VA_ARGS__)
-#else
-#define SPDLITE_LOGGER_ERROR(logger, ...) (void)0
-#define SPDLITE_ERROR(...) (void)0
-#endif
-
-#if SPDLITE_ACTIVE_LEVEL <= SPDLITE_LEVEL_CRITICAL
-#define SPDLITE_LOGGER_CRITICAL(logger, ...) SPDLITE_LOGGER_CALL(logger, spdlog::lite::level::critical, __VA_ARGS__)
-#define SPDLITE_CRITICAL(...) SPDLITE_LOGGER_CRITICAL(spdlog::lite::default_logger(), __VA_ARGS__)
-#else
-#define SPDLITE_LOGGER_CRITICAL(logger, ...) (void)0
-#define SPDLITE_CRITICAL(...) (void)0
-#endif
-
 namespace spdlog {
 class logger;
 
@@ -85,13 +22,13 @@ using string_view_t = fmt::string_view;
 
 enum class level
 {
-    trace = SPDLITE_LEVEL_TRACE,
-    debug = SPDLITE_LEVEL_DEBUG,
-    info = SPDLITE_LEVEL_INFO,
-    warn = SPDLITE_LEVEL_WARN,
-    err = SPDLITE_LEVEL_ERROR,
-    critical = SPDLITE_LEVEL_CRITICAL,
-    off = SPDLITE_LEVEL_OFF
+    trace,
+    debug,
+    info,
+    warn,
+    err,
+    critical,
+    off
 };
 
 
@@ -120,7 +57,6 @@ public:
         fmt::format_to(formatted_buf, fmt, args...);
         log_formatted_(lvl, formatted_buf);
     }
-
 
     // log string view
     void log(spdlog::lite::level lvl, const string_view_t &sv);
