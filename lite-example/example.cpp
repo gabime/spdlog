@@ -1,10 +1,11 @@
-#define SPDLITE_ACTIVE_LEVEL SPDLITE_LEVEL_TRACE
 #include "spdlite.h"
 
 int main()
 {
-    //auto l = spdlog::create_lite();
-    //l.info("Hello spdlog {}", "lite");
-    SPDLITE_TRACE("HELLO TRACE");
-
+    using namespace spdlog;
+    auto l = spdlog::create_lite();
+    l.set_level(spdlog::lite::level::trace);
+    lite::default_logger().set_level(l.get_level());
+    lite::trace("hello");
+    lite::trace("hello {}", std::string("again"));
 }
