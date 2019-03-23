@@ -3,9 +3,8 @@
 
 int main()
 {
-    //auto l = spdlog::create_lite();
-    //spdlog::lite::info("HELLO info {}", 123);
+    // auto l = spdlog::create_lite();
+    // spdlog::lite::info("HELLO info {}", 123);
     SPDLITE_TRACE("SOME MACRO {}", 123);
     SPDLITE_INFO("SOME MACRO {}", "HHHHH");
-
 }

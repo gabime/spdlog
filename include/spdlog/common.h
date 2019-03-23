@@ -128,7 +128,10 @@ enum level_enum
 static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 
 #if !defined(SPDLOG_SHORT_LEVEL_NAMES)
-#define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
+#define SPDLOG_SHORT_LEVEL_NAMES                                                                                                           \
+    {                                                                                                                                      \
+        "T", "D", "I", "W", "E", "C", "O"                                                                                                  \
+    }
 #endif
 static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
