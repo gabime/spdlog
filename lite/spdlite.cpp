@@ -39,7 +39,7 @@ void spdlog::lite::logger::log_printf(spdlog::lite::level lvl, const char *forma
     log(lvl, string_view_t{buffer, static_cast<size_t>(size)});
 }
 
-void spdlog::lite::logger::trace_f(const char *format, ...)
+void spdlog::lite::logger::trace_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -47,7 +47,7 @@ void spdlog::lite::logger::trace_f(const char *format, ...)
     va_end(args);
 }
 
-void spdlog::lite::logger::debug_f(const char *format, ...)
+void spdlog::lite::logger::debug_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -55,7 +55,7 @@ void spdlog::lite::logger::debug_f(const char *format, ...)
     va_end(args);
 }
 
-void spdlog::lite::logger::info_f(const char *format, ...)
+void spdlog::lite::logger::info_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -63,7 +63,7 @@ void spdlog::lite::logger::info_f(const char *format, ...)
     va_end(args);
 }
 
-void spdlog::lite::logger::warn_f(const char *format, ...)
+void spdlog::lite::logger::warn_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -71,7 +71,7 @@ void spdlog::lite::logger::warn_f(const char *format, ...)
     va_end(args);
 }
 
-void spdlog::lite::logger::error_f(const char *format, ...)
+void spdlog::lite::logger::error_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -79,7 +79,7 @@ void spdlog::lite::logger::error_f(const char *format, ...)
     va_end(args);
 }
 
-void spdlog::lite::logger::critical_f(const char *format, ...)
+void spdlog::lite::logger::critical_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
