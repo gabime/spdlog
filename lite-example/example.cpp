@@ -5,7 +5,9 @@ int main()
     using namespace spdlog;
     auto l = spdlog::create_lite();
     l.set_level(spdlog::lite::level::trace);
-    lite::default_logger().set_level(l.get_level());
-    lite::trace("hello");
-    lite::trace("hello {}", std::string("again"));
+
+
+    l.trace_f("Hello %s ","GABI");
+    l.info_f("Hello %d", 12346);
+
 }
