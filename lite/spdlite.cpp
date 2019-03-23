@@ -23,23 +23,71 @@ bool spdlog::lite::logger::should_log(spdlog::lite::level level) const SPDLOG_NO
     return impl_->should_log(spd_level); // TODO avoid the call using local level member?
 }
 
-void spdlog::lite::logger::log_formatted_(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const fmt::memory_buffer &formatted)
+void spdlog::lite::logger::log(spdlog::lite::level lvl, const string_view_t &sv)
 {
     auto spd_level = to_spdlog_level(lvl);
-    spdlog::source_loc source_loc{src.filename, src.line, src.funcname};
-    impl_->log(source_loc, spd_level, spdlog::details::fmt_helper::to_string_view(formatted));
+    impl_->log(spd_level, sv);
 }
 
-void spdlog::lite::logger::log_string_view_(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const string_view_t &sv)
+
+void spdlog::lite::logger::log_printf(spdlog::lite::level lvl, const char* format, va_list args)
 {
-    auto spd_level = to_spdlog_level(lvl);
-    spdlog::source_loc source_loc{src.filename, src.line, src.funcname};
-    impl_->log(source_loc, spd_level, sv);
+    char buffer[500];
+    auto size = vsnprintf (buffer, sizeof(buffer),format, args);
+    if(size < 0)
+    {
+        size = snprintf(buffer, sizeof(buffer), "invalid format (%s)", format);
+    }
+    log(lvl, string_view_t{buffer, static_cast<size_t>(size)});
 }
 
-void spdlog::lite::logger::log_string_view_(spdlog::lite::level lvl, const string_view_t &sv)
+
+void spdlog::lite::logger::trace_f(const char *format, ...)
 {
-    log_string_view_(spdlog::lite::src_loc{}, lvl, sv);
+    va_list args;
+    va_start (args, format);
+    log_printf(lite::level::trace, format, args);
+    va_end (args);
+}
+
+void spdlog::lite::logger::debug_f(const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    log_printf(lite::level::debug, format, args);
+    va_end (args);
+}
+
+void spdlog::lite::logger::info_f(const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    log_printf(lite::level::info, format, args);
+    va_end (args);
+}
+
+void spdlog::lite::logger::warn_f(const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    log_printf(lite::level::warn, format, args);
+    va_end (args);
+}
+
+void spdlog::lite::logger::error_f(const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    log_printf(lite::level::err, format, args);
+    va_end (args);
+}
+
+void spdlog::lite::logger::critical_f(const char *format, ...)
+{
+    va_list args;
+    va_start (args, format);
+    log_printf(lite::level::critical, format, args);
+    va_end (args);
 }
 
 void spdlog::lite::logger::set_level(spdlog::lite::level level)
@@ -80,8 +128,16 @@ void spdlog::lite::logger::set_pattern(std::string pattern)
     impl_->set_pattern(std::move(pattern));
 }
 
+void spdlog::lite::logger::log_formatted_(spdlog::lite::level lvl, const fmt::memory_buffer &formatted)
+{
+    auto spd_level = to_spdlog_level(lvl);
+    impl_->log(spd_level, spdlog::details::fmt_helper::to_string_view(formatted));
+}
+
 spdlog::lite::logger &spdlog::lite::default_logger()
 {
     static spdlog::lite::logger s_default(spdlog::default_logger());
     return s_default;
 }
+
+

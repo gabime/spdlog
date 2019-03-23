@@ -3,9 +3,10 @@
 
 int main()
 {
-    // auto l = spdlog::create_lite();
-    // spdlog::lite::info("HELLO info {}", 123);
+    using namespace spdlog;
+    auto l = spdlog::default_logger();
+    l->set_level(spdlog::level::trace);
 
-    SPDLOG_TRACE("SOME MACRO {}", 123);
-    SPDLOG_INFO("SOME MACRO {}", "HHHHH");
+    l->trace("hello123123213 ");
+
 }
