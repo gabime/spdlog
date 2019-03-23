@@ -4,9 +4,13 @@
 
 #pragma once
 
-// lite logger - a lite wrapper around spdlog::logger shared_ptr pimpl
-// main purpose is much faster compile time and very cheap copy and move.
-// also supports printf format for even faster compile times (by avoiding variadic templates)
+// lite logger - a pimpl around spdlog::logger shared_ptr:
+//  much faster compile times.
+//  can be used as lib or separate compilation unit.
+//  very cheap copy and move.
+//  supports printf format for even faster compile (by avoiding variadic templates).
+//
+// see lite-example/ for usage.
 
 #include <memory>
 #include <string>
