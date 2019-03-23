@@ -2,7 +2,6 @@
 
 int main()
 {
-    using namespace spdlog;
     auto l = spdlog::create_lite();
     l.set_level(spdlog::lite::level::trace);
 
