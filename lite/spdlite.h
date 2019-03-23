@@ -23,11 +23,8 @@
 
 #define SPDLITE_LOGGER_CALL(logger, level, ...) logger.log(level, __VA_ARGS__)
 
-// with source info
-#define SPDLITE_LOGGER_CALL2(logger, level, ...) logger.log(spdlog::lite::src_loc{__FILE__, __LINE__, __FUNCTION__}, level, __VA_ARGS__)
-
 #if SPDLITE_ACTIVE_LEVEL <= SPDLITE_LEVEL_TRACE
-#define SPDLITE_LOGGER_TRACE(logger, ...) SPDLITE_LOGGER_CALL2(logger, spdlog::lite::level::trace, __VA_ARGS__)
+#define SPDLITE_LOGGER_TRACE(logger, ...) SPDLITE_LOGGER_CALL(logger, spdlog::lite::level::trace, __VA_ARGS__)
 #define SPDLITE_TRACE(...) SPDLITE_LOGGER_TRACE(spdlog::lite::default_logger(), __VA_ARGS__)
 #else
 #define SPDLITE_LOGGER_TRACE(logger, ...) (void)0
