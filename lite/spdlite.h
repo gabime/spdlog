@@ -21,13 +21,10 @@
 #define SPDLITE_LEVEL_CRITICAL 5
 #define SPDLITE_LEVEL_OFF 6
 
+#define SPDLITE_LOGGER_CALL(logger, level, ...) logger.log(level, __VA_ARGS__)
 
-#define SPDLITE_LOGGER_CALL(logger, level, ...)  logger.log(level, __VA_ARGS__)
-
-//with source info
-#define SPDLITE_LOGGER_CALL2(logger, level, ...)                                                                                            \
-    logger.log(spdlog::lite::src_loc{__FILE__, __LINE__, __FUNCTION__}, level, __VA_ARGS__)
-
+// with source info
+#define SPDLITE_LOGGER_CALL2(logger, level, ...) logger.log(spdlog::lite::src_loc{__FILE__, __LINE__, __FUNCTION__}, level, __VA_ARGS__)
 
 #if SPDLITE_ACTIVE_LEVEL <= SPDLITE_LEVEL_TRACE
 #define SPDLITE_LOGGER_TRACE(logger, ...) SPDLITE_LOGGER_CALL2(logger, spdlog::lite::level::trace, __VA_ARGS__)
@@ -77,10 +74,6 @@
 #define SPDLITE_CRITICAL(...) (void)0
 #endif
 
-
-
-
-
 namespace spdlog {
 class logger;
 
@@ -88,9 +81,9 @@ namespace lite {
 
 // string_view type - either std::string_view or fmt::string_view (pre c++17)
 #if defined(FMT_USE_STD_STRING_VIEW)
-        using string_view_t = std::string_view;
+using string_view_t = std::string_view;
 #else
-        using string_view_t = fmt::string_view;
+using string_view_t = fmt::string_view;
 #endif
 
 enum class level
@@ -107,8 +100,12 @@ enum class level
 struct src_loc
 {
     src_loc() = default;
-    src_loc(const char *filename, int line, const char *funcname):
-        filename(filename), line(line), funcname(funcname){}
+    src_loc(const char *filename, int line, const char *funcname)
+        : filename(filename)
+        , line(line)
+        , funcname(funcname)
+    {
+    }
 
     const char *filename = nullptr;
     int line = 0;
@@ -147,6 +144,11 @@ public:
         log(spdlog::lite::src_loc{}, lvl, fmt, args...);
     }
 
+    // trace
+    void trace(const char *msg)
+    {
+        log_string_view_(spdlog::lite::level::trace, msg);
+    }
 
     template<typename... Args>
     void trace(const char *fmt, const Args &... args)
@@ -154,11 +156,11 @@ public:
         log(spdlog::lite::level::trace, fmt, args...);
     }
 
-    void trace(const char* msg)
+    // debug
+    void debug(const char *msg)
     {
-        log_string_view_(spdlog::lite::level::trace, msg);
+        log_string_view_(spdlog::lite::level::debug, msg);
     }
-
 
     template<typename... Args>
     void debug(const char *fmt, const Args &... args)
@@ -166,9 +168,10 @@ public:
         log(spdlog::lite::level::debug, fmt, args...);
     }
 
-    void debug(const char* msg)
+    // info
+    void info(const char *msg)
     {
-        log_string_view_(spdlog::lite::level::debug, msg);
+        log_string_view_(spdlog::lite::level::info, msg);
     }
 
     template<typename... Args>
@@ -177,11 +180,11 @@ public:
         log(spdlog::lite::level::info, fmt, args...);
     }
 
-    void info(const char* msg)
+    // warn
+    void warn(const char *msg)
     {
-        log_string_view_(spdlog::lite::level::info, msg);
+        log_string_view_(spdlog::lite::level::warn, msg);
     }
-
 
     template<typename... Args>
     void warn(const char *fmt, const Args &... args)
@@ -189,9 +192,10 @@ public:
         log(spdlog::lite::level::warn, fmt, args...);
     }
 
-    void warn(const char* msg)
+    // error
+    void error(const char *msg)
     {
-        log_string_view_(spdlog::lite::level::warn, msg);
+        log_string_view_(spdlog::lite::level::err, msg);
     }
 
     template<typename... Args>
@@ -200,9 +204,10 @@ public:
         log(spdlog::lite::level::err, fmt, args...);
     }
 
-    void error(const char* msg)
+    // critical
+    void critical(const char *msg)
     {
-        log_string_view_(spdlog::lite::level::err, msg);
+        log_string_view_(spdlog::lite::level::critical, msg);
     }
 
     template<typename... Args>
@@ -210,24 +215,13 @@ public:
     {
         log(spdlog::lite::level::critical, fmt, args...);
     }
-    void critical(const char* msg)
-    {
-        log_string_view_(spdlog::lite::level::critical, msg);
-    }
-
 
     std::string name() const;
-
-    // level
     void set_level(lite::level level);
     lite::level get_level() const;
-
-    // flush
     void flush();
     void flush_on(spdlog::lite::level log_level);
     spdlog::lite::level flush_level() const;
-
-    // pattern
     void set_pattern(std::string pattern);
 
 protected:
@@ -235,7 +229,6 @@ protected:
     void log_formatted_(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const fmt::memory_buffer &formatted);
     void log_string_view_(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const string_view_t &sv);
     void log_string_view_(spdlog::lite::level lvl, const string_view_t &sv);
-
 };
 
 spdlog::lite::logger &default_logger();

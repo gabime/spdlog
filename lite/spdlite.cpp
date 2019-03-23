@@ -23,7 +23,6 @@ bool spdlog::lite::logger::should_log(spdlog::lite::level level) const SPDLOG_NO
     return impl_->should_log(spd_level); // TODO avoid the call using local level member?
 }
 
-
 void spdlog::lite::logger::log_formatted_(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const fmt::memory_buffer &formatted)
 {
     auto spd_level = to_spdlog_level(lvl);
@@ -42,7 +41,6 @@ void spdlog::lite::logger::log_string_view_(spdlog::lite::level lvl, const strin
 {
     log_string_view_(spdlog::lite::src_loc{}, lvl, sv);
 }
-
 
 void spdlog::lite::logger::set_level(spdlog::lite::level level)
 {
