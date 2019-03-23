@@ -2,6 +2,6 @@
 
 int main()
 {
-    auto l = spdlog::create_lite();
-    l.trace("HELLO {}!!!", "lite");
+    //auto l = spdlog::create_lite();
+    spdlog::lite::info("HELLO info {}", 123);
 }
