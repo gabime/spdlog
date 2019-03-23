@@ -1,4 +1,4 @@
-#include "logger.h"
+#include "spdlite.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/logger.h"
 
