@@ -20,20 +20,21 @@ spdlog::lite::logger::logger(std::shared_ptr<spdlog::logger> impl)
 bool spdlog::lite::logger::should_log(spdlog::lite::level level) const SPDLOG_NOEXCEPT
 {
     auto spd_level = to_spdlog_level(level);
-    return impl_->should_log(spd_level); // TODO level
+    return impl_->should_log(spd_level); // TODO avoid the call using local level member?
 }
 
-void spdlog::lite::logger::log_formatted_(spdlog::lite::level level, const fmt::memory_buffer &formatted)
-{
-    auto spd_level = to_spdlog_level(level);
-    impl_->log(spd_level, spdlog::details::fmt_helper::to_string_view(formatted));
-}
 
-void spdlog::lite::logger::log_formatted_src(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const fmt::memory_buffer &formatted)
+
+void spdlog::lite::logger::log_formatted_(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const fmt::memory_buffer &formatted)
 {
     auto spd_level = to_spdlog_level(lvl);
     spdlog::source_loc source_loc{src.filename, src.line, src.funcname};
     impl_->log(source_loc, spd_level, spdlog::details::fmt_helper::to_string_view(formatted));
+}
+
+void spdlog::lite::logger::log_formatted_(spdlog::lite::level level, const fmt::memory_buffer &formatted)
+{
+    log_formatted_(src_loc{}, level, formatted);
 }
 
 void spdlog::lite::logger::set_level(spdlog::lite::level level)
