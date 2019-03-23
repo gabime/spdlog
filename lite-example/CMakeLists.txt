@@ -2,7 +2,7 @@ project(spdlog-lite-example CXX)
 
 find_package(Threads REQUIRED)
 
-set(LITE_SOURCES example.cpp create_lite.cpp)
+set(LITE_SOURCES example.cpp create_logger.cpp)
 
 add_executable(${PROJECT_NAME} ${LITE_SOURCES})
 
