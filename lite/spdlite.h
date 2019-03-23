@@ -4,6 +4,10 @@
 
 #pragma once
 
+// lite logger - a lite wrapper around spdlog::logger shared_ptr pimpl
+// main purpose is much faster compile time and very cheap copy and move.
+// also supports printf format for even faster compile times (by avoiding variadic templates)
+
 #include <memory>
 #include <string>
 #include "spdlog/fmt/fmt.h"
