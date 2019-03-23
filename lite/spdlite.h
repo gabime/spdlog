@@ -34,8 +34,6 @@ enum class level
 class logger
 {
 public:
-    logger() = default;
-
     explicit logger(std::shared_ptr<spdlog::logger> impl);
     logger(const logger &) = default;
     logger(logger &&) = default;
