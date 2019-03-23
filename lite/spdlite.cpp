@@ -1,6 +1,5 @@
 #include "spdlite.h"
 #include "spdlog/spdlog.h"
-#include "spdlog/logger.h"
 
 static spdlog::level::level_enum to_spdlog_level(spdlog::lite::level level)
 {
