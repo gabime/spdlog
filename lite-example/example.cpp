@@ -1,5 +1,5 @@
 #define SPDLITE_ACTIVE_LEVEL SPDLITE_LEVEL_INFO
-#include "logger.h"
+#include "spdlite.h"
 
 int main()
 {
