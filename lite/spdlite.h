@@ -43,10 +43,10 @@ public:
 
     ~logger() = default;
 
-    bool should_log(spdlog::lite::level lvl) const noexcept;
+    bool should_log(lite::level lvl) const noexcept;
 
     template<typename... Args>
-    void log(spdlog::lite::level lvl, const char *fmt, const Args &... args)
+    void log(lite::level lvl, const char *fmt, const Args &... args)
     {
         if (!should_log(lvl))
         {
@@ -58,21 +58,21 @@ public:
     }
 
     // log string view
-    void log(spdlog::lite::level lvl, const string_view_t &sv);
-    void log_printf(spdlog::lite::level lvl, const char *format, va_list args);
+    void log(lite::level lvl, const string_view_t &sv);
+    void log_printf(lite::level lvl, const char *format, va_list args);
 
     //
     // trace
     //
     void trace(const char *msg)
     {
-        log(spdlog::lite::level::trace, string_view_t(msg));
+        log(lite::level::trace, string_view_t(msg));
     }
 
     template<typename... Args>
     void trace(const char *fmt, const Args &... args)
     {
-        log(spdlog::lite::level::trace, fmt, args...);
+        log(lite::level::trace, fmt, args...);
     }
 
     void trace_f(const char *printf_format, ...);
@@ -82,13 +82,13 @@ public:
     //
     void debug(const char *msg)
     {
-        log(spdlog::lite::level::debug, string_view_t(msg));
+        log(lite::level::debug, string_view_t(msg));
     }
 
     template<typename... Args>
     void debug(const char *fmt, const Args &... args)
     {
-        log(spdlog::lite::level::debug, fmt, args...);
+        log(lite::level::debug, fmt, args...);
     }
 
     void debug_f(const char *printf_format, ...);
@@ -98,13 +98,13 @@ public:
     //
     void info(const char *msg)
     {
-        log(spdlog::lite::level::info, string_view_t(msg));
+        log(lite::level::info, string_view_t(msg));
     }
 
     template<typename... Args>
     void info(const char *fmt, const Args &... args)
     {
-        log(spdlog::lite::level::info, fmt, args...);
+        log(lite::level::info, fmt, args...);
     }
 
     void info_f(const char *printf_format, ...);
@@ -114,13 +114,13 @@ public:
     //
     void warn(const char *msg)
     {
-        log(spdlog::lite::level::warn, string_view_t(msg));
+        log(lite::level::warn, string_view_t(msg));
     }
 
     template<typename... Args>
     void warn(const char *fmt, const Args &... args)
     {
-        log(spdlog::lite::level::warn, fmt, args...);
+        log(lite::level::warn, fmt, args...);
     }
 
     void warn_f(const char *printf_format, ...);
@@ -130,13 +130,13 @@ public:
     //
     void error(const char *msg)
     {
-        log(spdlog::lite::level::err, string_view_t(msg));
+        log(lite::level::err, string_view_t(msg));
     }
 
     template<typename... Args>
     void error(const char *fmt, const Args &... args)
     {
-        log(spdlog::lite::level::err, fmt, args...);
+        log(lite::level::err, fmt, args...);
     }
 
     void error_f(const char *printf_format, ...);
@@ -146,13 +146,13 @@ public:
     //
     void critical(const char *msg)
     {
-        log(spdlog::lite::level::critical, string_view_t(msg));
+        log(lite::level::critical, string_view_t(msg));
     }
 
     template<typename... Args>
     void critical(const char *fmt, const Args &... args)
     {
-        log(spdlog::lite::level::critical, fmt, args...);
+        log(lite::level::critical, fmt, args...);
     }
 
     void critical_f(const char *printf_format, ...);
@@ -168,13 +168,17 @@ public:
     // flush
     //
     void flush();
-    void flush_on(spdlog::lite::level log_level);
-    spdlog::lite::level flush_level() const;
+    void flush_on(lite::level log_level);
+    lite::level flush_level() const;
+
+    //
+    // set pattern
+    //
     void set_pattern(std::string pattern);
 
 protected:
     std::shared_ptr<spdlog::logger> impl_;
-    void log_formatted_(spdlog::lite::level lvl, const fmt::memory_buffer &formatted);
+    void log_formatted_(lite::level lvl, const fmt::memory_buffer &formatted);
 };
 
 spdlog::lite::logger &default_logger();
