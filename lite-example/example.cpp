@@ -2,7 +2,7 @@
 
 int main()
 {
-    auto l = spdlog::create_lite();
+    auto l = spdlog::create_lite((void*)"async");
     l.set_level(spdlog::lite::level::trace);
 
     l.trace_f("Hello %s ", "GABI");
