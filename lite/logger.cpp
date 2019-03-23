@@ -2,9 +2,9 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/logger.h"
 
-static spdlog::level::level_enum  to_spdlog_level(spdlog::lite::level level)
+static spdlog::level::level_enum to_spdlog_level(spdlog::lite::level level)
 {
-    return static_cast<spdlog::level::level_enum >(level);
+    return static_cast<spdlog::level::level_enum>(level);
 }
 
 static spdlog::lite::level to_lite_level(spdlog::level::level_enum level)
@@ -20,7 +20,7 @@ spdlog::lite::logger::logger(std::shared_ptr<spdlog::logger> impl)
 bool spdlog::lite::logger::should_log(spdlog::lite::level level) const SPDLOG_NOEXCEPT
 {
     auto spd_level = to_spdlog_level(level);
-    return impl_->should_log(spd_level);//TODO level
+    return impl_->should_log(spd_level); // TODO level
 }
 
 void spdlog::lite::logger::log_formatted_(spdlog::lite::level level, const fmt::memory_buffer &formatted)
@@ -28,7 +28,6 @@ void spdlog::lite::logger::log_formatted_(spdlog::lite::level level, const fmt::
     auto spd_level = to_spdlog_level(level);
     impl_->log(spd_level, spdlog::details::fmt_helper::to_string_view(formatted));
 }
-
 
 void spdlog::lite::logger::log_formatted_src(const spdlog::lite::src_loc &src, spdlog::lite::level lvl, const fmt::memory_buffer &formatted)
 {
@@ -74,7 +73,6 @@ void spdlog::lite::logger::set_pattern(std::string pattern)
 {
     impl_->set_pattern(std::move(pattern));
 }
-
 
 spdlog::lite::logger &spdlog::lite::default_logger()
 {

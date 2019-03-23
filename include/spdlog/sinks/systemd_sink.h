@@ -18,22 +18,24 @@
 namespace spdlog {
 namespace sinks {
 
-inline int syslog_level(level::level_enum l) {
-    switch(l) {
-        case level::off:
-        case level::trace:
-        case level::debug:
-            return LOG_DEBUG;
-        case level::info:
-            return LOG_INFO;
-        case level::warn:
-            return LOG_WARNING;
-        case level::err:
-            return LOG_ERR;
-        case level::critical:
-            return LOG_CRIT;
-        default:
-            throw std::invalid_argument("systemd_sink.h syslog_level()");
+inline int syslog_level(level::level_enum l)
+{
+    switch (l)
+    {
+    case level::off:
+    case level::trace:
+    case level::debug:
+        return LOG_DEBUG;
+    case level::info:
+        return LOG_INFO;
+    case level::warn:
+        return LOG_WARNING;
+    case level::err:
+        return LOG_ERR;
+    case level::critical:
+        return LOG_CRIT;
+    default:
+        throw std::invalid_argument("systemd_sink.h syslog_level()");
     }
 }
 
@@ -57,13 +59,7 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        if( sd_journal_print(
-                syslog_level(msg.level),
-                "%.*s",
-                static_cast<int>(msg.payload.size()),
-                msg.payload.data()
-            )
-        )
+        if (sd_journal_print(syslog_level(msg.level), "%.*s", static_cast<int>(msg.payload.size()), msg.payload.data()))
             throw spdlog_ex("Failed writing to systemd");
     }
 
@@ -76,15 +72,13 @@ using systemd_sink_st = systemd_sink<details::null_mutex>;
 
 // Create and register a syslog logger
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> systemd_logger_mt(
-    const std::string &logger_name)
+inline std::shared_ptr<logger> systemd_logger_mt(const std::string &logger_name)
 {
     return Factory::template create<sinks::systemd_sink_mt>(logger_name);
 }
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> systemd_logger_st(
-    const std::string &logger_name)
+inline std::shared_ptr<logger> systemd_logger_st(const std::string &logger_name)
 {
     return Factory::template create<sinks::systemd_sink_st>(logger_name);
 }
