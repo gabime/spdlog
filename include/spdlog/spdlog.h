@@ -47,6 +47,21 @@ inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs 
     return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
 
+// Initialize and register a logger,
+// formatter and flush level will be set according the global settings.
+//
+// NOTE:
+// Use this function when creating loggers manually.
+//
+// Example:
+//   auto console_sink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
+//   auto console_logger = std::make_shared<spdlog::logger>("console_logger", console_sink);
+//   spdlog::initialize_logger(console_logger);
+inline void initialize_logger(std::shared_ptr<logger> logger)
+{
+    details::registry::instance().initialize_logger(std::move(logger));
+}
+
 // Return an existing logger or nullptr if a logger with such name doesn't
 // exist.
 // example: spdlog::get("my_logger")->info("hello {}", "world");
