@@ -6,7 +6,7 @@
 #define UNUSED(x) (void)(x)
 
 // example of creating lite logger with console and file sink
-spdlog::lite::logger spdlog::create_lite(void *ctx)
+spdlog::lite::logger spdlog::lite::create_logger(void *ctx)
 {
     UNUSED(ctx);
     std::shared_ptr<spdlog::logger> logger_impl;
@@ -17,7 +17,7 @@ spdlog::lite::logger spdlog::create_lite(void *ctx)
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt > ("log.txt", true);
     file_sink ->set_level(spdlog::level::info);
 
-    logger_impl = std::make_shared<spdlog::logger>("my-logger", spdlog::sinks_init_list{console_sink, file_sink});
+    logger_impl = std::make_unique<spdlog::logger>("my-logger", spdlog::sinks_init_list{console_sink, file_sink});
     logger_impl->set_level(spdlog::level::debug);
     return spdlog::lite::logger(std::move(logger_impl));
 }

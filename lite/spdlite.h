@@ -42,7 +42,7 @@ enum class level
 class logger
 {
 public:
-    explicit logger(std::shared_ptr<spdlog::logger> impl);
+    explicit logger(std::shared_ptr<spdlog::logger> impl);    
     logger(const logger &) = default;
     logger(logger &&) = default;
     logger &operator=(const logger &) = default;
@@ -65,6 +65,8 @@ public:
 
     // log string view
     void log(lite::level lvl, const string_view_t &sv);
+
+	// log using printf format
     void log_printf(lite::level lvl, const char *format, va_list args);
 
     //
@@ -98,10 +100,8 @@ public:
     }
 
     void debug_printf(const char *format, ...);
-
-    //
-    // info
-    //
+    
+    // info    
     void info(const char *msg)
     {
         log(lite::level::info, string_view_t(msg));
@@ -115,9 +115,7 @@ public:
 
     void info_printf(const char *format, ...);
 
-    //
     // warn
-    //
     void warn(const char *msg)
     {
         log(lite::level::warn, string_view_t(msg));
@@ -131,9 +129,7 @@ public:
 
     void warn_printf(const char *format, ...);
 
-    //
     // error
-    //
     void error(const char *msg)
     {
         log(lite::level::err, string_view_t(msg));
@@ -147,9 +143,7 @@ public:
 
     void error_printf(const char *format, ...);
 
-    //
     // critical
-    //
     void critical(const char *msg)
     {
         log(lite::level::critical, string_view_t(msg));
@@ -163,28 +157,18 @@ public:
 
     void critical_printf(const char *format, ...);
 
-    //
-    // setters/getters
-    //
-    std::string name() const;
-    void set_level(lite::level level);
-    lite::level get_level() const;
+    // setters/getters	
+    void set_level(lite::level level) noexcept;    
+    void set_pattern(std::string pattern) noexcept;
+    lite::level level() const noexcept;
+    std::string name() const noexcept;
+    lite::level flush_level() const noexcept;
 
-    //
     // flush
-    //
     void flush();
     void flush_on(lite::level log_level);
-    lite::level flush_level() const;
-
-    //
-    // set pattern
-    //
-    void set_pattern(std::string pattern);
-
-    //
+          
     //clone with new name
-    //
     spdlog::lite::logger clone(std::string logger_name);
 
 protected:
@@ -230,10 +214,10 @@ void critical(const char *fmt, const Args &... args)
     default_logger().critical(fmt, args...);
 }
 
+// user implemented factory to create lite logger
+// implement it in a seperated and dedicated compilation unit for fast compiles.
+logger create_logger(void *ctx = nullptr);
+
 } // namespace lite
-
-// factory to create lite logger
-// implement it in a dedicated compilation unit for fast compiles
-spdlog::lite::logger create_lite(void *ctx = nullptr);
-
 } // namespace spdlog
+
