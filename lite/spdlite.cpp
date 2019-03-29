@@ -87,18 +87,18 @@ void spdlog::lite::logger::critical_printf(const char *format, ...)
     va_end(args);
 }
 
-void spdlog::lite::logger::set_level(spdlog::lite::level level)
+void spdlog::lite::logger::set_level(spdlog::lite::level level) noexcept
 {
     auto spd_level = to_spdlog_level(level);
     impl_->set_level(spd_level);
 }
 
-spdlog::lite::level spdlog::lite::logger::get_level() const
+spdlog::lite::level spdlog::lite::logger::level() const noexcept
 {
     return to_lite_level(impl_->level());
 }
 
-std::string spdlog::lite::logger::name() const
+std::string spdlog::lite::logger::name() const noexcept
 {
     return impl_->name();
 }
@@ -114,13 +114,13 @@ void spdlog::lite::logger::flush_on(spdlog::lite::level level)
     impl_->flush_on(spd_level);
 }
 
-spdlog::lite::level spdlog::lite::logger::flush_level() const
+spdlog::lite::level spdlog::lite::logger::flush_level() const noexcept
 {
     return to_lite_level(impl_->flush_level());
 }
 
 // pattern
-void spdlog::lite::logger::set_pattern(std::string pattern)
+void spdlog::lite::logger::set_pattern(std::string pattern) noexcept
 {
     impl_->set_pattern(std::move(pattern));
 }

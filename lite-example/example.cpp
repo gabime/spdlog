@@ -2,15 +2,18 @@
 
 int main()
 {
-    auto l = spdlog::create_lite();
+    auto l = spdlog::lite::create_logger();
     l.set_level(spdlog::lite::level::trace);
 
-    l.trace_printf("Hello %s ", "GABI");
+    l.trace_printf("Hello %s ", "GABI");    
     l.info_printf("Hello %d", 12346);
     l.warn_printf("Hello %f", 12346.5656);
     l.warn("Hello {}", "LITE :) ");
 
-    auto l2 = l.clone("logger2");
+    auto l2 = l.clone("logger2");    
     l2.debug("HELLO");
+
+	auto l3 = std::move(l);
+    l3.warn("HELLO FROM L3");
 
 }
