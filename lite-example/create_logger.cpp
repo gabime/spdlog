@@ -2,22 +2,13 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/stdout_sinks.h"
 
 #define UNUSED(x) (void)(x)
 
 // example of creating lite logger with console and file sink
-spdlite::logger spdlite::create_logger(void *ctx)
+spdlite::logger create_logger(void *ctx)
 {
     UNUSED(ctx);
-    std::shared_ptr<spdlog::logger> logger_impl;
-
-    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt> ();
-    console_sink->set_level(spdlog::level::debug);
-
-    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt > ("log.txt", true);
-    file_sink ->set_level(spdlog::level::info);
-
-    logger_impl = std::make_unique<spdlog::logger>("my-logger", spdlog::sinks_init_list{console_sink, file_sink});
-    logger_impl->set_level(spdlog::level::debug);
-    return spdlite::logger(std::move(logger_impl));
+    return spdlite::default_logger();    
 }

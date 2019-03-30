@@ -16,6 +16,11 @@ spdlite::logger::logger(std::shared_ptr<spdlog::logger> impl)
     impl_ = std::move(impl);
 }
 
+void spdlite::logger::set_impl(std::shared_ptr<spdlog::logger> impl)
+{
+    impl_ = std::move(impl);
+}
+
 bool spdlite::logger::should_log(spdlite::level level) const SPDLOG_NOEXCEPT
 {
     auto spd_level = to_spdlog_level(level);
@@ -30,7 +35,7 @@ void spdlite::logger::log(spdlite::level lvl, const string_view_t &sv)
 
 void spdlite::logger::log_printf(spdlite::level lvl, const char *format, va_list args)
 {
-    char buffer[500];
+    char buffer[256];
     auto size = vsnprintf(buffer, sizeof(buffer), format, args);
     if (size < 0)
     {
@@ -136,8 +141,68 @@ void spdlite::logger::log_formatted_(spdlite::level lvl, const fmt::memory_buffe
     impl_->log(spd_level, spdlog::details::fmt_helper::to_string_view(formatted));
 }
 
+spdlite::logger &spdlite::logger::default_logger()
+{
+    static spdlite::logger default_inst_ = spdlite::logger(spdlog::default_logger());
+    return default_inst_;
+}
+
 spdlite::logger &spdlite::default_logger()
 {
-    static spdlite::logger s_default(spdlog::default_logger());
-    return s_default;
+    return spdlite::logger::default_logger();
 }
+
+// printf
+void spdlite::log_printf(spdlite::level lvl, const char *format, va_list args)
+{
+    default_logger().log_printf(lvl, format, args);
+}
+
+void spdlite::trace_printf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    log_printf(level::trace, format, args);
+    va_end(args);
+}
+
+void spdlite::debug_printf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    log_printf(level::debug, format, args);
+    va_end(args);
+}
+
+void spdlite::info_printf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    log_printf(level::info, format, args);
+    va_end(args);
+}
+
+void spdlite::warn_printf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    log_printf(level::warn, format, args);
+    va_end(args);
+}
+
+void spdlite::error_printf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    log_printf(level::err, format, args);
+    va_end(args);
+}
+
+void spdlite::critical_printf(const char *format, ...)
+{
+    va_list args;
+    va_start(args, format);
+    log_printf(level::critical, format, args);
+    va_end(args);
+}
+
