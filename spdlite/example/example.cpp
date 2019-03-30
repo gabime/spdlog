@@ -2,7 +2,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include "spdlite/spdlite.h"
-#include "spdlite/spdlite_global.h"
+#include "spdlite/default_api.h"
 
 #define SPDLITE_ACTIVE_LEVEL SPDLITE_LEVEL_TRACE
 #include "spdlite/spdlite_macros.h"

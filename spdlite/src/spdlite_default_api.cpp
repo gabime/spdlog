@@ -1,7 +1,7 @@
 // Copyright(c) 2015-present Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include "spdlite/spdlite_global.h"
+#include "spdlite/default_api.h"
 
 spdlite::logger &spdlite::default_logger()
 {
