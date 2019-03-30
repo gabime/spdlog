@@ -1,13 +1,11 @@
-project(spdlog-lite-example CXX)
-
-find_package(Threads REQUIRED)
+project(spdlite-example CXX)
 
 set(LITE_SOURCES example.cpp create_logger.cpp)
 
 add_executable(${PROJECT_NAME} ${LITE_SOURCES})
 
-include_directories(../lite)
+find_package(Threads)
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
-target_link_libraries(${PROJECT_NAME} PRIVATE spdlog_lite)
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlite)
 
 

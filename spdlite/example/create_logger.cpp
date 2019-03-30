@@ -1,7 +1,7 @@
 // Copyright(c) 2015-present Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include "spdlite.h"
+#include "spdlite/spdlite.h"
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 

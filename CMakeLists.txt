@@ -89,8 +89,7 @@ if(SPDLOG_BUILD_BENCH)
 endif()
 
 if(SPDLOG_BUILD_LITE)
-    add_subdirectory(lite)
-    add_subdirectory(lite-example)
+    add_subdirectory(spdlite)    
 endif()
 
 #---------------------------------------------------------------------------------------
