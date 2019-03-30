@@ -1,12 +1,12 @@
-#include "spdlite.h"
+// Copyright(c) 2015-present Gabi Melman.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
+#include "spdlite.h"
+#include "spdlite_global.h"
+
+#define SPDLITE_ACTIVE_LEVEL SPDLITE_LEVEL_TRACE
+#include "spdlite_macros.h"
 int main()
-{   
-	spdlite::default_logger().set_level(spdlite::level::trace);
-    spdlite::trace_printf("Hello %d", 123);    
-	spdlite::debug_printf("Hello %d", 123);
-    spdlite::info_printf("Hello %d", 123);
-    spdlite::warn_printf("Hello %d", 123);
-    spdlite::error_printf("Hello %d", 123);
-    spdlite::critical_printf("Hello %d", 123);
+{
+    SPDLITE_TRACE("SOME INFO {}", 123);
 }
