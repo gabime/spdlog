@@ -1,34 +1,34 @@
 #include "spdlite.h"
 #include "spdlog/spdlog.h"
 
-static spdlog::level::level_enum to_spdlog_level(spdlog::lite::level level)
+static spdlog::level::level_enum to_spdlog_level(spdlite::level level)
 {
     return static_cast<spdlog::level::level_enum>(level);
 }
 
-static spdlog::lite::level to_lite_level(spdlog::level::level_enum level)
+static spdlite::level to_lite_level(spdlog::level::level_enum level)
 {
-    return static_cast<spdlog::lite::level>(level);
+    return static_cast<spdlite::level>(level);
 }
 
-spdlog::lite::logger::logger(std::shared_ptr<spdlog::logger> impl)
+spdlite::logger::logger(std::shared_ptr<spdlog::logger> impl)
 {
     impl_ = std::move(impl);
 }
 
-bool spdlog::lite::logger::should_log(spdlog::lite::level level) const SPDLOG_NOEXCEPT
+bool spdlite::logger::should_log(spdlite::level level) const SPDLOG_NOEXCEPT
 {
     auto spd_level = to_spdlog_level(level);
     return impl_->should_log(spd_level); // TODO avoid the call using local level member?
 }
 
-void spdlog::lite::logger::log(spdlog::lite::level lvl, const string_view_t &sv)
+void spdlite::logger::log(spdlite::level lvl, const string_view_t &sv)
 {
     auto spd_level = to_spdlog_level(lvl);
     impl_->log(spd_level, sv);
 }
 
-void spdlog::lite::logger::log_printf(spdlog::lite::level lvl, const char *format, va_list args)
+void spdlite::logger::log_printf(spdlite::level lvl, const char *format, va_list args)
 {
     char buffer[500];
     auto size = vsnprintf(buffer, sizeof(buffer), format, args);
@@ -39,105 +39,105 @@ void spdlog::lite::logger::log_printf(spdlog::lite::level lvl, const char *forma
     log(lvl, string_view_t{buffer, static_cast<size_t>(size)});
 }
 
-void spdlog::lite::logger::trace_printf(const char *format, ...)
+void spdlite::logger::trace_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_printf(lite::level::trace, format, args);
+    log_printf(spdlite::level::trace, format, args);
     va_end(args);
 }
 
-void spdlog::lite::logger::debug_printf(const char *format, ...)
+void spdlite::logger::debug_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_printf(lite::level::debug, format, args);
+    log_printf(spdlite::level::debug, format, args);
     va_end(args);
 }
 
-void spdlog::lite::logger::info_printf(const char *format, ...)
+void spdlite::logger::info_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_printf(lite::level::info, format, args);
+    log_printf(spdlite::level::info, format, args);
     va_end(args);
 }
 
-void spdlog::lite::logger::warn_printf(const char *format, ...)
+void spdlite::logger::warn_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_printf(lite::level::warn, format, args);
+    log_printf(spdlite::level::warn, format, args);
     va_end(args);
 }
 
-void spdlog::lite::logger::error_printf(const char *format, ...)
+void spdlite::logger::error_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_printf(lite::level::err, format, args);
+    log_printf(spdlite::level::err, format, args);
     va_end(args);
 }
 
-void spdlog::lite::logger::critical_printf(const char *format, ...)
+void spdlite::logger::critical_printf(const char *format, ...)
 {
     va_list args;
     va_start(args, format);
-    log_printf(lite::level::critical, format, args);
+    log_printf(spdlite::level::critical, format, args);
     va_end(args);
 }
 
-void spdlog::lite::logger::set_level(spdlog::lite::level level) noexcept
+void spdlite::logger::set_level(spdlite::level level) noexcept
 {
     auto spd_level = to_spdlog_level(level);
     impl_->set_level(spd_level);
 }
 
-spdlog::lite::level spdlog::lite::logger::level() const noexcept
+spdlite::level spdlite::logger::level() const noexcept
 {
     return to_lite_level(impl_->level());
 }
 
-std::string spdlog::lite::logger::name() const noexcept
+std::string spdlite::logger::name() const noexcept
 {
     return impl_->name();
 }
 
-void spdlog::lite::logger::flush()
+void spdlite::logger::flush()
 {
     impl_->flush();
 }
 
-void spdlog::lite::logger::flush_on(spdlog::lite::level level)
+void spdlite::logger::flush_on(spdlite::level level)
 {
     auto spd_level = to_spdlog_level(level);
     impl_->flush_on(spd_level);
 }
 
-spdlog::lite::level spdlog::lite::logger::flush_level() const noexcept
+spdlite::level spdlite::logger::flush_level() const noexcept
 {
     return to_lite_level(impl_->flush_level());
 }
 
 // pattern
-void spdlog::lite::logger::set_pattern(std::string pattern) noexcept
+void spdlite::logger::set_pattern(std::string pattern) noexcept
 {
     impl_->set_pattern(std::move(pattern));
 }
 
-spdlog::lite::logger spdlog::lite::logger::clone(std::string logger_name)
+spdlite::logger spdlite::logger::clone(std::string logger_name)
 {
-    return spdlog::lite::logger(impl_->clone(std::move(logger_name)));
+    return spdlite::logger(impl_->clone(std::move(logger_name)));
 }
 
-void spdlog::lite::logger::log_formatted_(spdlog::lite::level lvl, const fmt::memory_buffer &formatted)
+void spdlite::logger::log_formatted_(spdlite::level lvl, const fmt::memory_buffer &formatted)
 {
     auto spd_level = to_spdlog_level(lvl);
     impl_->log(spd_level, spdlog::details::fmt_helper::to_string_view(formatted));
 }
 
-spdlog::lite::logger &spdlog::lite::default_logger()
+spdlite::logger &spdlite::default_logger()
 {
-    static spdlog::lite::logger s_default(spdlog::default_logger());
+    static spdlite::logger s_default(spdlog::default_logger());
     return s_default;
 }

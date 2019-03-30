@@ -18,8 +18,8 @@
 
 namespace spdlog {
 class logger;
-
-namespace lite {
+}
+namespace spdlite {
 
 // string_view type - either std::string_view or fmt::string_view (pre c++17)
 #if defined(FMT_USE_STD_STRING_VIEW)
@@ -49,10 +49,10 @@ public:
 
     ~logger() = default;
 
-    bool should_log(lite::level lvl) const noexcept;
+    bool should_log(spdlite::level lvl) const noexcept;
 
     template<typename... Args>
-    void log(lite::level lvl, const char *fmt, const Args &... args)
+    void log(spdlite::level lvl, const char *fmt, const Args &... args)
     {
         if (!should_log(lvl))
         {
@@ -64,23 +64,23 @@ public:
     }
 
     // log string view
-    void log(lite::level lvl, const string_view_t &sv);
+    void log(spdlite::level lvl, const string_view_t &sv);
 
 	// log using printf format
-    void log_printf(lite::level lvl, const char *format, va_list args);
+    void log_printf(spdlite::level lvl, const char *format, va_list args);
 
     //
     // trace
     //
     void trace(const char *msg)
     {
-        log(lite::level::trace, string_view_t(msg));
+        log(spdlite::level::trace, string_view_t(msg));
     }
 
     template<typename... Args>
     void trace(const char *fmt, const Args &... args)
     {
-        log(lite::level::trace, fmt, args...);
+        log(spdlite::level::trace, fmt, args...);
     }
 
     void trace_printf(const char *format, ...);
@@ -90,13 +90,13 @@ public:
     //
     void debug(const char *msg)
     {
-        log(lite::level::debug, string_view_t(msg));
+        log(spdlite::level::debug, string_view_t(msg));
     }
 
     template<typename... Args>
     void debug(const char *fmt, const Args &... args)
     {
-        log(lite::level::debug, fmt, args...);
+        log(spdlite::level::debug, fmt, args...);
     }
 
     void debug_printf(const char *format, ...);
@@ -104,13 +104,13 @@ public:
     // info    
     void info(const char *msg)
     {
-        log(lite::level::info, string_view_t(msg));
+        log(spdlite::level::info, string_view_t(msg));
     }
 
     template<typename... Args>
     void info(const char *fmt, const Args &... args)
     {
-        log(lite::level::info, fmt, args...);
+        log(spdlite::level::info, fmt, args...);
     }
 
     void info_printf(const char *format, ...);
@@ -118,13 +118,13 @@ public:
     // warn
     void warn(const char *msg)
     {
-        log(lite::level::warn, string_view_t(msg));
+        log(spdlite::level::warn, string_view_t(msg));
     }
 
     template<typename... Args>
     void warn(const char *fmt, const Args &... args)
     {
-        log(lite::level::warn, fmt, args...);
+        log(spdlite::level::warn, fmt, args...);
     }
 
     void warn_printf(const char *format, ...);
@@ -132,13 +132,13 @@ public:
     // error
     void error(const char *msg)
     {
-        log(lite::level::err, string_view_t(msg));
+        log(spdlite::level::err, string_view_t(msg));
     }
 
     template<typename... Args>
     void error(const char *fmt, const Args &... args)
     {
-        log(lite::level::err, fmt, args...);
+        log(spdlite::level::err, fmt, args...);
     }
 
     void error_printf(const char *format, ...);
@@ -146,37 +146,37 @@ public:
     // critical
     void critical(const char *msg)
     {
-        log(lite::level::critical, string_view_t(msg));
+        log(spdlite::level::critical, string_view_t(msg));
     }
 
     template<typename... Args>
     void critical(const char *fmt, const Args &... args)
     {
-        log(lite::level::critical, fmt, args...);
+        log(spdlite::level::critical, fmt, args...);
     }
 
     void critical_printf(const char *format, ...);
 
     // setters/getters	
-    void set_level(lite::level level) noexcept;    
+    void set_level(spdlite::level level) noexcept;    
     void set_pattern(std::string pattern) noexcept;
-    lite::level level() const noexcept;
+    spdlite::level level() const noexcept;
     std::string name() const noexcept;
-    lite::level flush_level() const noexcept;
+    spdlite::level flush_level() const noexcept;
 
     // flush
     void flush();
-    void flush_on(lite::level log_level);
+    void flush_on(spdlite::level log_level);
           
     //clone with new name
-    spdlog::lite::logger clone(std::string logger_name);
+    spdlite::logger clone(std::string logger_name);
 
 protected:
     std::shared_ptr<spdlog::logger> impl_;
-    void log_formatted_(lite::level lvl, const fmt::memory_buffer &formatted);
+    void log_formatted_(spdlite::level lvl, const fmt::memory_buffer &formatted);
 };
 
-spdlog::lite::logger &default_logger();
+spdlite::logger &default_logger();
 
 template<typename... Args>
 void trace(const char *fmt, const Args &... args)
@@ -218,6 +218,5 @@ void critical(const char *fmt, const Args &... args)
 // implement it in a seperated and dedicated compilation unit for fast compiles.
 logger create_logger(void *ctx = nullptr);
 
-} // namespace lite
-} // namespace spdlog
+} // namespace spdlite
 

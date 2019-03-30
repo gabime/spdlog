@@ -2,8 +2,8 @@
 
 int main()
 {
-    auto l = spdlog::lite::create_logger();
-    l.set_level(spdlog::lite::level::trace);
+    auto l = spdlite::create_logger();
+    l.set_level(spdlite::level::trace);
 
     l.trace_printf("Hello %s ", "GABI");    
     l.info_printf("Hello %d", 12346);
