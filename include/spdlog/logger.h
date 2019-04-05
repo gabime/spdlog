@@ -164,10 +164,9 @@ public:
 			}
 			try
 			{
-				using details::fmt_helper::to_string_view;
 				fmt::memory_buffer buf;
 				fmt::format_to(buf, "{}", msg);
-				details::log_msg log_msg(loc, &name_, lvl, to_string_view(buf));
+				details::log_msg log_msg(loc, &name_, lvl, lvl, string_view_t(buf.data(), buf.size()));
 				sink_it_(log_msg);
 			}
 			catch (const std::exception &ex)
