@@ -11,6 +11,7 @@
 
 #include "spdlog/common.h"
 #include "spdlog/details/registry.h"
+#include "spdlog/details/pattern_formatter.h"
 #include "spdlog/logger.h"
 #include "spdlog/version.h"
 

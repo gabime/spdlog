@@ -7,6 +7,7 @@
 //
 //
 
+#include "spdlog/spdlog.h"
 #include "spdlog/logger.h"
 
 spdlog::logger *get_logger();
@@ -14,5 +15,5 @@ spdlog::logger *get_logger();
 int main(int, char *[])
 {    
     auto *l = get_logger();
-    l->info(L"HEllo {}", L"HGFS");
+    l->info("HEllo {}", "HG FS");
 }
