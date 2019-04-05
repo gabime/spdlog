@@ -9,21 +9,15 @@
 
 #include <atomic>
 #include <chrono>
-#include <functional>
 #include <initializer_list>
 #include <memory>
 #include <stdexcept>
 #include <string>
-#include <cstring>
-#include <type_traits>
-#include <unordered_map>
 
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #include <codecvt>
 #include <locale>
 #endif
-
-#include "spdlog/details/null_mutex.h"
 
 #include "spdlog/fmt/fmt.h"
 
@@ -75,6 +69,17 @@
 #define SPDLOG_FUNCTION __FUNCTION__
 #endif
 
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
+#define SPDLOG_FILENAME_T(s) L##s
+SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
+{
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
+    return c.to_bytes(filename);
+}
+#else
+#define SPDLOG_FILENAME_T(s) s
+#endif
+
 namespace spdlog {
 
 class formatter;
@@ -86,7 +91,6 @@ class sink;
 using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
-using log_err_handler = std::function<void(const std::string &err_msg)>;
 
 // string_view type - either std::string_view or fmt::string_view (pre c++17)
 #if defined(FMT_USE_STD_STRING_VIEW)

@@ -154,7 +154,7 @@ public:
         periodic_flusher_ = details::make_unique<periodic_worker>(clbk, interval);
     }
 
-    void set_error_handler(log_err_handler handler)
+    void set_error_handler(void (*handler)(const std::string &msg))
     {
         std::lock_guard<std::mutex> lock(logger_map_mutex_);
         for (auto &l : loggers_)
@@ -275,7 +275,7 @@ private:
     std::unique_ptr<formatter> formatter_;
     level::level_enum level_ = spdlog::logger::default_level();
     level::level_enum flush_level_ = level::off;
-    log_err_handler err_handler_;
+    void (*err_handler_)(const std::string &msg);
     std::shared_ptr<thread_pool> tp_;
     std::unique_ptr<periodic_worker> periodic_flusher_;
     std::shared_ptr<logger> default_logger_;

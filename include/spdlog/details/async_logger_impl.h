@@ -38,9 +38,6 @@ inline spdlog::async_logger::async_logger(
 // send the log message to the thread pool
 inline void spdlog::async_logger::sink_it_(details::log_msg &msg)
 {
-#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-    incr_msg_counter_(msg);
-#endif
     if (auto pool_ptr = thread_pool_.lock())
     {
         pool_ptr->post_log(shared_from_this(), msg, overflow_policy_);
@@ -119,6 +116,6 @@ inline std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string n
 
     cloned->set_level(this->level());
     cloned->flush_on(this->flush_level());
-    cloned->set_error_handler(this->error_handler());
+    cloned->set_error_handler(this->custom_err_handler_);
     return std::move(cloned);
 }

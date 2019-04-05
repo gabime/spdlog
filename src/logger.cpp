@@ -113,14 +113,9 @@ SPDLOG_INLINE std::vector<spdlog::sink_ptr> &spdlog::logger::sinks()
 }
 
 // error handler
-SPDLOG_INLINE void spdlog::logger::set_error_handler(spdlog::log_err_handler err_handler)
+SPDLOG_INLINE void spdlog::logger::set_error_handler(void (*handler)(const std::string &msg))
 {
-    err_handler_ = std::move(err_handler);
-}
-
-SPDLOG_INLINE spdlog::log_err_handler spdlog::logger::error_handler() const
-{
-    return err_handler_;
+    custom_err_handler_ = handler;
 }
 
 // create new logger with same sinks and configuration.
@@ -129,16 +124,13 @@ SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::logger::clone(std::string 
     auto cloned = std::make_shared<spdlog::logger>(std::move(logger_name), sinks_.begin(), sinks_.end());
     cloned->set_level(this->level());
     cloned->flush_on(this->flush_level());
-    cloned->set_error_handler(this->error_handler());
+    cloned->set_error_handler(this->custom_err_handler_);
     return cloned;
 }
 
 // protected methods
 SPDLOG_INLINE void spdlog::logger::sink_it_(spdlog::details::log_msg &msg)
 {
-#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
-    incr_msg_counter_(msg);
-#endif
     for (auto &sink : sinks_)
     {
         if (sink->should_log(msg.level))
@@ -167,21 +159,17 @@ SPDLOG_INLINE bool spdlog::logger::should_flush_(const spdlog::details::log_msg 
     return (msg.level >= flush_level) && (msg.level != level::off);
 }
 
-SPDLOG_INLINE void spdlog::logger::default_err_handler_(const std::string &msg)
-{
-    auto now = time(nullptr);
-    if (now - last_err_time_ < 60)
+void spdlog::logger::err_handler_(const std::string &msg)
+{    
+	if (custom_err_handler_)
+	{
+		custom_err_handler_(msg);
+	}
+    else
     {
-        return;
+        auto tm_time = spdlog::details::os::localtime();
+        char date_buf[64];
+        std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
+        fmt::print(stderr, "[*** LOG ERROR ***] [{}] [{}] {}\n", date_buf, name(), msg);
     }
-    last_err_time_ = now;
-    auto tm_time = details::os::localtime(now);
-    char date_buf[100];
-    std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
-    fmt::print(stderr, "[*** LOG ERROR ***] [{}] [{}] {}\n", date_buf, name(), msg);
-}
-
-SPDLOG_INLINE void spdlog::logger::incr_msg_counter_(spdlog::details::log_msg &msg)
-{
-    msg.msg_id = msg_counter_.fetch_add(1, std::memory_order_relaxed);
 }

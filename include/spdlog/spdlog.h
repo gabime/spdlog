@@ -103,9 +103,9 @@ inline void flush_every(std::chrono::seconds interval)
 }
 
 // Set global error handler
-inline void set_error_handler(log_err_handler handler)
+inline void set_error_handler(void (*handler)(const std::string &msg))
 {
-    details::registry::instance().set_error_handler(std::move(handler));
+    details::registry::instance().set_error_handler(handler);
 }
 
 // Register the given logger with the given name

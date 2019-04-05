@@ -11,7 +11,6 @@
 #include <string>
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
-#define SPDLOG_ENABLE_MESSAGE_COUNTER
 
 #include "spdlog/spdlog.h"
 #include "spdlog/async.h"
