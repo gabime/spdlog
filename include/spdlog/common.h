@@ -212,8 +212,6 @@ private:
     std::string msg_;
 };
 
-
-
 struct source_loc
 {
     SPDLOG_CONSTEXPR source_loc()
