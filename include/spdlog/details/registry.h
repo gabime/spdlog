@@ -34,18 +34,15 @@ public:
 
     void register_logger(std::shared_ptr<logger> new_logger);    
     void initialize_logger(std::shared_ptr<logger> new_logger);    
-    std::shared_ptr<logger> get(const std::string &logger_name);
-    
+    std::shared_ptr<logger> get(const std::string &logger_name);   
     std::shared_ptr<logger> default_logger();
     
-
     // Return raw ptr to the default logger.
     // To be used directly by the spdlog default api (e.g. spdlog::info)
     // This make the default API faster, but cannot be used concurrently with set_default_logger().
     // e.g do not call set_default_logger() from one thread while calling spdlog::info() from another.
     logger *get_default_raw();
     
-
     // set default logger.
     // default logger is stored in default_logger_ (for faster retrieval) and in the loggers_ map.
     void set_default_logger(std::shared_ptr<logger> new_default_logger);
