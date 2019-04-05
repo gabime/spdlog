@@ -6,7 +6,6 @@
 
 #ifndef SPDLOG_HEADER_ONLY
 #include "spdlog/details/os.h"
-#include "spdlog/common.h"
 #endif
 
 #include <algorithm>
@@ -15,11 +14,10 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
-#include <functional>
 #include <string>
+#include <thread>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <thread>
 
 #ifdef _WIN32
 

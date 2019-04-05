@@ -14,9 +14,5 @@ spdlog::logger *get_logger();
 int main(int, char *[])
 {    
     auto *l = get_logger();
-    l->info("HE LO ", "GA");    	
-	l->error("Some {} {} {}", "er or");
-    l->error("Some {} {} {}", "er or");
-   
-
+    l->info("HE LO ", "GA");    		   
 }
