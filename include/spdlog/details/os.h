@@ -79,6 +79,11 @@ bool is_color_terminal() SPDLOG_NOEXCEPT;
 // Detrmine if the terminal attached
 // Source: https://github.com/agauniyal/rang/
 bool in_terminal(FILE *file) SPDLOG_NOEXCEPT;
+
+#if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) && defined(_WIN32)
+void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer &target);
+#endif
+
 } // namespace os
 } // namespace details
 } // namespace spdlog

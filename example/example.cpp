@@ -14,5 +14,5 @@ spdlog::logger *get_logger();
 int main(int, char *[])
 {    
     auto *l = get_logger();
-    l->info("HE LO ", "GA");    		   
+    l->info(L"HEllo {}", L"HGFS");
 }

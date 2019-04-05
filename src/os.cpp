@@ -397,6 +397,30 @@ SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
     return isatty(fileno(file)) != 0;
 #endif
 }
+
+#if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) && defined(_WIN32)
+SPDLOG_INLINE void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer &target)
+{
+    int wbuf_size = static_cast<int>(wbuf.size());
+    if (wbuf_size == 0)
+    {
+        return;
+    }
+
+    auto result_size = ::WideCharToMultiByte(CP_UTF8, 0, wbuf.data(), wbuf_size, NULL, 0, NULL, NULL);
+
+    if (result_size > 0)
+    {
+        target.resize(result_size);
+        ::WideCharToMultiByte(CP_UTF8, 0, wbuf.data(), wbuf_size, &target.data()[0], result_size, NULL, NULL);
+    }
+    else
+    {
+        throw spdlog::spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
+    }
+}
+#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT) && _WIN32
+
 } // namespace os
 } // namespace details
 } // namespace spdlog
