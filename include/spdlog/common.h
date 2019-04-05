@@ -70,6 +70,7 @@
 #endif
 
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
+using filename_t = std::wstring;
 #define SPDLOG_FILENAME_T(s) L##s
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
@@ -77,6 +78,7 @@ SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
     return c.to_bytes(filename);
 }
 #else
+using filename_t = std::string;
 #define SPDLOG_FILENAME_T(s) s
 #endif
 
@@ -210,14 +212,7 @@ private:
     std::string msg_;
 };
 
-//
-// wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
-//
-#if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
-using filename_t = std::wstring;
-#else
-using filename_t = std::string;
-#endif
+
 
 struct source_loc
 {

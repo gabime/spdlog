@@ -27,5 +27,3 @@ SPDLOG_INLINE spdlog::level::level_enum spdlog::sinks::sink::level() const
 {
     return static_cast<spdlog::level::level_enum>(level_.load(std::memory_order_relaxed));
 }
-
-
