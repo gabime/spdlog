@@ -1333,3 +1333,7 @@ private:
     }
 };
 } // namespace spdlog
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "../src/os.cpp"
+#endif

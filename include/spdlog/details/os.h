@@ -4,19 +4,7 @@
 //
 #pragma once
 
-#include "../common.h"
-
-#include <algorithm>
-#include <chrono>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <functional>
-#include <string>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <thread>
+#include "spdlog/common.h"
 
 namespace spdlog {
 namespace details {
