@@ -960,7 +960,7 @@ private:
 } // namespace details
 
 
- pattern_formatter::pattern_formatter(
+ SPDLOG_INLINE pattern_formatter::pattern_formatter(
         std::string pattern, pattern_time_type time_type, std::string eol)
         : pattern_(std::move(pattern))
         , eol_(std::move(eol))
@@ -972,7 +972,7 @@ private:
     }
 
     // use by default full formatter for if pattern is not given
-    pattern_formatter::pattern_formatter(pattern_time_type time_type, std::string eol)
+    SPDLOG_INLINE pattern_formatter::pattern_formatter(pattern_time_type time_type, std::string eol)
         : pattern_("%+")
         , eol_(std::move(eol))
         , pattern_time_type_(time_type)
@@ -983,12 +983,12 @@ private:
     }
 
     
-    std::unique_ptr<formatter> pattern_formatter::clone() const
+    SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
     {
         return details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_);
     }
 
-    void pattern_formatter::format(const details::log_msg &msg, fmt::memory_buffer &dest)
+    SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, fmt::memory_buffer &dest)
     {
 #ifndef SPDLOG_NO_DATETIME
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
@@ -1006,7 +1006,7 @@ private:
         details::fmt_helper::append_string_view(eol_, dest);
     }
 
-    std::tm pattern_formatter::get_time_(const details::log_msg &msg)
+    SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg)
     {
         if (pattern_time_type_ == pattern_time_type::local)
         {
@@ -1015,7 +1015,7 @@ private:
         return details::os::gmtime(log_clock::to_time_t(msg.time));
     }
 
-    void pattern_formatter::handle_flag_(char flag, details::padding_info padding)
+    SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_info padding)
     {
         switch (flag)
         {
@@ -1183,7 +1183,7 @@ private:
     // Extract given pad spec (e.g. %8X)
     // Advance the given it pass the end of the padding spec found (if any)
     // Return padding.
-    details::padding_info pattern_formatter::handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end)
+    SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end)
     {
         using details::padding_info;
         using details::scoped_pad;
@@ -1223,7 +1223,7 @@ private:
         return details::padding_info{std::min<size_t>(width, max_width), side};
     }
 
-    void pattern_formatter::compile_pattern_(const std::string &pattern)
+    SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &pattern)
     {
         auto end = pattern.end();
         std::unique_ptr<details::aggregate_formatter> user_chars;
