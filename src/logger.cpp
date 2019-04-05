@@ -113,7 +113,7 @@ SPDLOG_INLINE std::vector<spdlog::sink_ptr> &spdlog::logger::sinks()
 }
 
 // error handler
-SPDLOG_INLINE void spdlog::logger::set_error_handler(void (*handler)(const std::string &msg))
+SPDLOG_INLINE void spdlog::logger::set_error_handler(err_handler handler)
 {
     custom_err_handler_ = handler;
 }

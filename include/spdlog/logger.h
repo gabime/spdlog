@@ -32,6 +32,7 @@ namespace spdlog {
 class logger
 {
 public:
+		using err_handler = void (*)(const std::string &msg);
         template<typename It>
         logger(std::string name, It begin, It end)
             : name_(std::move(name))
@@ -318,7 +319,7 @@ public:
         std::vector<sink_ptr> &sinks();
 
         // error handler
-        void set_error_handler(void (*handler)(const std::string& msg));
+        void set_error_handler(err_handler);
         
         // create new logger with same sinks and configuration.
         virtual std::shared_ptr<logger> clone(std::string logger_name);
@@ -340,7 +341,7 @@ public:
         std::vector<sink_ptr> sinks_;
         spdlog::level_t level_{spdlog::logger::default_level()};
         spdlog::level_t flush_level_{level::off};
-        void (*custom_err_handler_)(const std::string &msg) {nullptr};                        
+        err_handler custom_err_handler_{nullptr};        
 
 
 };
