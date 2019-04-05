@@ -10,16 +10,15 @@
 #include "spdlog/logger.h"
 
 
-namespace spdlog {
-class logger;
-}
 
 spdlog::logger *get_logger();
-
-
 
 int main(int, char *[])
 {    
     auto *l = get_logger();
-    l->info("HELLO");
+    l->info("HELLO  {}", "World");    
+	l->warn("SOME WARNINNG");
+    l->error("Some {}", "error");
+   
+
 }

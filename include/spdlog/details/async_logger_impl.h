@@ -79,7 +79,14 @@ inline void spdlog::async_logger::backend_log_(const details::log_msg &incoming_
             }
         }
     }
-    SPDLOG_CATCH_AND_HANDLE
+    catch (const std::exception &ex)
+    {
+        err_handler_(ex.what());
+    }
+    catch (...)
+    {
+        err_handler_("Unknown exception in logger");
+    }
 
     if (should_flush_(incoming_log_msg))
     {
@@ -96,7 +103,14 @@ inline void spdlog::async_logger::backend_flush_()
             sink->flush();
         }
     }
-    SPDLOG_CATCH_AND_HANDLE
+    catch (const std::exception &ex)
+    {
+        err_handler_(ex.what());
+    }
+    catch (...)
+    {
+        err_handler_("Unknown exception in logger");
+    }
 }
 
 inline std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name)

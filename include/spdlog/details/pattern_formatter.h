@@ -4,7 +4,6 @@
 //
 
 #pragma once
-
 #include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/os.h"
