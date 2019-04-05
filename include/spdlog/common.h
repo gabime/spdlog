@@ -13,6 +13,7 @@
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <type_traits>
 
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #include <codecvt>
@@ -26,7 +27,6 @@
 #else
 #define SPDLOG_INLINE
 #endif
-
 
 // visual studio upto 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
@@ -214,15 +214,10 @@ private:
 
 struct source_loc
 {
-    SPDLOG_CONSTEXPR source_loc()
-        : filename{""}
-        , line{0}
-        , funcname{""}
-    {
-    }
+    SPDLOG_CONSTEXPR source_loc() = default;
     SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
         : filename{filename_in}
-        , line{static_cast<uint32_t>(line_in)}
+        , line{line_in}
         , funcname{funcname_in}
     {
     }
@@ -231,9 +226,9 @@ struct source_loc
     {
         return line == 0;
     }
-    const char *filename;
-    uint32_t line;
-    const char *funcname;
+    const char *filename{nullptr};
+    int line{0};
+    const char *funcname{nullptr};
 };
 
 namespace details {
