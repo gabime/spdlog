@@ -79,6 +79,8 @@ async...                Elapsed: 0.349851       2,858,358/sec
 #### Basic usage
 ```c++
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
+
 int main() 
 {
     spdlog::info("Welcome to spdlog!");
