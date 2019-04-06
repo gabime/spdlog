@@ -15,9 +15,7 @@ spdlog::logger *get_logger();
 int main(int, char *[])
 {    
 	int x = 4;
-	spdlog::info("HELLO {}", "st at ic");
-    spdlog::warn("HELLO {} *{} = {}", x, x, x*x);
-
-    /*auto *l = get_logger();
-    l->info("HEllo {}", "HG FS");*/
+	
+    auto *l = get_logger();
+    l->info("HEllo { }", "HG FS");
 }
