@@ -72,7 +72,7 @@
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 using filename_t = std::wstring;
 #define SPDLOG_FILENAME_T(s) L##s
-SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
+inline std::string filename_to_str(const filename_t &filename)
 {
     std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
     return c.to_bytes(filename);
