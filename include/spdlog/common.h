@@ -69,6 +69,15 @@
 #define SPDLOG_FUNCTION __FUNCTION__
 #endif
 
+
+namespace spdlog {
+
+class formatter;
+
+namespace sinks {
+class sink;
+}
+
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 using filename_t = std::wstring;
 #define SPDLOG_FILENAME_T(s) L##s
@@ -81,14 +90,6 @@ inline std::string filename_to_str(const filename_t &filename)
 using filename_t = std::string;
 #define SPDLOG_FILENAME_T(s) s
 #endif
-
-namespace spdlog {
-
-class formatter;
-
-namespace sinks {
-class sink;
-}
 
 using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
