@@ -53,11 +53,8 @@ option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
+option(SPDLOG_FMT_HEADER_ONLY "Use header-only variant of external fmt library" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
-
-if(SPDLOG_FMT_EXTERNAL AND NOT TARGET fmt::fmt)
-    find_package(fmt REQUIRED CONFIG)
-endif()
 
 target_include_directories(
     spdlog
@@ -68,7 +65,16 @@ target_include_directories(
 
 if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
-    target_link_libraries(spdlog INTERFACE fmt::fmt)
+
+    if(NOT TARGET fmt::fmt)
+        find_package(fmt REQUIRED CONFIG)
+    endif()
+
+    if(SPDLOG_FMT_HEADER_ONLY)
+        target_link_libraries(spdlog INTERFACE fmt::fmt-header-only)
+    else()
+        target_link_libraries(spdlog INTERFACE fmt::fmt)
+    endif()
 endif()
 
 set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
