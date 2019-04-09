@@ -159,7 +159,7 @@ SPDLOG_INLINE bool spdlog::logger::should_flush_(const spdlog::details::log_msg 
     return (msg.level >= flush_level) && (msg.level != level::off);
 }
 
-void spdlog::logger::err_handler_(const std::string &msg)
+SPDLOG_INLINE void spdlog::logger::err_handler_(const std::string &msg)
 {    
 	if (custom_err_handler_)
 	{
