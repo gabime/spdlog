@@ -32,3 +32,7 @@ struct log_msg
 };
 } // namespace details
 } // namespace spdlog
+
+#ifdef  SPDLOG_HEADER_ONLY
+#include "../../../src/log_msg.cpp"
+#endif //  SPDLOG_HEADER_ONLY
