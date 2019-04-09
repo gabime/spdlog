@@ -166,7 +166,7 @@ public:
 			{
 				fmt::memory_buffer buf;
 				fmt::format_to(buf, "{}", msg);
-				details::log_msg log_msg(loc, &name_, lvl, lvl, string_view_t(buf.data(), buf.size()));
+				details::log_msg log_msg(loc, &name_, lvl, string_view_t(buf.data(), buf.size()));
 				sink_it_(log_msg);
 			}
 			catch (const std::exception &ex)
