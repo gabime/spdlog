@@ -490,7 +490,7 @@ class basic_format_args;
 template <typename T, typename Char = char, typename Enable = void>
 struct formatter {
   static_assert(internal::no_formatter_error<T>::value,
-    "don't know how to format the type, include fmt/ostream.h if it provides "
+    "don't know how to format the type; include spdlog/fmt/bundled/ostream.h if it provides "
     "an operator<< that should be used");
 
   // The following functions are not defined intentionally.
