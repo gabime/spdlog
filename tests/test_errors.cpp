@@ -42,7 +42,7 @@ struct custom_ex
 {
 };
 
-static void custom_handler(const std::string &msg)
+static void custom_handler(const std::string &)
 {
     throw custom_ex();
 }

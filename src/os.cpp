@@ -2,8 +2,6 @@
 // Copyright(c) 2015 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
-#pragma once
-
 #ifndef SPDLOG_HEADER_ONLY
 #include "spdlog/details/os.h"
 #endif

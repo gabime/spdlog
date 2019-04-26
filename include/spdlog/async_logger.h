@@ -19,12 +19,8 @@
 // Upon destruction, logs all remaining messages in the queue before
 // destructing..
 
-#include "spdlog/common.h"
-#include "spdlog/logger.h"
 
-#include <chrono>
-#include <memory>
-#include <string>
+#include "spdlog/logger.h"
 
 namespace spdlog {
 
@@ -70,4 +66,8 @@ private:
 };
 } // namespace spdlog
 
-#include "details/async_logger_impl.h"
+#ifdef SPDLOG_HEADER_ONLY
+#include "../src/async_logger.cpp"
+#endif // SPDLOG_HEADER_ONLY
+
+

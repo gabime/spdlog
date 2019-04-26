@@ -7,15 +7,16 @@
 //
 //
 
-#include "spdlog/spdlog.h"
-#include "spdlog/logger.h"
 
-spdlog::logger *get_logger();
+#include "spdlog/spdlog.h"
+#include "spdlog/async.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+
 
 int main(int, char *[])
-{    
-	int x = 4;
-	
-    auto *l = get_logger();
-    l->info("HEllo { }", "HG FS");
+{
+    using spdlog::sinks::stderr_color_sink_mt;
+    auto logger = spdlog::create_async<spdlog::sinks::stderr_color_sink_mt>("async");
+    logger->info("HEllo xsdsdfs {}", 123);
+    //spdlog::error("HEllo err {}", "HG FS");
 }
