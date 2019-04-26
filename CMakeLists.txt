@@ -47,7 +47,7 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(SPDLOG_MASTER_PROJECT ON)
 endif()
 
-option(SPDLOG_HEADER_ONLY "Header only version. Turn OFF to build as static lib" ON)
+option(SPDLOG_HEADER_ONLY "Header only version. Turn OFF to build as static lib" OFF)
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" ON)
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
@@ -107,7 +107,7 @@ endif()
 #---------------------------------------------------------------------------------------
 install(DIRECTORY ${HEADER_BASE}/spdlog DESTINATION include)
 
-if(!SPDLOG_HEADER_ONLY)
+if(NOT SPDLOG_HEADER_ONLY)
     install(TARGETS spdlog ARCHIVE DESTINATION lib)
 endif()
 
