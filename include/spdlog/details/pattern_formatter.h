@@ -20,7 +20,6 @@
 namespace spdlog {
 namespace details {
 
-
 // padding information.
 struct padding_info
 {
@@ -61,26 +60,22 @@ protected:
     padding_info padinfo_;
 };
 
-}
+} // namespace details
 
 class pattern_formatter final : public formatter
 {
 public:
     explicit pattern_formatter(
-        std::string pattern, 
-		pattern_time_type time_type = pattern_time_type::local, 
-		std::string eol = spdlog::details::os::default_eol);
-        
+        std::string pattern, pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol);
+
     // use default pattern is not given
-    explicit pattern_formatter(
-		pattern_time_type time_type = pattern_time_type::local,
-		std::string eol = spdlog::details::os::default_eol);        
+    explicit pattern_formatter(pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol);
 
     pattern_formatter(const pattern_formatter &other) = delete;
     pattern_formatter &operator=(const pattern_formatter &other) = delete;
 
     std::unique_ptr<formatter> clone() const override;
-    void format(const details::log_msg &msg, fmt::memory_buffer &dest) override;    
+    void format(const details::log_msg &msg, fmt::memory_buffer &dest) override;
 
 private:
     std::string pattern_;
@@ -89,15 +84,15 @@ private:
     std::tm cached_tm_;
     std::chrono::seconds last_log_secs_;
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
-    std::tm get_time_(const details::log_msg &msg);   
+    std::tm get_time_(const details::log_msg &msg);
 
     void handle_flag_(char flag, details::padding_info padding);
-   
+
     // Extract given pad spec (e.g. %8X)
     // Advance the given it pass the end of the padding spec found (if any)
     // Return padding.
     details::padding_info handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end);
-    
+
     void compile_pattern_(const std::string &pattern);
 };
 } // namespace spdlog

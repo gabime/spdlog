@@ -70,7 +70,6 @@
 #define SPDLOG_FUNCTION __FUNCTION__
 #endif
 
-
 namespace spdlog {
 
 class formatter;

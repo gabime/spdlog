@@ -6,7 +6,6 @@
 #include "spdlog/details/registry.h"
 #endif
 
-
 #include "spdlog/common.h"
 #include "spdlog/details/periodic_worker.h"
 #include "spdlog/logger.h"

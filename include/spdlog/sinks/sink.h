@@ -17,7 +17,7 @@ class sink
 public:
     sink();
 
-    explicit sink(std::unique_ptr<spdlog::formatter> formatter);    
+    explicit sink(std::unique_ptr<spdlog::formatter> formatter);
     virtual ~sink() = default;
     virtual void log(const details::log_msg &msg) = 0;
     virtual void flush() = 0;
@@ -25,9 +25,9 @@ public:
     virtual void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) = 0;
 
     bool should_log(level::level_enum msg_level) const;
-    
+
     void set_level(level::level_enum log_level);
-    
+
     level::level_enum level() const;
 
 protected:

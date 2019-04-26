@@ -107,7 +107,7 @@ TEST_CASE("clone-logger", "[clone]")
     cloned->info("Some message 2");
 
     auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(cloned->sinks()[0]);
-    
+
     spdlog::drop_all();
 }
 
@@ -128,7 +128,7 @@ TEST_CASE("clone async", "[clone]")
 
     spdlog::details::os::sleep_for_millis(10);
 
-    auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(cloned->sinks()[0]);    
+    auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(cloned->sinks()[0]);
 
     spdlog::drop_all();
 }

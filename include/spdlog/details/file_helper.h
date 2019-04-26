@@ -24,17 +24,17 @@ public:
 
     file_helper(const file_helper &) = delete;
     file_helper &operator=(const file_helper &) = delete;
-    ~file_helper();    
+    ~file_helper();
 
-    void open(const filename_t &fname, bool truncate = false);    
-    void reopen(bool truncate);    
-    void flush();    
-    void close();    
+    void open(const filename_t &fname, bool truncate = false);
+    void reopen(bool truncate);
+    void flush();
+    void close();
     void write(const fmt::memory_buffer &buf);
-    size_t size() const;    
+    size_t size() const;
     const filename_t &filename() const;
     static bool file_exists(const filename_t &fname);
-    
+
     //
     // return file path and its extension:
     //
@@ -57,6 +57,6 @@ private:
 } // namespace details
 } // namespace spdlog
 
-#ifdef  SPDLOG_HEADER_ONLY
+#ifdef SPDLOG_HEADER_ONLY
 #include "spdlog/impl/file_helper.cpp"
 #endif // ! SPDLOG_HEADER_ONLY

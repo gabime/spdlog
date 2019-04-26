@@ -160,11 +160,11 @@ SPDLOG_INLINE bool spdlog::logger::should_flush_(const spdlog::details::log_msg 
 }
 
 SPDLOG_INLINE void spdlog::logger::err_handler_(const std::string &msg)
-{    
-	if (custom_err_handler_)
-	{
-		custom_err_handler_(msg);
-	}
+{
+    if (custom_err_handler_)
+    {
+        custom_err_handler_(msg);
+    }
     else
     {
         auto tm_time = spdlog::details::os::localtime();

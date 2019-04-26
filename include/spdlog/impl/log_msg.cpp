@@ -5,8 +5,6 @@
 #include "spdlog/details/log_msg.h"
 #endif
 
-
-
 SPDLOG_INLINE spdlog::details::log_msg::log_msg(
     spdlog::source_loc loc, const std::string *loggers_name, spdlog::level::level_enum lvl, spdlog::string_view_t view)
     : logger_name(loggers_name)
