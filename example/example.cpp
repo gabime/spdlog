@@ -12,7 +12,6 @@
 #include "spdlog/async.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-
 int main(int, char *[])
 {
     using spdlog::sinks::stderr_color_sink_mt;

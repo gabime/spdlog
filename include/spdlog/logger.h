@@ -27,12 +27,13 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <functional>
 
 namespace spdlog {
 class logger
 {
 public:
-		using err_handler = void (*)(const std::string &msg);
+        using err_handler = std::function<void(const std::string &err_msg)>;
         template<typename It>
         logger(std::string name, It begin, It end)
             : name_(std::move(name))
@@ -332,10 +333,7 @@ public:
         // default error handler.
         // print the error to stderr with the max rate of 1 message/minute.
         void err_handler_(const std::string &msg);
-
-        // increment the message count (only if defined(SPDLOG_ENABLE_MESSAGE_COUNTER))
-        void incr_msg_counter_(details::log_msg &msg);
-
+        
         const std::string name_;
         std::vector<sink_ptr> sinks_;
         spdlog::level_t level_{spdlog::logger::default_level()};
