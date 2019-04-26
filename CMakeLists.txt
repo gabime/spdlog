@@ -47,41 +47,47 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(SPDLOG_MASTER_PROJECT ON)
 endif()
 
-option(SPDLOG_HEADER_ONLY "Header only version. Turn OFF to build as static lib" OFF)
+option(SPDLOG_HEADER_ONLY "Header only version. Turn OFF to build as static lib" ON)
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" ON)
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 
+set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
 if(SPDLOG_HEADER_ONLY)
 	add_definitions(-DSPDLOG_HEADER_ONLY)
     add_library(spdlog INTERFACE)
     add_library(spdlog::spdlog ALIAS spdlog)
+    target_include_directories(
+            spdlog
+            INTERFACE
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+    )
 
 else()
 	remove_definitions(-DSPDLOG_HEADER_ONLY)
-    file(GLOB SRC_FILES ${PROJECT_SOURCE_DIR}/src/*.cpp)
-    add_library(spdlog ${SRC_FILES} )
+    file(GLOB SRC_FILES ${HEADER_BASE}/spdlog/impl/*.cpp)
+    add_library(spdlog STATIC ${SRC_FILES})
     add_library(spdlog::spdlog ALIAS spdlog)
+    target_include_directories(
+            spdlog
+            PUBLIC
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+    )
 endif()
 
 if(SPDLOG_FMT_EXTERNAL AND NOT TARGET fmt::fmt)
     find_package(fmt REQUIRED CONFIG)
 endif()
 
-target_include_directories(
-    spdlog
-    PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-)
 
 if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog INTERFACE fmt::fmt)
 endif()
 
-set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 if(SPDLOG_BUILD_EXAMPLES)
     add_subdirectory(example)
@@ -95,3 +101,18 @@ endif()
 if(SPDLOG_BUILD_BENCH)
     add_subdirectory(bench)
 endif()
+
+#---------------------------------------------------------------------------------------
+# install
+#---------------------------------------------------------------------------------------
+install(DIRECTORY ${HEADER_BASE}/spdlog DESTINATION include)
+
+if(!SPDLOG_HEADER_ONLY)
+    install(TARGETS spdlog ARCHIVE DESTINATION lib)
+endif()
+
+#---------------------------------------------------------------------------------------
+# register project in CMake user registry
+#---------------------------------------------------------------------------------------
+export(PACKAGE ${PROJECT_NAME})
+

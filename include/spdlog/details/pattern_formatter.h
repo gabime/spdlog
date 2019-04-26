@@ -103,5 +103,5 @@ private:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "../src/pattern_formatter.cpp"
+#include "spdlog/impl/pattern_formatter.cpp"
 #endif

@@ -34,5 +34,5 @@ struct log_msg
 } // namespace spdlog
 
 #ifdef  SPDLOG_HEADER_ONLY
-#include "../../../src/log_msg.cpp"
+#include "spdlog/impl/log_msg.cpp"
 #endif //  SPDLOG_HEADER_ONLY

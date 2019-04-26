@@ -33,7 +33,6 @@ namespace spdlog {
 class logger
 {
 public:
-        using err_handler = std::function<void(const std::string &err_msg)>;
         template<typename It>
         logger(std::string name, It begin, It end)
             : name_(std::move(name))
@@ -345,5 +344,5 @@ public:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "../src/logger.cpp"
+#include "spdlog/impl/logger.cpp"
 #endif // SPDLOG_HEADER_ONLY

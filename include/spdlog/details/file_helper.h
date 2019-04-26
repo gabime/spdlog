@@ -58,5 +58,5 @@ private:
 } // namespace spdlog
 
 #ifdef  SPDLOG_HEADER_ONLY
-#include "../../../src/file_helper.cpp"
+#include "spdlog/impl/file_helper.cpp"
 #endif // ! SPDLOG_HEADER_ONLY

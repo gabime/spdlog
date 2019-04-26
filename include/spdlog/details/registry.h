@@ -102,5 +102,5 @@ private:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "../src/registry.cpp"
+#include "spdlog/impl/registry.cpp"
 #endif // SPDLOG_HEADER_ONLY

@@ -42,5 +42,5 @@ protected:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "../src/sink.cpp"
+#include "spdlog/impl/sink.cpp"
 #endif // SPDLOG_HEADER_ONLY

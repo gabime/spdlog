@@ -67,7 +67,7 @@ private:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "../src/async_logger.cpp"
+#include "spdlog/impl/async_logger.cpp"
 #endif // SPDLOG_HEADER_ONLY
 
 
