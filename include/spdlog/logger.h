@@ -340,6 +340,6 @@ protected:
 };
 } // namespace spdlog
 
-#ifdef SPDLOG_HEADER_ONLY
+#ifndef SPDLOG_STATIC_LIB
 #include "spdlog/impl/logger.cpp"
-#endif // SPDLOG_HEADER_ONLY
+#endif

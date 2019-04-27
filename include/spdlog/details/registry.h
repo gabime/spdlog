@@ -101,6 +101,6 @@ private:
 } // namespace details
 } // namespace spdlog
 
-#ifdef SPDLOG_HEADER_ONLY
+#ifndef SPDLOG_STATIC_LIB
 #include "spdlog/impl/registry.cpp"
-#endif // SPDLOG_HEADER_ONLY
+#endif

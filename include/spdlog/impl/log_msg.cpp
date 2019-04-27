@@ -1,7 +1,7 @@
 #include "spdlog/details/os.h"
 #include "spdlog/sinks/sink.h"
 
-#ifndef SPDLOG_HEADER_ONLY
+#ifdef SPDLOG_STATIC_LIB
 #include "spdlog/details/log_msg.h"
 #endif
 

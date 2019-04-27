@@ -3,7 +3,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#ifndef SPDLOG_HEADER_ONLY
+#ifdef SPDLOG_STATIC_LIB
 #include "spdlog/details/file_helper.h"
 
 #endif

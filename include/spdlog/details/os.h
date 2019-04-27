@@ -88,6 +88,6 @@ void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer &target
 } // namespace details
 } // namespace spdlog
 
-#ifdef SPDLOG_HEADER_ONLY
+#ifndef SPDLOG_STATIC_LIB
 #include "spdlog/impl/os.cpp"
 #endif

@@ -1,8 +1,5 @@
-
-#
-# Copyright(c) 2015 Ruslan Baratov.
+# Copyright(c) 2019 spdlog
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
-#
 
 cmake_minimum_required(VERSION 3.1)
 project(spdlog VERSION 1.3.1 LANGUAGES CXX)
@@ -47,47 +44,35 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(SPDLOG_MASTER_PROJECT ON)
 endif()
 
-option(SPDLOG_HEADER_ONLY "Header only version. Turn OFF to build as static lib" OFF)
+option(SPDLOG_STATIC_LIB "Build as static lib" OFF)
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" ON)
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 
-set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog")
 
-if(SPDLOG_HEADER_ONLY)
-	add_definitions(-DSPDLOG_HEADER_ONLY)
-    add_library(spdlog INTERFACE)
-    add_library(spdlog::spdlog ALIAS spdlog)
-    target_include_directories(
-            spdlog
-            INTERFACE
-            "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-    )
-
-else()
-	remove_definitions(-DSPDLOG_HEADER_ONLY)
-    file(GLOB SRC_FILES ${HEADER_BASE}/spdlog/impl/*.cpp)
+if(SPDLOG_STATIC_LIB)
+    add_definitions(-DSPDLOG_STATIC_LIB)
+    file(GLOB SRC_FILES ${HEADER_BASE}/impl/*.cpp)
     add_library(spdlog STATIC ${SRC_FILES})
-    add_library(spdlog::spdlog ALIAS spdlog)
-    target_include_directories(
-            spdlog
-            PUBLIC
-            "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-    )
+    target_include_directories(spdlog PUBLIC  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
+else()
+    add_library(spdlog INTERFACE)
+    target_include_directories(spdlog INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
 endif()
+
+add_library(spdlog::spdlog ALIAS spdlog)
 
 if(SPDLOG_FMT_EXTERNAL AND NOT TARGET fmt::fmt)
     find_package(fmt REQUIRED CONFIG)
 endif()
 
-
 if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog INTERFACE fmt::fmt)
 endif()
-
 
 if(SPDLOG_BUILD_EXAMPLES)
     add_subdirectory(example)
@@ -105,9 +90,9 @@ endif()
 #---------------------------------------------------------------------------------------
 # install
 #---------------------------------------------------------------------------------------
-install(DIRECTORY ${HEADER_BASE}/spdlog DESTINATION include)
+install(DIRECTORY ${HEADER_BASE} DESTINATION include)
 
-if(NOT SPDLOG_HEADER_ONLY)
+if(SPDLOG_STATIC_LIB)
     install(TARGETS spdlog ARCHIVE DESTINATION lib)
 endif()
 

@@ -11,6 +11,8 @@
 #include <vector>
 
 namespace spdlog {
+class async_logger;
+
 namespace details {
 
 using async_logger_ptr = std::shared_ptr<spdlog::async_logger>;

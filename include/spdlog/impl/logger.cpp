@@ -1,4 +1,4 @@
-#ifndef SPDLOG_HEADER_ONLY
+#ifdef SPDLOG_STATIC_LIB
 #include "spdlog/logger.h"
 #endif
 

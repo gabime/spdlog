@@ -1,7 +1,7 @@
 #include "spdlog/common.h"
 #include "spdlog/details/pattern_formatter.h"
 
-#ifndef SPDLOG_HEADER_ONLY
+#ifdef SPDLOG_STATIC_LIB
 #include "spdlog/sinks/sink.h"
 #endif
 

@@ -3,9 +3,9 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#ifndef SPDLOG_HEADER_ONLY
+#ifdef SPDLOG_STATIC_LIB
 #include "spdlog/details/pattern_formatter.h"
-#endif // !SPDLOG_HEADER_ONLY
+#endif
 
 #include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/log_msg.h"
