@@ -29,8 +29,6 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     add_compile_options("-Wfatal-errors")
 endif()
 
-set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog")
-
 #---------------------------------------------------------------------------------------
 # address sanitizers check
 #---------------------------------------------------------------------------------------
@@ -52,6 +50,8 @@ option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
+
+set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog")
 
 if(SPDLOG_STATIC_LIB)
     add_definitions(-DSPDLOG_STATIC_LIB)
