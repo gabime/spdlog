@@ -29,6 +29,8 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     add_compile_options("-Wfatal-errors")
 endif()
 
+set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog")
+
 #---------------------------------------------------------------------------------------
 # address sanitizers check
 #---------------------------------------------------------------------------------------
@@ -44,20 +46,20 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(SPDLOG_MASTER_PROJECT ON)
 endif()
 
-option(SPDLOG_STATIC_LIB "Build as static lib" OFF)
+option(SPDLOG_STATIC_LIB "Build as static lib" ON)
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" ON)
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 
-set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog")
 
 if(SPDLOG_STATIC_LIB)
     add_definitions(-DSPDLOG_STATIC_LIB)
     file(GLOB SRC_FILES ${HEADER_BASE}/impl/*.cpp)
     add_library(spdlog STATIC ${SRC_FILES})
     target_include_directories(spdlog PUBLIC  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
+    target_link_libraries(spdlog -Wl,--as-needed)
 else()
     add_library(spdlog INTERFACE)
     target_include_directories(spdlog INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
@@ -100,4 +102,3 @@ endif()
 # register project in CMake user registry
 #---------------------------------------------------------------------------------------
 export(PACKAGE ${PROJECT_NAME})
-
