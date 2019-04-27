@@ -39,9 +39,10 @@ include(cmake/sanitizers.cmake)
 #---------------------------------------------------------------------------------------
 
 # Check if spdlog is being used directly or via add_subdirectory
-set(SPDLOG_MASTER_PROJECT OFF)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(SPDLOG_MASTER_PROJECT ON)
+else()
+    set(SPDLOG_MASTER_PROJECT OFF)
 endif()
 
 option(SPDLOG_STATIC_LIB "Build as static lib" OFF)
