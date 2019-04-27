@@ -1,4 +1,4 @@
-# Copyright(c) 2019 spdlog
+# Copyright(c) 2019 spdlog authors
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 cmake_minimum_required(VERSION 3.1)
@@ -52,7 +52,6 @@ option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
-
 
 if(SPDLOG_STATIC_LIB)
     add_definitions(-DSPDLOG_STATIC_LIB)
