@@ -29,7 +29,6 @@ public:
     // stop the worker thread and join it
     ~periodic_worker();
 
-
 private:
     bool active_;
     std::thread worker_thread_;
@@ -38,7 +37,6 @@ private:
 };
 } // namespace details
 } // namespace spdlog
-
 
 #ifndef SPDLOG_STATIC_LIB
 #include "spdlog/impl/periodic_worker.cpp"

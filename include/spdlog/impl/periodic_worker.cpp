@@ -42,4 +42,3 @@ SPDLOG_INLINE spdlog::details::periodic_worker::~periodic_worker()
         worker_thread_.join();
     }
 }
-

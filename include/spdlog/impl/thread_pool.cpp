@@ -8,19 +8,20 @@ template class spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;
 
 #include "spdlog/common.h"
 
-SPDLOG_INLINE spdlog::details::thread_pool::thread_pool(size_t q_max_items, size_t threads_n) : q_(q_max_items)
+SPDLOG_INLINE spdlog::details::thread_pool::thread_pool(size_t q_max_items, size_t threads_n)
+    : q_(q_max_items)
 {
-        // std::cout << "thread_pool()  q_size_bytes: " << q_size_bytes <<
-        // "\tthreads_n: " << threads_n << std::endl;
-        if (threads_n == 0 || threads_n > 1000)
-        {
-            throw spdlog_ex("spdlog::thread_pool(): invalid threads_n param (valid "
-                            "range is 1-1000)");
-        }
-        for (size_t i = 0; i < threads_n; i++)
-        {
-            threads_.emplace_back(&thread_pool::worker_loop_, this);
-        }
+    // std::cout << "thread_pool()  q_size_bytes: " << q_size_bytes <<
+    // "\tthreads_n: " << threads_n << std::endl;
+    if (threads_n == 0 || threads_n > 1000)
+    {
+        throw spdlog_ex("spdlog::thread_pool(): invalid threads_n param (valid "
+                        "range is 1-1000)");
+    }
+    for (size_t i = 0; i < threads_n; i++)
+    {
+        threads_.emplace_back(&thread_pool::worker_loop_, this);
+    }
 }
 
 // message all threads to terminate gracefully join them
@@ -43,7 +44,8 @@ SPDLOG_INLINE spdlog::details::thread_pool::~thread_pool()
     }
 }
 
-void SPDLOG_INLINE spdlog::details::thread_pool::post_log(async_logger_ptr &&worker_ptr, details::log_msg &msg, async_overflow_policy overflow_policy)
+void SPDLOG_INLINE spdlog::details::thread_pool::post_log(
+    async_logger_ptr &&worker_ptr, details::log_msg &msg, async_overflow_policy overflow_policy)
 {
     async_msg async_m(std::move(worker_ptr), async_msg_type::log, msg);
     post_async_msg_(std::move(async_m), overflow_policy);
@@ -90,27 +92,23 @@ bool SPDLOG_INLINE spdlog::details::thread_pool::process_next_msg_()
 
     switch (incoming_async_msg.msg_type)
     {
-        case async_msg_type::log:
-        {
-            auto msg = incoming_async_msg.to_log_msg();
-            incoming_async_msg.worker_ptr->backend_log_(msg);
-            return true;
-        }
-        case async_msg_type::flush:
-        {
-            incoming_async_msg.worker_ptr->backend_flush_();
-            return true;
-        }
+    case async_msg_type::log:
+    {
+        auto msg = incoming_async_msg.to_log_msg();
+        incoming_async_msg.worker_ptr->backend_log_(msg);
+        return true;
+    }
+    case async_msg_type::flush:
+    {
+        incoming_async_msg.worker_ptr->backend_flush_();
+        return true;
+    }
 
-        case async_msg_type::terminate:
-        {
-            return false;
-        }
+    case async_msg_type::terminate:
+    {
+        return false;
+    }
     }
     assert(false && "Unexpected async_msg_type");
     return true;
 }
-
-
-
-

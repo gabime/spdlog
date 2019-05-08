@@ -127,14 +127,12 @@ public:
     // message all threads to terminate gracefully join them
     ~thread_pool();
 
-
     thread_pool(const thread_pool &) = delete;
     thread_pool &operator=(thread_pool &&) = delete;
 
     void post_log(async_logger_ptr &&worker_ptr, details::log_msg &msg, async_overflow_policy overflow_policy);
     void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy);
     size_t overrun_counter();
-
 
 private:
     q_type q_;

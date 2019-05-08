@@ -23,7 +23,6 @@
 
 #include "spdlog/fmt/fmt.h"
 
-
 #ifdef SPDLOG_STATIC_LIB
 #define SPDLOG_INLINE
 #else
