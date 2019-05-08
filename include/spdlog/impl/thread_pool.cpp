@@ -11,8 +11,6 @@ template class spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;
 SPDLOG_INLINE spdlog::details::thread_pool::thread_pool(size_t q_max_items, size_t threads_n)
     : q_(q_max_items)
 {
-    // std::cout << "thread_pool()  q_size_bytes: " << q_size_bytes <<
-    // "\tthreads_n: " << threads_n << std::endl;
     if (threads_n == 0 || threads_n > 1000)
     {
         throw spdlog_ex("spdlog::thread_pool(): invalid threads_n param (valid "
