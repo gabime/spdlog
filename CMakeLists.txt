@@ -12,7 +12,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
 endif()
 
-message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+
 
 #---------------------------------------------------------------------------------------
 # compiler config
@@ -53,6 +53,9 @@ option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 
 set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog")
+
+message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+message(STATUS "Static lib: " ${SPDLOG_STATIC_LIB})
 
 if(SPDLOG_STATIC_LIB)
     add_definitions(-DSPDLOG_STATIC_LIB)
