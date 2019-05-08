@@ -68,9 +68,9 @@ size_t thread_id() SPDLOG_NOEXCEPT;
 // See https://github.com/gabime/spdlog/issues/609
 void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT;
 
-std::string filename_to_str(const filename_t &filename);
+std::string filename_to_str(const filename_t &filename) SPDLOG_NOEXCEPT;
 
-int pid();
+int pid() SPDLOG_NOEXCEPT;
 
 // Determine if the terminal supports colors
 // Source: https://github.com/agauniyal/rang/
