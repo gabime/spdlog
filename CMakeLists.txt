@@ -45,7 +45,7 @@ else()
     set(SPDLOG_MASTER_PROJECT OFF)
 endif()
 
-option(SPDLOG_STATIC_LIB "Build as static lib" ONg)
+option(SPDLOG_STATIC_LIB "Build as static lib" ON)
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
 option(SPDLOG_BUILD_TESTS "Build tests" ON)
