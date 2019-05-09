@@ -160,6 +160,16 @@ using level_hasher = std::hash<int>;
 } // namespace level
 
 //
+// Color mode used by sinks with color support.
+//
+enum class color_mode
+{
+    always,
+    automatic,
+    never
+};
+
+//
 // Pattern time - specific time getting to use for pattern_formatter.
 // local time by default
 //
