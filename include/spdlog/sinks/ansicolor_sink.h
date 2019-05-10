@@ -135,6 +135,7 @@ public:
 
     bool should_color()
     {
+        std::lock_guard<mutex_t> lock(mutex_);
         return should_do_colors_;
     }
 
