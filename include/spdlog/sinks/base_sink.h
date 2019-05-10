@@ -25,7 +25,8 @@ public:
     base_sink(const base_sink &) = delete;
     base_sink &operator=(const base_sink &) = delete;
     void log(const details::log_msg &msg) final;
-    void flush() final;void set_pattern(const std::string &pattern) final;
+    void flush() final;
+    void set_pattern(const std::string &pattern) final;
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) final;
 
 protected:
@@ -37,7 +38,6 @@ protected:
 };
 } // namespace sinks
 } // namespace spdlog
-
 
 #ifndef SPDLOG_STATIC_LIB
 #include "spdlog/impl/base_sink.cpp"
