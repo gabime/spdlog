@@ -31,26 +31,26 @@ using stderr_color_sink_st = ansicolor_stderr_sink_st;
 } // namespace sinks
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name)
+inline std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic)
 {
-    return Factory::template create<sinks::stdout_color_sink_mt>(logger_name);
+    return Factory::template create<sinks::stdout_color_sink_mt>(logger_name, mode);
 }
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> stdout_color_st(const std::string &logger_name)
+inline std::shared_ptr<logger> stdout_color_st(const std::string &logger_name, color_mode mode = color_mode::automatic)
 {
-    return Factory::template create<sinks::stdout_color_sink_st>(logger_name);
+    return Factory::template create<sinks::stdout_color_sink_st>(logger_name, mode);
 }
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> stderr_color_mt(const std::string &logger_name)
+inline std::shared_ptr<logger> stderr_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic)
 {
-    return Factory::template create<sinks::stderr_color_sink_mt>(logger_name);
+    return Factory::template create<sinks::stderr_color_sink_mt>(logger_name, mode);
 }
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> stderr_color_st(const std::string &logger_name)
+inline std::shared_ptr<logger> stderr_color_st(const std::string &logger_name, color_mode mode = color_mode::automatic)
 {
-    return Factory::template create<sinks::stderr_color_sink_st>(logger_name);
+    return Factory::template create<sinks::stderr_color_sink_st>(logger_name, mode);
 }
 } // namespace spdlog
