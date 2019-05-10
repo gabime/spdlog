@@ -123,10 +123,10 @@ private:
         case color_mode::always:
         case color_mode::automatic:
             should_do_colors_ = true;
-            break
+            break;
         case color_mode::never:
             should_do_colors_ = false;
-            break
+            break;
         }
     }
 
