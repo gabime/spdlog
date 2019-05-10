@@ -41,7 +41,7 @@ public:
         : out_handle_(OutHandle::handle())
         , mutex_(ConsoleMutex::mutex())
     {
-        set_color_mode(mode);
+        set_color_mode_(mode);
         colors_[level::trace] = WHITE;
         colors_[level::debug] = CYAN;
         colors_[level::info] = GREEN;
@@ -109,20 +109,27 @@ public:
 
     void set_color_mode(color_mode mode)
     {
+        std::lock_guard<mutex_t> lock(mutex_);
+        set_color_mode_(mode);
+    }
+
+private:
+    using mutex_t = typename ConsoleMutex::mutex_t;
+
+    void set_color_mode_(color_mode mode)
+    {
         switch (mode)
         {
         case color_mode::always:
         case color_mode::automatic:
             should_do_colors_ = true;
-            return;
+            break
         case color_mode::never:
             should_do_colors_ = false;
-            return;
+            break
         }
     }
 
-private:
-    using mutex_t = typename ConsoleMutex::mutex_t;
     // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs)
     {
