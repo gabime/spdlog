@@ -16,7 +16,6 @@
 #include <string>
 #include <tuple>
 
-
 namespace spdlog {
 namespace sinks {
 
@@ -53,8 +52,6 @@ SPDLOG_INLINE filename_t rotating_file_sink<Mutex>::calc_filename(const filename
     }
     return fmt::to_string(w);
 }
-
-
 
 template<typename Mutex>
 SPDLOG_INLINE const filename_t &rotating_file_sink<Mutex>::filename() const

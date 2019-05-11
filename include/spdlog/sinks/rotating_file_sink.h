@@ -2,6 +2,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
+
 #ifndef SPDLOG_H
 #include "spdlog/spdlog.h"
 #endif
@@ -27,11 +28,9 @@ public:
     static filename_t calc_filename(const filename_t &filename, std::size_t index);
     const filename_t &filename() const;
 
-
 protected:
     void sink_it_(const details::log_msg &msg) override;
     void flush_() override;
-
 
 private:
     // Rotate files:
@@ -75,7 +74,6 @@ inline std::shared_ptr<logger> rotating_logger_st(
     return Factory::template create<sinks::rotating_file_sink_st>(logger_name, filename, max_file_size, max_files, rotate_on_open);
 }
 } // namespace spdlog
-
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "rotating_file_sink-inl.h"
