@@ -58,15 +58,12 @@ template void spdlog::details::fmt_helper::append_string_view(spdlog::string_vie
 template spdlog::string_view_t spdlog::details::fmt_helper::to_string_view(const fmt::memory_buffer &buf) SPDLOG_NOEXCEPT;
 
 
-// Slightly modified version of fmt lib's format.cc source file
+// Slightly modified version of fmt lib's format.cc source file.
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #include "spdlog/fmt/bundled/format-inl.h"
-#else
-#include "fmt/format-inl.h"
-#endif
 
 FMT_BEGIN_NAMESPACE
 template struct internal::basic_data<void>;
@@ -106,3 +103,5 @@ template FMT_API int internal::char_traits<wchar_t>::format_float(wchar_t *, std
 
 template FMT_API std::wstring internal::vformat<wchar_t>(wstring_view, basic_format_args<wformat_context>);
 FMT_END_NAMESPACE
+
+#endif
