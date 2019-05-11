@@ -5,6 +5,7 @@
 #pragma once
 
 #include "spdlog/common.h"
+#include <ctime> // std::time_t
 
 namespace spdlog {
 namespace details {
