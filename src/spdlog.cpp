@@ -1,10 +1,14 @@
 // Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
+#ifndef SPDLOG_STATIC_LIB
+#warning spdlog is in header only configuration. please define SPDLOG_STATIC_LIB
+#endif
 
 #include <mutex>
 #include <chrono>
 
 #include "spdlog/common.h"
+
 #include "spdlog/common-inl.h"
 
 #include "spdlog/details/null_mutex.h"
