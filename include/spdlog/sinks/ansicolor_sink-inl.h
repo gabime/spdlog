@@ -1,3 +1,8 @@
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
+
+#pragma once
+
 #include "spdlog/details/os.h"
 
 template<typename TargetStream, typename ConsoleMutex>

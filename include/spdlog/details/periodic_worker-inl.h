@@ -1,8 +1,7 @@
-//
-// Created by gabi on 5/8/19.
-//
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include "spdlog/common.h"
+#pragma once
 
 SPDLOG_INLINE spdlog::details::periodic_worker::periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval)
 {

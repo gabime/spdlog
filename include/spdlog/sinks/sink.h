@@ -1,12 +1,9 @@
-//
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
 
 #pragma once
 
 #include "spdlog/details/log_msg.h"
-//#include "spdlog/details/pattern_formatter.h"
 #include "spdlog/formatter.h"
 
 namespace spdlog {

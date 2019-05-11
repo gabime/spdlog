@@ -1,9 +1,7 @@
-#pragma once
-
-//
-// Copyright(c) 2018 Gabi Melman.
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
+
+#pragma once
 
 // multi producer-multi consumer blocking queue.
 // enqueue(..) - will block until room found to put the new message.

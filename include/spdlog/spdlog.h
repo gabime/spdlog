@@ -1,12 +1,12 @@
-//
-// Copyright(c) 2015-2018 Gabi Melman.
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
+
 // spdlog main header file.
 // see example.cpp for usage example
 
 #ifndef SPDLOG_H
 #define SPDLOG_H
+
 #pragma once
 
 #include "spdlog/common.h"

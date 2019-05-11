@@ -1,9 +1,11 @@
-// Formatting library for C++
-//
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.
 //
 // For the license information refer to format.h.
+
+
+// Slightly modified version of fmt lib to include bundled format-inl.h
+
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #include "spdlog/fmt/bundled/format-inl.h"

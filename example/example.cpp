@@ -7,10 +7,10 @@
 //
 //
 
-
 #include "spdlog/spdlog.h"
 
-int main(int, char *[]) {
+int main(int, char *[])
+{
     int i = 123;
     spdlog::info("HELLO STATIC! {}", i);
 }
