@@ -56,3 +56,54 @@ template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, sp
 #include "spdlog/details/fmt_helper.h"
 template void spdlog::details::fmt_helper::append_string_view(spdlog::string_view_t view, fmt::memory_buffer &dest);
 template spdlog::string_view_t spdlog::details::fmt_helper::to_string_view(const fmt::memory_buffer &buf) SPDLOG_NOEXCEPT;
+
+/////////////////////////////////////////////////////////////////////////
+// Slightly modified version of fmt lib's format.cc source file
+// Copyright (c) 2012 - 2016, Victor Zverovich
+// All rights reserved.
+/////////////////////////////////////////////////////////////////////////
+
+#if !defined(SPDLOG_FMT_EXTERNAL)
+#include "spdlog/fmt/bundled/format-inl.h"
+#else
+#include "fmt/format-inl.h"
+#endif
+
+FMT_BEGIN_NAMESPACE
+template struct internal::basic_data<void>;
+template FMT_API internal::locale_ref::locale_ref(const std::locale &loc);
+template FMT_API std::locale internal::locale_ref::get<std::locale>() const;
+
+// Explicit instantiations for char.
+
+template FMT_API char internal::thousands_sep_impl(locale_ref);
+
+template FMT_API void internal::basic_buffer<char>::append(const char *, const char *);
+
+template FMT_API void internal::arg_map<format_context>::init(const basic_format_args<format_context> &args);
+
+template FMT_API int internal::char_traits<char>::format_float(char *, std::size_t, const char *, int, double);
+
+template FMT_API int internal::char_traits<char>::format_float(char *, std::size_t, const char *, int, long double);
+
+template FMT_API std::string internal::vformat<char>(string_view, basic_format_args<format_context>);
+
+template FMT_API format_context::iterator internal::vformat_to(internal::buffer &, string_view, basic_format_args<format_context>);
+
+template FMT_API void internal::sprintf_format(double, internal::buffer &, core_format_specs);
+template FMT_API void internal::sprintf_format(long double, internal::buffer &, core_format_specs);
+
+// Explicit instantiations for wchar_t.
+
+template FMT_API wchar_t internal::thousands_sep_impl(locale_ref);
+
+template FMT_API void internal::basic_buffer<wchar_t>::append(const wchar_t *, const wchar_t *);
+
+template FMT_API void internal::arg_map<wformat_context>::init(const basic_format_args<wformat_context> &);
+
+template FMT_API int internal::char_traits<wchar_t>::format_float(wchar_t *, std::size_t, const wchar_t *, int, double);
+
+template FMT_API int internal::char_traits<wchar_t>::format_float(wchar_t *, std::size_t, const wchar_t *, int, long double);
+
+template FMT_API std::wstring internal::vformat<wchar_t>(wstring_view, basic_format_args<wformat_context>);
+FMT_END_NAMESPACE

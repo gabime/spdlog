@@ -19,7 +19,6 @@
 #include <locale>
 #endif
 
-
 #ifdef SPDLOG_STATIC_LIB
 #undef SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE
