@@ -31,6 +31,11 @@
 template class spdlog::sinks::base_sink<std::mutex>;
 template class spdlog::sinks::base_sink<spdlog::details::null_mutex>;
 
+#include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/sinks/rotating_file_sink-inl.h"
+template class spdlog::sinks::rotating_file_sink<std::mutex>;
+template class spdlog::sinks::rotating_file_sink<spdlog::details::null_mutex>;
+
 #include "spdlog/details/registry.h"
 #include "spdlog/details/registry-inl.h"
 
@@ -61,7 +66,6 @@ template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, sp
 #include "spdlog/details/fmt_helper.h"
 template void spdlog::details::fmt_helper::append_string_view(spdlog::string_view_t view, fmt::memory_buffer &dest);
 template spdlog::string_view_t spdlog::details::fmt_helper::to_string_view(const fmt::memory_buffer &buf) SPDLOG_NOEXCEPT;
-
 
 // Slightly modified version of fmt lib's format.cc source file.
 // Copyright (c) 2012 - 2016, Victor Zverovich
