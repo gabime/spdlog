@@ -6,7 +6,6 @@
 #include "spdlog/common.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/os.h"
-#include "spdlog/fmt/fmt.h"
 #include "spdlog/formatter.h"
 
 #include <chrono>
@@ -33,8 +32,7 @@ struct padding_info
     padding_info(size_t width, padding_info::pad_side side)
         : width_(width)
         , side_(side)
-    {
-    }
+    {}
 
     bool enabled() const
     {
@@ -49,8 +47,7 @@ class flag_formatter
 public:
     explicit flag_formatter(padding_info padinfo)
         : padinfo_(padinfo)
-    {
-    }
+    {}
     flag_formatter() = default;
     virtual ~flag_formatter() = default;
     virtual void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) = 0;
@@ -83,8 +80,8 @@ private:
     std::tm cached_tm_;
     std::chrono::seconds last_log_secs_;
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
-    std::tm get_time_(const details::log_msg &msg);
 
+    std::tm get_time_(const details::log_msg &msg);
     void handle_flag_(char flag, details::padding_info padding);
 
     // Extract given pad spec (e.g. %8X)
@@ -96,6 +93,6 @@ private:
 };
 } // namespace spdlog
 
-#ifndef SPDLOG_STATIC_LIB
+#ifdef SPDLOG_HEADER_ONLY
 #include "pattern_formatter-inl.h"
 #endif

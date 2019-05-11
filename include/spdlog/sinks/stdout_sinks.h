@@ -26,8 +26,7 @@ public:
     stdout_sink()
         : mutex_(ConsoleMutex::mutex())
         , file_(TargetStream::stream())
-    {
-    }
+    {}
     ~stdout_sink() override = default;
 
     stdout_sink(const stdout_sink &other) = delete;

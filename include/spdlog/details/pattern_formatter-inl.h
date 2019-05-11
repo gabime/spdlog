@@ -58,8 +58,7 @@ public:
 
     scoped_pad(spdlog::string_view_t txt, padding_info &padinfo, fmt::memory_buffer &dest)
         : scoped_pad(txt.size(), padinfo, dest)
-    {
-    }
+    {}
 
     ~scoped_pad()
     {
@@ -90,8 +89,7 @@ class name_formatter : public flag_formatter
 public:
     explicit name_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
@@ -113,8 +111,7 @@ class level_formatter : public flag_formatter
 public:
     explicit level_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
@@ -137,8 +134,7 @@ class short_level_formatter : public flag_formatter
 public:
     explicit short_level_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
@@ -169,8 +165,7 @@ class a_formatter : public flag_formatter
 public:
     explicit a_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -187,8 +182,7 @@ class A_formatter : public flag_formatter
 public:
     explicit A_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -205,8 +199,7 @@ class b_formatter : public flag_formatter
 public:
     explicit b_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -224,8 +217,7 @@ class B_formatter : public flag_formatter
 public:
     explicit B_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -241,8 +233,7 @@ class c_formatter final : public flag_formatter
 public:
     explicit c_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -273,8 +264,7 @@ class C_formatter final : public flag_formatter
 public:
     explicit C_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -290,8 +280,7 @@ class D_formatter final : public flag_formatter
 public:
     explicit D_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -327,8 +316,7 @@ class m_formatter final : public flag_formatter
 public:
     explicit m_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -344,8 +332,7 @@ class d_formatter final : public flag_formatter
 public:
     explicit d_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -361,8 +348,7 @@ class H_formatter final : public flag_formatter
 public:
     explicit H_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
@@ -707,8 +693,7 @@ class ch_formatter final : public flag_formatter
 public:
     explicit ch_formatter(char ch)
         : ch_(ch)
-    {
-    }
+    {}
 
     void format(const details::log_msg &, const std::tm &, fmt::memory_buffer &dest) override
     {
@@ -746,8 +731,7 @@ class color_start_formatter final : public flag_formatter
 public:
     explicit color_start_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
@@ -759,8 +743,7 @@ class color_stop_formatter final : public flag_formatter
 public:
     explicit color_stop_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
     {
@@ -864,8 +847,7 @@ class full_formatter final : public flag_formatter
 public:
     explicit full_formatter(padding_info padinfo)
         : flag_formatter(padinfo)
-    {
-    }
+    {}
 
     void format(const details::log_msg &msg, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {

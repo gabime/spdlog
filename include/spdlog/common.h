@@ -22,8 +22,10 @@
 #include "spdlog/fmt/fmt.h"
 
 #ifdef SPDLOG_STATIC_LIB
+#undef SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE
 #else
+#define SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE inline
 #endif
 
@@ -138,39 +140,18 @@ enum level_enum
         "trace", "debug", "info", "warning", "error", "critical", "off"                                                                    \
     }
 #endif
-static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 
 #if !defined(SPDLOG_SHORT_LEVEL_NAMES)
+
 #define SPDLOG_SHORT_LEVEL_NAMES                                                                                                           \
     {                                                                                                                                      \
         "T", "D", "I", "W", "E", "C", "O"                                                                                                  \
     }
 #endif
-static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
-inline string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
-{
-    return level_string_views[l];
-}
-
-inline const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
-{
-    return short_level_names[l];
-}
-
-inline spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT
-{
-    int level = 0;
-    for (const auto &level_str : level_string_views)
-    {
-        if (level_str == name)
-        {
-            return static_cast<level::level_enum>(level);
-        }
-        level++;
-    }
-    return level::off;
-}
+string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
+const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
+spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
 using level_hasher = std::hash<int>;
 } // namespace level
@@ -206,8 +187,7 @@ struct source_loc
         : filename{filename_in}
         , line{line_in}
         , funcname{funcname_in}
-    {
-    }
+    {}
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT
     {
@@ -234,6 +214,6 @@ std::unique_ptr<T> make_unique(Args &&... args)
 } // namespace details
 } // namespace spdlog
 
-#ifndef SPDLOG_STATIC_LIB
-#include "commont-inl.h"
+#ifdef SPDLOG_HEADER_ONLY
+#include "common-inl.h"
 #endif

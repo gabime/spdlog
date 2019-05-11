@@ -57,8 +57,7 @@ struct async_msg
                                                    msg_id(other.msg_id),
                                                    source(other.source),
                                                    worker_ptr(std::move(other.worker_ptr))
-    {
-    }
+    {}
 
     async_msg &operator=(async_msg &&other) SPDLOG_NOEXCEPT
     {
@@ -98,13 +97,11 @@ struct async_msg
         , msg_id(0)
         , source()
         , worker_ptr(std::move(worker))
-    {
-    }
+    {}
 
     explicit async_msg(async_msg_type the_type)
         : async_msg(nullptr, the_type)
-    {
-    }
+    {}
 
     // copy into log_msg
     log_msg to_log_msg()
@@ -154,6 +151,6 @@ private:
 } // namespace details
 } // namespace spdlog
 
-#ifndef SPDLOG_STATIC_LIB
+#ifdef SPDLOG_HEADER_ONLY
 #include "thread_pool-inl.h"
 #endif

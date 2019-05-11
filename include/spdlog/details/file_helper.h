@@ -55,6 +55,6 @@ private:
 } // namespace details
 } // namespace spdlog
 
-#ifndef SPDLOG_STATIC_LIB
+#ifdef SPDLOG_HEADER_ONLY
 #include "file_helper-inl.h"
 #endif

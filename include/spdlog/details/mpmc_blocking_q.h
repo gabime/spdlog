@@ -25,8 +25,7 @@ public:
     using item_type = T;
     explicit mpmc_blocking_queue(size_t max_items)
         : q_(max_items)
-    {
-    }
+    {}
 
 #ifndef __MINGW32__
     // try to enqueue and block if no room left

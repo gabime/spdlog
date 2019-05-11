@@ -2,10 +2,10 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include <mutex>
+#include <chrono>
 
 #include "spdlog/common.h"
 #include "spdlog/common-inl.h"
-
 
 #include "spdlog/details/null_mutex.h"
 
@@ -51,3 +51,8 @@ template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, sp
 template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_nullmutex>;
 template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_mutex>;
 template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_nullmutex>;
+
+// fmt_helper templates
+#include "spdlog/details/fmt_helper.h"
+template void spdlog::details::fmt_helper::append_string_view(spdlog::string_view_t view, fmt::memory_buffer &dest);
+template spdlog::string_view_t spdlog::details::fmt_helper::to_string_view(const fmt::memory_buffer &buf) SPDLOG_NOEXCEPT;

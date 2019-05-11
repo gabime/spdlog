@@ -11,7 +11,7 @@
 //
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
-#ifndef SPDLOG_STATIC_LIB
+#ifdef SPDLOG_HEADER_ONLY
 #ifndef FMT_HEADER_ONLY
 #define FMT_HEADER_ONLY
 #endif

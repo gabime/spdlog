@@ -35,17 +35,14 @@ public:
     logger(std::string name, It begin, It end)
         : name_(std::move(name))
         , sinks_(begin, end)
-    {
-    }
+    {}
 
     logger(std::string name, sink_ptr single_sink)
         : logger(std::move(name), {std::move(single_sink)})
-    {
-    }
+    {}
     logger(std::string name, sinks_init_list sinks)
         : logger(std::move(name), sinks.begin(), sinks.end())
-    {
-    }
+    {}
 
     virtual ~logger() = default;
 
@@ -338,6 +335,6 @@ protected:
 };
 } // namespace spdlog
 
-#ifndef SPDLOG_STATIC_LIB
+#ifdef SPDLOG_HEADER_ONLY
 #include "logger-inl.h"
 #endif

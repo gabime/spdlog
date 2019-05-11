@@ -17,8 +17,7 @@ public:
     explicit circular_q(size_t max_items)
         : max_items_(max_items + 1) // one item is reserved as marker for full q
         , v_(max_items_)
-    {
-    }
+    {}
 
     // push back, overrun (oldest) item if no room left
     void push_back(T &&item)

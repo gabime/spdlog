@@ -38,6 +38,6 @@ protected:
 } // namespace sinks
 } // namespace spdlog
 
-#ifndef SPDLOG_STATIC_LIB
+#ifdef SPDLOG_HEADER_ONLY
 #include "sink-inl.h"
 #endif

@@ -6,7 +6,10 @@
 #include "spdlog/details/os.h"
 #include "spdlog/sinks/sink.h"
 
-SPDLOG_INLINE spdlog::details::log_msg::log_msg(
+namespace spdlog {
+namespace details {
+
+SPDLOG_INLINE log_msg::log_msg(
     spdlog::source_loc loc, const std::string *loggers_name, spdlog::level::level_enum lvl, spdlog::string_view_t view)
     : logger_name(loggers_name)
     , level(lvl)
@@ -19,10 +22,11 @@ SPDLOG_INLINE spdlog::details::log_msg::log_msg(
 #endif
     , source(loc)
     , payload(view)
-{
-}
+{}
 
-SPDLOG_INLINE spdlog::details::log_msg::log_msg(const std::string *loggers_name, spdlog::level::level_enum lvl, spdlog::string_view_t view)
+SPDLOG_INLINE log_msg::log_msg(const std::string *loggers_name, spdlog::level::level_enum lvl, spdlog::string_view_t view)
     : log_msg(source_loc{}, loggers_name, lvl, view)
-{
-}
+{}
+
+} // namespace details
+} // namespace spdlog

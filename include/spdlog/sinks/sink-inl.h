@@ -8,13 +8,11 @@
 
 SPDLOG_INLINE spdlog::sinks::sink::sink()
     : formatter_{details::make_unique<spdlog::pattern_formatter>()}
-{
-}
+{}
 
 SPDLOG_INLINE spdlog::sinks::sink::sink(std::unique_ptr<spdlog::formatter> formatter)
     : formatter_{std::move(formatter)}
-{
-}
+{}
 
 SPDLOG_INLINE bool spdlog::sinks::sink::should_log(spdlog::level::level_enum msg_level) const
 {

@@ -14,6 +14,7 @@
 
 namespace spdlog {
 namespace details {
+
 SPDLOG_INLINE file_helper::~file_helper()
 {
     close();

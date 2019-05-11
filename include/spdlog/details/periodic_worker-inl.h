@@ -2,8 +2,9 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
-
-SPDLOG_INLINE spdlog::details::periodic_worker::periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval)
+namespace spdlog {
+namespace details {
+SPDLOG_INLINE periodic_worker::periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval)
 {
     active_ = (interval > std::chrono::seconds::zero());
     if (!active_)
@@ -25,7 +26,7 @@ SPDLOG_INLINE spdlog::details::periodic_worker::periodic_worker(const std::funct
 }
 
 // stop the worker thread and join it
-SPDLOG_INLINE spdlog::details::periodic_worker::~periodic_worker()
+SPDLOG_INLINE periodic_worker::~periodic_worker()
 {
     if (worker_thread_.joinable())
     {
@@ -37,3 +38,6 @@ SPDLOG_INLINE spdlog::details::periodic_worker::~periodic_worker()
         worker_thread_.join();
     }
 }
+
+} // namespace details
+} // namespace spdlog

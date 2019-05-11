@@ -22,8 +22,7 @@ public:
     explicit ostream_sink(std::ostream &os, bool force_flush = false)
         : ostream_(os)
         , force_flush_(force_flush)
-    {
-    }
+    {}
     ostream_sink(const ostream_sink &) = delete;
     ostream_sink &operator=(const ostream_sink &) = delete;
 

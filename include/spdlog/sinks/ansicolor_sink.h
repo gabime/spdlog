@@ -89,6 +89,6 @@ using ansicolor_stderr_sink_st = ansicolor_sink<details::console_stderr, details
 } // namespace sinks
 } // namespace spdlog
 
-#ifndef SPDLOG_STATIC_LIB
+#ifdef SPDLOG_HEADER_ONLY
 #include "ansicolor_sink-inl.h"
 #endif

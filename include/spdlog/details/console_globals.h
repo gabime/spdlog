@@ -3,7 +3,6 @@
 
 #pragma once
 
-
 #include "spdlog/details/null_mutex.h"
 #include <cstdio>
 #include <mutex>

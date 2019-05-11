@@ -60,6 +60,6 @@ private:
 };
 } // namespace spdlog
 
-#ifndef SPDLOG_STATIC_LIB
+#ifdef SPDLOG_HEADER_ONLY
 #include "async_logger-inl.h"
 #endif
