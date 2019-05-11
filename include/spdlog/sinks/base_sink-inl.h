@@ -1,12 +1,3 @@
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/sinks/base_sink.h"
-
-#include "spdlog/details/null_mutex.h"
-#include <mutex>
-template class spdlog::sinks::base_sink<std::mutex>;
-template class spdlog::sinks::base_sink<spdlog::details::null_mutex>;
-#endif
-
 #include "spdlog/common.h"
 #include "spdlog/details/pattern_formatter.h"
 

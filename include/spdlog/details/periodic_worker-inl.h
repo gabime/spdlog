@@ -2,10 +2,6 @@
 // Created by gabi on 5/8/19.
 //
 
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/details/periodic_worker.h"
-#endif
-
 #include "spdlog/common.h"
 
 SPDLOG_INLINE spdlog::details::periodic_worker::periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval)

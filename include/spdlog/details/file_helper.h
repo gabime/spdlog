@@ -58,5 +58,5 @@ private:
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/file_helper.cpp"
+#include "file_helper-inl.h"
 #endif

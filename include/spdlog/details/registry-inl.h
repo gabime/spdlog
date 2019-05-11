@@ -2,9 +2,6 @@
 // Copyright(c) 2015 Gabi Melman.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/details/registry.h"
-#endif
 
 #include "spdlog/common.h"
 #include "spdlog/details/periodic_worker.h"

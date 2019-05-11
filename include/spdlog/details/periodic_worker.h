@@ -39,5 +39,5 @@ private:
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/periodic_worker.cpp"
+#include "periodic_worker-inl.h"
 #endif

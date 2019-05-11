@@ -3,10 +3,6 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/details/file_helper.h"
-
-#endif
 #include "spdlog/details/os.h"
 
 #include <cerrno>

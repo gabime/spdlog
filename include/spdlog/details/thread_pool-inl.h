@@ -1,10 +1,3 @@
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/async_logger.h"
-#include "spdlog/details/thread_pool.h"
-
-template class spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;
-
-#endif
 
 #include "spdlog/common.h"
 

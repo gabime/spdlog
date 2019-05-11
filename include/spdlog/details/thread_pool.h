@@ -152,5 +152,5 @@ private:
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/thread_pool.cpp"
+#include "thread_pool-inl.h"
 #endif

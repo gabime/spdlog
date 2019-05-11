@@ -341,5 +341,5 @@ protected:
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/logger.cpp"
+#include "logger-inl.h
 #endif

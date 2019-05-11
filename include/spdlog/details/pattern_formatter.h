@@ -98,5 +98,5 @@ private:
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/pattern_formatter.cpp"
+#include "pattern_formatter-inl.h"
 #endif

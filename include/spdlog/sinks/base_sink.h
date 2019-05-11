@@ -40,5 +40,5 @@ protected:
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/base_sink.cpp"
+#include "base_sink-inl.h"
 #endif

@@ -1,7 +1,3 @@
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/sinks/ansicolor_sink.h"
-#endif
-
 #include "spdlog/details/os.h"
 
 template<typename TargetStream, typename ConsoleMutex>
@@ -95,11 +91,3 @@ SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::pr
 {
     fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);
 }
-
-// template instantiate stdout_mt, stdout_st
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_mutex>;
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_nullmutex>;
-
-// template instantiate stderr_mt, stderr_st
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_mutex>;
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_nullmutex>;

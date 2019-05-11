@@ -66,5 +66,5 @@ private:
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/async_logger.cpp"
+#include "async_logger-inl.h"
 #endif

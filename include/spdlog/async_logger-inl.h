@@ -1,7 +1,3 @@
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/async_logger.h"
-#endif
-
 // async logger implementation
 // uses a thread pool to perform the actual logging
 

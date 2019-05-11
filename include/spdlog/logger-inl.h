@@ -1,7 +1,3 @@
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/logger.h"
-#endif
-
 #include "spdlog/sinks/sink.h"
 #include "spdlog/details/pattern_formatter.h"
 

@@ -102,5 +102,5 @@ private:
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/registry.cpp"
+#include "registry-inl.h"
 #endif

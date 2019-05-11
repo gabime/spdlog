@@ -1,10 +1,6 @@
 #include "spdlog/common.h"
 #include "spdlog/details/pattern_formatter.h"
 
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/sinks/sink.h"
-#endif
-
 SPDLOG_INLINE spdlog::sinks::sink::sink()
     : formatter_{details::make_unique<spdlog::pattern_formatter>()}
 {

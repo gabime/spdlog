@@ -3,10 +3,6 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //
 
-#ifdef SPDLOG_STATIC_LIB
-#include "spdlog/details/pattern_formatter.h"
-#endif
-
 #include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/os.h"

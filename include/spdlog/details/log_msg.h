@@ -34,5 +34,5 @@ struct log_msg
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/log_msg.cpp"
+#include "log_msg-inl.h"
 #endif

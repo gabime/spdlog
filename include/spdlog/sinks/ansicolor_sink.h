@@ -92,5 +92,5 @@ using ansicolor_stderr_sink_st = ansicolor_sink<details::console_stderr, details
 } // namespace spdlog
 
 #ifndef SPDLOG_STATIC_LIB
-#include "spdlog/impl/ansicolor_sink.cpp"
+#include "ansicolor_sink-inl.h"
 #endif
