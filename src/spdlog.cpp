@@ -16,8 +16,6 @@
 
 #include "spdlog/logger.h"
 #include "spdlog/logger-inl.h"
-template class std::shared_ptr<spdlog::sinks::sink>;
-template class std::function<void(const std::string &err_msg)>;
 template spdlog::logger::logger(std::string name, sinks_init_list::iterator begin, sinks_init_list::iterator end);
 
 #include "spdlog/async_logger.h"
