@@ -191,22 +191,9 @@ enum class pattern_time_type
 class spdlog_ex : public std::exception
 {
 public:
-    explicit spdlog_ex(std::string msg)
-        : msg_(std::move(msg))
-    {
-    }
-
-    spdlog_ex(const std::string &msg, int last_errno)
-    {
-        fmt::memory_buffer outbuf;
-        fmt::format_system_error(outbuf, last_errno, msg);
-        msg_ = fmt::to_string(outbuf);
-    }
-
-    const char *what() const SPDLOG_NOEXCEPT override
-    {
-        return msg_.c_str();
-    }
+    explicit spdlog_ex(std::string msg);
+    spdlog_ex(const std::string &msg, int last_errno);
+    const char *what() const SPDLOG_NOEXCEPT override;
 
 private:
     std::string msg_;
@@ -246,3 +233,7 @@ std::unique_ptr<T> make_unique(Args &&... args)
 #endif
 } // namespace details
 } // namespace spdlog
+
+#ifndef SPDLOG_STATIC_LIB
+#include "commont-inl.h"
+#endif

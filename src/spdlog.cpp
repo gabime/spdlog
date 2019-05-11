@@ -1,7 +1,11 @@
 // Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include "spdlog/spdlog.h"
+#include <mutex>
+
+#include "spdlog/common.h"
+#include "spdlog/common-inl.h"
+
 
 #include "spdlog/details/null_mutex.h"
 
