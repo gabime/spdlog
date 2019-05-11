@@ -1,7 +1,7 @@
 // Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 #ifndef SPDLOG_STATIC_LIB
-#warning spdlog is in header only configuration. please define SPDLOG_STATIC_LIB
+#error spdlog is in HEADER_ONLY configuration. Define SPDLOG_STATIC_LIB to compile this file.
 #endif
 
 #include <mutex>
