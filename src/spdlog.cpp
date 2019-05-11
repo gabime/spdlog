@@ -1,11 +1,9 @@
-#include  <mutex>
+#include "spdlog/spdlog.h"
+
 #include "spdlog/details/null_mutex.h"
 
 #include "spdlog/logger.h"
 #include "spdlog/logger-inl.h"
-
-#include "spdlog/async_logger.h"
-#include "spdlog/async_logger-inl.h"
 
 #include "spdlog/async_logger.h"
 #include "spdlog/async_logger-inl.h"
@@ -42,7 +40,6 @@ template class spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;
 
 #include "spdlog/sinks/ansicolor_sink.h"
 #include "spdlog/sinks/ansicolor_sink-inl.h"
-// template instantiate stdout_mt, stdout_st, stderr_mt, stderr_st
 template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_mutex>;
 template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_nullmutex>;
 template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_mutex>;
