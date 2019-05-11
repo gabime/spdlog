@@ -19,7 +19,6 @@
 #include <locale>
 #endif
 
-#include "spdlog/fmt/fmt.h"
 
 #ifdef SPDLOG_STATIC_LIB
 #undef SPDLOG_HEADER_ONLY
@@ -28,6 +27,8 @@
 #define SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE inline
 #endif
+
+#include "spdlog/fmt/fmt.h"
 
 // visual studio upto 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
