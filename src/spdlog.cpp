@@ -8,8 +8,10 @@
 #include <mutex>
 #include <chrono>
 
-#include "spdlog/common.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/async.h"
 
+#include "spdlog/common.h"
 #include "spdlog/common-inl.h"
 
 #include "spdlog/details/null_mutex.h"
@@ -56,22 +58,33 @@ template class spdlog::sinks::rotating_file_sink<spdlog::details::null_mutex>;
 #include "spdlog/details/thread_pool-inl.h"
 template class spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;
 
-#ifndef _WIN32
-#include "spdlog/sinks/ansicolor_sink.h"
-#include "spdlog/sinks/ansicolor_sink-inl.h"
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_mutex>;
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_nullmutex>;
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_mutex>;
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_nullmutex>;
-#else
+#ifdef _WIN32
 #include "spdlog/sinks/wincolor_sink.h"
 #include "spdlog/sinks/wincolor_sink-inl.h"
 template class spdlog::sinks::wincolor_sink<spdlog::details::console_stdout, spdlog::details::console_mutex>;
 template class spdlog::sinks::wincolor_sink<spdlog::details::console_stdout, spdlog::details::console_nullmutex>;
 template class spdlog::sinks::wincolor_sink<spdlog::details::console_stderr, spdlog::details::console_mutex>;
 template class spdlog::sinks::wincolor_sink<spdlog::details::console_stderr, spdlog::details::console_nullmutex>;
+#else
+#include "spdlog/sinks/ansicolor_sink.h"
+#include "spdlog/sinks/ansicolor_sink-inl.h"
+template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_mutex>;
+template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_nullmutex>;
+template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_mutex>;
+template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_nullmutex>;
 #endif
 
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/stdout_color_sinks-inl.h"
+template std::shared_ptr<spdlog::logger> spdlog::stdout_color_mt<spdlog::synchronous_factory>(const std::string &logger_name);
+template std::shared_ptr<spdlog::logger> spdlog::stdout_color_st<spdlog::synchronous_factory>(const std::string &logger_name);
+template std::shared_ptr<spdlog::logger> spdlog::stderr_color_mt<spdlog::synchronous_factory>(const std::string &logger_name);
+template std::shared_ptr<spdlog::logger> spdlog::stderr_color_st<spdlog::synchronous_factory>(const std::string &logger_name);
+
+template std::shared_ptr<spdlog::logger> spdlog::stdout_color_mt<spdlog::async_factory>(const std::string &logger_name);
+template std::shared_ptr<spdlog::logger> spdlog::stdout_color_st<spdlog::async_factory>(const std::string &logger_name);
+template std::shared_ptr<spdlog::logger> spdlog::stderr_color_mt<spdlog::async_factory>(const std::string &logger_name);
+template std::shared_ptr<spdlog::logger> spdlog::stderr_color_st<spdlog::async_factory>(const std::string &logger_name);
 
 // fmt_helper templates
 #include "spdlog/details/fmt_helper.h"
