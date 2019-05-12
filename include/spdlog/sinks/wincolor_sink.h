@@ -69,3 +69,7 @@ using wincolor_stderr_sink_st = wincolor_sink<details::console_stderr, details::
 
 } // namespace sinks
 } // namespace spdlog
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "wincolor_sink-inl.h"
+#endif

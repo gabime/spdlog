@@ -1,5 +1,7 @@
-#pragma once
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
+#pragma once
 
 namespace spdlog {
 namespace sinks {
@@ -18,7 +20,7 @@ SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::wincolor_sink()
 }
 
 template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::~wincolor_sink()
+SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::~wincolor_sink()
 {
     this->flush();
 }
