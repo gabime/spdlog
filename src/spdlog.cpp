@@ -36,6 +36,11 @@ template spdlog::logger::logger(std::string name, sinks_init_list::iterator begi
 template class spdlog::sinks::base_sink<std::mutex>;
 template class spdlog::sinks::base_sink<spdlog::details::null_mutex>;
 
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/basic_file_sink-inl.h"
+template class spdlog::sinks::basic_file_sink<std::mutex>;
+template class spdlog::sinks::basic_file_sink<spdlog::details::null_mutex>;
+
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/rotating_file_sink-inl.h"
 template class spdlog::sinks::rotating_file_sink<std::mutex>;
