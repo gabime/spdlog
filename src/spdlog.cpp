@@ -9,6 +9,8 @@
 #include <chrono>
 
 #include "spdlog/spdlog.h"
+#include "spdlog/spdlog-inl.h"
+
 #include "spdlog/async.h"
 
 #include "spdlog/common.h"

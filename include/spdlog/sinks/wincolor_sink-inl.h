@@ -7,8 +7,8 @@ namespace spdlog {
 namespace sinks {
 template<typename TargetStream, typename ConsoleMutex>
 SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::wincolor_sink()
-		: out_handle_(TargetStream::handle())
-        , mutex_(ConsoleMutex::mutex())
+    : out_handle_(TargetStream::handle())
+    , mutex_(ConsoleMutex::mutex())
 {
     colors_[level::trace] = WHITE;
     colors_[level::debug] = CYAN;
@@ -49,7 +49,7 @@ void SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::log(const details:
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
         ::SetConsoleTextAttribute(out_handle_,
             orig_attribs); // reset to orig colors
-                            // after color range
+                           // after color range
         print_range_(formatted, msg.color_range_end, formatted.size());
     }
     else // print without colors if color range is invalid
@@ -77,7 +77,7 @@ void SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::set_formatter(std:
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::move(sink_formatter);
 }
-    
+
 // set color and return the orig console attributes (for resetting later)
 template<typename TargetStream, typename ConsoleMutex>
 WORD SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::set_console_attribs(WORD attribs)
@@ -100,5 +100,5 @@ void SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::print_range_(const
     ::WriteConsoleA(out_handle_, formatted.data() + start, size, nullptr, nullptr);
 }
 
-}
+} // namespace sinks
 } // namespace spdlog
