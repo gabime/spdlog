@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/mpmc_blocking_q.h"
 #include "spdlog/details/os.h"
@@ -86,7 +85,7 @@ struct async_msg
         , source(m.source)
         , worker_ptr(std::move(worker))
     {
-        fmt_helper::append_string_view(m.payload, raw);
+        raw.append(m.payload.data(), m.payload.data() + m.payload.size());
     }
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
