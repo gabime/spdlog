@@ -3,8 +3,15 @@
 
 #pragma once
 
+#ifndef SPDLOG_HEADER_ONLY
+#include "spdlog/sinks/wincolor_sink.h"
+#endif
+
+#include "spdlog/common.h"
+
 namespace spdlog {
 namespace sinks {
+
 template<typename TargetStream, typename ConsoleMutex>
 SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::wincolor_sink()
     : out_handle_(TargetStream::handle())

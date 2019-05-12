@@ -3,6 +3,10 @@
 
 #pragma once
 
+#ifndef SPDLOG_HEADER_ONLY
+#include "spdlog/common.h"
+#endif
+
 namespace spdlog {
 namespace level {
 static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
