@@ -60,18 +60,12 @@ set(SRC_BASE "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(STATIC_SRC_FILES "${SRC_BASE}/spdlog.cpp")
 add_library(spdlog_static STATIC ${STATIC_SRC_FILES})
 add_library(spdlog::static ALIAS spdlog_static)
-
-if (CMAKE_BUILD_TYPE EQUAL "RELEASE")
-set_target_properties(spdlog_static PROPERTIES OUTPUT_NAME "spdlog")
-else()
-set_target_properties(spdlog_static PROPERTIES OUTPUT_NAME "spdlog-debug")
-endif()
-
-
 target_compile_definitions(spdlog_static PUBLIC SPDLOG_STATIC_LIB )
 target_include_directories(spdlog_static PUBLIC  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
+set_target_properties(spdlog_static PROPERTIES OUTPUT_NAME "spdlog")
+set_target_properties(spdlog_static PROPERTIES DEBUG_POSTFIX "-debug")
 
-# headr only
+# Headr only
 add_library(spdlog_header_only INTERFACE)
 target_include_directories(spdlog_header_only INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
 add_library(spdlog::header_only ALIAS spdlog_header_only)
@@ -83,7 +77,6 @@ endif()
 if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog_static INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog_static INTERFACE fmt::fmt)
-
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
 endif()
@@ -106,7 +99,6 @@ endif()
 #---------------------------------------------------------------------------------------
 install(DIRECTORY ${HEADER_BASE} DESTINATION include)
 install(TARGETS spdlog_static ARCHIVE DESTINATION lib)
-
 
 #---------------------------------------------------------------------------------------
 # register project in CMake user registry
