@@ -54,8 +54,6 @@ option(SPDLOG_BUILD_TESTS "Build tests" ON)
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 
-set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog")
-
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 find_package(Threads REQUIRED)
@@ -63,9 +61,10 @@ find_package(Threads REQUIRED)
 # Build library
 add_library(spdlog src/spdlog.cpp)
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB )
-target_include_directories(spdlog PUBLIC  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
-set_target_properties(spdlog PROPERTIES OUTPUT_NAME "spdlog")
-set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX "-debug")
+target_include_directories(spdlog PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+    "$<INSTALL_INTERFACE:include>"
+)
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 
 # Header only
