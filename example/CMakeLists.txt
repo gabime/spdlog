@@ -36,14 +36,22 @@ endif()
 
 find_package(Threads REQUIRED)
 
+# Example of using pre-compiled library
 add_executable(example example.cpp)
+target_link_libraries(example spdlog::spdlog Threads::Threads)
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_library(log-lib log)
-    target_link_libraries(example spdlog::spdlog Threads::Threads log)
-else()
-    target_link_libraries(example spdlog::spdlog Threads::Threads)
+    target_link_libraries(example log)
 endif()
 
+# Example of using header-only library
+add_executable(example_header_only example.cpp)
+get_target_property(SPDLOG_INCLUDE_DIRS spdlog::spdlog INTERFACE_INCLUDE_DIRECTORIES)
+target_include_directories(example_header_only PRIVATE ${SPDLOG_INCLUDE_DIRS})
+target_link_libraries(example_header_only Threads::Threads)
+if(CMAKE_SYSTEM_NAME STREQUAL "Android")
+    target_link_libraries(example_header_only log)
+endif ()
 
 add_executable(multisink multisink.cpp)
 target_link_libraries(multisink spdlog::spdlog Threads::Threads)
@@ -52,3 +60,4 @@ file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 
 enable_testing()
 add_test(NAME example COMMAND example)
+add_test(NAME example_header_only COMMAND example)
