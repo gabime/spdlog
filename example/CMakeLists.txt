@@ -38,7 +38,7 @@ find_package(Threads REQUIRED)
 
 # Example of using pre-compiled library
 add_executable(example example.cpp)
-target_link_libraries(example spdlog::spdlog Threads::Threads)
+target_link_libraries(example spdlog::spdlog)
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_library(log-lib log)
     target_link_libraries(example log)
@@ -54,7 +54,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
 endif ()
 
 add_executable(multisink multisink.cpp)
-target_link_libraries(multisink spdlog::spdlog Threads::Threads)
+target_link_libraries(multisink spdlog::spdlog)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 

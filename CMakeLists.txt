@@ -56,24 +56,30 @@ set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog")
 
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
+find_package(Threads REQUIRED)
+
 # Build library
 add_library(spdlog src/spdlog.cpp)
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB )
 target_include_directories(spdlog PUBLIC  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
 set_target_properties(spdlog PROPERTIES OUTPUT_NAME "spdlog")
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX "-debug")
+target_link_libraries(spdlog PUBLIC Threads::Threads)
 
-# Headr only
+# Header only
 add_library(spdlog_header_only INTERFACE)
-target_include_directories(spdlog_header_only INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
+target_include_directories(spdlog_header_only INTERFACE "${CMAKE_CURRENT_LIST_DIR}/include")
+target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
-if(SPDLOG_FMT_EXTERNAL AND NOT TARGET fmt::fmt)
-    find_package(fmt REQUIRED CONFIG)
-endif()
 
 if(SPDLOG_FMT_EXTERNAL)
-    target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
-    target_link_libraries(spdlog INTERFACE fmt::fmt)
+    if (NOT TARGET fmt::fmt)
+        find_package(fmt REQUIRED)
+    endif ()
+
+    target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
+    target_link_libraries(spdlog PUBLIC fmt::fmt)
+
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
 endif()

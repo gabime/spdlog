@@ -20,7 +20,6 @@ set(SPDLOG_UTESTS_SOURCES
     test_fmt_helper.cpp)
 
 add_executable(${PROJECT_NAME} ${SPDLOG_UTESTS_SOURCES})
-target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
