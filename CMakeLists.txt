@@ -38,12 +38,14 @@ include(cmake/sanitizers.cmake)
 # spdlog target
 #---------------------------------------------------------------------------------------
 
-# Check if spdlog is being used directly or via add_subdirectory
+# Check if spdlog is being used directly or via add_subdirectory, but allow overriding
+if (NOT DEFINED SPDLOG_MASTER_PROJECT)
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     set(SPDLOG_MASTER_PROJECT ON)
 else()
     set(SPDLOG_MASTER_PROJECT OFF)
 endif()
+endif ()
 
 option(BUILD_SHARED_LIBS "Global flag to cause add_library to create shared libraries if on." ON)
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
