@@ -24,9 +24,14 @@
 cmake_minimum_required(VERSION 3.1)
 project(SpdlogExamples CXX)
 
-if(NOT TARGET spdlog::spdlog)
-  # Stand-alone build
-  find_package(spdlog CONFIG REQUIRED)
+if(TARGET spdlog)
+    # If we're running this example as part of the primary spdlog applciation
+    # then add an alias. This allows us to use the same "spdlog::spdlog"
+    # below that a user would use (with the namespace)
+    add_library(spdlog::spdlog ALIAS spdlog)
+else()
+    # Stand-alone build
+    find_package(spdlog REQUIRED)
 endif()
 
 find_package(Threads REQUIRED)

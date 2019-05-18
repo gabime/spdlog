@@ -58,7 +58,6 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 # Build library
 add_library(spdlog src/spdlog.cpp)
-add_library(spdlog::spdlog ALIAS spdlog)
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB )
 target_include_directories(spdlog PUBLIC  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
 set_target_properties(spdlog PROPERTIES OUTPUT_NAME "spdlog")
@@ -67,7 +66,6 @@ set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX "-debug")
 # Headr only
 add_library(spdlog_header_only INTERFACE)
 target_include_directories(spdlog_header_only INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
-add_library(spdlog::header_only ALIAS spdlog_header_only)
 
 if(SPDLOG_FMT_EXTERNAL AND NOT TARGET fmt::fmt)
     find_package(fmt REQUIRED CONFIG)
