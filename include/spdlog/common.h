@@ -19,7 +19,7 @@
 #include <locale>
 #endif
 
-#ifdef SPDLOG_STATIC_LIB
+#ifdef SPDLOG_COMPILED_LIB
 #undef SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE
 #else

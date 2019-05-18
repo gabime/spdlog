@@ -33,16 +33,16 @@ find_package(Threads REQUIRED)
 find_package(benchmark CONFIG REQUIRED)
 
 add_executable(bench bench.cpp)
-target_link_libraries(bench PRIVATE spdlog::static Threads::Threads)
+target_link_libraries(bench PRIVATE spdlog::spdlog Threads::Threads)
 
 add_executable(async_bench async_bench.cpp)
-target_link_libraries(async_bench PRIVATE spdlog::static Threads::Threads)
+target_link_libraries(async_bench PRIVATE spdlog::spdlog Threads::Threads)
 
 add_executable(latency latency.cpp)
-target_link_libraries(latency PRIVATE benchmark::benchmark spdlog::static Threads::Threads)
+target_link_libraries(latency PRIVATE benchmark::benchmark spdlog::spdlog Threads::Threads)
 
 
 add_executable(formatter-bench formatter-bench.cpp)
-target_link_libraries(formatter-bench PRIVATE benchmark::benchmark spdlog::static Threads::Threads)
+target_link_libraries(formatter-bench PRIVATE benchmark::benchmark spdlog::spdlog Threads::Threads)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")

@@ -45,6 +45,7 @@ else()
     set(SPDLOG_MASTER_PROJECT OFF)
 endif()
 
+option(BUILD_SHARED_LIBS "Global flag to cause add_library to create shared libraries if on." ON)
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
 option(SPDLOG_BUILD_TESTS "Build tests" ON)
@@ -55,15 +56,13 @@ set(HEADER_BASE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog")
 
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
-# Build static lib
-set(SRC_BASE "${CMAKE_CURRENT_SOURCE_DIR}/src")
-set(STATIC_SRC_FILES "${SRC_BASE}/spdlog.cpp")
-add_library(spdlog_static STATIC ${STATIC_SRC_FILES})
-add_library(spdlog::static ALIAS spdlog_static)
-target_compile_definitions(spdlog_static PUBLIC SPDLOG_STATIC_LIB )
-target_include_directories(spdlog_static PUBLIC  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
-set_target_properties(spdlog_static PROPERTIES OUTPUT_NAME "spdlog")
-set_target_properties(spdlog_static PROPERTIES DEBUG_POSTFIX "-debug")
+# Build library
+add_library(spdlog src/spdlog.cpp)
+add_library(spdlog::spdlog ALIAS spdlog)
+target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB )
+target_include_directories(spdlog PUBLIC  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>")
+set_target_properties(spdlog PROPERTIES OUTPUT_NAME "spdlog")
+set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX "-debug")
 
 # Headr only
 add_library(spdlog_header_only INTERFACE)
@@ -75,8 +74,8 @@ if(SPDLOG_FMT_EXTERNAL AND NOT TARGET fmt::fmt)
 endif()
 
 if(SPDLOG_FMT_EXTERNAL)
-    target_compile_definitions(spdlog_static INTERFACE SPDLOG_FMT_EXTERNAL)
-    target_link_libraries(spdlog_static INTERFACE fmt::fmt)
+    target_compile_definitions(spdlog INTERFACE SPDLOG_FMT_EXTERNAL)
+    target_link_libraries(spdlog INTERFACE fmt::fmt)
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
 endif()
@@ -98,7 +97,7 @@ endif()
 # install
 #---------------------------------------------------------------------------------------
 install(DIRECTORY ${HEADER_BASE} DESTINATION include)
-install(TARGETS spdlog_static ARCHIVE DESTINATION lib)
+install(TARGETS spdlog DESTINATION lib)
 
 #---------------------------------------------------------------------------------------
 # register project in CMake user registry
