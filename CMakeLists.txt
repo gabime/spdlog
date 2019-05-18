@@ -91,13 +91,27 @@ if(SPDLOG_BUILD_BENCH)
     add_subdirectory(bench)
 endif()
 
-#---------------------------------------------------------------------------------------
-# install
-#---------------------------------------------------------------------------------------
-install(DIRECTORY ${HEADER_BASE} DESTINATION include)
-install(TARGETS spdlog DESTINATION lib)
+if (SPDLOG_INSTALL)
+    #---------------------------------------------------------------------------------------
+    # install
+    #---------------------------------------------------------------------------------------
+    install(DIRECTORY include/ DESTINATION include)
+    install(TARGETS spdlog EXPORT ${PROJECT_NAME} DESTINATION lib)
+    install(EXPORT ${PROJECT_NAME}
+        DESTINATION lib/${PROJECT_NAME}/cmake
+        NAMESPACE ${PROJECT_NAME}::
+        FILE ${PROJECT_NAME}Config.cmake
+    )
+
+    #---------------------------------------------------------------------------------------
+    # Support creation of installable packages
+    #---------------------------------------------------------------------------------------
+    include(SpdlogCPack.cmake)
+endif ()
 
 #---------------------------------------------------------------------------------------
-# register project in CMake user registry
+# register project in CMake user registry - disabled by default since the
+# installed/packaged version of the project is preferred.
 #---------------------------------------------------------------------------------------
+option(CMAKE_EXPORT_NO_PACKAGE_REGISTRY "Disable registration of CMake's build directory." ON)
 export(PACKAGE ${PROJECT_NAME})
