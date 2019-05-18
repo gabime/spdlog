@@ -66,3 +66,4 @@ install_manifest.txt
 
 # idea
 .idea/
+cmake-build-*/
