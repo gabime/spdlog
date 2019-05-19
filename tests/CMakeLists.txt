@@ -21,7 +21,7 @@ set(SPDLOG_UTESTS_SOURCES
 
 add_executable(${PROJECT_NAME} ${SPDLOG_UTESTS_SOURCES})
 target_link_libraries(${PROJECT_NAME} PRIVATE Threads::Threads)
-target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
+target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::static)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 

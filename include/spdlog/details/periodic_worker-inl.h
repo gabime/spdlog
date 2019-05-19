@@ -2,8 +2,14 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
+
+#ifndef SPDLOG_HEADER_ONLY
+#include "spdlog/details/periodic_worker.h"
+#endif
+
 namespace spdlog {
 namespace details {
+
 SPDLOG_INLINE periodic_worker::periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval)
 {
     active_ = (interval > std::chrono::seconds::zero());

@@ -34,14 +34,14 @@ find_package(Threads REQUIRED)
 add_executable(example example.cpp)
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     find_library(log-lib log)
-    target_link_libraries(example spdlog::spdlog Threads::Threads log)
+    target_link_libraries(example spdlog::static Threads::Threads log)
 else()
-    target_link_libraries(example spdlog::spdlog Threads::Threads)
+    target_link_libraries(example spdlog::static Threads::Threads)
 endif()
 
 
 add_executable(multisink multisink.cpp)
-target_link_libraries(multisink spdlog::spdlog Threads::Threads)
+target_link_libraries(multisink spdlog::static Threads::Threads)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 

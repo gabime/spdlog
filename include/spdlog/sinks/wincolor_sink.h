@@ -35,27 +35,26 @@ public:
     const WORD WHITE = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
     const WORD YELLOW = FOREGROUND_RED | FOREGROUND_GREEN;
 
-    wincolor_sink();    
+    wincolor_sink();
     ~wincolor_sink() override;
 
     wincolor_sink(const wincolor_sink &other) = delete;
     wincolor_sink &operator=(const wincolor_sink &other) = delete;
 
     // change the color for the given level
-    void set_color(level::level_enum level, WORD color);    
-    void log(const details::log_msg &msg) final override;    
-    void flush() final override;    
-    void set_pattern(const std::string &pattern) override final;    
+    void set_color(level::level_enum level, WORD color);
+    void log(const details::log_msg &msg) final override;
+    void flush() final override;
+    void set_pattern(const std::string &pattern) override final;
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override final;
-    
 
 private:
-    using mutex_t = typename ConsoleMutex::mutex_t;        
+    using mutex_t = typename ConsoleMutex::mutex_t;
     HANDLE out_handle_;
     mutex_t &mutex_;
     std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 
-	// set color and return the orig console attributes (for resetting later)
+    // set color and return the orig console attributes (for resetting later)
     WORD set_console_attribs(WORD attribs);
     // print a range of formatted message to console
     void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);

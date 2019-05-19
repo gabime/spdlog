@@ -2,6 +2,11 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
+
+#ifndef SPDLOG_HEADER_ONLY
+#include "spdlog/details/os.h"
+#endif
+
 #include <algorithm>
 #include <chrono>
 #include <cstdio>
