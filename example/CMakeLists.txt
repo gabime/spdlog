@@ -53,11 +53,4 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Android")
     target_link_libraries(example_header_only log Threads::Threads)
 endif ()
 
-add_executable(multisink multisink.cpp)
-target_link_libraries(multisink spdlog::spdlog)
-
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
-
-enable_testing()
-add_test(NAME example COMMAND example)
-add_test(NAME example_header_only COMMAND example)
