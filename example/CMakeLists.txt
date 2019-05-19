@@ -47,5 +47,5 @@ target_link_libraries(example spdlog::spdlog)
 add_executable(example_header_only example.cpp)
 target_link_libraries(example_header_only spdlog::spdlog_header_only)
 
-
+# Create logs directory
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
