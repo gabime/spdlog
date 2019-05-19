@@ -29,14 +29,12 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     add_compile_options("-Wfatal-errors")
 endif()
 
-#---------------------------------------------------------------------------------------
-# address sanitizers check
-#---------------------------------------------------------------------------------------
-include(cmake/sanitizers.cmake)
+
 
 #---------------------------------------------------------------------------------------
 # spdlog target
 #---------------------------------------------------------------------------------------
+
 
 # Check if spdlog is being used directly or via add_subdirectory, but allow overriding
 if (NOT DEFINED SPDLOG_MASTER_PROJECT)
@@ -47,10 +45,9 @@ else()
 endif()
 endif ()
 
-option(BUILD_SHARED_LIBS "Global flag to cause add_library to create shared libraries if on." ON)
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
-option(SPDLOG_BUILD_TESTS "Build tests" ON)
+option(SPDLOG_BUILD_TESTS "Build tests" OFF)
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 
@@ -60,11 +57,12 @@ find_package(Threads REQUIRED)
 
 # Build library
 add_library(spdlog src/spdlog.cpp)
-target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB )
+target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
     "$<INSTALL_INTERFACE:include>"
 )
+
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 
 # Header only
@@ -73,6 +71,16 @@ target_include_directories(spdlog_header_only INTERFACE "${CMAKE_CURRENT_LIST_DI
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
 
+#---------------------------------------------------------------------------------------
+# address sanitizers check
+#---------------------------------------------------------------------------------------
+if(SPDLOG_MASTER_PROJECT)
+    include(cmake/sanitizers.cmake)
+endif()
+
+#---------------------------------------------------------------------------------------
+# use fmt package if using exertnal fmt
+#---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL)
     if (NOT TARGET fmt::fmt)
         find_package(fmt REQUIRED)
@@ -85,6 +93,9 @@ if(SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
 endif()
 
+#---------------------------------------------------------------------------------------
+# build binries
+#---------------------------------------------------------------------------------------
 if(SPDLOG_BUILD_EXAMPLES)
     add_subdirectory(example)
 endif()
@@ -98,27 +109,49 @@ if(SPDLOG_BUILD_BENCH)
     add_subdirectory(bench)
 endif()
 
+#---------------------------------------------------------------------------------------
+# install
+#---------------------------------------------------------------------------------------
 if (SPDLOG_INSTALL)
+    set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/${PROJECT_NAME}Config.cmake.in")
+    set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
+    set(config_targets_file "${PROJECT_NAME}ConfigTargets.cmake")
+    set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+    set(dest_dir lib/${PROJECT_NAME}/cmake)
+
     #---------------------------------------------------------------------------------------
-    # install
+    # lib in include files
     #---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION include)
     install(TARGETS spdlog EXPORT ${PROJECT_NAME} DESTINATION lib)
+
+    #---------------------------------------------------------------------------------------
+    # package and version files
+    #---------------------------------------------------------------------------------------
     install(EXPORT ${PROJECT_NAME}
-        DESTINATION lib/${PROJECT_NAME}/cmake
-        NAMESPACE ${PROJECT_NAME}::
-        FILE ${PROJECT_NAME}Config.cmake
-    )
+            DESTINATION ${dest_dir}
+            NAMESPACE ${PROJECT_NAME}::
+            FILE ${config_targets_file})
+
+    include(CMakePackageConfigHelpers)
+    configure_file("${project_config_in}" "${project_config_out}" @ONLY)
+    write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
+    install(FILES
+            "${project_config_out}"
+            "${version_config_file}" DESTINATION "${dest_dir}")
 
     #---------------------------------------------------------------------------------------
     # Support creation of installable packages
     #---------------------------------------------------------------------------------------
-    include(SpdlogCPack.cmake)
+    include(cmake/SpdlogCPack.cmake)
+
+    #---------------------------------------------------------------------------------------
+    # register project in CMake user registry - disabled by default since the
+    # installed/packaged version of the project is preferred.
+    #---------------------------------------------------------------------------------------
+    option(CMAKE_EXPORT_NO_PACKAGE_REGISTRY "Disable registration of CMake's build directory." ON)
+    export(PACKAGE ${PROJECT_NAME})
+
 endif ()
 
-#---------------------------------------------------------------------------------------
-# register project in CMake user registry - disabled by default since the
-# installed/packaged version of the project is preferred.
-#---------------------------------------------------------------------------------------
-option(CMAKE_EXPORT_NO_PACKAGE_REGISTRY "Disable registration of CMake's build directory." ON)
-export(PACKAGE ${PROJECT_NAME})
+

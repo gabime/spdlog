@@ -29,12 +29,12 @@ if(TARGET spdlog)
     # then add an alias. This allows us to use the same "spdlog::spdlog"
     # below that a user would use (with the namespace)
     add_library(spdlog::spdlog ALIAS spdlog)
+    find_package(Threads REQUIRED)
 else()
     # Stand-alone build
     find_package(spdlog REQUIRED)
 endif()
 
-find_package(Threads REQUIRED)
 
 # Example of using pre-compiled library
 add_executable(example example.cpp)
@@ -50,7 +50,7 @@ get_target_property(SPDLOG_INCLUDE_DIRS spdlog::spdlog INTERFACE_INCLUDE_DIRECTO
 target_include_directories(example_header_only PRIVATE ${SPDLOG_INCLUDE_DIRS})
 target_link_libraries(example_header_only Threads::Threads)
 if(CMAKE_SYSTEM_NAME STREQUAL "Android")
-    target_link_libraries(example_header_only log)
+    target_link_libraries(example_header_only log Threads::Threads)
 endif ()
 
 add_executable(multisink multisink.cpp)
