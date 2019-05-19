@@ -12,8 +12,6 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
 endif()
 
-
-
 #---------------------------------------------------------------------------------------
 # compiler config
 #---------------------------------------------------------------------------------------
@@ -29,12 +27,9 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCH
     add_compile_options("-Wfatal-errors")
 endif()
 
-
-
 #---------------------------------------------------------------------------------------
 # spdlog target
 #---------------------------------------------------------------------------------------
-
 
 # Check if spdlog is being used directly or via add_subdirectory, but allow overriding
 if (NOT DEFINED SPDLOG_MASTER_PROJECT)
@@ -55,7 +50,7 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 find_package(Threads REQUIRED)
 
-# Build library
+# Static library version
 add_library(spdlog src/spdlog.cpp)
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC
@@ -65,11 +60,10 @@ target_include_directories(spdlog PUBLIC
 
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 
-# Header only
+# Header only version
 add_library(spdlog_header_only INTERFACE)
 target_include_directories(spdlog_header_only INTERFACE "${CMAKE_CURRENT_LIST_DIR}/include")
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
-
 
 #---------------------------------------------------------------------------------------
 # address sanitizers check
@@ -151,7 +145,5 @@ if (SPDLOG_INSTALL)
     #---------------------------------------------------------------------------------------
     option(CMAKE_EXPORT_NO_PACKAGE_REGISTRY "Disable registration of CMake's build directory." ON)
     export(PACKAGE ${PROJECT_NAME})
-
 endif ()
-
 
