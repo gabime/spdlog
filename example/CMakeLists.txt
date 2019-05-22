@@ -1,49 +1,31 @@
-# *************************************************************************/
-# * Copyright (c) 2015 Ruslan Baratov.                                    */
-# *                                                                       */
-# * Permission is hereby granted, free of charge, to any person obtaining */
-# * a copy of this software and associated documentation files (the       */
-# * "Software"), to deal in the Software without restriction, including   */
-# * without limitation the rights to use, copy, modify, merge, publish,   */
-# * distribute, sublicense, and/or sell copies of the Software, and to    */
-# * permit persons to whom the Software is furnished to do so, subject to */
-# * the following conditions:                                             */
-# *                                                                       */
-# * The above copyright notice and this permission notice shall be        */
-# * included in all copies or substantial portions of the Software.       */
-# *                                                                       */
-# * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,       */
-# * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF    */
-# * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.*/
-# * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY  */
-# * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,  */
-# * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE     */
-# * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.                */
-# *************************************************************************/
+# Copyright(c) 2019 spdlog authors
+# Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 cmake_minimum_required(VERSION 3.1)
 project(SpdlogExamples CXX)
 
-if(NOT TARGET spdlog)
-  # Stand-alone build
-  find_package(spdlog CONFIG REQUIRED)
-endif()
-
-find_package(Threads REQUIRED)
-
-add_executable(example example.cpp)
-if(CMAKE_SYSTEM_NAME STREQUAL "Android")
-    find_library(log-lib log)
-    target_link_libraries(example spdlog::static Threads::Threads log)
+if(TARGET spdlog)
+    # If we're running this example as part of the primary spdlog applciation
+    # then add an alias. This allows us to use the same "spdlog::spdlog"
+    # below that a user would use (with the namespace)
+    add_library(spdlog::spdlog ALIAS spdlog)
+    add_library(spdlog::spdlog_header_only ALIAS spdlog_header_only)
 else()
-    target_link_libraries(example spdlog::static Threads::Threads)
+    # Stand-alone build
+    find_package(spdlog REQUIRED)
 endif()
 
+#---------------------------------------------------------------------------------------
+# Example of using pre-compiled library
+#---------------------------------------------------------------------------------------
+add_executable(example example.cpp)
+target_link_libraries(example spdlog::spdlog)
 
-add_executable(multisink multisink.cpp)
-target_link_libraries(multisink spdlog::static Threads::Threads)
+#---------------------------------------------------------------------------------------
+# Example of using header-only library
+#---------------------------------------------------------------------------------------
+add_executable(example_header_only example.cpp)
+target_link_libraries(example_header_only spdlog::spdlog_header_only)
 
+# Create logs directory
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
-
-enable_testing()
-add_test(NAME example COMMAND example)
