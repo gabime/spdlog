@@ -125,9 +125,12 @@ enum level_enum
         "trace", "debug", "info", "warning", "error", "critical", "off"                                                                    \
     }
 #endif
-
 static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
-static const char *short_level_names[]{"T", "D", "I", "W", "E", "C", "O"};
+
+#if !defined(SPDLOG_SHORT_LEVEL_NAMES)
+#define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
+#endif
+static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
 inline string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
@@ -155,6 +158,16 @@ inline spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCE
 
 using level_hasher = std::hash<int>;
 } // namespace level
+
+//
+// Color mode used by sinks with color support.
+//
+enum class color_mode
+{
+    always,
+    automatic,
+    never
+};
 
 //
 // Pattern time - specific time getting to use for pattern_formatter.
@@ -210,10 +223,10 @@ struct source_loc
         , funcname{""}
     {
     }
-    SPDLOG_CONSTEXPR source_loc(const char *filename, int line, const char *funcname)
-        : filename{filename}
-        , line{static_cast<uint32_t>(line)}
-        , funcname{funcname}
+    SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
+        : filename{filename_in}
+        , line{static_cast<uint32_t>(line_in)}
+        , funcname{funcname_in}
     {
     }
 

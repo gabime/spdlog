@@ -11,7 +11,6 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 
 #### Or use your favorite package manager:
 
-* Ubuntu: `apt-get install libspdlog-dev`
 * Homebrew: `brew install spdlog`
 * FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
 * Fedora: `yum install spdlog`
@@ -80,6 +79,8 @@ async...                Elapsed: 0.349851       2,858,358/sec
 #### Basic usage
 ```c++
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
+
 int main() 
 {
     spdlog::info("Welcome to spdlog!");
@@ -101,7 +102,10 @@ int main()
     // define SPDLOG_ACTIVE_LEVEL to desired level
     SPDLOG_TRACE("Some trace message with param {}", {});
     SPDLOG_DEBUG("Some debug message");
-        
+    
+    // Set the default logger to file logger
+    auto file_logger = spdlog::basic_logger_mt("basic_logger", "logs/basic.txt");
+    spdlog::set_default_logger(file_logger);            
 }
 ```
 #### create stdout/stderr logger object
@@ -310,7 +314,7 @@ void syslog_example()
 void android_example()
 {
     std::string tag = "spdlog-android";
-    auto android_logger = spdlog::android_logger("android", tag);
+    auto android_logger = spdlog::android_logger_mt("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
 }
 ```

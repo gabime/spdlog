@@ -47,6 +47,21 @@ inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs 
     return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
 
+// Initialize and register a logger,
+// formatter and flush level will be set according the global settings.
+//
+// NOTE:
+// Use this function when creating loggers manually.
+//
+// Example:
+//   auto console_sink = std::make_shared<spdlog::sinks::stdout_sink_mt>();
+//   auto console_logger = std::make_shared<spdlog::logger>("console_logger", console_sink);
+//   spdlog::initialize_logger(console_logger);
+inline void initialize_logger(std::shared_ptr<logger> logger)
+{
+    details::registry::instance().initialize_logger(std::move(logger));
+}
+
 // Return an existing logger or nullptr if a logger with such name doesn't
 // exist.
 // example: spdlog::get("my_logger")->info("hello {}", "world");
@@ -312,8 +327,10 @@ inline void critical(const wchar_t *fmt, const Args &... args)
 //
 
 #define SPDLOG_LOGGER_CALL(logger, level, ...)                                                                                             \
-    if (logger->should_log(level))                                                                                                         \
-    logger->log(spdlog::source_loc{SPDLOG_FILE_BASENAME(__FILE__), __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__)
+    do {                                                                                                                                   \
+        if (logger->should_log(level))                                                                                                     \
+            logger->log(spdlog::source_loc{SPDLOG_FILE_BASENAME(__FILE__), __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__);                \
+    } while (0)
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
 #define SPDLOG_LOGGER_TRACE(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__)

@@ -31,13 +31,17 @@ template<typename Mutex>
 class rotating_file_sink final : public base_sink<Mutex>
 {
 public:
-    rotating_file_sink(filename_t base_filename, std::size_t max_size, std::size_t max_files)
+    rotating_file_sink(filename_t base_filename, std::size_t max_size, std::size_t max_files, bool rotate_on_open=false)
         : base_filename_(std::move(base_filename))
         , max_size_(max_size)
         , max_files_(max_files)
     {
         file_helper_.open(calc_filename(base_filename_, 0));
         current_size_ = file_helper_.size(); // expensive. called only once
+        if (rotate_on_open && current_size_ > 0)
+        {
+            rotate_();
+        }
     }
 
     // calc filename according to index and file extension if exists.
@@ -56,6 +60,11 @@ public:
             fmt::format_to(w, SPDLOG_FILENAME_T("{}"), filename);
         }
         return fmt::to_string(w);
+    }
+
+    const filename_t &filename() const
+    {
+        return file_helper_.filename();
     }
 
 protected:
@@ -141,15 +150,15 @@ using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
 
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> rotating_logger_mt(
-    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files)
+    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files, bool rotate_on_open=false)
 {
-    return Factory::template create<sinks::rotating_file_sink_mt>(logger_name, filename, max_file_size, max_files);
+    return Factory::template create<sinks::rotating_file_sink_mt>(logger_name, filename, max_file_size, max_files, rotate_on_open);
 }
 
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> rotating_logger_st(
-    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files)
+    const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files, bool rotate_on_open = false)
 {
-    return Factory::template create<sinks::rotating_file_sink_st>(logger_name, filename, max_file_size, max_files);
+    return Factory::template create<sinks::rotating_file_sink_st>(logger_name, filename, max_file_size, max_files, rotate_on_open);
 }
 } // namespace spdlog

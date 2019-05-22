@@ -60,7 +60,20 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
     prepare_logdir();
     size_t max_size = 1024 * 10;
     std::string basename = "logs/rotating_log";
-    auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 1);
+
+    {
+        // make an initial logger to create the first output file
+        auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 2, true);
+        for (int i = 0; i < 10; ++i)
+        {
+            logger->info("Test message {}", i);
+        }
+        // drop causes the logger destructor to be called, which is required so the
+        // next logger can rename the first output file. 
+        spdlog::drop(logger->name());
+    }
+
+    auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 2, true);
     for (int i = 0; i < 10; ++i)
     {
         logger->info("Test message {}", i);

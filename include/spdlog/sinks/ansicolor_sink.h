@@ -33,12 +33,12 @@ class ansicolor_sink final : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
-    ansicolor_sink()
+    ansicolor_sink(color_mode mode = color_mode::automatic)
         : target_file_(TargetStream::stream())
         , mutex_(ConsoleMutex::mutex())
 
     {
-        should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
+        set_color_mode_(mode);
         colors_[level::trace] = white;
         colors_[level::debug] = cyan;
         colors_[level::info] = green;
@@ -133,7 +133,35 @@ public:
         formatter_ = std::move(sink_formatter);
     }
 
+    bool should_color()
+    {
+        std::lock_guard<mutex_t> lock(mutex_);
+        return should_do_colors_;
+    }
+
+    void set_color_mode(color_mode mode)
+    {
+        std::lock_guard<mutex_t> lock(mutex_);
+        set_color_mode_(mode);
+    }
+
 private:
+    void set_color_mode_(color_mode mode)
+    {
+        switch (mode)
+        {
+        case color_mode::always:
+            should_do_colors_ = true;
+            break;
+        case color_mode::automatic:
+            should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
+            break;
+        case color_mode::never:
+            should_do_colors_ = false;
+            break;
+        }
+    }
+
     void print_ccode_(const std::string &color_code)
     {
         fwrite(color_code.data(), sizeof(char), color_code.size(), target_file_);
