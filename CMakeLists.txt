@@ -25,31 +25,22 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #---------------------------------------------------------------------------------------
 # Check if spdlog is being used directly or via add_subdirectory, but allow overriding
 if (NOT DEFINED SPDLOG_MASTER_PROJECT)
-if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
-    set(SPDLOG_MASTER_PROJECT ON)
-else()
-    set(SPDLOG_MASTER_PROJECT OFF)
-endif()
+    if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+        set(SPDLOG_MASTER_PROJECT ON)
+    else()
+        set(SPDLOG_MASTER_PROJECT OFF)
+    endif()
 endif ()
 
-option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
-option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
+option(SPDLOG_BUILD_EXAMPLES "Build examples" ON)
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
 option(SPDLOG_BUILD_TESTS "Build tests" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 find_package(Threads REQUIRED)
-
-if(SPDLOG_MASTER_PROJECT AND ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"))
-    add_compile_options("-Wall")
-    add_compile_options("-Wextra")
-    add_compile_options("-Wconversion")
-    add_compile_options("-pedantic")
-    add_compile_options("-Wfatal-errors")
-endif()
-
 
 #---------------------------------------------------------------------------------------
 # Static library version
@@ -71,10 +62,20 @@ target_include_directories(spdlog_header_only INTERFACE
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
+
 #---------------------------------------------------------------------------------------
-# address sanitizers check
+# Turn on compiler warnings and sanitizers if we build our own project
 #---------------------------------------------------------------------------------------
 if(SPDLOG_MASTER_PROJECT)
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+        target_compile_options( spdlog PRIVATE -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
+        target_compile_options( spdlog_header_only INTERFACE -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
+    endif()
+    if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+        target_compile_options( spdlog PRIVATE /W3 /WX )
+        target_compile_options( spdlog_header_only INTERFACE /W3 /WX)
+    endif()
+
     include(cmake/sanitizers.cmake)
 endif()
 
