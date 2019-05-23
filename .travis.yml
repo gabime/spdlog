@@ -70,11 +70,11 @@ matrix:
       addons: *clang6
       
       # Test clang-6.0: C++11, Build=Debug, TSAN=On
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 ASAN=Off TSAN=On
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 ASAN=Off TSAN=Off
       os: linux
       addons: *clang6
       
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=On
+    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
       os: linux
       addons: *clang6
 
