@@ -68,11 +68,11 @@ target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 #---------------------------------------------------------------------------------------
 if(SPDLOG_MASTER_PROJECT)
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-        target_compile_options( spdlog PRIVATE -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
+        target_compile_options( spdlog PUBLIC -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
         target_compile_options( spdlog_header_only INTERFACE -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
     endif()
     if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-        target_compile_options( spdlog PRIVATE /W3 /WX )
+        target_compile_options( spdlog PUBLIC /W3 /WX )
         target_compile_options( spdlog_header_only INTERFACE /W3 /WX)
     endif()
 
