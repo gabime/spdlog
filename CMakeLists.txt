@@ -31,16 +31,11 @@ else()
 endif()
 endif ()
 
-if(NOT WIN32) #spdlog does not yet contain __declspec( dllexport ) under windows.
-	option(BUILD_SHARED_LIBS "Build as shared library" OFF)
-endif()
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
-option(SPDLOG_BUILD_EXAMPLES "Build examples" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
-option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_BUILD_TESTS "Build tests" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
-option(CMAKE_EXPORT_NO_PACKAGE_REGISTRY "Disable registration of CMake's build directory." ON)
-
 
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
@@ -58,7 +53,7 @@ endif()
 #---------------------------------------------------------------------------------------
 # Static library version
 #---------------------------------------------------------------------------------------
-add_library(spdlog src/spdlog.cpp)
+add_library(spdlog STATIC src/spdlog.cpp)
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
@@ -149,10 +144,5 @@ if (SPDLOG_INSTALL)
     #---------------------------------------------------------------------------------------
     include(cmake/SpdlogCPack.cmake)
 
-    #---------------------------------------------------------------------------------------
-    # register project in CMake user registry - disabled by default since the
-    # installed/packaged version of the project is preferred.
-    #---------------------------------------------------------------------------------------
-    export(PACKAGE spdlog)
 endif ()
 
