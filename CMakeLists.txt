@@ -4,6 +4,7 @@
 cmake_minimum_required(VERSION 3.1)
 project(spdlog VERSION 1.3.1 LANGUAGES CXX)
 include(CMakeDependentOption)
+include(GNUInstallDirs)
 
 #---------------------------------------------------------------------------------------
 # set default build to release
@@ -57,7 +58,7 @@ add_library(spdlog STATIC src/spdlog.cpp)
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-    "$<INSTALL_INTERFACE:include>")
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 
 #---------------------------------------------------------------------------------------
@@ -67,7 +68,7 @@ add_library(spdlog_header_only INTERFACE)
 
 target_include_directories(spdlog_header_only INTERFACE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<INSTALL_INTERFACE:include>")
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
 #---------------------------------------------------------------------------------------
@@ -116,13 +117,13 @@ if (SPDLOG_INSTALL)
     set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfig.cmake")
     set(config_targets_file "spdlogConfigTargets.cmake")
     set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfigVersion.cmake")
-    set(export_dest_dir lib/spdlog/cmake)
+    set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/spdlog/cmake")
 
     #---------------------------------------------------------------------------------------
-    # lib in include files
+    # include files
     #---------------------------------------------------------------------------------------
-    install(DIRECTORY include/ DESTINATION include)
-    install(TARGETS spdlog spdlog_header_only EXPORT spdlog DESTINATION lib)
+    install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+    install(TARGETS spdlog spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_LIBDIR}/spdlog")
 
     #---------------------------------------------------------------------------------------
     # package and version files
