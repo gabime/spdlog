@@ -35,7 +35,7 @@ public:
     const WORD WHITE = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
     const WORD YELLOW = FOREGROUND_RED | FOREGROUND_GREEN;
 
-    wincolor_sink();
+    wincolor_sink(color_mode mode = color_mode::automatic);
     ~wincolor_sink() override;
 
     wincolor_sink(const wincolor_sink &other) = delete;
@@ -47,11 +47,13 @@ public:
     void flush() final override;
     void set_pattern(const std::string &pattern) override final;
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override final;
+    void set_color_mode(color_mode mode);
 
 private:
     using mutex_t = typename ConsoleMutex::mutex_t;
     HANDLE out_handle_;
     mutex_t &mutex_;
+    bool should_do_colors_;
     std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 
     // set color and return the orig console attributes (for resetting later)

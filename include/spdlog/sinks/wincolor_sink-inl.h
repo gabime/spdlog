@@ -13,10 +13,11 @@ namespace spdlog {
 namespace sinks {
 
 template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::wincolor_sink()
+SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::wincolor_sink(color_mode mode)
     : out_handle_(TargetStream::handle())
     , mutex_(ConsoleMutex::mutex())
 {
+    set_color_mode(mode);
     colors_[level::trace] = WHITE;
     colors_[level::debug] = CYAN;
     colors_[level::info] = GREEN;
@@ -46,7 +47,7 @@ void SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::log(const details:
     std::lock_guard<mutex_t> lock(mutex_);
     fmt::memory_buffer formatted;
     formatter_->format(msg, formatted);
-    if (msg.color_range_end > msg.color_range_start)
+    if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
     {
         // before color range
         print_range_(formatted, 0, msg.color_range_start);
@@ -59,7 +60,7 @@ void SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::log(const details:
                            // after color range
         print_range_(formatted, msg.color_range_end, formatted.size());
     }
-    else // print without colors if color range is invalid
+    else // print without colors if color range is invalid (or color is disabled)
     {
         print_range_(formatted, 0, formatted.size());
     }
@@ -83,6 +84,23 @@ void SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::set_formatter(std:
 {
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::move(sink_formatter);
+}
+
+template<typename TargetStream, typename ConsoleMutex>
+void SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::set_color_mode(color_mode mode)
+{
+    switch (mode)
+    {
+        case color_mode::always:
+        case color_mode::automatic:
+            should_do_colors_ = true;
+            break;
+        case color_mode::never:
+            should_do_colors_ = false;
+            break;
+        default:
+            should_do_colors_ = true;
+    }
 }
 
 // set color and return the orig console attributes (for resetting later)

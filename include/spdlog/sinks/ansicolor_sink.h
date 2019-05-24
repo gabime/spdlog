@@ -29,7 +29,7 @@ class ansicolor_sink final : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
-    ansicolor_sink();
+    ansicolor_sink(color_mode mode = color_mode::automatic);
     ~ansicolor_sink() override = default;
 
     ansicolor_sink(const ansicolor_sink &other) = delete;
@@ -40,6 +40,7 @@ public:
     void set_pattern(const std::string &pattern) final;
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
     bool should_color();
+    void set_color_mode(color_mode mode);
 
     /// Formatting codes
     const std::string reset = "\033[m";

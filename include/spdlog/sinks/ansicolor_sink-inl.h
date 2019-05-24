@@ -10,12 +10,12 @@
 #include "spdlog/details/os.h"
 
 template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::ansicolor_sink()
+SPDLOG_INLINE spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::ansicolor_sink(color_mode mode)
     : target_file_(TargetStream::stream())
     , mutex_(ConsoleMutex::mutex())
 
 {
-    should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
+    set_color_mode(mode);
     colors_[level::trace] = white;
     colors_[level::debug] = cyan;
     colors_[level::info] = green;
@@ -86,6 +86,23 @@ template<typename TargetStream, typename ConsoleMutex>
 SPDLOG_INLINE bool spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::should_color()
 {
     return should_do_colors_;
+}
+
+template<typename TargetStream, typename ConsoleMutex>
+SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::set_color_mode(color_mode mode)
+{
+    switch (mode)
+    {
+        case color_mode::always:
+            should_do_colors_ = true;
+            return;
+        case color_mode::automatic:
+            should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
+            return;
+        case color_mode::never:
+            should_do_colors_ = false;
+            return;
+    }
 }
 
 template<typename TargetStream, typename ConsoleMutex>
