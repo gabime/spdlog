@@ -178,7 +178,7 @@ SPDLOG_INLINE bool file_exists(const filename_t &filename) SPDLOG_NOEXCEPT
     return (attribs != INVALID_FILE_ATTRIBUTES && !(attribs & FILE_ATTRIBUTE_DIRECTORY));
 #else // common linux/unix all have the stat system call
     struct stat buffer;
-    return (stat(filename.c_str(), &buffer) == 0);
+    return (::stat(filename.c_str(), &buffer) == 0);
 #endif
 }
 
@@ -218,7 +218,7 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 #else // unix 32 bits or cygwin
     struct stat st;
 
-    if (fstat(fd, &st) == 0)
+    if (::fstat(fd, &st) == 0)
     {
         return static_cast<size_t>(st.st_size);
     }
