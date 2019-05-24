@@ -1169,7 +1169,7 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::stri
     const size_t max_width = 128;
     if (it == end)
     {
-        return padding_info{}
+        return padding_info{};
     }
 
     padding_info::pad_side side;
