@@ -31,8 +31,7 @@ public:
     bytes_range(It range_begin, It range_end)
         : begin_(range_begin)
         , end_(range_end)
-    {
-    }
+    {}
 
     It begin() const
     {

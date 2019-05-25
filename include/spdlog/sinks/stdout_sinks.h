@@ -1,7 +1,5 @@
-//
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
 
 #pragma once
 
@@ -11,6 +9,7 @@
 
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"
+#include "spdlog/details/pattern_formatter.h"
 
 #include <cstdio>
 #include <memory>
@@ -28,8 +27,7 @@ public:
     stdout_sink()
         : mutex_(ConsoleMutex::mutex())
         , file_(TargetStream::stream())
-    {
-    }
+    {}
     ~stdout_sink() override = default;
 
     stdout_sink(const stdout_sink &other) = delete;

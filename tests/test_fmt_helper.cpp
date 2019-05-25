@@ -1,5 +1,6 @@
 
 #include "includes.h"
+#include "spdlog/details/fmt_helper.h"
 
 void test_pad2(int n, const char *expected)
 {

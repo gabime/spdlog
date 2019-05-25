@@ -39,8 +39,7 @@ TEST_CASE("default_error_handler", "[errors]]")
 }
 
 struct custom_ex
-{
-};
+{};
 TEST_CASE("custom_error_handler", "[errors]]")
 {
     prepare_logdir();

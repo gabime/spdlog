@@ -1,41 +1,17 @@
-//
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
 
 #pragma once
 
 #include "spdlog/common.h"
-#include "spdlog/details/os.h"
-
 #include <string>
-#include <utility>
 
 namespace spdlog {
 namespace details {
 struct log_msg
 {
-
-    log_msg(source_loc loc, const std::string *loggers_name, level::level_enum lvl, string_view_t view)
-        : logger_name(loggers_name)
-        , level(lvl)
-#ifndef SPDLOG_NO_DATETIME
-        , time(os::now())
-#endif
-
-#ifndef SPDLOG_NO_THREAD_ID
-        , thread_id(os::thread_id())
-#endif
-        , source(loc)
-        , payload(view)
-    {
-    }
-
-    log_msg(const std::string *loggers_name, level::level_enum lvl, string_view_t view)
-        : log_msg(source_loc{}, loggers_name, lvl, view)
-    {
-    }
-
+    log_msg(source_loc loc, const std::string *loggers_name, level::level_enum lvl, string_view_t view);
+    log_msg(const std::string *loggers_name, level::level_enum lvl, string_view_t view);
     log_msg(const log_msg &other) = default;
 
     const std::string *logger_name{nullptr};
@@ -53,3 +29,7 @@ struct log_msg
 };
 } // namespace details
 } // namespace spdlog
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "log_msg-inl.h"
+#endif

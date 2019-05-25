@@ -1,7 +1,5 @@
-//
-// Copyright(c) 2017 spdlog authors.
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
 
 #pragma once
 
@@ -11,9 +9,7 @@
 
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"
-#include "spdlog/details/os.h"
 #include "spdlog/sinks/sink.h"
-
 #include <memory>
 #include <mutex>
 #include <string>
@@ -28,36 +24,23 @@ namespace sinks {
  * of the message.
  * If no color terminal detected, omit the escape codes.
  */
-template<typename TargetStream, class ConsoleMutex>
+template<typename TargetStream, typename ConsoleMutex>
 class ansicolor_sink final : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
-    ansicolor_sink(color_mode mode = color_mode::automatic)
-        : target_file_(TargetStream::stream())
-        , mutex_(ConsoleMutex::mutex())
-
-    {
-        set_color_mode_(mode);
-        colors_[level::trace] = white;
-        colors_[level::debug] = cyan;
-        colors_[level::info] = green;
-        colors_[level::warn] = yellow + bold;
-        colors_[level::err] = red + bold;
-        colors_[level::critical] = bold + on_red;
-        colors_[level::off] = reset;
-    }
-
+    ansicolor_sink(color_mode mode = color_mode::automatic);
     ~ansicolor_sink() override = default;
 
     ansicolor_sink(const ansicolor_sink &other) = delete;
     ansicolor_sink &operator=(const ansicolor_sink &other) = delete;
-
-    void set_color(level::level_enum color_level, const std::string &color)
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        colors_[color_level] = color;
-    }
+    void set_color(level::level_enum color_level, const std::string &color);
+    void log(const details::log_msg &msg) override;
+    void flush() override;
+    void set_pattern(const std::string &pattern) final;
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
+    bool should_color();
+    void set_color_mode(color_mode mode);
 
     /// Formatting codes
     const std::string reset = "\033[m";
@@ -89,93 +72,13 @@ public:
     const std::string on_cyan = "\033[46m";
     const std::string on_white = "\033[47m";
 
-    void log(const details::log_msg &msg) override
-    {
-        // Wrap the originally formatted message in color codes.
-        // If color is not supported in the terminal, log as is instead.
-        std::lock_guard<mutex_t> lock(mutex_);
-
-        fmt::memory_buffer formatted;
-        formatter_->format(msg, formatted);
-        if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
-        {
-            // before color range
-            print_range_(formatted, 0, msg.color_range_start);
-            // in color range
-            print_ccode_(colors_[msg.level]);
-            print_range_(formatted, msg.color_range_start, msg.color_range_end);
-            print_ccode_(reset);
-            // after color range
-            print_range_(formatted, msg.color_range_end, formatted.size());
-        }
-        else // no color
-        {
-            print_range_(formatted, 0, formatted.size());
-        }
-        fflush(target_file_);
-    }
-
-    void flush() override
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        fflush(target_file_);
-    }
-
-    void set_pattern(const std::string &pattern) final
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
-    }
-
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        formatter_ = std::move(sink_formatter);
-    }
-
-    bool should_color()
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        return should_do_colors_;
-    }
-
-    void set_color_mode(color_mode mode)
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        set_color_mode_(mode);
-    }
-
 private:
-    void set_color_mode_(color_mode mode)
-    {
-        switch (mode)
-        {
-        case color_mode::always:
-            should_do_colors_ = true;
-            break;
-        case color_mode::automatic:
-            should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
-            break;
-        case color_mode::never:
-            should_do_colors_ = false;
-            break;
-        }
-    }
-
-    void print_ccode_(const std::string &color_code)
-    {
-        fwrite(color_code.data(), sizeof(char), color_code.size(), target_file_);
-    }
-    void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end)
-    {
-        fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);
-    }
-
     FILE *target_file_;
     mutex_t &mutex_;
-
     bool should_do_colors_;
     std::unordered_map<level::level_enum, std::string, level::level_hasher> colors_;
+    void print_ccode_(const std::string &color_code);
+    void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
 };
 
 using ansicolor_stdout_sink_mt = ansicolor_sink<details::console_stdout, details::console_mutex>;
@@ -185,5 +88,8 @@ using ansicolor_stderr_sink_mt = ansicolor_sink<details::console_stderr, details
 using ansicolor_stderr_sink_st = ansicolor_sink<details::console_stderr, details::console_nullmutex>;
 
 } // namespace sinks
-
 } // namespace spdlog
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "ansicolor_sink-inl.h"
+#endif

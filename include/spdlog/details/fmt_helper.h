@@ -1,12 +1,11 @@
-//
-// Created by gabi on 6/15/18.
-//
-
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
 #pragma once
 
 #include <chrono>
 #include <type_traits>
 #include "spdlog/fmt/fmt.h"
+#include "spdlog/common.h"
 
 // Some fmt helpers to efficiently format and pad ints and strings
 namespace spdlog {

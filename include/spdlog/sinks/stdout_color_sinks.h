@@ -1,7 +1,5 @@
-//
-// Copyright(c) 2018 spdlog
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
 
 #pragma once
 
@@ -31,26 +29,19 @@ using stderr_color_sink_st = ansicolor_stderr_sink_st;
 } // namespace sinks
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic)
-{
-    return Factory::template create<sinks::stdout_color_sink_mt>(logger_name, mode);
-}
+std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic);
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> stdout_color_st(const std::string &logger_name, color_mode mode = color_mode::automatic)
-{
-    return Factory::template create<sinks::stdout_color_sink_st>(logger_name, mode);
-}
+std::shared_ptr<logger> stdout_color_st(const std::string &logger_name, color_mode mode = color_mode::automatic);
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> stderr_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic)
-{
-    return Factory::template create<sinks::stderr_color_sink_mt>(logger_name, mode);
-}
+std::shared_ptr<logger> stderr_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic);
 
 template<typename Factory = default_factory>
-inline std::shared_ptr<logger> stderr_color_st(const std::string &logger_name, color_mode mode = color_mode::automatic)
-{
-    return Factory::template create<sinks::stderr_color_sink_st>(logger_name, mode);
-}
+std::shared_ptr<logger> stderr_color_st(const std::string &logger_name, color_mode mode = color_mode::automatic);
+
 } // namespace spdlog
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "stdout_color_sinks-inl.h"
+#endif

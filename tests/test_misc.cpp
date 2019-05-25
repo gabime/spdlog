@@ -107,7 +107,6 @@ TEST_CASE("clone-logger", "[clone]")
     cloned->info("Some message 2");
 
     auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(cloned->sinks()[0]);
-    REQUIRE(test_sink->msg_counter() == 2);
 
     spdlog::drop_all();
 }
@@ -130,7 +129,6 @@ TEST_CASE("clone async", "[clone]")
     spdlog::details::os::sleep_for_millis(10);
 
     auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(cloned->sinks()[0]);
-    REQUIRE(test_sink->msg_counter() == 2);
 
     spdlog::drop_all();
 }
@@ -174,22 +172,6 @@ TEST_CASE("to_hex_no_delimiter", "[to_hex]")
 
     auto output = oss.str();
     REQUIRE(ends_with(output, "0000: 090A0B0CFFFF" + std::string(spdlog::details::os::default_eol)));
-}
-
-TEST_CASE("message_counter", "[message_counter]")
-{
-    std::ostringstream oss;
-    auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
-    spdlog::logger oss_logger("oss", oss_sink);
-    oss_logger.set_pattern("%i %v");
-
-    oss_logger.info("Hello");
-    REQUIRE(oss.str() == "000001 Hello" + std::string(spdlog::details::os::default_eol));
-
-    oss.str("");
-    oss_logger.info("Hello again");
-
-    REQUIRE(oss.str() == "000002 Hello again" + std::string(spdlog::details::os::default_eol));
 }
 
 TEST_CASE("default logger API", "[default logger]")

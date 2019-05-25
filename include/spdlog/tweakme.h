@@ -1,7 +1,5 @@
-//
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
 
 #pragma once
 
@@ -105,13 +103,6 @@
 // Uncomment to prevent child processes from inheriting log file descriptors
 //
 // #define SPDLOG_PREVENT_CHILD_FD
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-// Uncomment to enable message counting feature.
-// Use the %i in the logger pattern to display log message sequence id.
-//
-// #define SPDLOG_ENABLE_MESSAGE_COUNTER
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////

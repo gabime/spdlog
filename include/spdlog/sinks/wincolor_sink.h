@@ -1,7 +1,5 @@
-//
-// Copyright(c) 2016 spdlog
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
 
 #pragma once
 
@@ -26,7 +24,7 @@ namespace sinks {
  * Windows color console sink. Uses WriteConsoleA to write to the console with
  * colors
  */
-template<typename OutHandle, typename ConsoleMutex>
+template<typename TargetStream, typename ConsoleMutex>
 class wincolor_sink : public sink
 {
 public:
@@ -37,123 +35,31 @@ public:
     const WORD WHITE = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
     const WORD YELLOW = FOREGROUND_RED | FOREGROUND_GREEN;
 
-    wincolor_sink(color_mode mode = color_mode::automatic)
-        : out_handle_(OutHandle::handle())
-        , mutex_(ConsoleMutex::mutex())
-    {
-        set_color_mode_(mode);
-        colors_[level::trace] = WHITE;
-        colors_[level::debug] = CYAN;
-        colors_[level::info] = GREEN;
-        colors_[level::warn] = YELLOW | BOLD;
-        colors_[level::err] = RED | BOLD;                         // red bold
-        colors_[level::critical] = BACKGROUND_RED | WHITE | BOLD; // white bold on red background
-        colors_[level::off] = 0;
-    }
-
-    ~wincolor_sink() override
-    {
-        this->flush();
-    }
+    wincolor_sink(color_mode mode = color_mode::automatic);
+    ~wincolor_sink() override;
 
     wincolor_sink(const wincolor_sink &other) = delete;
     wincolor_sink &operator=(const wincolor_sink &other) = delete;
 
     // change the color for the given level
-    void set_color(level::level_enum level, WORD color)
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        colors_[level] = color;
-    }
-
-    void log(const details::log_msg &msg) final override
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        fmt::memory_buffer formatted;
-        formatter_->format(msg, formatted);
-        if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
-        {
-            // before color range
-            print_range_(formatted, 0, msg.color_range_start);
-
-            // in color range
-            auto orig_attribs = set_console_attribs(colors_[msg.level]);
-            print_range_(formatted, msg.color_range_start, msg.color_range_end);
-            ::SetConsoleTextAttribute(out_handle_,
-                orig_attribs); // reset to orig colors
-                               // after color range
-            print_range_(formatted, msg.color_range_end, formatted.size());
-        }
-        else // print without colors if color range is invalid (or color is disabled)
-        {
-            print_range_(formatted, 0, formatted.size());
-        }
-    }
-
-    void flush() final override
-    {
-        // windows console always flushed?
-    }
-
-    void set_pattern(const std::string &pattern) override final
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
-    }
-
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override final
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        formatter_ = std::move(sink_formatter);
-    }
-
-    void set_color_mode(color_mode mode)
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        set_color_mode_(mode);
-    }
+    void set_color(level::level_enum level, WORD color);
+    void log(const details::log_msg &msg) final override;
+    void flush() final override;
+    void set_pattern(const std::string &pattern) override final;
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override final;
+    void set_color_mode(color_mode mode);
 
 private:
     using mutex_t = typename ConsoleMutex::mutex_t;
-
-    void set_color_mode_(color_mode mode)
-    {
-        switch (mode)
-        {
-        case color_mode::always:
-        case color_mode::automatic:
-            should_do_colors_ = true;
-            break;
-        case color_mode::never:
-            should_do_colors_ = false;
-            break;
-        }
-    }
-
-    // set color and return the orig console attributes (for resetting later)
-    WORD set_console_attribs(WORD attribs)
-    {
-        CONSOLE_SCREEN_BUFFER_INFO orig_buffer_info;
-        ::GetConsoleScreenBufferInfo(out_handle_, &orig_buffer_info);
-        WORD back_color = orig_buffer_info.wAttributes;
-        // retrieve the current background color
-        back_color &= static_cast<WORD>(~(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY));
-        // keep the background color unchanged
-        ::SetConsoleTextAttribute(out_handle_, attribs | back_color);
-        return orig_buffer_info.wAttributes; // return orig attribs
-    }
-
-    // print a range of formatted message to console
-    void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end)
-    {
-        auto size = static_cast<DWORD>(end - start);
-        ::WriteConsoleA(out_handle_, formatted.data() + start, size, nullptr, nullptr);
-    }
-
     HANDLE out_handle_;
     mutex_t &mutex_;
     bool should_do_colors_;
     std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
+
+    // set color and return the orig console attributes (for resetting later)
+    WORD set_console_attribs(WORD attribs);
+    // print a range of formatted message to console
+    void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
 };
 
 using wincolor_stdout_sink_mt = wincolor_sink<details::console_stdout, details::console_mutex>;
@@ -164,3 +70,7 @@ using wincolor_stderr_sink_st = wincolor_sink<details::console_stderr, details::
 
 } // namespace sinks
 } // namespace spdlog
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "wincolor_sink-inl.h"
+#endif

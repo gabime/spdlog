@@ -32,9 +32,9 @@ BraceWrapping:
   BeforeCatch:     true
   BeforeElse:      true
   IndentBraces:    false
-  SplitEmptyFunction: true
-  SplitEmptyRecord: true
-  SplitEmptyNamespace: true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+  SplitEmptyNamespace: false
 BreakBeforeBinaryOperators: None
 BreakBeforeBraces: Custom
 BreakBeforeInheritanceComma: false

@@ -1,30 +1,20 @@
-//
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
 
 #pragma once
 
-// Very fast asynchronous logger (millions of logs per second on an average
-// desktop)
-// Uses pre allocated lockfree queue for maximum throughput even under large
-// number of threads.
+// Fast asynchronous logger.
+// Uses pre allocated queue.
 // Creates a single back thread to pop messages from the queue and log them.
 //
 // Upon each log write the logger:
 //    1. Checks if its log level is enough to log the message
 //    2. Push a new copy of the message to a queue (or block the caller until
 //    space is available in the queue)
-//    3. will throw spdlog_ex upon log exceptions
 // Upon destruction, logs all remaining messages in the queue before
 // destructing..
 
-#include "spdlog/common.h"
 #include "spdlog/logger.h"
-
-#include <chrono>
-#include <memory>
-#include <string>
 
 namespace spdlog {
 
@@ -70,4 +60,6 @@ private:
 };
 } // namespace spdlog
 
-#include "details/async_logger_impl.h"
+#ifdef SPDLOG_HEADER_ONLY
+#include "async_logger-inl.h"
+#endif

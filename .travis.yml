@@ -46,7 +46,7 @@ matrix:
     - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
       os: linux
       addons: *gcc48
-  
+
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
       os: linux
       addons: *gcc7
@@ -64,24 +64,15 @@ matrix:
     - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
       os: linux
       addons: *clang6
-      
+
     - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
-      os: linux
-      addons: *clang6
-      
-      # Test clang-6.0: C++11, Build=Debug, TSAN=On
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 ASAN=Off TSAN=On
-      os: linux
-      addons: *clang6
-      
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=On
       os: linux
       addons: *clang6
 
       # osx
     - env: BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
       os: osx
-    
+
 
 
 

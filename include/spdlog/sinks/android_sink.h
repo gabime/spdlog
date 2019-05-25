@@ -1,7 +1,5 @@
-//
-// Copyright(c) 2015 Gabi Melman.
+// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-//
 
 #pragma once
 
@@ -37,8 +35,7 @@ public:
     explicit android_sink(std::string tag = "spdlog", bool use_raw_msg = false)
         : tag_(std::move(tag))
         , use_raw_msg_(use_raw_msg)
-    {
-    }
+    {}
 
 protected:
     void sink_it_(const details::log_msg &msg) override
