@@ -1,29 +1,35 @@
 # spdlog
 
-Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.org/gabime/spdlog.svg?branch=master)](https://travis-ci.org/gabime/spdlog)&nbsp; [![Build status](https://ci.appveyor.com/api/projects/status/d2jnxclg20vd0o50?svg=true)](https://ci.appveyor.com/project/gabime/spdlog)
+Very fast, header-only/statically-compiled, C++ logging library. [![Build Status](https://travis-ci.org/gabime/spdlog.svg?branch=master)](https://travis-ci.org/gabime/spdlog)&nbsp; [![Build status](https://ci.appveyor.com/api/projects/status/d2jnxclg20vd0o50?svg=true)](https://ci.appveyor.com/project/gabime/spdlog)
 
 
 
-## Install
-#### Just copy the headers:
-
+## Install 
+#### Header only version
 * Copy the source [folder](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) to your build tree and use a C++11 compiler.
 
-#### Or use your favorite package manager:
+#### Static lib version
+* spdlog now supports compiling as a static lib for much faster compile times.
+* Copy and add [src/spdlog.cpp](https://github.com/gabime/spdlog/blob/v1.x/src/spdlog.cpp) to your build.
+* Pass the `-DSPDLOG_COMPILED_LIB` to the compiler (and -lspdlog to the linker).
 
-* Homebrew: `brew install spdlog`
-* FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
-* Fedora: `yum install spdlog`
-* Gentoo: `emerge dev-libs/spdlog`
-* Arch Linux: `yaourt -S spdlog-git`
-* vcpkg: `vcpkg install spdlog`
- 
+#### CMake
+* Build it (```cmake ..```) and then use it (```target_link_libraries(my-program spdlog::spdlog)```).
+* See [example](https://github.com/gabime/spdlog/blob/v1.x/example/CMakeLists.txt).
 
 ## Platforms
  * Linux, FreeBSD, OpenBSD, Solaris, AIX
  * Windows (msvc 2013+, cygwin)
  * macOS (clang 3.5+)
  * Android
+
+## Package managers:
+* Homebrew: `brew install spdlog`
+* FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
+* Fedora: `yum install spdlog`
+* Gentoo: `emerge dev-libs/spdlog`
+* Arch Linux: `yaourt -S spdlog-git`
+* vcpkg: `vcpkg install spdlog`
 
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).
@@ -42,7 +48,7 @@ Very fast, header only, C++ logging library. [![Build Status](https://travis-ci.
 * Severity based filtering - threshold levels can be modified in runtime as well as in compile time.
 * Binary data logging.
 
-
+ 
 ## Benchmarks
 
 Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/bench.cpp) done in Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
