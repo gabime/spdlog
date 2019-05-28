@@ -15,7 +15,7 @@ Very fast, header only/statically compiled, C++ logging library. [![Build Status
 
 Or use CMake:
 * Build it (```cmake ..```).
-* Use it (```target_link_libraries(my-program spdlog::spdlog)``` .
+* Use it (```target_link_libraries(my-program spdlog::spdlog)```).
 * see [example](https://github.com/gabime/spdlog/blob/v1.x/example/CMakeLists.txt).
 
 ## Platforms
