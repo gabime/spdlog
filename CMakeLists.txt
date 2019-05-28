@@ -147,6 +147,6 @@ if (SPDLOG_INSTALL)
     #---------------------------------------------------------------------------------------
     # Support creation of installable packages
     #---------------------------------------------------------------------------------------
-    include(cmake/SpdlogCPack.cmake)
+    include(cmake/spdlogCPack.cmake)
 
 endif ()
