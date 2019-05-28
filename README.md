@@ -8,7 +8,7 @@ Very fast, header only/statically compiled, C++ logging library. [![Build Status
 ### Header only version
 * Copy the source [folder](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) to your build tree and use a C++11 compiler.
 
-### compiled version (recommended)
+### Static lib version (recommended)
 spdlog now supports compiling as a static lib for much faster compile times.
 * Copy and add [src/spdlog.cpp](https://github.com/gabime/spdlog/tree/v1.x/src/spdlog.cpp) to your build.
 * Pass the `-DSPDLOG_COMPILED_LIB` to the compiler (and -lspdlog to the linker)
