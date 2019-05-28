@@ -4,8 +4,6 @@
 cmake_minimum_required(VERSION 3.1)
 project(spdlog_bench CXX)
 
-message(STATUS "Generating benchmarks..")
-
 if(NOT TARGET spdlog)
   # Stand-alone build
   find_package(spdlog CONFIG REQUIRED)

@@ -101,15 +101,18 @@ endif()
 # build binries
 #---------------------------------------------------------------------------------------
 if(SPDLOG_BUILD_EXAMPLES)
+    message(STATUS "Generating examples")
     add_subdirectory(example)
 endif()
 
 if(SPDLOG_BUILD_TESTS)
+    message(STATUS "Generating tests")
     include(CTest)
     add_subdirectory(tests)
 endif()
 
 if(SPDLOG_BUILD_BENCH)
+    message(STATUS "Generating benchmarks")
     add_subdirectory(bench)
 endif()
 
@@ -117,6 +120,7 @@ endif()
 # install
 #---------------------------------------------------------------------------------------
 if (SPDLOG_INSTALL)
+    message(STATUS "Generating install")
     set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/spdlogConfig.cmake.in")
     set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfig.cmake")
     set(config_targets_file "spdlogConfigTargets.cmake")

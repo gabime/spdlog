@@ -4,8 +4,6 @@
 cmake_minimum_required(VERSION 3.1)
 project(spdlog_examples CXX)
 
-message(STATUS "Generating examples..")
-
 if(NOT TARGET spdlog)
     # Stand-alone build
     find_package(spdlog REQUIRED)
