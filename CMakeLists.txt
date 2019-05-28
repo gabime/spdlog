@@ -3,18 +3,17 @@
 
 cmake_minimum_required(VERSION 3.1)
 project(spdlog VERSION 1.3.1 LANGUAGES CXX)
-include(CMakeDependentOption)
 include(GNUInstallDirs)
 
 #---------------------------------------------------------------------------------------
-# set default build to release
+# Set default build to release
 #---------------------------------------------------------------------------------------
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
 endif()
 
 #---------------------------------------------------------------------------------------
-# compiler config
+# Compiler config
 #---------------------------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -35,6 +34,7 @@ endif ()
 option(SPDLOG_BUILD_EXAMPLES "Build examples" ON)
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
 option(SPDLOG_BUILD_TESTS "Build tests" OFF)
+option(SPDLOG_BUILD_HO_TESTS "Build tests using the header only version" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
@@ -43,25 +43,44 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 find_package(Threads REQUIRED)
 
 #---------------------------------------------------------------------------------------
+# IDE support for headers
+#---------------------------------------------------------------------------------------
+set(SPDLOG_HEADERS_DIR  "${CMAKE_CURRENT_LIST_DIR}/include")
+file(GLOB SPDLOG_TOP_HEADERS "${SPDLOG_HEADERS_DIR}/spdlog/*.h")
+file(GLOB SPDLOG_DETAILS_HEADERS "${SPDLOG_HEADERS_DIR}/spdlog/details/*.h")
+file(GLOB SPDLOG_SINKS_HEADERS "${SPDLOG_HEADERS_DIR}/spdlog/sinks/*.h")
+file(GLOB SPDLOG_FMT_HEADERS "${SPDLOG_HEADERS_DIR}/spdlog/fmt/*.h")
+file(GLOB SPDLOG_FMT_BUNDELED_HEADERS "${SPDLOG_HEADERS_DIR}/spdlog/fmt/bundled/*.h")
+set(SPDLOG_ALL_HEADERS ${SPDLOG_TOP_HEADERS} ${SPDLOG_DETAILS_HEADERS} ${SPDLOG_SINKS_HEADERS} ${SPDLOG_FMT_HEADERS} ${SPDLOG_FMT_BUNDELED_HEADERS})
+
+source_group("Header Files\\spdlog" FILES ${SPDLOG_TOP_HEADERS})
+source_group("Header Files\\spdlog\\details" FILES ${SPDLOG_DETAILS_HEADERS})
+source_group("Header Files\\spdlog\\sinks" FILES ${SPDLOG_SINKS_HEADERS})
+source_group("Header Files\\spdlog\\fmt" FILES ${SPDLOG_FMT_HEADERS})
+source_group("Header Files\\spdlog\\fmt\\bundled\\" FILES ${SPDLOG_FMT_BUNDELED_HEADERS})
+
+#---------------------------------------------------------------------------------------
 # Static library version
 #---------------------------------------------------------------------------------------
-add_library(spdlog STATIC src/spdlog.cpp)
+add_library(spdlog STATIC src/spdlog.cpp ${SPDLOG_ALL_HEADERS})
+add_library(spdlog::spdlog ALIAS spdlog)
+    
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 
 #---------------------------------------------------------------------------------------
 # Header only version
 #---------------------------------------------------------------------------------------
 add_library(spdlog_header_only INTERFACE)
+add_library(spdlog::spdlog_header_only ALIAS spdlog_header_only)
 
 target_include_directories(spdlog_header_only INTERFACE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
-
 
 #---------------------------------------------------------------------------------------
 # Turn on compiler warnings and sanitizers if we build our own project
@@ -147,4 +166,3 @@ if (SPDLOG_INSTALL)
     include(cmake/SpdlogCPack.cmake)
 
 endif ()
-
