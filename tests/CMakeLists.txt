@@ -1,3 +1,5 @@
+message(STATUS "Generating tests..")
+
 set(SPDLOG_UTESTS_SOURCES
     test_errors.cpp
     test_file_helper.cpp
