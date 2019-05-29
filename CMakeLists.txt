@@ -2,8 +2,17 @@
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 cmake_minimum_required(VERSION 3.1)
-project(spdlog VERSION 1.3.1 LANGUAGES CXX)
+
+
+#---------------------------------------------------------------------------------------
+# Start spdlog project
+#---------------------------------------------------------------------------------------
+include(cmake/version.cmake)
+project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
+message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
+
 include(GNUInstallDirs)
+include(cmake/ide.cmake)
 
 #---------------------------------------------------------------------------------------
 # Set default build to release
@@ -40,12 +49,12 @@ option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
+
 find_package(Threads REQUIRED)
 
 #---------------------------------------------------------------------------------------
 # Static library version
 #---------------------------------------------------------------------------------------
-include(cmake/ide.cmake)
 add_library(spdlog STATIC src/spdlog.cpp ${SPDLOG_ALL_HEADERS})
 add_library(spdlog::spdlog ALIAS spdlog)
     
