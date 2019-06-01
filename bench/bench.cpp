@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st.log");
         bench(howmany, std::move(daily_st));
 
-        bench(howmany, spdlog::create<null_sink_st>("null_st"));
+        bench(howmany, std::make_shared<spdlog::logger>("empty_logger"));
 
         spdlog::info("**************************************************************");
         spdlog::info("C-string (400 bytes). Single thread, {:n} iterations", howmany);
