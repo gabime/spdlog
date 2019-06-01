@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 {
 
     int howmany = 1000000;
-    int queue_size = std::min(howmany + 2, 32768);
+    int queue_size = std::min(howmany + 2, 8192);
     int threads = 10;
     int iters = 3;
 
