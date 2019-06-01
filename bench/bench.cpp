@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 
     spdlog::default_logger()->set_pattern("[%^%l%$] %v");
     int howmany = 1000000;
-    int queue_size = howmany + 2;
+    int queue_size = 8192;
     int threads = 10;
     size_t file_size = 30 * 1024 * 1024;
     size_t rotating_files = 5;
@@ -96,11 +96,16 @@ int main(int argc, char *argv[])
         bench_mt(howmany, std::move(daily_mt), threads);
         bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
 
+        int iters = 3;
         spdlog::info("**************************************************************");
-        spdlog::info("Asyncronous.. {:n} threads sharing same logger, {:n} iterations", threads, howmany);
+        spdlog::info("Asyncronous bench {:n} threads sharing same logger", threads);
+        spdlog::info("Messages: {:n}", howmany);
+        spdlog::info("Queue size: {:n} slots", queue_size);
+        auto slot_size = sizeof(spdlog::details::async_msg);
+        spdlog::info("Total queue memory: {}x{} bytes per slot = {:n} Kb ", queue_size, slot_size, (queue_size * slot_size)/1024);
         spdlog::info("**************************************************************");
 
-        for (int i = 0; i < 3; ++i)
+        for (int i = 0; i < iters; ++i)
         {
             spdlog::init_thread_pool(static_cast<size_t>(queue_size), 1);
             auto as = spdlog::basic_logger_mt<spdlog::async_factory>("async", "logs/basic_async.log", true);

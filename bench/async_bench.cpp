@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 {
 
     int howmany = 1000000;
-    int queue_size = howmany + 2;
+    int queue_size = std::min(howmany + 2, 32768);
     int threads = 10;
     int iters = 3;
 
@@ -62,16 +62,25 @@ int main(int argc, char *argv[])
         if (argc > 2)
             threads = atoi(argv[2]);
         if (argc > 3)
+        {
             queue_size = atoi(argv[3]);
+            if(queue_size > 500000)
+            {
+                spdlog::error("Max queue size allowed: 500,000");
+                exit(1);
+            }
+        }
 
         if (argc > 4)
             iters = atoi(argv[4]);
 
+        auto slot_size = sizeof(spdlog::details::async_msg);
         spdlog::info("-------------------------------------------------");
-        spdlog::info("Messages: {:14n}", howmany);
-        spdlog::info("Threads : {:14n}", threads);
-        spdlog::info("Queue   : {:14n}", queue_size);
-        spdlog::info("Iters   : {:>14n}", iters);
+        spdlog::info("Messages     : {:n}", howmany);
+        spdlog::info("Threads      : {:n}", threads);
+        spdlog::info("Queue        : {:n} slots", queue_size);
+        spdlog::info("Queue memory : {:n} x {} = {:n} KB ", queue_size, slot_size, (queue_size * slot_size)/1024);
+        spdlog::info("Total iters  : {:n}", iters);
         spdlog::info("-------------------------------------------------");
 
         const char *filename = "logs/basic_async.log";
