@@ -32,9 +32,10 @@ class logger
 {
 public:
     // Empty logger
-    logger(std::string name) :
+    explicit logger(std::string name) :
             name_(std::move(name)),
-            sinks_(){}
+            sinks_()
+    {}
 
     // Logger with range on sinks
     template<typename It>

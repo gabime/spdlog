@@ -15,6 +15,7 @@
 #include <ctime>
 #include <string>
 #include <thread>
+#include <array>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -370,8 +371,8 @@ SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT
 #ifdef _WIN32
     return true;
 #else
-    static constexpr const char *Terms[] = {
-        "ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"};
+    static constexpr std::array<const char *, 14>Terms = {
+            "ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"};
 
     const char *env_p = std::getenv("TERM");
     if (env_p == nullptr)

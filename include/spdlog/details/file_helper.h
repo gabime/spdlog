@@ -16,8 +16,6 @@ namespace details {
 class file_helper
 {
 public:
-    const int open_tries = 5;
-    const int open_interval = 10;
     explicit file_helper() = default;
 
     file_helper(const file_helper &) = delete;
@@ -49,6 +47,8 @@ public:
     static std::tuple<filename_t, filename_t> split_by_extension(const filename_t &fname);
 
 private:
+    const int open_tries = 5;
+    const int open_interval = 10;
     std::FILE *fd_{nullptr};
     filename_t _filename;
 };

@@ -163,7 +163,7 @@ static int to12h(const tm &t)
 }
 
 // Abbreviated weekday name
-static const char *days[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+static std::array<const char*, 7> days{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
 class a_formatter : public flag_formatter
 {
 public:
@@ -180,7 +180,7 @@ public:
 };
 
 // Full weekday name
-static const char *full_days[]{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+static std::array<const char *, 7> full_days{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 class A_formatter : public flag_formatter
 {
 public:
@@ -197,7 +197,7 @@ public:
 };
 
 // Abbreviated month
-static const char *months[]{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
+static const std::array<const char *, 12> months {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
 class b_formatter : public flag_formatter
 {
 public:
@@ -214,8 +214,9 @@ public:
 };
 
 // Full month name
-static const char *full_months[]{
-    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+static const std::array<const char *, 12> full_months {
+        "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
 class B_formatter : public flag_formatter
 {
 public:
@@ -575,7 +576,7 @@ public:
     explicit z_formatter(padding_info padinfo)
         : flag_formatter(padinfo){}
 
-    const std::chrono::seconds cache_refresh = std::chrono::seconds(5);
+
 
     z_formatter() = default;
     z_formatter(const z_formatter &) = delete;
@@ -617,7 +618,8 @@ private:
 
     int get_cached_offset(const log_msg &msg, const std::tm &tm_time)
     {
-        if (msg.time - last_update_ >= cache_refresh)
+        // refresh every 10 seconds
+        if (msg.time - last_update_ >= std::chrono::seconds(10))
         {
             offset_minutes_ = os::utc_minutes_offset(tm_time);
             last_update_ = msg.time;

@@ -1,4 +1,4 @@
-Checks: 'modernize-*,modernize-use-override,google-*,-google-runtime-references,misc-*,clang-analyzer-*'
+Checks: 'modernize-*,modernize-use-override,google-*,-google-runtime-references,misc-*,clang-analyzer-*,-misc-non-private-member-variables-in-classes'
 WarningsAsErrors: ''
 HeaderFilterRegex: 'async.h|async_logger.h|common.h|details|formatter.h|logger.h|sinks|spdlog.h|tweakme.h|version.h'
 AnalyzeTemporaryDtors: false

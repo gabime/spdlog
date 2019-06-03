@@ -29,7 +29,7 @@ class ansicolor_sink final : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
-    ansicolor_sink(color_mode mode = color_mode::automatic);
+    explicit ansicolor_sink(color_mode mode = color_mode::automatic);
     ~ansicolor_sink() override = default;
 
     ansicolor_sink(const ansicolor_sink &other) = delete;
