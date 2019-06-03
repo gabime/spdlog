@@ -3,10 +3,6 @@
 
 #pragma once
 
-#ifndef SPDLOG_H
-#include "spdlog/spdlog.h"
-#endif
-
 #include "spdlog/common.h"
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"

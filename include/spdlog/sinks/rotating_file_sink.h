@@ -3,10 +3,6 @@
 
 #pragma once
 
-#ifndef SPDLOG_H
-#include "spdlog/spdlog.h"
-#endif
-
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/file_helper.h"
 
