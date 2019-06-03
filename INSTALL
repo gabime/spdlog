@@ -1,13 +1,26 @@
-spdlog is header only library.
+# Header only version:
+
 Just copy the files to your build tree and use a C++11 compiler
+or 
+"
+add_executable(example_header_only example.cpp)
+target_link_libraries(example_header_only spdlog::spdlog_header_only)
+"
+
+# Compiled library version:
+
+"
+add_executable(example example.cpp)
+target_link_libraries(example spdlog::spdlog)
+"
+
+or copy src/spdlog.cpp to your build tree and pass the -DSPDLOG_COMPILED_LIB to the compiler
 
 Tested on:
 gcc 4.8.1 and above
 clang 3.5
 Visual Studio 2013
 
-gcc 4.8 flags: --std==c++11 -pthread -O3 -flto -Wl,--no-as-needed
-gcc 4.9 flags: --std=c++11 -pthread -O3 -flto
 
 
-see the makefile in the example folder
+
