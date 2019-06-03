@@ -12,7 +12,6 @@ CMake:
   add_executable(example example.cpp)
   target_link_libraries(example spdlog::spdlog)
 
-
 Or copy src/spdlog.cpp to your build tree and pass the -DSPDLOG_COMPILED_LIB to the compiler.
 
 Tested on:
