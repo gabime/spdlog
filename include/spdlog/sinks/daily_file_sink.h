@@ -8,6 +8,7 @@
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/os.h"
+#include "spdlog/details/synchronous_factory.h"
 
 #include <chrono>
 #include <cstdio>
@@ -120,14 +121,14 @@ using daily_file_sink_st = daily_file_sink<details::null_mutex>;
 //
 // factory functions
 //
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_mt(
     const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false)
 {
     return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, truncate);
 }
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_st(
     const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false)
 {

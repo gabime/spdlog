@@ -7,6 +7,7 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/os.h"
 #include "spdlog/sinks/base_sink.h"
+#include "spdlog/details/synchronous_factory.h"
 
 #include <android/log.h>
 #include <chrono>
@@ -99,13 +100,13 @@ using android_sink_st = android_sink<details::null_mutex>;
 
 // Create and register android syslog logger
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> android_logger_mt(const std::string &logger_name, const std::string &tag = "spdlog")
 {
     return Factory::template create<sinks::android_sink_mt>(logger_name, tag);
 }
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> android_logger_st(const std::string &logger_name, const std::string &tag = "spdlog")
 {
     return Factory::template create<sinks::android_sink_st>(logger_name, tag);

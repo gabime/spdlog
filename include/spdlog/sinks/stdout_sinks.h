@@ -6,6 +6,7 @@
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/pattern_formatter.h"
+#include "spdlog/details/synchronous_factory.h"
 
 #include <cstdio>
 #include <memory>
@@ -70,25 +71,25 @@ using stderr_sink_st = stdout_sink<details::console_stderr, details::console_nul
 } // namespace sinks
 
 // factory methods
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name)
 {
     return Factory::template create<sinks::stdout_sink_mt>(logger_name);
 }
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name)
 {
     return Factory::template create<sinks::stdout_sink_st>(logger_name);
 }
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name)
 {
     return Factory::template create<sinks::stderr_sink_mt>(logger_name);
 }
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name)
 {
     return Factory::template create<sinks::stderr_sink_st>(logger_name);

@@ -222,6 +222,8 @@ std::unique_ptr<T> make_unique(Args &&... args)
 }
 #endif
 } // namespace details
+
+
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY

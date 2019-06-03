@@ -77,6 +77,7 @@ private:
     void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
 };
 
+
 using ansicolor_stdout_sink_mt = ansicolor_sink<details::console_stdout, details::console_mutex>;
 using ansicolor_stdout_sink_st = ansicolor_sink<details::console_stdout, details::console_nullmutex>;
 

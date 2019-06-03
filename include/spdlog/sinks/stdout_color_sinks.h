@@ -9,6 +9,8 @@
 #include "spdlog/sinks/ansicolor_sink.h"
 #endif
 
+#include "spdlog/details/synchronous_factory.h"
+
 namespace spdlog {
 namespace sinks {
 #ifdef _WIN32
@@ -24,16 +26,17 @@ using stderr_color_sink_st = ansicolor_stderr_sink_st;
 #endif
 } // namespace sinks
 
-template<typename Factory = default_factory>
+
+template<typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic);
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stdout_color_st(const std::string &logger_name, color_mode mode = color_mode::automatic);
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stderr_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic);
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stderr_color_st(const std::string &logger_name, color_mode mode = color_mode::automatic);
 
 } // namespace spdlog

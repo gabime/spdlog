@@ -5,6 +5,7 @@
 
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/file_helper.h"
+#include "spdlog/details/synchronous_factory.h"
 
 #include <chrono>
 #include <mutex>
@@ -56,14 +57,14 @@ using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
 // factory functions
 //
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> rotating_logger_mt(
     const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files, bool rotate_on_open = false)
 {
     return Factory::template create<sinks::rotating_file_sink_mt>(logger_name, filename, max_file_size, max_files, rotate_on_open);
 }
 
-template<typename Factory = default_factory>
+template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> rotating_logger_st(
     const std::string &logger_name, const filename_t &filename, size_t max_file_size, size_t max_files, bool rotate_on_open = false)
 {
