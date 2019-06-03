@@ -36,7 +36,6 @@ struct async_msg
     size_t thread_id;
     fmt::basic_memory_buffer<char, 176> raw;
 
-    size_t msg_id;
     source_loc source;
     async_logger_ptr worker_ptr;
 
@@ -81,7 +80,6 @@ struct async_msg
         , level(m.level)
         , time(m.time)
         , thread_id(m.thread_id)
-        , msg_id(m.msg_id)
         , source(m.source)
         , worker_ptr(std::move(worker))
     {
@@ -93,7 +91,6 @@ struct async_msg
         , level(level::off)
         , time()
         , thread_id(0)
-        , msg_id(0)
         , source()
         , worker_ptr(std::move(worker))
     {}
@@ -108,7 +105,6 @@ struct async_msg
         log_msg msg(&worker_ptr->name(), level, string_view_t(raw.data(), raw.size()));
         msg.time = time;
         msg.thread_id = thread_id;
-        msg.msg_id = msg_id;
         msg.source = source;
         msg.color_range_start = 0;
         msg.color_range_end = 0;
