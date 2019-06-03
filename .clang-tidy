@@ -1,6 +1,6 @@
 Checks: 'modernize-*,modernize-use-override,google-*,-google-runtime-references,misc-*,clang-analyzer-*'
 WarningsAsErrors: ''
-HeaderFilterRegex: 'async.h|async_logger.h|common.h|details|formatter.h|logger.h|sinks|spdlog.h|tweakme.h|version.h|spdlite.h'
+HeaderFilterRegex: 'async.h|async_logger.h|common.h|details|formatter.h|logger.h|sinks|spdlog.h|tweakme.h|version.h'
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 
