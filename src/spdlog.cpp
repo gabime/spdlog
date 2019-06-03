@@ -1,4 +1,4 @@
-// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
+// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #ifndef SPDLOG_COMPILED_LIB
@@ -58,10 +58,14 @@ template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, sp
 #endif
 
 #include "spdlog/sinks/stdout_color_sinks-inl.h"
-template std::shared_ptr<spdlog::logger> spdlog::stdout_color_mt<spdlog::synchronous_factory>(const std::string &logger_name, color_mode mode);
-template std::shared_ptr<spdlog::logger> spdlog::stdout_color_st<spdlog::synchronous_factory>(const std::string &logger_name, color_mode mode);
-template std::shared_ptr<spdlog::logger> spdlog::stderr_color_mt<spdlog::synchronous_factory>(const std::string &logger_name, color_mode mode);
-template std::shared_ptr<spdlog::logger> spdlog::stderr_color_st<spdlog::synchronous_factory>(const std::string &logger_name, color_mode mode);
+template std::shared_ptr<spdlog::logger> spdlog::stdout_color_mt<spdlog::synchronous_factory>(
+    const std::string &logger_name, color_mode mode);
+template std::shared_ptr<spdlog::logger> spdlog::stdout_color_st<spdlog::synchronous_factory>(
+    const std::string &logger_name, color_mode mode);
+template std::shared_ptr<spdlog::logger> spdlog::stderr_color_mt<spdlog::synchronous_factory>(
+    const std::string &logger_name, color_mode mode);
+template std::shared_ptr<spdlog::logger> spdlog::stderr_color_st<spdlog::synchronous_factory>(
+    const std::string &logger_name, color_mode mode);
 
 template std::shared_ptr<spdlog::logger> spdlog::stdout_color_mt<spdlog::async_factory>(const std::string &logger_name, color_mode mode);
 template std::shared_ptr<spdlog::logger> spdlog::stdout_color_st<spdlog::async_factory>(const std::string &logger_name, color_mode mode);

@@ -1,4 +1,4 @@
-// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
+// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
@@ -32,9 +32,9 @@ class logger
 {
 public:
     // Empty logger
-    explicit logger(std::string name) :
-            name_(std::move(name)),
-            sinks_()
+    explicit logger(std::string name)
+        : name_(std::move(name))
+        , sinks_()
     {}
 
     // Logger with range on sinks
@@ -53,8 +53,6 @@ public:
     logger(std::string name, sinks_init_list sinks)
         : logger(std::move(name), sinks.begin(), sinks.end())
     {}
-
-
 
     virtual ~logger() = default;
 

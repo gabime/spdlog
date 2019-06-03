@@ -1,4 +1,4 @@
-// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
+// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
@@ -93,15 +93,15 @@ SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::se
 {
     switch (mode)
     {
-        case color_mode::always:
-            should_do_colors_ = true;
-            return;
-        case color_mode::automatic:
-            should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
-            return;
-        case color_mode::never:
-            should_do_colors_ = false;
-            return;
+    case color_mode::always:
+        should_do_colors_ = true;
+        return;
+    case color_mode::automatic:
+        should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
+        return;
+    case color_mode::never:
+        should_do_colors_ = false;
+        return;
     }
 }
 

@@ -1,4 +1,4 @@
-// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
+// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
@@ -25,7 +25,6 @@ using stderr_color_sink_mt = ansicolor_stderr_sink_mt;
 using stderr_color_sink_st = ansicolor_stderr_sink_st;
 #endif
 } // namespace sinks
-
 
 template<typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic);

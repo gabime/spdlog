@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
         spdlog::info("Messages: {:n}", howmany);
         spdlog::info("Queue size: {:n} slots", queue_size);
         auto slot_size = sizeof(spdlog::details::async_msg);
-        spdlog::info("Total queue memory: {}x{} bytes per slot = {:n} Kb ", queue_size, slot_size, (queue_size * slot_size)/1024);
+        spdlog::info("Total queue memory: {}x{} bytes per slot = {:n} Kb ", queue_size, slot_size, (queue_size * slot_size) / 1024);
         spdlog::info("**************************************************************");
 
         for (int i = 0; i < iters; ++i)

@@ -1,4 +1,4 @@
-// Copyright(c) 2015-present Gabi Melman & spdlog contributors.
+// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
@@ -91,15 +91,15 @@ void SPDLOG_INLINE wincolor_sink<TargetStream, ConsoleMutex>::set_color_mode(col
 {
     switch (mode)
     {
-        case color_mode::always:
-        case color_mode::automatic:
-            should_do_colors_ = true;
-            break;
-        case color_mode::never:
-            should_do_colors_ = false;
-            break;
-        default:
-            should_do_colors_ = true;
+    case color_mode::always:
+    case color_mode::automatic:
+        should_do_colors_ = true;
+        break;
+    case color_mode::never:
+        should_do_colors_ = false;
+        break;
+    default:
+        should_do_colors_ = true;
     }
 }
 

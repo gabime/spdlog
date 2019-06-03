@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
         if (argc > 3)
         {
             queue_size = atoi(argv[3]);
-            if(queue_size > 500000)
+            if (queue_size > 500000)
             {
                 spdlog::error("Max queue size allowed: 500,000");
                 exit(1);
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         spdlog::info("Messages     : {:n}", howmany);
         spdlog::info("Threads      : {:n}", threads);
         spdlog::info("Queue        : {:n} slots", queue_size);
-        spdlog::info("Queue memory : {:n} x {} = {:n} KB ", queue_size, slot_size, (queue_size * slot_size)/1024);
+        spdlog::info("Queue memory : {:n} x {} = {:n} KB ", queue_size, slot_size, (queue_size * slot_size) / 1024);
         spdlog::info("Total iters  : {:n}", iters);
         spdlog::info("-------------------------------------------------");
 
