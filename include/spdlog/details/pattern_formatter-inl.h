@@ -173,7 +173,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        string_view_t field_value{days[tm_time.tm_wday]};
+        string_view_t field_value{days[static_cast<size_t>(tm_time.tm_wday)]};
         scoped_pad p(field_value, padinfo_, dest);
         fmt_helper::append_string_view(field_value, dest);
     }
@@ -190,7 +190,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        string_view_t field_value{full_days[tm_time.tm_wday]};
+        string_view_t field_value{full_days[static_cast<size_t>(tm_time.tm_wday)]};
         scoped_pad p(field_value, padinfo_, dest);
         fmt_helper::append_string_view(field_value, dest);
     }
@@ -207,7 +207,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        string_view_t field_value{months[tm_time.tm_mon]};
+        string_view_t field_value{months[static_cast<size_t>(tm_time.tm_mon)]};
         scoped_pad p(field_value, padinfo_, dest);
         fmt_helper::append_string_view(field_value, dest);
     }
@@ -226,7 +226,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, fmt::memory_buffer &dest) override
     {
-        string_view_t field_value{full_months[tm_time.tm_mon]};
+        string_view_t field_value{full_months[static_cast<size_t>(tm_time.tm_mon)]};
         scoped_pad p(field_value, padinfo_, dest);
         fmt_helper::append_string_view(field_value, dest);
     }
@@ -245,9 +245,9 @@ public:
         const size_t field_size = 24;
         scoped_pad p(field_size, padinfo_, dest);
 
-        fmt_helper::append_string_view(days[tm_time.tm_wday], dest);
+        fmt_helper::append_string_view(days[static_cast<size_t>(tm_time.tm_wday)], dest);
         dest.push_back(' ');
-        fmt_helper::append_string_view(months[tm_time.tm_mon], dest);
+        fmt_helper::append_string_view(months[static_cast<size_t>(tm_time.tm_mon)], dest);
         dest.push_back(' ');
         fmt_helper::append_int(tm_time.tm_mday, dest);
         dest.push_back(' ');
