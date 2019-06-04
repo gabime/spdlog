@@ -71,7 +71,7 @@ public:
         {
             fmt::memory_buffer buf;
             fmt::format_to(buf, fmt, args...);
-            details::log_msg log_msg(loc, &name_, lvl, string_view_t(buf.data(), buf.size()));
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
         }
         catch (const std::exception &ex)
@@ -145,7 +145,7 @@ public:
         }
         try
         {
-            details::log_msg log_msg(loc, &name_, lvl, msg);
+            details::log_msg log_msg(loc, name_, lvl, msg);
             sink_it_(log_msg);
         }
         catch (const std::exception &ex)
@@ -170,7 +170,7 @@ public:
         {
             fmt::memory_buffer buf;
             fmt::format_to(buf, "{}", msg);
-            details::log_msg log_msg(loc, &name_, lvl, string_view_t(buf.data(), buf.size()));
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
         }
         catch (const std::exception &ex)
@@ -238,7 +238,7 @@ public:
             fmt::format_to(wbuf, fmt, args...);
             fmt::memory_buffer buf;
             details::os::wbuf_to_utf8buf(wbuf, buf);
-            details::log_msg log_msg(source, &name_, lvl, string_view_t(buf.data(), buf.size()));
+            details::log_msg log_msg(source, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
         }
         catch (const std::exception &ex)

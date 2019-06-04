@@ -10,11 +10,11 @@ namespace spdlog {
 namespace details {
 struct log_msg
 {
-    log_msg(source_loc loc, const std::string *loggers_name, level::level_enum lvl, string_view_t view);
-    log_msg(const std::string *loggers_name, level::level_enum lvl, string_view_t view);
+    log_msg(source_loc loc, string_view_t logger_name, level::level_enum lvl, string_view_t msg);
+    log_msg(string_view_t logger_name, level::level_enum lvl, string_view_t msg);
     log_msg(const log_msg &other) = default;
 
-    const std::string *logger_name{nullptr};
+    const string_view_t logger_name;
     level::level_enum level{level::off};
     log_clock::time_point time;
     size_t thread_id{0};

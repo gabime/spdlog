@@ -60,7 +60,7 @@ public:
         }
     }
 
-    scoped_pad(spdlog::string_view_t txt, padding_info &padinfo, fmt::memory_buffer &dest)
+    scoped_pad(const spdlog::string_view_t &txt, padding_info &padinfo, fmt::memory_buffer &dest)
         : scoped_pad(txt.size(), padinfo, dest)
     {}
 
@@ -99,12 +99,12 @@ public:
     {
         if (padinfo_.enabled())
         {
-            scoped_pad p(*msg.logger_name, padinfo_, dest);
-            fmt_helper::append_string_view(*msg.logger_name, dest);
+            scoped_pad p(msg.logger_name, padinfo_, dest);
+            fmt_helper::append_string_view(msg.logger_name, dest);
         }
         else
         {
-            fmt_helper::append_string_view(*msg.logger_name, dest);
+            fmt_helper::append_string_view(msg.logger_name, dest);
         }
     }
 };
@@ -921,11 +921,11 @@ public:
 #endif
 
 #ifndef SPDLOG_NO_NAME
-        if (!msg.logger_name->empty())
+        if (msg.logger_name.size() > 0)
         {
             dest.push_back('[');
             // fmt_helper::append_str(*msg.logger_name, dest);
-            fmt_helper::append_string_view(*msg.logger_name, dest);
+            fmt_helper::append_string_view(msg.logger_name, dest);
             dest.push_back(']');
             dest.push_back(' ');
         }

@@ -12,9 +12,8 @@
 namespace spdlog {
 namespace details {
 
-SPDLOG_INLINE log_msg::log_msg(
-    spdlog::source_loc loc, const std::string *loggers_name, spdlog::level::level_enum lvl, spdlog::string_view_t view)
-    : logger_name(loggers_name)
+SPDLOG_INLINE log_msg::log_msg(spdlog::source_loc loc, string_view_t logger_name, spdlog::level::level_enum lvl, spdlog::string_view_t msg)
+    : logger_name(logger_name)
     , level(lvl)
 #ifndef SPDLOG_NO_DATETIME
     , time(os::now())
@@ -24,11 +23,11 @@ SPDLOG_INLINE log_msg::log_msg(
     , thread_id(os::thread_id())
 #endif
     , source(loc)
-    , payload(view)
+    , payload(msg)
 {}
 
-SPDLOG_INLINE log_msg::log_msg(const std::string *loggers_name, spdlog::level::level_enum lvl, spdlog::string_view_t view)
-    : log_msg(source_loc{}, loggers_name, lvl, view)
+SPDLOG_INLINE log_msg::log_msg(string_view_t logger_name, spdlog::level::level_enum lvl, spdlog::string_view_t msg)
+    : log_msg(source_loc{}, logger_name, lvl, msg)
 {}
 
 } // namespace details
