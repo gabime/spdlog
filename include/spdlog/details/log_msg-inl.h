@@ -8,7 +8,6 @@
 #endif
 
 #include "spdlog/details/os.h"
-#include "spdlog/sinks/sink.h"
 
 namespace spdlog {
 namespace details {
