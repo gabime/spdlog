@@ -8,7 +8,9 @@
 #include <fstream>
 #include <iostream>
 #include <ostream>
+#include <sstream>
 #include <string>
+#include <iomanip>
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 
