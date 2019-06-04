@@ -3,6 +3,8 @@
 
 #pragma once
 
+#ifdef __ANDROID__
+
 #include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/os.h"
@@ -113,3 +115,5 @@ inline std::shared_ptr<logger> android_logger_st(const std::string &logger_name,
 }
 
 } // namespace spdlog
+
+#endif // __ANDROID__
