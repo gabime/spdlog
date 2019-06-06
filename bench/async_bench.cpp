@@ -158,6 +158,3 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> logger, int thread_co
     auto delta_d = duration_cast<duration<double>>(delta).count();
     spdlog::info("Elapsed: {} secs\t {:n}/sec", delta_d, int(howmany / delta_d));
 }
-
-async_bench.cpp
-        Displaying async_bench.cpp.
