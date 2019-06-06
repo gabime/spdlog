@@ -26,6 +26,11 @@ using namespace utils;
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count);
 
+#ifdef _MSC_VER
+#pragma warning(push) 
+#pragma warning(disable : 4996) //disable fopen warning under msvc
+#endif // _MSC_VER
+
 int count_lines(const char *filename)
 {
     int counter = 0;
@@ -40,6 +45,11 @@ int count_lines(const char *filename)
 
     return counter;
 }
+#ifdef _MSC_VER
+#pragma warning(pop) 
+#endif
+
+
 int main(int argc, char *argv[])
 {
 
@@ -148,3 +158,6 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> logger, int thread_co
     auto delta_d = duration_cast<duration<double>>(delta).count();
     spdlog::info("Elapsed: {} secs\t {:n}/sec", delta_d, int(howmany / delta_d));
 }
+
+async_bench.cpp
+        Displaying async_bench.cpp.
