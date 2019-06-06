@@ -7,7 +7,6 @@
 // bench.cpp : spdlog benchmarks
 //
 #include "spdlog/spdlog.h"
-#include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
@@ -95,22 +94,6 @@ int main(int argc, char *argv[])
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
         bench_mt(howmany, std::move(daily_mt), threads);
         bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
-
-        int iters = 3;
-        spdlog::info("**************************************************************");
-        spdlog::info("Asyncronous bench {:n} threads sharing same logger", threads);
-        spdlog::info("Messages: {:n}", howmany);
-        spdlog::info("Queue size: {:n} slots", queue_size);
-        auto slot_size = sizeof(spdlog::details::async_msg);
-        spdlog::info("Total queue memory: {}x{} bytes per slot = {:n} Kb ", queue_size, slot_size, (queue_size * slot_size) / 1024);
-        spdlog::info("**************************************************************");
-
-        for (int i = 0; i < iters; ++i)
-        {
-            spdlog::init_thread_pool(static_cast<size_t>(queue_size), 1);
-            auto as = spdlog::basic_logger_mt<spdlog::async_factory>("async", "logs/basic_async.log", true);
-            bench_mt(howmany, std::move(as), threads);
-        }
     }
     catch (std::exception &ex)
     {

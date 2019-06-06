@@ -26,6 +26,7 @@ using namespace utils;
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count);
 
+
 #ifdef _MSC_VER
 #pragma warning(push) 
 #pragma warning(disable : 4996) //disable fopen warning under msvc
@@ -45,10 +46,21 @@ int count_lines(const char *filename)
 
     return counter;
 }
+
+void verify_file(const char *filename, int expected_count)
+{
+    auto count = count_lines(filename);
+    if (count != expected_count)
+    {
+        spdlog::error("Test failed. {} has {:n} lines instead of {:n}", filename, count, expected_count);
+        exit(1);
+    }
+    spdlog::info("Line count OK ({:n})\n", count);
+}
+
 #ifdef _MSC_VER
 #pragma warning(pop) 
 #endif
-
 
 int main(int argc, char *argv[])
 {
@@ -60,9 +72,9 @@ int main(int argc, char *argv[])
 
     try
     {
+        spdlog::set_pattern("[%^%l%$] %v");
         if (argc == 1)
         {
-            spdlog::set_pattern("%v");
             spdlog::info("Usage: {} <message_count> <threads> <q_size> <iterations>", argv[0]);
             return 0;
         }
@@ -94,24 +106,32 @@ int main(int argc, char *argv[])
         spdlog::info("-------------------------------------------------");
 
         const char *filename = "logs/basic_async.log";
-
+        spdlog::info("");
+        spdlog::info("*********************************");
+        spdlog::info("Queue Overflow Policy: block");
+        spdlog::info("*********************************");
         for (int i = 0; i < iters; i++)
         {
             auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
             auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
             auto logger = std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp), async_overflow_policy::block);
             bench_mt(howmany, std::move(logger), threads);
-            auto count = count_lines(filename);
+#ifdef SPDLOG_ASYNC_BENCH_VERIFY
+            verify_file(filename, howmany);
+#endif // SPDLOG_ASYNC_BENCH_VERIFY
+        }
 
-            if (count != howmany)
-            {
-                spdlog::error("Test failed. {} has {:n} lines instead of {:n}", filename, count, howmany);
-                exit(1);
-            }
-            else
-            {
-                spdlog::info("Line count OK ({:n})\n", count);
-            }
+        spdlog::info("");
+        spdlog::info("*********************************");
+        spdlog::info("Queue Overflow Policy: overrun");
+        spdlog::info("*********************************");
+        // do same test but discard oldest if queue is full instead of blocking
+        for (int i = 0; i < iters; i++)
+        {
+            auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
+            auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
+            auto logger = std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp), async_overflow_policy::overrun_oldest);
+            bench_mt(howmany, std::move(logger), threads);
         }
         spdlog::shutdown();
     }
