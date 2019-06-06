@@ -319,13 +319,28 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 [info] null_mt          Elapsed: 0.16 secs        6,272,758/sec
 ```
 #### ASynchronous mode
-```
-[info] **************************************************************
-[info] One logger, 10 threads, total 1,000,000 message => queue of 8192 entries
-[info] **************************************************************
-[info] async            Elapsed: 1.75 secs          570,852/sec
-[info] async            Elapsed: 1.69 secs          592,855/sec
-[info] async            Elapsed: 1.67 secs          599,914/sec
+[info] -------------------------------------------------
+[info] Messages     : 1,000,000
+[info] Threads      : 10
+[info] Queue        : 8,192 slots
+[info] Queue memory : 8,192 x 272 = 2,176 KB 
+[info] Total iters  : 3
+[info] -------------------------------------------------
+[info] 
+[info] *********************************
+[info] Queue Overflow Policy: block
+[info] *********************************
+[info] Elapsed: 1.70784 secs     585,535/sec
+[info] Elapsed: 1.69805 secs     588,910/sec
+[info] Elapsed: 1.7026 secs      587,337/sec
+[info] 
+[info] *********************************
+[info] Queue Overflow Policy: overrun
+[info] *********************************
+[info] Elapsed: 0.372816 secs    2,682,285/sec
+[info] Elapsed: 0.379758 secs    2,633,255/sec
+[info] Elapsed: 0.373532 secs    2,677,147/sec
+
 ```
 
 ## Documentation
