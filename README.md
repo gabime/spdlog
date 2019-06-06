@@ -319,6 +319,7 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 [info] null_mt          Elapsed: 0.16 secs        6,272,758/sec
 ```
 #### ASynchronous mode
+```
 [info] -------------------------------------------------
 [info] Messages     : 1,000,000
 [info] Threads      : 10
