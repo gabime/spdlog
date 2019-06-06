@@ -45,37 +45,6 @@ Very fast, header-only/statically-compiled, C++ logging library. [![Build Status
 * Binary data logging.
 
  
-## Benchmarks
-
-Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/bench.cpp) done in Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
-
-#### Synchronous mode
-```
-*******************************************************************************
-Single thread, 1,000,000 iterations
-*******************************************************************************
-basic_st...             Elapsed: 0.181652       5,505,042/sec
-rotating_st...          Elapsed: 0.181781       5,501,117/sec
-daily_st...             Elapsed: 0.187595       5,330,630/sec
-null_st...              Elapsed: 0.0504704      19,813,602/sec
-*******************************************************************************
-10 threads sharing same logger, 1,000,000 iterations
-*******************************************************************************
-basic_mt...             Elapsed: 0.616035       1,623,284/sec
-rotating_mt...          Elapsed: 0.620344       1,612,008/sec
-daily_mt...             Elapsed: 0.648353       1,542,369/sec
-null_mt...              Elapsed: 0.151972       6,580,166/sec
-``` 
-#### Asynchronous mode
-```
-*******************************************************************************
-10 threads sharing same logger, 1,000,000 iterations 
-*******************************************************************************
-async...                Elapsed: 0.350066       2,856,606/sec
-async...                Elapsed: 0.314865       3,175,960/sec
-async...                Elapsed: 0.349851       2,858,358/sec
-```
-
 ## Usage samples
 
 #### Basic usage
@@ -319,6 +288,44 @@ void android_example()
     auto android_logger = spdlog::android_logger_mt("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
 }
+```
+
+## Benchmarks
+
+Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/bench.cpp) done in Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
+
+#### Synchronous mode
+```
+[info] **************************************************************
+[info] Single thread, 1,000,000 iterations
+[info] **************************************************************
+[info] basic_st         Elapsed: 0.17 secs        5,777,626/sec
+[info] rotating_st      Elapsed: 0.18 secs        5,475,894/sec
+[info] daily_st         Elapsed: 0.20 secs        5,062,659/sec
+[info] empty_logger     Elapsed: 0.07 secs       14,127,300/sec
+[info] **************************************************************
+[info] C-string (400 bytes). Single thread, 1,000,000 iterations
+[info] **************************************************************
+[info] basic_st         Elapsed: 0.41 secs        2,412,483/sec
+[info] rotating_st      Elapsed: 0.72 secs        1,389,196/sec
+[info] daily_st         Elapsed: 0.42 secs        2,393,298/sec
+[info] null_st          Elapsed: 0.04 secs       27,446,957/sec
+[info] **************************************************************
+[info] 10 threads sharing same logger, 1,000,000 iterations
+[info] **************************************************************
+[info] basic_mt         Elapsed: 0.60 secs        1,659,613/sec
+[info] rotating_mt      Elapsed: 0.62 secs        1,612,493/sec
+[info] daily_mt         Elapsed: 0.61 secs        1,638,305/sec
+[info] null_mt          Elapsed: 0.16 secs        6,272,758/sec
+```
+#### ASynchronous mode
+```
+[info] **************************************************************
+[info] One logger, 10 threads, total 1,000,000 message => queue of 8192 entries
+[info] **************************************************************
+[info] async            Elapsed: 1.75 secs          570,852/sec
+[info] async            Elapsed: 1.69 secs          592,855/sec
+[info] async            Elapsed: 1.67 secs          599,914/sec
 ```
 
 ## Documentation
