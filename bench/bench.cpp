@@ -35,7 +35,6 @@ int main(int argc, char *argv[])
 
     spdlog::default_logger()->set_pattern("[%^%l%$] %v");
     int howmany = 1000000;
-    int queue_size = 8192;
     int threads = 10;
     size_t file_size = 30 * 1024 * 1024;
     size_t rotating_files = 5;
@@ -47,8 +46,6 @@ int main(int argc, char *argv[])
             howmany = atoi(argv[1]);
         if (argc > 2)
             threads = atoi(argv[2]);
-        if (argc > 3)
-            queue_size = atoi(argv[3]);
 
         spdlog::info("**************************************************************");
         spdlog::info("Single thread, {:n} iterations", howmany);
