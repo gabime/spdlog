@@ -25,12 +25,10 @@ endfunction()
 
 # Turn on warnings on the given target
 function(spdlog_enable_warnings target_name)
-	if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-		target_compile_options(${target_name} PRIVATE -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
-	endif()
-	if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-		target_compile_options(${target_name} PRIVATE /W4 /WX )
-	endif()
+    target_compile_options(${target_name} PRIVATE
+        $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
+            -Wall -Wextra -Wconversion -pedantic -Wfatal-errors>
+        $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>)
 endfunction()
 
 
