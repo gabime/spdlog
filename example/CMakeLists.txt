@@ -14,14 +14,14 @@ endif()
 #---------------------------------------------------------------------------------------
 add_executable(example example.cpp)
 spdlog_enable_warnings(example)
-target_link_libraries(example spdlog::spdlog)
+target_link_libraries(example PRIVATE spdlog::spdlog)
 
 #---------------------------------------------------------------------------------------
 # Example of using header-only library
 #---------------------------------------------------------------------------------------
 add_executable(example_header_only example.cpp)
 spdlog_enable_warnings(example_header_only)
-target_link_libraries(example_header_only spdlog::spdlog_header_only)
+target_link_libraries(example_header_only PRIVATE spdlog::spdlog_header_only)
 
 # Create logs directory
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")

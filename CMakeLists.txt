@@ -45,6 +45,7 @@ option(SPDLOG_BUILD_EXAMPLES "Build examples" ON)
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
 option(SPDLOG_BUILD_TESTS "Build tests" OFF)
 option(SPDLOG_BUILD_HO_TESTS "Build tests using the header only version" OFF)
+option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
@@ -57,7 +58,7 @@ find_package(Threads REQUIRED)
 #---------------------------------------------------------------------------------------
 add_library(spdlog STATIC src/spdlog.cpp ${SPDLOG_ALL_HEADERS})
 add_library(spdlog::spdlog ALIAS spdlog)
-    
+
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
