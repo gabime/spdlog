@@ -7,7 +7,8 @@ cmake_minimum_required(VERSION 3.1)
 #---------------------------------------------------------------------------------------
 # Start spdlog project
 #---------------------------------------------------------------------------------------
-include(cmake/version.cmake)
+include(cmake/utils.cmake)
+spdlog_extract_version()
 project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
 message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
@@ -49,7 +50,6 @@ option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
-
 find_package(Threads REQUIRED)
 
 #---------------------------------------------------------------------------------------
@@ -63,6 +63,7 @@ target_include_directories(spdlog PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
+spdlog_enable_warnings(spdlog)
 
 #---------------------------------------------------------------------------------------
 # Header only version
@@ -75,19 +76,6 @@ target_include_directories(spdlog_header_only INTERFACE
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
-#---------------------------------------------------------------------------------------
-# Turn on compiler warnings and sanitizers if we build our own project
-#---------------------------------------------------------------------------------------
-if(SPDLOG_MASTER_PROJECT)
-    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
-        target_compile_options( spdlog PRIVATE -Wall -Wextra -Wconversion -pedantic -Wfatal-errors)
-    endif()
-    if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-        target_compile_options( spdlog PRIVATE /W3 /WX )
-    endif()
-
-    include(cmake/sanitizers.cmake)
-endif()
 
 #---------------------------------------------------------------------------------------
 # use fmt package if using exertnal fmt
