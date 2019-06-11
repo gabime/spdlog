@@ -5,57 +5,16 @@ cc_library(
     includes = ["include"],
 )
 
-cc_binary(
-  name="bench",
-  srcs=[
-    "bench/utils.h",
-    "bench/bench.cpp"
-  ],
-  includes=[
-    "bench"
-  ],
-  deps=[
-    ":headers"
-  ]
+
+cc_library(
+    name = "spdlog",
+    visibility = ["//visibility:public"],
+    defines=[
+      "SPDLOG_COMPILED_LIB"
+    ],
+    srcs = ["src/spdlog.cpp"],
+    includes = ["include"],
 )
 
-cc_binary(
-  name="async_bench",
-  srcs=[
-    "bench/utils.h",
-    "bench/async_bench.cpp"
-  ],
-  includes=[
-    "bench"
-  ],
-  deps=[
-    ":headers"
-  ]
-)
 
-cc_binary(
-  name="latency",
-  srcs=[
-    "bench/utils.h",
-    "bench/latency.cpp"
-  ],
-  includes=[
-    "bench"
-  ],
-  deps=[
-    ":headers"
-  ]
-)
 
-cc_binary(
-  name="example",
-  srcs=[
-    "example/example.cpp"
-  ],
-  includes=[
-    "bench"
-  ],
-  deps=[
-    ":headers"
-  ]
-)

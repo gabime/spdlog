@@ -1,5 +1,6 @@
-# Auto generated files
+.vscode*
 bazel*
+# Auto generated files
 build/*
 *.slo
 *.lo
