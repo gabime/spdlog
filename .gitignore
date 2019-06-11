@@ -1,4 +1,5 @@
 # Auto generated files
+bazel*
 build/*
 *.slo
 *.lo
