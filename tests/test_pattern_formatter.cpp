@@ -257,7 +257,7 @@ TEST_CASE("clone-formatter-2", "[pattern_formatter]")
 //
 // Test source location formatting
 //
-
+/*
 TEST_CASE("short filename formatter-1", "[pattern_formatter]")
 {
     spdlog::pattern_formatter formatter("%s", spdlog::pattern_time_type::local, "");
@@ -301,3 +301,4 @@ TEST_CASE("full filename formatter", "[pattern_formatter]")
     formatter.format(msg, formatted);
     REQUIRE(fmt::to_string(formatted) == "/a/b/c/d/myfile.cpp:123");
 }
+*/
