@@ -828,10 +828,10 @@ public:
         : flag_formatter(padinfo)
     {}
 
-    static const char* basename(const char* filename)
+    static const char *basename(const char *filename)
     {
         const char *rv = std::strrchr(filename, os::folder_sep);
-        return rv != nullptr ? rv + 1: filename;
+        return rv != nullptr ? rv + 1 : filename;
     }
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override

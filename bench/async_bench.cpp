@@ -26,11 +26,10 @@ using namespace utils;
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count);
 
-
 #ifdef _MSC_VER
-#pragma warning(push) 
-#pragma warning(disable : 4996) //disable fopen warning under msvc
-#endif // _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996) // disable fopen warning under msvc
+#endif                          // _MSC_VER
 
 int count_lines(const char *filename)
 {
@@ -59,7 +58,7 @@ void verify_file(const char *filename, int expected_count)
 }
 
 #ifdef _MSC_VER
-#pragma warning(pop) 
+#pragma warning(pop)
 #endif
 
 int main(int argc, char *argv[])
@@ -130,7 +129,8 @@ int main(int argc, char *argv[])
         {
             auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
             auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
-            auto logger = std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp), async_overflow_policy::overrun_oldest);
+            auto logger =
+                std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp), async_overflow_policy::overrun_oldest);
             bench_mt(howmany, std::move(logger), threads);
         }
         spdlog::shutdown();

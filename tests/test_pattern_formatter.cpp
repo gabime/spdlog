@@ -301,4 +301,3 @@ TEST_CASE("full filename formatter", "[pattern_formatter]")
     formatter.format(msg, formatted);
     REQUIRE(fmt::to_string(formatted) == "/a/b/c/d/myfile.cpp:123");
 }
-
