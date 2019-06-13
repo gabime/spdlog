@@ -15,7 +15,8 @@ void bench_formatter(benchmark::State &state, std::string pattern)
     std::string logger_name = "logger-name";
     const char *text = "Hello. This is some message with length of 80                                   ";
 
-    spdlog::details::log_msg msg(logger_name, spdlog::level::info, text);
+    spdlog::source_loc source_loc{"a/b/c/d/myfile.cpp", 123, "some_func()"};
+    spdlog::details::log_msg msg(source_loc, logger_name, spdlog::level::info, text);
 
     for (auto _ : state)
     {
@@ -28,7 +29,7 @@ void bench_formatter(benchmark::State &state, std::string pattern)
 void bench_formatters()
 {
     // basic patterns(single flag)
-    std::string all_flags = "+vtPnlLaAbBcCYDmdHIMSefFprRTXzEi%";
+    std::string all_flags = "+vtPnlLaAbBcCYDmdHIMSefFprRTXzEisg@l%";
     std::vector<std::string> basic_patterns;
     for (auto &flag : all_flags)
     {

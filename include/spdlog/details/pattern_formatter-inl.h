@@ -17,6 +17,7 @@
 #include <chrono>
 #include <ctime>
 #include <cctype>
+#include <cstring>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -820,6 +821,31 @@ public:
     }
 };
 
+class short_filename_formatter final : public flag_formatter
+{
+public:
+    explicit short_filename_formatter(padding_info padinfo)
+        : flag_formatter(padinfo)
+    {}
+
+    static const char* basename(const char* filename)
+    {
+        const char *rv = std::strrchr(filename, os::folder_sep);
+        return rv != nullptr ? rv + 1: filename;
+    }
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+        if (msg.source.empty())
+        {
+            return;
+        }
+        auto filename = basename(msg.source.filename);
+        scoped_pad p(filename, padinfo_, dest);
+        fmt_helper::append_string_view(filename, dest);
+    }
+};
+
 class source_linenum_formatter final : public flag_formatter
 {
 public:
@@ -944,7 +970,8 @@ public:
         if (!msg.source.empty())
         {
             dest.push_back('[');
-            fmt_helper::append_string_view(msg.source.filename, dest);
+            const char *filename = details::short_filename_formatter::basename(msg.source.filename);
+            fmt_helper::append_string_view(filename, dest);
             dest.push_back(':');
             fmt_helper::append_int(msg.source.line, dest);
             dest.push_back(']');
@@ -1154,7 +1181,11 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
         formatters_.push_back(details::make_unique<details::source_location_formatter>(padding));
         break;
 
-    case ('s'): // source filename
+    case ('s'): // short source filename - without directory name
+        formatters_.push_back(details::make_unique<details::short_filename_formatter>(padding));
+        break;
+
+    case ('g'): // full source filename
         formatters_.push_back(details::make_unique<details::source_filename_formatter>(padding));
         break;
 

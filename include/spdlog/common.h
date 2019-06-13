@@ -53,19 +53,6 @@
 #endif
 #endif
 
-// Get the basename of __FILE__ (at compile time if possible)
-#if FMT_HAS_FEATURE(__builtin_strrchr)
-#define SPDLOG_STRRCHR(str, sep) __builtin_strrchr(str, sep)
-#else
-#define SPDLOG_STRRCHR(str, sep) strrchr(str, sep)
-#endif //__builtin_strrchr not defined
-
-#ifdef _WIN32
-#define SPDLOG_FILE_BASENAME(file) SPDLOG_STRRCHR("\\" file, '\\') + 1
-#else
-#define SPDLOG_FILE_BASENAME(file) SPDLOG_STRRCHR("/" file, '/') + 1
-#endif
-
 #ifndef SPDLOG_FUNCTION
 #define SPDLOG_FUNCTION __FUNCTION__
 #endif

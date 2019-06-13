@@ -253,3 +253,52 @@ TEST_CASE("clone-formatter-2", "[pattern_formatter]")
     formatter_2->format(msg, formatted_2);
     REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
 }
+
+//
+// Test source location formatting
+//
+
+TEST_CASE("short filename formatter-1", "[pattern_formatter]")
+{
+    spdlog::pattern_formatter formatter("%s", spdlog::pattern_time_type::local, "");
+    fmt::memory_buffer formatted;
+    std::string logger_name = "logger-name";
+    spdlog::source_loc source_loc{"/a/b/c/d/myfile.cpp", 123, "some_func()"};
+    spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
+    formatter.format(msg, formatted);
+    REQUIRE(fmt::to_string(formatted) == "myfile.cpp");
+}
+
+TEST_CASE("short filename formatter-2", "[pattern_formatter]")
+{
+    spdlog::pattern_formatter formatter("%s:%#", spdlog::pattern_time_type::local, "");
+    fmt::memory_buffer formatted;
+    std::string logger_name = "logger-name";
+    spdlog::source_loc source_loc{"myfile.cpp", 123, "some_func()"};
+    spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
+    formatter.format(msg, formatted);
+    REQUIRE(fmt::to_string(formatted) == "myfile.cpp:123");
+}
+
+TEST_CASE("short filename formatter-3", "[pattern_formatter]")
+{
+    spdlog::pattern_formatter formatter("%s %v", spdlog::pattern_time_type::local, "");
+    fmt::memory_buffer formatted;
+    std::string logger_name = "logger-name";
+    spdlog::source_loc source_loc{"", 123, "some_func()"};
+    spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
+    formatter.format(msg, formatted);
+    REQUIRE(fmt::to_string(formatted) == " Hello");
+}
+
+TEST_CASE("full filename formatter", "[pattern_formatter]")
+{
+    spdlog::pattern_formatter formatter("%g:%#", spdlog::pattern_time_type::local, "");
+    fmt::memory_buffer formatted;
+    std::string logger_name = "logger-name";
+    spdlog::source_loc source_loc{"/a/b/c/d/myfile.cpp", 123, "some_func()"};
+    spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
+    formatter.format(msg, formatted);
+    REQUIRE(fmt::to_string(formatted) == "/a/b/c/d/myfile.cpp:123");
+}
+
