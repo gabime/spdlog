@@ -92,6 +92,8 @@ template FMT_API int internal::char_traits<char>::format_float(char *, std::size
 template FMT_API int internal::char_traits<char>::format_float(char *, std::size_t, const char *, int, long double);
 template FMT_API std::string internal::vformat<char>(string_view, basic_format_args<format_context>);
 template FMT_API format_context::iterator internal::vformat_to(internal::buffer &, string_view, basic_format_args<format_context>);
+template FMT_API void internal::sprintf_format(double, internal::buffer &, core_format_specs);
+template FMT_API void internal::sprintf_format(long double, internal::buffer &, core_format_specs);
 
 // Explicit instantiations for wchar_t.
 template FMT_API wchar_t internal::thousands_sep_impl(locale_ref);
