@@ -56,8 +56,11 @@ public:
 
     virtual ~logger() = default;
 
-    logger(const logger &) = delete;
-    logger &operator=(const logger &) = delete;
+    logger(const logger &other);
+    logger(logger &&other);
+    logger &operator=(logger other);
+
+    void swap(spdlog::logger &other);
 
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, const char *fmt, const Args &... args)
@@ -328,22 +331,25 @@ public:
     virtual std::shared_ptr<logger> clone(std::string logger_name);
 
 protected:
-    virtual void sink_it_(details::log_msg &msg);
+    std::string name_;
+    std::vector<sink_ptr> sinks_;
+    spdlog::level_t level_{spdlog::logger::default_level()};
+    spdlog::level_t flush_level_{level::off};
+    err_handler custom_err_handler_{nullptr};
 
+    virtual void sink_it_(details::log_msg &msg);
     virtual void flush_();
     bool should_flush_(const details::log_msg &msg);
 
     // default error handler.
     // print the error to stderr with the max rate of 1 message/minute.
     void err_handler_(const std::string &msg);
-
-    const std::string name_;
-    std::vector<sink_ptr> sinks_;
-    spdlog::level_t level_{spdlog::logger::default_level()};
-    spdlog::level_t flush_level_{level::off};
-    err_handler custom_err_handler_{nullptr};
 };
+
+void swap(logger& a, logger& b);
+
 } // namespace spdlog
+
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "logger-inl.h"
