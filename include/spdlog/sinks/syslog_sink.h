@@ -13,16 +13,15 @@ namespace spdlog {
 namespace sinks {
 /**
  * Sink that write to syslog using the `syscall()` library call.
- *
- * Locking is not needed, as `syslog()` itself is thread-safe.
  */
 template<typename Mutex>
 class syslog_sink : public base_sink<Mutex>
 {
+
 public:
-    //
-    explicit syslog_sink(std::string ident = "", int syslog_option = 0, int syslog_facility = LOG_USER)
-        : ident_(std::move(ident))
+    syslog_sink(std::string ident, int syslog_option, int syslog_facility, bool enable_formatting):
+        enable_formatting_{enable_formatting},
+        ident_{std::move(ident)}
     {
         priorities_[static_cast<size_t>(level::trace)] = LOG_DEBUG;
         priorities_[static_cast<size_t>(level::debug)] = LOG_DEBUG;
@@ -47,10 +46,24 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        ::syslog(syslog_prio_from_level(msg), "%s", fmt::to_string(msg.payload).c_str());
+        string_view_t payload;
+
+        if(enable_formatting_)
+        {
+            fmt::memory_buffer formatted;
+            sink::formatter_->format(msg, formatted);
+            payload = string_view_t(formatted.data(), formatted.size());
+        }
+        else
+        {
+            payload = msg.payload;
+        }
+
+        ::syslog(syslog_prio_from_level(msg), "%s", payload.data());
     }
 
     void flush_() override {}
+    bool enable_formatting_ = false;
 
 private:
     std::array<int, 7> priorities_;
@@ -74,15 +87,23 @@ using syslog_sink_st = syslog_sink<details::null_mutex>;
 // Create and register a syslog logger
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> syslog_logger_mt(
-    const std::string &logger_name, const std::string &syslog_ident = "", int syslog_option = 0, int syslog_facility = (1 << 3))
+    const std::string &logger_name,
+    const std::string &syslog_ident = "",
+    int syslog_option = 0,
+    int syslog_facility = LOG_USER,
+    bool enable_formatting = false)
 {
-    return Factory::template create<sinks::syslog_sink_mt>(logger_name, syslog_ident, syslog_option, syslog_facility);
+    return Factory::template create<sinks::syslog_sink_mt>(logger_name, syslog_ident, syslog_option, syslog_facility, enable_formatting);
 }
 
 template<typename Factory = default_factory>
 inline std::shared_ptr<logger> syslog_logger_st(
-    const std::string &logger_name, const std::string &syslog_ident = "", int syslog_option = 0, int syslog_facility = (1 << 3))
+    const std::string &logger_name,
+    const std::string &syslog_ident = "",
+    int syslog_option = 0,
+    int syslog_facility = LOG_USER,
+    bool enable_formatting = false)
 {
-    return Factory::template create<sinks::syslog_sink_st>(logger_name, syslog_ident, syslog_option, syslog_facility);
+    return Factory::template create<sinks::syslog_sink_st>(logger_name, syslog_ident, syslog_option, syslog_facility, enable_formatting);
 }
 } // namespace spdlog
