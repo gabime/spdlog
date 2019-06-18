@@ -9,9 +9,12 @@
 
 #include "spdlog/details/os.h"
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::ansicolor_sink(color_mode mode)
-    : target_file_(TargetStream::stream())
+namespace spdlog {
+namespace sinks {
+
+template<typename ConsoleMutex>
+SPDLOG_INLINE ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, color_mode mode)
+    : target_file_(target_file)
     , mutex_(ConsoleMutex::mutex())
 
 {
@@ -25,16 +28,15 @@ SPDLOG_INLINE spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::ansicol
     colors_[level::off] = reset;
 }
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::set_color(
-    level::level_enum color_level, const std::string &color)
+template<typename ConsoleMutex>
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color(level::level_enum color_level, const std::string &color)
 {
     std::lock_guard<mutex_t> lock(mutex_);
     colors_[color_level] = color;
 }
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::log(const details::log_msg &msg)
+template<typename ConsoleMutex>
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
     // Wrap the originally formatted message in color codes.
     // If color is not supported in the terminal, log as is instead.
@@ -60,36 +62,35 @@ SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::lo
     fflush(target_file_);
 }
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::flush()
+template<typename ConsoleMutex>
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::flush()
 {
     std::lock_guard<mutex_t> lock(mutex_);
     fflush(target_file_);
 }
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::set_pattern(const std::string &pattern)
+template<typename ConsoleMutex>
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_pattern(const std::string &pattern)
 {
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
 }
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::set_formatter(
-    std::unique_ptr<spdlog::formatter> sink_formatter)
+template<typename ConsoleMutex>
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter)
 {
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::move(sink_formatter);
 }
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE bool spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::should_color()
+template<typename ConsoleMutex>
+SPDLOG_INLINE bool ansicolor_sink<ConsoleMutex>::should_color()
 {
     return should_do_colors_;
 }
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::set_color_mode(color_mode mode)
+template<typename ConsoleMutex>
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
 {
     switch (mode)
     {
@@ -105,15 +106,29 @@ SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::se
     }
 }
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::print_ccode_(const std::string &color_code)
+template<typename ConsoleMutex>
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_ccode_(const std::string &color_code)
 {
     fwrite(color_code.data(), sizeof(char), color_code.size(), target_file_);
 }
 
-template<typename TargetStream, typename ConsoleMutex>
-SPDLOG_INLINE void spdlog::sinks::ansicolor_sink<TargetStream, ConsoleMutex>::print_range_(
-    const fmt::memory_buffer &formatted, size_t start, size_t end)
+template<typename ConsoleMutex>
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end)
 {
     fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);
 }
+
+// ansicolor_stdout_sink
+template<typename ConsoleMutex>
+SPDLOG_INLINE ansicolor_stdout_sink<ConsoleMutex>::ansicolor_stdout_sink(color_mode mode)
+    : ansicolor_sink<ConsoleMutex>(stdout, mode)
+{}
+
+// ansicolor_stderr_sink
+template<typename ConsoleMutex>
+SPDLOG_INLINE ansicolor_stderr_sink<ConsoleMutex>::ansicolor_stderr_sink(color_mode mode)
+    : ansicolor_sink<ConsoleMutex>(stderr, mode)
+{}
+
+} // namespace sinks
+} // namespace spdlog

@@ -4,51 +4,11 @@
 #pragma once
 
 #include "spdlog/details/null_mutex.h"
-#include <cstdio>
 #include <mutex>
 
-#ifdef _WIN32
-
-#ifndef NOMINMAX
-#define NOMINMAX // prevent windows redefining min/max
-#endif
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <windows.h>
-#endif
 
 namespace spdlog {
 namespace details {
-struct console_stdout
-{
-    static std::FILE *stream()
-    {
-        return stdout;
-    }
-#ifdef _WIN32
-    static HANDLE handle()
-    {
-        return ::GetStdHandle(STD_OUTPUT_HANDLE);
-    }
-#endif
-};
-
-struct console_stderr
-{
-    static std::FILE *stream()
-    {
-        return stderr;
-    }
-#ifdef _WIN32
-    static HANDLE handle()
-    {
-        return ::GetStdHandle(STD_ERROR_HANDLE);
-    }
-#endif
-};
 
 struct console_mutex
 {

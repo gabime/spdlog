@@ -20,7 +20,7 @@ namespace sinks {
  * Windows color console sink. Uses WriteConsoleA to write to the console with
  * colors
  */
-template<typename TargetStream, typename ConsoleMutex>
+template<typename ConsoleMutex>
 class wincolor_sink : public sink
 {
 public:
@@ -31,7 +31,7 @@ public:
     const WORD WHITE = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
     const WORD YELLOW = FOREGROUND_RED | FOREGROUND_GREEN;
 
-    wincolor_sink(color_mode mode = color_mode::automatic);
+    wincolor_sink(HANDLE out_handle, color_mode mode);
     ~wincolor_sink() override;
 
     wincolor_sink(const wincolor_sink &other) = delete;
@@ -58,11 +58,25 @@ private:
     void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
 };
 
-using wincolor_stdout_sink_mt = wincolor_sink<details::console_stdout, details::console_mutex>;
-using wincolor_stdout_sink_st = wincolor_sink<details::console_stdout, details::console_nullmutex>;
+template<typename ConsoleMutex>
+class wincolor_stdout_sink : public wincolor_sink<ConsoleMutex>
+{
+public:
+    explicit wincolor_stdout_sink(color_mode mode = color_mode::automatic);    
+};
 
-using wincolor_stderr_sink_mt = wincolor_sink<details::console_stderr, details::console_mutex>;
-using wincolor_stderr_sink_st = wincolor_sink<details::console_stderr, details::console_nullmutex>;
+template<typename ConsoleMutex>
+class wincolor_stderr_sink : public wincolor_sink<ConsoleMutex>
+{
+public:
+    explicit wincolor_stderr_sink(color_mode mode = color_mode::automatic);    
+};
+
+using wincolor_stdout_sink_mt = wincolor_stdout_sink<details::console_mutex>;
+using wincolor_stdout_sink_st = wincolor_stdout_sink<details::console_nullmutex>;
+
+using wincolor_stderr_sink_mt = wincolor_stderr_sink<details::console_mutex>;
+using wincolor_stderr_sink_st = wincolor_stderr_sink<details::console_nullmutex>;
 
 } // namespace sinks
 } // namespace spdlog
