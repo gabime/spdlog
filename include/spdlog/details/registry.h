@@ -56,7 +56,13 @@ public:
 
     void flush_on(level::level_enum log_level);
 
-    void flush_every(std::chrono::seconds interval);
+    template<class Rep, class Period>
+    void flush_every(std::chrono::duration<Rep, Period> interval)
+    {
+        std::lock_guard<std::mutex> lock(flusher_mutex_);
+        std::function<void()> clbk = std::bind(&registry::flush_all, this);
+        periodic_flusher_ = details::make_unique<periodic_worker>(clbk, interval);
+    }
 
     void set_error_handler(void (*handler)(const std::string &msg));
 

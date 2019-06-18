@@ -10,6 +10,7 @@
 #pragma once
 
 #include "spdlog/common.h"
+#include "spdlog/details/periodic_worker.h"
 #include "spdlog/details/registry.h"
 #include "spdlog/logger.h"
 #include "spdlog/version.h"
@@ -67,7 +68,11 @@ void flush_on(level::level_enum log_level);
 
 // Start/Restart a periodic flusher thread
 // Warning: Use only if all your loggers are thread safe!
-void flush_every(std::chrono::seconds interval);
+template<class Rep, class Period>
+inline void flush_every(std::chrono::duration<Rep, Period> interval)
+{
+    details::registry::instance().flush_every(interval);
+}
 
 // Set global error handler
 void set_error_handler(void (*handler)(const std::string &msg));
