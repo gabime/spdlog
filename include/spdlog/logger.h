@@ -346,10 +346,9 @@ protected:
     void err_handler_(const std::string &msg);
 };
 
-void swap(logger& a, logger& b);
+void swap(logger &a, logger &b);
 
 } // namespace spdlog
-
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "logger-inl.h"

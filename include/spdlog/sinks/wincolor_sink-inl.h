@@ -125,7 +125,6 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::print_range_(const fmt::memory_b
     ::WriteConsoleA(out_handle_, formatted.data() + start, size, nullptr, nullptr);
 }
 
-
 // wincolor_stdout_sink
 template<typename ConsoleMutex>
 SPDLOG_INLINE wincolor_stdout_sink<ConsoleMutex>::wincolor_stdout_sink(color_mode mode)
@@ -137,7 +136,6 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE wincolor_stderr_sink<ConsoleMutex>::wincolor_stderr_sink(color_mode mode)
     : wincolor_sink<ConsoleMutex>(::GetStdHandle(STD_ERROR_HANDLE), mode)
 {}
-
 
 } // namespace sinks
 } // namespace spdlog

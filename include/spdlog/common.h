@@ -26,12 +26,10 @@
 #include <windows.h>
 #endif //_WIN32
 
-
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #include <codecvt>
 #include <locale>
 #endif
-
 
 #ifdef SPDLOG_COMPILED_LIB
 #undef SPDLOG_HEADER_ONLY

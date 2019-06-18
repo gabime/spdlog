@@ -264,14 +264,12 @@ static const char *test_path = "\\a\\b\\myfile.cpp";
 static const char *test_path = "/a/b//myfile.cpp";
 #endif
 
-
-
 TEST_CASE("short filename formatter-1", "[pattern_formatter]")
 {
     spdlog::pattern_formatter formatter("%s", spdlog::pattern_time_type::local, "");
     fmt::memory_buffer formatted;
     std::string logger_name = "logger-name";
-    spdlog::source_loc source_loc{test_path , 123, "some_func()"};
+    spdlog::source_loc source_loc{test_path, 123, "some_func()"};
     spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
     formatter.format(msg, formatted);
     REQUIRE(fmt::to_string(formatted) == "myfile.cpp");
@@ -304,9 +302,8 @@ TEST_CASE("full filename formatter", "[pattern_formatter]")
     spdlog::pattern_formatter formatter("%g", spdlog::pattern_time_type::local, "");
     fmt::memory_buffer formatted;
     std::string logger_name = "logger-name";
-    spdlog::source_loc source_loc{test_path , 123, "some_func()"};
+    spdlog::source_loc source_loc{test_path, 123, "some_func()"};
     spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
     formatter.format(msg, formatted);
     REQUIRE(fmt::to_string(formatted) == test_path);
 }
-
