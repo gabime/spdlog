@@ -45,16 +45,16 @@ template class spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;
 
 #ifdef _WIN32
 #include "spdlog/sinks/wincolor_sink-inl.h"
-template class spdlog::sinks::wincolor_sink<spdlog::details::console_stdout, spdlog::details::console_mutex>;
-template class spdlog::sinks::wincolor_sink<spdlog::details::console_stdout, spdlog::details::console_nullmutex>;
-template class spdlog::sinks::wincolor_sink<spdlog::details::console_stderr, spdlog::details::console_mutex>;
-template class spdlog::sinks::wincolor_sink<spdlog::details::console_stderr, spdlog::details::console_nullmutex>;
+template class spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_mutex>;
+template class spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_nullmutex>;
+template class spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_mutex>;
+template class spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_nullmutex>;
 #else
 #include "spdlog/sinks/ansicolor_sink-inl.h"
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_mutex>;
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stdout, spdlog::details::console_nullmutex>;
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_mutex>;
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_stderr, spdlog::details::console_nullmutex>;
+template class spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_mutex>;
+template class spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_nullmutex>;
+template class spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_mutex>;
+template class spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_nullmutex>;
 #endif
 
 #include "spdlog/sinks/stdout_color_sinks-inl.h"

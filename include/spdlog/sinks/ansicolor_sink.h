@@ -20,12 +20,12 @@ namespace sinks {
  * of the message.
  * If no color terminal detected, omit the escape codes.
  */
-template<typename TargetStream, typename ConsoleMutex>
-class ansicolor_sink final : public sink
+template<typename ConsoleMutex>
+class ansicolor_sink : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
-    explicit ansicolor_sink(color_mode mode = color_mode::automatic);
+    ansicolor_sink(FILE* target_file, color_mode mode);
     ~ansicolor_sink() override = default;
 
     ansicolor_sink(const ansicolor_sink &other) = delete;
@@ -77,11 +77,27 @@ private:
     void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
 };
 
-using ansicolor_stdout_sink_mt = ansicolor_sink<details::console_stdout, details::console_mutex>;
-using ansicolor_stdout_sink_st = ansicolor_sink<details::console_stdout, details::console_nullmutex>;
 
-using ansicolor_stderr_sink_mt = ansicolor_sink<details::console_stderr, details::console_mutex>;
-using ansicolor_stderr_sink_st = ansicolor_sink<details::console_stderr, details::console_nullmutex>;
+template<typename ConsoleMutex>
+class ansicolor_stdout_sink : public ansicolor_sink<ConsoleMutex>
+{
+public:
+    explicit ansicolor_stdout_sink(color_mode mode = color_mode::automatic);    
+};
+
+template<typename ConsoleMutex>
+class ansicolor_stderr_sink : public ansicolor_sink<ConsoleMutex>
+{
+public:
+    explicit ansicolor_stderr_sink(color_mode mode = color_mode::automatic);
+};
+
+
+using ansicolor_stdout_sink_mt = ansicolor_stdout_sink<details::console_mutex>;
+using ansicolor_stdout_sink_st = ansicolor_stdout_sink<details::console_nullmutex>;
+
+using ansicolor_stderr_sink_mt = ansicolor_stderr_sink<details::console_mutex>;
+using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::console_nullmutex>;
 
 } // namespace sinks
 } // namespace spdlog

@@ -14,10 +14,24 @@
 #include <type_traits>
 #include <functional>
 
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX // prevent windows redefining min/max
+#endif
+
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <windows.h>
+#endif //_WIN32
+
+
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #include <codecvt>
 #include <locale>
 #endif
+
 
 #ifdef SPDLOG_COMPILED_LIB
 #undef SPDLOG_HEADER_ONLY
