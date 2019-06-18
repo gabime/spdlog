@@ -58,7 +58,7 @@ SPDLOG_INLINE void swap(logger &a, logger &b)
     a.swap(b);
 }
 
-void logger::log(source_loc loc, level::level_enum lvl, const char *msg)
+SPDLOG_INLINE void logger::log(source_loc loc, level::level_enum lvl, const char *msg)
 {
     if (!should_log(lvl))
     {
