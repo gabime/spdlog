@@ -18,8 +18,10 @@
 #include "spdlog/details/registry.h"
 #include "spdlog/details/thread_pool.h"
 
+
 #include <memory>
 #include <mutex>
+#include <functional>
 
 namespace spdlog {
 
@@ -70,10 +72,16 @@ inline std::shared_ptr<spdlog::logger> create_async_nb(std::string logger_name, 
 }
 
 // set global thread pool.
+inline void init_thread_pool(size_t q_size, size_t thread_count, std::function<void()> on_thread_start)
+{
+    auto tp = std::make_shared<details::thread_pool>(q_size, thread_count, on_thread_start);
+    details::registry::instance().set_tp(std::move(tp));
+}
+
+// set global thread pool.
 inline void init_thread_pool(size_t q_size, size_t thread_count)
 {
-    auto tp = std::make_shared<details::thread_pool>(q_size, thread_count);
-    details::registry::instance().set_tp(std::move(tp));
+    init_thread_pool(q_size, thread_count, []{});
 }
 
 // get the global thread pool.
