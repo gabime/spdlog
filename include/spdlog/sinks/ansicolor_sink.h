@@ -40,7 +40,6 @@ public:
     void set_pattern(const std::string &pattern) final;
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
 
-
     // Formatting codes
     const string_view_t reset = "\033[m";
     const string_view_t bold = "\033[1m";
@@ -81,7 +80,7 @@ private:
     mutex_t &mutex_;
     bool should_do_colors_;
     std::unordered_map<level::level_enum, string_view_t, level::level_hasher> colors_;
-    void print_ccode_(const string_view_t&color_code);
+    void print_ccode_(const string_view_t &color_code);
     void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
 };
 

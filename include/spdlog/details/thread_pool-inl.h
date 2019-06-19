@@ -22,19 +22,16 @@ SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n, std
     }
     for (size_t i = 0; i < threads_n; i++)
     {
-        threads_.emplace_back([this, on_thread_start]
-        {
+        threads_.emplace_back([this, on_thread_start] {
             on_thread_start();
             this->thread_pool::worker_loop_();
         });
     }
 }
 
-SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n):
-    thread_pool(q_max_items, threads_n, []{})
-{
-
-}
+SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n)
+    : thread_pool(q_max_items, threads_n, [] {})
+{}
 
 // message all threads to terminate gracefully join them
 SPDLOG_INLINE thread_pool::~thread_pool()

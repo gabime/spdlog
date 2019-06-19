@@ -268,7 +268,7 @@ inline void critical(const wchar_t *fmt, const Args &... args)
     do                                                                                                                                     \
     {                                                                                                                                      \
         if (logger->should_log(level))                                                                                                     \
-            logger->force_log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__);                                      \
+            logger->force_log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__);                                \
     } while (0)
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
