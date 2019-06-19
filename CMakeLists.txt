@@ -41,7 +41,7 @@ if (NOT DEFINED SPDLOG_MASTER_PROJECT)
     endif()
 endif ()
 
-option(SPDLOG_BUILD_EXAMPLES "Build examples" ON)
+option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
 option(SPDLOG_BUILD_TESTS "Build tests" OFF)
 option(SPDLOG_BUILD_HO_TESTS "Build tests using the header only version" OFF)
