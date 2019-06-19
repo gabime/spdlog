@@ -22,7 +22,6 @@ TEST_CASE("stdout_mt", "[stdout]")
     spdlog::drop_all();
 }
 
-
 TEST_CASE("stderr_st", "[stderr]")
 {
     auto l = spdlog::stderr_logger_st("test");
@@ -59,7 +58,6 @@ TEST_CASE("stdout_color_mt", "[stdout]")
     l->trace("Test stdout_color_mt");
     spdlog::drop_all();
 }
-
 
 TEST_CASE("stderr_color_st", "[stderr]")
 {

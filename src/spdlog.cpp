@@ -43,6 +43,9 @@ template class spdlog::sinks::rotating_file_sink<spdlog::details::null_mutex>;
 #include "spdlog/details/thread_pool-inl.h"
 template class spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;
 
+//
+// color sinks
+//
 #ifdef _WIN32
 #include "spdlog/sinks/wincolor_sink-inl.h"
 template class spdlog::sinks::wincolor_sink<spdlog::details::console_mutex>;
@@ -61,7 +64,7 @@ template class spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_mut
 template class spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_nullmutex>;
 #endif
 
-// factory methods for color sinks
+// factory methods for color loggers
 #include "spdlog/sinks/stdout_color_sinks-inl.h"
 template std::shared_ptr<spdlog::logger> spdlog::stdout_color_mt<spdlog::synchronous_factory>(
     const std::string &logger_name, color_mode mode);
@@ -77,8 +80,9 @@ template std::shared_ptr<spdlog::logger> spdlog::stdout_color_st<spdlog::async_f
 template std::shared_ptr<spdlog::logger> spdlog::stderr_color_mt<spdlog::async_factory>(const std::string &logger_name, color_mode mode);
 template std::shared_ptr<spdlog::logger> spdlog::stderr_color_st<spdlog::async_factory>(const std::string &logger_name, color_mode mode);
 
+//
 // stdout/stderr sinks
-
+//
 #include "spdlog/sinks/stdout_sinks-inl.h"
 
 template class spdlog::sinks::stdout_sink_base<spdlog::details::console_mutex>;
@@ -90,7 +94,7 @@ template class spdlog::sinks::stdout_sink<spdlog::details::console_nullmutex>;
 template class spdlog::sinks::stderr_sink<spdlog::details::console_mutex>;
 template class spdlog::sinks::stderr_sink<spdlog::details::console_nullmutex>;
 
-// factory methods
+// factory methods for stdout/stderr loggers
 template std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt<spdlog::synchronous_factory>(const std::string &logger_name);
 template std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st<spdlog::synchronous_factory>(const std::string &logger_name);
 template std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt<spdlog::async_factory>(const std::string &logger_name);
