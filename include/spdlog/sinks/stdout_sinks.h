@@ -4,13 +4,8 @@
 #pragma once
 
 #include "spdlog/details/console_globals.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/details/pattern_formatter.h"
 #include "spdlog/details/synchronous_factory.h"
-
 #include <cstdio>
-#include <memory>
-#include <mutex>
 
 namespace spdlog {
 
