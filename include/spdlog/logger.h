@@ -63,13 +63,8 @@ public:
     void swap(spdlog::logger &other);
 
     template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, const char *fmt, const Args &... args)
+    void force_log(source_loc loc, level::level_enum lvl, const char *fmt, const Args &... args)
     {
-        if (!should_log(lvl))
-        {
-            return;
-        }
-
         try
         {
             fmt::memory_buffer buf;
@@ -84,6 +79,15 @@ public:
         catch (...)
         {
             err_handler_("Unknown exception in logger");
+        }
+    }
+
+    template<typename... Args>
+    void log(source_loc loc, level::level_enum lvl, const char *fmt, const Args &... args)
+    {
+        if (should_log(lvl))
+        {
+            force_log(loc, lvl, fmt, args...);
         }
     }
 

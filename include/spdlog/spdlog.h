@@ -27,8 +27,9 @@ using default_factory = synchronous_factory;
 // Create and register a logger with a templated sink type
 // The logger's level, formatter and flush level will be set according the
 // global settings.
+//
 // Example:
-// spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
+//   spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
 template<typename Sink, typename... SinkArgs>
 inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... sink_args)
 {
@@ -267,7 +268,7 @@ inline void critical(const wchar_t *fmt, const Args &... args)
     do                                                                                                                                     \
     {                                                                                                                                      \
         if (logger->should_log(level))                                                                                                     \
-            logger->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__);                                      \
+            logger->force_log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__);                                      \
     } while (0)
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
