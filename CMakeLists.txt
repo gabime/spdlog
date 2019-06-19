@@ -3,7 +3,6 @@
 
 cmake_minimum_required(VERSION 3.1)
 
-
 #---------------------------------------------------------------------------------------
 # Start spdlog project
 #---------------------------------------------------------------------------------------
@@ -85,7 +84,7 @@ target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
 
 #---------------------------------------------------------------------------------------
-# use fmt package if using exertnal fmt
+# Use fmt package if using exertnal fmt
 #---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL)
     if (NOT TARGET fmt::fmt)
@@ -100,7 +99,7 @@ if(SPDLOG_FMT_EXTERNAL)
 endif()
 
 #---------------------------------------------------------------------------------------
-# build binries
+# Build binaries
 #---------------------------------------------------------------------------------------
 if(SPDLOG_BUILD_EXAMPLES)
     message(STATUS "Generating examples")
@@ -119,7 +118,7 @@ if(SPDLOG_BUILD_BENCH)
 endif()
 
 #---------------------------------------------------------------------------------------
-# install
+# Install
 #---------------------------------------------------------------------------------------
 if (SPDLOG_INSTALL)
     message(STATUS "Generating install")
@@ -130,13 +129,13 @@ if (SPDLOG_INSTALL)
     set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/spdlog/cmake")
 
     #---------------------------------------------------------------------------------------
-    # include files
+    # Include files
     #---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
     install(TARGETS spdlog spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_LIBDIR}/spdlog")
 
     #---------------------------------------------------------------------------------------
-    # package and version files
+    # Package and version files
     #---------------------------------------------------------------------------------------
     install(EXPORT spdlog
             DESTINATION ${export_dest_dir}
