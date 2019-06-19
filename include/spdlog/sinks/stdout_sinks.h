@@ -16,82 +16,64 @@ namespace spdlog {
 
 namespace sinks {
 
-template<typename TargetStream, typename ConsoleMutex>
-class stdout_sink final : public sink
+template<typename ConsoleMutex>
+class stdout_sink_base : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
-    stdout_sink()
-        : mutex_(ConsoleMutex::mutex())
-        , file_(TargetStream::stream())
-    {}
-    ~stdout_sink() override = default;
+    explicit stdout_sink_base(FILE *file);
+    ~stdout_sink_base() override = default;
+    stdout_sink_base(const stdout_sink_base &other) = delete;
+    stdout_sink_base &operator=(const stdout_sink_base &other) = delete;
 
-    stdout_sink(const stdout_sink &other) = delete;
-    stdout_sink &operator=(const stdout_sink &other) = delete;
+    void log(const details::log_msg &msg) override;
+    void flush() override;
+    void set_pattern(const std::string &pattern) override;
 
-    void log(const details::log_msg &msg) override
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        fmt::memory_buffer formatted;
-        formatter_->format(msg, formatted);
-        fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
-        fflush(TargetStream::stream());
-    }
-
-    void flush() override
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        fflush(file_);
-    }
-
-    void set_pattern(const std::string &pattern) override
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
-    }
-
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override
-    {
-        std::lock_guard<mutex_t> lock(mutex_);
-        formatter_ = std::move(sink_formatter);
-    }
+    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
 
 private:
     mutex_t &mutex_;
     FILE *file_;
 };
 
-using stdout_sink_mt = stdout_sink<details::console_stdout, details::console_mutex>;
-using stdout_sink_st = stdout_sink<details::console_stdout, details::console_nullmutex>;
+template<typename ConsoleMutex>
+class stdout_sink : public stdout_sink_base<ConsoleMutex>
+{
+public:
+    stdout_sink();
+};
 
-using stderr_sink_mt = stdout_sink<details::console_stderr, details::console_mutex>;
-using stderr_sink_st = stdout_sink<details::console_stderr, details::console_nullmutex>;
+template<typename ConsoleMutex>
+class stderr_sink : public stdout_sink_base<ConsoleMutex>
+{
+public:
+    stderr_sink();
+};
+
+using stdout_sink_mt = stdout_sink<details::console_mutex>;
+using stdout_sink_st = stdout_sink<details::console_nullmutex>;
+
+using stderr_sink_mt = stderr_sink<details::console_mutex>;
+using stderr_sink_st = stderr_sink<details::console_nullmutex>;
 
 } // namespace sinks
 
 // factory methods
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name)
-{
-    return Factory::template create<sinks::stdout_sink_mt>(logger_name);
-}
+std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name);
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name)
-{
-    return Factory::template create<sinks::stdout_sink_st>(logger_name);
-}
+std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name);
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name)
-{
-    return Factory::template create<sinks::stderr_sink_mt>(logger_name);
-}
+std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name);
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name)
-{
-    return Factory::template create<sinks::stderr_sink_st>(logger_name);
-}
+std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
+
 } // namespace spdlog
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "stdout_sinks-inl.h"
+#endif
