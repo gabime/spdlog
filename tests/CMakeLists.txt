@@ -13,7 +13,8 @@ set(SPDLOG_UTESTS_SOURCES
     main.cpp
     test_mpmc_q.cpp
     test_sink.h
-    test_fmt_helper.cpp)
+    test_fmt_helper.cpp
+	test_stdout_api.cpp)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 enable_testing()
