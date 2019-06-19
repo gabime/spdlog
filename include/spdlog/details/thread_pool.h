@@ -11,6 +11,7 @@
 #include <memory>
 #include <thread>
 #include <vector>
+#include <functional>
 
 namespace spdlog {
 class async_logger;
@@ -118,7 +119,9 @@ public:
     using item_type = async_msg;
     using q_type = details::mpmc_blocking_queue<item_type>;
 
+    thread_pool(size_t q_max_items, size_t threads_n, std::function<void()> on_thread_start);
     thread_pool(size_t q_max_items, size_t threads_n);
+
     // message all threads to terminate gracefully join them
     ~thread_pool();
 
