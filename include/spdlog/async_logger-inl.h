@@ -114,5 +114,5 @@ SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::s
     cloned->set_level(this->level());
     cloned->flush_on(this->flush_level());
     cloned->set_error_handler(this->custom_err_handler_);
-    return std::move(cloned);
+    return cloned;
 }
