@@ -6,6 +6,7 @@
 #include "base_sink.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/null_mutex.h"
+#include "spdlog/details/pattern_formatter.h"
 
 #include <algorithm>
 #include <memory>
@@ -47,7 +48,6 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-
         for (auto &sink : sinks_)
         {
             if (sink->should_log(msg.level))
