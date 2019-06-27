@@ -183,16 +183,14 @@ TEST_CASE("left_padded_huge", "[pattern_formatter]")
 {
     REQUIRE(
         log_to_str("Some message", "[%-300n] %v", spdlog::pattern_time_type::local, "\n") ==
-        "[pattern_tester                                                                                                                  ]"
-        " Some message\n");
+            "[pattern_tester                                                  ] Some message\n");
 }
 
 TEST_CASE("left_padded_max", "[pattern_formatter]")
 {
     REQUIRE(
-        log_to_str("Some message", "[%-128n] %v", spdlog::pattern_time_type::local, "\n") ==
-        "[pattern_tester                                                                                                                  ]"
-        " Some message\n");
+        log_to_str("Some message", "[%-64n] %v", spdlog::pattern_time_type::local, "\n") ==
+            "[pattern_tester                                                  ] Some message\n");
 }
 
 TEST_CASE("clone-default-formatter", "[pattern_formatter]")
