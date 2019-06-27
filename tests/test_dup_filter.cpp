@@ -51,7 +51,7 @@ TEST_CASE("dup_filter_test3", "[dup_filter_sink]")
 
 TEST_CASE("dup_filter_test4", "[dup_filter_sink]")
 {
-    dup_filter_sink_st dup_sink {std::chrono::milliseconds{10}};
+    dup_filter_sink_mt dup_sink {std::chrono::milliseconds{10}};
     auto test_sink = std::make_shared<test_sink_mt>();
     dup_sink.add_sink(test_sink);
 
@@ -63,7 +63,7 @@ TEST_CASE("dup_filter_test4", "[dup_filter_sink]")
 
 TEST_CASE("dup_filter_test5", "[dup_filter_sink]")
 {
-    dup_filter_sink_st dup_sink {std::chrono::seconds{5}};
+    dup_filter_sink_mt dup_sink {std::chrono::seconds{5}};
     auto test_sink = std::make_shared<test_sink_mt>();
     dup_sink.add_sink(test_sink);
 
