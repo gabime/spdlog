@@ -8,6 +8,6 @@ TEST_CASE("systemd", "[all]")
     spdlog::logger logger("spdlog_systemd_test", systemd_sink);
 
     logger.debug("test debug");
-    logger.error("test error");
+    SPDLOG_LOGGER_ERROR((&logger), "test error");
     logger.info("test info");
 }
