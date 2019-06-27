@@ -74,7 +74,7 @@ protected:
             rotation_tp_ = next_rotation_tp_();
         }
         fmt::memory_buffer formatted;
-        sink::formatter_->format(msg, formatted);
+        base_sink<Mutex>::formatter_->format(msg, formatted);
         file_helper_.write(formatted);
     }
 

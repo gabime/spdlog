@@ -52,7 +52,7 @@ protected:
         if (enable_formatting_)
         {
             fmt::memory_buffer formatted;
-            sink::formatter_->format(msg, formatted);
+            base_sink<Mutex>::formatter_->format(msg, formatted);
             payload = string_view_t(formatted.data(), formatted.size());
         }
         else

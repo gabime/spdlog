@@ -29,7 +29,7 @@ template<typename Mutex>
 SPDLOG_INLINE void basic_file_sink<Mutex>::sink_it_(const details::log_msg &msg)
 {
     fmt::memory_buffer formatted;
-    sink::formatter_->format(msg, formatted);
+    base_sink<Mutex>::formatter_->format(msg, formatted);
     file_helper_.write(formatted);
 }
 

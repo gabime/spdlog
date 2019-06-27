@@ -79,6 +79,7 @@ private:
     FILE *target_file_;
     mutex_t &mutex_;
     bool should_do_colors_;
+    std::unique_ptr<spdlog::formatter> formatter_;
     std::unordered_map<level::level_enum, string_view_t, level::level_hasher> colors_;
     void print_ccode_(const string_view_t &color_code);
     void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);

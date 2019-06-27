@@ -33,8 +33,6 @@
 //       [2019-06-25 17:50:56.512] [logger] [info] Skipped 3 duplicate messages..
 //       [2019-06-25 17:50:56.512] [logger] [info] Different Hello
 
-
-
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>
@@ -55,14 +53,14 @@ protected:
     void sink_it_(const details::log_msg &msg) override
     {
         bool filtered = filter_(msg);
-        if(!filtered)
+        if (!filtered)
         {
             skip_counter_ += 1;
             return;
         }
 
         // log the "skipped.." message
-        if(skip_counter_ > 0)
+        if (skip_counter_ > 0)
         {
             fmt::basic_memory_buffer<char, 64> buf;
             fmt::format_to(buf, "Skipped {} duplicate messages..", skip_counter_);
@@ -72,7 +70,7 @@ protected:
 
         // log current message
         dist_sink<Mutex>::sink_it_(msg);
-        last_msg_time_= msg.time;
+        last_msg_time_ = msg.time;
         skip_counter_ = 0;
         last_msg_payload_.assign(msg.payload.data(), msg.payload.data() + msg.payload.size());
     }
@@ -81,7 +79,7 @@ protected:
     bool filter_(const details::log_msg &msg)
     {
         auto filter_duration = msg.time - last_msg_time_;
-        return (filter_duration  > max_skip_duration_) || (msg.payload != last_msg_payload_);
+        return (filter_duration > max_skip_duration_) || (msg.payload != last_msg_payload_);
     }
 };
 

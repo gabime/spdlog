@@ -18,6 +18,7 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
     : mutex_(ConsoleMutex::mutex())
     , file_(file)
+    , formatter_(details::make_unique<spdlog::pattern_formatter>())
 {}
 
 template<typename ConsoleMutex>

@@ -28,9 +28,10 @@ public:
 
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
 
-private:
+protected:
     mutex_t &mutex_;
     FILE *file_;
+    std::unique_ptr<spdlog::formatter> formatter_;
 };
 
 template<typename ConsoleMutex>

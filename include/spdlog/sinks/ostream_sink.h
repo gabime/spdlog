@@ -26,7 +26,7 @@ protected:
     void sink_it_(const details::log_msg &msg) override
     {
         fmt::memory_buffer formatted;
-        sink::formatter_->format(msg, formatted);
+        base_sink<Mutex>::formatter_->format(msg, formatted);
         ostream_.write(formatted.data(), static_cast<std::streamsize>(formatted.size()));
         if (force_flush_)
         {
