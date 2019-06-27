@@ -28,6 +28,7 @@ TEST_CASE("dup_filter_test2", "[dup_filter_sink]")
     for (int i = 0; i < 10; i++)
     {
         dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "message1"});
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 
     REQUIRE(test_sink->msg_counter() == 10);
