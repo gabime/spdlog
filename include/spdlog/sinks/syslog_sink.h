@@ -24,14 +24,6 @@ public:
         : enable_formatting_{enable_formatting}
         , ident_{std::move(ident)}
     {
-        priorities_[static_cast<size_t>(level::trace)] = LOG_DEBUG;
-        priorities_[static_cast<size_t>(level::debug)] = LOG_DEBUG;
-        priorities_[static_cast<size_t>(level::info)] = LOG_INFO;
-        priorities_[static_cast<size_t>(level::warn)] = LOG_WARNING;
-        priorities_[static_cast<size_t>(level::err)] = LOG_ERR;
-        priorities_[static_cast<size_t>(level::critical)] = LOG_CRIT;
-        priorities_[static_cast<size_t>(level::off)] = LOG_INFO;
-
         // set ident to be program name if empty
         ::openlog(ident_.empty() ? nullptr : ident_.c_str(), syslog_option, syslog_facility);
     }
@@ -67,7 +59,15 @@ protected:
     bool enable_formatting_ = false;
 
 private:
-    std::array<int, 7> priorities_;
+    std::array<int, 7> syslog_levels_ {
+            /* level::trace      */ LOG_DEBUG,
+            /* level::debug      */ LOG_DEBUG,
+            /* level::info       */ LOG_INFO,
+            /* level::warn       */ LOG_WARNING,
+            /* level::err        */ LOG_ERR,
+            /* level::critical   */ LOG_CRIT,
+            /* level::off        */ LOG_INFO
+    };
     // must store the ident because the man says openlog might use the pointer as
     // is and not a string copy
     const std::string ident_;
@@ -77,7 +77,7 @@ private:
     //
     int syslog_prio_from_level(const details::log_msg &msg) const
     {
-        return priorities_[static_cast<size_t>(msg.level)];
+        return syslog_levels_.at(static_cast<int>(msg.level));
     }
 };
 
