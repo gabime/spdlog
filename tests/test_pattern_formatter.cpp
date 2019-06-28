@@ -193,6 +193,7 @@ TEST_CASE("left_padded_max", "[pattern_formatter]")
             "[pattern_tester                                                  ] Some message\n");
 }
 
+
 TEST_CASE("clone-default-formatter", "[pattern_formatter]")
 {
     auto formatter_1 = std::make_shared<spdlog::pattern_formatter>();
