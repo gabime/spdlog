@@ -28,9 +28,10 @@ public:
 
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
 
-private:
+protected:
     mutex_t &mutex_;
     FILE *file_;
+    std::unique_ptr<spdlog::formatter> formatter_;
 };
 
 template<typename ConsoleMutex>
@@ -70,6 +71,5 @@ std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
 
 } // namespace spdlog
 
-#ifdef SPDLOG_HEADER_ONLY
 #include "stdout_sinks-inl.h"
-#endif
+

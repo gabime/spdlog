@@ -29,7 +29,7 @@ protected:
     {
 
         fmt::memory_buffer formatted;
-        sink::formatter_->format(msg, formatted);
+        base_sink<Mutex>::formatter_->format(msg, formatted);
         OutputDebugStringA(fmt::to_string(formatted).c_str());
     }
 

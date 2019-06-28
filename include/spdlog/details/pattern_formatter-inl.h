@@ -84,9 +84,7 @@ private:
     const padding_info &padinfo_;
     fmt::memory_buffer &dest_;
     size_t total_pad_;
-    string_view_t spaces_{"                                                                "
-                          "                                                                ",
-        128};
+    string_view_t spaces_{"                                                                ", 64};
 };
 
 class name_formatter : public flag_formatter
@@ -1217,7 +1215,7 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::stri
 {
     using details::padding_info;
     using details::scoped_pad;
-    const size_t max_width = 128;
+    const size_t max_width = 64;
     if (it == end)
     {
         return padding_info{};

@@ -67,7 +67,7 @@ template<typename Mutex>
 SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &msg)
 {
     fmt::memory_buffer formatted;
-    sink::formatter_->format(msg, formatted);
+    base_sink<Mutex>::formatter_->format(msg, formatted);
     current_size_ += formatted.size();
     if (current_size_ > max_size_)
     {
