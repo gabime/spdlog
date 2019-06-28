@@ -14,7 +14,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_mpmc_q.cpp
     test_sink.h
     test_fmt_helper.cpp
-	test_stdout_api.cpp
+  	test_stdout_api.cpp
     test_dup_filter.cpp)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")

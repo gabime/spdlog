@@ -7,8 +7,6 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/synchronous_factory.h"
 
-#include <array>
-#include <string>
 #include <systemd/sd-journal.h>
 
 namespace spdlog {
@@ -36,16 +34,16 @@ inline int syslog_level(level::level_enum l)
 }
 
 /**
- * Sink that write to systemd using the `sd_journal_print()` library call.
+ * Sink that write to systemd journal using the `sd_journal_send()` library call.
  *
- * Locking is not needed, as `sd_journal_print()` itself is thread-safe.
+ * Locking is not needed, as `sd_journal_send()` itself is thread-safe.
  */
 template<typename Mutex>
 class systemd_sink : public base_sink<Mutex>
 {
 public:
     //
-    explicit systemd_sink(void) {}
+    explicit systemd_sink() {}
 
     ~systemd_sink() override {}
 
@@ -55,8 +53,29 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        if (sd_journal_print(syslog_level(msg.level), "%.*s", static_cast<int>(msg.payload.size()), msg.payload.data()))
+        const char* key_msg  = "MESSAGE=%.*s";
+        const char* key_prio = "PRIORITY=%d";
+        const char* key_file = "CODE_FILE=%s";
+        const char* key_line = "CODE_LINE=%d";
+        const char* key_func = "CODE_FUNC=%s";
+
+        if( !msg.source.filename || !msg.source.funcname || msg.source.line == 0 ) {
+            // Do not send source location if not available
+            key_file = nullptr;
+        }
+
+        // Note: function call inside '()' to avoid macro expansion
+        int err = (sd_journal_send)(
+                key_msg, static_cast<int>(msg.payload.size()), msg.payload.data(),
+                key_prio, syslog_level(msg.level),
+                key_file, msg.source.filename,
+                key_line, msg.source.line,
+                key_func, msg.source.funcname,
+                nullptr);
+
+        if( err ) {
             throw spdlog_ex("Failed writing to systemd");
+        }
     }
 
     void flush_() override {}
