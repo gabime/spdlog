@@ -243,9 +243,9 @@ public:
             // format to wmemory_buffer and convert to utf8
             fmt::wmemory_buffer wbuf;
             fmt::format_to(wbuf, fmt, args...);
-            fmt::memory_buffer buf;
-            details::os::wbuf_to_utf8buf(wbuf, buf);
-            details::log_msg log_msg(source, name_, lvl, string_view_t(buf.data(), buf.size()));
+
+            const auto payload = details::os::wstr_to_str({ wbuf.data(), wbuf.size() });
+            details::log_msg log_msg(source, name_, lvl, payload);
             sink_it_(log_msg);
         }
         catch (const std::exception &ex)
