@@ -1,7 +1,13 @@
 project('spdlog', ['cpp'],
   license         : 'MIT',
-  version         : '1.3.1',
-  default_options : ['warning_level=3', 'cpp_std=c++11', 'default_library=static'],
+  version         : run_command(find_program('extract_version.py')).stdout().strip(),
+  default_options : [
+    'warning_level=3',
+    'cpp_std=c++11',
+    'default_library=static',
+    'buildtype=release',
+    'b_colorout=always',
+  ],
 )
 
 # ------------------------
