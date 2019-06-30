@@ -1,3 +1,5 @@
+project(spdlog_utests CXX)
+
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
 	pkg_check_modules(systemd libsystemd)
@@ -45,7 +47,7 @@ if(SPDLOG_BUILD_TESTS)
 endif()
 
 # The header-only library version tests
-if(SPDLOG_BUILD_HO_TESTS)
+if(SPDLOG_BUILD_TESTS_HO)
     add_executable(spdlog-utests-ho ${SPDLOG_UTESTS_SOURCES})
 	spdlog_enable_warnings(spdlog-utests-ho)
     target_link_libraries(spdlog-utests-ho PRIVATE spdlog::spdlog_header_only)

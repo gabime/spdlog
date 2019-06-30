@@ -40,17 +40,27 @@ if (NOT DEFINED SPDLOG_MASTER_PROJECT)
     endif()
 endif ()
 
-option(SPDLOG_BUILD_EXAMPLES "Build examples" OFF)
+# example options
+option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
+
+# testing options
+option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" OFF)
+
+# bench options
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
-option(SPDLOG_BUILD_TESTS "Build tests" OFF)
-option(SPDLOG_BUILD_HO_TESTS "Build tests using the header only version" OFF)
+
+# sanitizer options
 option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
+
+# install options
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
-message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
-
 find_package(Threads REQUIRED)
+
+message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 #---------------------------------------------------------------------------------------
 # Static/Shared library (shared not supported in windows yet)
@@ -101,12 +111,12 @@ endif()
 #---------------------------------------------------------------------------------------
 # Build binaries
 #---------------------------------------------------------------------------------------
-if(SPDLOG_BUILD_EXAMPLES)
+if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO)
     message(STATUS "Generating examples")
     add_subdirectory(example)
 endif()
 
-if(SPDLOG_BUILD_TESTS)
+if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_TESTS_HO)
     message(STATUS "Generating tests")
     include(CTest)
     add_subdirectory(tests)

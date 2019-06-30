@@ -19,9 +19,11 @@ target_link_libraries(example PRIVATE spdlog::spdlog)
 #---------------------------------------------------------------------------------------
 # Example of using header-only library
 #---------------------------------------------------------------------------------------
-add_executable(example_header_only example.cpp)
-spdlog_enable_warnings(example_header_only)
-target_link_libraries(example_header_only PRIVATE spdlog::spdlog_header_only)
+if(SPDLOG_BUILD_EXAMPLE_HO)
+    add_executable(example_header_only example.cpp)
+    spdlog_enable_warnings(example_header_only)
+    target_link_libraries(example_header_only PRIVATE spdlog::spdlog_header_only)
+endif()
 
 # Create logs directory
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
