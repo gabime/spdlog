@@ -1,6 +1,6 @@
 project('spdlog', ['cpp'],
   license         : 'MIT',
-  version         : run_command(find_program('extract_version.py')).stdout().strip(),
+  version         : run_command(find_program('scripts/extract_version.py')).stdout().strip(),
   default_options : [
     'warning_level=3',
     'cpp_std=c++11',
