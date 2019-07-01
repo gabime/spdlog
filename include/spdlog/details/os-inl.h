@@ -418,7 +418,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(basic_string_view_t<wchar_t> wstr, fmt::memor
         return;
     }
 
-    int result_size = target.capacity();
+    int result_size = static_cast<int>(target.capacity());
     if ((wstr_size + 1) * 2 > result_size)
     {
         result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, NULL, 0, NULL, NULL);
