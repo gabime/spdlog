@@ -244,8 +244,10 @@ public:
             fmt::wmemory_buffer wbuf;
             fmt::format_to(wbuf, fmt, args...);
 
-            const auto payload = details::os::wstr_to_str({ wbuf.data(), wbuf.size() });
-            details::log_msg log_msg(source, name_, lvl, payload);
+            fmt::memory_buffer buf;
+            details::os::wstr_to_utf8buf(basic_string_view_t<wchar_t>(wbuf.data(), wbuf.size()), buf);
+
+            details::log_msg log_msg(source, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
         }
         catch (const std::exception &ex)

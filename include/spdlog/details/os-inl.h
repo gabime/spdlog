@@ -348,7 +348,9 @@ SPDLOG_INLINE void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
-    return wstr_to_str(filename);
+    fmt::memory_buffer buf;
+    wstr_to_utf8buf(filename, buf);
+    return fmt::to_string(buf);
 }
 #else
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
@@ -402,7 +404,7 @@ SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
 }
 
 #if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
-SPDLOG_INLINE std::string wstr_to_str(basic_string_view_t<wchar_t> wstr)
+SPDLOG_INLINE void wstr_to_utf8buf(basic_string_view_t<wchar_t> wstr, fmt::memory_buffer &target)
 {
     if (wstr.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
@@ -412,21 +414,25 @@ SPDLOG_INLINE std::string wstr_to_str(basic_string_view_t<wchar_t> wstr)
     int wstr_size = static_cast<int>(wstr.size());
     if (wstr_size == 0)
     {
-        return { };
+        target.resize(0);
+        return;
     }
 
-    int result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, NULL, 0, NULL, NULL);
+    int result_size = target.capacity();
+    if ((wstr_size + 1) * 2 > result_size)
+    {
+        result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, NULL, 0, NULL, NULL);
+    }
 
     if (result_size > 0)
     {
-        std::string result;
-        result.resize(result_size);
-        result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, &result[0], result_size, NULL, NULL);
+        target.resize(result_size);
+        result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, target.data(), result_size, NULL, NULL);
 
         if (result_size > 0)
         {
-            result.resize(result_size);
-            return result;
+            target.resize(result_size);
+            return;
         }
     }
 
