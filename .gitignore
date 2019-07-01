@@ -49,6 +49,7 @@ example/*
 !example/example.sln
 !example/example.vcxproj
 !example/CMakeLists.txt
+!example/meson.build
 !example/multisink.cpp
 !example/jni
 
