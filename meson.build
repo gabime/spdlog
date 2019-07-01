@@ -13,7 +13,6 @@ project('spdlog', ['cpp'],
 # ------------------------
 # ---   Dependencies   ---
 # ------------------------
-
 dep_list = []
 compile_args = []
 
