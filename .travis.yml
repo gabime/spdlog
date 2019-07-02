@@ -39,11 +39,11 @@ addons: &clang6
 matrix:
   include:
     # Test gcc-4.8: C++11, Build=Debug/Release
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=14  
       os: linux
       addons: *gcc48
 
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=14
       os: linux
       addons: *gcc48
 
