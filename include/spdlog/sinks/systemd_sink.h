@@ -23,7 +23,16 @@ class systemd_sink : public base_sink<Mutex>
 {
 public:
     //
-    explicit systemd_sink() {}
+    systemd_sink(): syslog_levels_{
+        /* spdlog::level::trace      */ LOG_DEBUG,
+        /* spdlog::level::debug      */ LOG_DEBUG,
+        /* spdlog::level::info       */ LOG_INFO,
+        /* spdlog::level::warn       */ LOG_WARNING,
+        /* spdlog::level::err        */ LOG_ERR,
+        /* spdlog::level::critical   */ LOG_CRIT,
+        /* spdlog::level::off        */ LOG_INFO
+    }
+    {}
 
     ~systemd_sink() override {}
 
@@ -32,15 +41,7 @@ public:
 
 protected:
 
-    std::array<int, 7> syslog_levels_ {
-        /* level::trace      */ LOG_DEBUG,
-        /* level::debug      */ LOG_DEBUG,
-        /* level::info       */ LOG_INFO,
-        /* level::warn       */ LOG_WARNING,
-        /* level::err        */ LOG_ERR,
-        /* level::critical   */ LOG_CRIT,
-        /* level::off        */ LOG_INFO
-    };
+    std::array<int, 7> syslog_levels_;
 
     void sink_it_(const details::log_msg &msg) override
     {

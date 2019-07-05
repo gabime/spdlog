@@ -22,6 +22,15 @@ class syslog_sink : public base_sink<Mutex>
 public:
     syslog_sink(std::string ident, int syslog_option, int syslog_facility, bool enable_formatting)
         : enable_formatting_{enable_formatting}
+        , syslog_levels_{
+            /* spdlog::level::trace      */ LOG_DEBUG,
+            /* spdlog::level::debug      */ LOG_DEBUG,
+            /* spdlog::level::info       */ LOG_INFO,
+            /* spdlog::level::warn       */ LOG_WARNING,
+            /* spdlog::level::err        */ LOG_ERR,
+            /* spdlog::level::critical   */ LOG_CRIT,
+            /* spdlog::level::off        */ LOG_INFO
+        }
         , ident_{std::move(ident)}
     {
         // set ident to be program name if empty
@@ -59,15 +68,7 @@ protected:
     bool enable_formatting_ = false;
 
 private:
-    std::array<int, 7> syslog_levels_ {
-            /* level::trace      */ LOG_DEBUG,
-            /* level::debug      */ LOG_DEBUG,
-            /* level::info       */ LOG_INFO,
-            /* level::warn       */ LOG_WARNING,
-            /* level::err        */ LOG_ERR,
-            /* level::critical   */ LOG_CRIT,
-            /* level::off        */ LOG_INFO
-    };
+    std::array<int, 7> syslog_levels_;
     // must store the ident because the man says openlog might use the pointer as
     // is and not a string copy
     const std::string ident_;
