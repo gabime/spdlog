@@ -67,10 +67,14 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-
-        if (msg.time >= rotation_tp_)
+#ifdef SPDLOG_NO_DATETIME
+        auto time = log_clock::now();
+#else
+        auto time = msg.time;
+#endif
+        if (time >= rotation_tp_)
         {
-            file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(msg.time)), truncate_);
+            file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(time)), truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
         fmt::memory_buffer formatted;

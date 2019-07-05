@@ -68,7 +68,7 @@ size_t thread_id() SPDLOG_NOEXCEPT;
 // See https://github.com/gabime/spdlog/issues/609
 void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT;
 
-std::string filename_to_str(const filename_t &filename) SPDLOG_NOEXCEPT;
+std::string filename_to_str(const filename_t &filename);
 
 int pid() SPDLOG_NOEXCEPT;
 
@@ -80,8 +80,8 @@ bool is_color_terminal() SPDLOG_NOEXCEPT;
 // Source: https://github.com/agauniyal/rang/
 bool in_terminal(FILE *file) SPDLOG_NOEXCEPT;
 
-#if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) && defined(_WIN32)
-void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer &target);
+#if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
+void wstr_to_utf8buf(basic_string_view_t<wchar_t> wstr, fmt::memory_buffer &target);
 #endif
 
 } // namespace os

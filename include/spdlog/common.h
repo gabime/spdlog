@@ -26,11 +26,6 @@
 #include <windows.h>
 #endif //_WIN32
 
-#if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-#include <codecvt>
-#include <locale>
-#endif
-
 #ifdef SPDLOG_COMPILED_LIB
 #undef SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE
@@ -80,11 +75,6 @@ class sink;
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 using filename_t = std::wstring;
 #define SPDLOG_FILENAME_T(s) L##s
-inline std::string filename_to_str(const filename_t &filename)
-{
-    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
-    return c.to_bytes(filename);
-}
 #else
 using filename_t = std::string;
 #define SPDLOG_FILENAME_T(s) s
@@ -97,10 +87,13 @@ using err_handler = std::function<void(const std::string &err_msg)>;
 
 // string_view type - either std::string_view or fmt::string_view (pre c++17)
 #if defined(FMT_USE_STD_STRING_VIEW)
-using string_view_t = std::string_view;
+template<typename T>
+using basic_string_view_t = std::basic_string_view<T>;
 #else
-using string_view_t = fmt::string_view;
+template<typename T>
+using basic_string_view_t = fmt::basic_string_view<T>;
 #endif
+using string_view_t = basic_string_view_t<char>;
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;

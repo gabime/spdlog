@@ -1,5 +1,7 @@
 project(spdlog_utests CXX)
 
+include(../cmake/utils.cmake)
+
 find_package(PkgConfig)
 if(PkgConfig_FOUND)
 	pkg_check_modules(systemd libsystemd)

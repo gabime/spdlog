@@ -1,0 +1,4 @@
+option('extrenal_fmt',      type: 'boolean', value: false)
+option('enable_examples',   type: 'boolean', value: false)
+option('enable_benchmarks', type: 'boolean', value: false)
+option('enable_tests',      type: 'boolean', value: false)

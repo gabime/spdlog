@@ -36,6 +36,10 @@
 #include <share.h>
 #endif
 
+#if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)
+#include <limits>
+#endif
+
 #else // unix
 
 #include <fcntl.h>
@@ -342,13 +346,14 @@ SPDLOG_INLINE void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT
 
 // wchar support for windows file names (SPDLOG_WCHAR_FILENAMES must be defined)
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
-SPDLOG_INLINE std::string filename_to_str(const filename_t &filename) SPDLOG_NOEXCEPT
+SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> c;
-    return c.to_bytes(filename);
+    fmt::memory_buffer buf;
+    wstr_to_utf8buf(filename, buf);
+    return fmt::to_string(buf);
 }
 #else
-SPDLOG_INLINE std::string filename_to_str(const filename_t &filename) SPDLOG_NOEXCEPT
+SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
     return filename;
 }
@@ -398,28 +403,42 @@ SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
 #endif
 }
 
-#if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) && defined(_WIN32)
-SPDLOG_INLINE void wbuf_to_utf8buf(const fmt::wmemory_buffer &wbuf, fmt::memory_buffer &target)
+#if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
+SPDLOG_INLINE void wstr_to_utf8buf(basic_string_view_t<wchar_t> wstr, fmt::memory_buffer &target)
 {
-    int wbuf_size = static_cast<int>(wbuf.size());
-    if (wbuf_size == 0)
+    if (wstr.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
+        throw spdlog::spdlog_ex("UTF-16 string is too big to be converted to UTF-8");
+    }
+
+    int wstr_size = static_cast<int>(wstr.size());
+    if (wstr_size == 0)
+    {
+        target.resize(0);
         return;
     }
 
-    auto result_size = ::WideCharToMultiByte(CP_UTF8, 0, wbuf.data(), wbuf_size, NULL, 0, NULL, NULL);
+    int result_size = static_cast<int>(target.capacity());
+    if ((wstr_size + 1) * 2 > result_size)
+    {
+        result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, NULL, 0, NULL, NULL);
+    }
 
     if (result_size > 0)
     {
         target.resize(result_size);
-        ::WideCharToMultiByte(CP_UTF8, 0, wbuf.data(), wbuf_size, &target.data()[0], result_size, NULL, NULL);
+        result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, target.data(), result_size, NULL, NULL);
+
+        if (result_size > 0)
+        {
+            target.resize(result_size);
+            return;
+        }
     }
-    else
-    {
-        throw spdlog::spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
-    }
+
+    throw spdlog::spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
 }
-#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT) && _WIN32
+#endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 
 } // namespace os
 } // namespace details
