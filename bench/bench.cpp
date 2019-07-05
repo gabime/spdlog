@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
     size_t file_size = 30 * 1024 * 1024;
     size_t rotating_files = 5;
 
+
     try
     {
 
@@ -61,8 +62,13 @@ int main(int argc, char *argv[])
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st.log");
         bench(howmany, std::move(daily_st));
 
-        bench(howmany, std::make_shared<spdlog::logger>("empty_logger"));
+        bench(howmany, spdlog::create<null_sink_st>("null_st"));
 
+        auto empty_logger = std::make_shared<spdlog::logger>("level-off");
+        empty_logger->set_level(spdlog::level::off);
+        bench(howmany, empty_logger);
+
+        /*
         spdlog::info("**************************************************************");
         spdlog::info("C-string (400 bytes). Single thread, {:n} iterations", howmany);
         spdlog::info("**************************************************************");
@@ -77,6 +83,7 @@ int main(int argc, char *argv[])
         bench_c_string(howmany, std::move(daily_st));
 
         bench_c_string(howmany, spdlog::create<null_sink_st>("null_st"));
+        */
 
         spdlog::info("**************************************************************");
         spdlog::info("{:n} threads sharing same logger, {:n} iterations", threads, howmany);
@@ -91,6 +98,7 @@ int main(int argc, char *argv[])
         auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
         bench_mt(howmany, std::move(daily_mt), threads);
         bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
+        bench(howmany, empty_logger);
     }
     catch (std::exception &ex)
     {
