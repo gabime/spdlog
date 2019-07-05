@@ -42,7 +42,6 @@ Very fast, header-only/compiled, C++ logging library. [![Build Status](https://t
     * Windows debugger (```OutputDebugString(..)```)
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Severity based filtering - threshold levels can be modified in runtime as well as in compile time.
-* Binary data logging.
 
  
 ## Usage samples
