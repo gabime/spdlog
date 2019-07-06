@@ -63,7 +63,7 @@ public:
     void swap(spdlog::logger &other);
 
     template<typename... Args>
-    void force_log(source_loc loc, level::level_enum lvl, const char *fmt, const Args &... args)
+    void force_log(source_loc loc, level::level_enum lvl, fmt::string_view fmt, const Args &... args)
     {
         try
         {
@@ -83,7 +83,7 @@ public:
     }
 
     template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, const char *fmt, const Args &... args)
+    void log(source_loc loc, level::level_enum lvl, fmt::string_view fmt, const Args &... args)
     {
         if (should_log(lvl))
         {
@@ -92,7 +92,7 @@ public:
     }
 
     template<typename... Args>
-    void log(level::level_enum lvl, const char *fmt, const Args &... args)
+    void log(level::level_enum lvl, fmt::string_view fmt, const Args &... args)
     {
         log(source_loc{}, lvl, fmt, args...);
     }
@@ -101,37 +101,37 @@ public:
     void log(level::level_enum lvl, const char *msg);
 
     template<typename... Args>
-    void trace(const char *fmt, const Args &... args)
+    void trace(fmt::string_view fmt, const Args &... args)
     {
         log(level::trace, fmt, args...);
     }
 
     template<typename... Args>
-    void debug(const char *fmt, const Args &... args)
+    void debug(fmt::string_view fmt, const Args &... args)
     {
         log(level::debug, fmt, args...);
     }
 
     template<typename... Args>
-    void info(const char *fmt, const Args &... args)
+    void info(fmt::string_view fmt, const Args &... args)
     {
         log(level::info, fmt, args...);
     }
 
     template<typename... Args>
-    void warn(const char *fmt, const Args &... args)
+    void warn(fmt::string_view fmt, const Args &... args)
     {
         log(level::warn, fmt, args...);
     }
 
     template<typename... Args>
-    void error(const char *fmt, const Args &... args)
+    void error(fmt::string_view fmt, const Args &... args)
     {
         log(level::err, fmt, args...);
     }
 
     template<typename... Args>
-    void critical(const char *fmt, const Args &... args)
+    void critical(fmt::string_view fmt, const Args &... args)
     {
         log(level::critical, fmt, args...);
     }
@@ -231,7 +231,7 @@ public:
 #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
 #else
     template<typename... Args>
-    void log(source_loc source, level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+    void log(source_loc source, level::level_enum lvl, fmt::wstring_view fmt, const Args &... args)
     {
         if (!should_log(lvl))
         {
@@ -261,43 +261,43 @@ public:
     }
 
     template<typename... Args>
-    void log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+    void log(level::level_enum lvl, fmt::wstring_view fmt, const Args &... args)
     {
         log(source_loc{}, lvl, fmt, args...);
     }
 
     template<typename... Args>
-    void trace(const wchar_t *fmt, const Args &... args)
+    void trace(fmt::wstring_view fmt, const Args &... args)
     {
         log(level::trace, fmt, args...);
     }
 
     template<typename... Args>
-    void debug(const wchar_t *fmt, const Args &... args)
+    void debug(fmt::wstring_view fmt, const Args &... args)
     {
         log(level::debug, fmt, args...);
     }
 
     template<typename... Args>
-    void info(const wchar_t *fmt, const Args &... args)
+    void info(fmt::wstring_view fmt, const Args &... args)
     {
         log(level::info, fmt, args...);
     }
 
     template<typename... Args>
-    void warn(const wchar_t *fmt, const Args &... args)
+    void warn(fmt::wstring_view fmt, const Args &... args)
     {
         log(level::warn, fmt, args...);
     }
 
     template<typename... Args>
-    void error(const wchar_t *fmt, const Args &... args)
+    void error(fmt::wstring_view fmt, const Args &... args)
     {
         log(level::err, fmt, args...);
     }
 
     template<typename... Args>
-    void critical(const wchar_t *fmt, const Args &... args)
+    void critical(fmt::wstring_view fmt, const Args &... args)
     {
         log(level::critical, fmt, args...);
     }
