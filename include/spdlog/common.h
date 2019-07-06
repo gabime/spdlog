@@ -94,6 +94,13 @@ template<typename T>
 using basic_string_view_t = fmt::basic_string_view<T>;
 #endif
 using string_view_t = basic_string_view_t<char>;
+#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+#ifndef _WIN32
+#error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
+#else
+using wstring_view_t = basic_string_view_t<wchar_t>;
+#endif // _WIN32
+#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
