@@ -115,49 +115,49 @@ spdlog::logger *default_logger_raw();
 void set_default_logger(std::shared_ptr<spdlog::logger> default_logger);
 
 template<typename... Args>
-inline void log(source_loc source, level::level_enum lvl, const char *fmt, const Args &... args)
+inline void log(source_loc source, level::level_enum lvl, string_view_t fmt, const Args &... args)
 {
     default_logger_raw()->log(source, lvl, fmt, args...);
 }
 
 template<typename... Args>
-inline void log(level::level_enum lvl, const char *fmt, const Args &... args)
+inline void log(level::level_enum lvl, string_view_t fmt, const Args &... args)
 {
     default_logger_raw()->log(source_loc{}, lvl, fmt, args...);
 }
 
 template<typename... Args>
-inline void trace(const char *fmt, const Args &... args)
+inline void trace(string_view_t fmt, const Args &... args)
 {
     default_logger_raw()->trace(fmt, args...);
 }
 
 template<typename... Args>
-inline void debug(const char *fmt, const Args &... args)
+inline void debug(string_view_t fmt, const Args &... args)
 {
     default_logger_raw()->debug(fmt, args...);
 }
 
 template<typename... Args>
-inline void info(const char *fmt, const Args &... args)
+inline void info(string_view_t fmt, const Args &... args)
 {
     default_logger_raw()->info(fmt, args...);
 }
 
 template<typename... Args>
-inline void warn(const char *fmt, const Args &... args)
+inline void warn(string_view_t fmt, const Args &... args)
 {
     default_logger_raw()->warn(fmt, args...);
 }
 
 template<typename... Args>
-inline void error(const char *fmt, const Args &... args)
+inline void error(string_view_t fmt, const Args &... args)
 {
     default_logger_raw()->error(fmt, args...);
 }
 
 template<typename... Args>
-inline void critical(const char *fmt, const Args &... args)
+inline void critical(string_view_t fmt, const Args &... args)
 {
     default_logger_raw()->critical(fmt, args...);
 }
@@ -206,43 +206,43 @@ inline void critical(const T &msg)
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 template<typename... Args>
-inline void log(level::level_enum lvl, const wchar_t *fmt, const Args &... args)
+inline void log(level::level_enum lvl, wstring_view_t fmt, const Args &... args)
 {
     default_logger_raw()->log(lvl, fmt, args...);
 }
 
 template<typename... Args>
-inline void trace(const wchar_t *fmt, const Args &... args)
+inline void trace(wstring_view_t fmt, const Args &... args)
 {
     default_logger_raw()->trace(fmt, args...);
 }
 
 template<typename... Args>
-inline void debug(const wchar_t *fmt, const Args &... args)
+inline void debug(wstring_view_t fmt, const Args &... args)
 {
     default_logger_raw()->debug(fmt, args...);
 }
 
 template<typename... Args>
-inline void info(const wchar_t *fmt, const Args &... args)
+inline void info(wstring_view_t fmt, const Args &... args)
 {
     default_logger_raw()->info(fmt, args...);
 }
 
 template<typename... Args>
-inline void warn(const wchar_t *fmt, const Args &... args)
+inline void warn(wstring_view_t fmt, const Args &... args)
 {
     default_logger_raw()->warn(fmt, args...);
 }
 
 template<typename... Args>
-inline void error(const wchar_t *fmt, const Args &... args)
+inline void error(wstring_view_t fmt, const Args &... args)
 {
     default_logger_raw()->error(fmt, args...);
 }
 
 template<typename... Args>
-inline void critical(const wchar_t *fmt, const Args &... args)
+inline void critical(wstring_view_t fmt, const Args &... args)
 {
     default_logger_raw()->critical(fmt, args...);
 }
