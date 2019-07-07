@@ -58,7 +58,7 @@ SPDLOG_INLINE void swap(logger &a, logger &b)
     a.swap(b);
 }
 
-SPDLOG_INLINE void logger::log(source_loc loc, level::level_enum lvl, const char *msg)
+SPDLOG_INLINE void logger::log(source_loc loc, level::level_enum lvl, string_view_t msg)
 {
     if (!should_log(lvl))
     {
@@ -67,7 +67,7 @@ SPDLOG_INLINE void logger::log(source_loc loc, level::level_enum lvl, const char
 
     try
     {
-        details::log_msg log_msg(loc, string_view_t(name_), lvl, string_view_t(msg));
+        details::log_msg log_msg(loc, string_view_t(name_), lvl, msg);
         sink_it_(log_msg);
     }
     catch (const std::exception &ex)
@@ -80,7 +80,7 @@ SPDLOG_INLINE void logger::log(source_loc loc, level::level_enum lvl, const char
     }
 }
 
-SPDLOG_INLINE void logger::log(level::level_enum lvl, const char *msg)
+SPDLOG_INLINE void logger::log(level::level_enum lvl, string_view_t msg)
 {
     log(source_loc{}, lvl, msg);
 }
