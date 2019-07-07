@@ -27,7 +27,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_dup_filter.cpp)
 
 if(systemd_FOUND)
-	set(SPDLOG_UTESTS_SOURCES ${SPDLOG_UTESTS_SOURCES} test_systemd.cpp)
+	list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)
 endif()
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
