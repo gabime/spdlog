@@ -85,15 +85,11 @@ using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using err_handler = std::function<void(const std::string &err_msg)>;
 
-// string_view type - either std::string_view or fmt::string_view (pre c++17)
-#if defined(FMT_USE_STD_STRING_VIEW)
-template<typename T>
-using basic_string_view_t = std::basic_string_view<T>;
-#else
 template<typename T>
 using basic_string_view_t = fmt::basic_string_view<T>;
-#endif
+
 using string_view_t = basic_string_view_t<char>;
+
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #ifndef _WIN32
 #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
