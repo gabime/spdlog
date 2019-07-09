@@ -152,9 +152,8 @@ spdlog::flush_every(std::chrono::seconds(3));
 ```
 
 ---
-#### Binary logging as hex
+#### Log binary data as hex.
 ```c++
-// log binary data as hex.
 // many types of std::container<char> types can be used.
 // ranges are supported too.
 // format flags:
