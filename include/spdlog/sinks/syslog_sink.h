@@ -59,8 +59,14 @@ protected:
             payload = msg.payload;
         }
 
-        int length = std::min<std::common_type<int, std::size_t>::type>(std::numeric_limits<int>::max(), payload.size());
-        ::syslog(syslog_prio_from_level(msg), "%.*s", length, payload.data());
+        size_t length = payload.size();
+        // limit to max int
+        if(length > std::numeric_limits<int>::max())
+        {
+            length = std::numeric_limits<int>::max();
+        }
+
+        ::syslog(syslog_prio_from_level(msg), "%.*s", static_cast<int>(length), payload.data());
     }
 
     void flush_() override {}
