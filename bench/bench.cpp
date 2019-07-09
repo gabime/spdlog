@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
     size_t file_size = 30 * 1024 * 1024;
     size_t rotating_files = 5;
 
-
     try
     {
 

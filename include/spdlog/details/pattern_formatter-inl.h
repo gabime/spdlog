@@ -892,13 +892,12 @@ public:
 template<typename Units>
 class elapsed_formatter final : public flag_formatter
 {
-
 public:
     using DurationUnits = Units;
 
     explicit elapsed_formatter(padding_info padinfo)
-        : flag_formatter(padinfo),
-        last_message_time_(log_clock::now())
+        : flag_formatter(padinfo)
+        , last_message_time_(log_clock::now())
     {}
 
     void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
@@ -919,7 +918,6 @@ public:
 
 protected:
     log_clock::time_point last_message_time_;
-
 };
 
 // Full info formatter

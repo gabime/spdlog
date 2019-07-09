@@ -46,7 +46,7 @@ protected:
 
         size_t length = msg.payload.size();
         // limit to max int
-        if(length > std::numeric_limits<int>::max())
+        if (length > std::numeric_limits<int>::max())
         {
             length = std::numeric_limits<int>::max();
         }
@@ -60,9 +60,8 @@ protected:
         }
         else
         {
-            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d",
-                syslog_level(msg.level), "SOURCE_FILE=%s", msg.source.filename, "SOURCE_LINE=%d", msg.source.line, "SOURCE_FUNC=%s",
-                msg.source.funcname, nullptr);
+            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d", syslog_level(msg.level),
+                "SOURCE_FILE=%s", msg.source.filename, "SOURCE_LINE=%d", msg.source.line, "SOURCE_FUNC=%s", msg.source.funcname, nullptr);
         }
 
         if (err)

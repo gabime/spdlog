@@ -61,7 +61,7 @@ protected:
 
         size_t length = payload.size();
         // limit to max int
-        if(length > std::numeric_limits<int>::max())
+        if (length > std::numeric_limits<int>::max())
         {
             length = std::numeric_limits<int>::max();
         }
