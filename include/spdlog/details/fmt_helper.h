@@ -107,7 +107,7 @@ inline void pad9(T n, fmt::basic_memory_buffer<char, Buffer_Size> &dest)
 // e.g.
 // fraction<std::milliseconds>(tp) -> will return the millis part of the second
 template<typename ToDuration>
-inline ToDuration time_fraction(const log_clock::time_point &tp)
+inline ToDuration time_fraction(log_clock::time_point tp)
 {
     using std::chrono::duration_cast;
     using std::chrono::seconds;
