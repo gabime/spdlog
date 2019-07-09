@@ -44,16 +44,23 @@ protected:
     {
         int err;
 
+        size_t length = msg.payload.size();
+        // limit to max int
+        if(length > std::numeric_limits<int>::max())
+        {
+            length = std::numeric_limits<int>::max();
+        }
+
         // Do not send source location if not available
         if (msg.source.empty())
         {
             // Note: function call inside '()' to avoid macro expansion
             err = (sd_journal_send)(
-                "MESSAGE=%.*s", static_cast<int>(msg.payload.size()), msg.payload.data(), "PRIORITY=%d", syslog_level(msg.level), nullptr);
+                "MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d", syslog_level(msg.level), nullptr);
         }
         else
         {
-            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(msg.payload.size()), msg.payload.data(), "PRIORITY=%d",
+            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d",
                 syslog_level(msg.level), "SOURCE_FILE=%s", msg.source.filename, "SOURCE_LINE=%d", msg.source.line, "SOURCE_FUNC=%s",
                 msg.source.funcname, nullptr);
         }
