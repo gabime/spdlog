@@ -888,6 +888,40 @@ public:
     }
 };
 
+// print elapsed time since last message
+template<typename Units>
+class elapsed_formatter final : public flag_formatter
+{
+
+public:
+    using DurationUnits = Units;
+
+    explicit elapsed_formatter(padding_info padinfo)
+        : flag_formatter(padinfo),
+        last_message_time_(log_clock::now())
+    {}
+
+    void format(const details::log_msg &msg, const std::tm &, fmt::memory_buffer &dest) override
+    {
+        auto delta = msg.time - last_message_time_;
+        auto delta_units = std::chrono::duration_cast<DurationUnits>(delta);
+        last_message_time_ = msg.time;
+        if (padinfo_.enabled())
+        {
+            scoped_pad p(6, padinfo_, dest);
+            fmt_helper::pad6(static_cast<size_t>(delta_units.count()), dest);
+        }
+        else
+        {
+            fmt_helper::pad6(static_cast<size_t>(delta_units.count()), dest);
+        }
+    }
+
+protected:
+    log_clock::time_point last_message_time_;
+
+};
+
 // Full info formatter
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
 class full_formatter final : public flag_formatter
@@ -1197,6 +1231,22 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 
     case ('%'): // % char
         formatters_.push_back(details::make_unique<details::ch_formatter>('%'));
+        break;
+
+    case ('u'): // elapsed time since last log message in nanos
+        formatters_.push_back(details::make_unique<details::elapsed_formatter<std::chrono::nanoseconds>>(padding));
+        break;
+
+    case ('i'): // elapsed time since last log message in micros
+        formatters_.push_back(details::make_unique<details::elapsed_formatter<std::chrono::microseconds>>(padding));
+        break;
+
+    case ('o'): // elapsed time since last log message in millis
+        formatters_.push_back(details::make_unique<details::elapsed_formatter<std::chrono::milliseconds>>(padding));
+        break;
+
+    case ('O'): // elapsed time since last log message in seconds
+        formatters_.push_back(details::make_unique<details::elapsed_formatter<std::chrono::seconds>>(padding));
         break;
 
     default: // Unknown flag appears as is
