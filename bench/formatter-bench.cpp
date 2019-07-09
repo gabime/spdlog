@@ -29,7 +29,7 @@ void bench_formatter(benchmark::State &state, std::string pattern)
 void bench_formatters()
 {
     // basic patterns(single flag)
-    std::string all_flags = "+vtPnlLaAbBcCYDmdHIMSefFprRTXzEisg@l%";
+    std::string all_flags = "+vtPnlLaAbBcCYDmdHIMSefFprRTXzEisg@luioO%";
     std::vector<std::string> basic_patterns;
     for (auto &flag : all_flags)
     {
