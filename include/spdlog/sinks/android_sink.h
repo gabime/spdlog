@@ -47,7 +47,7 @@ protected:
         }
         else
         {
-            sink::formatter_->format(msg, formatted);
+            base_sink<Mutex>::formatter_->format(msg, formatted);
         }
         formatted.push_back('\0');
         const char *msg_output = formatted.data();
