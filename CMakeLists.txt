@@ -22,7 +22,6 @@ endif()
 project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
 message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
-
 #---------------------------------------------------------------------------------------
 # Compiler config
 #---------------------------------------------------------------------------------------
