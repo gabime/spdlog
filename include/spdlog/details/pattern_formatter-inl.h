@@ -35,7 +35,7 @@ namespace details {
 class scoped_pad
 {
 public:
-    scoped_pad(size_t wrapped_size, padding_info &padinfo, fmt::memory_buffer &dest)
+    scoped_pad(size_t wrapped_size, const padding_info &padinfo, fmt::memory_buffer &dest)
         : padinfo_(padinfo)
         , dest_(dest)
     {
