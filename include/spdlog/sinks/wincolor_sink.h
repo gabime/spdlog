@@ -49,8 +49,8 @@ protected:
     using mutex_t = typename ConsoleMutex::mutex_t;
     HANDLE out_handle_;
     mutex_t &mutex_;
-    bool should_do_colors_;
 	bool in_console_;
+    bool should_do_colors_;	
     std::unique_ptr<spdlog::formatter> formatter_;
     std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 
