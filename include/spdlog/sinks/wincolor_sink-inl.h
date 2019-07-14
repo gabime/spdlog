@@ -23,6 +23,7 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(HANDLE out_handle, colo
     // ::GetConsoleMode() should return 0 if it is redirected or not valid console handle.
     DWORD console_mode;
     in_console_ = ::GetConsoleMode(out_handle, &console_mode) != 0;
+
     set_color_mode(mode);
     colors_[level::trace] = WHITE;
     colors_[level::debug] = CYAN;
