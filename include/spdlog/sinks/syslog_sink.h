@@ -61,9 +61,9 @@ protected:
 
         size_t length = payload.size();
         // limit to max int
-        if (length > std::numeric_limits<int>::max())
+        if (length > static_cast<size_t>(std::numeric_limits<int>::max()))
         {
-            length = std::numeric_limits<int>::max();
+            length = static_cast<size_t>(std::numeric_limits<int>::max());
         }
 
         ::syslog(syslog_prio_from_level(msg), "%.*s", static_cast<int>(length), payload.data());
