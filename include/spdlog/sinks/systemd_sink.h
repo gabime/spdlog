@@ -46,9 +46,9 @@ protected:
 
         size_t length = msg.payload.size();
         // limit to max int
-        if (length > std::numeric_limits<int>::max())
+        if (length > static_cast<size_t>(std::numeric_limits<int>::max()))
         {
-            length = std::numeric_limits<int>::max();
+            length = static_cast<size_t>(std::numeric_limits<int>::max());
         }
 
         // Do not send source location if not available
