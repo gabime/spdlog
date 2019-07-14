@@ -60,7 +60,7 @@ public:
             total_pad_ = half_pad + reminder; // for the right side
         }
     }
-    
+
     ~scoped_padder()
     {
         if (total_pad_)
@@ -85,8 +85,7 @@ private:
 
 struct null_scoped_padder
 {
-    null_scoped_padder(size_t /*wrapped_size*/, const padding_info &/*padinfo*/, fmt::memory_buffer &/*dest*/)
-    {}
+    null_scoped_padder(size_t /*wrapped_size*/, const padding_info & /*padinfo*/, fmt::memory_buffer & /*dest*/) {}
 };
 
 template<typename ScopedPadder>
@@ -434,7 +433,6 @@ public:
         const size_t field_size = 3;
         ScopedPadder p(field_size, padinfo_, dest);
         fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
-
     }
 };
 
@@ -454,7 +452,6 @@ public:
         const size_t field_size = 6;
         ScopedPadder p(field_size, padinfo_, dest);
         fmt_helper::pad6(static_cast<size_t>(micros.count()), dest);
-
     }
 };
 
@@ -579,7 +576,7 @@ public:
 };
 
 // ISO 8601 offset from UTC in timezone (+-HH:MM)
-        template<typename ScopedPadder>
+template<typename ScopedPadder>
 class z_formatter final : public flag_formatter
 {
 public:
@@ -639,7 +636,7 @@ private:
 };
 
 // Thread id
-        template<typename ScopedPadder>
+template<typename ScopedPadder>
 class t_formatter final : public flag_formatter
 {
 public:
@@ -766,9 +763,8 @@ public:
             return;
         }
 
-        size_t text_size = padinfo_.enabled() ?
-                           std::char_traits<char>::length(msg.source.filename) + fmt_helper::count_digits(msg.source.line) + 1:
-                           0;
+        size_t text_size =
+            padinfo_.enabled() ? std::char_traits<char>::length(msg.source.filename) + fmt_helper::count_digits(msg.source.line) + 1 : 0;
 
         ScopedPadder p(text_size, padinfo_, dest);
         fmt_helper::append_string_view(msg.source.filename, dest);
@@ -792,7 +788,7 @@ public:
         {
             return;
         }
-        size_t text_size = padinfo_.enabled() ? std::char_traits<char>::length(msg.source.filename): 0;
+        size_t text_size = padinfo_.enabled() ? std::char_traits<char>::length(msg.source.filename) : 0;
         ScopedPadder p(text_size, padinfo_, dest);
         fmt_helper::append_string_view(msg.source.filename, dest);
     }
@@ -825,7 +821,7 @@ public:
     }
 };
 
-        template<typename ScopedPadder>
+template<typename ScopedPadder>
 class source_linenum_formatter final : public flag_formatter
 {
 public:
@@ -1043,8 +1039,7 @@ SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg)
     return details::os::gmtime(log_clock::to_time_t(msg.time));
 }
 
-
-template <typename Padder>
+template<typename Padder>
 SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_info padding)
 {
     switch (flag)
@@ -1291,7 +1286,7 @@ SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &patter
 
             if (it != end)
             {
-                if(padding.enabled())
+                if (padding.enabled())
                 {
                     handle_flag_<details::scoped_padder>(*it, padding);
                 }
@@ -1299,7 +1294,6 @@ SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &patter
                 {
                     handle_flag_<details::null_scoped_padder>(*it, padding);
                 }
-
             }
             else
             {

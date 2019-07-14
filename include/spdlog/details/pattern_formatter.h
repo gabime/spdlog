@@ -82,7 +82,7 @@ private:
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
 
     std::tm get_time_(const details::log_msg &msg);
-    template <typename Padder>
+    template<typename Padder>
     void handle_flag_(char flag, details::padding_info padding);
 
     // Extract given pad spec (e.g. %8X)
