@@ -49,8 +49,8 @@ protected:
     using mutex_t = typename ConsoleMutex::mutex_t;
     HANDLE out_handle_;
     mutex_t &mutex_;
-	bool in_console_;
-    bool should_do_colors_;	
+    bool in_console_;
+    bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
     std::unordered_map<level::level_enum, WORD, level::level_hasher> colors_;
 
@@ -59,9 +59,8 @@ protected:
     // print a range of formatted message to console
     void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
 
-	//in case we are redirected to file (not in console mode)
-	void write_to_file_(const fmt::memory_buffer &formatted);
-	
+    // in case we are redirected to file (not in console mode)
+    void write_to_file_(const fmt::memory_buffer &formatted);
 };
 
 template<typename ConsoleMutex>
