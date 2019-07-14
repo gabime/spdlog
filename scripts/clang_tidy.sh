@@ -2,4 +2,4 @@
 
 cd "$(dirname "$0")"
 
-clang-tidy ../example/example.cpp -- -I ./include
+clang-tidy ../example/example.cpp -- -I ../include
