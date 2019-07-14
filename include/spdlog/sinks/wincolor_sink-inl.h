@@ -120,7 +120,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
 template<typename ConsoleMutex>
 WORD SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_console_attribs(WORD attribs)
 {
-    in_console_ CONSOLE_SCREEN_BUFFER_INFO orig_buffer_info;
+    CONSOLE_SCREEN_BUFFER_INFO orig_buffer_info;
     ::GetConsoleScreenBufferInfo(out_handle_, &orig_buffer_info);
     WORD back_color = orig_buffer_info.wAttributes;
     // retrieve the current background color
