@@ -20,7 +20,7 @@ compile_args = []
 dep_list += dependency('threads')
 
 # Check for FMT
-if get_option('extrenal_fmt')
+if get_option('external_fmt')
   if not meson.version().version_compare('>=0.49.0')
     warning('Finding fmt can fail wit meson versions before 0.49.0')
   endif
@@ -96,12 +96,12 @@ endif
 
 summary_str = '''spdlog build summary:
 
-  - using extrenal fmt:  @0@
+  - using external fmt:  @0@
   - building tests:      @1@
   - building examples:   @2@
   - building benchmarks: @3@
 '''.format(
-  get_option('extrenal_fmt'),
+  get_option('external_fmt'),
   get_option('enable_tests'),
   get_option('enable_examples'),
   get_option('enable_benchmarks')
