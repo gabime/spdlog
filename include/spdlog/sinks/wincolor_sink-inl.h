@@ -68,9 +68,8 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
         // in color range
         auto orig_attribs = set_console_attribs(colors_[msg.level]);
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
-        ::SetConsoleTextAttribute(out_handle_,
-            orig_attribs); // reset to orig colors
-                           // after color range
+		// reset to orig colors                           
+        ::SetConsoleTextAttribute(out_handle_, orig_attribs); 
         print_range_(formatted, msg.color_range_end, formatted.size());
     }
     else // print without colors if color range is invalid (or color is disabled)
