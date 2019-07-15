@@ -66,7 +66,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
         print_range_(formatted, 0, msg.color_range_start);
 
         // in color range
-        auto orig_attribs = set_console_attribs(colors_[msg.level]);
+        auto orig_attribs = set_foreground_color_(colors_[msg.level]);
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
 		// reset to orig colors                           
         ::SetConsoleTextAttribute(out_handle_, orig_attribs); 
@@ -115,9 +115,9 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
     }
 }
 
-// set color and return the orig console attributes (for resetting later)
+// set foreground color and return the orig console attributes (for resetting later)
 template<typename ConsoleMutex>
-WORD SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_console_attribs(WORD attribs)
+WORD SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_foreground_color_(WORD attribs)
 {
     CONSOLE_SCREEN_BUFFER_INFO orig_buffer_info;
     ::GetConsoleScreenBufferInfo(out_handle_, &orig_buffer_info);
