@@ -9,7 +9,7 @@
 #include <chrono>
 #include <initializer_list>
 #include <memory>
-#include <stdexcept>
+#include <exception>
 #include <string>
 #include <type_traits>
 #include <functional>
