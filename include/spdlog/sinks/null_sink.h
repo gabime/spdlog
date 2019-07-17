@@ -17,7 +17,7 @@ template<typename Mutex>
 class null_sink : public base_sink<Mutex>
 {
 protected:
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const details::log_msg &) override
     {
         // prevent optimizer to remove this sink altogether (and do useful check while at it).
         if(this->level() == level::off)
