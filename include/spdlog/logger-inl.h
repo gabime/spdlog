@@ -10,6 +10,8 @@
 #include "spdlog/sinks/sink.h"
 #include "spdlog/details/pattern_formatter.h"
 
+#include <cstdio>
+
 namespace spdlog {
 
 // public methods
@@ -203,18 +205,32 @@ SPDLOG_INLINE bool logger::should_flush_(const details::log_msg &msg)
     return (msg.level >= flush_level) && (msg.level != level::off);
 }
 
+
 SPDLOG_INLINE void logger::err_handler_(const std::string &msg)
 {
+
     if (custom_err_handler_)
     {
         custom_err_handler_(msg);
     }
     else
     {
-        auto tm_time = details::os::localtime();
+        using std::chrono::system_clock;
+        static std::mutex mutex;
+        static std::chrono::system_clock::time_point last_report_time;
+        static size_t err_counter = 0;
+        std::lock_guard<std::mutex> lk{mutex};
+        auto now = system_clock::now();
+        err_counter++;
+        if(now - last_report_time < std::chrono::seconds(1))
+        {
+            return;
+        }
+        last_report_time = now;
+        auto tm_time = details::os::localtime(system_clock::to_time_t(now));
         char date_buf[64];
         std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
-        fmt::print(stderr, "[*** LOG ERROR ***] [{}] [{}] {}\n", date_buf, name(), msg);
+        fprintf(stderr, "[*** LOG ERROR #%04zu ***] [%s] [%s] {%s}\n", err_counter, date_buf, name().c_str(), msg.c_str());
     }
 }
 } // namespace spdlog

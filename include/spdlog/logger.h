@@ -317,8 +317,8 @@ protected:
     virtual void flush_();
     bool should_flush_(const details::log_msg &msg);
 
-    // default error handler.
-    // print the error to stderr with the max rate of 1 message/minute.
+    // handle errors during logging.
+    // default handler prints the error to stderr at max rate of 1 message/sec.
     void err_handler_(const std::string &msg);
 };
 
