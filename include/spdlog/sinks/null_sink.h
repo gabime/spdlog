@@ -22,10 +22,9 @@ protected:
         // prevent optimizer to remove this sink altogether (and do useful check while at it).
         if(msg.level == level::off)
         {
-            printf("Should never not be called if level is off!\n");
+            printf("null_sink: should never not be called if level is off!\n");
+            abort();
         }
-        assert(msg.level != level::off);
-
     }
     void flush_() override {}
 };
