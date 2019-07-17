@@ -26,6 +26,13 @@ Very fast, header-only/compiled, C++ logging library. [![Build Status](https://t
 * Gentoo: `emerge dev-libs/spdlog`
 * Arch Linux: `yaourt -S spdlog-git`
 * vcpkg: `vcpkg install spdlog`
+* Compile from source:
+   ```
+   $ git clone git@github.com:gabime/spdlog.git
+   $ mkdir build && cd build
+   $ cmake ..
+   $ (sudo) make install clean
+   ```
 
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).
