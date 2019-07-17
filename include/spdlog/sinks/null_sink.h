@@ -20,9 +20,9 @@ protected:
     void sink_it_(const details::log_msg &msg) override
     {
         // prevent optimizer to remove this sink altogether (and do useful check while at it).
-        if(msg.level == level::off || this->level() == level::off)
+        if(this->level() == level::off)
         {
-            printf("null_sink: should never be called if level is off!\n");
+            printf("null_sink: should never be called if its level is off!\n");
             abort();
         }
     }
