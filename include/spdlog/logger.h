@@ -22,10 +22,7 @@
 #include "spdlog/details/os.h"
 #endif
 
-#include <memory>
-#include <string>
 #include <vector>
-#include <functional>
 
 #define SPDLOG_LOGGER_CATCH() \
 catch (const std::exception &ex) { err_handler_(ex.what());} \
