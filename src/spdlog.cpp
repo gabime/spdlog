@@ -34,6 +34,7 @@ template class spdlog::sinks::rotating_file_sink<std::mutex>;
 template class spdlog::sinks::rotating_file_sink<spdlog::details::null_mutex>;
 
 #include "spdlog/details/registry-inl.h"
+#include "spdlog/details/console_globals-inl.h"
 
 #include "spdlog/details/os-inl.h"
 #include "spdlog/details/periodic_worker-inl.h"
