@@ -65,19 +65,8 @@ SPDLOG_INLINE void logger::log(source_loc loc, level::level_enum lvl, string_vie
         return;
     }
 
-    try
-    {
-        details::log_msg log_msg(loc, string_view_t(name_), lvl, msg);
-        sink_it_(log_msg);
-    }
-    catch (const std::exception &ex)
-    {
-        err_handler_(ex.what());
-    }
-    catch (...)
-    {
-        err_handler_("Unknown exception in logger");
-    }
+    details::log_msg log_msg(loc, string_view_t(name_), lvl, msg);
+    sink_it_(log_msg);
 }
 
 SPDLOG_INLINE void logger::log(level::level_enum lvl, string_view_t msg)
@@ -137,18 +126,7 @@ SPDLOG_INLINE void logger::set_pattern(std::string pattern, pattern_time_type ti
 // flush functions
 SPDLOG_INLINE void logger::flush()
 {
-    try
-    {
-        flush_();
-    }
-    catch (const std::exception &ex)
-    {
-        err_handler_(ex.what());
-    }
-    catch (...)
-    {
-        err_handler_("Unknown exception in logger");
-    }
+    flush_();
 }
 
 SPDLOG_INLINE void logger::flush_on(level::level_enum log_level)
@@ -193,7 +171,11 @@ SPDLOG_INLINE void logger::sink_it_(details::log_msg &msg)
     {
         if (sink->should_log(msg.level))
         {
-            sink->log(msg);
+            try
+            {
+                sink->log(msg);
+            }
+            SPDLOG_LOGGER_CATCH()
         }
     }
 
@@ -207,7 +189,11 @@ SPDLOG_INLINE void logger::flush_()
 {
     for (auto &sink : sinks_)
     {
-        sink->flush();
+        try
+        {
+            sink->flush();
+        }
+        SPDLOG_LOGGER_CATCH()
     }
 }
 

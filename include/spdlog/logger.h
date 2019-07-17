@@ -27,6 +27,10 @@
 #include <vector>
 #include <functional>
 
+#define SPDLOG_LOGGER_CATCH() \
+catch (const std::exception &ex) { err_handler_(ex.what());} \
+catch (...) {err_handler_("Unknown exception in logger");}
+
 namespace spdlog {
 class logger
 {
@@ -72,14 +76,7 @@ public:
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
         }
-        catch (const std::exception &ex)
-        {
-            err_handler_(ex.what());
-        }
-        catch (...)
-        {
-            err_handler_("Unknown exception in logger");
-        }
+        SPDLOG_LOGGER_CATCH()
     }
 
     template<typename... Args>
@@ -150,19 +147,9 @@ public:
         {
             return;
         }
-        try
-        {
-            details::log_msg log_msg(loc, name_, lvl, msg);
-            sink_it_(log_msg);
-        }
-        catch (const std::exception &ex)
-        {
-            err_handler_(ex.what());
-        }
-        catch (...)
-        {
-            err_handler_("Unknown exception in logger");
-        }
+
+        details::log_msg log_msg(loc, name_, lvl, msg);
+        sink_it_(log_msg);
     }
 
     // T cannot be statically converted to string_view
@@ -180,14 +167,7 @@ public:
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
         }
-        catch (const std::exception &ex)
-        {
-            err_handler_(ex.what());
-        }
-        catch (...)
-        {
-            err_handler_("Unknown exception in logger");
-        }
+        SPDLOG_LOGGER_CATCH()
     }
 
     template<typename T>
@@ -250,14 +230,7 @@ public:
             details::log_msg log_msg(source, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
         }
-        catch (const std::exception &ex)
-        {
-            err_handler_(ex.what());
-        }
-        catch (...)
-        {
-            err_handler_("Unknown exception in logger");
-        }
+        SPDLOG_LOGGER_CATCH()
     }
 
     template<typename... Args>
