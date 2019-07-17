@@ -8,6 +8,7 @@
 #include "spdlog/details/synchronous_factory.h"
 
 #include <mutex>
+#include <stdio.h>
 
 namespace spdlog {
 namespace sinks {
@@ -16,7 +17,16 @@ template<typename Mutex>
 class null_sink : public base_sink<Mutex>
 {
 protected:
-    void sink_it_(const details::log_msg &) override {}
+    void sink_it_(const details::log_msg &msg) override
+    {
+        // prevent optimizer to remove this sink altogether (and do useful check while at it).
+        if(msg.level == level::off)
+        {
+            printf("Should never not be called if level is off!\n");
+        }
+        assert(msg.level != level::off);
+
+    }
     void flush_() override {}
 };
 
