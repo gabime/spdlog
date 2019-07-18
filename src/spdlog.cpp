@@ -80,8 +80,6 @@ template std::shared_ptr<spdlog::logger> spdlog::stdout_color_st<spdlog::async_f
 template std::shared_ptr<spdlog::logger> spdlog::stderr_color_mt<spdlog::async_factory>(const std::string &logger_name, color_mode mode);
 template std::shared_ptr<spdlog::logger> spdlog::stderr_color_st<spdlog::async_factory>(const std::string &logger_name, color_mode mode);
 
-
-
 #include "spdlog/sinks/stdout_sinks-inl.h"
 
 template class spdlog::sinks::stdout_sink_base<spdlog::details::console_mutex>;
@@ -100,7 +98,6 @@ template std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt<spdlog::async_
 template std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st<spdlog::async_factory>(const std::string &logger_name);
 template std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt<spdlog::async_factory>(const std::string &logger_name);
 template std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st<spdlog::async_factory>(const std::string &logger_name);
-
 
 // Slightly modified version of fmt lib's format.cc source file.
 // Copyright (c) 2012 - 2016, Victor Zverovich

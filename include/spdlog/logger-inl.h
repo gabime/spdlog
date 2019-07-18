@@ -205,7 +205,6 @@ SPDLOG_INLINE bool logger::should_flush_(const details::log_msg &msg)
     return (msg.level >= flush_level) && (msg.level != level::off);
 }
 
-
 SPDLOG_INLINE void logger::err_handler_(const std::string &msg)
 {
 
@@ -222,7 +221,7 @@ SPDLOG_INLINE void logger::err_handler_(const std::string &msg)
         std::lock_guard<std::mutex> lk{mutex};
         auto now = system_clock::now();
         err_counter++;
-        if(now - last_report_time < std::chrono::seconds(1))
+        if (now - last_report_time < std::chrono::seconds(1))
         {
             return;
         }

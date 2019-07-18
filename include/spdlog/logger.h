@@ -24,9 +24,15 @@
 
 #include <vector>
 
-#define SPDLOG_LOGGER_CATCH() \
-catch (const std::exception &ex) { err_handler_(ex.what());} \
-catch (...) {err_handler_("Unknown exception in logger");}
+#define SPDLOG_LOGGER_CATCH()                                                                                                              \
+    catch (const std::exception &ex)                                                                                                       \
+    {                                                                                                                                      \
+        err_handler_(ex.what());                                                                                                           \
+    }                                                                                                                                      \
+    catch (...)                                                                                                                            \
+    {                                                                                                                                      \
+        err_handler_("Unknown exception in logger");                                                                                       \
+    }
 
 namespace spdlog {
 class logger

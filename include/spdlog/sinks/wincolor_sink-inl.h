@@ -68,8 +68,8 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
         // in color range
         auto orig_attribs = set_foreground_color_(colors_[msg.level]);
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
-		// reset to orig colors                           
-        ::SetConsoleTextAttribute(out_handle_, orig_attribs); 
+        // reset to orig colors
+        ::SetConsoleTextAttribute(out_handle_, orig_attribs);
         print_range_(formatted, msg.color_range_end, formatted.size());
     }
     else // print without colors if color range is invalid (or color is disabled)
@@ -149,12 +149,12 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const fmt::memory
     DWORD total_written = 0;
     do
     {
-        DWORD bytes_written = 0;		
-        bool ok = ::WriteFile(out_handle_, formatted.data()+total_written, size-total_written, &bytes_written, nullptr) != 0;
+        DWORD bytes_written = 0;
+        bool ok = ::WriteFile(out_handle_, formatted.data() + total_written, size - total_written, &bytes_written, nullptr) != 0;
         if (!ok || bytes_written == 0)
         {
             throw spdlog_ex("wincolor_sink: write_to_file_ failed. GetLastError(): " + std::to_string(::GetLastError()));
-        }		
+        }
         total_written += bytes_written;
     } while (total_written < size);
 }

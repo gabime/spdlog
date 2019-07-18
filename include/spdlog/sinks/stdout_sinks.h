@@ -71,8 +71,6 @@ std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
 
 } // namespace spdlog
 
-
-
 #ifdef SPDLOG_HEADER_ONLY
 #include "stdout_sinks-inl.h"
 #endif
