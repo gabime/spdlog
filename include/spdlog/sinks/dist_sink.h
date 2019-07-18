@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "base_sink.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/null_mutex.h"
@@ -20,7 +21,7 @@ namespace spdlog {
 namespace sinks {
 
 template<typename Mutex>
-class dist_sink : public base_sink<Mutex>
+class SPDLOG_API dist_sink : public base_sink<Mutex>
 {
 public:
     dist_sink() = default;

@@ -5,11 +5,12 @@
 #pragma once
 
 #include <vector>
+#include "spdlog/common.h"
 
 namespace spdlog {
 namespace details {
 template<typename T>
-class circular_q
+class SPDLOG_API circular_q
 {
 public:
     using item_type = T;

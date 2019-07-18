@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/sink.h"
@@ -22,7 +23,7 @@ namespace sinks {
  */
 
 template<typename ConsoleMutex>
-class ansicolor_sink : public sink
+class SPDLOG_API ansicolor_sink : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
@@ -81,19 +82,19 @@ private:
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
     std::unordered_map<level::level_enum, string_view_t, level::level_hasher> colors_;
-    void print_ccode_(const string_view_t &color_code);
-    void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
+    SPDLOG_PRIVATE void print_ccode_(const string_view_t &color_code);
+    SPDLOG_PRIVATE void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
 };
 
 template<typename ConsoleMutex>
-class ansicolor_stdout_sink : public ansicolor_sink<ConsoleMutex>
+class SPDLOG_API ansicolor_stdout_sink : public ansicolor_sink<ConsoleMutex>
 {
 public:
     explicit ansicolor_stdout_sink(color_mode mode = color_mode::automatic);
 };
 
 template<typename ConsoleMutex>
-class ansicolor_stderr_sink : public ansicolor_sink<ConsoleMutex>
+class SPDLOG_API ansicolor_stderr_sink : public ansicolor_sink<ConsoleMutex>
 {
 public:
     explicit ansicolor_stderr_sink(color_mode mode = color_mode::automatic);

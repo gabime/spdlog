@@ -10,6 +10,7 @@
 // dequeue_for(..) - will block until the queue is not empty or timeout have
 // passed.
 
+#include "spdlog/common.h"
 #include "spdlog/details/circular_q.h"
 
 #include <condition_variable>
@@ -19,7 +20,7 @@ namespace spdlog {
 namespace details {
 
 template<typename T>
-class mpmc_blocking_queue
+class SPDLOG_API mpmc_blocking_queue
 {
 public:
     using item_type = T;

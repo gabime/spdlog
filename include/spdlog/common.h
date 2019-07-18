@@ -34,6 +34,26 @@
 #define SPDLOG_INLINE inline
 #endif
 
+#if !defined(SPDLOG_HEADER_ONLY)
+# if defined(_WIN32) || defined(__CYGWIN__)
+#  if defined(SPDLOG_EXPORTS)
+#   define SPDLOG_API __declspec(dllexport)
+#  elif defined(SPDLOG_SHARED)
+#   define SPDLOG_API __declspec(dllimport)
+#  endif
+# elif __GNUC__ >= 4
+#  define SPDLOG_API     __attribute__ ((visibility ("default")))
+#  define SPDLOG_PRIVATE __attribute__ ((visibility ("hidden")))
+# endif
+#endif
+
+#ifndef SPDLOG_API
+# define SPDLOG_API
+#endif
+#ifndef SPDLOG_PRIVATE
+# define SPDLOG_PRIVATE
+#endif
+
 #include "spdlog/fmt/fmt.h"
 
 // visual studio upto 2013 does not support noexcept nor constexpr
@@ -144,9 +164,9 @@ enum level_enum
     }
 #endif
 
-string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
+SPDLOG_API string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
 using level_hasher = std::hash<int>;
 } // namespace level
@@ -174,7 +194,7 @@ enum class pattern_time_type
 //
 // Log exception
 //
-class spdlog_ex : public std::exception
+class SPDLOG_API spdlog_ex : public std::exception
 {
 public:
     explicit spdlog_ex(std::string msg);
@@ -185,7 +205,7 @@ private:
     std::string msg_;
 };
 
-struct source_loc
+struct SPDLOG_API source_loc
 {
     SPDLOG_CONSTEXPR source_loc() = default;
     SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)

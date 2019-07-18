@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
 
@@ -12,7 +13,7 @@
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>
-class ostream_sink final : public base_sink<Mutex>
+class SPDLOG_API ostream_sink final : public base_sink<Mutex>
 {
 public:
     explicit ostream_sink(std::ostream &os, bool force_flush = false)

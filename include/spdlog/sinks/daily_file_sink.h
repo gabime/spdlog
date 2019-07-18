@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/fmt/fmt.h"
@@ -22,7 +23,7 @@ namespace sinks {
 /*
  * Generator of daily log file names in format basename.YYYY-MM-DD.ext
  */
-struct daily_filename_calculator
+struct SPDLOG_API daily_filename_calculator
 {
     // Create filename for the form basename.YYYY-MM-DD
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
@@ -40,7 +41,7 @@ struct daily_filename_calculator
  * Rotating file sink based on date. rotates at midnight
  */
 template<typename Mutex, typename FileNameCalc = daily_filename_calculator>
-class daily_file_sink final : public base_sink<Mutex>
+class SPDLOG_API daily_file_sink final : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time

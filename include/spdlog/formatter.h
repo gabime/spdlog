@@ -3,12 +3,13 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "fmt/fmt.h"
 #include "spdlog/details/log_msg.h"
 
 namespace spdlog {
 
-class formatter
+class SPDLOG_API formatter
 {
 public:
     virtual ~formatter() = default;

@@ -35,7 +35,7 @@
     }
 
 namespace spdlog {
-class logger
+class SPDLOG_API logger
 {
 public:
     // Empty logger
@@ -328,7 +328,7 @@ protected:
     void err_handler_(const std::string &msg);
 };
 
-void swap(logger &a, logger &b);
+SPDLOG_API void swap(logger &a, logger &b);
 
 } // namespace spdlog
 

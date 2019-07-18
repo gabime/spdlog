@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/synchronous_factory.h"
@@ -18,7 +19,7 @@ namespace sinks {
  * Locking is not needed, as `sd_journal_send()` itself is thread-safe.
  */
 template<typename Mutex>
-class systemd_sink : public base_sink<Mutex>
+class SPDLOG_API systemd_sink : public base_sink<Mutex>
 {
 public:
     //

@@ -5,6 +5,7 @@
 
 #if defined(_WIN32)
 
+#include "spdlog/common.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
 
@@ -19,7 +20,7 @@ namespace sinks {
  * MSVC sink (logging using OutputDebugStringA)
  */
 template<typename Mutex>
-class msvc_sink : public base_sink<Mutex>
+class SPDLOG_API msvc_sink : public base_sink<Mutex>
 {
 public:
     explicit msvc_sink() {}

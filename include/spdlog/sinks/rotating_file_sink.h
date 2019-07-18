@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/null_mutex.h"
@@ -19,7 +20,7 @@ namespace sinks {
 // Rotating file sink based on size
 //
 template<typename Mutex>
-class rotating_file_sink final : public base_sink<Mutex>
+class SPDLOG_API rotating_file_sink final : public base_sink<Mutex>
 {
 public:
     rotating_file_sink(filename_t base_filename, std::size_t max_size, std::size_t max_files, bool rotate_on_open = false);
@@ -36,11 +37,11 @@ private:
     // log.1.txt -> log.2.txt
     // log.2.txt -> log.3.txt
     // log.3.txt -> delete
-    void rotate_();
+    SPDLOG_PRIVATE void rotate_();
 
     // delete the target if exists, and rename the src file  to target
     // return true on success, false otherwise.
-    bool rename_file(const filename_t &src_filename, const filename_t &target_filename);
+    SPDLOG_PRIVATE bool rename_file(const filename_t &src_filename, const filename_t &target_filename);
 
     filename_t base_filename_;
     std::size_t max_size_;

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/null_mutex.h"
 
@@ -16,7 +17,7 @@ namespace sinks {
  * Sink that write to syslog using the `syscall()` library call.
  */
 template<typename Mutex>
-class syslog_sink : public base_sink<Mutex>
+class SPDLOG_API syslog_sink : public base_sink<Mutex>
 {
 
 public:

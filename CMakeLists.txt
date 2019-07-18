@@ -80,6 +80,12 @@ target_include_directories(spdlog PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
+set_target_properties(spdlog PROPERTIES DEFINE_SYMBOL SPDLOG_EXPORTS)
+
+if (BUILD_SHARED_LIBS)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED)
+endif ()
+
 spdlog_enable_warnings(spdlog)
 
 #---------------------------------------------------------------------------------------
@@ -92,7 +98,6 @@ target_include_directories(spdlog_header_only INTERFACE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
-
 
 #---------------------------------------------------------------------------------------
 # Use fmt package if using exertnal fmt

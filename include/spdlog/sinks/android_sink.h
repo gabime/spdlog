@@ -5,6 +5,7 @@
 
 #ifdef __ANDROID__
 
+#include "spdlog/common.h"
 #include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/os.h"
@@ -28,7 +29,7 @@ namespace sinks {
  * Android sink (logging using __android_log_write)
  */
 template<typename Mutex>
-class android_sink final : public base_sink<Mutex>
+class SPDLOG_API android_sink final : public base_sink<Mutex>
 {
 public:
     explicit android_sink(std::string tag = "spdlog", bool use_raw_msg = false)

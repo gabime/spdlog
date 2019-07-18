@@ -865,7 +865,6 @@ public:
 
 // print elapsed time since last message
 template<typename ScopedPadder, typename Units>
-
 class elapsed_formatter final : public flag_formatter
 {
 public:

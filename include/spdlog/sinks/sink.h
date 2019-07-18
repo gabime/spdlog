@@ -3,13 +3,14 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/formatter.h"
 
 namespace spdlog {
 
 namespace sinks {
-class sink
+class SPDLOG_API sink
 {
 public:
     virtual ~sink() = default;

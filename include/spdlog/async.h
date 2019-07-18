@@ -14,6 +14,7 @@
 // This is because each message in the queue holds a shared_ptr to the
 // originating logger.
 
+#include "spdlog/common.h"
 #include "spdlog/async_logger.h"
 #include "spdlog/details/registry.h"
 #include "spdlog/details/thread_pool.h"
@@ -25,14 +26,14 @@
 namespace spdlog {
 
 namespace details {
-static const size_t default_async_q_size = 8192;
+SPDLOG_CONSTEXPR static const size_t default_async_q_size = 8192;
 }
 
 // async logger factory - creates async loggers backed with thread pool.
 // if a global thread pool doesn't already exist, create it with default queue
 // size of 8192 items and single thread.
 template<async_overflow_policy OverflowPolicy = async_overflow_policy::block>
-struct async_factory_impl
+struct SPDLOG_API async_factory_impl
 {
     template<typename Sink, typename... SinkArgs>
     static std::shared_ptr<async_logger> create(std::string logger_name, SinkArgs &&... args)

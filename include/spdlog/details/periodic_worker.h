@@ -14,10 +14,11 @@
 #include <functional>
 #include <mutex>
 #include <thread>
+#include "spdlog/common.h"
 namespace spdlog {
 namespace details {
 
-class periodic_worker
+class SPDLOG_API periodic_worker
 {
 public:
     periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval);

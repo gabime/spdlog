@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/mpmc_blocking_q.h"
 #include "spdlog/details/os.h"
@@ -29,7 +30,7 @@ enum class async_msg_type
 
 // Async msg to move to/from the queue
 // Movable only. should never be copied
-struct async_msg
+struct SPDLOG_API async_msg
 {
     async_msg_type msg_type;
     level::level_enum level;
@@ -113,7 +114,7 @@ struct async_msg
     }
 };
 
-class thread_pool
+class SPDLOG_API thread_pool
 {
 public:
     using item_type = async_msg;
@@ -137,13 +138,13 @@ private:
 
     std::vector<std::thread> threads_;
 
-    void post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy);
-    void worker_loop_();
+    SPDLOG_PRIVATE void post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy);
+    SPDLOG_PRIVATE void worker_loop_();
 
     // process next message in the queue
     // return true if this thread should still be active (while no terminate msg
     // was received)
-    bool process_next_msg_();
+    SPDLOG_PRIVATE bool process_next_msg_();
 };
 
 } // namespace details

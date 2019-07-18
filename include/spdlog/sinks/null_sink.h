@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/synchronous_factory.h"
@@ -13,7 +14,7 @@ namespace spdlog {
 namespace sinks {
 
 template<typename Mutex>
-class null_sink : public base_sink<Mutex>
+class SPDLOG_API null_sink : public base_sink<Mutex>
 {
 protected:
     void sink_it_(const details::log_msg &) override {}

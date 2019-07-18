@@ -105,6 +105,10 @@ template std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st<spdlog::async_
 // All rights reserved.
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
+
+#if defined(SPDLOG_SHARED) && !defined(FMT_SHARED)
+# define FMT_SHARED
+#endif
 #include "spdlog/fmt/bundled/format-inl.h"
 
 FMT_BEGIN_NAMESPACE

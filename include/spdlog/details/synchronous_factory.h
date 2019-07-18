@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "registry.h"
 
 namespace spdlog {
@@ -10,7 +11,7 @@ namespace spdlog {
 // Default logger factory-  creates synchronous loggers
 class logger;
 
-struct synchronous_factory
+struct SPDLOG_API synchronous_factory
 {
     template<typename Sink, typename... SinkArgs>
     static std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... args)

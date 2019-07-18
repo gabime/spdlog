@@ -19,7 +19,7 @@ namespace spdlog {
 namespace details {
 
 // padding information.
-struct padding_info
+struct SPDLOG_API padding_info
 {
     enum pad_side
     {
@@ -42,7 +42,7 @@ struct padding_info
     const pad_side side_ = left;
 };
 
-class flag_formatter
+class SPDLOG_API flag_formatter
 {
 public:
     explicit flag_formatter(padding_info padinfo)
@@ -58,7 +58,7 @@ protected:
 
 } // namespace details
 
-class pattern_formatter final : public formatter
+class SPDLOG_API pattern_formatter final : public formatter
 {
 public:
     explicit pattern_formatter(
@@ -81,16 +81,16 @@ private:
     std::chrono::seconds last_log_secs_;
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
 
-    std::tm get_time_(const details::log_msg &msg);
+    SPDLOG_PRIVATE std::tm get_time_(const details::log_msg &msg);
     template<typename Padder>
-    void handle_flag_(char flag, details::padding_info padding);
+    SPDLOG_PRIVATE void handle_flag_(char flag, details::padding_info padding);
 
     // Extract given pad spec (e.g. %8X)
     // Advance the given it pass the end of the padding spec found (if any)
     // Return padding.
-    details::padding_info handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end);
+    SPDLOG_PRIVATE details::padding_info handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end);
 
-    void compile_pattern_(const std::string &pattern);
+    SPDLOG_PRIVATE void compile_pattern_(const std::string &pattern);
 };
 } // namespace spdlog
 

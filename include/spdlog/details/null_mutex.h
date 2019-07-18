@@ -4,11 +4,12 @@
 #pragma once
 
 #include <atomic>
+#include "spdlog/common.h"
 // null, no cost dummy "mutex" and dummy "atomic" int
 
 namespace spdlog {
 namespace details {
-struct null_mutex
+struct SPDLOG_API null_mutex
 {
     void lock() {}
     void unlock() {}

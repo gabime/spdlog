@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
@@ -17,7 +18,7 @@ namespace sinks {
  * Trivial file sink with single file as target
  */
 template<typename Mutex>
-class basic_file_sink final : public base_sink<Mutex>
+class SPDLOG_API basic_file_sink final : public base_sink<Mutex>
 {
 public:
     explicit basic_file_sink(const filename_t &filename, bool truncate = false);

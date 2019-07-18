@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/details/console_globals.h"
 #include "spdlog/details/synchronous_factory.h"
 #include "spdlog/sinks/sink.h"
@@ -13,7 +14,7 @@ namespace spdlog {
 namespace sinks {
 
 template<typename ConsoleMutex>
-class stdout_sink_base : public sink
+class SPDLOG_API stdout_sink_base : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
@@ -35,14 +36,14 @@ protected:
 };
 
 template<typename ConsoleMutex>
-class stdout_sink : public stdout_sink_base<ConsoleMutex>
+class SPDLOG_API stdout_sink : public stdout_sink_base<ConsoleMutex>
 {
 public:
     stdout_sink();
 };
 
 template<typename ConsoleMutex>
-class stderr_sink : public stdout_sink_base<ConsoleMutex>
+class SPDLOG_API stderr_sink : public stdout_sink_base<ConsoleMutex>
 {
 public:
     stderr_sink();
@@ -58,16 +59,16 @@ using stderr_sink_st = stderr_sink<details::console_nullmutex>;
 
 // factory methods
 template<typename Factory = spdlog::synchronous_factory>
-std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name);
+SPDLOG_API std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name);
 
 template<typename Factory = spdlog::synchronous_factory>
-std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name);
+SPDLOG_API std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name);
 
 template<typename Factory = spdlog::synchronous_factory>
-std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name);
+SPDLOG_API std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name);
 
 template<typename Factory = spdlog::synchronous_factory>
-std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
+SPDLOG_API std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
 
 } // namespace spdlog
 
