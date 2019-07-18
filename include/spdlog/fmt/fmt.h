@@ -18,6 +18,9 @@
 # if defined(SDPLOG_SHARED) && !defined(FMT_SHARED)
 #  define FMT_SHARED
 # endif
+# if defined(SDPLOG_EXPORTS) && !defined(FMT_EXPORT)
+#  define FMT_EXPORT
+# endif
 # ifndef FMT_USE_WINDOWS_H
 #  define FMT_USE_WINDOWS_H 0
 # endif
