@@ -155,11 +155,15 @@
 # define FMT_BEGIN_NAMESPACE namespace fmt { FMT_INLINE_NAMESPACE v5 {
 #endif
 
-#if !defined(FMT_HEADER_ONLY) && defined(_WIN32)
-# ifdef FMT_EXPORT
-#  define FMT_API __declspec(dllexport)
-# elif defined(FMT_SHARED)
-#  define FMT_API __declspec(dllimport)
+#if !defined(FMT_HEADER_ONLY)
+# if defined(_WIN32) || defined(__CYGWIN__)
+#  ifdef FMT_EXPORT
+#   define FMT_API __declspec(dllexport)
+#  elif defined(FMT_SHARED)
+#   define FMT_API __declspec(dllimport)
+#  endif
+# elif __GNUC__ >= 4
+#  define FMT_API __attribute__((visibility ("default")))
 # endif
 #endif
 #ifndef FMT_API
