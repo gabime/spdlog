@@ -4,7 +4,6 @@ project('spdlog', ['cpp'],
   default_options : [
     'warning_level=3',
     'cpp_std=c++11',
-    'default_library=static',
     'buildtype=release',
     'b_colorout=always',
   ],
@@ -34,12 +33,21 @@ endif
 
 spdlog_inc = include_directories('./include')
 
-spdlog = library('spdlog', ['src/spdlog.cpp'],
-  cpp_args            : [compile_args] + ['-DSPDLOG_COMPILED_LIB'],
-  include_directories : spdlog_inc,
-  dependencies        : dep_list,
-  install             : true,
-)
+if get_option('library_type') == 'static'
+  spdlog = static_library('spdlog', ['src/spdlog.cpp'],
+    cpp_args            : [compile_args] + ['-DSPDLOG_COMPILED_LIB'],
+    include_directories : spdlog_inc,
+    dependencies        : dep_list,
+    install             : not meson.is_subproject(),
+  )
+else
+  spdlog = shared_library('spdlog', ['src/spdlog.cpp'],
+    cpp_args            : [compile_args] + ['-DSPDLOG_COMPILED_LIB'],
+    include_directories : spdlog_inc,
+    dependencies        : dep_list,
+    install             : not meson.is_subproject(),
+  )
+endif
 
 spdlog_dep = declare_dependency(
   link_with           : spdlog,
@@ -64,15 +72,18 @@ spdlog_headeronly_dep = declare_dependency(
 # ---   Installation   ---
 # ------------------------
 
-install_subdir('include/spdlog', install_dir: get_option('includedir'))
+# Do not install when spdlog is used as a subproject
+if not meson.is_subproject()
+  install_subdir('include/spdlog', install_dir: get_option('includedir'))
 
-pkg = import('pkgconfig')
-pkg.generate(spdlog,
-  name         : 'spdlog',
-  description  : 'Fast C++ logging library',
-  url          : 'https://github.com/gabime/spdlog',
-  extra_cflags : ['-DSPDLOG_COMPILED_LIB']
-)
+  pkg = import('pkgconfig')
+  pkg.generate(spdlog,
+    name         : 'spdlog',
+    description  : 'Fast C++ logging library',
+    url          : 'https://github.com/gabime/spdlog',
+    extra_cflags : ['-DSPDLOG_COMPILED_LIB']
+  )
+endif
 
 # -------------------------------------
 # ---   Conditionally add subdirs   ---
@@ -100,11 +111,13 @@ summary_str = '''spdlog build summary:
   - building tests:      @1@
   - building examples:   @2@
   - building benchmarks: @3@
+  - library type:        @4@
 '''.format(
   get_option('external_fmt'),
   get_option('enable_tests'),
   get_option('enable_examples'),
-  get_option('enable_benchmarks')
+  get_option('enable_benchmarks'),
+  get_option('library_type')
 )
 
 message(summary_str)
