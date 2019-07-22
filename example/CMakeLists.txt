@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.13)
 project(spdlog_examples CXX)
 
-if(NOT TARGET spdlog_header_only)
+if(NOT TARGET spdlog)
     # Stand-alone build
     find_package(spdlog REQUIRED)
 endif()

@@ -170,7 +170,7 @@ if(SPDLOG_INSTALL)
     # Include files
     #---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-    install(TARGETS spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_LIBDIR}/spdlog")
+    install(TARGETS spdlog spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_LIBDIR}/spdlog")
 
     #---------------------------------------------------------------------------------------
     # Package and version files
