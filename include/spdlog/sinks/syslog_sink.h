@@ -20,7 +20,7 @@ class syslog_sink : public base_sink<Mutex>
 {
 
 public:
-    syslog_sink(std::string  ident, int syslog_option, int syslog_facility, bool enable_formatting)
+    syslog_sink(std::string ident, int syslog_option, int syslog_facility, bool enable_formatting)
         : enable_formatting_{enable_formatting}
         , syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
               /* spdlog::level::debug      */ LOG_DEBUG,
@@ -44,7 +44,7 @@ public:
     syslog_sink &operator=(const syslog_sink &) = delete;
 
 protected:
-    void sink_it_(const details::log_msg & msg) override
+    void sink_it_(const details::log_msg &msg) override
     {
         string_view_t payload;
 

@@ -962,7 +962,8 @@ class arg_map {
     // The list is unsorted, so just return the first matching name.
     for (entry *it = map_, *end = map_ + size_; it != end; ++it) {
       if (it->name == name) {
-        return it->arg; }
+        return it->arg;
+      }
     }
     return {};
   }
