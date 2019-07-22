@@ -85,8 +85,13 @@ using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using err_handler = std::function<void(const std::string &err_msg)>;
 
+#ifdef SPDLOG_FMT_EXTERNAL
+template<typename T>
+using basic_string_view_t = std::basic_string_view<T>;
+#else
 template<typename T>
 using basic_string_view_t = fmt::basic_string_view<T>;
+#endif
 
 using string_view_t = basic_string_view_t<char>;
 

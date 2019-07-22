@@ -27,14 +27,14 @@ endfunction()
 function(spdlog_enable_warnings target_name)
     target_compile_options(${target_name} PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-            -Wall -Wextra -Wconversion -pedantic -Wfatal-errors>
+            -Wall -Wextra -Wconversion -pedantic -Werror -Wfatal-errors>
         $<$<CXX_COMPILER_ID:MSVC>:/W4 /WX>)
 endfunction()
 
 
 # Enable address sanitizer (gcc/clang only)
 function(spdlog_enable_sanitizer target_name)
-	if (NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+	if(NOT CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 		message(FATAL_ERROR "Sanitizer supported only for gcc/clang")
 	endif()
 	message(STATUS "Address sanitizer enabled")

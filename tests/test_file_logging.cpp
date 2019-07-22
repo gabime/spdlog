@@ -51,8 +51,7 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
     }
 
     logger->flush();
-    auto filename = basename;
-    REQUIRE(count_lines(filename) == 10);
+    REQUIRE(count_lines(basename) == 10);
 }
 
 TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
@@ -80,8 +79,7 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
     }
 
     logger->flush();
-    auto filename = basename;
-    REQUIRE(count_lines(filename) == 10);
+    REQUIRE(count_lines(basename) == 10);
     for (int i = 0; i < 1000; i++)
     {
 
@@ -89,7 +87,7 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
     }
 
     logger->flush();
-    REQUIRE(get_filesize(filename) <= max_size);
+    REQUIRE(get_filesize(basename) <= max_size);
     auto filename1 = basename + ".1";
     REQUIRE(get_filesize(filename1) <= max_size);
 }

@@ -108,7 +108,9 @@ TEST_CASE("async_error_handler2", "[errors]]")
         logger->set_error_handler([=](const std::string &) {
             std::ofstream ofs("logs/custom_err2.txt");
             if (!ofs)
+            {
                 throw std::runtime_error("Failed open logs/custom_err2.txt");
+            }
             ofs << err_msg;
         });
         logger->info("Hello failure");

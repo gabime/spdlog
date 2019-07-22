@@ -152,7 +152,7 @@ static int to12h(const tm &t)
 }
 
 // Abbreviated weekday name
-static std::array<const char *, 7> days{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+static std::array<const char *, 7> days{{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}};
 
 template<typename ScopedPadder>
 class a_formatter : public flag_formatter
@@ -171,7 +171,7 @@ public:
 };
 
 // Full weekday name
-static std::array<const char *, 7> full_days{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+static std::array<const char *, 7> full_days{{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}};
 
 template<typename ScopedPadder>
 class A_formatter : public flag_formatter
@@ -190,7 +190,7 @@ public:
 };
 
 // Abbreviated month
-static const std::array<const char *, 12> months{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"};
+static const std::array<const char *, 12> months{{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"}};
 
 template<typename ScopedPadder>
 class b_formatter : public flag_formatter
@@ -210,7 +210,7 @@ public:
 
 // Full month name
 static const std::array<const char *, 12> full_months{
-    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+    {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}};
 
 template<typename ScopedPadder>
 class B_formatter : public flag_formatter

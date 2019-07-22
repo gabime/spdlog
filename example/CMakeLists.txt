@@ -1,10 +1,10 @@
 # Copyright(c) 2019 spdlog authors
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.13)
 project(spdlog_examples CXX)
 
-if(NOT TARGET spdlog)
+if(NOT TARGET spdlog_header_only)
     # Stand-alone build
     find_package(spdlog REQUIRED)
 endif()

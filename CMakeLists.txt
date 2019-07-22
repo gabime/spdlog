@@ -1,14 +1,21 @@
 # Copyright(c) 2019 spdlog authors
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.13)
+
+
+# use ccache if found
+find_program(CCACHE_EXECUTABLE "ccache" HINTS /usr/local/bin /opt/local/bin)
+if(CCACHE_EXECUTABLE AND NOT CMAKE_TOOLCHAIN_FILE)
+    message(STATUS "use ccache")
+    set(CMAKE_CXX_COMPILER_LAUNCHER "${CCACHE_EXECUTABLE}" CACHE PATH "ccache" FORCE)
+endif()
 
 #---------------------------------------------------------------------------------------
 # Start spdlog project
 #---------------------------------------------------------------------------------------
 include(GNUInstallDirs)
 include(cmake/utils.cmake)
-include(cmake/ide.cmake)
 
 spdlog_extract_version()
 
@@ -22,6 +29,8 @@ endif()
 project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
 message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
+include(cmake/ide.cmake)
+
 #---------------------------------------------------------------------------------------
 # Compiler config
 #---------------------------------------------------------------------------------------
@@ -33,13 +42,31 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Set SPDLOG_MASTER_PROJECT to ON if we are building spdlog
 #---------------------------------------------------------------------------------------
 # Check if spdlog is being used directly or via add_subdirectory, but allow overriding
-if (NOT DEFINED SPDLOG_MASTER_PROJECT)
-    if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+if(NOT DEFINED SPDLOG_MASTER_PROJECT)
+    if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
         set(SPDLOG_MASTER_PROJECT ON)
     else()
         set(SPDLOG_MASTER_PROJECT OFF)
     endif()
-endif ()
+endif()
+
+
+# Where to put all the RUNTIME targets when built.  This variable is used to
+# initialize the RUNTIME_OUTPUT_DIRECTORY property for all the targets.
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+# Create logs directory, needed for examples! CK
+file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/logs")
+
+# initialize the ARCHIVE_OUTPUT_DIRECTORY property for all the targets.
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+
+# clang-tidy options
+option(SPDLOG_USE_CLANG_TIDY "run clang-tidy along with the compiler and report any problems" OFF)
+if(SPDLOG_USE_CLANG_TIDY)
+    find_program(CMAKE_CXX_CLANG_TIDY clang-tidy HINTS /usr/local/bin /opt/local/bin)
+else()
+    unset(CMAKE_CXX_CLANG_TIDY CACHE)
+endif()
 
 # example options
 option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
@@ -66,7 +93,7 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 #---------------------------------------------------------------------------------------
 # Static/Shared library (shared not supported in windows yet)
 #---------------------------------------------------------------------------------------
-if (BUILD_SHARED_LIBS AND WIN32)
+if(BUILD_SHARED_LIBS AND WIN32)
     message(WARNING "shared libs is not supported in spdlog - building static instead")
     add_library(spdlog STATIC src/spdlog.cpp ${SPDLOG_ALL_HEADERS})
 else()
@@ -98,9 +125,9 @@ target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 # Use fmt package if using exertnal fmt
 #---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL)
-    if (NOT TARGET fmt::fmt)
+    if(NOT TARGET fmt::fmt)
         find_package(fmt REQUIRED)
-    endif ()
+    endif()
 
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog PUBLIC fmt::fmt)
@@ -119,7 +146,7 @@ endif()
 
 if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_TESTS_HO)
     message(STATUS "Generating tests")
-    include(CTest)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 
@@ -131,7 +158,7 @@ endif()
 #---------------------------------------------------------------------------------------
 # Install
 #---------------------------------------------------------------------------------------
-if (SPDLOG_INSTALL)
+if(SPDLOG_INSTALL)
     message(STATUS "Generating install")
     set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/spdlogConfig.cmake.in")
     set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfig.cmake")
@@ -143,7 +170,7 @@ if (SPDLOG_INSTALL)
     # Include files
     #---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-    install(TARGETS spdlog spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_LIBDIR}/spdlog")
+    install(TARGETS spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_LIBDIR}/spdlog")
 
     #---------------------------------------------------------------------------------------
     # Package and version files
@@ -165,4 +192,4 @@ if (SPDLOG_INSTALL)
     #---------------------------------------------------------------------------------------
     include(cmake/spdlogCPack.cmake)
 
-endif ()
+endif()

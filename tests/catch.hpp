@@ -132,7 +132,7 @@ namespace Catch {
 
 #endif
 
-#if defined(CATCH_CPP17_OR_GREATER)
+#if defined(CATCH_CPP17_OR_GREATER) && !defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__)
 #  define CATCH_INTERNAL_CONFIG_CPP17_UNCAUGHT_EXCEPTIONS
 #endif
 

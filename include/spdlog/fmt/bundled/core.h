@@ -81,7 +81,7 @@
 #endif
 
 #ifndef FMT_OVERRIDE
-# if FMT_HAS_FEATURE(cxx_override) || \
+# if FMT_HAS_FEATURE(cxx_override) || (__cplusplus >= 201402L) ||\
      (FMT_GCC_VERSION >= 408 && FMT_HAS_GXX_CXX11) || FMT_MSC_VER >= 1900
 #  define FMT_OVERRIDE override
 # else
@@ -167,7 +167,7 @@
 #endif
 
 #ifndef FMT_ASSERT
-# define FMT_ASSERT(condition, message) assert((condition) && message)
+# define FMT_ASSERT(condition, message) assert((condition) && (message))
 #endif
 
 // libc++ supports string_view in pre-c++17.
@@ -961,8 +961,8 @@ class arg_map {
   basic_format_arg<Context> find(basic_string_view<char_type> name) const {
     // The list is unsorted, so just return the first matching name.
     for (entry *it = map_, *end = map_ + size_; it != end; ++it) {
-      if (it->name == name)
-        return it->arg;
+      if (it->name == name) {
+        return it->arg; }
     }
     return {};
   }

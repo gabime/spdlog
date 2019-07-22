@@ -1,10 +1,10 @@
 Checks: 'modernize-*,modernize-use-override,google-*,-google-runtime-references,misc-*,clang-analyzer-*,-misc-non-private-member-variables-in-classes'
 WarningsAsErrors: ''
-HeaderFilterRegex: 'async.h|async_logger.h|common.h|details|formatter.h|logger.h|sinks|spdlog.h|tweakme.h|version.h'
+HeaderFilterRegex: 'async.h|async_logger.h|common.h|details/.*|formatter.h|logger.h|sinks/.*|spdlog.h|tweakme.h|version.h'
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 
-CheckOptions:    
+CheckOptions:
   - key:             google-readability-braces-around-statements.ShortStatementLines
     value:           '1'
   - key:             google-readability-function-size.StatementThreshold

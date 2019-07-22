@@ -3,7 +3,7 @@
 void prepare_logdir()
 {
     spdlog::drop_all();
-#ifdef _WIN32
+#ifdef _MSC_VER
     system("if not exist logs mkdir logs");
     system("del /F /Q logs\\*");
 #else
@@ -41,7 +41,9 @@ std::size_t count_lines(const std::string &filename)
     std::string line;
     size_t counter = 0;
     while (std::getline(ifs, line))
+    {
         counter++;
+    }
     return counter;
 }
 

@@ -4,7 +4,6 @@
 #include "includes.h"
 
 using spdlog::details::file_helper;
-using spdlog::details::log_msg;
 
 static const std::string target_filename = "logs/file_helper_test.txt";
 
@@ -76,7 +75,7 @@ static void test_split_ext(const char *fname, const char *expect_base, const cha
     spdlog::filename_t expected_base(expect_base);
     spdlog::filename_t expected_ext(expect_ext);
 
-#ifdef _WIN32 // replace folder sep
+#ifdef _MSC_VER // replace folder sep
     std::replace(filename.begin(), filename.end(), '/', '\\');
     std::replace(expected_base.begin(), expected_base.end(), '/', '\\');
 #endif

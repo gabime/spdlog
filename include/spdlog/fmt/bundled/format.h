@@ -482,7 +482,7 @@ class basic_memory_buffer: private Allocator, public internal::basic_buffer<T> {
       : Allocator(alloc) {
     this->set(store_, SIZE);
   }
-  ~basic_memory_buffer() { deallocate(); }
+  ~basic_memory_buffer() FMT_OVERRIDE { deallocate(); }
 
  private:
   // Move data from other to this buffer.

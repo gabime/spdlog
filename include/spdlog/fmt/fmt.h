@@ -22,6 +22,6 @@
 #include "bundled/core.h"
 #include "bundled/format.h"
 #else // SPDLOG_FMT_EXTERNAL is defined - use external fmtlib
-#include "fmt/core.h"
-#include "fmt/format.h"
+      //FIXME: libfmt @4.1.0 FMT_STRING_VIEW missing! CK  #include <fmt/core.h>
+#include <fmt/format.h>
 #endif

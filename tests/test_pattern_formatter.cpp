@@ -10,7 +10,7 @@ static std::string log_to_str(const std::string &msg, const Args &... args)
     spdlog::logger oss_logger("pattern_tester", oss_sink);
     oss_logger.set_level(spdlog::level::info);
 
-    oss_logger.set_formatter(std::unique_ptr<spdlog::formatter>(new spdlog::pattern_formatter(args...)));
+    oss_logger.set_formatter(std::unique_ptr<spdlog::formatter>(new spdlog::pattern_formatter(args ...)));
 
     oss_logger.info(msg);
     return oss.str();
@@ -254,10 +254,10 @@ TEST_CASE("clone-formatter-2", "[pattern_formatter]")
 // Test source location formatting
 //
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 static const char *test_path = "\\a\\b\\myfile.cpp";
 #else
-static const char *test_path = "/a/b//myfile.cpp";
+static const char *test_path = "/a/b/myfile.cpp";
 #endif
 
 TEST_CASE("short filename formatter-1", "[pattern_formatter]")

@@ -97,7 +97,7 @@ public:
         log(source_loc{}, lvl, fmt, args...);
     }
 
-    void log(source_loc loc, level::level_enum lvl, const string_view_t msg);
+    void log(source_loc loc, level::level_enum lvl, string_view_t msg);
     void log(level::level_enum lvl, string_view_t msg);
 
     template<typename... Args>
