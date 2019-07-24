@@ -163,6 +163,12 @@ inline void critical(string_view_t fmt, const Args &... args)
 }
 
 template<typename T>
+inline void log(source_loc source, level::level_enum lvl, const T &msg)
+{
+    default_logger_raw()->log(source, lvl, msg);
+}
+
+template<typename T>
 inline void log(level::level_enum lvl, const T &msg)
 {
     default_logger_raw()->log(lvl, msg);
@@ -205,6 +211,12 @@ inline void critical(const T &msg)
 }
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+template<typename... Args>
+inline void log(source_loc source, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
+{
+    default_logger_raw()->log(source, lvl, fmt, args...);
+}
+
 template<typename... Args>
 inline void log(level::level_enum lvl, wstring_view_t fmt, const Args &... args)
 {
