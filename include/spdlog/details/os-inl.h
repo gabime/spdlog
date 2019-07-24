@@ -32,10 +32,6 @@
 #include <process.h> //  _get_pid support
 #include <windows.h>
 
-// windows.h leaks NEAR and FAR macros, prevent those from leaking further
-#undef NEAR
-#undef FAR
-
 #ifdef __MINGW32__
 #include <share.h>
 #endif
