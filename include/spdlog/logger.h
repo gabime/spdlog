@@ -143,7 +143,7 @@ public:
     }
 
     // T can be statically converted to string_view
-    template<class T, typename std::enable_if<std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
+    template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         if (!should_log(lvl))
@@ -156,7 +156,7 @@ public:
     }
 
     // T cannot be statically converted to string_view
-    template<class T, typename std::enable_if<!std::is_convertible<T, spdlog::string_view_t>::value, T>::type * = nullptr>
+    template<class T, typename std::enable_if<!std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         if (!should_log(lvl))
@@ -279,7 +279,7 @@ public:
     }
 
     // T can be statically converted to wstring_view
-    template<class T, typename std::enable_if<std::is_convertible<T, spdlog::wstring_view_t>::value, T>::type * = nullptr>
+    template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::wstring_view_t>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         if (!should_log(lvl))
