@@ -155,8 +155,8 @@ public:
         sink_it_(log_msg);
     }
 
-    // T cannot be statically converted to string_view
-    template<class T, typename std::enable_if<!std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
+    // T cannot be statically converted to string_view or wstring_view
+    template<class T, typename std::enable_if<!std::is_convertible<const T &, spdlog::string_view_t>::value && !is_convertible_to_wstring_view<const T &>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         if (!should_log(lvl))
@@ -279,7 +279,7 @@ public:
     }
 
     // T can be statically converted to wstring_view
-    template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::wstring_view_t>::value, T>::type * = nullptr>
+    template<class T, typename std::enable_if<is_convertible_to_wstring_view<const T &>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         if (!should_log(lvl))
@@ -292,7 +292,7 @@ public:
             fmt::memory_buffer buf;
             details::os::wstr_to_utf8buf(msg, buf);
 
-            details::log_msg log_msg(loc, name_, lvl, buf);
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
         }
         SPDLOG_LOGGER_CATCH()

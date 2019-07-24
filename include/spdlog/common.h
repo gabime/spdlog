@@ -95,7 +95,13 @@ using string_view_t = basic_string_view_t<char>;
 #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
 #else
 using wstring_view_t = basic_string_view_t<wchar_t>;
+
+template<typename T>
+struct is_convertible_to_wstring_view : std::is_convertible<T, wstring_view_t> { };
 #endif // _WIN32
+#else
+template<typename>
+struct is_convertible_to_wstring_view : std::false_type { };
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
