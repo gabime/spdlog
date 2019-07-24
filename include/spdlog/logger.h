@@ -228,7 +228,7 @@ public:
             fmt::format_to(wbuf, fmt, args...);
 
             fmt::memory_buffer buf;
-            details::os::wstr_to_utf8buf(basic_string_view_t<wchar_t>(wbuf.data(), wbuf.size()), buf);
+            details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
 
             details::log_msg log_msg(source, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
@@ -276,6 +276,26 @@ public:
     void critical(wstring_view_t fmt, const Args &... args)
     {
         log(level::critical, fmt, args...);
+    }
+
+    // T can be statically converted to wstring_view
+    template<class T, typename std::enable_if<std::is_convertible<T, spdlog::wstring_view_t>::value, T>::type * = nullptr>
+    void log(source_loc loc, level::level_enum lvl, const T &msg)
+    {
+        if (!should_log(lvl))
+        {
+            return;
+        }
+
+        try
+        {
+            fmt::memory_buffer buf;
+            details::os::wstr_to_utf8buf(msg, buf);
+
+            details::log_msg log_msg(loc, name_, lvl, buf);
+            sink_it_(log_msg);
+        }
+        SPDLOG_LOGGER_CATCH()
     }
 #endif // _WIN32
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
