@@ -214,13 +214,8 @@ public:
 #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
 #else
     template<typename... Args>
-    void log(source_loc source, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
+    void force_log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
     {
-        if (!should_log(lvl))
-        {
-            return;
-        }
-
         try
         {
             // format to wmemory_buffer and convert to utf8
@@ -234,6 +229,15 @@ public:
             sink_it_(log_msg);
         }
         SPDLOG_LOGGER_CATCH()
+    }
+
+    template<typename... Args>
+    void log(source_loc source, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
+    {
+        if (should_log(lvl))
+        {
+            force_log(loc, lvl, fmt, args...);
+        }
     }
 
     template<typename... Args>
