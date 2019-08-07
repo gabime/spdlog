@@ -214,7 +214,7 @@ public:
 #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
 #else
     template<typename... Args>
-    void force_log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
+    void force_log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
     {
         try
         {
