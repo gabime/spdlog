@@ -225,14 +225,14 @@ public:
             fmt::memory_buffer buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
 
-            details::log_msg log_msg(source, name_, lvl, string_view_t(buf.data(), buf.size()));
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
         }
         SPDLOG_LOGGER_CATCH()
     }
 
     template<typename... Args>
-    void log(source_loc source, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
+    void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
     {
         if (should_log(lvl))
         {
