@@ -59,6 +59,11 @@ option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
+if(WIN32)
+	option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
+endif()
+
+
 find_package(Threads REQUIRED)
 
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
@@ -108,6 +113,12 @@ if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
 endif()
+
+if(SPDLOG_WCHAR_SUPPORT)
+	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+ endif()
+
 
 #---------------------------------------------------------------------------------------
 # Build binaries
