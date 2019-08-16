@@ -308,8 +308,6 @@ public:
 
     void set_level(level::level_enum log_level);
 
-    static level::level_enum default_level();
-
     level::level_enum level() const;
 
     const std::string &name() const;
@@ -339,7 +337,7 @@ public:
 protected:
     std::string name_;
     std::vector<sink_ptr> sinks_;
-    spdlog::level_t level_{spdlog::logger::default_level()};
+    spdlog::level_t level_{level::info};
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
 
