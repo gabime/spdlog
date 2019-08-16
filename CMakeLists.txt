@@ -130,7 +130,7 @@ endif()
 
 if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_TESTS_HO)
     message(STATUS "Generating tests")
-    include(CTest)
+    enable_testing()
     add_subdirectory(tests)
 endif()
 
