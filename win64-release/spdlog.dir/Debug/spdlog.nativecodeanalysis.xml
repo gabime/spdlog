@@ -1,0 +1,684 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>852</LINE>
+      <COLUMN>50</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::decimal_formatter::write_pair</FUNCTION>
+    <DECORATED>?write_pair@decimal_formatter@internal@v5@fmt@@AEAAXII@Z</DECORATED>
+    <FUNCLINE>851</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2205</LINE>
+      <COLUMN>2</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::system_error::error_code_' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::system_error::{ctor}</FUNCTION>
+    <DECORATED>??0system_error@v5@fmt@@IEAA@XZ</DECORATED>
+    <FUNCLINE>2205</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::system_error::error_code_</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>423</LINE>
+      <COLUMN>24</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::fp::compute_boundaries</FUNCTION>
+    <DECORATED>?compute_boundaries@fp@internal@v5@fmt@@QEBAXAEAV1234@0@Z</DECORATED>
+    <FUNCLINE>418</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>456</LINE>
+      <COLUMN>45</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::get_cached_power</FUNCTION>
+    <DECORATED>?get_cached_power@internal@v5@fmt@@YA?AVfp@123@HAEAH@Z</DECORATED>
+    <FUNCLINE>453</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>456</LINE>
+      <COLUMN>22</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::get_cached_power</FUNCTION>
+    <DECORATED>?get_cached_power@internal@v5@fmt@@YA?AVfp@123@HAEAH@Z</DECORATED>
+    <FUNCLINE>453</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\details\</FILEPATH>
+      <FILENAME>thread_pool.h</FILENAME>
+      <LINE>79</LINE>
+      <COLUMN>15</COLUMN>
+    </SFA>
+    <DEFECTCODE>26439</DEFECTCODE>
+    <DESCRIPTION>This kind of function may not throw. Declare it 'noexcept' (f.6).</DESCRIPTION>
+    <FUNCTION>spdlog::details::async_msg::=</FUNCTION>
+    <DECORATED>??4async_msg@details@spdlog@@QEAAAEAU012@$$QEAU012@@Z</DECORATED>
+    <FUNCLINE>79</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>523</LINE>
+      <COLUMN>23</COLUMN>
+    </SFA>
+    <DEFECTCODE>26439</DEFECTCODE>
+    <DESCRIPTION>This kind of function may not throw. Declare it 'noexcept' (f.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_memory_buffer&lt;char,176,std::allocator&lt;char&gt; &gt;::=</FUNCTION>
+    <DECORATED>??4?$basic_memory_buffer@D$0LA@V?$allocator@D@std@@@v5@fmt@@QEAAAEAV012@$$QEAV012@@Z</DECORATED>
+    <FUNCLINE>523</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>636</LINE>
+      <COLUMN>28</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::grisu2_prettify</FUNCTION>
+    <DECORATED>??$grisu2_prettify@AEAUchar_counter@internal@v5@fmt@@@internal@v5@fmt@@YAXAEBUgen_digits_params@012@HHAEAUchar_counter@012@@Z</DECORATED>
+    <FUNCLINE>619</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>650</LINE>
+      <COLUMN>46</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::grisu2_prettify</FUNCTION>
+    <DECORATED>??$grisu2_prettify@AEAUchar_counter@internal@v5@fmt@@@internal@v5@fmt@@YAXAEBUgen_digits_params@012@HHAEAUchar_counter@012@@Z</DECORATED>
+    <FUNCLINE>619</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>655</LINE>
+      <COLUMN>24</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::grisu2_prettify</FUNCTION>
+    <DECORATED>??$grisu2_prettify@AEAUchar_counter@internal@v5@fmt@@@internal@v5@fmt@@YAXAEBUgen_digits_params@012@HHAEAUchar_counter@012@@Z</DECORATED>
+    <FUNCLINE>619</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>626</LINE>
+      <COLUMN>39</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::grisu2_prettify</FUNCTION>
+    <DECORATED>??$grisu2_prettify@AEAUchar_counter@internal@v5@fmt@@@internal@v5@fmt@@YAXAEBUgen_digits_params@012@HHAEAUchar_counter@012@@Z</DECORATED>
+    <FUNCLINE>619</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>798</LINE>
+      <COLUMN>20</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::sprintf_format</FUNCTION>
+    <DECORATED>??$sprintf_format@N@internal@v5@fmt@@YAXNAEAV?$basic_buffer@D@012@Ucore_format_specs@12@@Z</DECORATED>
+    <FUNCLINE>764</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>798</LINE>
+      <COLUMN>20</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::sprintf_format</FUNCTION>
+    <DECORATED>??$sprintf_format@O@internal@v5@fmt@@YAXOAEAV?$basic_buffer@D@012@Ucore_format_specs@12@@Z</DECORATED>
+    <FUNCLINE>764</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>598</LINE>
+      <COLUMN>39</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::write_exponent</FUNCTION>
+    <DECORATED>??$write_exponent@AEAUchar_counter@internal@v5@fmt@@@internal@v5@fmt@@YAXHAEAUchar_counter@012@@Z</DECORATED>
+    <FUNCLINE>587</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format-inl.h</FILENAME>
+      <LINE>602</LINE>
+      <COLUMN>39</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::write_exponent</FUNCTION>
+    <DECORATED>??$write_exponent@AEAUchar_counter@internal@v5@fmt@@@internal@v5@fmt@@YAXHAEAUchar_counter@012@@Z</DECORATED>
+    <FUNCLINE>587</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1353</LINE>
+      <COLUMN>9</COLUMN>
+    </SFA>
+    <DEFECTCODE>6387</DEFECTCODE>
+    <DESCRIPTION>'value' could be '0':  this does not adhere to the specification for the function 'std::_WChar_traits&lt;wchar_t&gt;::length'. </DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::arg_formatter_base&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::write</FUNCTION>
+    <DECORATED>?write@?$arg_formatter_base@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@internal@v5@fmt@@IEAAXPEB_W@Z</DECORATED>
+    <FUNCLINE>1350</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+        <FILENAME>format.h</FILENAME>
+        <LINE>1351</LINE>
+        <COLUMN>8</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'value' may be NULL (Enter this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+        <FILENAME>format.h</FILENAME>
+        <LINE>1352</LINE>
+        <COLUMN>6</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+        <FILENAME>format.h</FILENAME>
+        <LINE>1353</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'value' is an Input to 'std::_WChar_traits&lt;wchar_t&gt;::length' (declared at c:\program files (x86)\microsoft visual studio\2019\community\vc\tools\msvc\14.22.27905\include\xstring:155)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+        <FILENAME>format.h</FILENAME>
+        <LINE>1353</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'value' should not be NULL, because this is not consistent with the SAL annotation on 'std::_WChar_traits&lt;wchar_t&gt;::length'</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1353</LINE>
+      <COLUMN>9</COLUMN>
+    </SFA>
+    <DEFECTCODE>6387</DEFECTCODE>
+    <DESCRIPTION>'value' could be '0':  this does not adhere to the specification for the function 'std::_Narrow_char_traits&lt;char,int&gt;::length'. </DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::arg_formatter_base&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::write</FUNCTION>
+    <DECORATED>?write@?$arg_formatter_base@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@internal@v5@fmt@@IEAAXPEBD@Z</DECORATED>
+    <FUNCLINE>1350</FUNCLINE>
+    <PROBABILITY>1</PROBABILITY>
+    <RANK>4</RANK>
+    <CATEGORY>
+      <RULECATEGORY>mspft</RULECATEGORY>
+    </CATEGORY>
+    <PATH>
+      <SFA>
+        <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+        <FILENAME>format.h</FILENAME>
+        <LINE>1351</LINE>
+        <COLUMN>8</COLUMN>
+        <KEYEVENT>
+          <ID>1</ID>
+          <KIND>branch</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'value' may be NULL (Enter this branch)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+        <FILENAME>format.h</FILENAME>
+        <LINE>1352</LINE>
+        <COLUMN>6</COLUMN>
+      </SFA>
+      <SFA>
+        <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+        <FILENAME>format.h</FILENAME>
+        <LINE>1353</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>2</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Full</IMPORTANCE>
+          <MESSAGE>'value' is an Input to 'std::_Narrow_char_traits&lt;char,int&gt;::length' (declared at c:\program files (x86)\microsoft visual studio\2019\community\vc\tools\msvc\14.22.27905\include\xstring:309)</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+      <SFA>
+        <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+        <FILENAME>format.h</FILENAME>
+        <LINE>1353</LINE>
+        <COLUMN>9</COLUMN>
+        <KEYEVENT>
+          <ID>3</ID>
+          <KIND>usage</KIND>
+          <IMPORTANCE>Essential</IMPORTANCE>
+          <MESSAGE>'value' should not be NULL, because this is not consistent with the SAL annotation on 'std::_Narrow_char_traits&lt;char,int&gt;::length'</MESSAGE>
+        </KEYEVENT>
+      </SFA>
+    </PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1463</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>26498</DEFECTCODE>
+    <DESCRIPTION>The function 'std::numeric_limits&lt;int&gt;::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::parse_nonnegative_int</FUNCTION>
+    <DECORATED>??$parse_nonnegative_int@DAEAU?$id_adapter@AEAU?$format_handler@V?$arg_formatter@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@DV?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@D@internal@v5@fmt@@@std@@D@23@@v5@fmt@@D@internal@v5@fmt@@@internal@v5@fmt@@YAIAEAPEBDPEBDAEAU?$id_adapter@AEAU?$format_handler@V?$arg_formatter@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@DV?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@D@internal@v5@fmt@@@std@@D@23@@v5@fmt@@D@012@@Z</DECORATED>
+    <FUNCLINE>1454</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1463</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>26498</DEFECTCODE>
+    <DESCRIPTION>The function 'std::numeric_limits&lt;int&gt;::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::parse_nonnegative_int</FUNCTION>
+    <DECORATED>??$parse_nonnegative_int@_WAEAU?$id_adapter@AEAU?$format_handler@V?$arg_formatter@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@_WV?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@_W@internal@v5@fmt@@@std@@_W@23@@v5@fmt@@_W@internal@v5@fmt@@@internal@v5@fmt@@YAIAEAPEB_WPEB_WAEAU?$id_adapter@AEAU?$format_handler@V?$arg_formatter@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@_WV?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@_W@internal@v5@fmt@@@std@@_W@23@@v5@fmt@@_W@012@@Z</DECORATED>
+    <FUNCLINE>1454</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1463</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>26498</DEFECTCODE>
+    <DESCRIPTION>The function 'std::numeric_limits&lt;int&gt;::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::parse_nonnegative_int</FUNCTION>
+    <DECORATED>??$parse_nonnegative_int@_WAEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@_W@internal@v5@fmt@@@std@@_W@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@YAIAEAPEB_WPEB_WAEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@_W@internal@v5@fmt@@@std@@_W@v5@fmt@@@internal@v5@fmt@@@012@@Z</DECORATED>
+    <FUNCLINE>1454</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1463</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>26498</DEFECTCODE>
+    <DESCRIPTION>The function 'std::numeric_limits&lt;int&gt;::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::parse_nonnegative_int</FUNCTION>
+    <DECORATED>??$parse_nonnegative_int@DAEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@D@internal@v5@fmt@@@std@@D@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@YAIAEAPEBDPEBDAEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@D@internal@v5@fmt@@@std@@D@v5@fmt@@@internal@v5@fmt@@@012@@Z</DECORATED>
+    <FUNCLINE>1454</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;unsigned __int64,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;unsigned __int64,fmt::v5::basic_format_specs&lt;char&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@_KU?$basic_format_specs@D@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@_KAEBU?$basic_format_specs@D@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;unsigned __int64,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;unsigned __int64,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;unsigned __int64,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@_KU?$basic_format_specs@_W@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@_KAEBU?$basic_format_specs@_W@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;unsigned __int64,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1463</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>26498</DEFECTCODE>
+    <DESCRIPTION>The function 'std::numeric_limits&lt;int&gt;::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::parse_nonnegative_int</FUNCTION>
+    <DECORATED>??$parse_nonnegative_int@_WAEAU?$precision_adapter@AEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@_W@internal@v5@fmt@@@std@@_W@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@_W@internal@v5@fmt@@@internal@v5@fmt@@YAIAEAPEB_WPEB_WAEAU?$precision_adapter@AEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@_W@internal@v5@fmt@@@std@@_W@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@_W@012@@Z</DECORATED>
+    <FUNCLINE>1454</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1463</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>26498</DEFECTCODE>
+    <DESCRIPTION>The function 'std::numeric_limits&lt;int&gt;::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::parse_nonnegative_int</FUNCTION>
+    <DECORATED>??$parse_nonnegative_int@DAEAU?$precision_adapter@AEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@D@internal@v5@fmt@@@std@@D@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@D@internal@v5@fmt@@@internal@v5@fmt@@YAIAEAPEBDPEBDAEAU?$precision_adapter@AEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@D@internal@v5@fmt@@@std@@D@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@D@012@@Z</DECORATED>
+    <FUNCLINE>1454</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;char,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;char,fmt::v5::basic_format_specs&lt;char&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@DU?$basic_format_specs@D@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@DAEBU?$basic_format_specs@D@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;char,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;bool,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;bool,fmt::v5::basic_format_specs&lt;char&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@_NU?$basic_format_specs@D@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@_NAEBU?$basic_format_specs@D@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;bool,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;__int64,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;__int64,fmt::v5::basic_format_specs&lt;char&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@_JU?$basic_format_specs@D@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@_JAEBU?$basic_format_specs@D@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;__int64,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;unsigned int,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;unsigned int,fmt::v5::basic_format_specs&lt;char&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@IU?$basic_format_specs@D@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@IAEBU?$basic_format_specs@D@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;unsigned int,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;wchar_t,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;wchar_t,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@_WU?$basic_format_specs@_W@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@_WAEBU?$basic_format_specs@_W@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;wchar_t,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;bool,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;bool,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@_NU?$basic_format_specs@_W@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@_NAEBU?$basic_format_specs@_W@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;bool,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;__int64,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;__int64,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@_JU?$basic_format_specs@_W@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@_JAEBU?$basic_format_specs@_W@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;__int64,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;unsigned int,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;unsigned int,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@IU?$basic_format_specs@_W@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@IAEBU?$basic_format_specs@_W@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;unsigned int,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;int,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;int,fmt::v5::basic_format_specs&lt;char&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@HU?$basic_format_specs@D@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@HAEBU?$basic_format_specs@D@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::int_writer&lt;int,fmt::v5::basic_format_specs&lt;char&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2386</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;int,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;int,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$int_writer@HU?$basic_format_specs@_W@v5@fmt@@@?$basic_writer@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEAA@AEAV123@HAEBU?$basic_format_specs@_W@23@@Z</DECORATED>
+    <FUNCLINE>2386</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::int_writer&lt;int,fmt::v5::basic_format_specs&lt;wchar_t&gt; &gt;::prefix</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1463</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>26498</DEFECTCODE>
+    <DESCRIPTION>The function 'std::numeric_limits&lt;int&gt;::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::parse_nonnegative_int</FUNCTION>
+    <DECORATED>??$parse_nonnegative_int@_WAEAU?$width_adapter@AEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@_W@internal@v5@fmt@@@std@@_W@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@_W@internal@v5@fmt@@@internal@v5@fmt@@YAIAEAPEB_WPEB_WAEAU?$width_adapter@AEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@_W@internal@v5@fmt@@@std@@_W@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@_W@012@@Z</DECORATED>
+    <FUNCLINE>1454</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>1463</LINE>
+      <COLUMN>11</COLUMN>
+    </SFA>
+    <DEFECTCODE>26498</DEFECTCODE>
+    <DESCRIPTION>The function 'std::numeric_limits&lt;int&gt;::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5).</DESCRIPTION>
+    <FUNCTION>fmt::v5::internal::parse_nonnegative_int</FUNCTION>
+    <DECORATED>??$parse_nonnegative_int@DAEAU?$width_adapter@AEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@D@internal@v5@fmt@@@std@@D@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@D@internal@v5@fmt@@@internal@v5@fmt@@YAIAEAPEBDPEBDAEAU?$width_adapter@AEAV?$specs_checker@V?$specs_handler@V?$basic_format_context@V?$back_insert_iterator@V?$basic_buffer@D@internal@v5@fmt@@@std@@D@v5@fmt@@@internal@v5@fmt@@@internal@v5@fmt@@D@012@@Z</DECORATED>
+    <FUNCLINE>1454</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2511</LINE>
+      <COLUMN>47</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;wchar_t&gt; &gt; &gt;::inf_or_nan_writer::size</FUNCTION>
+    <DECORATED>?size@inf_or_nan_writer@?$basic_writer@V?$back_insert_range@V?$basic_buffer@_W@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEBA_KXZ</DECORATED>
+    <FUNCLINE>2510</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\include\spdlog\fmt\bundled\</FILEPATH>
+      <FILENAME>format.h</FILENAME>
+      <LINE>2511</LINE>
+      <COLUMN>47</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>fmt::v5::basic_writer&lt;fmt::v5::back_insert_range&lt;fmt::v5::internal::basic_buffer&lt;char&gt; &gt; &gt;::inf_or_nan_writer::size</FUNCTION>
+    <DECORATED>?size@inf_or_nan_writer@?$basic_writer@V?$back_insert_range@V?$basic_buffer@D@internal@v5@fmt@@@v5@fmt@@@v5@fmt@@QEBA_KXZ</DECORATED>
+    <FUNCLINE>2510</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>
