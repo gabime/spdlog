@@ -71,3 +71,13 @@ install_manifest.txt
 # idea
 .idea/
 cmake-build-*/
+*.db
+*.ipch
+*.filters
+*.db-wal
+*.opendb
+*.db-shm
+*.vcxproj
+*.tcl
+*.user
+*.sln
