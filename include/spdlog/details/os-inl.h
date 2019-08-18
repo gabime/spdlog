@@ -120,13 +120,13 @@ SPDLOG_INLINE void prevent_child_fd(FILE *f)
 #if !defined(__cplusplus_winrt)
     auto file_handle = reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(f)));
     if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
-        throw spdlog_ex("SetHandleInformation failed", errno);
+        SPDLOG_THROW spdlog_ex("SetHandleInformation failed", errno);
 #endif
 #else
     auto fd = fileno(f);
     if (fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
     {
-        throw spdlog_ex("fcntl with FD_CLOEXEC failed", errno);
+        SPDLOG_THROW spdlog_ex("fcntl with FD_CLOEXEC failed", errno);
     }
 #endif
 }
@@ -192,7 +192,7 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 {
     if (f == nullptr)
     {
-        throw spdlog_ex("Failed getting file size. fd is null");
+        SPDLOG_THROW spdlog_ex("Failed getting file size. fd is null");
     }
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = _fileno(f);
@@ -229,7 +229,7 @@ SPDLOG_INLINE size_t filesize(FILE *f)
     }
 #endif
 #endif
-    throw spdlog_ex("Failed getting file size from fd", errno);
+    SPDLOG_THROW spdlog_ex("Failed getting file size from fd", errno);
 }
 
 // Return utc offset in minutes or throw spdlog_ex on failure

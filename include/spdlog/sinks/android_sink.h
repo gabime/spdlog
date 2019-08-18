@@ -64,7 +64,7 @@ protected:
 
         if (ret < 0)
         {
-            throw spdlog_ex("__android_log_write() failed", ret);
+            SPDLOG_THROW spdlog_ex("__android_log_write() failed", ret);
         }
     }
 

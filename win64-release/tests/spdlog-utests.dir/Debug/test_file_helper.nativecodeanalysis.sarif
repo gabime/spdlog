@@ -52,396 +52,6 @@
           }
         },
         {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 423,
-                  "startColumn": 17,
-                  "endLine": 423,
-                  "endColumn": 32
-                }
-              },
-              "fullyQualifiedLogicalName": "public: void __cdecl fmt::v5::internal::fp::compute_boundaries(class fmt::v5::internal::fp &,class fmt::v5::internal::fp &)const "
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 456,
-                  "startColumn": 10,
-                  "endLine": 456,
-                  "endColumn": 48
-                }
-              },
-              "fullyQualifiedLogicalName": "class fmt::v5::internal::fp __cdecl fmt::v5::internal::get_cached_power(int,int &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 456,
-                  "startColumn": 10,
-                  "endLine": 456,
-                  "endColumn": 29
-                }
-              },
-              "fullyQualifiedLogicalName": "class fmt::v5::internal::fp __cdecl fmt::v5::internal::get_cached_power(int,int &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26439",
-          "message": {
-            "text": "This kind of function may not throw. Declare it 'noexcept' (f.6)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/details/thread_pool.h"
-                },
-                "region": {
-                  "startLine": 79,
-                  "startColumn": 16,
-                  "endLine": 79,
-                  "endColumn": 16
-                }
-              },
-              "fullyQualifiedLogicalName": "public: struct spdlog::details::async_msg & __cdecl spdlog::details::async_msg::operator=(struct spdlog::details::async_msg &&)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26439",
-          "message": {
-            "text": "This kind of function may not throw. Declare it 'noexcept' (f.6)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 523,
-                  "startColumn": 24,
-                  "endLine": 523,
-                  "endColumn": 24
-                }
-              },
-              "fullyQualifiedLogicalName": "public: class fmt::v5::basic_memory_buffer<char,176,class std::allocator<char> > & __cdecl fmt::v5::basic_memory_buffer<char,176,class std::allocator<char> >::operator=(class fmt::v5::basic_memory_buffer<char,176,class std::allocator<char> > &&)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 636,
-                  "startColumn": 20,
-                  "endLine": 636,
-                  "endColumn": 31
-                }
-              },
-              "fullyQualifiedLogicalName": "void __cdecl fmt::v5::internal::grisu2_prettify<struct fmt::v5::internal::char_counter &>(struct fmt::v5::internal::gen_digits_params const &,int,int,struct fmt::v5::internal::char_counter &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 650,
-                  "startColumn": 29,
-                  "endLine": 650,
-                  "endColumn": 49
-                }
-              },
-              "fullyQualifiedLogicalName": "void __cdecl fmt::v5::internal::grisu2_prettify<struct fmt::v5::internal::char_counter &>(struct fmt::v5::internal::gen_digits_params const &,int,int,struct fmt::v5::internal::char_counter &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 655,
-                  "startColumn": 23,
-                  "endLine": 655,
-                  "endColumn": 27
-                }
-              },
-              "fullyQualifiedLogicalName": "void __cdecl fmt::v5::internal::grisu2_prettify<struct fmt::v5::internal::char_counter &>(struct fmt::v5::internal::gen_digits_params const &,int,int,struct fmt::v5::internal::char_counter &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 626,
-                  "startColumn": 22,
-                  "endLine": 626,
-                  "endColumn": 42
-                }
-              },
-              "fullyQualifiedLogicalName": "void __cdecl fmt::v5::internal::grisu2_prettify<struct fmt::v5::internal::char_counter &>(struct fmt::v5::internal::gen_digits_params const &,int,int,struct fmt::v5::internal::char_counter &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 798,
-                  "startColumn": 19,
-                  "endLine": 798,
-                  "endColumn": 23
-                }
-              },
-              "fullyQualifiedLogicalName": "void __cdecl fmt::v5::internal::sprintf_format<double>(double,class fmt::v5::internal::basic_buffer<char> &,struct fmt::v5::core_format_specs)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 798,
-                  "startColumn": 19,
-                  "endLine": 798,
-                  "endColumn": 23
-                }
-              },
-              "fullyQualifiedLogicalName": "void __cdecl fmt::v5::internal::sprintf_format<long double>(long double,class fmt::v5::internal::basic_buffer<char> &,struct fmt::v5::core_format_specs)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 598,
-                  "startColumn": 36,
-                  "endLine": 598,
-                  "endColumn": 42
-                }
-              },
-              "fullyQualifiedLogicalName": "void __cdecl fmt::v5::internal::write_exponent<struct fmt::v5::internal::char_counter &>(int,struct fmt::v5::internal::char_counter &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h"
-                },
-                "region": {
-                  "startLine": 602,
-                  "startColumn": 36,
-                  "endLine": 602,
-                  "endColumn": 42
-                }
-              },
-              "fullyQualifiedLogicalName": "void __cdecl fmt::v5::internal::write_exponent<struct fmt::v5::internal::char_counter &>(int,struct fmt::v5::internal::char_counter &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "6387",
-          "message": {
-            "text": "'value' could be '0':  this does not adhere to the specification for the function 'std::_WChar_traits<wchar_t>::length'. "
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 1353,
-                  "startColumn": 10,
-                  "endLine": 1353,
-                  "endColumn": 55
-                }
-              },
-              "fullyQualifiedLogicalName": "protected: void __cdecl fmt::v5::internal::arg_formatter_base<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >::write(wchar_t const *)"
-            }
-          ],
-          "codeFlows": [
-            {
-              "threadFlows": [
-                {
-                  "locations": [
-                    {
-                      "step": 0,
-                      "location": {
-                        "physicalLocation": {
-                          "fileLocation": {
-                            "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                          },
-                          "region": {
-                            "startLine": 1351,
-                            "startColumn": 9
-                          }
-                        },
-                        "message": {
-                          "text": "'value' may be NULL (Enter this branch)"
-                        }
-                      },
-                      "kind": "branch",
-                      "importance": "important"
-                    },
-                    {
-                      "step": 1,
-                      "location": {
-                        "physicalLocation": {
-                          "fileLocation": {
-                            "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                          },
-                          "region": {
-                            "startLine": 1352,
-                            "startColumn": 7
-                          }
-                        }
-                      },
-                      "importance": "unimportant"
-                    },
-                    {
-                      "step": 2,
-                      "location": {
-                        "physicalLocation": {
-                          "fileLocation": {
-                            "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                          },
-                          "region": {
-                            "startLine": 1353,
-                            "startColumn": 10
-                          }
-                        },
-                        "message": {
-                          "text": "'value' is an Input to 'std::_WChar_traits<wchar_t>::length' (declared at c:\\program files (x86)\\microsoft visual studio\\2019\\community\\vc\\tools\\msvc\\14.22.27905\\include\\xstring:155)"
-                        }
-                      },
-                      "kind": "usage",
-                      "importance": "important"
-                    },
-                    {
-                      "step": 3,
-                      "location": {
-                        "physicalLocation": {
-                          "fileLocation": {
-                            "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                          },
-                          "region": {
-                            "startLine": 1353,
-                            "startColumn": 10
-                          }
-                        },
-                        "message": {
-                          "text": "'value' should not be NULL, because this is not consistent with the SAL annotation on 'std::_WChar_traits<wchar_t>::length'"
-                        }
-                      },
-                      "kind": "usage",
-                      "importance": "essential"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
           "ruleId": "6387",
           "message": {
             "text": "'value' could be '0':  this does not adhere to the specification for the function 'std::_Narrow_char_traits<char,int>::length'. "
@@ -585,50 +195,6 @@
                   "endColumn": 53
                 }
               },
-              "fullyQualifiedLogicalName": "unsigned int __cdecl fmt::v5::internal::parse_nonnegative_int<wchar_t,struct fmt::v5::internal::id_adapter<struct fmt::v5::format_handler<class fmt::v5::arg_formatter<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >,wchar_t,class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<wchar_t> >,wchar_t> > &,wchar_t> &>(wchar_t const * &,wchar_t const *,struct fmt::v5::internal::id_adapter<struct fmt::v5::format_handler<class fmt::v5::arg_formatter<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >,wchar_t,class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<wchar_t> >,wchar_t> > &,wchar_t> &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26498",
-          "message": {
-            "text": "The function 'std::numeric_limits<int>::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 1463,
-                  "startColumn": 12,
-                  "endLine": 1463,
-                  "endColumn": 53
-                }
-              },
-              "fullyQualifiedLogicalName": "unsigned int __cdecl fmt::v5::internal::parse_nonnegative_int<wchar_t,class fmt::v5::internal::specs_checker<class fmt::v5::internal::specs_handler<class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<wchar_t> >,wchar_t> > > &>(wchar_t const * &,wchar_t const *,class fmt::v5::internal::specs_checker<class fmt::v5::internal::specs_handler<class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<wchar_t> >,wchar_t> > > &)"
-            }
-          ]
-        },
-        {
-          "ruleId": "26498",
-          "message": {
-            "text": "The function 'std::numeric_limits<int>::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 1463,
-                  "startColumn": 12,
-                  "endLine": 1463,
-                  "endColumn": 53
-                }
-              },
               "fullyQualifiedLogicalName": "unsigned int __cdecl fmt::v5::internal::parse_nonnegative_int<char,class fmt::v5::internal::specs_checker<class fmt::v5::internal::specs_handler<class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<char> >,char> > > &>(char const * &,char const *,class fmt::v5::internal::specs_checker<class fmt::v5::internal::specs_handler<class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<char> >,char> > > &)"
             }
           ]
@@ -657,53 +223,6 @@
           "properties": {
             "targetSymbol": "fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<char> > >::int_writer<unsigned __int64,fmt::v5::basic_format_specs<char> >::prefix"
           }
-        },
-        {
-          "ruleId": "26495",
-          "message": {
-            "text": "Variable 'fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<unsigned __int64,fmt::v5::basic_format_specs<wchar_t> >::prefix' is uninitialized. Always initialize a member variable (type.6)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 2386,
-                  "startColumn": 5,
-                  "endLine": 2386,
-                  "endColumn": 5
-                }
-              },
-              "fullyQualifiedLogicalName": "public: __cdecl fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<unsigned __int64,struct fmt::v5::basic_format_specs<wchar_t> >::int_writer<unsigned __int64,struct fmt::v5::basic_format_specs<wchar_t> >(class fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > > &,unsigned __int64,struct fmt::v5::basic_format_specs<wchar_t> const &)"
-            }
-          ],
-          "properties": {
-            "targetSymbol": "fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<unsigned __int64,fmt::v5::basic_format_specs<wchar_t> >::prefix"
-          }
-        },
-        {
-          "ruleId": "26498",
-          "message": {
-            "text": "The function 'std::numeric_limits<int>::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 1463,
-                  "startColumn": 12,
-                  "endLine": 1463,
-                  "endColumn": 53
-                }
-              },
-              "fullyQualifiedLogicalName": "unsigned int __cdecl fmt::v5::internal::parse_nonnegative_int<wchar_t,struct fmt::v5::internal::precision_adapter<class fmt::v5::internal::specs_checker<class fmt::v5::internal::specs_handler<class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<wchar_t> >,wchar_t> > > &,wchar_t> &>(wchar_t const * &,wchar_t const *,struct fmt::v5::internal::precision_adapter<class fmt::v5::internal::specs_checker<class fmt::v5::internal::specs_handler<class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<wchar_t> >,wchar_t> > > &,wchar_t> &)"
-            }
-          ]
         },
         {
           "ruleId": "26498",
@@ -830,106 +349,6 @@
         {
           "ruleId": "26495",
           "message": {
-            "text": "Variable 'fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<wchar_t,fmt::v5::basic_format_specs<wchar_t> >::prefix' is uninitialized. Always initialize a member variable (type.6)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 2386,
-                  "startColumn": 5,
-                  "endLine": 2386,
-                  "endColumn": 5
-                }
-              },
-              "fullyQualifiedLogicalName": "public: __cdecl fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<wchar_t,struct fmt::v5::basic_format_specs<wchar_t> >::int_writer<wchar_t,struct fmt::v5::basic_format_specs<wchar_t> >(class fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > > &,wchar_t,struct fmt::v5::basic_format_specs<wchar_t> const &)"
-            }
-          ],
-          "properties": {
-            "targetSymbol": "fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<wchar_t,fmt::v5::basic_format_specs<wchar_t> >::prefix"
-          }
-        },
-        {
-          "ruleId": "26495",
-          "message": {
-            "text": "Variable 'fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<bool,fmt::v5::basic_format_specs<wchar_t> >::prefix' is uninitialized. Always initialize a member variable (type.6)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 2386,
-                  "startColumn": 5,
-                  "endLine": 2386,
-                  "endColumn": 5
-                }
-              },
-              "fullyQualifiedLogicalName": "public: __cdecl fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<bool,struct fmt::v5::basic_format_specs<wchar_t> >::int_writer<bool,struct fmt::v5::basic_format_specs<wchar_t> >(class fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > > &,bool,struct fmt::v5::basic_format_specs<wchar_t> const &)"
-            }
-          ],
-          "properties": {
-            "targetSymbol": "fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<bool,fmt::v5::basic_format_specs<wchar_t> >::prefix"
-          }
-        },
-        {
-          "ruleId": "26495",
-          "message": {
-            "text": "Variable 'fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<__int64,fmt::v5::basic_format_specs<wchar_t> >::prefix' is uninitialized. Always initialize a member variable (type.6)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 2386,
-                  "startColumn": 5,
-                  "endLine": 2386,
-                  "endColumn": 5
-                }
-              },
-              "fullyQualifiedLogicalName": "public: __cdecl fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<__int64,struct fmt::v5::basic_format_specs<wchar_t> >::int_writer<__int64,struct fmt::v5::basic_format_specs<wchar_t> >(class fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > > &,__int64,struct fmt::v5::basic_format_specs<wchar_t> const &)"
-            }
-          ],
-          "properties": {
-            "targetSymbol": "fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<__int64,fmt::v5::basic_format_specs<wchar_t> >::prefix"
-          }
-        },
-        {
-          "ruleId": "26495",
-          "message": {
-            "text": "Variable 'fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<unsigned int,fmt::v5::basic_format_specs<wchar_t> >::prefix' is uninitialized. Always initialize a member variable (type.6)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 2386,
-                  "startColumn": 5,
-                  "endLine": 2386,
-                  "endColumn": 5
-                }
-              },
-              "fullyQualifiedLogicalName": "public: __cdecl fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<unsigned int,struct fmt::v5::basic_format_specs<wchar_t> >::int_writer<unsigned int,struct fmt::v5::basic_format_specs<wchar_t> >(class fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > > &,unsigned int,struct fmt::v5::basic_format_specs<wchar_t> const &)"
-            }
-          ],
-          "properties": {
-            "targetSymbol": "fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<unsigned int,fmt::v5::basic_format_specs<wchar_t> >::prefix"
-          }
-        },
-        {
-          "ruleId": "26495",
-          "message": {
             "text": "Variable 'fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<char> > >::int_writer<int,fmt::v5::basic_format_specs<char> >::prefix' is uninitialized. Always initialize a member variable (type.6)."
           },
           "locations": [
@@ -951,53 +370,6 @@
           "properties": {
             "targetSymbol": "fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<char> > >::int_writer<int,fmt::v5::basic_format_specs<char> >::prefix"
           }
-        },
-        {
-          "ruleId": "26495",
-          "message": {
-            "text": "Variable 'fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<int,fmt::v5::basic_format_specs<wchar_t> >::prefix' is uninitialized. Always initialize a member variable (type.6)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 2386,
-                  "startColumn": 5,
-                  "endLine": 2386,
-                  "endColumn": 5
-                }
-              },
-              "fullyQualifiedLogicalName": "public: __cdecl fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<int,struct fmt::v5::basic_format_specs<wchar_t> >::int_writer<int,struct fmt::v5::basic_format_specs<wchar_t> >(class fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > > &,int,struct fmt::v5::basic_format_specs<wchar_t> const &)"
-            }
-          ],
-          "properties": {
-            "targetSymbol": "fmt::v5::basic_writer<fmt::v5::back_insert_range<fmt::v5::internal::basic_buffer<wchar_t> > >::int_writer<int,fmt::v5::basic_format_specs<wchar_t> >::prefix"
-          }
-        },
-        {
-          "ruleId": "26498",
-          "message": {
-            "text": "The function 'std::numeric_limits<int>::max' is constexpr, mark variable 'max_int' constexpr if compile-time evaluation is desired (con.5)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 1463,
-                  "startColumn": 12,
-                  "endLine": 1463,
-                  "endColumn": 53
-                }
-              },
-              "fullyQualifiedLogicalName": "unsigned int __cdecl fmt::v5::internal::parse_nonnegative_int<wchar_t,struct fmt::v5::internal::width_adapter<class fmt::v5::internal::specs_checker<class fmt::v5::internal::specs_handler<class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<wchar_t> >,wchar_t> > > &,wchar_t> &>(wchar_t const * &,wchar_t const *,struct fmt::v5::internal::width_adapter<class fmt::v5::internal::specs_checker<class fmt::v5::internal::specs_handler<class fmt::v5::basic_format_context<class std::back_insert_iterator<class fmt::v5::internal::basic_buffer<wchar_t> >,wchar_t> > > &,wchar_t> &)"
-            }
-          ]
         },
         {
           "ruleId": "26498",
@@ -1039,28 +411,6 @@
                   "endColumn": 62
                 }
               },
-              "fullyQualifiedLogicalName": "public: unsigned __int64 __cdecl fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<wchar_t> > >::inf_or_nan_writer::size(void)const "
-            }
-          ]
-        },
-        {
-          "ruleId": "26451",
-          "message": {
-            "text": "Arithmetic overflow: Using operator '+' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '+' to avoid overflow (io.2)."
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "fileLocation": {
-                  "uri": "file:///E:/devel/spdlog/include/spdlog/fmt/bundled/format.h"
-                },
-                "region": {
-                  "startLine": 2511,
-                  "startColumn": 39,
-                  "endLine": 2511,
-                  "endColumn": 62
-                }
-              },
               "fullyQualifiedLogicalName": "public: unsigned __int64 __cdecl fmt::v5::basic_writer<class fmt::v5::back_insert_range<class fmt::v5::internal::basic_buffer<char> > >::inf_or_nan_writer::size(void)const "
             }
           ]
@@ -1074,112 +424,32 @@
       },
       "invocations": [
         {
-          "commandLine": "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\bin\\HostX64\\x64\\c1xx.dll\" -ACf{1F7B090C-16DB-4822-966A-A93D26ED4681} -ACpmspft140.dll -Alint -D_PREFAST_ -D_AST_FE_ -Analyze -zm0x00007FF619B86AB0 -il C:\\Users\\gmelm\\AppData\\Local\\Temp\\_CL_9a7db7e3ast -typedil -f E:\\devel\\spdlog\\src\\spdlog.cpp -Ze -D_MSC_EXTENSIONS -Zp16 -ZB64 -D_INTEGRAL_MAX_BITS=64 -pc \\:/ -D_MSC_VER=1922 -D_MSC_FULL_VER=192227905 -D_MSC_BUILD=0 -D_M_AMD64=100 -ZILP448 -D_M_X64=100 -D_WIN64 -D_WIN32 -I E:\\devel\\spdlog\\include -nologo -W 4 -WX -diagnostics:column -Ot -DCODE_ANALYSIS -DWIN32 -D_WINDOWS -DSPDLOG_COMPILED_LIB -DCMAKE_INTDIR=\"Debug\" -D_MBCS -EHs -D_CPPUNWIND -EHc -D__MSVC_RUNTIME_CHECKS -RTCs -RTCu -D_DEBUG -D_MT -D_DLL -GS -D_M_FP_PRECISE -Zc:wchar_t -Zc:forScope -GR -D_CPPRTTI -Fospdlog.dir\\Debug\\spdlog.obj -Fdspdlog.dir\\Debug\\spdlog.pdb -Gd -analyze:quiet -analyze:plugin C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\bin\\HostX64\\x64\\EspXEngine.dll -errorreport:prompt -analyze:ruleset C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Static Analysis Tools\\Rule Sets\\NativeRecommendedRules.ruleset -analyze:projectdirectory E:\\devel\\spdlog\\win64-release -analyze:rulesetdirectory ;C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Static Analysis Tools\\\\Rule Sets -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\atlmfc\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\include -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\ucrt -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\UnitTest\\include -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\um -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\shared -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\winrt -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.7.2\\Include\\um"
+          "commandLine": "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\bin\\HostX64\\x64\\c1xx.dll\" -ACf{1F7B090C-16DB-4822-966A-A93D26ED4681} -ACpmspft140.dll -Alint -D_PREFAST_ -D_AST_FE_ -Analyze -zm0x00007FF619B86AB0 -il C:\\Users\\gmelm\\AppData\\Local\\Temp\\_CL_5f956919ast -typedil -f E:\\devel\\spdlog\\tests\\test_file_helper.cpp -Ze -D_MSC_EXTENSIONS -Zp16 -ZB64 -D_INTEGRAL_MAX_BITS=64 -pc \\:/ -D_MSC_VER=1922 -D_MSC_FULL_VER=192227905 -D_MSC_BUILD=0 -D_M_AMD64=100 -ZILP448 -D_M_X64=100 -D_WIN64 -D_WIN32 -I E:\\devel\\spdlog\\include -nologo -W 4 -WX -diagnostics:column -Ot -DCODE_ANALYSIS -DWIN32 -D_WINDOWS -DSPDLOG_COMPILED_LIB -DCMAKE_INTDIR=\"Debug\" -D_MBCS -EHs -D_CPPUNWIND -EHc -D__MSVC_RUNTIME_CHECKS -RTCs -RTCu -D_DEBUG -D_MT -D_DLL -GS -D_M_FP_PRECISE -Zc:wchar_t -Zc:forScope -GR -D_CPPRTTI -Fospdlog-utests.dir\\Debug\\test_file_helper.obj -Fdspdlog-utests.dir\\Debug\\vc142.pdb -Gd -analyze:quiet -analyze:plugin C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\bin\\HostX64\\x64\\EspXEngine.dll -errorreport:prompt -analyze:ruleset C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Static Analysis Tools\\Rule Sets\\NativeRecommendedRules.ruleset -analyze:projectdirectory E:\\devel\\spdlog\\win64-release\\tests -analyze:rulesetdirectory ;C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Team Tools\\Static Analysis Tools\\\\Rule Sets -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.22.27905\\atlmfc\\include -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\include -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\ucrt -I C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Auxiliary\\VS\\UnitTest\\include -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\um -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\shared -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\winrt -I C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.17134.0\\cppwinrt -I C:\\Program Files (x86)\\Windows Kits\\NETFXSDK\\4.7.2\\Include\\um"
         }
       ],
       "files": {
-        "file:///e:/devel/spdlog/src/spdlog.cpp": {
+        "file:///e:/devel/spdlog/tests/test_dup_filter.cpp": {
           "roles": [
             "analysisTarget",
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/details/null_mutex.h": {
+        "file:///e:/devel/spdlog/tests/utils.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/async.h": {
+        "file:///e:/devel/spdlog/tests/includes.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/details/mpmc_blocking_q.h": {
+        "file:///e:/devel/spdlog/include/spdlog/version.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/common.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/details/periodic_worker-inl.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/stdout_sinks.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/async_logger.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/tweakme.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/details/file_helper-inl.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/logger.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/fmt/bundled/format.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/fmt/fmt.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/fmt/bundled/core.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/details/log_msg.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/details/registry.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/details/thread_pool.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/base_sink-inl.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/details/circular_q.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/details/os.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/spdlog-inl.h": {
+        "file:///e:/devel/spdlog/tests/catch.hpp": {
           "roles": [
             "resultFile"
           ]
@@ -1194,22 +464,82 @@
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/version.h": {
+        "file:///e:/devel/spdlog/include/spdlog/sinks/daily_file_sink.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/details/pattern_formatter.h": {
+        "file:///e:/devel/spdlog/include/spdlog/common.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/sink-inl.h": {
+        "file:///e:/devel/spdlog/include/spdlog/sinks/stdout_sinks.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/formatter.h": {
+        "file:///e:/devel/spdlog/include/spdlog/tweakme.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/fmt/fmt.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/fmt/bundled/core.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/fmt/bundled/format.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/logger.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/details/registry.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/details/log_msg.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/async.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/details/mpmc_blocking_q.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/async_logger.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/details/thread_pool.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/details/circular_q.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/details/os.h": {
           "roles": [
             "resultFile"
           ]
@@ -1219,37 +549,23 @@
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/common-inl.h": {
+        "file:///e:/devel/spdlog/include/spdlog/formatter.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/stdout_sinks-inl.h": {
+        "file:///e:/devel/spdlog/tests/test_file_helper.cpp": {
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/details/file_helper.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/logger-inl.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/fmt/bundled/format-inl.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/sink.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/async_logger-inl.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/details/log_msg-inl.h": {
+        "file:///e:/devel/spdlog/include/spdlog/details/null_mutex.h": {
           "roles": [
             "resultFile"
           ]
@@ -1259,17 +575,23 @@
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/basic_file_sink-inl.h": {
+        "file:///e:/devel/spdlog/tests/test_macros.cpp": {
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/sinks/sink.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/details/file_helper.h": {
+        "file:///e:/devel/spdlog/include/spdlog/sinks/null_sink.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/rotating_file_sink-inl.h": {
+        "file:///e:/devel/spdlog/include/spdlog/sinks/ostream_sink.h": {
           "roles": [
             "resultFile"
           ]
@@ -1279,12 +601,7 @@
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/details/registry-inl.h": {
-          "roles": [
-            "resultFile"
-          ]
-        },
-        "file:///e:/devel/spdlog/include/spdlog/details/periodic_worker.h": {
+        "file:///e:/devel/spdlog/include/spdlog/sinks/stdout_color_sinks.h": {
           "roles": [
             "resultFile"
           ]
@@ -1299,13 +616,47 @@
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/details/os-inl.h": {
+        "file:///e:/devel/spdlog/tests/test_stdout_api.cpp": {
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/tests/test_file_logging.cpp": {
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/details/pattern_formatter.h": {
           "roles": [
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/details/pattern_formatter-inl.h": {
+        "file:///e:/devel/spdlog/include/spdlog/sinks/dup_filter_sink.h": {
           "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/sinks/dist_sink.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/tests/test_async.cpp": {
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/tests/test_sink.h": {
+          "roles": [
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/tests/test_fmt_helper.cpp": {
+          "roles": [
+            "analysisTarget",
             "resultFile"
           ]
         },
@@ -1314,22 +665,43 @@
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/details/thread_pool-inl.h": {
+        "file:///e:/devel/spdlog/tests/test_mpmc_q.cpp": {
           "roles": [
+            "analysisTarget",
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/wincolor_sink-inl.h": {
+        "file:///e:/devel/spdlog/tests/main.cpp": {
           "roles": [
+            "analysisTarget",
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/stdout_color_sinks-inl.h": {
+        "file:///e:/devel/spdlog/tests/utils.cpp": {
           "roles": [
+            "analysisTarget",
             "resultFile"
           ]
         },
-        "file:///e:/devel/spdlog/include/spdlog/sinks/stdout_color_sinks.h": {
+        "file:///e:/devel/spdlog/tests/test_registry.cpp": {
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/tests/test_pattern_formatter.cpp": {
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/tests/test_misc.cpp": {
+          "roles": [
+            "analysisTarget",
+            "resultFile"
+          ]
+        },
+        "file:///e:/devel/spdlog/include/spdlog/fmt/bin_to_hex.h": {
           "roles": [
             "resultFile"
           ]

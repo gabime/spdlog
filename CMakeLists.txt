@@ -63,6 +63,10 @@ if(WIN32)
 	option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
 endif()
 
+option(SPDLOG_NO_EXCEPTIONS "Support for -fno-exceptions. Replace throw with std::abort" OFF)
+
+
+
 
 find_package(Threads REQUIRED)
 
@@ -118,6 +122,11 @@ if(SPDLOG_WCHAR_SUPPORT)
 	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
  endif()
+
+ if(SPDLOG_NO_EXCEPTIONS)
+	target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)	
+	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)	
+endif()
 
 
 #---------------------------------------------------------------------------------------

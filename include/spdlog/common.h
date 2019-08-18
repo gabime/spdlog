@@ -64,6 +64,12 @@
 #define SPDLOG_FUNCTION __FUNCTION__
 #endif
 
+#ifdef SPDLOG_NO_EXCEPTIONS
+#define SPDLOG_THROW
+#else
+#define SPDLOG_THROW throw
+#endif
+
 namespace spdlog {
 
 class formatter;
