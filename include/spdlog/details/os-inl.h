@@ -50,7 +50,7 @@
 #ifdef __linux__
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
 
-#elif __FreeBSD__
+#elif defined(__FreeBSD__)
 #include <sys/thr.h> //Use thr_self() syscall under FreeBSD to get thread id
 #endif
 
@@ -306,12 +306,12 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
 {
 #ifdef _WIN32
     return static_cast<size_t>(::GetCurrentThreadId());
-#elif __linux__
+#elif defined(__linux__)
 #if defined(__ANDROID__) && defined(__ANDROID_API__) && (__ANDROID_API__ < 21)
 #define SYS_gettid __NR_gettid
 #endif
     return static_cast<size_t>(syscall(SYS_gettid));
-#elif __FreeBSD__
+#elif defined(__FreeBSD__)
     long tid;
     thr_self(&tid);
     return static_cast<size_t>(tid);
