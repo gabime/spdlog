@@ -123,8 +123,12 @@ if(SPDLOG_WCHAR_SUPPORT)
 
  if(SPDLOG_NO_EXCEPTIONS)
 	target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)	
-	target_compile_options(spdlog PRIVATE -fno-exceptions)
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)	
+
+	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)
+
+    if(NOT MSVC)
+        target_compile_options(spdlog PRIVATE -fno-exceptions)
+    endif()
 endif()
 
 
