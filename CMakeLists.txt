@@ -56,16 +56,14 @@ option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/
 option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 
 # install options
-option(SPDLOG_INSTALL "Generate the install target." ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
 if(WIN32)
 	option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
 endif()
 
-option(SPDLOG_NO_EXCEPTIONS "Support for -fno-exceptions. Replace throw with std::abort" OFF)
-
-
+option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
 
 
 find_package(Threads REQUIRED)
@@ -125,6 +123,7 @@ if(SPDLOG_WCHAR_SUPPORT)
 
  if(SPDLOG_NO_EXCEPTIONS)
 	target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)	
+	target_compile_options(spdlog PRIVATE -fno-exceptions)
 	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)	
 endif()
 

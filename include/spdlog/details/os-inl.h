@@ -126,7 +126,7 @@ SPDLOG_INLINE void prevent_child_fd(FILE *f)
     auto fd = fileno(f);
     if (fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
     {
-        SPDLOG_THROW spdlog_ex("fcntl with FD_CLOEXEC failed", errno);
+        SPDLOG_THROW(spdlog_ex("fcntl with FD_CLOEXEC failed", errno));
     }
 #endif
 }
@@ -192,7 +192,7 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 {
     if (f == nullptr)
     {
-        SPDLOG_THROW spdlog_ex("Failed getting file size. fd is null");
+        SPDLOG_THROW(spdlog_ex("Failed getting file size. fd is null"));
     }
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = _fileno(f);
@@ -229,7 +229,7 @@ SPDLOG_INLINE size_t filesize(FILE *f)
     }
 #endif
 #endif
-    SPDLOG_THROW spdlog_ex("Failed getting file size from fd", errno);
+    SPDLOG_THROW(spdlog_ex("Failed getting file size from fd", errno));
 }
 
 // Return utc offset in minutes or throw spdlog_ex on failure
@@ -245,7 +245,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
     auto rv = GetDynamicTimeZoneInformation(&tzinfo);
 #endif
     if (rv == TIME_ZONE_ID_INVALID)
-        throw spdlog::spdlog_ex("Failed getting timezone info. ", errno);
+        SPDLOG_THROW(spdlog::spdlog_ex("Failed getting timezone info. ", errno));
 
     int offset = -tzinfo.Bias;
     if (tm.tm_isdst)
@@ -408,7 +408,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(basic_string_view_t<wchar_t> wstr, fmt::memor
 {
     if (wstr.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {
-        throw spdlog::spdlog_ex("UTF-16 string is too big to be converted to UTF-8");
+        SPDLOG_THROW(spdlog::spdlog_ex("UTF-16 string is too big to be converted to UTF-8"));
     }
 
     int wstr_size = static_cast<int>(wstr.size());
@@ -436,7 +436,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(basic_string_view_t<wchar_t> wstr, fmt::memor
         }
     }
 
-    throw spdlog::spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
+    SPDLOG_THROW(spdlog::spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError())));
 }
 #endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 

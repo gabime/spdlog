@@ -66,7 +66,7 @@ protected:
 
         if (err)
         {
-            SPDLOG_THROW spdlog_ex("Failed writing to systemd", errno);
+            SPDLOG_THROW(spdlog_ex("Failed writing to systemd", errno));
         }
     }
 

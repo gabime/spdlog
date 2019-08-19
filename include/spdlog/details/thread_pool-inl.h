@@ -17,8 +17,8 @@ SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n, std
 {
     if (threads_n == 0 || threads_n > 1000)
     {
-        SPDLOG_THROW spdlog_ex("spdlog::thread_pool(): invalid threads_n param (valid "
-                        "range is 1-1000)");
+        SPDLOG_THROW(spdlog_ex("spdlog::thread_pool(): invalid threads_n param (valid "
+                               "range is 1-1000)"));
     }
     for (size_t i = 0; i < threads_n; i++)
     {
@@ -36,7 +36,7 @@ SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n)
 // message all threads to terminate gracefully join them
 SPDLOG_INLINE thread_pool::~thread_pool()
 {
-    try
+    SPDLOG_TRY
     {
         for (size_t i = 0; i < threads_.size(); i++)
         {
@@ -48,8 +48,7 @@ SPDLOG_INLINE thread_pool::~thread_pool()
             t.join();
         }
     }
-    catch (...)
-    {}
+    SPDLOG_CATCH_ALL() {}
 }
 
 void SPDLOG_INLINE thread_pool::post_log(async_logger_ptr &&worker_ptr, details::log_msg &msg, async_overflow_policy overflow_policy)

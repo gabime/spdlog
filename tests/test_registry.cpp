@@ -3,6 +3,7 @@
 static const char *tested_logger_name = "null_logger";
 static const char *tested_logger_name2 = "null_logger2";
 
+#ifndef SPDLOG_NO_EXCEPTIONS
 TEST_CASE("register_drop", "[registry]")
 {
     spdlog::drop_all();
@@ -21,6 +22,7 @@ TEST_CASE("explicit register", "[registry]")
     // Throw if registring existing name
     REQUIRE_THROWS_AS(spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name), spdlog::spdlog_ex);
 }
+#endif
 
 TEST_CASE("apply_all", "[registry]")
 {

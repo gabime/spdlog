@@ -52,7 +52,7 @@ public:
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
         {
-            SPDLOG_THROW spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
+            SPDLOG_THROW(spdlog_ex("daily_file_sink: Invalid rotation time in ctor"));
         }
         auto now = log_clock::now();
         file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(now)), truncate_);

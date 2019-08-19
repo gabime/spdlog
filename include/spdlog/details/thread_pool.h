@@ -31,20 +31,20 @@ enum class async_msg_type
 // Movable only. should never be copied
 struct async_msg
 {
-	async_msg_type msg_type;
-	level::level_enum level;
+    async_msg_type msg_type;
+    level::level_enum level;
     log_clock::time_point time;
-	size_t thread_id;
+    size_t thread_id;
     fmt::basic_memory_buffer<char, 176> raw;
 
     source_loc source;
     async_logger_ptr worker_ptr;
 
-	async_msg() 
-		:msg_type(async_msg_type::log),
-		level(level::info),
-		thread_id(0) 
-	{}
+    async_msg()
+        : msg_type(async_msg_type::log)
+        , level(level::info)
+        , thread_id(0)
+    {}
     ~async_msg() = default;
 
     // should only be moved in or out of the queue..
@@ -52,17 +52,18 @@ struct async_msg
 
 // support for vs2013 move
 #if defined(_MSC_VER) && _MSC_VER <= 1800
-    async_msg(async_msg &&other) : msg_type(other.msg_type),
-                                                   level(other.level),
-                                                   time(other.time),
-                                                   thread_id(other.thread_id),
-                                                   raw(move(other.raw)),
-                                                   msg_id(other.msg_id),
-                                                   source(other.source),
-                                                   worker_ptr(std::move(other.worker_ptr))
+    async_msg(async_msg &&other)
+        : msg_type(other.msg_type)
+        , level(other.level)
+        , time(other.time)
+        , thread_id(other.thread_id)
+        , raw(move(other.raw))
+        , msg_id(other.msg_id)
+        , source(other.source)
+        , worker_ptr(std::move(other.worker_ptr))
     {}
 
-    async_msg &operator=(async_msg &&other) 
+    async_msg &operator=(async_msg &&other)
     {
         msg_type = other.msg_type;
         level = other.level;

@@ -65,9 +65,18 @@
 #endif
 
 #ifdef SPDLOG_NO_EXCEPTIONS
-#define SPDLOG_THROW
+#define SPDLOG_TRY
+#define SPDLOG_THROW(ex)                                                                                                                   \
+    do                                                                                                                                     \
+    {                                                                                                                                      \
+        printf("spdlog fatal error: %s\n", ex.what());                                                                                     \
+        std::abort();                                                                                                                      \
+    } while (0)
+#define SPDLOG_CATCH_ALL()
 #else
-#define SPDLOG_THROW throw
+#define SPDLOG_TRY try
+#define SPDLOG_THROW(ex) throw(ex)
+#define SPDLOG_CATCH_ALL() catch (...)
 #endif
 
 namespace spdlog {
@@ -103,11 +112,13 @@ using string_view_t = basic_string_view_t<char>;
 using wstring_view_t = basic_string_view_t<wchar_t>;
 
 template<typename T>
-struct is_convertible_to_wstring_view : std::is_convertible<T, wstring_view_t> { };
+struct is_convertible_to_wstring_view : std::is_convertible<T, wstring_view_t>
+{};
 #endif // _WIN32
 #else
 template<typename>
-struct is_convertible_to_wstring_view : std::false_type { };
+struct is_convertible_to_wstring_view : std::false_type
+{};
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
