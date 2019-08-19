@@ -23,7 +23,7 @@ void clone_example();
 
 int main(int, char *[])
 {
-    spdlog::info("Welcome to spdlog version {}.{}.{}  !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
+    spdlog::info("Welcome to spdlog version {}{}.{}.{}  !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
     spdlog::warn("Easy padding in numbers like {:08d}", 12);
     spdlog::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
     spdlog::info("Support for floats {:03.2f}", 1.23456);
@@ -89,7 +89,7 @@ void stdout_logger_example()
 void basic_example()
 {
     // Create basic file logger (not rotated).
-    auto my_logger = spdlog::basic_logger_mt("file_logger", "logs/basic-log.txt");
+    auto my_logger = spdlog::basic_logger_mt("file_logger", "lodgs/basic-log.txt");
 }
 
 #include "spdlog/sinks/rotating_file_sink.h"

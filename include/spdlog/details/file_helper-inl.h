@@ -8,6 +8,7 @@
 #endif
 
 #include "spdlog/details/os.h"
+#include "spdlog/common.h"
 
 #include <cerrno>
 #include <chrono>
@@ -39,14 +40,14 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
         details::os::sleep_for_millis(open_interval);
     }
 
-    throw spdlog_ex("Failed opening file " + os::filename_to_str(_filename) + " for writing", errno);
+    SPDLOG_THROW(spdlog_ex("Failed opening file " + os::filename_to_str(_filename) + " for writing", errno));
 }
 
 SPDLOG_INLINE void file_helper::reopen(bool truncate)
 {
     if (_filename.empty())
     {
-        throw spdlog_ex("Failed re opening file - was not opened before");
+        SPDLOG_THROW(spdlog_ex("Failed re opening file - was not opened before"));
     }
     open(_filename, truncate);
 }
@@ -71,7 +72,7 @@ SPDLOG_INLINE void file_helper::write(const fmt::memory_buffer &buf)
     auto data = buf.data();
     if (std::fwrite(data, 1, msg_size, fd_) != msg_size)
     {
-        throw spdlog_ex("Failed writing to file " + os::filename_to_str(_filename), errno);
+        SPDLOG_THROW(spdlog_ex("Failed writing to file " + os::filename_to_str(_filename), errno));
     }
 }
 
@@ -79,7 +80,7 @@ SPDLOG_INLINE size_t file_helper::size() const
 {
     if (fd_ == nullptr)
     {
-        throw spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename));
+        SPDLOG_THROW(spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename)));
     }
     return os::filesize(fd_);
 }

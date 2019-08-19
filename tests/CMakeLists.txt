@@ -8,7 +8,6 @@ if(PkgConfig_FOUND)
 endif()
 
 set(SPDLOG_UTESTS_SOURCES
-    test_errors.cpp
     test_file_helper.cpp
     test_file_logging.cpp
     test_misc.cpp
@@ -25,6 +24,10 @@ set(SPDLOG_UTESTS_SOURCES
     test_fmt_helper.cpp
   	test_stdout_api.cpp
     test_dup_filter.cpp)
+
+if(NOT SPDLOG_NO_EXCEPTIONS)
+	list(APPEND SPDLOG_UTESTS_SOURCES test_errors.cpp)
+endif()
 
 if(systemd_FOUND)
 	list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)

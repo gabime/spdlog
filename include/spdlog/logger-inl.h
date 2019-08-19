@@ -23,12 +23,11 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , custom_err_handler_(other.custom_err_handler_)
 {}
 
-SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT
-    : name_(std::move(other.name_))
-    , sinks_(std::move(other.sinks_))
-    , level_(other.level_.load(std::memory_order_relaxed))
-    , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
-    , custom_err_handler_(std::move(other.custom_err_handler_))
+SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT : name_(std::move(other.name_)),
+                                                               sinks_(std::move(other.sinks_)),
+                                                               level_(other.level_.load(std::memory_order_relaxed)),
+                                                               flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
+                                                               custom_err_handler_(std::move(other.custom_err_handler_))
 {}
 
 SPDLOG_INLINE logger &logger::operator=(logger other) SPDLOG_NOEXCEPT
@@ -168,7 +167,7 @@ SPDLOG_INLINE void logger::sink_it_(details::log_msg &msg)
     {
         if (sink->should_log(msg.level))
         {
-            try
+            SPDLOG_TRY
             {
                 sink->log(msg);
             }
@@ -186,7 +185,7 @@ SPDLOG_INLINE void logger::flush_()
 {
     for (auto &sink : sinks_)
     {
-        try
+        SPDLOG_TRY
         {
             sink->flush();
         }

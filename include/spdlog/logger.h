@@ -23,7 +23,7 @@
 #endif
 
 #include <vector>
-
+#ifndef SPDLOG_NO_EXCEPTIONS
 #define SPDLOG_LOGGER_CATCH()                                                                                                              \
     catch (const std::exception &ex)                                                                                                       \
     {                                                                                                                                      \
@@ -33,6 +33,9 @@
     {                                                                                                                                      \
         err_handler_("Unknown exception in logger");                                                                                       \
     }
+#else
+#define SPDLOG_LOGGER_CATCH()
+#endif
 
 namespace spdlog {
 class logger
@@ -63,7 +66,7 @@ public:
 
     virtual ~logger() = default;
 
-    logger(const logger &other) ;
+    logger(const logger &other);
     logger(logger &&other) SPDLOG_NOEXCEPT;
     logger &operator=(logger other) SPDLOG_NOEXCEPT;
 
@@ -72,7 +75,7 @@ public:
     template<typename... Args>
     void force_log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
     {
-        try
+        SPDLOG_TRY
         {
             fmt::memory_buffer buf;
             fmt::format_to(buf, fmt, args...);
@@ -156,14 +159,16 @@ public:
     }
 
     // T cannot be statically converted to string_view or wstring_view
-    template<class T, typename std::enable_if<!std::is_convertible<const T &, spdlog::string_view_t>::value && !is_convertible_to_wstring_view<const T &>::value, T>::type * = nullptr>
+    template<class T, typename std::enable_if<!std::is_convertible<const T &, spdlog::string_view_t>::value &&
+                                                  !is_convertible_to_wstring_view<const T &>::value,
+                          T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         if (!should_log(lvl))
         {
             return;
         }
-        try
+        SPDLOG_TRY
         {
             fmt::memory_buffer buf;
             fmt::format_to(buf, "{}", msg);

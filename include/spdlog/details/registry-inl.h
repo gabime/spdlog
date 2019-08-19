@@ -32,7 +32,6 @@ namespace details {
 
 SPDLOG_INLINE registry::registry()
     : formatter_(new pattern_formatter())
-    , level_(spdlog::level::info)
 {
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
@@ -245,7 +244,7 @@ SPDLOG_INLINE void registry::throw_if_exists_(const std::string &logger_name)
 {
     if (loggers_.find(logger_name) != loggers_.end())
     {
-        throw spdlog_ex("logger with name '" + logger_name + "' already exists");
+        SPDLOG_THROW(spdlog_ex("logger with name '" + logger_name + "' already exists"));
     }
 }
 

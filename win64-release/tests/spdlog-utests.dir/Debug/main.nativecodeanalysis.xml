@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DEFECTS>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>6172</LINE>
+      <COLUMN>56</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '*' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '*' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>Catch::Detail::Approx::{ctor}</FUNCTION>
+    <DECORATED>??0Approx@Detail@Catch@@QEAA@N@Z</DECORATED>
+    <FUNCLINE>6171</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>7931</LINE>
+      <COLUMN>21</COLUMN>
+    </SFA>
+    <DEFECTCODE>26444</DEFECTCODE>
+    <DESCRIPTION>Avoid unnamed objects with custom construction and destruction (es.84).</DESCRIPTION>
+    <FUNCTION>Catch::clara::detail::Parser::parse</FUNCTION>
+    <DECORATED>?parse@Parser@detail@clara@Catch@@UEBA?AV?$BasicResult@VParseState@detail@clara@Catch@@@234@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@AEBVTokenStream@234@@Z</DECORATED>
+    <FUNCLINE>7914</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>9899</LINE>
+      <COLUMN>19</COLUMN>
+    </SFA>
+    <DEFECTCODE>26439</DEFECTCODE>
+    <DESCRIPTION>This kind of function may not throw. Declare it 'noexcept' (f.6).</DESCRIPTION>
+    <FUNCTION>Catch::ScopedMessage::{ctor}</FUNCTION>
+    <DECORATED>??0ScopedMessage@Catch@@QEAA@$$QEAV01@@Z</DECORATED>
+    <FUNCLINE>9899</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>13370</LINE>
+      <COLUMN>14</COLUMN>
+    </SFA>
+    <DEFECTCODE>26444</DEFECTCODE>
+    <DESCRIPTION>Avoid unnamed objects with custom construction and destruction (es.84).</DESCRIPTION>
+    <FUNCTION>Catch::prepareExpandedExpression</FUNCTION>
+    <DECORATED>?prepareExpandedExpression@Catch@@YAXAEAVAssertionResult@1@@Z</DECORATED>
+    <FUNCLINE>13369</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>14092</LINE>
+      <COLUMN>111</COLUMN>
+    </SFA>
+    <DEFECTCODE>26451</DEFECTCODE>
+    <DESCRIPTION>Arithmetic overflow: Using operator '-' on a 4 byte value and then casting the result to a 8 byte value. Cast the value to the wider type before calling operator '-' to avoid overflow (io.2).</DESCRIPTION>
+    <FUNCTION>Catch::ConsoleReporter::benchmarkStarting</FUNCTION>
+    <DECORATED>?benchmarkStarting@ConsoleReporter@Catch@@UEAAXAEBUBenchmarkInfo@2@@Z</DECORATED>
+    <FUNCLINE>14089</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>5028</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::Option&lt;unsigned __int64&gt;::storage' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::Option&lt;unsigned __int64&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$Option@_K@Catch@@QEAA@XZ</DECORATED>
+    <FUNCLINE>5028</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::Option&lt;unsigned __int64&gt;::storage</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>7277</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::clara::detail::ResultValueBase&lt;Catch::clara::detail::ParseState&gt;::&lt;unnamed-tag&gt;::m_value' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::clara::detail::ResultValueBase&lt;Catch::clara::detail::ParseState&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$ResultValueBase@VParseState@detail@clara@Catch@@@detail@clara@Catch@@IEAA@AEBV0123@@Z</DECORATED>
+    <FUNCLINE>7277</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::clara::detail::ResultValueBase&lt;Catch::clara::detail::ParseState&gt;::&lt;unnamed-tag&gt;::m_value</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>5028</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::Option&lt;Catch::AssertionResult&gt;::storage' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::Option&lt;Catch::AssertionResult&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$Option@VAssertionResult@Catch@@@Catch@@QEAA@XZ</DECORATED>
+    <FUNCLINE>5028</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::Option&lt;Catch::AssertionResult&gt;::storage</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>5028</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::Option&lt;Catch::TestCaseInfo&gt;::storage' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::Option&lt;Catch::TestCaseInfo&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$Option@UTestCaseInfo@Catch@@@Catch@@QEAA@XZ</DECORATED>
+    <FUNCLINE>5028</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::Option&lt;Catch::TestCaseInfo&gt;::storage</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>5028</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::Option&lt;Catch::GroupInfo&gt;::storage' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::Option&lt;Catch::GroupInfo&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$Option@UGroupInfo@Catch@@@Catch@@QEAA@XZ</DECORATED>
+    <FUNCLINE>5028</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::Option&lt;Catch::GroupInfo&gt;::storage</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>5028</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::Option&lt;Catch::TestRunInfo&gt;::storage' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::Option&lt;Catch::TestRunInfo&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$Option@UTestRunInfo@Catch@@@Catch@@QEAA@XZ</DECORATED>
+    <FUNCLINE>5028</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::Option&lt;Catch::TestRunInfo&gt;::storage</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>7275</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::clara::detail::ResultValueBase&lt;Catch::clara::detail::ParseState&gt;::&lt;unnamed-tag&gt;::m_value' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::clara::detail::ResultValueBase&lt;Catch::clara::detail::ParseState&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$ResultValueBase@VParseState@detail@clara@Catch@@@detail@clara@Catch@@IEAA@W4Type@ResultBase@123@@Z</DECORATED>
+    <FUNCLINE>7275</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::clara::detail::ResultValueBase&lt;Catch::clara::detail::ParseState&gt;::&lt;unnamed-tag&gt;::m_value</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>7275</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::clara::detail::ResultValueBase&lt;enum Catch::clara::detail::ParseResultType&gt;::&lt;unnamed-tag&gt;::m_value' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::clara::detail::ResultValueBase&lt;enum Catch::clara::detail::ParseResultType&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$ResultValueBase@W4ParseResultType@detail@clara@Catch@@@detail@clara@Catch@@IEAA@W4Type@ResultBase@123@@Z</DECORATED>
+    <FUNCLINE>7275</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::clara::detail::ResultValueBase&lt;enum Catch::clara::detail::ParseResultType&gt;::&lt;unnamed-tag&gt;::m_value</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>7277</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::clara::detail::ResultValueBase&lt;enum Catch::clara::detail::ParseResultType&gt;::&lt;unnamed-tag&gt;::m_value' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::clara::detail::ResultValueBase&lt;enum Catch::clara::detail::ParseResultType&gt;::{ctor}</FUNCTION>
+    <DECORATED>??0?$ResultValueBase@W4ParseResultType@detail@clara@Catch@@@detail@clara@Catch@@IEAA@AEBV0123@@Z</DECORATED>
+    <FUNCLINE>7277</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::clara::detail::ResultValueBase&lt;enum Catch::clara::detail::ParseResultType&gt;::&lt;unnamed-tag&gt;::m_value</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>7168</LINE>
+      <COLUMN>4</COLUMN>
+    </SFA>
+    <DEFECTCODE>26495</DEFECTCODE>
+    <DESCRIPTION>Variable 'Catch::clara::detail::Token::type' is uninitialized. Always initialize a member variable (type.6).</DESCRIPTION>
+    <FUNCTION>Catch::clara::detail::Token::{ctor}</FUNCTION>
+    <DECORATED>??0Token@detail@clara@Catch@@QEAA@XZ</DECORATED>
+    <FUNCLINE>7168</FUNCLINE>
+    <ADDITIONALINFO>
+      <targetSymbol>Catch::clara::detail::Token::type</targetSymbol>
+    </ADDITIONALINFO>
+    <PATH></PATH>
+  </DEFECT>
+  <DEFECT>
+    <SFA>
+      <FILEPATH>E:\devel\spdlog\tests\</FILEPATH>
+      <FILENAME>catch.hpp</FILENAME>
+      <LINE>5145</LINE>
+      <COLUMN>8</COLUMN>
+    </SFA>
+    <DEFECTCODE>26439</DEFECTCODE>
+    <DESCRIPTION>This kind of function may not throw. Declare it 'noexcept' (f.6).</DESCRIPTION>
+    <FUNCTION>Catch::AssertionStats::{ctor}</FUNCTION>
+    <DECORATED>??0AssertionStats@Catch@@QEAA@$$QEAU01@@Z</DECORATED>
+    <FUNCLINE>5145</FUNCLINE>
+    <PATH></PATH>
+  </DEFECT>
+</DEFECTS>

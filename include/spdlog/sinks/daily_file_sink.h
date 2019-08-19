@@ -3,12 +3,14 @@
 
 #pragma once
 
+#include "spdlog/common.h"
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/fmt/fmt.h"
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/os.h"
 #include "spdlog/details/synchronous_factory.h"
+
 
 #include <chrono>
 #include <cstdio>
@@ -52,7 +54,7 @@ public:
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
         {
-            throw spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
+            SPDLOG_THROW(spdlog_ex("daily_file_sink: Invalid rotation time in ctor"));
         }
         auto now = log_clock::now();
         file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(now)), truncate_);

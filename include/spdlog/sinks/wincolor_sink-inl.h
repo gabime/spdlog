@@ -153,7 +153,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const fmt::memory
         bool ok = ::WriteFile(out_handle_, formatted.data() + total_written, size - total_written, &bytes_written, nullptr) != 0;
         if (!ok || bytes_written == 0)
         {
-            throw spdlog_ex("wincolor_sink: write_to_file_ failed. GetLastError(): " + std::to_string(::GetLastError()));
+            SPDLOG_THROW(spdlog_ex("wincolor_sink: write_to_file_ failed. GetLastError(): " + std::to_string(::GetLastError())));
         }
         total_written += bytes_written;
     } while (total_written < size);
