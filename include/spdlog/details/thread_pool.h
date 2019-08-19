@@ -31,20 +31,16 @@ enum class async_msg_type
 // Movable only. should never be copied
 struct async_msg
 {
-    async_msg_type msg_type;
-    level::level_enum level;
+    async_msg_type msg_type {async_msg_type::log};
+    level::level_enum level {level::info};
     log_clock::time_point time;
-    size_t thread_id;
+    size_t thread_id {0};
     fmt::basic_memory_buffer<char, 176> raw;
 
     source_loc source;
     async_logger_ptr worker_ptr;
 
-    async_msg()
-        : msg_type(async_msg_type::log)
-        , level(level::info)
-        , thread_id(0)
-    {}
+    async_msg() = default;
     ~async_msg() = default;
 
     // should only be moved in or out of the queue..

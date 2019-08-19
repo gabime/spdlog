@@ -32,7 +32,6 @@ namespace details {
 
 SPDLOG_INLINE registry::registry()
     : formatter_(new pattern_formatter())
-    , level_(spdlog::level::info)
 {
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
