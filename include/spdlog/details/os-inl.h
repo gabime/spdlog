@@ -122,7 +122,7 @@ SPDLOG_INLINE void prevent_child_fd(FILE *f)
 #if !defined(__cplusplus_winrt)
     auto file_handle = reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(f)));
     if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
-        SPDLOG_THROW spdlog_ex("SetHandleInformation failed", errno);
+        SPDLOG_THROW(spdlog_ex("SetHandleInformation failed", errno));
 #endif
 #else
     auto fd = fileno(f);

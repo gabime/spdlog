@@ -8,6 +8,7 @@
 #endif
 
 #include "spdlog/details/os.h"
+#include "spdlog/common.h"
 
 #include <cerrno>
 #include <chrono>
