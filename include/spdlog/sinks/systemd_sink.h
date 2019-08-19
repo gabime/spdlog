@@ -38,7 +38,8 @@ public:
     systemd_sink &operator=(const systemd_sink &) = delete;
 
 protected:
-    std::array<int, 7> syslog_levels_;
+    using levels_array = std::array<int, 7>;
+    levels_array syslog_levels_;
 
     void sink_it_(const details::log_msg &msg) override
     {
@@ -72,7 +73,7 @@ protected:
 
     int syslog_level(level::level_enum l)
     {
-        return syslog_levels_.at(static_cast<int>(l));
+        return syslog_levels_.at(static_cast<levels_array::size_type>(l));
     }
 
     void flush_() override {}

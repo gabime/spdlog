@@ -73,7 +73,8 @@ protected:
     bool enable_formatting_ = false;
 
 private:
-    std::array<int, 7> syslog_levels_;
+    using levels_array = std::array<int, 7>;
+    levels_array syslog_levels_;
     // must store the ident because the man says openlog might use the pointer as
     // is and not a string copy
     const std::string ident_;
@@ -83,7 +84,7 @@ private:
     //
     int syslog_prio_from_level(const details::log_msg &msg) const
     {
-        return syslog_levels_.at(static_cast<int>(msg.level));
+        return syslog_levels_.at(static_cast<levels_array::size_type>(msg.level));
     }
 };
 
