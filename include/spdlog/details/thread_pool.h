@@ -7,7 +7,6 @@
 #include "spdlog/details/mpmc_blocking_q.h"
 #include "spdlog/details/os.h"
 
-
 #include <chrono>
 #include <memory>
 #include <thread>
@@ -31,9 +30,9 @@ enum class async_msg_type
 #include "spdlog/details/log_msg_buffer.h"
 // Async msg to move to/from the queue
 // Movable only. should never be copied
-struct async_msg:log_msg_buffer
+struct async_msg : log_msg_buffer
 {
-    async_msg_type msg_type {async_msg_type::log};
+    async_msg_type msg_type{async_msg_type::log};
     async_logger_ptr worker_ptr;
 
     async_msg() = default;
@@ -53,7 +52,7 @@ struct async_msg:log_msg_buffer
     async_msg &operator=(async_msg &&other)
 
     {
-        *static_cast<log_msg_buffer*>(this) = std::move(other);
+        *static_cast<log_msg_buffer *>(this) = std::move(other);
         msg_type = other.msg_type;
         worker_ptr = std::move(other.worker_ptr);
         return *this;
@@ -68,8 +67,7 @@ struct async_msg:log_msg_buffer
         : log_msg_buffer(m)
         , msg_type(the_type)
         , worker_ptr(std::move(worker))
-    {
-    }
+    {}
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
         : log_msg_buffer()
@@ -80,7 +78,6 @@ struct async_msg:log_msg_buffer
     explicit async_msg(async_msg_type the_type)
         : async_msg(nullptr, the_type)
     {}
-
 };
 
 class thread_pool

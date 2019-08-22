@@ -34,7 +34,6 @@
 //         l.warn("This will trigger the log of all prev messages in the queue");
 //     }
 
-
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>
@@ -42,7 +41,8 @@ class backtrace_sink : public dist_sink<Mutex>
 {
 public:
     explicit backtrace_sink(level::level_enum trigger_level = spdlog::level::warn, size_t n_messages = 32)
-        : trigger_level_{trigger_level}, traceback_msgs_{n_messages}
+        : trigger_level_{trigger_level}
+        , traceback_msgs_{n_messages}
     {}
 
 protected:
@@ -54,40 +54,39 @@ protected:
     // otherwise save the message in the queue for future trigger.
     void sink_it_(const details::log_msg &msg) override
     {
-        if(msg.level < trigger_level_)
+        if (msg.level < trigger_level_)
         {
             traceback_msgs_.push_back(details::log_msg_buffer(msg));
         }
-        if(msg.level > level::debug)
+        if (msg.level > level::debug)
         {
             dist_sink<Mutex>::sink_it_(msg);
         }
-        if(msg.level >= trigger_level_)
+        if (msg.level >= trigger_level_)
         {
             log_backtrace_(msg.logger_name);
         }
     }
 
-    void log_backtrace_(const string_view_t& logger_name)
+    void log_backtrace_(const string_view_t &logger_name)
     {
-        if(traceback_msgs_.empty())
+        if (traceback_msgs_.empty())
         {
             return;
         }
 
-        dist_sink<Mutex>::sink_it_(details::log_msg{
-            logger_name,level::info,"********************* [Backtrace Start] *********************"});
+        dist_sink<Mutex>::sink_it_(
+            details::log_msg{logger_name, level::info, "********************* [Backtrace Start] *********************"});
 
         do
         {
             details::log_msg_buffer popped;
             traceback_msgs_.pop_front(popped);
             dist_sink<Mutex>::sink_it_(popped);
-        }
-        while (!traceback_msgs_.empty());
+        } while (!traceback_msgs_.empty());
 
-        dist_sink<Mutex>::sink_it_(details::log_msg{
-            logger_name,level::info,"********************* [Backtrace End] ***********************"});
+        dist_sink<Mutex>::sink_it_(
+            details::log_msg{logger_name, level::info, "********************* [Backtrace End] ***********************"});
     }
 };
 
