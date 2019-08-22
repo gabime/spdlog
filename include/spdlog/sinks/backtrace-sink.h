@@ -5,7 +5,6 @@
 
 #include "dist_sink.h"
 #include "spdlog/details/null_mutex.h"
-#include "spdlog/details/log_msg.h"
 #include "spdlog/details/log_msg_buffer.h"
 #include "spdlog/details/circular_q.h"
 
@@ -14,25 +13,8 @@
 #include <chrono>
 
 // Store log messages in circular buffer
-// If it encounters a message with high enough level, it will send all pervious message to its child sinks
+// If it encounters a message with high enough level, it will send all previous message to it child sinks
 // Useful for storing debug data in case of error/warning happens
-
-//
-// Example:
-//
-//     #include "spdlog/spdlog.h"
-//     #include "spdlog/sinks/backtrace_sink.h
-//
-//     int main() {
-//         auto backtrace_sink = std::make_shared<backtrace_sink>();
-//         backtrace_sink ->add_sink(std::make_shared<stdout_color_sink_mt>());
-//         spdlog::logger l("logger", backtrace_sink);
-//         logger.set_level(spdlog::level::trace);
-//         l.trace("Hello");
-//         l.debug("Hello");
-//         l.info("Hello");
-//         l.warn("This will trigger the log of all prev messages in the queue");
-//     }
 
 namespace spdlog {
 namespace sinks {

@@ -128,7 +128,6 @@ SPDLOG_INLINE void logger::enable_backtrace(level::level_enum trigger_level, siz
     this->set_level(spdlog::level::trace);
 }
 
-
 // flush functions
 SPDLOG_INLINE void logger::flush()
 {

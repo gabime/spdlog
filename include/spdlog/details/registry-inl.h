@@ -67,7 +67,7 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
     new_logger->set_level(level_);
     new_logger->flush_on(flush_level_);
 
-    if(backtrace_level_ != level::off)
+    if (backtrace_level_ != level::off)
     {
         new_logger->enable_backtrace(backtrace_level_, backtrace_n_messages_);
     }
@@ -76,8 +76,6 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
     {
         register_logger_(std::move(new_logger));
     }
-
-
 }
 
 SPDLOG_INLINE std::shared_ptr<logger> registry::get(const std::string &logger_name)
