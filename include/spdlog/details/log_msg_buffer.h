@@ -9,7 +9,7 @@
 namespace spdlog {
 namespace details {
 
-// regular log_msgs only holds string_views to stack data - so the cannot be stored for later use.
+// regular log_msgs hold string_views to stack data - so they cannot be stored for later use.
 // this one can, since it contains and owns the payload buffer.
 struct log_msg_buffer : log_msg
 {
