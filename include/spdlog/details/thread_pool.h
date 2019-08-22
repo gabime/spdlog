@@ -63,7 +63,7 @@ struct async_msg : log_msg_buffer
 #endif
 
     // construct from log_msg with given type
-    async_msg(async_logger_ptr &&worker, async_msg_type the_type, details::log_msg &m)
+    async_msg(async_logger_ptr &&worker, async_msg_type the_type, const details::log_msg &m)
         : log_msg_buffer{m}
         , msg_type{the_type}
         , worker_ptr{std::move(worker)}
@@ -95,7 +95,7 @@ public:
     thread_pool(const thread_pool &) = delete;
     thread_pool &operator=(thread_pool &&) = delete;
 
-    void post_log(async_logger_ptr &&worker_ptr, details::log_msg &msg, async_overflow_policy overflow_policy);
+    void post_log(async_logger_ptr &&worker_ptr, const details::log_msg &msg, async_overflow_policy overflow_policy);
     void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy);
     size_t overrun_counter();
 

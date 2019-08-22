@@ -161,7 +161,7 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
 }
 
 // protected methods
-SPDLOG_INLINE void logger::sink_it_(details::log_msg &msg)
+SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
 {
     for (auto &sink : sinks_)
     {
