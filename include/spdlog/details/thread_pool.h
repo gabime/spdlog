@@ -58,8 +58,8 @@ struct async_msg : log_msg_buffer
         return *this;
     }
 #else // (_MSC_VER) && _MSC_VER <= 1800
-    async_msg(async_msg &&) SPDLOG_NOEXCEPT = default;
-    async_msg &operator=(async_msg &&) SPDLOG_NOEXCEPT = default;
+    async_msg(async_msg &&) = default;
+    async_msg &operator=(async_msg &&) = default;
 #endif
 
     // construct from log_msg with given type
