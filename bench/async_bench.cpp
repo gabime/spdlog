@@ -115,6 +115,8 @@ int main(int argc, char *argv[])
             auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
             auto logger = std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp), async_overflow_policy::block);
             bench_mt(howmany, std::move(logger), threads);
+
+            verify_file(filename, howmany);
 #ifdef SPDLOG_ASYNC_BENCH_VERIFY
             verify_file(filename, howmany);
 #endif // SPDLOG_ASYNC_BENCH_VERIFY

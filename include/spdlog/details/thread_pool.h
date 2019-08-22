@@ -3,9 +3,10 @@
 
 #pragma once
 
-#include "spdlog/details/log_msg.h"
+#include "spdlog/details/log_msg_buffer.h"
 #include "spdlog/details/mpmc_blocking_q.h"
 #include "spdlog/details/os.h"
+
 
 #include <chrono>
 #include <memory>
@@ -27,17 +28,12 @@ enum class async_msg_type
     terminate
 };
 
+#include "spdlog/details/log_msg_buffer.h"
 // Async msg to move to/from the queue
 // Movable only. should never be copied
-struct async_msg
+struct async_msg:log_msg_buffer
 {
     async_msg_type msg_type {async_msg_type::log};
-    level::level_enum level {level::info};
-    log_clock::time_point time;
-    size_t thread_id {0};
-    fmt::basic_memory_buffer<char, 176> raw;
-
-    source_loc source;
     async_logger_ptr worker_ptr;
 
     async_msg() = default;
@@ -49,51 +45,35 @@ struct async_msg
 // support for vs2013 move
 #if defined(_MSC_VER) && _MSC_VER <= 1800
     async_msg(async_msg &&other)
-        : msg_type(other.msg_type)
-        , level(other.level)
-        , time(other.time)
-        , thread_id(other.thread_id)
-        , raw(move(other.raw))
-        , msg_id(other.msg_id)
-        , source(other.source)
+        : log_msg_buffer(std::move(other))
+        , msg_type(other.msg_type)
         , worker_ptr(std::move(other.worker_ptr))
     {}
 
     async_msg &operator=(async_msg &&other)
+
     {
+        *static_cast<log_msg_buffer*>(this) = std::move(other);
         msg_type = other.msg_type;
-        level = other.level;
-        time = other.time;
-        thread_id = other.thread_id;
-        raw = std::move(other.raw);
-        msg_id = other.msg_id;
-        source = other.source;
         worker_ptr = std::move(other.worker_ptr);
         return *this;
     }
 #else // (_MSC_VER) && _MSC_VER <= 1800
-    async_msg(async_msg &&) = default;
-    async_msg &operator=(async_msg &&) = default;
+    async_msg(async_msg &&) SPDLOG_NOEXCEPT = default;
+    async_msg &operator=(async_msg &&) SPDLOG_NOEXCEPT = default;
 #endif
 
     // construct from log_msg with given type
     async_msg(async_logger_ptr &&worker, async_msg_type the_type, details::log_msg &m)
-        : msg_type(the_type)
-        , level(m.level)
-        , time(m.time)
-        , thread_id(m.thread_id)
-        , source(m.source)
+        : log_msg_buffer(m)
+        , msg_type(the_type)
         , worker_ptr(std::move(worker))
     {
-        raw.append(m.payload.data(), m.payload.data() + m.payload.size());
     }
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
-        : msg_type(the_type)
-        , level(level::off)
-        , time()
-        , thread_id(0)
-        , source()
+        : log_msg_buffer()
+        , msg_type(the_type)
         , worker_ptr(std::move(worker))
     {}
 
@@ -101,17 +81,6 @@ struct async_msg
         : async_msg(nullptr, the_type)
     {}
 
-    // copy into log_msg
-    log_msg to_log_msg()
-    {
-        log_msg msg(string_view_t(worker_ptr->name()), level, string_view_t(raw.data(), raw.size()));
-        msg.time = time;
-        msg.thread_id = thread_id;
-        msg.source = source;
-        msg.color_range_start = 0;
-        msg.color_range_end = 0;
-        return msg;
-    }
 };
 
 class thread_pool
