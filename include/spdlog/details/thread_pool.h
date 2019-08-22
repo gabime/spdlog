@@ -64,19 +64,19 @@ struct async_msg : log_msg_buffer
 
     // construct from log_msg with given type
     async_msg(async_logger_ptr &&worker, async_msg_type the_type, details::log_msg &m)
-        : log_msg_buffer(m)
-        , msg_type(the_type)
-        , worker_ptr(std::move(worker))
+        : log_msg_buffer{m}
+        , msg_type{the_type}
+        , worker_ptr{std::move(worker)}
     {}
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
-        : log_msg_buffer()
-        , msg_type(the_type)
-        , worker_ptr(std::move(worker))
+        : log_msg_buffer{}
+        , msg_type{the_type}
+        , worker_ptr{std::move(worker)}
     {}
 
     explicit async_msg(async_msg_type the_type)
-        : async_msg(nullptr, the_type)
+        : async_msg{nullptr, the_type}
     {}
 };
 
