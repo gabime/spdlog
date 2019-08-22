@@ -17,7 +17,7 @@ struct log_msg_buffer : log_msg
     fmt::basic_memory_buffer<char, 200> payload_buf;
     log_msg_buffer() = default;
 
-    log_msg_buffer(const log_msg &orig_msg)
+    explicit log_msg_buffer(const log_msg &orig_msg)
         : log_msg(orig_msg)
     {
         update_buffers();
@@ -29,13 +29,13 @@ struct log_msg_buffer : log_msg
         update_buffers();
     }
 
-    log_msg_buffer(const log_msg_buffer &&other)
+    log_msg_buffer(const log_msg_buffer &&other) SPDLOG_NOEXCEPT
         : log_msg(std::move(other))
     {
         update_buffers();
     }
 
-    log_msg_buffer &operator=(log_msg_buffer &other) SPDLOG_NOEXCEPT
+    log_msg_buffer &operator=(const log_msg_buffer &other) SPDLOG_NOEXCEPT
     {
         *static_cast<log_msg *>(this) = other;
         update_buffers();
