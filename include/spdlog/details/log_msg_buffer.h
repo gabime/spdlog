@@ -12,23 +12,40 @@ namespace details {
 // extend log_msg with internal buffer to store its payload.
 // this is needed since log_msg holds string_views that points to stack data.
 
-struct log_msg_buffer : log_msg
+class log_msg_buffer : public log_msg
 {
     fmt::basic_memory_buffer<char, 200> buffer;
-    log_msg_buffer() = default;
-
-    explicit log_msg_buffer(const log_msg &orig_msg)
-        : log_msg(orig_msg)
+    void update_string_views()
     {
-        buffer.append(logger_name.begin(), logger_name.end());
-        logger_name = string_view_t{buffer.data(), buffer.size()};
-
-        buffer.append(payload.begin(), payload.end());
+        logger_name = string_view_t{buffer.data(), logger_name.size()};
         payload = string_view_t{logger_name.end(), payload.size()};
     }
 
-    log_msg_buffer(log_msg_buffer &&other) = default;
-    log_msg_buffer &operator=(log_msg_buffer &&other) = default;
+public:
+    log_msg_buffer() = default;
+
+    explicit log_msg_buffer(const log_msg &orig_msg)
+        : log_msg{orig_msg}
+    {
+        buffer.append(logger_name.begin(), logger_name.end());
+        buffer.append(payload.begin(), payload.end());
+        update_string_views();
+    }
+
+    log_msg_buffer(log_msg_buffer &&other)
+        : log_msg{std::move(other)}
+        , buffer{std::move(other.buffer)}
+    {
+        update_string_views();
+    }
+
+    log_msg_buffer &operator=(log_msg_buffer &&other)
+    {
+        log_msg::operator=(std::move(other));
+        buffer = std::move(other.buffer);
+        update_string_views();
+        return *this;
+    }
 };
 
 } // namespace details
