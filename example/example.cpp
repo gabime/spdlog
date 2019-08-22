@@ -47,7 +47,7 @@ int main(int, char *[])
     spdlog::trace("Backtrace message 1");
     spdlog::debug("Backtrace message 2");
     spdlog::debug("Backtrace message 3");
-    spdlog::error("This should trigger backtrace!")
+    spdlog::error("This should trigger backtrace!");
     
     try
     {
