@@ -323,6 +323,8 @@ public:
 
     void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
+    void enable_backtrace(level::level_enum trigger_level = level::err, size_t n_messages = 16);
+
     // flush functions
     void flush();
     void flush_on(level::level_enum log_level);

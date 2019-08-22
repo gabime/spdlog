@@ -40,7 +40,7 @@ template<typename Mutex>
 class backtrace_sink : public dist_sink<Mutex>
 {
 public:
-    explicit backtrace_sink(level::level_enum trigger_level = spdlog::level::warn, size_t n_messages = 32)
+    explicit backtrace_sink(level::level_enum trigger_level = spdlog::level::err, size_t n_messages = 16)
         : trigger_level_{trigger_level}
         , traceback_msgs_{n_messages}
     {}
@@ -76,7 +76,7 @@ protected:
         }
 
         dist_sink<Mutex>::sink_it_(
-            details::log_msg{logger_name, level::info, "********************* [Backtrace Start] *********************"});
+            details::log_msg{logger_name, level::info, "********************* Backtrace Start *********************"});
 
         do
         {
@@ -86,7 +86,7 @@ protected:
         } while (!traceback_msgs_.empty());
 
         dist_sink<Mutex>::sink_it_(
-            details::log_msg{logger_name, level::info, "********************* [Backtrace End] ***********************"});
+            details::log_msg{logger_name, level::info, "********************* Backtrace End ***********************"});
     }
 };
 

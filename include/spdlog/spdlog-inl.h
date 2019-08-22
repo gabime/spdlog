@@ -32,6 +32,11 @@ SPDLOG_INLINE void set_pattern(std::string pattern, pattern_time_type time_type)
     set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
 }
 
+SPDLOG_INLINE void enable_backtrace(level::level_enum trigger_level, size_t n_messages)
+{
+    details::registry::instance().enable_backtrace(trigger_level, n_messages);
+}
+
 SPDLOG_INLINE void set_level(level::level_enum log_level)
 {
     details::registry::instance().set_level(log_level);

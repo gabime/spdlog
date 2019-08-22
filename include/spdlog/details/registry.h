@@ -52,6 +52,8 @@ public:
     // Set global formatter. Each sink in each logger will get a clone of this object
     void set_formatter(std::unique_ptr<formatter> formatter);
 
+    void enable_backtrace(level::level_enum trigger_level, size_t n_messages);
+
     void set_level(level::level_enum log_level);
 
     void flush_on(level::level_enum log_level);
@@ -94,6 +96,8 @@ private:
     std::unique_ptr<periodic_worker> periodic_flusher_;
     std::shared_ptr<logger> default_logger_;
     bool automatic_registration_ = true;
+    level::level_enum backtrace_level_ = level::off;
+    size_t backtrace_n_messages_ = 0;
 };
 
 } // namespace details

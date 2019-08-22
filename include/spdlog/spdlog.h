@@ -60,6 +60,9 @@ void set_formatter(std::unique_ptr<spdlog::formatter> formatter);
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
+// enable global backtrace support
+void enable_backtrace(level::level_enum trigger_level = level::err, size_t n_messages = 16);
+
 // Set global logging level
 void set_level(level::level_enum log_level);
 
