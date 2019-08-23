@@ -160,13 +160,13 @@ if (SPDLOG_INSTALL)
     set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfig.cmake")
     set(config_targets_file "spdlogConfigTargets.cmake")
     set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfigVersion.cmake")
-    set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/spdlog/cmake")
+    set(export_dest_dir "${CMAKE_INSTALL_DATAROOTDIR}/spdlog/cmake")
 
     #---------------------------------------------------------------------------------------
     # Include files
     #---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-    install(TARGETS spdlog spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_LIBDIR}/spdlog")
+    install(TARGETS spdlog spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/spdlog")
 
     #---------------------------------------------------------------------------------------
     # Package and version files
