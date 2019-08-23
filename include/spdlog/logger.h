@@ -323,7 +323,9 @@ public:
 
     void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
-    void enable_backtrace(level::level_enum trigger_level = level::err, size_t n_messages = 16);
+    void enable_backtrace(size_t n_messages = 16);
+
+    void dump_backtrace();
 
     // flush functions
     void flush();
@@ -347,7 +349,7 @@ protected:
     spdlog::level_t level_{level::info};
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
-    bool backtrace_enabled_ {false};
+    bool backtrace_enabled_{false};
 
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();

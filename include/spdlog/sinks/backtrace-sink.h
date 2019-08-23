@@ -22,41 +22,37 @@ template<typename Mutex>
 class backtrace_sink : public dist_sink<Mutex>
 {
 public:
-    explicit backtrace_sink(level::level_enum trigger_level = spdlog::level::err, size_t n_messages = 16)
-        : trigger_level_{trigger_level}
-        , traceback_msgs_{n_messages}
+    explicit backtrace_sink(size_t n_messages = 16)
+        : traceback_msgs_{n_messages}
     {}
 
-protected:
-    level::level_enum trigger_level_;
+    void dump_backtrace()
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        dump_backtrace_();
+    }
 
+protected:
     details::circular_q<details::log_msg_buffer> traceback_msgs_;
 
-    // if current message is high enough, trigger a backtrace log,
-    // otherwise save the message in the queue for future trigger.
+    // save the messages in a circular queue
     void sink_it_(const details::log_msg &msg) override
     {
-        if (msg.level < trigger_level_)
-        {
-            traceback_msgs_.push_back(details::log_msg_buffer(msg));
-        }
+        traceback_msgs_.push_back(details::log_msg_buffer(msg));
+
         if (msg.level > level::debug)
         {
             dist_sink<Mutex>::sink_it_(msg);
         }
-        if (msg.level >= trigger_level_)
-        {
-            log_backtrace_(msg.logger_name);
-        }
     }
 
-    void log_backtrace_(const string_view_t &logger_name)
+    void dump_backtrace_()
     {
         if (traceback_msgs_.empty())
         {
             return;
         }
-
+        const char *logger_name = "??????";
         dist_sink<Mutex>::sink_it_(
             details::log_msg{logger_name, level::info, "********************* Backtrace Start *********************"});
 

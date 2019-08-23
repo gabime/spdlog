@@ -67,9 +67,9 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
     new_logger->set_level(level_);
     new_logger->flush_on(flush_level_);
 
-    if (backtrace_level_ != level::off)
+    if (backtrace_n_messages_ > 0)
     {
-        new_logger->enable_backtrace(backtrace_level_, backtrace_n_messages_);
+        new_logger->enable_backtrace(backtrace_n_messages_);
     }
 
     if (automatic_registration_)
@@ -140,15 +140,14 @@ SPDLOG_INLINE void registry::set_formatter(std::unique_ptr<formatter> formatter)
     }
 }
 
-SPDLOG_INLINE void registry::enable_backtrace(level::level_enum trigger_level, size_t n_messages)
+SPDLOG_INLINE void registry::enable_backtrace(size_t n_messages)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    backtrace_level_ = trigger_level;
     backtrace_n_messages_ = n_messages;
 
     for (auto &l : loggers_)
     {
-        l.second->enable_backtrace(trigger_level, n_messages);
+        l.second->enable_backtrace(n_messages);
     }
 }
 
