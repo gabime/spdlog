@@ -120,13 +120,20 @@ SPDLOG_INLINE void logger::set_pattern(std::string pattern, pattern_time_type ti
     set_formatter(std::move(new_formatter));
 }
 
+
+// create new backtrace sink and hand it all sinks
 SPDLOG_INLINE void logger::enable_backtrace(level::level_enum trigger_level, size_t n_messages)
 {
-    auto backtrace_sink = std::make_shared<spdlog::sinks::backtrace_sink_mt>(trigger_level, n_messages);
-    backtrace_sink->set_sinks(std::move(sinks()));
-    sinks().push_back(std::move(backtrace_sink));
-    this->set_level(spdlog::level::trace);
+    if(!backtrace_enabled_)
+    {
+        backtrace_enabled_ = true;
+        auto backtrace_sink = std::make_shared<spdlog::sinks::backtrace_sink_mt>(trigger_level, n_messages);
+        backtrace_sink->set_sinks(std::move(sinks()));
+        sinks().push_back(std::move(backtrace_sink));
+        this->set_level(spdlog::level::trace);
+    }
 }
+
 
 // flush functions
 SPDLOG_INLINE void logger::flush()
