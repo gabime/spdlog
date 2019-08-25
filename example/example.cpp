@@ -35,6 +35,7 @@ int main(int, char *[])
     spdlog::debug("This message should not be displayed!");
     spdlog::set_level(spdlog::level::trace); // Set specific logger's log level
     spdlog::debug("This message should be displayed..");
+    spdlog::set_level(spdlog::level::info); // Set specific logger's log level
 
     // Customize msg format for all loggers
     spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
@@ -46,8 +47,7 @@ int main(int, char *[])
     spdlog::enable_backtrace(16);
     spdlog::trace("Backtrace message 1");
     spdlog::debug("Backtrace message 2");
-    spdlog::debug("Backtrace message 3");
-    spdlog::error("This should trigger backtrace!");
+    spdlog::dump_backtrace();
     
     try
     {
