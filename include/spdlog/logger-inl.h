@@ -241,7 +241,11 @@ SPDLOG_INLINE void logger::dump_backtrace_()
     if (backtrace_sink_)
     {
         auto tracer = static_cast<sinks::backtrace_sink_mt *>(backtrace_sink_.get());
-        tracer->dump_backtrace(name());
+        SPDLOG_TRY
+        {
+            tracer->dump_backtrace(name());
+        }
+        SPDLOG_LOGGER_CATCH()
     }
 }
 
