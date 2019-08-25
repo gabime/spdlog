@@ -40,10 +40,10 @@ public:
         return filter_level_;
     }
 
-    void dump_backtrace()
+    void dump_backtrace(string_view_t logger_name)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-        dump_backtrace_();
+        dump_backtrace_(logger_name);
     }
 
 protected:
@@ -61,13 +61,12 @@ protected:
         }
     }
 
-    void dump_backtrace_()
+    void dump_backtrace_(string_view_t logger_name)
     {
         if (traceback_msgs_.empty())
         {
             return;
         }
-        const char *logger_name = "??????";
         dist_sink<Mutex>::sink_it_(
             details::log_msg{logger_name, level::info, "********************* Backtrace Start *********************"});
 
