@@ -24,7 +24,8 @@ enum class async_msg_type
 {
     log,
     flush,
-    terminate
+    terminate,
+    dump_backtrace
 };
 
 #include "spdlog/details/log_msg_buffer.h"
@@ -96,6 +97,7 @@ public:
 
     void post_log(async_logger_ptr &&worker_ptr, const details::log_msg &msg, async_overflow_policy overflow_policy);
     void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy);
+    void post_dump_backtrace(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy);
     size_t overrun_counter();
 
 private:

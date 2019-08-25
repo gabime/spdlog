@@ -158,12 +158,9 @@ SPDLOG_INLINE void logger::disable_backtrace()
 
 SPDLOG_INLINE void logger::dump_backtrace()
 {
-    if (backtrace_sink_)
-    {
-        auto tracer = static_cast<sinks::backtrace_sink_mt *>(backtrace_sink_.get());
-        tracer->dump_backtrace(name());
-    }
+    dump_backtrace_();
 }
+
 
 // flush functions
 SPDLOG_INLINE void logger::flush()
@@ -236,6 +233,15 @@ SPDLOG_INLINE void logger::flush_()
             sink->flush();
         }
         SPDLOG_LOGGER_CATCH()
+    }
+}
+
+SPDLOG_INLINE void logger::dump_backtrace_()
+{
+    if (backtrace_sink_)
+    {
+        auto tracer = static_cast<sinks::backtrace_sink_mt *>(backtrace_sink_.get());
+        tracer->dump_backtrace(name());
     }
 }
 

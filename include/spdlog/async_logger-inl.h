@@ -4,7 +4,9 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
+
 #include "spdlog/async_logger.h"
+
 #endif
 
 #include "spdlog/sinks/sink.h"
@@ -73,11 +75,41 @@ SPDLOG_INLINE void spdlog::async_logger::backend_log_(const details::log_msg &in
     }
 }
 
-SPDLOG_INLINE void spdlog::async_logger::backend_flush_(){SPDLOG_TRY{for (auto &sink : sinks_){sink->flush();
+SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
+{
+    SPDLOG_TRY
+    {
+        for (auto &sink : sinks_){sink->flush();}
+    }
+    SPDLOG_LOGGER_CATCH()
 }
+
+
+SPDLOG_INLINE void spdlog::async_logger::dump_backtrace_()
+{
+    if (auto pool_ptr = thread_pool_.lock())
+    {
+        pool_ptr->post_dump_backtrace(shared_from_this(), overflow_policy_);
+    }
+    else
+    {
+        SPDLOG_THROW(spdlog_ex("async dumptrace: thread pool doesn't exist anymore"));
+    }
 }
-SPDLOG_LOGGER_CATCH()
+
+SPDLOG_INLINE void spdlog::async_logger::backend_dump_backtrace_()
+{
+    SPDLOG_TRY
+    {
+        if (backtrace_sink_) {
+            auto tracer = static_cast<sinks::backtrace_sink_mt *>(backtrace_sink_.get());
+            tracer->dump_backtrace(name());
+        }
+    }
+    SPDLOG_LOGGER_CATCH()
 }
+
+
 
 SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name)
 {

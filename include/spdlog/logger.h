@@ -325,7 +325,6 @@ public:
 
     void enable_backtrace(size_t n_messages = 16);
     void disable_backtrace();
-
     void dump_backtrace();
 
     // flush functions
@@ -355,6 +354,7 @@ protected:
 
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
+    virtual void dump_backtrace_();
     bool should_flush_(const details::log_msg &msg);
 
     // handle errors during logging.
