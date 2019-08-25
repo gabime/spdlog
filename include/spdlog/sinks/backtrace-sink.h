@@ -5,7 +5,6 @@
 
 #include "dist_sink.h"
 #include "spdlog/common.h"
-#include "spdlog/details/null_mutex.h"
 #include "spdlog/details/log_msg_buffer.h"
 #include "spdlog/details/circular_q.h"
 
@@ -13,9 +12,9 @@
 #include <string>
 #include <chrono>
 
-// Store log messages in circular buffer
-// If it encounters a message with high enough level, it will send all previous message to it child sinks
-// Useful for storing debug data in case of error/warning happens
+// Store log messages in circular buffer.
+// If it encounters a message with high enough level, it will send all previous message to it child sinks.
+// Useful for storing debug data in case of error/warning happens.
 
 namespace spdlog {
 namespace sinks {
@@ -23,10 +22,12 @@ template<typename Mutex>
 class backtrace_sink : public dist_sink<Mutex>
 {
 public:
-    explicit backtrace_sink(spdlog::level::level_enum filter_level, size_t n_messages)
+    backtrace_sink(std::vector<std::shared_ptr<sink>> &&child_sinks, spdlog::level::level_enum filter_level, size_t n_messages)
         : filter_level_{filter_level}
         , traceback_msgs_{n_messages}
-    {}
+    {
+        dist_sink<Mutex>::set_sinks(std::move(child_sinks));
+    }
 
     void set_filter_level(spdlog::level::level_enum filter_level)
     {
@@ -83,7 +84,6 @@ protected:
 };
 
 using backtrace_sink_mt = backtrace_sink<std::mutex>;
-using backtrace_sink_st = backtrace_sink<details::null_mutex>;
 
 } // namespace sinks
 } // namespace spdlog

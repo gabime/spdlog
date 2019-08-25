@@ -25,13 +25,12 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , backtrace_sink_(other.backtrace_sink_)
 {}
 
-SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT :
-    name_(std::move(other.name_)),
-    sinks_(std::move(other.sinks_)),
-    level_(other.level_.load(std::memory_order_relaxed)),
-    flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
-    custom_err_handler_(std::move(other.custom_err_handler_)),
-    backtrace_sink_(std::move(other.backtrace_sink_))
+SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT : name_(std::move(other.name_)),
+                                                               sinks_(std::move(other.sinks_)),
+                                                               level_(other.level_.load(std::memory_order_relaxed)),
+                                                               flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
+                                                               custom_err_handler_(std::move(other.custom_err_handler_)),
+                                                               backtrace_sink_(std::move(other.backtrace_sink_))
 
 {}
 
@@ -88,7 +87,7 @@ SPDLOG_INLINE bool logger::should_log(level::level_enum msg_level) const
 
 SPDLOG_INLINE void logger::set_level(level::level_enum log_level)
 {
-    if(backtrace_sink_)
+    if (backtrace_sink_)
     {
         auto tracer = static_cast<sinks::backtrace_sink_mt *>(backtrace_sink_.get());
         tracer->set_filter_level(log_level);
@@ -139,8 +138,7 @@ SPDLOG_INLINE void logger::enable_backtrace(size_t n_messages)
 {
     if (!backtrace_sink_)
     {
-        auto new_backtrace_sink = new spdlog::sinks::backtrace_sink_mt(level(), n_messages);
-        new_backtrace_sink->set_sinks(std::move(sinks_));
+        auto new_backtrace_sink = new spdlog::sinks::backtrace_sink_mt(std::move(sinks_), level(), n_messages);
         backtrace_sink_.reset(new_backtrace_sink);
         sinks().push_back(backtrace_sink_);
         assert(sinks().size() == 1);

@@ -351,7 +351,7 @@ protected:
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
     sink_ptr backtrace_sink_;
-    //bool backtrace_enabled_{false};
+    // bool backtrace_enabled_{false};
 
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();

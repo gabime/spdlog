@@ -45,11 +45,10 @@ public:
         sinks_ = std::move(sinks);
     }
 
-    std::vector<std::shared_ptr<sink>>& sinks()
+    std::vector<std::shared_ptr<sink>> &sinks()
     {
         return sinks_;
     }
-
 
 protected:
     void sink_it_(const details::log_msg &msg) override
