@@ -43,7 +43,7 @@ int main(int, char *[])
 
     // Backtrace support.
     // Auto trigger backtrace of latest debug/trace messages upon when error/critical messages happen..
-    spdlog::enable_backtrace();
+    spdlog::enable_backtrace(16);
     spdlog::trace("Backtrace message 1");
     spdlog::debug("Backtrace message 2");
     spdlog::debug("Backtrace message 3");
