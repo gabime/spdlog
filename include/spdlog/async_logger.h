@@ -51,11 +51,10 @@ public:
 
     std::shared_ptr<logger> clone(std::string new_name) override;
 
-
 protected:
     void sink_it_(const details::log_msg &msg) override;
     void flush_() override;
-    void dump_backtrace_() override ;
+    void dump_backtrace_() override;
     void backend_sink_it_(const details::log_msg &incoming_log_msg);
     void backend_flush_();
     void backend_dump_backtrace_();

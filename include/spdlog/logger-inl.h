@@ -161,7 +161,6 @@ SPDLOG_INLINE void logger::dump_backtrace()
     dump_backtrace_();
 }
 
-
 // flush functions
 SPDLOG_INLINE void logger::flush()
 {
