@@ -38,6 +38,7 @@ void prepare_logdir()
 
 void bench_c_string(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
 {
+    logger->enable_backtrace(64);
     const char *msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum pharetra metus cursus "
                       "lacus placerat congue. Nulla egestas, mauris a tincidunt tempus, enim lectus volutpat mi, eu consequat sem "
                       "libero nec massa. In dapibus ipsum a diam rhoncus gravida. Etiam non dapibus eros. Donec fringilla dui sed "
@@ -52,6 +53,7 @@ void bench_c_string(benchmark::State &state, std::shared_ptr<spdlog::logger> log
 
 void bench_logger(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
 {
+    logger->enable_backtrace(64);
     int i = 0;
     for (auto _ : state)
     {
@@ -61,6 +63,7 @@ void bench_logger(benchmark::State &state, std::shared_ptr<spdlog::logger> logge
 
 void bench_disabled_macro(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
 {
+    logger->enable_backtrace(64);
     int i = 0;
     benchmark::DoNotOptimize(i);      // prevent unused warnings
     benchmark::DoNotOptimize(logger); // prevent unused warnings
