@@ -138,11 +138,9 @@ SPDLOG_INLINE void logger::enable_backtrace(size_t n_messages)
 {
     if (!backtrace_sink_)
     {
-        auto new_backtrace_sink = new spdlog::sinks::backtrace_sink_mt(std::move(sinks_), level(), n_messages);
-        backtrace_sink_.reset(new_backtrace_sink);
+        backtrace_sink_ = std::make_shared<sinks::backtrace_sink_mt>((std::move(sinks_), level(), n_messages));
         sinks().push_back(backtrace_sink_);
-        assert(sinks().size() == 1);
-        level_.store(level::trace);
+        level_.store(level::trace); // pass all messages to the backtrace sink.
     }
 }
 
