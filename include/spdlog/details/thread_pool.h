@@ -50,7 +50,6 @@ struct async_msg : log_msg_buffer
     {}
 
     async_msg &operator=(async_msg &&other)
-
     {
         *static_cast<log_msg_buffer *>(this) = std::move(other);
         msg_type = other.msg_type;
