@@ -49,24 +49,37 @@ SPDLOG_INLINE void spdlog::async_logger::dump_backtrace_()
     if (auto pool_ptr = thread_pool_.lock()) {
         pool_ptr->post_dump_backtrace(shared_from_this(), overflow_policy_);
     } else {
-        SPDLOG_THROW(spdlog_ex("async dumptrace: thread pool doesn't exist anymore"));
+        SPDLOG_THROW(spdlog_ex("async dump_backtrace: thread pool doesn't exist anymore"));
     }
 }
 
 //
 // backend functions - called from the thread pool to do the actual job
 //
-SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg &incoming_log_msg)
+SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg &msg)
 {
-    spdlog::logger::sink_it_(incoming_log_msg);
+    for (auto &sink : sinks_)
+    {
+        if (sink->should_log(msg.level))
+        {
+            SPDLOG_TRY
+            {
+                sink->log(msg);
+            }
+            SPDLOG_LOGGER_CATCH()
+        }
+    }
+
+    if (should_flush_(msg))
+    {
+        backend_flush_();
+    }
 }
 
 SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
 {
     spdlog::logger::flush_();
 }
-
-
 
 SPDLOG_INLINE void spdlog::async_logger::backend_dump_backtrace_()
 {
