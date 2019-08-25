@@ -22,13 +22,17 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , level_(other.level_.load(std::memory_order_relaxed))
     , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
     , custom_err_handler_(other.custom_err_handler_)
+    , backtrace_sink_(other.backtrace_sink_)
 {}
 
-SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT : name_(std::move(other.name_)),
-                                                               sinks_(std::move(other.sinks_)),
-                                                               level_(other.level_.load(std::memory_order_relaxed)),
-                                                               flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
-                                                               custom_err_handler_(std::move(other.custom_err_handler_))
+SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT :
+    name_(std::move(other.name_)),
+    sinks_(std::move(other.sinks_)),
+    level_(other.level_.load(std::memory_order_relaxed)),
+    flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
+    custom_err_handler_(std::move(other.custom_err_handler_)),
+    backtrace_sink_(std::move(other.backtrace_sink_))
+
 {}
 
 SPDLOG_INLINE logger &logger::operator=(logger other) SPDLOG_NOEXCEPT
@@ -53,6 +57,7 @@ SPDLOG_INLINE void logger::swap(spdlog::logger &other) SPDLOG_NOEXCEPT
     other.flush_level_.store(tmp);
 
     custom_err_handler_.swap(other.custom_err_handler_);
+    backtrace_sink_.swap(other.backtrace_sink_);
 }
 
 SPDLOG_INLINE void swap(logger &a, logger &b)
@@ -83,7 +88,16 @@ SPDLOG_INLINE bool logger::should_log(level::level_enum msg_level) const
 
 SPDLOG_INLINE void logger::set_level(level::level_enum log_level)
 {
-    level_.store(log_level);
+    if(backtrace_sink_)
+    {
+        auto tracer = static_cast<sinks::backtrace_sink_mt *>(backtrace_sink_.get());
+        tracer->set_filter_level(log_level);
+        level_.store(level::trace);
+    }
+    else
+    {
+        level_.store(log_level);
+    }
 }
 
 SPDLOG_INLINE level::level_enum logger::level() const
@@ -120,26 +134,37 @@ SPDLOG_INLINE void logger::set_pattern(std::string pattern, pattern_time_type ti
     set_formatter(std::move(new_formatter));
 }
 
-// create new backtrace sink and hand it all sinks
+// create new backtrace sink and move to it all our child sinks
 SPDLOG_INLINE void logger::enable_backtrace(size_t n_messages)
 {
-    if (!backtrace_enabled_)
+    if (!backtrace_sink_)
     {
-        backtrace_enabled_ = true;
-        auto backtrace_sink = std::make_shared<spdlog::sinks::backtrace_sink_mt>(n_messages);
-        backtrace_sink->set_sinks(std::move(sinks()));
-        sinks().push_back(std::move(backtrace_sink));
-        this->set_level(spdlog::level::trace);
+        auto new_backtrace_sink = new spdlog::sinks::backtrace_sink_mt(level(), n_messages);
+        new_backtrace_sink->set_sinks(std::move(sinks_));
+        backtrace_sink_.reset(new_backtrace_sink);
+        sinks().push_back(backtrace_sink_);
+        assert(sinks().size() == 1);
+        level_.store(level::trace);
+    }
+}
+
+// restore orig sinks and level and delete the backtrace sink
+SPDLOG_INLINE void logger::disable_backtrace()
+{
+    if (backtrace_sink_)
+    {
+        auto tracer = static_cast<sinks::backtrace_sink_mt *>(backtrace_sink_.get());
+        sinks_ = std::move(tracer->sinks());
+        level_.store(tracer->get_filter_level());
+        backtrace_sink_.reset();
     }
 }
 
 SPDLOG_INLINE void logger::dump_backtrace()
 {
-    if (backtrace_enabled_)
+    if (backtrace_sink_)
     {
-        // auto backtrace_sink = static_cast<std::shared_ptr<sinks::backtrace_sink_mt>>(sinks_[0]);
-        auto *first_sink = sinks_[0].get();
-        auto tracer = static_cast<sinks::backtrace_sink_mt *>(first_sink);
+        auto tracer = static_cast<sinks::backtrace_sink_mt *>(backtrace_sink_.get());
         tracer->dump_backtrace();
     }
 }

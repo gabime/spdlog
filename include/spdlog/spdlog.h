@@ -63,6 +63,12 @@ void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time
 // enable global backtrace support
 void enable_backtrace(size_t n_messages);
 
+// disable global backtrace support
+void disable_backtrace();
+
+// call dump backtrace on default logger
+void dump_backtrace();
+
 // Set global logging level
 void set_level(level::level_enum log_level);
 

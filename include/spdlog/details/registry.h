@@ -54,6 +54,8 @@ public:
 
     void enable_backtrace(size_t n_messages);
 
+    void disable_backtrace();
+
     void set_level(level::level_enum log_level);
 
     void flush_on(level::level_enum log_level);

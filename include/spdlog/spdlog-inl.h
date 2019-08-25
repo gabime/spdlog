@@ -37,6 +37,16 @@ SPDLOG_INLINE void enable_backtrace(size_t n_messages)
     details::registry::instance().enable_backtrace(n_messages);
 }
 
+SPDLOG_INLINE void disable_backtrace()
+{
+    details::registry::instance().disable_backtrace();
+}
+
+SPDLOG_INLINE void dump_backtrace()
+{
+    default_logger_raw()->dump_backtrace();
+}
+
 SPDLOG_INLINE void set_level(level::level_enum log_level)
 {
     details::registry::instance().set_level(log_level);

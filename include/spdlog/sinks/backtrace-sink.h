@@ -4,6 +4,7 @@
 #pragma once
 
 #include "dist_sink.h"
+#include "spdlog/common.h"
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/log_msg_buffer.h"
 #include "spdlog/details/circular_q.h"
@@ -22,9 +23,22 @@ template<typename Mutex>
 class backtrace_sink : public dist_sink<Mutex>
 {
 public:
-    explicit backtrace_sink(size_t n_messages = 16)
-        : traceback_msgs_{n_messages}
+    explicit backtrace_sink(spdlog::level::level_enum filter_level, size_t n_messages)
+        : filter_level_{filter_level}
+        , traceback_msgs_{n_messages}
     {}
+
+    void set_filter_level(spdlog::level::level_enum filter_level)
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        filter_level_ = filter_level;
+    }
+
+    spdlog::level::level_enum get_filter_level()
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        return filter_level_;
+    }
 
     void dump_backtrace()
     {
@@ -33,6 +47,7 @@ public:
     }
 
 protected:
+    spdlog::level::level_enum filter_level_;
     details::circular_q<details::log_msg_buffer> traceback_msgs_;
 
     // save the messages in a circular queue
@@ -40,7 +55,7 @@ protected:
     {
         traceback_msgs_.push_back(details::log_msg_buffer(msg));
 
-        if (msg.level > level::debug)
+        if (msg.level >= filter_level_)
         {
             dist_sink<Mutex>::sink_it_(msg);
         }

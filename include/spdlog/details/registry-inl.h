@@ -151,6 +151,16 @@ SPDLOG_INLINE void registry::enable_backtrace(size_t n_messages)
     }
 }
 
+SPDLOG_INLINE void registry::disable_backtrace()
+{
+    std::lock_guard<std::mutex> lock(logger_map_mutex_);
+
+    for (auto &l : loggers_)
+    {
+        l.second->disable_backtrace();
+    }
+}
+
 SPDLOG_INLINE void registry::set_level(level::level_enum log_level)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
