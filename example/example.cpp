@@ -42,8 +42,7 @@ int main(int, char *[])
     spdlog::info("This an info message with custom format");
     spdlog::set_pattern("%+"); // back to default format
 
-    // Backtrace support.
-    // Auto trigger backtrace of latest debug/trace messages upon when error/critical messages happen..
+    // Backtrace support of latest debug/trace messages
     spdlog::enable_backtrace(16);
     spdlog::trace("Backtrace message 1");
     spdlog::debug("Backtrace message 2");
