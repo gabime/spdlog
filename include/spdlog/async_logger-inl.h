@@ -99,10 +99,7 @@ SPDLOG_INLINE void spdlog::async_logger::backend_dump_backtrace_()
 
 SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name)
 {
-    auto cloned = std::make_shared<spdlog::async_logger>(std::move(new_name), sinks_.begin(), sinks_.end(), thread_pool_, overflow_policy_);
-
-    cloned->set_level(this->level());
-    cloned->flush_on(this->flush_level());
-    cloned->set_error_handler(this->custom_err_handler_);
+    auto cloned = std::make_shared<spdlog::async_logger>(*this);
+    cloned->name_ = std::move(new_name);
     return cloned;
 }
