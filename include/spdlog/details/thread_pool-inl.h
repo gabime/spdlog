@@ -62,11 +62,6 @@ void SPDLOG_INLINE thread_pool::post_flush(async_logger_ptr &&worker_ptr, async_
     post_async_msg_(async_msg(std::move(worker_ptr), async_msg_type::flush), overflow_policy);
 }
 
-void SPDLOG_INLINE thread_pool::post_dump_backtrace(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy)
-{
-    post_async_msg_(async_msg(std::move(worker_ptr), async_msg_type::dump_backtrace), overflow_policy);
-}
-
 size_t SPDLOG_INLINE thread_pool::overrun_counter()
 {
     return q_.overrun_counter();
@@ -114,18 +109,17 @@ bool SPDLOG_INLINE thread_pool::process_next_msg_()
         return true;
     }
 
-    case async_msg_type ::dump_backtrace:
-    {
-        incoming_async_msg.worker_ptr->backend_dump_backtrace_();
-        return true;
-    }
-
     case async_msg_type::terminate:
     {
         return false;
     }
+
+    default:
+    {
+        assert(false && "Unexpected async_msg_type");
     }
-    assert(false && "Unexpected async_msg_type");
+    }
+
     return true;
 }
 

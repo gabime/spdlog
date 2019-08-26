@@ -38,6 +38,11 @@
 #endif
 
 namespace spdlog {
+
+namespace details {
+class backtracer;
+}
+
 class logger
 {
 public:
@@ -81,6 +86,10 @@ public:
             fmt::format_to(buf, fmt, args...);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             sink_it_(log_msg);
+            if (tracer_)
+            {
+                save_backtrace_(log_msg);
+            }
         }
         SPDLOG_LOGGER_CATCH()
     }
@@ -149,6 +158,10 @@ public:
     template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
+        if (tracer_)
+        {
+            save_backtrace_(details::log_msg(loc, name_, lvl, msg));
+        }
         if (!should_log(lvl))
         {
             return;
@@ -164,6 +177,13 @@ public:
                           T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
+        if (tracer_)
+        {
+            fmt::memory_buffer buf;
+            fmt::format_to(buf, "{}", msg);
+            save_backtrace_(details::log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size())));
+        }
+
         if (!should_log(lvl))
         {
             return;
@@ -323,7 +343,9 @@ public:
 
     void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
-    void enable_backtrace(size_t n_messages = 16);
+    // backtrace support.
+    // efficiently store all debug/trace messages in a circular buffer until needed for debugging.
+    void enable_backtrace(size_t n_messages);
     void disable_backtrace();
     void dump_backtrace();
 
@@ -349,12 +371,13 @@ protected:
     spdlog::level_t level_{level::info};
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
-    sink_ptr backtrace_sink_;
-    // bool backtrace_enabled_{false};
+    std::shared_ptr<details::backtracer> tracer_;
 
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
-    virtual void dump_backtrace_();
+
+    void save_backtrace_(const details::log_msg &msg);
+    void dump_backtrace_();
     bool should_flush_(const details::log_msg &msg);
 
     // handle errors during logging.

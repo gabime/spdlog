@@ -50,18 +50,6 @@ SPDLOG_INLINE void spdlog::async_logger::flush_()
     }
 }
 
-SPDLOG_INLINE void spdlog::async_logger::dump_backtrace_()
-{
-    if (auto pool_ptr = thread_pool_.lock())
-    {
-        pool_ptr->post_dump_backtrace(shared_from_this(), overflow_policy_);
-    }
-    else
-    {
-        SPDLOG_THROW(spdlog_ex("async dump_backtrace: thread pool doesn't exist anymore"));
-    }
-}
-
 //
 // backend functions - called from the thread pool to do the actual job
 //
@@ -88,11 +76,6 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
 SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
 {
     spdlog::logger::flush_();
-}
-
-SPDLOG_INLINE void spdlog::async_logger::backend_dump_backtrace_()
-{
-    spdlog::logger::dump_backtrace_();
 }
 
 SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name)
