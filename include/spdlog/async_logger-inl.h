@@ -10,7 +10,6 @@
 #include "spdlog/sinks/sink.h"
 #include "spdlog/details/thread_pool.h"
 
-#include <chrono>
 #include <memory>
 #include <string>
 
