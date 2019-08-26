@@ -64,26 +64,6 @@ SPDLOG_INLINE void swap(logger &a, logger &b)
     a.swap(b);
 }
 
-SPDLOG_INLINE void logger::log(source_loc loc, level::level_enum lvl, string_view_t msg)
-{
-    if (tracer_)
-    {
-        save_backtrace_(details::log_msg(loc, string_view_t(name_), lvl, msg));
-    }
-
-    if (!should_log(lvl))
-    {
-        return;
-    }
-
-    details::log_msg log_msg(loc, string_view_t(name_), lvl, msg);
-    sink_it_(log_msg);
-}
-
-SPDLOG_INLINE void logger::log(level::level_enum lvl, string_view_t msg)
-{
-    log(source_loc{}, lvl, msg);
-}
 
 SPDLOG_INLINE bool logger::should_log(level::level_enum msg_level) const
 {
@@ -220,9 +200,9 @@ SPDLOG_INLINE void logger::flush_()
     }
 }
 
-SPDLOG_INLINE void logger::save_backtrace_(const details::log_msg &msg)
+SPDLOG_INLINE void logger::backtrace_add_(const details::log_msg &msg)
 {
-    tracer_->add_msg(msg);
+    tracer_->add(msg);
 }
 
 SPDLOG_INLINE void logger::dump_backtrace_()

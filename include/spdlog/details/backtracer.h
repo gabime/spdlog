@@ -24,7 +24,7 @@ public:
         : messages_{n_message}
     {}
 
-    void add_msg(const log_msg &msg)
+    void add(const log_msg &msg)
     {
         std::lock_guard<std::mutex> lock{mutex_};
         messages_.push_back(log_msg_buffer{msg});

@@ -78,29 +78,22 @@ public:
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
     template<typename... Args>
-    void force_log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
+    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
     {
+        auto level_enabled = should_log(lvl);
+        if(!level_enabled && !tracer_)
+        {
+            return;
+        }
         SPDLOG_TRY
         {
             fmt::memory_buffer buf;
             fmt::format_to(buf, fmt, args...);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            sink_it_(log_msg);
-            if (tracer_)
-            {
-                save_backtrace_(log_msg);
-            }
+            if (level_enabled) sink_it_(log_msg);
+            if (tracer_) backtrace_add_(log_msg);
         }
         SPDLOG_LOGGER_CATCH()
-    }
-
-    template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
-    {
-        if (should_log(lvl))
-        {
-            force_log(loc, lvl, fmt, args...);
-        }
     }
 
     template<typename... Args>
@@ -108,9 +101,6 @@ public:
     {
         log(source_loc{}, lvl, fmt, args...);
     }
-
-    void log(source_loc loc, level::level_enum lvl, const string_view_t msg);
-    void log(level::level_enum lvl, string_view_t msg);
 
     template<typename... Args>
     void trace(string_view_t fmt, const Args &... args)
@@ -158,17 +148,23 @@ public:
     template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
-        if (tracer_)
-        {
-            save_backtrace_(details::log_msg(loc, name_, lvl, msg));
-        }
-        if (!should_log(lvl))
+        auto level_enabled = should_log(lvl);
+        if(!level_enabled && !tracer_)
         {
             return;
         }
+        SPDLOG_TRY
+        {
+            details::log_msg log_msg(loc, name_, lvl, msg);
+            if (level_enabled) sink_it_(log_msg);
+            if (tracer_) backtrace_add_(log_msg);
+        }
+        SPDLOG_LOGGER_CATCH()
+    }
 
-        details::log_msg log_msg(loc, name_, lvl, msg);
-        sink_it_(log_msg);
+    void log(level::level_enum lvl, string_view_t msg)
+    {
+        log(source_loc{}, lvl, msg);
     }
 
     // T cannot be statically converted to string_view or wstring_view
@@ -177,25 +173,7 @@ public:
                           T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
-        if (tracer_)
-        {
-            fmt::memory_buffer buf;
-            fmt::format_to(buf, "{}", msg);
-            save_backtrace_(details::log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size())));
-        }
-
-        if (!should_log(lvl))
-        {
-            return;
-        }
-        SPDLOG_TRY
-        {
-            fmt::memory_buffer buf;
-            fmt::format_to(buf, "{}", msg);
-            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            sink_it_(log_msg);
-        }
-        SPDLOG_LOGGER_CATCH()
+        log(loc, lvl, "{}", msg);
     }
 
     template<typename T>
@@ -376,7 +354,7 @@ protected:
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
 
-    void save_backtrace_(const details::log_msg &msg);
+    void backtrace_add_(const details::log_msg &msg);
     void dump_backtrace_();
     bool should_flush_(const details::log_msg &msg);
 
