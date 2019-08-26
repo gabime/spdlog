@@ -39,6 +39,7 @@ public:
     // pop all items in the q and apply the give fun on each of them.
     void foreach_pop(std::function<void(const details::log_msg)> fun)
     {
+        std::lock_guard<std::mutex> lock{mutex_};
         while (!messages_.empty())
         {
             log_msg_buffer popped;
