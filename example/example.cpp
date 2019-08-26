@@ -40,6 +40,18 @@ int main(int, char *[])
     spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
     spdlog::info("This an info message with custom format");
     spdlog::set_pattern("%+"); // back to default format
+    spdlog::set_level(spdlog::level::info);
+
+    // Backtrace support
+    // Loggers can store in a ring buffer all messages (including debug/trace) for later inspection.
+    // When needed, call dump_backtrace() to see what happened:
+    spdlog::enable_backtrace(10); // create ring buffer with capacity of 10  messages
+    for(int i = 0; i < 100; i++)
+    {
+        spdlog::debug("Backtrace message {}", i); // not logged..
+    }
+    // e.g. if some error happened:
+    spdlog::dump_backtrace(); // log them now!
 
     try
     {
