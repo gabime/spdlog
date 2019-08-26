@@ -64,7 +64,6 @@ SPDLOG_INLINE void swap(logger &a, logger &b)
     a.swap(b);
 }
 
-
 SPDLOG_INLINE bool logger::should_log(level::level_enum msg_level) const
 {
     return msg_level >= level_.load(std::memory_order_relaxed);
@@ -157,14 +156,6 @@ SPDLOG_INLINE std::vector<sink_ptr> &logger::sinks()
 SPDLOG_INLINE void logger::set_error_handler(err_handler handler)
 {
     custom_err_handler_ = handler;
-}
-
-// create new logger with same sinks and configuration.
-SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
-{
-    auto cloned = std::make_shared<logger>(*this);
-    cloned->name_ = std::move(logger_name);
-    return cloned;
 }
 
 // protected methods

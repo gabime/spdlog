@@ -81,7 +81,7 @@ public:
     void log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
     {
         auto level_enabled = should_log(lvl);
-        if(!level_enabled && !tracer_)
+        if (!level_enabled && !tracer_)
         {
             return;
         }
@@ -90,8 +90,14 @@ public:
             fmt::memory_buffer buf;
             fmt::format_to(buf, fmt, args...);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            if (level_enabled) sink_it_(log_msg);
-            if (tracer_) backtrace_add_(log_msg);
+            if (level_enabled)
+            {
+                sink_it_(log_msg);
+            }
+            if (tracer_)
+            {
+                backtrace_add_(log_msg);
+            }
         }
         SPDLOG_LOGGER_CATCH()
     }
@@ -149,15 +155,21 @@ public:
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         auto level_enabled = should_log(lvl);
-        if(!level_enabled && !tracer_)
+        if (!level_enabled && !tracer_)
         {
             return;
         }
         SPDLOG_TRY
         {
             details::log_msg log_msg(loc, name_, lvl, msg);
-            if (level_enabled) sink_it_(log_msg);
-            if (tracer_) backtrace_add_(log_msg);
+            if (level_enabled)
+            {
+                sink_it_(log_msg);
+            }
+            if (tracer_)
+            {
+                backtrace_add_(log_msg);
+            }
         }
         SPDLOG_LOGGER_CATCH()
     }
@@ -340,8 +352,6 @@ public:
     // error handler
     void set_error_handler(err_handler);
 
-    // create new logger with same sinks and configuration.
-    virtual std::shared_ptr<logger> clone(std::string logger_name);
 
 protected:
     std::string name_;
