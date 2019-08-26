@@ -37,6 +37,7 @@ Very fast, header-only/compiled, C++ logging library. [![Build Status](https://t
 * Very fast (see [benchmarks](#benchmarks) below).
 * Headers only, just copy and use. Or use as a compiled library.
 * Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
+* [Backtrace](#backtrace-support) support - store debugging messages in a ring buffer for later inspection.
 * Fast asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
@@ -137,15 +138,17 @@ void daily_example()
 ```
 
 ---
-#### Cloning loggers 
+#### Backtrace support
 ```c++
-// clone a logger and give it new name.
-// Useful for creating subsystem loggers from some "root" logger
-void clone_example()
+// Loggers can store in a ring buffer all messages (including debug/trace) for later inspection.
+// When needed, call dump_backtrace() to see what happened:
+spdlog::enable_backtrace(32); // create ring buffer with capacity of 32  messages
+for(int i = 0; i < 100; i++)
 {
-    auto network_logger = spdlog::get("root")->clone("network");
-    network_logger->info("Logging network stuff..");
+  spdlog::debug("Backtrace message {}", i); // not logged yet..
 }
+// e.g. if some error happened:
+spdlog::dump_backtrace(); // log them now!
 ```
 
 ---
