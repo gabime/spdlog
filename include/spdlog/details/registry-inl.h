@@ -154,7 +154,7 @@ SPDLOG_INLINE void registry::enable_backtrace(size_t n_messages)
 SPDLOG_INLINE void registry::disable_backtrace()
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
-
+    backtrace_n_messages_ = 0;
     for (auto &l : loggers_)
     {
         l.second->disable_backtrace();
