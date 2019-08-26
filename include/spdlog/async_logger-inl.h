@@ -75,6 +75,13 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
 
 SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
 {
-    spdlog::logger::flush_();
+    for (auto &sink : sinks_)
+    {
+        SPDLOG_TRY
+        {
+            sink->flush();
+        }
+        SPDLOG_LOGGER_CATCH()
+    }
 }
 

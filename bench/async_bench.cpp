@@ -141,7 +141,6 @@ int main(int argc, char *argv[])
         perror("Last error");
         return 1;
     }
-
     return 0;
 }
 
