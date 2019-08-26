@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
     // with backtrace of 64
     auto tracing_rotating_st =
         spdlog::rotating_logger_st("tracing_rotating_st", "latency_logs/tracing_rotating_st.log", file_size, rotating_files);
-    benchmark::RegisterBenchmark("rotating_st/tracing", bench_logger, std::move(tracing_rotating_st))->UseRealTime();
+    benchmark::RegisterBenchmark("rotating_st/backtrace", bench_logger, std::move(tracing_rotating_st))->UseRealTime();
     spdlog::drop("tracing_rotating_st");
 
     // daily st
@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
     benchmark::RegisterBenchmark("daily_st", bench_logger, std::move(daily_st))->UseRealTime();
     spdlog::drop("daily_st");
     auto tracing_daily_st = spdlog::daily_logger_mt("tracing_daily_st", "latency_logs/daily_st.log");
-    benchmark::RegisterBenchmark("daily_st/tracing", bench_logger, std::move(tracing_daily_st))->UseRealTime();
+    benchmark::RegisterBenchmark("daily_st/backtrace", bench_logger, std::move(tracing_daily_st))->UseRealTime();
     spdlog::drop("tracing_daily_st");
 
     //
@@ -158,6 +158,11 @@ int main(int argc, char *argv[])
     auto async_logger = std::make_shared<spdlog::async_logger>(
         "async_logger", std::make_shared<null_sink_mt>(), std::move(tp), spdlog::async_overflow_policy::overrun_oldest);
     benchmark::RegisterBenchmark("async_logger", bench_logger, async_logger)->Threads(n_threads)->UseRealTime();
+
+    auto async_logger_tracing = std::make_shared<spdlog::async_logger>(
+            "async_logger_tracing", std::make_shared<null_sink_mt>(), std::move(tp), spdlog::async_overflow_policy::overrun_oldest);
+    async_logger_tracing->enable_backtrace(32);
+    benchmark::RegisterBenchmark("async_logger/tracing", bench_logger, async_logger_tracing)->Threads(n_threads)->UseRealTime();
 
     benchmark::Initialize(&argc, argv);
     benchmark::RunSpecifiedBenchmarks();
