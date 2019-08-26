@@ -8,7 +8,7 @@
 #endif
 
 #include "spdlog/sinks/sink.h"
-#include "spdlog/sinks/backtrace-sink.h"
+#include "spdlog/sinks/backtrace_sink.h"
 #include "spdlog/details/pattern_formatter.h"
 
 #include <cstdio>
