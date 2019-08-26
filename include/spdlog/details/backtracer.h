@@ -17,12 +17,18 @@ namespace details {
 class backtracer
 {
     std::mutex mutex_;
+    size_t n_messages_;
     circular_q<log_msg_buffer> messages_;
 
 public:
-    explicit backtracer(size_t n_message)
-        : messages_{n_message}
+    explicit backtracer(size_t n_messages)
+        : n_messages_{n_messages}, messages_{n_messages}
     {}
+
+    size_t n_messages()
+    {
+        return n_messages_;
+    }
 
     void add(const log_msg &msg)
     {
