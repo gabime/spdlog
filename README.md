@@ -37,7 +37,7 @@ Very fast, header-only/compiled, C++ logging library. [![Build Status](https://t
 * Very fast (see [benchmarks](#benchmarks) below).
 * Headers only, just copy and use. Or use as a compiled library.
 * Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
-* Backtrace support - save latest debugging messages for later inspection.
+* [Backtrace](#backtrace-support) support - save latest debugging messages for later inspection.
 * Fast asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
