@@ -17,7 +17,6 @@ void multi_sink_example();
 void user_defined_example();
 void err_handler_example();
 void syslog_example();
-void clone_example();
 
 #include "spdlog/spdlog.h"
 
