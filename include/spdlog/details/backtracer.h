@@ -22,11 +22,13 @@ class backtracer
 
 public:
     explicit backtracer(size_t n_messages)
-        : n_messages_{n_messages}, messages_{n_messages}
+        : n_messages_{n_messages}
+        , messages_{n_messages}
     {}
 
-    backtracer(const backtracer &other):
-        n_messages_{other.n_messages_}, messages_{other.messages_}
+    backtracer(const backtracer &other)
+        : n_messages_{other.n_messages_}
+        , messages_{other.messages_}
     {}
 
     size_t n_messages() const

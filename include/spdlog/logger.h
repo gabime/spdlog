@@ -230,7 +230,7 @@ public:
 #else
 
     template<typename... Args>
-	void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
+    void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
     {
         auto level_enabled = should_log(lvl);
         if (!level_enabled && !tracer_)
@@ -239,14 +239,14 @@ public:
         }
         SPDLOG_TRY
         {
-             // format to wmemory_buffer and convert to utf8
+            // format to wmemory_buffer and convert to utf8
             fmt::wmemory_buffer wbuf;
             fmt::format_to(wbuf, fmt, args...);
 
             fmt::memory_buffer buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-			
+
             if (level_enabled)
             {
                 sink_it_(log_msg);
@@ -258,7 +258,7 @@ public:
         }
         SPDLOG_LOGGER_CATCH()
     }
-  
+
     template<typename... Args>
     void log(level::level_enum lvl, wstring_view_t fmt, const Args &... args)
     {
@@ -355,7 +355,6 @@ public:
 
     // error handler
     void set_error_handler(err_handler);
-
 
 protected:
     std::string name_;

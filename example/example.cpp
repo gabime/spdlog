@@ -45,7 +45,7 @@ int main(int, char *[])
     // Loggers can store in a ring buffer all messages (including debug/trace) for later inspection.
     // When needed, call dump_backtrace() to see what happened:
     spdlog::enable_backtrace(10); // create ring buffer with capacity of 10  messages
-    for(int i = 0; i < 100; i++)
+    for (int i = 0; i < 100; i++)
     {
         spdlog::debug("Backtrace message {}", i); // not logged..
     }

@@ -83,4 +83,3 @@ SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
         SPDLOG_LOGGER_CATCH()
     }
 }
-

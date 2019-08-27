@@ -23,7 +23,7 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
     , custom_err_handler_(other.custom_err_handler_)
 {
-    if(other.tracer_)
+    if (other.tracer_)
     {
         tracer_ = std::make_shared<details::backtracer>(*other.tracer_);
     }

@@ -49,7 +49,6 @@ public:
     async_logger(std::string logger_name, sink_ptr single_sink, std::weak_ptr<details::thread_pool> tp,
         async_overflow_policy overflow_policy = async_overflow_policy::block);
 
-
 protected:
     void sink_it_(const details::log_msg &msg) override;
     void flush_() override;
