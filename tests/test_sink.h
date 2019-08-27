@@ -18,6 +18,7 @@ namespace sinks {
 template<class Mutex>
 class test_sink : public base_sink<Mutex>
 {
+	const size_t lines_to_save = 100;
 public:
     size_t msg_counter()
     {
@@ -33,23 +34,29 @@ public:
 
     void set_delay(std::chrono::milliseconds delay)
     {
+		std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         delay_ = delay;
     }
 
 	// return last output without the eol
-	std::string last_output()
+	std::vector<std::string> lines()
 	{
 		std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-		auto eol_len = strlen(spdlog::details::os::default_eol);
-		return std::string(last_output_.begin(),  last_output_.end() - eol_len);
+		return lines_;
 	}
+	
 
 protected:
     void sink_it_(const details::log_msg &msg) override
     {        	
 		fmt::memory_buffer formatted;
 	    base_sink<Mutex>::formatter_->format(msg, formatted);
-		last_output_.assign(formatted.begin(), formatted.end());
+		// save the line without the eol
+		auto eol_len = strlen(details::os::default_eol);
+		if(lines_.size() < lines_to_save)
+		{
+			lines_.emplace_back(formatted.begin(), formatted.end()-eol_len);		
+		}
 		msg_counter_++;
         std::this_thread::sleep_for(delay_);		
     }
@@ -62,7 +69,7 @@ protected:
     size_t msg_counter_{0};
     size_t flush_counter_{0};
     std::chrono::milliseconds delay_{std::chrono::milliseconds::zero()};
-	std::string last_output_;
+	std::vector<std::string> lines_;
 };
 
 using test_sink_mt = test_sink<std::mutex>;

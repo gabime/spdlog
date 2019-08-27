@@ -23,7 +23,8 @@ set(SPDLOG_UTESTS_SOURCES
     test_sink.h
     test_fmt_helper.cpp
   	test_stdout_api.cpp
-    test_dup_filter.cpp)
+    test_dup_filter.cpp
+	test_backtrace.cpp)
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
 	list(APPEND SPDLOG_UTESTS_SOURCES test_errors.cpp)
