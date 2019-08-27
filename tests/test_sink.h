@@ -7,7 +7,7 @@
 
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
-
+#include "spdlog/fmt/fmt.h"
 #include <chrono>
 #include <mutex>
 #include <thread>
@@ -36,20 +36,33 @@ public:
         delay_ = delay;
     }
 
+	// return last output without the eol
+	std::string last_output()
+	{
+		std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+		auto eol_len = strlen(spdlog::details::os::default_eol);
+		return std::string(last_output_.begin(),  last_output_.end() - eol_len);
+	}
+
 protected:
-    void sink_it_(const details::log_msg &) override
-    {
-        msg_counter_++;
-        std::this_thread::sleep_for(delay_);
+    void sink_it_(const details::log_msg &msg) override
+    {        	
+		fmt::memory_buffer formatted;
+	    base_sink<Mutex>::formatter_->format(msg, formatted);
+		last_output_.assign(formatted.begin(), formatted.end());
+		msg_counter_++;
+        std::this_thread::sleep_for(delay_);		
     }
 
     void flush_() override
     {
         flush_counter_++;
     }
+	
     size_t msg_counter_{0};
     size_t flush_counter_{0};
     std::chrono::milliseconds delay_{std::chrono::milliseconds::zero()};
+	std::string last_output_;
 };
 
 using test_sink_mt = test_sink<std::mutex>;
