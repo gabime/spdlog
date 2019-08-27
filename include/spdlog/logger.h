@@ -246,15 +246,36 @@ public:
         SPDLOG_LOGGER_CATCH()
     }
 
-    template<typename... Args>
+	 template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
     {
-        if (should_log(lvl))
+        auto level_enabled = should_log(lvl);
+        if (!level_enabled && !tracer_)
         {
-            force_log(loc, lvl, fmt, args...);
+            return;
         }
-    }
+        SPDLOG_TRY
+        {
+             // format to wmemory_buffer and convert to utf8
+            fmt::wmemory_buffer wbuf;
+            fmt::format_to(wbuf, fmt, args...);
 
+            fmt::memory_buffer buf;
+            details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+			
+            if (level_enabled)
+            {
+                sink_it_(log_msg);
+            }
+            if (tracer_)
+            {
+                backtrace_add_(log_msg);
+            }
+        }
+        SPDLOG_LOGGER_CATCH()
+    }
+  
     template<typename... Args>
     void log(level::level_enum lvl, wstring_view_t fmt, const Args &... args)
     {
