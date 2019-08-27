@@ -25,7 +25,11 @@ public:
         : n_messages_{n_messages}, messages_{n_messages}
     {}
 
-    size_t n_messages()
+    backtracer(const backtracer &other):
+        n_messages_{other.n_messages_}, messages_{other.messages_}
+    {}
+
+    size_t n_messages() const
     {
         return n_messages_;
     }
