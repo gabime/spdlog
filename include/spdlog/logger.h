@@ -356,6 +356,9 @@ public:
     // error handler
     void set_error_handler(err_handler);
 
+    // create new logger with same sinks and configuration.
+    virtual std::shared_ptr<logger> clone(std::string logger_name);
+
 protected:
     std::string name_;
     std::vector<sink_ptr> sinks_;

@@ -162,6 +162,14 @@ SPDLOG_INLINE void logger::set_error_handler(err_handler handler)
     custom_err_handler_ = handler;
 }
 
+// create new logger with same sinks and configuration.
+SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
+{
+    auto cloned = std::make_shared<logger>(*this);
+    cloned->name_ = std::move(logger_name);
+    return cloned;
+}
+
 // protected methods
 SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
 {

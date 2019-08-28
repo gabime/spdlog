@@ -1,5 +1,7 @@
 #include "includes.h"
 #include "test_sink.h"
+#include "spdlog/fmt/bin_to_hex.h"
+
 
 template<class T>
 std::string log_info(const T &what, spdlog::level::level_enum logger_level = spdlog::level::info)
@@ -92,7 +94,54 @@ TEST_CASE("periodic flush", "[periodic_flush]")
     spdlog::drop_all();
 }
 
-#include "spdlog/fmt/bin_to_hex.h"
+TEST_CASE("clone-logger", "[clone]")
+{
+    using namespace spdlog;
+    auto test_sink = std::make_shared<sinks::test_sink_mt>();
+    auto logger = std::make_shared<spdlog::logger>("orig", test_sink);
+    logger->set_pattern("%v");
+    auto cloned = logger->clone("clone");
+
+    REQUIRE(cloned->name() == "clone");
+    REQUIRE(logger->sinks() == cloned->sinks());
+    REQUIRE(logger->level() == cloned->level());
+    REQUIRE(logger->flush_level() == cloned->flush_level());
+    logger->info("Some message 1");
+    cloned->info("Some message 2");
+
+    REQUIRE(test_sink->lines().size()==2);
+    REQUIRE(test_sink->lines()[0] == "Some message 1");
+    REQUIRE(test_sink->lines()[1] == "Some message 2");
+
+    spdlog::drop_all();
+}
+
+TEST_CASE("clone async", "[clone]")
+{
+    using namespace spdlog;
+
+    spdlog::init_thread_pool(4, 1);
+    auto test_sink = std::make_shared<sinks::test_sink_st >();
+    auto logger = std::make_shared<spdlog::async_logger>("orig", test_sink, spdlog::thread_pool());
+    logger->set_pattern("%v");
+    auto cloned = logger->clone("clone");
+
+    REQUIRE(cloned->name() == "clone");
+    REQUIRE(logger->sinks() == cloned->sinks());
+    REQUIRE(logger->level() == cloned->level());
+    REQUIRE(logger->flush_level() == cloned->flush_level());
+
+    logger->info("Some message 1");
+    cloned->info("Some message 2");
+
+    spdlog::details::os::sleep_for_millis(10);
+
+    REQUIRE(test_sink->lines().size()==2);
+    REQUIRE(test_sink->lines()[0] == "Some message 1");
+    REQUIRE(test_sink->lines()[1] == "Some message 2");
+
+    spdlog::drop_all();
+}
 
 TEST_CASE("to_hex", "[to_hex]")
 {

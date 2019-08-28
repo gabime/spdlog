@@ -122,7 +122,6 @@ struct formatter<spdlog::details::bytes_range<T>>
         auto inserter = ctx.out();
 #endif
 
-
         for (auto &item : the_range)
         {
             auto ch = static_cast<unsigned char>(item);
