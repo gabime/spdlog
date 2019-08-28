@@ -149,7 +149,7 @@ for(int i = 0; i < 100; i++)
   spdlog::debug("Backtrace message {}", i); // not logged yet..
 }
 // e.g. if some error happened:
-spdlog::dump_backtrace(); // log them now!
+spdlog::dump_backtrace(); // log them now! show the last 32 messages
 
 // or my_logger->dump_backtrace(32)..
 ```
