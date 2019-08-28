@@ -143,12 +143,15 @@ void daily_example()
 // Loggers can store in a ring buffer all messages (including debug/trace) for later inspection.
 // When needed, call dump_backtrace() to see what happened:
 spdlog::enable_backtrace(32); // create ring buffer with capacity of 32  messages
+// or my_logger->enable_backtrace(32)..
 for(int i = 0; i < 100; i++)
 {
   spdlog::debug("Backtrace message {}", i); // not logged yet..
 }
 // e.g. if some error happened:
 spdlog::dump_backtrace(); // log them now!
+
+// or my_logger->dump_backtrace(32)..
 ```
 
 ---
