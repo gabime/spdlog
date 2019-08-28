@@ -11,7 +11,7 @@
 void bench_formatter(benchmark::State &state, std::string pattern)
 {
     auto formatter = spdlog::details::make_unique<spdlog::pattern_formatter>(pattern);
-    fmt::memory_buffer dest;
+    spdlog::memory_buf_t dest;
     std::string logger_name = "logger-name";
     const char *text = "Hello. This is some message with length of 80                                   ";
 

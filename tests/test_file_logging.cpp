@@ -102,7 +102,7 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger_dateonly]]")
     // calculate filename (time based)
     std::string basename = "logs/daily_dateonly";
     std::tm tm = spdlog::details::os::localtime();
-    fmt::memory_buffer w;
+    spdlog::memory_buf_t w;
     fmt::format_to(w, "{}_{:04d}-{:02d}-{:02d}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
@@ -120,7 +120,7 @@ struct custom_daily_file_name_calculator
 {
     static spdlog::filename_t calc_filename(const spdlog::filename_t &basename, const tm &now_tm)
     {
-        fmt::memory_buffer w;
+        spdlog::memory_buf_t w;
         fmt::format_to(w, "{}{:04d}{:02d}{:02d}", basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday);
         return fmt::to_string(w);
     }
@@ -134,7 +134,7 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger_custom]]")
     // calculate filename (time based)
     std::string basename = "logs/daily_dateonly";
     std::tm tm = spdlog::details::os::localtime();
-    fmt::memory_buffer w;
+    spdlog::memory_buf_t w;
     fmt::format_to(w, "{}{:04d}{:02d}{:02d}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
