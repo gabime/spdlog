@@ -934,7 +934,7 @@ public:
 
             cache_timestamp_ = secs;
         }
-        dest.append(cached_datetime_.data(), cached_datetime_.data()+cached_datetime_.size());
+        dest.append(cached_datetime_.begin(), cached_datetime_.end());
 
         auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
         fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
