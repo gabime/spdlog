@@ -14,7 +14,7 @@ namespace details {
 
 class log_msg_buffer : public log_msg
 {
-    fmt::basic_memory_buffer<char, 200> buffer;
+    fmt::basic_memory_buffer<char, 250> buffer;
     void update_string_views()
     {
         logger_name = string_view_t{buffer.data(), logger_name.size()};
