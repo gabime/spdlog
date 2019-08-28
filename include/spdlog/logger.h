@@ -87,7 +87,7 @@ public:
         }
         SPDLOG_TRY
         {
-            fmt::memory_buffer buf;
+            memory_buf_t buf;
             fmt::format_to(buf, fmt, args...);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             if (level_enabled)
@@ -243,7 +243,7 @@ public:
             fmt::wmemory_buffer wbuf;
             fmt::format_to(wbuf, fmt, args...);
 
-            fmt::memory_buffer buf;
+            memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
 
@@ -312,7 +312,7 @@ public:
 
         try
         {
-            fmt::memory_buffer buf;
+            memory_buf_t buf;
             details::os::wstr_to_utf8buf(msg, buf);
 
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));

@@ -10,7 +10,7 @@ static const std::string target_filename = "logs/file_helper_test.txt";
 
 static void write_with_helper(file_helper &helper, size_t howmany)
 {
-    fmt::memory_buffer formatted;
+    spdlog::memory_buf_t formatted;
     fmt::format_to(formatted, "{}", std::string(howmany, '1'));
     helper.write(formatted);
     helper.flush();

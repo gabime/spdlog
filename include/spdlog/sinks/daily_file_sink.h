@@ -30,7 +30,7 @@ struct daily_filename_calculator
     {
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
-        std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
+        std::conditional<std::is_same<filename_t::value_type, char>::value, memory_buf_t, fmt::wmemory_buffer>::type w;
         fmt::format_to(
             w, SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
         return fmt::to_string(w);
@@ -78,7 +78,7 @@ protected:
             file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(time)), truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
-        fmt::memory_buffer formatted;
+        memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
         file_helper_.write(formatted);
     }

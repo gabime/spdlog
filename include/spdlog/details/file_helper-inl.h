@@ -66,7 +66,7 @@ SPDLOG_INLINE void file_helper::close()
     }
 }
 
-SPDLOG_INLINE void file_helper::write(const fmt::memory_buffer &buf)
+SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf)
 {
     size_t msg_size = buf.size();
     auto data = buf.data();

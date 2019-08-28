@@ -26,7 +26,7 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &msg)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    fmt::memory_buffer formatted;
+    memory_buf_t formatted;
     formatter_->format(msg, formatted);
     fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
     fflush(file_); // flush every line to terminal

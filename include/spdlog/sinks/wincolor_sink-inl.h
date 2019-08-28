@@ -52,7 +52,7 @@ template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    fmt::memory_buffer formatted;
+    memory_buf_t formatted;
     formatter_->format(msg, formatted);
     if (!in_console_)
     {
@@ -131,14 +131,14 @@ WORD SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_foreground_color_(WORD attri
 
 // print a range of formatted message to console
 template<typename ConsoleMutex>
-void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end)
+void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end)
 {
     auto size = static_cast<DWORD>(end - start);
     ::WriteConsoleA(out_handle_, formatted.data() + start, size, nullptr, nullptr);
 }
 
 template<typename ConsoleMutex>
-void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const fmt::memory_buffer &formatted)
+void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const memory_buf_t &formatted)
 {
     auto size = static_cast<DWORD>(formatted.size());
     if (size == 0)

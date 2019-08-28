@@ -43,7 +43,7 @@ SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
 template<typename Mutex>
 SPDLOG_INLINE filename_t rotating_file_sink<Mutex>::calc_filename(const filename_t &filename, std::size_t index)
 {
-    typename std::conditional<std::is_same<filename_t::value_type, char>::value, fmt::memory_buffer, fmt::wmemory_buffer>::type w;
+    typename std::conditional<std::is_same<filename_t::value_type, char>::value, memory_buf_t, fmt::wmemory_buffer>::type w;
     if (index != 0u)
     {
         filename_t basename, ext;
@@ -66,7 +66,7 @@ SPDLOG_INLINE const filename_t &rotating_file_sink<Mutex>::filename() const
 template<typename Mutex>
 SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &msg)
 {
-    fmt::memory_buffer formatted;
+    memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);
     current_size_ += formatted.size();
     if (current_size_ > max_size_)

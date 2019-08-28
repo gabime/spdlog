@@ -58,10 +58,10 @@ protected:
     WORD set_foreground_color_(WORD attribs);
 
     // print a range of formatted message to console
-    void print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end);
+    void print_range_(const memory_buf_t &formatted, size_t start, size_t end);
 
     // in case we are redirected to file (not in console mode)
-    void write_to_file_(const fmt::memory_buffer &formatted);
+    void write_to_file_(const memory_buf_t &formatted);
 };
 
 template<typename ConsoleMutex>

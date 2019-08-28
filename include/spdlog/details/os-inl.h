@@ -350,7 +350,7 @@ SPDLOG_INLINE void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
-    fmt::memory_buffer buf;
+    memory_buf_t buf;
     wstr_to_utf8buf(filename, buf);
     return fmt::to_string(buf);
 }
@@ -406,7 +406,7 @@ SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
 }
 
 #if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
-SPDLOG_INLINE void wstr_to_utf8buf(basic_string_view_t<wchar_t> wstr, fmt::memory_buffer &target)
+SPDLOG_INLINE void wstr_to_utf8buf(basic_string_view_t<wchar_t> wstr, memory_buf_t &target)
 {
     if (wstr.size() > static_cast<size_t>(std::numeric_limits<int>::max()))
     {

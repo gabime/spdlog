@@ -44,7 +44,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
     // If color is not supported in the terminal, log as is instead.
     std::lock_guard<mutex_t> lock(mutex_);
 
-    fmt::memory_buffer formatted;
+    memory_buf_t formatted;
     formatter_->format(msg, formatted);
     if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
     {
@@ -115,7 +115,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_ccode_(const string_view_
 }
 
 template<typename ConsoleMutex>
-SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_range_(const fmt::memory_buffer &formatted, size_t start, size_t end)
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end)
 {
     fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);
 }

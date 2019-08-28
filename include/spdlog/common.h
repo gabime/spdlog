@@ -105,6 +105,8 @@ using basic_string_view_t = fmt::basic_string_view<T>;
 
 using string_view_t = basic_string_view_t<char>;
 
+using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
+
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #ifndef _WIN32
 #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows

@@ -40,7 +40,7 @@ protected:
     void sink_it_(const details::log_msg &msg) override
     {
         const android_LogPriority priority = convert_to_android_(msg.level);
-        fmt::memory_buffer formatted;
+        memory_buf_t formatted;
         if (use_raw_msg_)
         {
             details::fmt_helper::append_string_view(msg.payload, formatted);
