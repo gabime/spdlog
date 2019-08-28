@@ -38,6 +38,11 @@
 #endif
 
 namespace spdlog {
+
+namespace details {
+class backtracer;
+}
+
 class logger
 {
 public:
@@ -73,25 +78,28 @@ public:
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
     template<typename... Args>
-    void force_log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
+    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
     {
+        auto level_enabled = should_log(lvl);
+        if (!level_enabled && !tracer_)
+        {
+            return;
+        }
         SPDLOG_TRY
         {
             fmt::memory_buffer buf;
             fmt::format_to(buf, fmt, args...);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            sink_it_(log_msg);
+            if (level_enabled)
+            {
+                sink_it_(log_msg);
+            }
+            if (tracer_)
+            {
+                backtrace_add_(log_msg);
+            }
         }
         SPDLOG_LOGGER_CATCH()
-    }
-
-    template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
-    {
-        if (should_log(lvl))
-        {
-            force_log(loc, lvl, fmt, args...);
-        }
     }
 
     template<typename... Args>
@@ -99,9 +107,6 @@ public:
     {
         log(source_loc{}, lvl, fmt, args...);
     }
-
-    void log(source_loc loc, level::level_enum lvl, const string_view_t msg);
-    void log(level::level_enum lvl, string_view_t msg);
 
     template<typename... Args>
     void trace(string_view_t fmt, const Args &... args)
@@ -149,13 +154,29 @@ public:
     template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
-        if (!should_log(lvl))
+        auto level_enabled = should_log(lvl);
+        if (!level_enabled && !tracer_)
         {
             return;
         }
+        SPDLOG_TRY
+        {
+            details::log_msg log_msg(loc, name_, lvl, msg);
+            if (level_enabled)
+            {
+                sink_it_(log_msg);
+            }
+            if (tracer_)
+            {
+                backtrace_add_(log_msg);
+            }
+        }
+        SPDLOG_LOGGER_CATCH()
+    }
 
-        details::log_msg log_msg(loc, name_, lvl, msg);
-        sink_it_(log_msg);
+    void log(level::level_enum lvl, string_view_t msg)
+    {
+        log(source_loc{}, lvl, msg);
     }
 
     // T cannot be statically converted to string_view or wstring_view
@@ -164,18 +185,7 @@ public:
                           T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
-        if (!should_log(lvl))
-        {
-            return;
-        }
-        SPDLOG_TRY
-        {
-            fmt::memory_buffer buf;
-            fmt::format_to(buf, "{}", msg);
-            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            sink_it_(log_msg);
-        }
-        SPDLOG_LOGGER_CATCH()
+        log(loc, lvl, "{}", msg);
     }
 
     template<typename T>
@@ -218,10 +228,16 @@ public:
 #ifndef _WIN32
 #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
 #else
+
     template<typename... Args>
-    void force_log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
+    void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
     {
-        try
+        auto level_enabled = should_log(lvl);
+        if (!level_enabled && !tracer_)
+        {
+            return;
+        }
+        SPDLOG_TRY
         {
             // format to wmemory_buffer and convert to utf8
             fmt::wmemory_buffer wbuf;
@@ -229,20 +245,18 @@ public:
 
             fmt::memory_buffer buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
-
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            sink_it_(log_msg);
+
+            if (level_enabled)
+            {
+                sink_it_(log_msg);
+            }
+            if (tracer_)
+            {
+                backtrace_add_(log_msg);
+            }
         }
         SPDLOG_LOGGER_CATCH()
-    }
-
-    template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
-    {
-        if (should_log(lvl))
-        {
-            force_log(loc, lvl, fmt, args...);
-        }
     }
 
     template<typename... Args>
@@ -323,6 +337,12 @@ public:
 
     void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
+    // backtrace support.
+    // efficiently store all debug/trace messages in a circular buffer until needed for debugging.
+    void enable_backtrace(size_t n_messages);
+    void disable_backtrace();
+    void dump_backtrace();
+
     // flush functions
     void flush();
     void flush_on(level::level_enum log_level);
@@ -336,18 +356,19 @@ public:
     // error handler
     void set_error_handler(err_handler);
 
-    // create new logger with same sinks and configuration.
-    virtual std::shared_ptr<logger> clone(std::string logger_name);
-
 protected:
     std::string name_;
     std::vector<sink_ptr> sinks_;
     spdlog::level_t level_{level::info};
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
+    std::shared_ptr<details::backtracer> tracer_;
 
-    virtual void sink_it_(details::log_msg &msg);
+    virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
+
+    void backtrace_add_(const details::log_msg &msg);
+    void dump_backtrace_();
     bool should_flush_(const details::log_msg &msg);
 
     // handle errors during logging.

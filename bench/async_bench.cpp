@@ -48,6 +48,7 @@ int count_lines(const char *filename)
 
 void verify_file(const char *filename, int expected_count)
 {
+    spdlog::info("Verifying {} to contain {:n} line..", filename, expected_count);
     auto count = count_lines(filename);
     if (count != expected_count)
     {
@@ -115,9 +116,7 @@ int main(int argc, char *argv[])
             auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
             auto logger = std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp), async_overflow_policy::block);
             bench_mt(howmany, std::move(logger), threads);
-#ifdef SPDLOG_ASYNC_BENCH_VERIFY
-            verify_file(filename, howmany);
-#endif // SPDLOG_ASYNC_BENCH_VERIFY
+            // verify_file(filename, howmany);
         }
 
         spdlog::info("");
@@ -125,6 +124,7 @@ int main(int argc, char *argv[])
         spdlog::info("Queue Overflow Policy: overrun");
         spdlog::info("*********************************");
         // do same test but discard oldest if queue is full instead of blocking
+        filename = "logs/basic_async-overrun.log";
         for (int i = 0; i < iters; i++)
         {
             auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
@@ -141,7 +141,6 @@ int main(int argc, char *argv[])
         perror("Last error");
         return 1;
     }
-
     return 0;
 }
 

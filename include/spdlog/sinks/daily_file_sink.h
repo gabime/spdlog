@@ -11,7 +11,6 @@
 #include "spdlog/details/os.h"
 #include "spdlog/details/synchronous_factory.h"
 
-
 #include <chrono>
 #include <cstdio>
 #include <ctime>

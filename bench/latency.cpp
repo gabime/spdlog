@@ -90,29 +90,50 @@ int main(int argc, char *argv[])
     disabled_logger->set_level(spdlog::level::off);
     benchmark::RegisterBenchmark("disabled-at-compile-time", bench_disabled_macro, disabled_logger);
     benchmark::RegisterBenchmark("disabled-at-runtime", bench_logger, disabled_logger);
+    // with backtrace of 64
+    auto tracing_disabled_logger = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_mt>());
+    tracing_disabled_logger->enable_backtrace(64);
+    benchmark::RegisterBenchmark("disabled-at-runtime/backtrace", bench_logger, tracing_disabled_logger);
 
     auto null_logger_st = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_st>());
     benchmark::RegisterBenchmark("null_sink_st (500_bytes c_str)", bench_c_string, std::move(null_logger_st));
     benchmark::RegisterBenchmark("null_sink_st", bench_logger, null_logger_st);
+    // with backtrace of 64
+    auto tracing_null_logger_st = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_st>());
+    tracing_null_logger_st->enable_backtrace(64);
+    benchmark::RegisterBenchmark("null_sink_st/backtrace", bench_logger, tracing_null_logger_st);
 
     // basic_st
     auto basic_st = spdlog::basic_logger_st("basic_st", "latency_logs/basic_st.log", true);
     benchmark::RegisterBenchmark("basic_st", bench_logger, std::move(basic_st))->UseRealTime();
     spdlog::drop("basic_st");
+    // with backtrace of 64
+    auto tracing_basic_st = spdlog::basic_logger_st("tracing_basic_st", "latency_logs/tracing_basic_st.log", true);
+    tracing_basic_st->enable_backtrace(64);
+    benchmark::RegisterBenchmark("basic_st/backtrace", bench_logger, std::move(tracing_basic_st))->UseRealTime();
+    spdlog::drop("tracing_basic_st");
 
     // rotating st
     auto rotating_st = spdlog::rotating_logger_st("rotating_st", "latency_logs/rotating_st.log", file_size, rotating_files);
     benchmark::RegisterBenchmark("rotating_st", bench_logger, std::move(rotating_st))->UseRealTime();
     spdlog::drop("rotating_st");
+    // with backtrace of 64
+    auto tracing_rotating_st =
+        spdlog::rotating_logger_st("tracing_rotating_st", "latency_logs/tracing_rotating_st.log", file_size, rotating_files);
+    benchmark::RegisterBenchmark("rotating_st/backtrace", bench_logger, std::move(tracing_rotating_st))->UseRealTime();
+    spdlog::drop("tracing_rotating_st");
 
     // daily st
     auto daily_st = spdlog::daily_logger_mt("daily_st", "latency_logs/daily_st.log");
     benchmark::RegisterBenchmark("daily_st", bench_logger, std::move(daily_st))->UseRealTime();
     spdlog::drop("daily_st");
+    auto tracing_daily_st = spdlog::daily_logger_mt("tracing_daily_st", "latency_logs/daily_st.log");
+    benchmark::RegisterBenchmark("daily_st/backtrace", bench_logger, std::move(tracing_daily_st))->UseRealTime();
+    spdlog::drop("tracing_daily_st");
 
-    //    //
-    //    // Multi threaded bench, 10 loggers using same logger concurrently
-    //    //
+    //
+    // Multi threaded bench, 10 loggers using same logger concurrently
+    //
     auto null_logger_mt = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_mt>());
     benchmark::RegisterBenchmark("null_sink_mt", bench_logger, null_logger_mt)->Threads(n_threads)->UseRealTime();
 
@@ -137,6 +158,11 @@ int main(int argc, char *argv[])
     auto async_logger = std::make_shared<spdlog::async_logger>(
         "async_logger", std::make_shared<null_sink_mt>(), std::move(tp), spdlog::async_overflow_policy::overrun_oldest);
     benchmark::RegisterBenchmark("async_logger", bench_logger, async_logger)->Threads(n_threads)->UseRealTime();
+
+    auto async_logger_tracing = std::make_shared<spdlog::async_logger>(
+        "async_logger_tracing", std::make_shared<null_sink_mt>(), std::move(tp), spdlog::async_overflow_policy::overrun_oldest);
+    async_logger_tracing->enable_backtrace(32);
+    benchmark::RegisterBenchmark("async_logger/tracing", bench_logger, async_logger_tracing)->Threads(n_threads)->UseRealTime();
 
     benchmark::Initialize(&argc, argv);
     benchmark::RunSpecifiedBenchmarks();

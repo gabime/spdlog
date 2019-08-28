@@ -51,7 +51,7 @@ SPDLOG_INLINE thread_pool::~thread_pool()
     SPDLOG_CATCH_ALL() {}
 }
 
-void SPDLOG_INLINE thread_pool::post_log(async_logger_ptr &&worker_ptr, details::log_msg &msg, async_overflow_policy overflow_policy)
+void SPDLOG_INLINE thread_pool::post_log(async_logger_ptr &&worker_ptr, const details::log_msg &msg, async_overflow_policy overflow_policy)
 {
     async_msg async_m(std::move(worker_ptr), async_msg_type::log, msg);
     post_async_msg_(std::move(async_m), overflow_policy);
@@ -100,8 +100,7 @@ bool SPDLOG_INLINE thread_pool::process_next_msg_()
     {
     case async_msg_type::log:
     {
-        auto msg = incoming_async_msg.to_log_msg();
-        incoming_async_msg.worker_ptr->backend_log_(msg);
+        incoming_async_msg.worker_ptr->backend_sink_it_(incoming_async_msg);
         return true;
     }
     case async_msg_type::flush:
@@ -114,8 +113,13 @@ bool SPDLOG_INLINE thread_pool::process_next_msg_()
     {
         return false;
     }
+
+    default:
+    {
+        assert(false && "Unexpected async_msg_type");
     }
-    assert(false && "Unexpected async_msg_type");
+    }
+
     return true;
 }
 

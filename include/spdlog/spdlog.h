@@ -60,6 +60,15 @@ void set_formatter(std::unique_ptr<spdlog::formatter> formatter);
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
+// enable global backtrace support
+void enable_backtrace(size_t n_messages);
+
+// disable global backtrace support
+void disable_backtrace();
+
+// call dump backtrace on default logger
+void dump_backtrace();
+
 // Set global logging level
 void set_level(level::level_enum log_level);
 
@@ -276,12 +285,7 @@ inline void critical(wstring_view_t fmt, const Args &... args)
 // SPDLOG_LEVEL_OFF
 //
 
-#define SPDLOG_LOGGER_CALL(logger, level, ...)                                                                                             \
-    do                                                                                                                                     \
-    {                                                                                                                                      \
-        if (logger->should_log(level))                                                                                                     \
-            logger->force_log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__);                                \
-    } while (0)
+#define SPDLOG_LOGGER_CALL(logger, level, ...) logger->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__);
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
 #define SPDLOG_LOGGER_TRACE(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__)

@@ -49,13 +49,10 @@ public:
     async_logger(std::string logger_name, sink_ptr single_sink, std::weak_ptr<details::thread_pool> tp,
         async_overflow_policy overflow_policy = async_overflow_policy::block);
 
-    std::shared_ptr<logger> clone(std::string new_name) override;
-
 protected:
-    void sink_it_(details::log_msg &msg) override;
+    void sink_it_(const details::log_msg &msg) override;
     void flush_() override;
-
-    void backend_log_(const details::log_msg &incoming_log_msg);
+    void backend_sink_it_(const details::log_msg &incoming_log_msg);
     void backend_flush_();
 
 private:
