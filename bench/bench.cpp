@@ -30,42 +30,64 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 void bench_default_api(int howmany, std::shared_ptr<spdlog::logger> log);
 void bench_c_string(int howmany, std::shared_ptr<spdlog::logger> log);
 
+static size_t file_size = 30 * 1024 * 1024;
+static size_t rotating_files = 5;
+
+void bench_threaded_logging(int threads, int iters)
+{
+    spdlog::info("**************************************************************");
+    spdlog::info("Multi threaded: {:n} thread, {:n} messages", threads, iters);
+    spdlog::info("**************************************************************");
+
+    auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
+    bench_mt(iters, std::move(basic_mt), threads);
+
+    auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt.log", file_size, rotating_files);
+    bench_mt(iters, std::move(rotating_mt), threads);
+
+    auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
+    bench_mt(iters, std::move(daily_mt), threads);
+    bench_mt(iters, spdlog::create<null_sink_mt>("null_mt"), threads);
+
+    auto empty_logger = std::make_shared<spdlog::logger>("level-off");
+    empty_logger->set_level(spdlog::level::off);
+    bench(iters, empty_logger);
+
+}
+
 int main(int argc, char *argv[])
 {
-
+    spdlog::set_automatic_registration(false);
     spdlog::default_logger()->set_pattern("[%^%l%$] %v");
-    int howmany = 1000000;
-    int threads = 10;
-    size_t file_size = 30 * 1024 * 1024;
-    size_t rotating_files = 5;
-
+    int iters = 500000;
+    int threads = 4;
     try
     {
 
         if (argc > 1)
-            howmany = atoi(argv[1]);
+            iters = atoi(argv[1]);
         if (argc > 2)
             threads = atoi(argv[2]);
 
         spdlog::info("**************************************************************");
-        spdlog::info("Single thread, {:n} iterations", howmany);
+        spdlog::info("Single thread, {:n} messages", iters);
         spdlog::info("**************************************************************");
 
         auto basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
-        bench(howmany, std::move(basic_st));
+        bench(iters, std::move(basic_st));
 
         basic_st.reset();
         auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
-        bench(howmany, std::move(rotating_st));
+        bench(iters, std::move(rotating_st));
 
         auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st.log");
-        bench(howmany, std::move(daily_st));
+        bench(iters, std::move(daily_st));
 
-        bench(howmany, spdlog::create<null_sink_st>("null_st"));
+        bench(iters, spdlog::create<null_sink_st>("null_st"));
 
         auto empty_logger = std::make_shared<spdlog::logger>("level-off");
         empty_logger->set_level(spdlog::level::off);
-        bench(howmany, empty_logger);
+        bench(iters, empty_logger);
 
         /*
         spdlog::info("**************************************************************");
@@ -84,20 +106,8 @@ int main(int argc, char *argv[])
         bench_c_string(howmany, spdlog::create<null_sink_st>("null_st"));
         */
 
-        spdlog::info("**************************************************************");
-        spdlog::info("{:n} threads sharing same logger, {:n} iterations", threads, howmany);
-        spdlog::info("**************************************************************");
-
-        auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
-        bench_mt(howmany, std::move(basic_mt), threads);
-
-        auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt.log", file_size, rotating_files);
-        bench_mt(howmany, std::move(rotating_mt), threads);
-
-        auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
-        bench_mt(howmany, std::move(daily_mt), threads);
-        bench_mt(howmany, spdlog::create<null_sink_mt>("null_mt"), threads);
-        bench(howmany, empty_logger);
+        bench_threaded_logging(1, iters);
+        bench_threaded_logging(threads, iters);
     }
     catch (std::exception &ex)
     {
