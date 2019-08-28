@@ -61,7 +61,7 @@ public:
 
     // Logger with single sink
     logger(std::string name, sink_ptr single_sink)
-        : logger(std::move(name), std::move(single_sink))
+        : logger(std::move(name), {std::move(single_sink)})
     {}
 
     // Logger with sinks init list
