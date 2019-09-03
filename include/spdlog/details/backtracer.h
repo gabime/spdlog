@@ -23,14 +23,12 @@ class backtracer
 public:
     explicit backtracer(size_t n_messages) : n_messages_{n_messages}, messages_{n_messages}
     {}
-
-
+    
     size_t n_messages() const
     {
         return n_messages_;
     }
-
-    
+   
     void add(const log_msg &msg)
     {
         std::lock_guard<std::mutex> lock{mutex_};
