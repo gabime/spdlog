@@ -22,10 +22,11 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , level_(other.level_.load(std::memory_order_relaxed))
     , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
     , custom_err_handler_(other.custom_err_handler_)
+    , tracer_(other.tracer_)
 {
-    if (other.tracer_)
+    if (tracer_)
     {
-        enable_backtrace(other.tracer_->n_messages());
+        enable_backtrace(tracer_->n_messages());
     }
 }
 
