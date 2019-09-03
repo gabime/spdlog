@@ -60,10 +60,9 @@ private:
     size_t max_items_;
     typename std::vector<T>::size_type head_ = 0;
     typename std::vector<T>::size_type tail_ = 0;
-
-    std::vector<T> v_;
-
     size_t overrun_counter_ = 0;
+    std::vector<T> v_;
+    
 };
 } // namespace details
 } // namespace spdlog
