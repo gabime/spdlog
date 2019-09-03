@@ -25,7 +25,7 @@ SPDLOG_INLINE logger::logger(const logger &other)
 {
     if (other.tracer_)
     {
-        tracer_ = std::make_shared<details::backtracer>(other.tracer_->n_messages());
+        enable_backtrace(other.tracer_->n_messages());
     }
 }
 
