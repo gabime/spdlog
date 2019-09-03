@@ -42,7 +42,7 @@ public:
         messages_.push_back(log_msg_buffer{msg});
     }
 
-    // pop all items in the q and apply the give fun on each of them.
+    // pop all items in the q and apply the given fun on each of them.
     void foreach_pop(std::function<void(const details::log_msg)> fun)
     {
         std::lock_guard<std::mutex> lock{mutex_};
