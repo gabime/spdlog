@@ -16,26 +16,16 @@ namespace spdlog {
 namespace details {
 class backtracer
 {
-    std::mutex mutex_;
-    size_t n_messages_;
+    std::mutex mutex_;    
     circular_q<log_msg_buffer> messages_;
 
 public:
-    explicit backtracer(size_t n_messages)
-        : n_messages_{n_messages}
-        , messages_{n_messages}
+    explicit backtracer(size_t n_messages) : messages_{n_messages}
     {}
 
-    backtracer(const backtracer &other)
-        : n_messages_{other.n_messages_}
-        , messages_{other.messages_}
+    backtracer(const backtracer &other) : messages_{other.messages_}
     {}
-
-    size_t n_messages() const
-    {
-        return n_messages_;
-    }
-
+  
     void add(const log_msg &msg)
     {
         std::lock_guard<std::mutex> lock{mutex_};
