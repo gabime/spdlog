@@ -23,7 +23,6 @@ public:
     backtracer() = default;
     backtracer(const backtracer &other);
 
-
     backtracer(backtracer &&other) SPDLOG_NOEXCEPT;
     backtracer &operator=(backtracer other);
     void enable(size_t size);
@@ -34,7 +33,6 @@ public:
 
     // pop all items in the q and apply the given fun on each of them.
     void foreach_pop(std::function<void(const details::log_msg &)> fun);
-
 };
 
 } // namespace details
