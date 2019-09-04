@@ -3,10 +3,14 @@
 
 #pragma once
 
-#include "spdlog/common.h"
+
 #include "spdlog/details/log_msg_buffer.h"
 #include "spdlog/details/circular_q.h"
+
+#include <atomic>
 #include <mutex>
+#include <functional>
+
 
 // Store log messages in circular buffer.
 // Useful for storing debug data in case of error/warning happens.
@@ -25,6 +29,7 @@ public:
 
     backtracer(backtracer &&other) SPDLOG_NOEXCEPT;
     backtracer &operator=(backtracer other);
+
     void enable(size_t size);
     void disable();
     bool enabled() const;
