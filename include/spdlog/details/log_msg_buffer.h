@@ -47,10 +47,10 @@ public:
         update_string_views();
     }
 
-    log_msg_buffer &operator=(log_msg_buffer &other)
+    log_msg_buffer &operator=(const log_msg_buffer &other)
     {
         log_msg::operator=(other);
-        buffer.append(other.buffer.begin(), other.buffer.end());
+        buffer.append(other.buffer.data(), other.buffer.data() + other.buffer.size());
         update_string_views();
         return *this;
     }

@@ -63,7 +63,7 @@ namespace spdlog {
                 return enabled_.load(std::memory_order_relaxed);
             }
 
-            operator bool() const
+            explicit operator bool() const
             {
                 return enabled();
             }

@@ -35,7 +35,7 @@ namespace spdlog {
 
             // move cannot be default,
             // since we need to reset head_, tail_, etc to zero in the moved object
-            circular_q(circular_q&& other) SPDLOG_NOEXCEPT:
+            circular_q(circular_q&& other) SPDLOG_NOEXCEPT
             {
                 copy_moveable(std::move(other));
             }
