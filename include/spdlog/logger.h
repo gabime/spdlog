@@ -93,7 +93,7 @@ public:
             }
             if (tracer_)
             {
-                backtrace_add_(log_msg);
+                tracer_.push_back(log_msg);
             }
         }
         SPDLOG_LOGGER_CATCH()
@@ -165,7 +165,7 @@ public:
             }
             if (tracer_)
             {
-                backtrace_add_(log_msg);
+                tracer_.push_back(log_msg);
             }
         }
         SPDLOG_LOGGER_CATCH()
@@ -250,7 +250,7 @@ public:
             }
             if (tracer_)
             {
-                backtrace_add_(log_msg);
+                tracer_.push_back(log_msg);
             }
         }
         SPDLOG_LOGGER_CATCH()
@@ -366,8 +366,6 @@ protected:
 
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
-
-    void backtrace_add_(const details::log_msg &msg);
     void dump_backtrace_();
     bool should_flush_(const details::log_msg &msg);
 

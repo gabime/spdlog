@@ -199,11 +199,6 @@ SPDLOG_INLINE void logger::flush_()
     }
 }
 
-SPDLOG_INLINE void logger::backtrace_add_(const details::log_msg &msg)
-{
-    tracer_.push_back(msg);
-}
-
 SPDLOG_INLINE void logger::dump_backtrace_()
 {
     using details::log_msg;
