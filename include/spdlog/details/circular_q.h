@@ -11,6 +11,12 @@ namespace spdlog {
         template<typename T>
         class circular_q
         {
+            size_t max_items_ = 0;
+            typename std::vector<T>::size_type head_ = 0;
+            typename std::vector<T>::size_type tail_ = 0;
+            size_t overrun_counter_ = 0;
+            std::vector<T> v_;
+
         public:
             using item_type = T;
 
@@ -84,14 +90,7 @@ namespace spdlog {
                 return overrun_counter_;
             }
 
-        private:
-            size_t max_items_ = 0;
-            typename std::vector<T>::size_type head_ = 0;
-            typename std::vector<T>::size_type tail_ = 0;
-            size_t overrun_counter_ = 0;
-            std::vector<T> v_;
-
-
+        private:            
             void copy_moveable(circular_q&& other) SPDLOG_NOEXCEPT
             {
                 max_items_ = other.max_items_;
