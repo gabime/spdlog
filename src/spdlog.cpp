@@ -12,7 +12,7 @@
 
 #include "spdlog/spdlog-inl.h"
 #include "spdlog/common-inl.h"
-
+#include "spdlog/details/backtracer-inl.h"
 #include "spdlog/logger-inl.h"
 template spdlog::logger::logger(std::string name, sinks_init_list::iterator begin, sinks_init_list::iterator end);
 

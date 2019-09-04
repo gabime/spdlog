@@ -2,7 +2,6 @@
 #include "test_sink.h"
 #include "spdlog/fmt/bin_to_hex.h"
 
-
 template<class T>
 std::string log_info(const T &what, spdlog::level::level_enum logger_level = spdlog::level::info)
 {
@@ -109,7 +108,7 @@ TEST_CASE("clone-logger", "[clone]")
     logger->info("Some message 1");
     cloned->info("Some message 2");
 
-    REQUIRE(test_sink->lines().size()==2);
+    REQUIRE(test_sink->lines().size() == 2);
     REQUIRE(test_sink->lines()[0] == "Some message 1");
     REQUIRE(test_sink->lines()[1] == "Some message 2");
 
@@ -121,7 +120,7 @@ TEST_CASE("clone async", "[clone]")
     using namespace spdlog;
 
     spdlog::init_thread_pool(4, 1);
-    auto test_sink = std::make_shared<sinks::test_sink_st >();
+    auto test_sink = std::make_shared<sinks::test_sink_st>();
     auto logger = std::make_shared<spdlog::async_logger>("orig", test_sink, spdlog::thread_pool());
     logger->set_pattern("%v");
     auto cloned = logger->clone("clone");
@@ -136,7 +135,7 @@ TEST_CASE("clone async", "[clone]")
 
     spdlog::details::os::sleep_for_millis(10);
 
-    REQUIRE(test_sink->lines().size()==2);
+    REQUIRE(test_sink->lines().size() == 2);
     REQUIRE(test_sink->lines()[0] == "Some message 1");
     REQUIRE(test_sink->lines()[1] == "Some message 2");
 

@@ -59,7 +59,6 @@ void bench_threaded_logging(int threads, int iters)
     daily_mt_tracing->enable_backtrace(32);
     bench_mt(iters, std::move(daily_mt_tracing), threads);
 
-
     spdlog::info("");
     auto empty_logger = std::make_shared<spdlog::logger>("level-off");
     empty_logger->set_level(spdlog::level::off);
@@ -68,7 +67,6 @@ void bench_threaded_logging(int threads, int iters)
     empty_logger_tracing->set_level(spdlog::level::off);
     empty_logger_tracing->enable_backtrace(32);
     bench(iters, empty_logger_tracing);
-
 }
 
 void bench_single_threaded(int iters)
@@ -76,7 +74,6 @@ void bench_single_threaded(int iters)
     spdlog::info("**************************************************************");
     spdlog::info("Single threaded: {:n} messages", iters);
     spdlog::info("**************************************************************");
-
 
     auto basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
     bench(iters, std::move(basic_st));

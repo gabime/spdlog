@@ -23,8 +23,7 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
     , custom_err_handler_(other.custom_err_handler_)
     , tracer_(other.tracer_)
-{    
-}
+{}
 
 SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT : name_(std::move(other.name_)),
                                                                sinks_(std::move(other.sinks_)),
@@ -57,7 +56,7 @@ SPDLOG_INLINE void logger::swap(spdlog::logger &other) SPDLOG_NOEXCEPT
     other.flush_level_.store(tmp);
 
     custom_err_handler_.swap(other.custom_err_handler_);
-    std::swap(tracer_, other.tracer_);    
+    std::swap(tracer_, other.tracer_);
 }
 
 SPDLOG_INLINE void swap(logger &a, logger &b)
