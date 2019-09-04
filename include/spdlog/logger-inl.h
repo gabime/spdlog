@@ -23,11 +23,7 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
     , custom_err_handler_(other.custom_err_handler_)
     , tracer_(other.tracer_)
-{
-    if (tracer_)
-    {
-        enable_backtrace(tracer_->n_messages());
-    }
+{    
 }
 
 SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT : name_(std::move(other.name_)),
@@ -61,7 +57,7 @@ SPDLOG_INLINE void logger::swap(spdlog::logger &other) SPDLOG_NOEXCEPT
     other.flush_level_.store(tmp);
 
     custom_err_handler_.swap(other.custom_err_handler_);
-    tracer_.swap(other.tracer_);
+    std::swap(tracer_, other.tracer_);    
 }
 
 SPDLOG_INLINE void swap(logger &a, logger &b)
@@ -116,13 +112,13 @@ SPDLOG_INLINE void logger::set_pattern(std::string pattern, pattern_time_type ti
 // create new backtrace sink and move to it all our child sinks
 SPDLOG_INLINE void logger::enable_backtrace(size_t n_messages)
 {
-    tracer_ = std::make_shared<details::backtracer>(n_messages);
+    tracer_.enable(n_messages);
 }
 
 // restore orig sinks and level and delete the backtrace sink
 SPDLOG_INLINE void logger::disable_backtrace()
 {
-    tracer_.reset();
+    tracer_.disable();
 }
 
 SPDLOG_INLINE void logger::dump_backtrace()
@@ -206,7 +202,7 @@ SPDLOG_INLINE void logger::flush_()
 
 SPDLOG_INLINE void logger::backtrace_add_(const details::log_msg &msg)
 {
-    tracer_->add(msg);
+    tracer_.push_back(msg);
 }
 
 SPDLOG_INLINE void logger::dump_backtrace_()
@@ -215,7 +211,7 @@ SPDLOG_INLINE void logger::dump_backtrace_()
     if (tracer_)
     {
         sink_it_(log_msg{name(), level::info, "****************** Backtrace Start ******************"});
-        tracer_->foreach_pop([this](const details::log_msg &msg) { this->sink_it_(msg); });
+        tracer_.foreach_pop([this](const details::log_msg &msg) { this->sink_it_(msg); });
         sink_it_(log_msg{name(), level::info, "****************** Backtrace End ********************"});
     }
 }

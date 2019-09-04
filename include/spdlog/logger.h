@@ -17,6 +17,7 @@
 
 #include "spdlog/common.h"
 #include "spdlog/details/log_msg.h"
+#include "spdlog/details/backtracer.h"
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #include "spdlog/details/os.h"
@@ -38,10 +39,6 @@
 #endif
 
 namespace spdlog {
-
-namespace details {
-class backtracer;
-}
 
 class logger
 {
@@ -365,7 +362,7 @@ protected:
     spdlog::level_t level_{level::info};
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
-    std::shared_ptr<details::backtracer> tracer_;
+    details::backtracer tracer_;
 
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();

@@ -47,6 +47,14 @@ public:
         update_string_views();
     }
 
+    log_msg_buffer &operator=(log_msg_buffer &other)
+    {
+        log_msg::operator=(other);
+        buffer.append(other.buffer.begin(), other.buffer.end());
+        update_string_views();
+        return *this;
+    }
+
     log_msg_buffer &operator=(log_msg_buffer &&other)
     {
         log_msg::operator=(std::move(other));
