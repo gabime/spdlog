@@ -6,7 +6,6 @@
 #include "spdlog/common.h"
 #include "spdlog/details/log_msg_buffer.h"
 #include "spdlog/details/circular_q.h"
-#include "spdlog/sinks/sink.h"
 #include <mutex>
 
 // Store log messages in circular buffer.
