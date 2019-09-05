@@ -15,6 +15,7 @@
 #include "spdlog/version.h"
 #include "spdlog/details/synchronous_factory.h"
 
+
 #include <chrono>
 #include <functional>
 #include <memory>
@@ -101,6 +102,10 @@ void shutdown();
 
 // Automatic registration of loggers when using spdlog::create() or spdlog::create_async
 void set_automatic_registration(bool automatic_registation);
+
+// return spdlog version
+std::string version();
+
 
 // API for using default logger (stdout_color_mt),
 // e.g: spdlog::info("Message {}", 1);
