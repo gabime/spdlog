@@ -1,6 +1,15 @@
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/async.h"
+// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
+#ifndef SPDLOG_COMPILED_LIB
+#error Please define SPDLOG_COMPILED_LIB to compile this file.
+#endif
+
+
+#include <mutex>
+#include "spdlog/sinks/base_sink.h"
+#include "spdlog/details/null_mutex.h"
+#include "spdlog/details/file_helper-inl.h"
 #include "spdlog/sinks/base_sink-inl.h"
 template class spdlog::sinks::base_sink<std::mutex>;
 template class spdlog::sinks::base_sink<spdlog::details::null_mutex>;
