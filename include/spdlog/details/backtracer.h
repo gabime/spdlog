@@ -3,14 +3,12 @@
 
 #pragma once
 
-
 #include "spdlog/details/log_msg_buffer.h"
 #include "spdlog/details/circular_q.h"
 
 #include <atomic>
 #include <mutex>
 #include <functional>
-
 
 // Store log messages in circular buffer.
 // Useful for storing debug data in case of error/warning happens.

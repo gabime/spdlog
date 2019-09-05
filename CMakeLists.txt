@@ -73,11 +73,19 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 #---------------------------------------------------------------------------------------
 # Static/Shared library (shared not supported in windows yet)
 #---------------------------------------------------------------------------------------
+set(SPDLOG_SRCS
+        src/spdlog.cpp
+        src/stdout_sinks.cpp
+        src/fmt.cpp
+        src/color_sinks.cpp
+        src/file_sinks.cpp
+        src/async.cpp)
+
 if (BUILD_SHARED_LIBS AND WIN32)
     message(WARNING "shared libs is not supported in spdlog - building static instead")
-    add_library(spdlog STATIC src/spdlog.cpp ${SPDLOG_ALL_HEADERS})
+    add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
 else()
-    add_library(spdlog src/spdlog.cpp ${SPDLOG_ALL_HEADERS})
+    add_library(spdlog ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
 endif()
 
 add_library(spdlog::spdlog ALIAS spdlog)
