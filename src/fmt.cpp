@@ -8,7 +8,6 @@
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #include "spdlog/fmt/bundled/format-inl.h"
-#include "spdlog/details/file_helper-inl.h"
 
 FMT_BEGIN_NAMESPACE
 template struct internal::basic_data<void>;
