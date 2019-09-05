@@ -112,9 +112,4 @@ SPDLOG_INLINE void set_default_logger(std::shared_ptr<spdlog::logger> default_lo
     details::registry::instance().set_default_logger(std::move(default_logger));
 }
 
-SPDLOG_INLINE std::string version()
-{
-    return fmt::format("{}.{}.{}", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
-}
-
 } // namespace spdlog
