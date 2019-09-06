@@ -71,12 +71,12 @@ public:
         }
     }
 
-    bool empty()
+    bool empty() const
     {
         return tail_ == head_;
     }
 
-    bool full()
+    bool full() const
     {
         // head is ahead of the tail by 1
         return ((tail_ + 1) % max_items_) == head_;
