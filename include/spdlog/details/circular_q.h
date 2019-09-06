@@ -88,13 +88,19 @@ public:
     }
 
 private:
-    void copy_moveable(circular_q &&other) SPDLOG_NOEXCEPT
+    // copy from other&& and reset it to disabled state
+        void copy_moveable(circular_q &&other) SPDLOG_NOEXCEPT
     {
         max_items_ = other.max_items_;
         head_ = other.head_;
         tail_ = other.tail_;
-        overrun_counter_ = other.overrun_counter_, v_ = std::move(other.v_);
-        other.max_items_ = 0; // disable other
+        overrun_counter_ = other.overrun_counter_;
+        v_ = std::move(other.v_);
+
+        // put &&other in disabled, but valid state
+        other.max_items_ = 0;
+        other.head_ = other.tail_ = 0;
+        other.overrun_counter_ = 0;
     }
 };
 } // namespace details
