@@ -104,7 +104,7 @@ private:
     void _print_range(const details::log_msg &msg, size_t start, size_t end)
     {
         DWORD size = static_cast<DWORD>(end - start);
-        WriteConsoleA(out_handle_, msg.formatted.data() + start, size, nullptr, nullptr);
+        WriteFile(out_handle_, msg.formatted.data() + start, size, nullptr, nullptr);
     }
 };
 
