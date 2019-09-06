@@ -2777,12 +2777,12 @@ void internal::basic_writer<Range>::write_double(T value,
   memory_buffer buffer;
   int exp = 0;
   int precision = specs.precision >= 0 || !specs.type ? specs.precision : 6;
-  unsigned options = handler.fixed ? internal::grisu_options::fixed : 0;
+  
   bool use_grisu = USE_GRISU &&
                    (specs.type != 'a' && specs.type != 'A' &&
                     specs.type != 'e' && specs.type != 'E') &&
                    internal::grisu_format(static_cast<double>(value), buffer,
-                                          precision, options, exp);
+                                          precision, handler.fixed ? internal::grisu_options::fixed : 0, exp);
   char* decimal_point_pos = nullptr;
   if (!use_grisu)
     decimal_point_pos = internal::sprintf_format(value, buffer, specs);
