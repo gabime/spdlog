@@ -4,6 +4,7 @@
 #pragma once
 
 #include "spdlog/tweakme.h"
+#include "spdlog/details/null_mutex.h"
 
 #include <atomic>
 #include <chrono>
