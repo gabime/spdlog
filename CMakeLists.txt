@@ -41,6 +41,11 @@ if (NOT DEFINED SPDLOG_MASTER_PROJECT)
     endif()
 endif ()
 
+# build shared option
+if(NOT WIN32)
+    option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
+endif()
+
 # example options
 option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
@@ -81,11 +86,14 @@ set(SPDLOG_SRCS
         src/file_sinks.cpp
         src/async.cpp)
 
-if (BUILD_SHARED_LIBS AND WIN32)
-    message(WARNING "shared libs is not supported in spdlog - building static instead")
-    add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
+
+if (SPDLOG_BUILD_SHARED)
+    if(WIN32)
+        message(FATAL_ERROR "spdlog shared lib is not yet supported under windows")
+    endif()
+    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
 else()
-    add_library(spdlog ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
+    add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
 endif()
 
 add_library(spdlog::spdlog ALIAS spdlog)
@@ -96,6 +104,9 @@ target_include_directories(spdlog PUBLIC
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 spdlog_enable_warnings(spdlog)
+
+set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
+set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
 
 #---------------------------------------------------------------------------------------
 # Header only version
