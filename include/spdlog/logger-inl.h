@@ -46,14 +46,14 @@ SPDLOG_INLINE void logger::swap(spdlog::logger &other) SPDLOG_NOEXCEPT
     sinks_.swap(other.sinks_);
 
     // swap level_
-    auto tmp = other.level_.load();
-    tmp = level_.exchange(tmp);
-    other.level_.store(tmp);
+    auto other_level = other.level_.load();
+    auto my_level = level_.exchange(other_level);
+    other.level_.store(my_level);
 
     // swap flush level_
-    tmp = other.flush_level_.load();
-    tmp = flush_level_.exchange(tmp);
-    other.flush_level_.store(tmp);
+    other_level = other.flush_level_.load();
+    my_level = flush_level_.exchange(other_level);
+    other.flush_level_.store(my_level);
 
     custom_err_handler_.swap(other.custom_err_handler_);
     std::swap(tracer_, other.tracer_);

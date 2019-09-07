@@ -15,7 +15,6 @@
 #include "spdlog/version.h"
 #include "spdlog/details/synchronous_factory.h"
 
-
 #include <chrono>
 #include <functional>
 #include <memory>

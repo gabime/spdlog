@@ -21,8 +21,8 @@ template FMT_API void internal::buffer<char>::append(const char *, const char *)
 template FMT_API void internal::arg_map<format_context>::init(const basic_format_args<format_context> &args);
 template FMT_API std::string internal::vformat<char>(string_view, basic_format_args<format_context>);
 template FMT_API format_context::iterator internal::vformat_to(internal::buffer<char> &, string_view, basic_format_args<format_context>);
-template FMT_API char* internal::sprintf_format(double, internal::buffer<char> &, sprintf_specs);
-template FMT_API char* internal::sprintf_format(long double, internal::buffer<char> &, sprintf_specs);
+template FMT_API char *internal::sprintf_format(double, internal::buffer<char> &, sprintf_specs);
+template FMT_API char *internal::sprintf_format(long double, internal::buffer<char> &, sprintf_specs);
 
 // Explicit instantiations for wchar_t.
 template FMT_API wchar_t internal::thousands_sep_impl(locale_ref);

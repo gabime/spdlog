@@ -89,7 +89,7 @@ public:
 
 private:
     // copy from other&& and reset it to disabled state
-        void copy_moveable(circular_q &&other) SPDLOG_NOEXCEPT
+    void copy_moveable(circular_q &&other) SPDLOG_NOEXCEPT
     {
         max_items_ = other.max_items_;
         head_ = other.head_;
