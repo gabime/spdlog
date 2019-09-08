@@ -9,6 +9,7 @@
 // This class is thread safe
 
 #include "spdlog/common.h"
+#include "spdlog/details/periodic_worker.h"
 
 #include <chrono>
 #include <functional>
@@ -27,6 +28,10 @@ class periodic_worker;
 class registry
 {
 public:
+	// Default constructor
+	registry();
+	~registry() = default;
+
     registry(const registry &) = delete;
     registry &operator=(const registry &) = delete;
 
@@ -79,12 +84,11 @@ public:
 
     void set_automatic_registration(bool automatic_regsistration);
 
+	// The unique global instance of the registry, usefult to access it
+	// from the global scope. NOTE It doesn't make it a singleton
     static registry &instance();
 
 private:
-    registry();
-    ~registry() = default;
-
     void throw_if_exists_(const std::string &logger_name);
     void register_logger_(std::shared_ptr<logger> new_logger);
     std::mutex logger_map_mutex_, flusher_mutex_;

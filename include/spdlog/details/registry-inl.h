@@ -8,7 +8,6 @@
 #endif
 
 #include "spdlog/common.h"
-#include "spdlog/details/periodic_worker.h"
 #include "spdlog/logger.h"
 #include "spdlog/details/pattern_formatter.h"
 
