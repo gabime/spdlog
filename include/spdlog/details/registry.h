@@ -84,6 +84,16 @@ public:
 
     void set_automatic_registration(bool automatic_regsistration);
 
+	// Factory function to create a new logger and register it in this registry
+	template<typename Sink, typename... SinkArgs>
+	std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs&& ... args)
+	{
+		auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
+		auto new_logger = std::make_shared<spdlog::logger>(std::move(logger_name), std::move(sink));
+		this->initialize_logger(new_logger);
+		return new_logger;
+	}
+
 	// The unique global instance of the registry, usefult to access it
 	// from the global scope. NOTE It doesn't make it a singleton
     static registry &instance();
