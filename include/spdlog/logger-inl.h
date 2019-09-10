@@ -169,6 +169,10 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
 // protected methods
 SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
 {
+#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+    incr_msg_counter_(msg);
+#endif
+
     for (auto &sink : sinks_)
     {
         if (sink->should_log(msg.level))
@@ -218,7 +222,6 @@ SPDLOG_INLINE bool logger::should_flush_(const details::log_msg &msg)
 
 SPDLOG_INLINE void logger::err_handler_(const std::string &msg)
 {
-
     if (custom_err_handler_)
     {
         custom_err_handler_(msg);
@@ -243,4 +246,12 @@ SPDLOG_INLINE void logger::err_handler_(const std::string &msg)
         fprintf(stderr, "[*** LOG ERROR #%04zu ***] [%s] [%s] {%s}\n", err_counter, date_buf, name().c_str(), msg.c_str());
     }
 }
+
+#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+SPDLOG_INLINE void logger::incr_msg_counter_(const details::log_msg &msg)
+{
+    msg.msg_id = msg_counter_.fetch_add(1, std::memory_order_relaxed);
+}
+#endif
+
 } // namespace spdlog

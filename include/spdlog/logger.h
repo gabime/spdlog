@@ -372,6 +372,11 @@ protected:
     // handle errors during logging.
     // default handler prints the error to stderr at max rate of 1 message/sec.
     void err_handler_(const std::string &msg);
+
+#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+    std::atomic<size_t> msg_counter_{0};
+    void incr_msg_counter_(const details::log_msg &msg);
+#endif
 };
 
 void swap(logger &a, logger &b);

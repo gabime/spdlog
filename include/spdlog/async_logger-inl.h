@@ -26,6 +26,10 @@ SPDLOG_INLINE spdlog::async_logger::async_logger(
 // send the log message to the thread pool
 SPDLOG_INLINE void spdlog::async_logger::sink_it_(const details::log_msg &msg)
 {
+#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+    incr_msg_counter_(msg);
+#endif
+
     if (auto pool_ptr = thread_pool_.lock())
     {
         pool_ptr->post_log(shared_from_this(), msg, overflow_policy_);

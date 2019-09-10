@@ -137,6 +137,24 @@ public:
     }
 };
 
+// message counter formatter
+#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+template<typename ScopedPadder>
+class message_ctr_formatter : public flag_formatter
+{
+public:
+    explicit message_ctr_formatter(padding_info padinfo)
+        : flag_formatter(padinfo)
+    {}
+
+    void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
+    {
+        fmt_helper::pad_uint(msg.msg_id, padinfo_.width_, dest);
+    }
+};
+#endif
+
+
 ///////////////////////////////////////////////////////////////////////
 // Date time pattern appenders
 ///////////////////////////////////////////////////////////////////////
@@ -1215,6 +1233,12 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
     case ('O'): // elapsed time since last log message in seconds
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::seconds>>(padding));
         break;
+
+#if defined(SPDLOG_ENABLE_MESSAGE_COUNTER)
+    case ('j'): // message counter
+        formatters_.push_back(details::make_unique<details::message_ctr_formatter<Padder>>(padding));
+        break;
+#endif
 
     default: // Unknown flag appears as is
         auto unknown_flag = details::make_unique<details::aggregate_formatter>();
