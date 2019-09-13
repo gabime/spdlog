@@ -47,10 +47,9 @@ protected:
     void sink_it_(const details::log_msg &msg) override
     {
         string_view_t payload;
-
+        memory_buf_t formatted;
         if (enable_formatting_)
         {
-            memory_buf_t formatted;
             base_sink<Mutex>::formatter_->format(msg, formatted);
             payload = string_view_t(formatted.data(), formatted.size());
         }
