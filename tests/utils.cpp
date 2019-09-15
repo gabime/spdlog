@@ -1,6 +1,9 @@
 #include "includes.h"
+
+#ifndef _WIN32
 #include <sys/types.h>
 #include <dirent.h>
+#endif
 
 void prepare_logdir()
 {
