@@ -69,7 +69,30 @@ bool ends_with(std::string const &value, std::string const &ending)
 }
 
 #ifdef _WIN32
-std::size_t count_files(const std::string &folder) {}
+// source: https://stackoverflow.com/a/37416569/192001
+std::size_t count_files(const std::string &folder)
+{
+    counter counter = 0;
+    WIN32_FIND_DATA ffd;
+    HANDLE hFind = INVALID_HANDLE_VALUE;
+
+    // Start iterating over the files in the path directory.
+    hFind = ::FindFirstFileA(path.c_str(), &ffd);
+    if (hFind != INVALID_HANDLE_VALUE)
+    {
+        do // Managed to locate and create an handle to that folder.
+        {
+            counter++;
+        } while (::FindNextFile(hFind, &ffd) == TRUE);
+        ::FindClose(hFind);
+    }
+    else
+    {
+        throw std::runtime_error("Failed open folder " + folder);
+    }
+
+    return counter;
+}
 #else
 // Based on: https://stackoverflow.com/a/2802255/192001
 std::size_t count_files(const std::string &folder)
