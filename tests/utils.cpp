@@ -1,4 +1,6 @@
 #include "includes.h"
+#include <sys/types.h>
+#include <dirent.h>
 
 void prepare_logdir()
 {
@@ -65,3 +67,27 @@ bool ends_with(std::string const &value, std::string const &ending)
     }
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
+
+#ifdef _WIN32
+std::size_t count_files(const std::string &folder) {}
+#else
+// Based on: https://stackoverflow.com/a/2802255/192001
+std::size_t count_files(const std::string &folder)
+{
+    size_t counter = 0;
+    DIR *dp = opendir(folder.c_str());
+    if (dp == nullptr)
+    {
+        throw std::runtime_error("Failed open folder " + folder);
+    }
+
+    struct dirent *ep;
+    while (ep = readdir(dp))
+    {
+        if (ep->d_name[0] != '.')
+            counter++;
+    }
+    (void)closedir(dp);
+    return counter;
+}
+#endif

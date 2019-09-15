@@ -43,11 +43,16 @@ void prevent_child_fd(FILE *f);
 // fopen_s on non windows for writing
 bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode);
 
+// Remove filename. return 0 on success
 int remove(const filename_t &filename) SPDLOG_NOEXCEPT;
+
+// Remove file if exists. return 0 on success
+// Note: Non atomic (might return failure to delete if concurrently deleted by other process/thread)
+int remove_if_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
 
 int rename(const filename_t &filename1, const filename_t &filename2) SPDLOG_NOEXCEPT;
 
-// Return if file exists
+// Return if file exists.
 bool file_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
 
 // Return file size according to open FILE* object

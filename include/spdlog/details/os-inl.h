@@ -164,6 +164,11 @@ SPDLOG_INLINE int remove(const filename_t &filename) SPDLOG_NOEXCEPT
 #endif
 }
 
+SPDLOG_INLINE int remove_if_exists(const filename_t &filename) SPDLOG_NOEXCEPT
+{
+    return file_exists(filename) ? remove(filename) : 0;
+}
+
 SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename2) SPDLOG_NOEXCEPT
 {
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
@@ -173,7 +178,7 @@ SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename
 #endif
 }
 
-// Return if file exists
+// Return true if file exists
 SPDLOG_INLINE bool file_exists(const filename_t &filename) SPDLOG_NOEXCEPT
 {
 #ifdef _WIN32

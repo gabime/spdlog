@@ -36,26 +36,38 @@ struct daily_filename_calculator
 };
 
 /*
- * Rotating file sink based on date. rotates at midnight
+ * Rotating file sink based on date.
+ * If truncate != false , the created file will be truncated.
+ * If max_files > 0, retain only the last max_files and delete previous.
  */
 template<typename Mutex, typename FileNameCalc = daily_filename_calculator>
 class daily_file_sink final : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time
-    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false)
+    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false, ushort max_files = 0)
         : base_filename_(std::move(base_filename))
         , rotation_h_(rotation_hour)
         , rotation_m_(rotation_minute)
         , truncate_(truncate)
+        , max_files_(max_files)
+        , filenames_q_()
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
         {
             SPDLOG_THROW(spdlog_ex("daily_file_sink: Invalid rotation time in ctor"));
         }
+
         auto now = log_clock::now();
-        file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(now)), truncate_);
+        auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
+        file_helper_.open(filename, truncate_);
         rotation_tp_ = next_rotation_tp_();
+
+        if (max_files_ > 0)
+        {
+            filenames_q_ = details::circular_q<filename_t>(static_cast<size_t>(max_files_));
+            filenames_q_.push_back(std::move(filename));
+        }
     }
 
     const filename_t &filename() const
@@ -71,14 +83,23 @@ protected:
 #else
         auto time = msg.time;
 #endif
-        if (time >= rotation_tp_)
+
+        bool should_rotate = time >= rotation_tp_;
+        if (should_rotate)
         {
-            file_helper_.open(FileNameCalc::calc_filename(base_filename_, now_tm(time)), truncate_);
+            auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(time));
+            file_helper_.open(filename, truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
         file_helper_.write(formatted);
+
+        // Do the cleaning ony at the end because it might throw on failure.
+        if (should_rotate && max_files_ > 0)
+        {
+            delete_old_();
+        }
     }
 
     void flush_() override
@@ -108,12 +129,36 @@ private:
         return {rotation_time + std::chrono::hours(24)};
     }
 
+    // Delete the file N rotations ago.
+    // Throw spdlog_ex on failure to delete the old file.
+    void delete_old_()
+    {
+        using details::os::filename_to_str;
+        using details::os::remove_if_exists;
+
+        filename_t current_file = filename();
+        if (filenames_q_.full())
+        {
+            filename_t old_filename;
+            filenames_q_.pop_front(old_filename);
+            bool ok = remove_if_exists(old_filename) == 0;
+            if (!ok)
+            {
+                filenames_q_.push_back(std::move(current_file));
+                throw spdlog_ex("Failed removing daily file " + filename_to_str(old_filename), errno);
+            }
+        }
+        filenames_q_.push_back(std::move(current_file));
+    }
+
     filename_t base_filename_;
     int rotation_h_;
     int rotation_m_;
     log_clock::time_point rotation_tp_;
     details::file_helper file_helper_;
     bool truncate_;
+    ushort max_files_;
+    details::circular_q<filename_t> filenames_q_;
 };
 
 using daily_file_sink_mt = daily_file_sink<std::mutex>;
