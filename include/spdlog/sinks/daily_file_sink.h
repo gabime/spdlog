@@ -45,7 +45,7 @@ class daily_file_sink final : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time
-    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false, ushort max_files = 0)
+    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false, uint16_t max_files = 0)
         : base_filename_(std::move(base_filename))
         , rotation_h_(rotation_hour)
         , rotation_m_(rotation_minute)
@@ -157,7 +157,7 @@ private:
     log_clock::time_point rotation_tp_;
     details::file_helper file_helper_;
     bool truncate_;
-    ushort max_files_;
+    uint16_t max_files_;
     details::circular_q<filename_t> filenames_q_;
 };
 

@@ -110,7 +110,7 @@ static spdlog::details::log_msg create_msg(std::chrono::seconds offset)
     return msg;
 }
 
-static void test_rotate(int days_to_run, ushort max_days, ushort expected_n_files)
+static void test_rotate(int days_to_run, uint16_t max_days, uint16_t expected_n_files)
 {
     using spdlog::log_clock;
     using spdlog::details::log_msg;
