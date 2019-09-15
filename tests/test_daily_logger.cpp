@@ -135,7 +135,6 @@ static void test_rotate(int days_to_run, uint16_t max_days, uint16_t expected_n_
 
 TEST_CASE("daily_logger rotate", "[daily_file_sink]")
 {
-
     int days_to_run = 1;
     test_rotate(days_to_run, 0, 1);
     test_rotate(days_to_run, 1, 1);
