@@ -72,7 +72,7 @@ bool ends_with(std::string const &value, std::string const &ending)
 // source: https://stackoverflow.com/a/37416569/192001
 std::size_t count_files(const std::string &folder)
 {
-    counter counter = 0;
+    size_t counter = 0;
     WIN32_FIND_DATA ffd;
     HANDLE hFind = INVALID_HANDLE_VALUE;
 
