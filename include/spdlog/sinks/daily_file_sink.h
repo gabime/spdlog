@@ -145,7 +145,7 @@ private:
             if (!ok)
             {
                 filenames_q_.push_back(std::move(current_file));
-                throw spdlog_ex("Failed removing daily file " + filename_to_str(old_filename), errno);
+                SPDLOG_THROW(spdlog_ex("Failed removing daily file " + filename_to_str(old_filename), errno));
             }
         }
         filenames_q_.push_back(std::move(current_file));
