@@ -77,10 +77,9 @@ std::size_t count_files(const std::string &folder)
 {
     size_t counter = 0;
     WIN32_FIND_DATA ffd;
-    HANDLE hFind = INVALID_HANDLE_VALUE;
-
+    
     // Start iterating over the files in the path directory.
-    hFind = ::FindFirstFileA((folder + "\\*").c_str(), &ffd);
+    HANDLE hFind = ::FindFirstFileA((folder + "\\*").c_str(), &ffd);
     if (hFind != INVALID_HANDLE_VALUE)
     {
         do // Managed to locate and create an handle to that folder.
