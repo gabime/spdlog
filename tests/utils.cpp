@@ -108,7 +108,7 @@ std::size_t count_files(const std::string &folder)
     }
 
     struct dirent *ep;
-    while (ep = readdir(dp))
+    while ((ep = readdir(dp)) != nullptr)
     {
         if (ep->d_name[0] != '.')
             counter++;
