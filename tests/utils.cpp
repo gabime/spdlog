@@ -87,7 +87,7 @@ std::size_t count_files(const std::string &folder)
         {
              if (ffd.cFileName[0] != '.')
                 counter++;            
-        } while (::FindNextFile(hFind, &ffd) == TRUE);
+        } while (::FindNextFile(hFind, &ffd) != 0);
         ::FindClose(hFind);
     }
     else
