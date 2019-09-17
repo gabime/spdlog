@@ -20,7 +20,7 @@ class circular_q
 public:
     using item_type = T;
 
-    // empty cir
+    // empty ctor - create a disabled queue with no elements allocated at all
     circular_q() = default;
 
     explicit circular_q(size_t max_items)
