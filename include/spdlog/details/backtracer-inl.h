@@ -66,8 +66,8 @@ SPDLOG_INLINE void backtracer::foreach_pop(std::function<void(const details::log
     while (!messages_.empty())
     {
         auto &front_msg = messages_.front();
-        messages_.pop_front();
         fun(front_msg);
+        messages_.pop_front();
     }
 }
 } // namespace details

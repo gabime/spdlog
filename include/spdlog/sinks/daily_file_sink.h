@@ -139,7 +139,7 @@ private:
         filename_t current_file = filename();
         if (filenames_q_.full())
         {
-            auto &old_filename = filenames_q_.front();
+            auto old_filename = std::move(filenames_q_.front());
             filenames_q_.pop_front();
             bool ok = remove_if_exists(old_filename) == 0;
             if (!ok)
