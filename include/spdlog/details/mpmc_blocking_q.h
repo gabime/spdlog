@@ -59,7 +59,8 @@ public:
             {
                 return false;
             }
-            q_.pop_front(popped_item);
+            popped_item = std::move(q_.front());
+            q_.pop_front();
         }
         pop_cv_.notify_one();
         return true;

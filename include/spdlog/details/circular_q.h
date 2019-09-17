@@ -60,15 +60,18 @@ public:
         }
     }
 
+    // Return reference to the front item.
+    // If there are no elements in the container, the behavior is undefined.
+    T& front()
+    {
+        return v_[head_];
+    }
+
     // Pop item from front.
     // If there are no elements in the container, the behavior is undefined.
-    void pop_front(T &popped_item)
+    void pop_front()
     {
-        if (max_items_ > 0)
-        {
-            popped_item = std::move(v_[head_]);
-            head_ = (head_ + 1) % max_items_;
-        }
+        head_ = (head_ + 1) % max_items_;
     }
 
     bool empty() const
@@ -79,7 +82,11 @@ public:
     bool full() const
     {
         // head is ahead of the tail by 1
-        return ((tail_ + 1) % max_items_) == head_;
+        if(max_items_ > 0)
+        {
+            return ((tail_ + 1) % max_items_) == head_;
+        }
+        return true;
     }
 
     size_t overrun_counter() const

@@ -139,8 +139,8 @@ private:
         filename_t current_file = filename();
         if (filenames_q_.full())
         {
-            filename_t old_filename;
-            filenames_q_.pop_front(old_filename);
+            auto &old_filename = filenames_q_.front();
+            filenames_q_.pop_front();
             bool ok = remove_if_exists(old_filename) == 0;
             if (!ok)
             {
