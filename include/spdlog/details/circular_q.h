@@ -18,7 +18,7 @@ class circular_q
     std::vector<T> v_;
 
 public:
-    using item_type = T;
+    using value_type = T;
 
     // empty ctor - create a disabled queue with no elements allocated at all
     circular_q() = default;
