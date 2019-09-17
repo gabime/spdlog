@@ -62,6 +62,11 @@ public:
 
     // Return reference to the front item.
     // If there are no elements in the container, the behavior is undefined.
+    const T& front() const
+    {
+        return v_[head_];
+    }
+
     T& front()
     {
         return v_[head_];
