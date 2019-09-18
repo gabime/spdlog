@@ -1,7 +1,7 @@
 # Copyright(c) 2019 spdlog authors
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.2)
 
 #---------------------------------------------------------------------------------------
 # Start spdlog project
@@ -197,7 +197,7 @@ if (SPDLOG_INSTALL)
 
     include(CMakePackageConfigHelpers)
     configure_file("${project_config_in}" "${project_config_out}" @ONLY)
-    if(${CMAKE_VERSION} VERSION_GREATER 3.13)
+    if(${CMAKE_VERSION} VERSION_GREATER_EQUAL 3.14)
         write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion ARCH_INDEPENDENT)
     else()
         write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
