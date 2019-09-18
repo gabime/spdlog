@@ -27,21 +27,37 @@ if get_option('external_fmt')
   compile_args += '-DSPDLOG_FMT_EXTERNAL'
 endif
 
+if get_option('no_exceptions')
+  compile_args += '-DSPDLOG_NO_EXCEPTIONS'
+endif
+
 # ------------------------------------
 # ---   Compiled library version   ---
 # ------------------------------------
 
 spdlog_inc = include_directories('./include')
 
+spdlog_srcs = files([
+    'src/async.cpp',
+    'src/color_sinks.cpp',
+    'src/file_sinks.cpp',
+    'src/fmt.cpp',
+    'src/spdlog.cpp',
+    'src/stdout_sinks.cpp'
+])
+
 if get_option('library_type') == 'static'
-  spdlog = static_library('spdlog', ['src/spdlog.cpp'],
+  spdlog = static_library(
+    'spdlog',
+    spdlog_srcs,
     cpp_args            : [compile_args] + ['-DSPDLOG_COMPILED_LIB'],
     include_directories : spdlog_inc,
     dependencies        : dep_list,
-    install             : not meson.is_subproject(),
-  )
+    install             : not meson.is_subproject()
+    )
 else
-  spdlog = shared_library('spdlog', ['src/spdlog.cpp'],
+  spdlog = shared_library('spdlog',
+    spdlog_srcs,
     cpp_args            : [compile_args] + ['-DSPDLOG_COMPILED_LIB'],
     include_directories : spdlog_inc,
     dependencies        : dep_list,
@@ -112,12 +128,14 @@ summary_str = '''spdlog build summary:
   - building examples:   @2@
   - building benchmarks: @3@
   - library type:        @4@
+  - no exceptions:       @5@
 '''.format(
   get_option('external_fmt'),
   get_option('enable_tests'),
   get_option('enable_examples'),
   get_option('enable_benchmarks'),
-  get_option('library_type')
+  get_option('library_type'),
+  get_option('no_exceptions')
 )
 
 message(summary_str)

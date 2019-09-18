@@ -1,5 +1,6 @@
 option('external_fmt',      type: 'boolean', value: false)
-option('enable_examples',   type: 'boolean', value: false)
+option('enable_examples',   type: 'boolean', value: true)
 option('enable_benchmarks', type: 'boolean', value: false)
 option('enable_tests',      type: 'boolean', value: false)
 option('library_type',      type: 'combo', choices: ['static', 'shared'], value: 'static')
+option('no_exceptions',      type: 'boolean', value: false)
