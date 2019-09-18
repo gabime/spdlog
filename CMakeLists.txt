@@ -197,7 +197,11 @@ if (SPDLOG_INSTALL)
 
     include(CMakePackageConfigHelpers)
     configure_file("${project_config_in}" "${project_config_out}" @ONLY)
-    write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion ARCH_INDEPENDENT)
+    if(${CMAKE_VERSION} VERSION_GREATER 3.13)
+        write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion ARCH_INDEPENDENT)
+    else()
+        write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
+    endif()
     install(FILES
             "${project_config_out}"
             "${version_config_file}" DESTINATION "${export_dest_dir}")
