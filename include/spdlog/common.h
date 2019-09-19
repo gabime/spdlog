@@ -100,12 +100,7 @@ using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using err_handler = std::function<void(const std::string &err_msg)>;
-
-template<typename T>
-using basic_string_view_t = fmt::basic_string_view<T>;
-
-using string_view_t = basic_string_view_t<char>;
-
+using string_view_t = fmt::basic_string_view<char>;
 using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
@@ -248,4 +243,7 @@ std::unique_ptr<T> make_unique(Args &&... args)
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "common-inl.h"
+#else
+extern template class fmt::basic_string_view<char>;
+extern template class fmt::basic_memory_buffer<char, 250>;
 #endif

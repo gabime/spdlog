@@ -18,3 +18,5 @@
  
 // template instantiate logger constructor with sinks init list
 template spdlog::logger::logger(std::string name, sinks_init_list::iterator begin, sinks_init_list::iterator end);
+template class fmt::basic_string_view<char>;
+template class fmt::basic_memory_buffer<char, 250>;
