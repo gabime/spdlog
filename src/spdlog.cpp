@@ -12,6 +12,7 @@
 #include "spdlog/details/os-inl.h"
 #include "spdlog/details/pattern_formatter-inl.h"
 #include "spdlog/details/log_msg-inl.h"
+#include "spdlog/details/log_msg_buffer-inl.h"
 #include "spdlog/logger-inl.h"
 #include "spdlog/sinks/sink-inl.h"
 
