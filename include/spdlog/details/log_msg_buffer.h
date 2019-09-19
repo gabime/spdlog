@@ -8,14 +8,13 @@
 namespace spdlog {
 namespace details {
 
-// extend log_msg with internal buffer to store its payload.
-// this is needed since log_msg holds string_views that points to stack data.
+// Extend log_msg with internal buffer to store its payload.
+// THis is needed since log_msg holds string_views that points to stack data.
 
 class log_msg_buffer : public log_msg
 {
     memory_buf_t buffer;
     void update_string_views();    
-
 public:
     log_msg_buffer() = default;
     explicit log_msg_buffer(const log_msg &orig_msg);    
