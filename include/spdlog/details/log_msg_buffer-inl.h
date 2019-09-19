@@ -49,7 +49,6 @@ namespace details {
         return *this;
     }
 
-
     SPDLOG_INLINE void log_msg_buffer::update_string_views()
     {
         logger_name = string_view_t{buffer.data(), logger_name.size()};
