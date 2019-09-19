@@ -44,9 +44,4 @@ protected:
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "base_sink-inl.h"
-#else
-#include "spdlog/details/null_mutex.h"
-#include <mutex>
-extern template class spdlog::sinks::base_sink<std::mutex>;
-extern template class spdlog::sinks::base_sink<spdlog::details::null_mutex>;
 #endif
