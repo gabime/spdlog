@@ -243,7 +243,4 @@ std::unique_ptr<T> make_unique(Args &&... args)
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "common-inl.h"
-#else
-extern template class fmt::basic_string_view<char>;
-extern template class fmt::basic_memory_buffer<char, 250>;
 #endif

@@ -43,6 +43,4 @@ public:
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "backtracer-inl.h"
-#else
-extern template class spdlog::details::circular_q<spdlog::details::log_msg_buffer>;
 #endif
