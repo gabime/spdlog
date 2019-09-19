@@ -15,8 +15,15 @@
 #include "spdlog/details/log_msg_buffer-inl.h"
 #include "spdlog/logger-inl.h"
 #include "spdlog/sinks/sink-inl.h"
- 
+#include "spdlog/sinks/base_sink-inl.h"
+#include "spdlog/details/null_mutex.h"
+
+#include <mutex>
+
 // template instantiate logger constructor with sinks init list
 template spdlog::logger::logger(std::string name, sinks_init_list::iterator begin, sinks_init_list::iterator end);
+template class spdlog::details::circular_q<spdlog::details::log_msg_buffer>;
+template class spdlog::sinks::base_sink<std::mutex>;
+template class spdlog::sinks::base_sink<spdlog::details::null_mutex>;
 template class fmt::basic_string_view<char>;
 template class fmt::basic_memory_buffer<char, 250>;
