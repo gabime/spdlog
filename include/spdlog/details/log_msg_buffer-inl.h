@@ -17,9 +17,6 @@ namespace details {
         buffer.append(payload.begin(), payload.end());
         update_string_views();
     }
-
-
-
   
     SPDLOG_INLINE log_msg_buffer::log_msg_buffer(const log_msg_buffer &other)
         : log_msg{other}
