@@ -15,5 +15,6 @@
 #include "spdlog/details/log_msg_buffer-inl.h"
 #include "spdlog/logger-inl.h"
 #include "spdlog/sinks/sink-inl.h"
-
+ 
+// template instantiate logger with sinks init list
 template spdlog::logger::logger(std::string name, sinks_init_list::iterator begin, sinks_init_list::iterator end);
