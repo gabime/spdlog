@@ -50,8 +50,17 @@
 #ifdef __linux__
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
 
-#elif defined(__FreeBSD__)
-#include <sys/thr.h> //Use thr_self() syscall under FreeBSD to get thread id
+#elif defined(_AIX)
+#include <pthread.h>     // for pthread_getthreadid_np
+
+#elif defined(__DragonFly__) || defined(__FreeBSD__)
+#include <pthread_np.h>  // for pthread_getthreadid_np
+
+#elif defined(__NetBSD__)
+#include <lwp.h>         // for _lwp_self
+
+#elif defined(__sun)
+#include <thread.h>      // for thr_self
 #endif
 
 #endif // unix
@@ -221,7 +230,7 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 #else // unix
     int fd = fileno(f);
 // 64 bits(but not in osx or cygwin, where fstat64 is deprecated)
-#if !defined(__FreeBSD__) && !defined(__APPLE__) && (defined(__x86_64__) || defined(__ppc64__)) && !defined(__CYGWIN__)
+#if (defined(__linux__) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
     struct stat64 st;
     if (::fstat64(fd, &st) == 0)
     {
@@ -316,10 +325,14 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
 #define SYS_gettid __NR_gettid
 #endif
     return static_cast<size_t>(syscall(SYS_gettid));
-#elif defined(__FreeBSD__)
-    long tid;
-    thr_self(&tid);
-    return static_cast<size_t>(tid);
+#elif defined(_AIX) || defined(__DragonFly__) || defined(__FreeBSD__)
+    return static_cast<size_t>(pthread_getthreadid_np());
+#elif defined(__NetBSD__)
+    return static_cast<size_t>(_lwp_self());
+#elif defined(__OpenBSD__)
+    return static_cast<size_t>(getthrid());
+#elif defined(__sun)
+    return static_cast<size_t>(thr_self());
 #elif __APPLE__
     uint64_t tid;
     pthread_threadid_np(nullptr, &tid);
