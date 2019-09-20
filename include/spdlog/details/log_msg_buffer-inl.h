@@ -36,6 +36,7 @@ namespace details {
     SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(const log_msg_buffer &other)
     {
         log_msg::operator=(other);
+        buffe.clear();
         buffer.append(other.buffer.data(), other.buffer.data() + other.buffer.size());
         update_string_views();
         return *this;
