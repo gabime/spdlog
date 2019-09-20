@@ -53,7 +53,7 @@ namespace details {
     SPDLOG_INLINE void log_msg_buffer::update_string_views()
     {
         logger_name = string_view_t{buffer.data(), logger_name.size()};
-        payload = string_view_t{logger_name.end(), payload.size()};
+        payload = string_view_t{buffer.data()+logger_name.size(), payload.size()};
     }
 
 } // namespace details
