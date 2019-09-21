@@ -62,12 +62,12 @@ public:
 
     // Return reference to the front item.
     // If there are no elements in the container, the behavior is undefined.
-    const T& front() const
+    const T &front() const
     {
         return v_[head_];
     }
 
-    T& front()
+    T &front()
     {
         return v_[head_];
     }
@@ -87,7 +87,7 @@ public:
     bool full() const
     {
         // head is ahead of the tail by 1
-        if(max_items_ > 0)
+        if (max_items_ > 0)
         {
             return ((tail_ + 1) % max_items_) == head_;
         }

@@ -13,7 +13,6 @@
 #include "spdlog/details/log_msg.h"
 #include "spdlog/sinks/sink.h"
 
-
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>

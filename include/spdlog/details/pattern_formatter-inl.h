@@ -209,8 +209,8 @@ public:
 };
 
 // Full month name
-static const std::array<const char *, 12> full_months{{
-    "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}};
+static const std::array<const char *, 12> full_months{
+    {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}};
 
 template<typename ScopedPadder>
 class B_formatter : public flag_formatter

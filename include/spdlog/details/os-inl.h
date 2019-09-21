@@ -51,16 +51,16 @@
 #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
 
 #elif defined(_AIX)
-#include <pthread.h>     // for pthread_getthreadid_np
+#include <pthread.h> // for pthread_getthreadid_np
 
 #elif defined(__DragonFly__) || defined(__FreeBSD__)
-#include <pthread_np.h>  // for pthread_getthreadid_np
+#include <pthread_np.h> // for pthread_getthreadid_np
 
 #elif defined(__NetBSD__)
-#include <lwp.h>         // for _lwp_self
+#include <lwp.h> // for _lwp_self
 
 #elif defined(__sun)
-#include <thread.h>      // for thr_self
+#include <thread.h> // for thr_self
 #endif
 
 #endif // unix
@@ -396,8 +396,8 @@ SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT
 #ifdef _WIN32
     return true;
 #else
-    static constexpr std::array<const char *, 14> Terms = {{
-        "ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"}};
+    static constexpr std::array<const char *, 14> Terms = {
+        {"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"}};
 
     const char *env_p = std::getenv("TERM");
     if (env_p == nullptr)
