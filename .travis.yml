@@ -5,6 +5,7 @@
 sudo: required
 language: cpp
 
+# gcc 4.8
 addons: &gcc48
   apt:
     packages:
@@ -12,6 +13,7 @@ addons: &gcc48
     sources:
       - ubuntu-toolchain-r-test
 
+# gcc 7.0
 addons: &gcc7
   apt:
     packages:
@@ -19,6 +21,7 @@ addons: &gcc7
     sources:
       - ubuntu-toolchain-r-test
 
+# Clang 3.5
 addons: &clang35
   apt:
     packages:
@@ -26,14 +29,16 @@ addons: &clang35
     sources:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-precise-3.5
-
-addons: &clang6
+      
+# Clang 7.0
+addons: &clang70
   apt:
     packages:
-      - clang-6.0
+      - clang-7      
     sources:
       - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-6.0
+      - llvm-toolchain-trusty-7
+
 
 
 matrix:
@@ -60,19 +65,18 @@ matrix:
       os: linux
       addons: *clang35
 
-      # Test clang-6.0: C++11, Build=Debug, ASAN=On
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
-      os: linux
-      addons: *clang6
+      # Test clang-7.0: C++11, Build=Debug, ASAN=On
+    - env: CLANG_VERSION=7.0 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
+      os: linux   
+      addons: *clang70
 
-    - env: CLANG_VERSION=6.0 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
+    - env: CLANG_VERSION=7.0 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
       os: linux
-      addons: *clang6
+      addons: *clang70
 
       # osx
     - env: BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
       os: osx
-
 
 
 
