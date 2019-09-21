@@ -29,7 +29,7 @@ TEST_CASE("dequeue-empty-wait", "[mpmc_blocking_q]")
 
     size_t q_size = 100;
     milliseconds wait_ms(250);
-    milliseconds tolerance_wait(50);
+    milliseconds tolerance_wait(250);
 
     spdlog::details::mpmc_blocking_queue<int> q(q_size);
     int popped_item;
