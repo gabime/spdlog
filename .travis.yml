@@ -66,14 +66,12 @@ matrix:
       addons: *clang35
 
       # Test clang-7.0: C++11, Build=Debug, ASAN=On
-    - env: CLANG_VERSION=7.0 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
-      dist: bionic
-      addons: *clang70
+    - env: CLANG_VERSION=7 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
+      dist: bionic      
 
-    - env: CLANG_VERSION=7.0 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
+    - env: CLANG_VERSION=7 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
       dist: bionic
-      addons: *clang70
-
+      
       # osx
     - env: BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
       os: osx
