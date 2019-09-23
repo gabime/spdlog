@@ -86,6 +86,7 @@ set(SPDLOG_SRCS
         src/file_sinks.cpp
         src/async.cpp)
 
+set(SPDLOG_CFLAGS "${PROJECT_NAME}")
 
 if (SPDLOG_BUILD_SHARED)
     if(WIN32)
@@ -127,6 +128,8 @@ if(SPDLOG_FMT_EXTERNAL)
     if (NOT TARGET fmt::fmt)
         find_package(fmt REQUIRED)
     endif ()
+
+    set(SPDLOG_CFLAGS "${SPDLOG_CFLAGS} -DSPDLOG_FMT_EXTERNAL")
 
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog PUBLIC fmt::fmt)
@@ -180,6 +183,8 @@ if (SPDLOG_INSTALL)
     set(config_targets_file "spdlogConfigTargets.cmake")
     set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfigVersion.cmake")
     set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/spdlog/cmake")
+    set(pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
+    set(pkg_config "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
 
     #---------------------------------------------------------------------------------------
     # Include files
@@ -190,6 +195,9 @@ if (SPDLOG_INSTALL)
     #---------------------------------------------------------------------------------------
     # Package and version files
     #---------------------------------------------------------------------------------------
+    configure_file("cmake/${PROJECT_NAME}.pc.in" "${pkg_config}" @ONLY)
+    install(FILES "${pkg_config}" DESTINATION "${pkgconfig_install_dir}")
+
     install(EXPORT spdlog
             DESTINATION ${export_dest_dir}
             NAMESPACE spdlog::
