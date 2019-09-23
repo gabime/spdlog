@@ -129,7 +129,7 @@ if(SPDLOG_FMT_EXTERNAL)
         find_package(fmt REQUIRED)
     endif ()
 
-    set(SPDLOG_CFLAGS "${SPDLOG_CFLAGS} -DSPDLOG_FMT_EXTERNAL")
+    set(SPDLOG_CFLAGS "${SPDLOG_CFLAGS} -DSPDLOG_FMT_EXTERNAL -DFMT_HEADER_ONLY")
 
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog PUBLIC fmt::fmt)
