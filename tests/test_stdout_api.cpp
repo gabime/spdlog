@@ -91,7 +91,7 @@ TEST_CASE("wchar_api", "[stdout]")
     l->trace(L"Test wchar_api {}", 1);    
     l->trace(L"Test wchar_api {}", std::wstring{L"wstring param"});
     l->trace(std::wstring{L"Test wchar_api wstring"});
-
+    SPDLOG_LOGGER_DEBUG(l, L"Test SPDLOG_LOGGER_DEBUG {}", L"param");
     spdlog::drop_all();
 }
 
