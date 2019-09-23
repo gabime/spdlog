@@ -86,7 +86,7 @@ bool is_color_terminal() SPDLOG_NOEXCEPT;
 bool in_terminal(FILE *file) SPDLOG_NOEXCEPT;
 
 #if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
-void wstr_to_utf8buf(basic_string_view_t<wchar_t> wstr, memory_buf_t &target);
+void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target);
 #endif
 
 } // namespace os

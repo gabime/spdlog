@@ -107,7 +107,7 @@ using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 #ifndef _WIN32
 #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
 #else
-using wstring_view_t = basic_string_view_t<wchar_t>;
+using wstring_view_t = fmt::basic_string_view<wchar_t>;
 
 template<typename T>
 struct is_convertible_to_wstring_view : std::is_convertible<T, wstring_view_t>
