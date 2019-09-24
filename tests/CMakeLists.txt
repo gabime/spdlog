@@ -45,8 +45,8 @@ enable_testing()
 # The compiled library tests
 if(SPDLOG_BUILD_TESTS)
     add_executable(spdlog-utests ${SPDLOG_UTESTS_SOURCES})
-    target_compile_options(spdlog-utests PRIVATE 
-        /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>)
+    target_compile_options(spdlog-utests PRIVATE $<$<CXX_COMPILER_ID:MSVC>:
+        /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>>)
 	spdlog_enable_warnings(spdlog-utests)
     target_link_libraries(spdlog-utests PRIVATE spdlog)
 

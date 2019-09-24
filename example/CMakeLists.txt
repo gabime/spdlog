@@ -17,8 +17,8 @@ endif()
 # Example of using pre-compiled library
 #---------------------------------------------------------------------------------------
 add_executable(example example.cpp)
-target_compile_options(example PRIVATE 
-    /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>)
+target_compile_options(example PRIVATE $<$<CXX_COMPILER_ID:MSVC>:
+    /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>>)
 spdlog_enable_warnings(example)
 target_link_libraries(example PRIVATE spdlog::spdlog)
 

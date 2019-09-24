@@ -104,7 +104,8 @@ endif()
 add_library(spdlog::spdlog ALIAS spdlog)
 
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
-target_compile_options(spdlog PRIVATE /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>)
+target_compile_options(spdlog PRIVATE $<$<CXX_COMPILER_ID:MSVC>:
+    /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>>)
 target_include_directories(spdlog PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
