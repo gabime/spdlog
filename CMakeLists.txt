@@ -46,6 +46,10 @@ if(NOT WIN32)
     option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
 endif()
 
+if (NOT DEFINED SPDLOG_MSVC_RUNTIME_LIBRARY)
+    set(SPDLOG_MSVC_RUNTIME_LIBRARY "MT")
+endif()
+
 # example options
 option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
@@ -100,6 +104,7 @@ endif()
 add_library(spdlog::spdlog ALIAS spdlog)
 
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
+target_compile_options(spdlog PRIVATE /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>)
 target_include_directories(spdlog PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
