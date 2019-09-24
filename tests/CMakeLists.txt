@@ -7,6 +7,10 @@ if(PkgConfig_FOUND)
 	pkg_check_modules(systemd libsystemd)
 endif()
 
+if (NOT DEFINED SPDLOG_MSVC_RUNTIME_LIBRARY)
+    set(SPDLOG_MSVC_RUNTIME_LIBRARY "MT")
+endif()
+
 set(SPDLOG_UTESTS_SOURCES
     test_file_helper.cpp
     test_file_logging.cpp
@@ -41,6 +45,8 @@ enable_testing()
 # The compiled library tests
 if(SPDLOG_BUILD_TESTS)
     add_executable(spdlog-utests ${SPDLOG_UTESTS_SOURCES})
+    target_compile_options(spdlog-utests PRIVATE 
+        /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>)
 	spdlog_enable_warnings(spdlog-utests)
     target_link_libraries(spdlog-utests PRIVATE spdlog)
 

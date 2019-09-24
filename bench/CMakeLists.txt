@@ -7,22 +7,34 @@ project(spdlog_bench CXX)
 if(NOT TARGET spdlog)
   # Stand-alone build
   find_package(spdlog CONFIG REQUIRED)
+  
+  if (NOT DEFINED SPDLOG_MSVC_RUNTIME_LIBRARY)
+    set(SPDLOG_MSVC_RUNTIME_LIBRARY "MT")
+  endif()
 endif()
 
 find_package(Threads REQUIRED)
 find_package(benchmark CONFIG REQUIRED)
 
 add_executable(bench bench.cpp)
+target_compile_options(bench PRIVATE 
+    /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>)
 spdlog_enable_warnings(bench)
 target_link_libraries(bench PRIVATE spdlog::spdlog)
 
 add_executable(async_bench async_bench.cpp)
+target_compile_options(async_bench PRIVATE 
+    /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>)
 target_link_libraries(async_bench PRIVATE spdlog::spdlog)
 
 add_executable(latency latency.cpp)
+target_compile_options(latency PRIVATE 
+    /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>)
 target_link_libraries(latency PRIVATE benchmark::benchmark spdlog::spdlog)
 
 add_executable(formatter-bench formatter-bench.cpp)
+target_compile_options(formatter-bench PRIVATE 
+    /${SPDLOG_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:d>)
 target_link_libraries(formatter-bench PRIVATE benchmark::benchmark spdlog::spdlog)
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
