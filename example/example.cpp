@@ -177,7 +177,7 @@ void multi_sink_example()
     console_sink->set_level(spdlog::level::warn);
     console_sink->set_pattern("[multi_sink_example] [%^%l%$] %v");
 
-    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multisink.txt", true);
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multisink.txt", false);
     file_sink->set_level(spdlog::level::trace);
 
     spdlog::logger logger("multi_sink", {console_sink, file_sink});
