@@ -66,6 +66,7 @@ option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
 if(WIN32)
 	option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
+    option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)    
 endif()
 
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
@@ -141,6 +142,11 @@ endif()
 if(SPDLOG_WCHAR_SUPPORT)
 	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+ endif()
+
+ if(SPDLOG_WCHAR_FILENAMES)
+	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_FILENAMES)
+	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_FILENAMES)
  endif()
 
  if(SPDLOG_NO_EXCEPTIONS)
