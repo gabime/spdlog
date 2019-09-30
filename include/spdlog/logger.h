@@ -3,8 +3,7 @@
 
 #pragma once
 
-// Thread safe logger (except for set_pattern(..), set_formatter(..) and
-// set_error_handler())
+// Thread safe logger (except for set_error_handler())
 // Has name, log level, vector of std::shared sink pointers and formatter
 // Upon each log write the logger:
 // 1. Checks if its log level is enough to log the message and if yes:
