@@ -878,7 +878,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
-        auto delta = std::max(msg.time - last_message_time_, log_clock::duration::zero());
+        auto delta = (std::max)(msg.time - last_message_time_, log_clock::duration::zero());
         auto delta_units = std::chrono::duration_cast<DurationUnits>(delta);
         last_message_time_ = msg.time;
         ScopedPadder p(6, padinfo_, dest);
