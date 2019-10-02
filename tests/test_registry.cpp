@@ -114,3 +114,22 @@ TEST_CASE("disable automatic registration", "[registry]")
     spdlog::set_level(spdlog::level::info);
     spdlog::set_automatic_registration(true);
 }
+
+TEST_CASE("concrete registry and global instance", "[registry]")
+{
+	spdlog::details::registry Local{};
+	auto& Global = spdlog::details::registry::instance();
+	REQUIRE((&Global != &Local));
+
+	SECTION("register drop on local registry")
+	{
+		Local.drop_all();
+
+		auto sink = std::make_shared<spdlog::sinks::null_sink_mt>();
+		auto new_logger = std::make_shared<spdlog::logger>(tested_logger_name, std::move(sink));
+		Local.initialize_logger(new_logger);
+
+		REQUIRE(Local.get(tested_logger_name) != nullptr);
+	}
+
+}
