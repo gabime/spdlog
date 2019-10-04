@@ -30,7 +30,7 @@ class registry
 public:
 	// Default constructor
 	registry();
-	~registry() = default;
+	~registry();
 
     registry(const registry &) = delete;
     registry &operator=(const registry &) = delete;
