@@ -20,7 +20,7 @@ namespace spdlog {
 namespace sinks {
 
 template<typename Mutex>
-class dist_sink : public base_sink<Mutex>
+class SPDLOG_EXPORT dist_sink : public base_sink<Mutex>
 {
 public:
     dist_sink() = default;

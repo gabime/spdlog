@@ -5,6 +5,11 @@
 #error Please define SPDLOG_COMPILED_LIB to compile this file.
 #endif
 
+#ifdef SPDLOG_USE_EXPORT_HEADER
+#include "spdlog_export.h"
+#else
+#define SPDLOG_EXPORT
+#endif
 #include "spdlog/spdlog-inl.h"
 #include "spdlog/common-inl.h"
 #include "spdlog/details/backtracer-inl.h"
@@ -21,6 +26,6 @@
 #include <mutex>
 
 // template instantiate logger constructor with sinks init list
-template spdlog::logger::logger(std::string name, sinks_init_list::iterator begin, sinks_init_list::iterator end);
-template class spdlog::sinks::base_sink<std::mutex>;
-template class spdlog::sinks::base_sink<spdlog::details::null_mutex>;
+template SPDLOG_EXPORT spdlog::logger::logger(std::string name, sinks_init_list::iterator begin, sinks_init_list::iterator end);
+template class SPDLOG_EXPORT spdlog::sinks::base_sink<std::mutex>;
+template class SPDLOG_EXPORT spdlog::sinks::base_sink<spdlog::details::null_mutex>;

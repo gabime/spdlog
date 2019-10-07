@@ -16,7 +16,7 @@ namespace sinks {
  * Sink that write to syslog using the `syscall()` library call.
  */
 template<typename Mutex>
-class syslog_sink : public base_sink<Mutex>
+class SPDLOG_EXPORT syslog_sink : public base_sink<Mutex>
 {
 
 public:

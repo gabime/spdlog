@@ -152,12 +152,20 @@
     FMT_INLINE_NAMESPACE v6 {
 #endif
 
-#if !defined(FMT_HEADER_ONLY) && defined(_WIN32)
-#  ifdef FMT_EXPORT
-#    define FMT_API __declspec(dllexport)
-#  elif defined(FMT_SHARED)
-#    define FMT_API __declspec(dllimport)
-#    define FMT_EXTERN_TEMPLATE_API FMT_API
+#if !defined(FMT_HEADER_ONLY)
+#  ifdef SPDLOG_USE_EXPORT_HEADER
+#    include "spdlog_export.h"
+#    define FMT_API SPDLOG_EXPORT
+#  elif defined (_WIN32)
+#    ifdef FMT_EXPORT
+#      define FMT_API __declspec(dllexport)
+#    elif defined(FMT_SHARED)
+#      define FMT_API __declspec(dllimport)
+#      define FMT_EXTERN_TEMPLATE_API FMT_API
+#    else
+#      define FMT_API
+#      define FMT_EXTERN_TEMPLATE_API
+#    endif
 #  endif
 #endif
 #ifndef FMT_API

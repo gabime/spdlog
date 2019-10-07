@@ -9,6 +9,12 @@
 #include <spdlog/sinks/ansicolor_sink.h>
 #endif
 
+#ifdef SPDLOG_USE_EXPORT_HEADER
+#include "spdlog_export.h"
+#else
+#define SPDLOG_EXPORT
+#endif
+
 #include <spdlog/details/synchronous_factory.h>
 
 namespace spdlog {

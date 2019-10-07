@@ -36,7 +36,7 @@
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>
-class dup_filter_sink : public dist_sink<Mutex>
+class SPDLOG_EXPORT dup_filter_sink : public dist_sink<Mutex>
 {
 public:
     template<class Rep, class Period>

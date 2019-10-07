@@ -3,6 +3,12 @@
 
 #pragma once
 
+#ifdef SPDLOG_USE_EXPORT_HEADER
+#include "spdlog_export.h"
+#else
+#define SPDLOG_EXPORT
+#endif
+
 #include <spdlog/details/log_msg_buffer.h>
 #include <spdlog/details/circular_q.h>
 
@@ -15,7 +21,7 @@
 
 namespace spdlog {
 namespace details {
-class backtracer
+class SPDLOG_EXPORT backtracer
 {
     mutable std::mutex mutex_;
     std::atomic<bool> enabled_{false};

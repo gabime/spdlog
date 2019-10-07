@@ -21,7 +21,7 @@ namespace sinks {
  * colors
  */
 template<typename ConsoleMutex>
-class wincolor_sink : public sink
+class SPDLOG_EXPORT wincolor_sink : public sink
 {
 public:
     const WORD BOLD = FOREGROUND_INTENSITY;
@@ -65,14 +65,14 @@ protected:
 };
 
 template<typename ConsoleMutex>
-class wincolor_stdout_sink : public wincolor_sink<ConsoleMutex>
+class SPDLOG_EXPORT wincolor_stdout_sink : public wincolor_sink<ConsoleMutex>
 {
 public:
     explicit wincolor_stdout_sink(color_mode mode = color_mode::automatic);
 };
 
 template<typename ConsoleMutex>
-class wincolor_stderr_sink : public wincolor_sink<ConsoleMutex>
+class SPDLOG_EXPORT wincolor_stderr_sink : public wincolor_sink<ConsoleMutex>
 {
 public:
     explicit wincolor_stderr_sink(color_mode mode = color_mode::automatic);

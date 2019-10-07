@@ -20,7 +20,7 @@ namespace details {
 
 using async_logger_ptr = std::shared_ptr<spdlog::async_logger>;
 
-enum class async_msg_type
+enum class SPDLOG_EXPORT async_msg_type
 {
     log,
     flush,
@@ -30,7 +30,7 @@ enum class async_msg_type
 #include <spdlog/details/log_msg_buffer.h>
 // Async msg to move to/from the queue
 // Movable only. should never be copied
-struct async_msg : log_msg_buffer
+struct SPDLOG_EXPORT async_msg : log_msg_buffer
 {
     async_msg_type msg_type{async_msg_type::log};
     async_logger_ptr worker_ptr;
@@ -79,7 +79,7 @@ struct async_msg : log_msg_buffer
     {}
 };
 
-class thread_pool
+class SPDLOG_EXPORT thread_pool
 {
 public:
     using item_type = async_msg;

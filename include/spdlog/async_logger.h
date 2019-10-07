@@ -19,7 +19,7 @@
 namespace spdlog {
 
 // Async overflow policy - block by default.
-enum class async_overflow_policy
+enum class SPDLOG_EXPORT async_overflow_policy
 {
     block,         // Block until message can be enqueued
     overrun_oldest // Discard oldest message in the queue if full when trying to
@@ -30,7 +30,7 @@ namespace details {
 class thread_pool;
 }
 
-class async_logger final : public std::enable_shared_from_this<async_logger>, public logger
+class SPDLOG_EXPORT async_logger final : public std::enable_shared_from_this<async_logger>, public logger
 {
     friend class details::thread_pool;
 

@@ -13,7 +13,7 @@ namespace spdlog {
 namespace sinks {
 
 template<typename ConsoleMutex>
-class stdout_sink_base : public sink
+class SPDLOG_EXPORT stdout_sink_base : public sink
 {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;

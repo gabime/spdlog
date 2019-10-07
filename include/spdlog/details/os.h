@@ -10,14 +10,19 @@ namespace spdlog {
 namespace details {
 namespace os {
 
+SPDLOG_EXPORT
 spdlog::log_clock::time_point now() SPDLOG_NOEXCEPT;
 
+SPDLOG_EXPORT
 std::tm localtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT;
 
+SPDLOG_EXPORT
 std::tm localtime() SPDLOG_NOEXCEPT;
 
+SPDLOG_EXPORT
 std::tm gmtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT;
 
+SPDLOG_EXPORT
 std::tm gmtime() SPDLOG_NOEXCEPT;
 
 // eol definition
@@ -39,52 +44,67 @@ SPDLOG_CONSTEXPR static const char folder_sep = '/';
 #endif
 
 #ifdef SPDLOG_PREVENT_CHILD_FD
+SPDLOG_EXPORT
 void prevent_child_fd(FILE *f);
 #endif
 
 // fopen_s on non windows for writing
+SPDLOG_EXPORT
 bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode);
 
 // Remove filename. return 0 on success
+SPDLOG_EXPORT
 int remove(const filename_t &filename) SPDLOG_NOEXCEPT;
 
 // Remove file if exists. return 0 on success
 // Note: Non atomic (might return failure to delete if concurrently deleted by other process/thread)
+SPDLOG_EXPORT
 int remove_if_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
 
+SPDLOG_EXPORT
 int rename(const filename_t &filename1, const filename_t &filename2) SPDLOG_NOEXCEPT;
 
 // Return if file exists.
+SPDLOG_EXPORT
 bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
 
 // Return file size according to open FILE* object
+SPDLOG_EXPORT
 size_t filesize(FILE *f);
 
 // Return utc offset in minutes or throw spdlog_ex on failure
+SPDLOG_EXPORT
 int utc_minutes_offset(const std::tm &tm = details::os::localtime());
 
 // Return current thread id as size_t
 // It exists because the std::this_thread::get_id() is much slower(especially
 // under VS 2013)
+SPDLOG_EXPORT
 size_t _thread_id() SPDLOG_NOEXCEPT;
 
 // Return current thread id as size_t (from thread local storage)
+SPDLOG_EXPORT
 size_t thread_id() SPDLOG_NOEXCEPT;
 
 // This is avoid msvc issue in sleep_for that happens if the clock changes.
 // See https://github.com/gabime/spdlog/issues/609
+SPDLOG_EXPORT
 void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT;
 
+SPDLOG_EXPORT
 std::string filename_to_str(const filename_t &filename);
 
+SPDLOG_EXPORT
 int pid() SPDLOG_NOEXCEPT;
 
 // Determine if the terminal supports colors
 // Source: https://github.com/agauniyal/rang/
+SPDLOG_EXPORT
 bool is_color_terminal() SPDLOG_NOEXCEPT;
 
 // Determine if the terminal attached
 // Source: https://github.com/agauniyal/rang/
+SPDLOG_EXPORT
 bool in_terminal(FILE *file) SPDLOG_NOEXCEPT;
 
 #if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
@@ -96,10 +116,12 @@ void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target);
 // "abc/" => "abc"
 // "abc" => ""
 // "abc///" => "abc//"
+SPDLOG_EXPORT
 filename_t dir_name(filename_t path);
 
 // Create a dir from the given path.
 // Return true if succeeded or if this dir already exists.
+SPDLOG_EXPORT
 bool create_dir(filename_t path);
 
 } // namespace os

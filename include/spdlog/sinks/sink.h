@@ -9,7 +9,7 @@
 namespace spdlog {
 
 namespace sinks {
-class sink
+class SPDLOG_EXPORT sink
 {
 public:
     virtual ~sink() = default;

@@ -6,13 +6,18 @@
 #endif
 
 #include <mutex>
+#ifdef SPDLOG_USE_EXPORT_HEADER
+#include "spdlog_export.h"
+#else
+#define SPDLOG_EXPORT
+#endif
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/file_helper-inl.h"
 #include "spdlog/sinks/basic_file_sink-inl.h"
 
-template class spdlog::sinks::basic_file_sink<std::mutex>;
-template class spdlog::sinks::basic_file_sink<spdlog::details::null_mutex>;
+template class SPDLOG_EXPORT spdlog::sinks::basic_file_sink<std::mutex>;
+template class SPDLOG_EXPORT spdlog::sinks::basic_file_sink<spdlog::details::null_mutex>;
 
 #include "spdlog/sinks/rotating_file_sink-inl.h"
-template class spdlog::sinks::rotating_file_sink<std::mutex>;
-template class spdlog::sinks::rotating_file_sink<spdlog::details::null_mutex>;
+template class SPDLOG_EXPORT spdlog::sinks::rotating_file_sink<std::mutex>;
+template class SPDLOG_EXPORT spdlog::sinks::rotating_file_sink<spdlog::details::null_mutex>;

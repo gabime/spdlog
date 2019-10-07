@@ -24,7 +24,7 @@ namespace sinks {
 /*
  * Generator of daily log file names in format basename.YYYY-MM-DD.ext
  */
-struct daily_filename_calculator
+struct SPDLOG_EXPORT daily_filename_calculator
 {
     // Create filename for the form basename.YYYY-MM-DD
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
@@ -42,7 +42,7 @@ struct daily_filename_calculator
  * If max_files > 0, retain only the last max_files and delete previous.
  */
 template<typename Mutex, typename FileNameCalc = daily_filename_calculator>
-class daily_file_sink final : public base_sink<Mutex>
+class SPDLOG_EXPORT daily_file_sink final : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time

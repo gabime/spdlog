@@ -3,13 +3,19 @@
 
 #pragma once
 
+#ifdef SPDLOG_USE_EXPORT_HEADER
+#include "spdlog_export.h"
+#else
+#define SPDLOG_EXPORT
+#endif
+
 #include <atomic>
 #include <utility>
 // null, no cost dummy "mutex" and dummy "atomic" int
 
 namespace spdlog {
 namespace details {
-struct null_mutex
+struct SPDLOG_EXPORT null_mutex
 {
     void lock() const {}
     void unlock() const {}
@@ -19,7 +25,7 @@ struct null_mutex
     }
 };
 
-struct null_atomic_int
+struct SPDLOG_EXPORT null_atomic_int
 {
     int value;
     null_atomic_int() = default;

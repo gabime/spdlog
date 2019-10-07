@@ -22,7 +22,7 @@ namespace sinks {
  * Locking is not needed, as `sd_journal_send()` itself is thread-safe.
  */
 template<typename Mutex>
-class systemd_sink : public base_sink<Mutex>
+class SPDLOG_EXPORT systemd_sink : public base_sink<Mutex>
 {
 public:
     //

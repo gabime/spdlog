@@ -5,6 +5,19 @@
 
 #include <spdlog/tweakme.h>
 #include <spdlog/details/null_mutex.h>
+#ifdef SPDLOG_USE_EXPORT_HEADER
+#  include "spdlog_export.h"
+#else
+#  define SPDLOG_EXPORT
+#  if defined(__GNUC__) || defined(__clang__)
+#    define SPDLOG_DEPRECATED __attribute__((deprecated))
+#  elif defined(_MSC_VER)
+#    define SPDLOG_DEPRECATED __declspec(deprecated)
+#  else
+#    define SPDLOG_DEPRECATED
+#  endif
+#endif
+
 
 #include <atomic>
 #include <chrono>
@@ -44,14 +57,6 @@
 #else
 #define SPDLOG_NOEXCEPT noexcept
 #define SPDLOG_CONSTEXPR constexpr
-#endif
-
-#if defined(__GNUC__) || defined(__clang__)
-#define SPDLOG_DEPRECATED __attribute__((deprecated))
-#elif defined(_MSC_VER)
-#define SPDLOG_DEPRECATED __declspec(deprecated)
-#else
-#define SPDLOG_DEPRECATED
 #endif
 
 // disable thread local on msvc 2013
@@ -138,7 +143,7 @@ using level_t = std::atomic<int>;
 
 // Log level enum
 namespace level {
-enum level_enum
+enum SPDLOG_EXPORT level_enum
 {
     trace = SPDLOG_LEVEL_TRACE,
     debug = SPDLOG_LEVEL_DEBUG,
@@ -164,8 +169,13 @@ enum level_enum
     }
 #endif
 
+SPDLOG_EXPORT
 string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
+
+SPDLOG_EXPORT
 const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
+
+SPDLOG_EXPORT
 spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
 using level_hasher = std::hash<int>;
@@ -174,7 +184,7 @@ using level_hasher = std::hash<int>;
 //
 // Color mode used by sinks with color support.
 //
-enum class color_mode
+enum class SPDLOG_EXPORT color_mode
 {
     always,
     automatic,
@@ -185,7 +195,7 @@ enum class color_mode
 // Pattern time - specific time getting to use for pattern_formatter.
 // local time by default
 //
-enum class pattern_time_type
+enum class SPDLOG_EXPORT pattern_time_type
 {
     local, // log localtime
     utc    // log utc
@@ -194,7 +204,7 @@ enum class pattern_time_type
 //
 // Log exception
 //
-class spdlog_ex : public std::exception
+class SPDLOG_EXPORT spdlog_ex : public std::exception
 {
 public:
     explicit spdlog_ex(std::string msg);
@@ -205,7 +215,7 @@ private:
     std::string msg_;
 };
 
-struct source_loc
+struct SPDLOG_EXPORT source_loc
 {
     SPDLOG_CONSTEXPR source_loc() = default;
     SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)

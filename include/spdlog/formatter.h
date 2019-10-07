@@ -8,7 +8,7 @@
 
 namespace spdlog {
 
-class formatter
+class SPDLOG_EXPORT formatter
 {
 public:
     virtual ~formatter() = default;

@@ -41,11 +41,6 @@ if (NOT DEFINED SPDLOG_MASTER_PROJECT)
     endif()
 endif ()
 
-# build shared option
-if(NOT WIN32)
-    option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
-endif()
-
 # example options
 option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
@@ -101,22 +96,25 @@ if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
     list(APPEND SPDLOG_SRCS src/fmt.cpp)
 endif()
 
-if (SPDLOG_BUILD_SHARED)
-    if(WIN32)
-        message(FATAL_ERROR "spdlog shared lib is not yet supported under windows")
-    endif()
-    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
-else()
-    add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
+add_library(spdlog ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
+add_library(spdlog::spdlog ALIAS spdlog)
+
+if (BUILD_SHARED_LIBS)
+  generate_export_header(spdlog)
+  target_compile_definitions(spdlog PRIVATE SPDLOG_USE_EXPORT_HEADER)
+  set_target_properties(spdlog PROPERTIES CXX_VISIBILITY_PRESET hidden)
+  set_target_properties(spdlog PROPERTIES VISIBILITY_INLINES_HIDDEN 1)
 endif()
 
 add_library(spdlog::spdlog ALIAS spdlog)
 
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-target_link_libraries(spdlog PUBLIC Threads::Threads)
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+  "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+
+target_link_libraries(spdlog PRIVATE Threads::Threads)
 spdlog_enable_warnings(spdlog)
 
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
@@ -129,8 +127,10 @@ add_library(spdlog_header_only INTERFACE)
 add_library(spdlog::spdlog_header_only ALIAS spdlog_header_only)
 
 target_include_directories(spdlog_header_only INTERFACE
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+  "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
 
@@ -154,6 +154,10 @@ if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
     endif()
 
     set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
+else()
+    if (BUILD_SHARED_LIBS)
+        target_compile_definitions(spdlog PRIVATE FMT_SHARED)
+    endif()
 endif()
 
 #---------------------------------------------------------------------------------------
@@ -241,6 +245,8 @@ if (SPDLOG_INSTALL)
     # Include files
     #---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
+    install(FILES ${PROJECT_BINARY_DIR}/spdlog_export.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
     install(TARGETS spdlog spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
     if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
