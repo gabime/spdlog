@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.2)
 # Start spdlog project
 #---------------------------------------------------------------------------------------
 include(GNUInstallDirs)
+include(GenerateExportHeader)
 include(cmake/utils.cmake)
 include(cmake/ide.cmake)
 
@@ -99,8 +100,8 @@ endif()
 add_library(spdlog ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
 add_library(spdlog::spdlog ALIAS spdlog)
 
+generate_export_header(spdlog)
 if (BUILD_SHARED_LIBS)
-  generate_export_header(spdlog)
   target_compile_definitions(spdlog PRIVATE SPDLOG_USE_EXPORT_HEADER)
   set_target_properties(spdlog PROPERTIES CXX_VISIBILITY_PRESET hidden)
   set_target_properties(spdlog PROPERTIES VISIBILITY_INLINES_HIDDEN 1)

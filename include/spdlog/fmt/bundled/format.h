@@ -665,7 +665,7 @@ template <typename T = void> struct FMT_EXTERN_TEMPLATE_API basic_data {
   static const wchar_t wreset_color[5];
 };
 
-FMT_EXTERN template struct basic_data<void>;
+FMT_EXTERN template struct FMT_API basic_data<void>;
 
 // This is a struct rather than an alias to avoid shadowing warnings in gcc.
 struct data : basic_data<> {};
