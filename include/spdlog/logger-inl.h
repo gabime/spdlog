@@ -69,6 +69,11 @@ SPDLOG_INLINE bool logger::should_log(level::level_enum msg_level) const
     return msg_level >= level_.load(std::memory_order_relaxed);
 }
 
+SPDLOG_INLINE bool logger::should_backtrace() const
+{
+    return tracer_.enabled();
+}
+
 SPDLOG_INLINE void logger::set_level(level::level_enum log_level)
 {
     level_.store(log_level);
