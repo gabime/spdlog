@@ -140,7 +140,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::print_range_(const memory_buf_t 
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const memory_buf_t &formatted)
 {
-    if(out_handle_ == nullptr) // no console and no file redirect
+    if (out_handle_ == nullptr) // no console and no file redirect
     {
         return;
     }

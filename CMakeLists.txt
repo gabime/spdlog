@@ -87,8 +87,6 @@ set(SPDLOG_SRCS
         src/file_sinks.cpp
         src/async.cpp)
 
-set(SPDLOG_CFLAGS "${PROJECT_NAME}")
-
 if (SPDLOG_BUILD_SHARED)
     if(WIN32)
         message(FATAL_ERROR "spdlog shared lib is not yet supported under windows")
@@ -129,14 +127,13 @@ if(SPDLOG_FMT_EXTERNAL)
     if (NOT TARGET fmt::fmt)
         find_package(fmt REQUIRED)
     endif ()
-
-    set(SPDLOG_CFLAGS "${SPDLOG_CFLAGS} -DSPDLOG_FMT_EXTERNAL")
-
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog PUBLIC fmt::fmt)
 
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
+
+    set(PKG_CONFIG_REQUIRES fmt) # add dependecy to pkg-config
 endif()
 
 if(SPDLOG_WCHAR_SUPPORT)
@@ -204,11 +201,17 @@ if (SPDLOG_INSTALL)
     endif()
 
     #---------------------------------------------------------------------------------------
-    # Package and version files
+    # Install pkg-config file
     #---------------------------------------------------------------------------------------
+    get_target_property(PKG_CONFIG_DEFINES spdlog INTERFACE_COMPILE_DEFINITIONS)
+    string(REPLACE ";" " -D" PKG_CONFIG_DEFINES "${PKG_CONFIG_DEFINES}")
+    string(CONCAT PKG_CONFIG_DEFINES "-D" "${PKG_CONFIG_DEFINES}")
     configure_file("cmake/${PROJECT_NAME}.pc.in" "${pkg_config}" @ONLY)
     install(FILES "${pkg_config}" DESTINATION "${pkgconfig_install_dir}")
 
+    #---------------------------------------------------------------------------------------
+    # Install CMake config files
+    #---------------------------------------------------------------------------------------
     install(EXPORT spdlog
             DESTINATION ${export_dest_dir}
             NAMESPACE spdlog::
@@ -216,6 +219,7 @@ if (SPDLOG_INSTALL)
 
     include(CMakePackageConfigHelpers)
     configure_file("${project_config_in}" "${project_config_out}" @ONLY)
+
     write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
     install(FILES
             "${project_config_out}"
@@ -227,3 +231,4 @@ if (SPDLOG_INSTALL)
     include(cmake/spdlogCPack.cmake)
 
 endif ()
+

@@ -319,7 +319,11 @@ public:
 #endif // _WIN32
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
+    // return true logging is enabled for the given level.
     bool should_log(level::level_enum msg_level) const;
+
+    // return true if backtrace logging is enabled.
+    bool should_backtrace() const;
 
     void set_level(level::level_enum log_level);
 
