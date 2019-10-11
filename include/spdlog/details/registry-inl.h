@@ -48,7 +48,7 @@ SPDLOG_INLINE registry::registry()
 #endif // SPDLOG_DISABLE_DEFAULT_LOGGER
 }
 
-registry::~registry() = default;
+SPDLOG_INLINE registry::~registry() = default;
 
 SPDLOG_INLINE void registry::register_logger(std::shared_ptr<logger> new_logger)
 {
