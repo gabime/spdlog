@@ -98,6 +98,7 @@ endif()
 
 add_library(spdlog::spdlog ALIAS spdlog)
 
+target_compile_features(spdlog PUBLIC cxx_std_11)
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
