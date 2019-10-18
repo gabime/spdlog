@@ -31,7 +31,6 @@ public:
     void enable(size_t size);
     void disable();
     bool enabled() const;
-    explicit operator bool() const;
     void push_back(const log_msg &msg);
 
     // pop all items in the q and apply the given fun on each of them.
