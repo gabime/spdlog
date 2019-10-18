@@ -73,7 +73,6 @@ public:
 
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
-
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
     {
@@ -150,7 +149,6 @@ public:
 
         details::log_msg log_msg(loc, name_, lvl, msg);
         log_it_(log_msg);
-
     }
 
     void log(level::level_enum lvl, string_view_t msg)

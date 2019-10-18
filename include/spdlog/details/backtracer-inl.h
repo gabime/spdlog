@@ -48,7 +48,6 @@ SPDLOG_INLINE bool backtracer::enabled() const
     return enabled_.load(std::memory_order_relaxed);
 }
 
-
 SPDLOG_INLINE void backtracer::push_back(const log_msg &msg)
 {
     std::lock_guard<std::mutex> lock{mutex_};
