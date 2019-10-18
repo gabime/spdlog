@@ -7,6 +7,7 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/details/synchronous_factory.h"
 
+#include <array>
 #include <systemd/sd-journal.h>
 
 namespace spdlog {
