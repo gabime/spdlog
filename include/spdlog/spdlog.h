@@ -100,7 +100,7 @@ void drop_all();
 void shutdown();
 
 // Automatic registration of loggers when using spdlog::create() or spdlog::create_async
-void set_automatic_registration(bool automatic_registation);
+void set_automatic_registration(bool automatic_registration);
 
 // API for using default logger (stdout_color_mt),
 // e.g: spdlog::info("Message {}", 1);

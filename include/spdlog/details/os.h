@@ -81,7 +81,7 @@ int pid() SPDLOG_NOEXCEPT;
 // Source: https://github.com/agauniyal/rang/
 bool is_color_terminal() SPDLOG_NOEXCEPT;
 
-// Detrmine if the terminal attached
+// Determine if the terminal attached
 // Source: https://github.com/agauniyal/rang/
 bool in_terminal(FILE *file) SPDLOG_NOEXCEPT;
 
