@@ -92,9 +92,9 @@ SPDLOG_INLINE void shutdown()
     details::registry::instance().shutdown();
 }
 
-SPDLOG_INLINE void set_automatic_registration(bool automatic_registation)
+SPDLOG_INLINE void set_automatic_registration(bool automatic_registration)
 {
-    details::registry::instance().set_automatic_registration(automatic_registation);
+    details::registry::instance().set_automatic_registration(automatic_registration);
 }
 
 SPDLOG_INLINE std::shared_ptr<spdlog::logger> default_logger()

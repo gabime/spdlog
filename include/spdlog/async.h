@@ -6,7 +6,7 @@
 //
 // Async logging using global thread pool
 // All loggers created here share same global thread pool.
-// Each log message is pushed to a queue along withe a shared pointer to the
+// Each log message is pushed to a queue along with a shared pointer to the
 // logger.
 // If a logger deleted while having pending messages in the queue, it's actual
 // destruction will defer

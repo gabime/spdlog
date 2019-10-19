@@ -121,7 +121,7 @@ target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
 
 #---------------------------------------------------------------------------------------
-# Use fmt package if using exertnal fmt
+# Use fmt package if using external fmt
 #---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL)
     if (NOT TARGET fmt::fmt)
@@ -133,7 +133,7 @@ if(SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
 
-    set(PKG_CONFIG_REQUIRES fmt) # add dependecy to pkg-config
+    set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
 endif()
 
 if(SPDLOG_WCHAR_SUPPORT)

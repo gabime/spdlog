@@ -596,7 +596,7 @@ public:
 #ifdef _WIN32
         int total_minutes = get_cached_offset(msg, tm_time);
 #else
-        // No need to chache under gcc,
+        // No need to cache under gcc,
         // it is very fast (already stored in tm.tm_gmtoff)
         (void)(msg);
         int total_minutes = os::utc_minutes_offset(tm_time);

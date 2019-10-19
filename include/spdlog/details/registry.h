@@ -77,7 +77,7 @@ public:
 
     std::recursive_mutex &tp_mutex();
 
-    void set_automatic_registration(bool automatic_regsistration);
+    void set_automatic_registration(bool automatic_registration);
 
     static registry &instance();
 

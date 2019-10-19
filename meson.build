@@ -21,7 +21,7 @@ dep_list += dependency('threads')
 # Check for FMT
 if get_option('external_fmt')
   if not meson.version().version_compare('>=0.49.0')
-    warning('Finding fmt can fail wit meson versions before 0.49.0')
+    warning('Finding fmt can fail with meson versions before 0.49.0')
   endif
   dep_list     += dependency('fmt')
   compile_args += '-DSPDLOG_FMT_EXTERNAL'

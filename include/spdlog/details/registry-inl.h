@@ -254,10 +254,10 @@ SPDLOG_INLINE std::recursive_mutex &registry::tp_mutex()
     return tp_mutex_;
 }
 
-SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_regsistration)
+SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registration)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    automatic_registration_ = automatic_regsistration;
+    automatic_registration_ = automatic_registration;
 }
 
 SPDLOG_INLINE registry &registry::instance()
