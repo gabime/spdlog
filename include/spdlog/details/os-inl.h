@@ -113,10 +113,10 @@ SPDLOG_INLINE std::tm gmtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT
 
 #ifdef _WIN32
     std::tm tm;
-    gmtime_s(&tm, &time_tt);
+    ::gmtime_s(&tm, &time_tt);
 #else
     std::tm tm;
-    gmtime_r(&time_tt, &tm);
+    ::gmtime_r(&time_tt, &tm);
 #endif
     return tm;
 }
@@ -261,7 +261,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
     auto rv = ::GetTimeZoneInformation(&tzinfo);
 #else
     DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
-    auto rv = ::filnoGetDynamicTimeZoneInformation(&tzinfo);
+    auto rv = ::GetDynamicTimeZoneInformation(&tzinfo);
 #endif
     if (rv == TIME_ZONE_ID_INVALID)
         SPDLOG_THROW(spdlog::spdlog_ex("Failed getting timezone info. ", errno));
@@ -327,15 +327,15 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
 #if defined(__ANDROID__) && defined(__ANDROID_API__) && (__ANDROID_API__ < 21)
 #define SYS_gettid __NR_gettid
 #endif
-    return static_cast<size_t>(syscall(SYS_gettid));
+    return static_cast<size_t>(::syscall(SYS_gettid));
 #elif defined(_AIX) || defined(__DragonFly__) || defined(__FreeBSD__)
-    return static_cast<size_t>(pthread_getthreadid_np());
+    return static_cast<size_t>(::pthread_getthreadid_np());
 #elif defined(__NetBSD__)
-    return static_cast<size_t>(_lwp_self());
+    return static_cast<size_t>(::_lwp_self());
 #elif defined(__OpenBSD__)
-    return static_cast<size_t>(getthrid());
+    return static_cast<size_t>(::getthrid());
 #elif defined(__sun)
-    return static_cast<size_t>(thr_self());
+    return static_cast<size_t>(::thr_self());
 #elif __APPLE__
     uint64_t tid;
     pthread_threadid_np(nullptr, &tid);
@@ -420,9 +420,9 @@ SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
 {
 
 #ifdef _WIN32
-    return _isatty(_fileno(file)) != 0;
+    return ::_isatty(_fileno(file)) != 0;
 #else
-    return isatty(fileno(file)) != 0;
+    return ::isatty(fileno(file)) != 0;
 #endif
 }
 
