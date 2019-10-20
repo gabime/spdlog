@@ -43,6 +43,8 @@
 #include <limits>
 #endif
 
+#include <direct.h> // for _mkdir/_wmkdir
+
 #else // unix
 
 #include <fcntl.h>
