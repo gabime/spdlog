@@ -515,7 +515,7 @@ SPDLOG_INLINE bool create_dir(filename_t path)
 // "abc/file" => "abc"
 // "abc/" => "abc"
 // "abc" => ""
-// "abc///" => "abc"
+// "abc///" => "abc//"
 SPDLOG_INLINE filename_t dir_name(filename_t path)
 {
     using char_type = filename_t::value_type;
