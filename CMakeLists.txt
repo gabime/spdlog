@@ -82,10 +82,14 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 set(SPDLOG_SRCS
         src/spdlog.cpp
         src/stdout_sinks.cpp
-        src/fmt.cpp
         src/color_sinks.cpp
         src/file_sinks.cpp
         src/async.cpp)
+
+
+if(NOT SPDLOG_FMT_EXTERNAL)
+    list(APPEND SPDLOG_SRCS src/fmt.cpp)
+endif()
 
 if (SPDLOG_BUILD_SHARED)
     if(WIN32)
