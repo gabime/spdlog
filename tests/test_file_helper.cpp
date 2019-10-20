@@ -6,7 +6,7 @@
 using spdlog::details::file_helper;
 using spdlog::details::log_msg;
 
-static const std::string target_filename = "logs/file_helper_test.txt";
+static const std::string target_filename = "test_logs/file_helper_test.txt";
 
 static void write_with_helper(file_helper &helper, size_t howmany)
 {

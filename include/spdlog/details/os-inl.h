@@ -16,6 +16,7 @@
 #include <cstring>
 #include <ctime>
 #include <string>
+#include <sstream>
 #include <thread>
 #include <array>
 #include <sys/stat.h>
@@ -196,7 +197,7 @@ SPDLOG_INLINE bool file_exists(const filename_t &filename) SPDLOG_NOEXCEPT
 #else
     auto attribs = GetFileAttributesA(filename.c_str());
 #endif
-    return (attribs != INVALID_FILE_ATTRIBUTES && !(attribs & FILE_ATTRIBUTE_DIRECTORY));
+    return attribs != INVALID_FILE_ATTRIBUTES;
 #else // common linux/unix all have the stat system call
     struct stat buffer;
     return (::stat(filename.c_str(), &buffer) == 0);
@@ -459,6 +460,72 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
     SPDLOG_THROW(spdlog::spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError())));
 }
 #endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
+
+// return true on success
+SPDLOG_INLINE bool mkdir_(const filename_t &path)
+{
+#ifdef _WIN32
+#ifdef SPDLOG_WCHAR_FILENAMES
+    return ::_wmkdir(path.c_str()) == 0;
+#else
+    return ::_mkdir(path.c_str()) == 0;
+#endif
+#else
+    return ::mkdir(path.c_str(), mode_t(0755)) == 0;
+#endif
+}
+
+// create the given directory - and all directories leading to it
+// return true on success
+SPDLOG_INLINE bool create_dir(filename_t path)
+{
+    if (file_exists(path))
+    {
+        return true;
+    }
+    using char_type = filename_t::value_type;
+    std::basic_istringstream<char_type> istream(path);
+    filename_t token;
+    filename_t cur_dir;
+    char_type sep = '/';
+
+#ifdef _WIN32
+    // support forward slash in windows
+    std::replace(path.begin(), path.end(), char_type('\\'), sep);
+#endif
+    while (std::getline(istream, token, sep))
+    {
+        if (!token.empty())
+        {
+            cur_dir += token;
+            if (!file_exists(cur_dir) && !mkdir_(cur_dir))
+            {
+                return false;
+            }
+        }
+        cur_dir += sep;
+    }
+
+    return true;
+}
+
+// Return directory name from given path or empty string
+// "abc/file" => "abc"
+// "abc/" => "abc"
+// "abc" => ""
+// "abc///" => "abc"
+SPDLOG_INLINE filename_t dir_name(filename_t path)
+{
+    using char_type = filename_t::value_type;
+    char_type sep = '/';
+
+#ifdef _WIN32
+    // support forward slash in windows
+    std::replace(path.begin(), path.end(), char_type('\\'), sep);
+#endif
+    auto pos = path.find_last_of(sep);
+    return pos != filename_t::npos ? path.substr(0, pos) : filename_t{};
+}
 
 } // namespace os
 } // namespace details

@@ -25,7 +25,8 @@ set(SPDLOG_UTESTS_SOURCES
     test_fmt_helper.cpp
   	test_stdout_api.cpp
     test_dup_filter.cpp
-	test_backtrace.cpp)
+	test_backtrace.cpp
+	test_create_dir.cpp)
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
 	list(APPEND SPDLOG_UTESTS_SOURCES test_errors.cpp)
@@ -35,7 +36,6 @@ if(systemd_FOUND)
 	list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)
 endif()
 
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 enable_testing()
 
 # The compiled library tests

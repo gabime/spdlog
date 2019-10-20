@@ -29,9 +29,16 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
 {
     close();
     auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
+    auto folder_name = os::dir_name(fname);
     _filename = fname;
+
     for (int tries = 0; tries < open_tries; ++tries)
     {
+        if (!folder_name.empty())
+        {
+            os::create_dir(folder_name);
+        }
+
         if (!os::fopen_s(&fd_, fname, mode))
         {
             return;
@@ -129,5 +136,6 @@ SPDLOG_INLINE std::tuple<filename_t, filename_t> file_helper::split_by_extension
     // finally - return a valid base and extension tuple
     return std::make_tuple(fname.substr(0, ext_index), fname.substr(ext_index));
 }
+
 } // namespace details
 } // namespace spdlog

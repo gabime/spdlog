@@ -16,26 +16,6 @@
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
 
-void prepare_logdir()
-{
-    spdlog::info("Preparing latency_logs directory..");
-#ifdef _WIN32
-    system("if not exist logs mkdir latency_logs");
-    system("del /F /Q logs\\*");
-#else
-    auto rv = system("mkdir -p latency_logs");
-    if (rv != 0)
-    {
-        throw std::runtime_error("Failed to mkdir -p latency_logs");
-    }
-    rv = system("rm -f latency_logs/*");
-    if (rv != 0)
-    {
-        throw std::runtime_error("Failed to rm -f latency_logs/*");
-    }
-#endif
-}
-
 void bench_c_string(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
 {
     const char *msg = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum pharetra metus cursus "
@@ -82,8 +62,6 @@ int main(int argc, char *argv[])
     size_t file_size = 30 * 1024 * 1024;
     size_t rotating_files = 5;
     int n_threads = benchmark::CPUInfo::Get().num_cpus;
-
-    prepare_logdir();
 
     // disabled loggers
     auto disabled_logger = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_mt>());

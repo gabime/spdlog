@@ -25,5 +25,3 @@ if(SPDLOG_BUILD_EXAMPLE_HO)
     target_link_libraries(example_header_only PRIVATE spdlog::spdlog_header_only)
 endif()
 
-# Create logs directory
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")

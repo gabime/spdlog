@@ -35,7 +35,6 @@ if systemd_dep.found()
   global_test_deps += systemd_dep
 endif
 
-run_command('mkdir', 'logs')
 # --------------------------------------
 # ---   Build the test executables   ---
 # --------------------------------------
@@ -49,5 +48,3 @@ foreach i : test_matrix
   test_exe = executable(i[0], test_sources, dependencies: global_test_deps + [i[1]])
   test('test_' + i[0], test_exe)
 endforeach
-
-run_command(find_program('mkdir'), meson.current_build_dir() + '/logs')
