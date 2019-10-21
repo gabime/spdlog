@@ -93,7 +93,7 @@ void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target);
 // "abc/file" => "abc"
 // "abc/" => "abc"
 // "abc" => ""
-// "abc///" => "abc"
+// "abc///" => "abc//"
 filename_t dir_name(filename_t path);
 
 // Create a dir from the given path.
