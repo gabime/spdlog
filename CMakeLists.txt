@@ -66,7 +66,8 @@ option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 
 if(WIN32)
 	option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
-    option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)    
+    option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)
+    option(SPDLOG_FORCE_ANSICOLOR "Use VT100 instead of winapi for colored sinks" OFF)
 endif()
 
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
@@ -149,6 +150,11 @@ if(SPDLOG_WCHAR_SUPPORT)
 	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_FILENAMES)
 	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_FILENAMES)
  endif()
+
+if(WIN32 AND NOT SPDLOG_FORCE_ANSICOLOR)
+	target_compile_definitions(spdlog PUBLIC SPDLOG_WINCOLOR)
+	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WINCOLOR)
+endif()
 
  if(SPDLOG_NO_EXCEPTIONS)
 	target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)	

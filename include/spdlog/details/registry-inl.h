@@ -14,7 +14,7 @@
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
 // support for the default stdout color logger
-#ifdef _WIN32
+#ifdef SPDLOG_WINCOLOR
 #include "spdlog/sinks/wincolor_sink.h"
 #else
 #include "spdlog/sinks/ansicolor_sink.h"
@@ -36,7 +36,7 @@ SPDLOG_INLINE registry::registry()
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
     // create default logger (ansicolor_stdout_sink_mt or wincolor_stdout_sink_mt in windows).
-#ifdef _WIN32
+#ifdef SPDLOG_WINCOLOR
     auto color_sink = std::make_shared<sinks::wincolor_stdout_sink_mt>();
 #else
     auto color_sink = std::make_shared<sinks::ansicolor_stdout_sink_mt>();
