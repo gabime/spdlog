@@ -33,7 +33,7 @@ SPDLOG_CONSTEXPR static const char *default_eol = SPDLOG_EOL;
 
 // folder separator
 #ifdef _WIN32
-const char folder_sep = '\\';
+static const char folder_sep = '\\';
 #else
 SPDLOG_CONSTEXPR static const char folder_sep = '/';
 #endif

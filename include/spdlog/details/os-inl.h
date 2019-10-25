@@ -488,14 +488,13 @@ SPDLOG_INLINE bool create_dir(filename_t path)
     using char_type = filename_t::value_type;
     std::basic_istringstream<char_type> istream(path);
     filename_t token;
-    filename_t cur_dir;
-    char_type sep = '/';
+    filename_t cur_dir;    
 
 #ifdef _WIN32
     // support forward slash in windows
-    std::replace(path.begin(), path.end(), char_type('\\'), sep);
+	std::replace(path.begin(), path.end(), '/', folder_sep);
 #endif
-    while (std::getline(istream, token, sep))
+    while (std::getline(istream, token, folder_sep))
     {
         if (!token.empty())
         {
@@ -505,7 +504,7 @@ SPDLOG_INLINE bool create_dir(filename_t path)
                 return false;
             }
         }
-        cur_dir += sep;
+        cur_dir += folder_sep;
     }
 
     return true;
@@ -517,15 +516,12 @@ SPDLOG_INLINE bool create_dir(filename_t path)
 // "abc" => ""
 // "abc///" => "abc//"
 SPDLOG_INLINE filename_t dir_name(filename_t path)
-{
-    using char_type = filename_t::value_type;
-    char_type sep = '/';
-
+{    
 #ifdef _WIN32
     // support forward slash in windows
-    std::replace(path.begin(), path.end(), char_type('\\'), sep);
+	std::replace(path.begin(), path.end(), '/', folder_sep);
 #endif
-    auto pos = path.find_last_of(sep);
+    auto pos = path.find_last_of(folder_sep);
     return pos != filename_t::npos ? path.substr(0, pos) : filename_t{};
 }
 
