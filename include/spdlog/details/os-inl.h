@@ -499,6 +499,7 @@ SPDLOG_INLINE bool create_dir(filename_t path)
     size_t search_offset = 0;
     do
     {
+        fmt::string_view t;
         auto token_pos = path.find(folder_sep, search_offset);
         // treat the entire path as a folder if no folder separator not found
         if (token_pos == filename_t::npos)

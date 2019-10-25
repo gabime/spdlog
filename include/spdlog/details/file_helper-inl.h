@@ -28,15 +28,14 @@ SPDLOG_INLINE file_helper::~file_helper()
 SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
 {
     close();
-    auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
-    auto folder_name = os::dir_name(fname);
     filename_ = fname;
 
+    // create containing folder if not empty string and not exists already
+    os::create_dir(os::dir_name(fname));
+    
+    auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
     for (int tries = 0; tries < open_tries_; ++tries)
     {
-        // create if not empty and not exists already
-        os::create_dir(folder_name);
-
         if (!os::fopen_s(&fd_, fname, mode))
         {
             return;
