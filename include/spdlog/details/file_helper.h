@@ -46,10 +46,10 @@ public:
     static std::tuple<filename_t, filename_t> split_by_extension(const filename_t &fname);
 
 private:
-    const int open_tries = 5;
-    const int open_interval = 10;
+    const int open_tries_ = 5;
+    const int open_interval_ = 10;
     std::FILE *fd_{nullptr};
-    filename_t _filename;
+    filename_t filename_;
 };
 } // namespace details
 } // namespace spdlog

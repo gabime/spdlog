@@ -30,9 +30,9 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
     close();
     auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
     auto folder_name = os::dir_name(fname);
-    _filename = fname;
+    filename_ = fname;
 
-    for (int tries = 0; tries < open_tries; ++tries)
+    for (int tries = 0; tries < open_tries_; ++tries)
     {
         if (!folder_name.empty())
         {
@@ -44,19 +44,19 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
             return;
         }
 
-        details::os::sleep_for_millis(open_interval);
+        details::os::sleep_for_millis(open_interval_);
     }
 
-    SPDLOG_THROW(spdlog_ex("Failed opening file " + os::filename_to_str(_filename) + " for writing", errno));
+    SPDLOG_THROW(spdlog_ex("Failed opening file " + os::filename_to_str(filename_) + " for writing", errno));
 }
 
 SPDLOG_INLINE void file_helper::reopen(bool truncate)
 {
-    if (_filename.empty())
+    if (filename_.empty())
     {
         SPDLOG_THROW(spdlog_ex("Failed re opening file - was not opened before"));
     }
-    open(_filename, truncate);
+    this->open(filename_, truncate);
 }
 
 SPDLOG_INLINE void file_helper::flush()
@@ -79,7 +79,7 @@ SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf)
     auto data = buf.data();
     if (std::fwrite(data, 1, msg_size, fd_) != msg_size)
     {
-        SPDLOG_THROW(spdlog_ex("Failed writing to file " + os::filename_to_str(_filename), errno));
+        SPDLOG_THROW(spdlog_ex("Failed writing to file " + os::filename_to_str(filename_), errno));
     }
 }
 
@@ -87,14 +87,14 @@ SPDLOG_INLINE size_t file_helper::size() const
 {
     if (fd_ == nullptr)
     {
-        SPDLOG_THROW(spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(_filename)));
+        SPDLOG_THROW(spdlog_ex("Cannot use size() on closed file " + os::filename_to_str(filename_)));
     }
     return os::filesize(fd_);
 }
 
 SPDLOG_INLINE const filename_t &file_helper::filename() const
 {
-    return _filename;
+    return filename_;
 }
 
 //
