@@ -178,7 +178,7 @@ SPDLOG_INLINE int remove(const filename_t &filename) SPDLOG_NOEXCEPT
 
 SPDLOG_INLINE int remove_if_exists(const filename_t &filename) SPDLOG_NOEXCEPT
 {
-    return file_exists(filename) ? remove(filename) : 0;
+    return path_exists(filename) ? remove(filename) : 0;
 }
 
 SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename2) SPDLOG_NOEXCEPT
@@ -190,8 +190,8 @@ SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename
 #endif
 }
 
-// Return true if file exists
-SPDLOG_INLINE bool file_exists(const filename_t &filename) SPDLOG_NOEXCEPT
+// Return true if path exists (file or directory)
+SPDLOG_INLINE bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT
 {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES
@@ -481,7 +481,7 @@ SPDLOG_INLINE bool mkdir_(const filename_t &path)
 // return true on success
 SPDLOG_INLINE bool create_dir(filename_t path)
 {
-    if (file_exists(path))
+    if (path_exists(path))
     {
         return true;
     }
@@ -503,7 +503,7 @@ SPDLOG_INLINE bool create_dir(filename_t path)
 
         auto subdir = path.substr(0, token_pos);
 
-        if (!subdir.empty() && !file_exists(subdir) && !mkdir_(subdir))
+        if (!subdir.empty() && !path_exists(subdir) && !mkdir_(subdir))
         {
             return false; // return error if failed creating dir
         }

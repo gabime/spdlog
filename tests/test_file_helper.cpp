@@ -38,14 +38,6 @@ TEST_CASE("file_helper_size", "[file_helper::size()]]")
     REQUIRE(get_filesize(target_filename) == expected_size);
 }
 
-TEST_CASE("file_helper_exists", "[file_helper::file_exists()]]")
-{
-    prepare_logdir();
-    REQUIRE(!file_helper::file_exists(target_filename));
-    file_helper helper;
-    helper.open(target_filename);
-    REQUIRE(file_helper::file_exists(target_filename));
-}
 
 TEST_CASE("file_helper_reopen", "[file_helper::reopen()]]")
 {

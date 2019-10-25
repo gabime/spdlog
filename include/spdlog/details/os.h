@@ -53,7 +53,7 @@ int remove_if_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
 int rename(const filename_t &filename1, const filename_t &filename2) SPDLOG_NOEXCEPT;
 
 // Return if file exists.
-bool file_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
+bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
 
 // Return file size according to open FILE* object
 size_t filesize(FILE *f);

@@ -4,13 +4,13 @@
 #include "includes.h"
 
 using spdlog::details::os::create_dir;
-using spdlog::details::os::file_exists;
+using spdlog::details::os::path_exists;
 
 bool try_create_dir(const char *path, const char *normalized_path)
 {
     auto rv = create_dir(path);
     REQUIRE(rv == true);
-    return file_exists(normalized_path);
+    return path_exists(normalized_path);
 }
 
 TEST_CASE("create_dir", "[create_dir]")

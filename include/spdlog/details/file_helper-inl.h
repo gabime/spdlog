@@ -97,11 +97,6 @@ SPDLOG_INLINE const filename_t &file_helper::filename() const
     return _filename;
 }
 
-SPDLOG_INLINE bool file_helper::file_exists(const filename_t &fname)
-{
-    return os::file_exists(fname);
-}
-
 //
 // return file path and its extension:
 //
