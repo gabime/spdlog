@@ -32,6 +32,14 @@ TEST_CASE("create_dir", "[create_dir]")
 #endif
 }
 
+TEST_CASE("create_invalid_dir", "[create_dir]")
+{
+    REQUIRE(create_dir("") == false);
+#ifdef __linux__
+    REQUIRE(create_dir("/proc/spdlog-utest") == false);
+#endif
+}
+
 TEST_CASE("dir_name", "[create_dir]")
 {
     using spdlog::details::os::dir_name;

@@ -34,10 +34,8 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
 
     for (int tries = 0; tries < open_tries_; ++tries)
     {
-        if (!folder_name.empty())
-        {
-            os::create_dir(folder_name); // will not created if already exists
-        }
+        // will not created if already exists or empty.
+        os::create_dir(folder_name);
 
         if (!os::fopen_s(&fd_, fname, mode))
         {

@@ -478,12 +478,17 @@ SPDLOG_INLINE bool mkdir_(const filename_t &path)
 }
 
 // create the given directory - and all directories leading to it
-// return true on success
+// return true on success or if the directory already exists
 SPDLOG_INLINE bool create_dir(filename_t path)
 {
     if (path_exists(path))
     {
         return true;
+    }
+
+    if(path.empty())
+    {
+        return false;
     }
 
 #ifdef _WIN32
