@@ -12,7 +12,7 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
 {
 
     prepare_logdir();
-    std::string filename = "logs/simple_log";
+    std::string filename = "test_logs/simple_log";
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");

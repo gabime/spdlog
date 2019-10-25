@@ -24,5 +24,3 @@ target_link_libraries(latency PRIVATE benchmark::benchmark spdlog::spdlog)
 
 add_executable(formatter-bench formatter-bench.cpp)
 target_link_libraries(formatter-bench PRIVATE benchmark::benchmark spdlog::spdlog)
-
-file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")

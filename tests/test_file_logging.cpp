@@ -6,7 +6,7 @@
 TEST_CASE("simple_file_logger", "[simple_logger]]")
 {
     prepare_logdir();
-    std::string filename = "logs/simple_log";
+    std::string filename = "test_logs/simple_log";
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");
@@ -22,7 +22,7 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
 TEST_CASE("flush_on", "[flush_on]]")
 {
     prepare_logdir();
-    std::string filename = "logs/simple_log";
+    std::string filename = "test_logs/simple_log";
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");
@@ -42,7 +42,7 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 {
     prepare_logdir();
     size_t max_size = 1024 * 10;
-    std::string basename = "logs/rotating_log";
+    std::string basename = "test_logs/rotating_log";
     auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 0);
 
     for (int i = 0; i < 10; ++i)
@@ -59,7 +59,7 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 {
     prepare_logdir();
     size_t max_size = 1024 * 10;
-    std::string basename = "logs/rotating_log";
+    std::string basename = "test_logs/rotating_log";
 
     {
         // make an initial logger to create the first output file

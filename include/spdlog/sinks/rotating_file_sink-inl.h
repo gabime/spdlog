@@ -88,11 +88,12 @@ template<typename Mutex>
 SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
 {
     using details::os::filename_to_str;
+    using details::os::path_exists;
     file_helper_.close();
     for (auto i = max_files_; i > 0; --i)
     {
         filename_t src = calc_filename(base_filename_, i - 1);
-        if (!details::file_helper::file_exists(src))
+        if (!path_exists(src))
         {
             continue;
         }
