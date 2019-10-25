@@ -6,12 +6,11 @@
 using spdlog::details::os::create_dir;
 using spdlog::details::os::file_exists;
 
-void test_create_dir(const char *path, const char *normalized_path)
-{
-	printf("Test Create dir %s\n", path);
+bool try_create_dir(const char *path, const char *normalized_path)
+{	
     auto rv = create_dir(path);
     REQUIRE(rv == true);
-    REQUIRE(file_exists(normalized_path));
+    return file_exists(normalized_path);
 }
 
 #include "spdlog/sinks/stdout_color_sinks.h"
@@ -19,23 +18,21 @@ void test_create_dir(const char *path, const char *normalized_path)
 TEST_CASE("create_dir", "[create_dir]")
 {
     prepare_logdir();
+
+    REQUIRE(try_create_dir("test_logs/dir1/dir1", "test_logs/dir1/dir1"));	
+	REQUIRE(try_create_dir("test_logs/dir1/dir1", "test_logs/dir1/dir1")); //test existing
+	REQUIRE(try_create_dir("test_logs/dir1///dir2//", "test_logs/dir1/dir2"));
+	REQUIRE(try_create_dir("./test_logs/dir1/dir3", "test_logs/dir1/dir3"));
+	REQUIRE(try_create_dir("test_logs/../test_logs/dir1/dir4", "test_logs/dir1/dir4"));
+
 #ifdef WIN32
-    test_create_dir("test_logs/dir1/dir1", "test_logs\\dir1\\dir1");	
-	test_create_dir("test_logs/dir1/dir1", "test_logs\\dir1\\dir1"); //test existing
-    test_create_dir("test_logs/dir1///dir2//", "test_logs\\dir1\\dir2");
-    test_create_dir("./test_logs/dir1/dir3", "test_logs\\dir1\\dir3");
-    test_create_dir("test_logs/../test_logs/dir1/dir4", "test_logs\\dir1\\dir4");
 	// test backslash
-	test_create_dir("test_logs\\dir1\\dir222", "test_logs\\dir1\\dir222");
-	test_create_dir("test_logs\\dir1\\dir223\\", "test_logs\\dir1\\dir223\\");
-    test_create_dir(".\\test_logs\\dir1\\dir2\\dir99\\..\\dir23", "test_logs\\dir1\\dir2\\dir23");
-#else
-	test_create_dir("test_logs/dir1/dir1", "test_logs/dir1/dir1");
-	test_create_dir("test_logs/dir1/dir1", "test_logs/dir1/dir1"); // test existing
-	test_create_dir("test_logs/dir1///dir2", "test_logs/dir1/dir2");
-	test_create_dir("./test_logs/dir1/dir3", "test_logs/dir1/dir3");
-	test_create_dir("test_logs/../test_logs/dir1/dir4", "test_logs/dir1/dir4");
+	REQUIRE(try_create_dir("test_logs\\dir1\\dir222", "test_logs\\dir1\\dir222"));
+	REQUIRE(try_create_dir("test_logs\\dir1\\dir223\\", "test_logs\\dir1\\dir223\\"));
+	REQUIRE(try_create_dir(".\\test_logs\\dir1\\dir2\\dir99\\..\\dir23", "test_logs\\dir1\\dir2\\dir23"));
+	REQUIRE(try_create_dir("test_logs\\..\\test_logs\\dir1\\dir5", "test_logs\\dir1\\dir5"));
 #endif
+
 }
 
 TEST_CASE("dir_name", "[create_dir]")

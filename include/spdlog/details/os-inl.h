@@ -519,7 +519,11 @@ SPDLOG_INLINE bool create_dir(filename_t path)
 // "abc" => ""
 // "abc///" => "abc//"
 SPDLOG_INLINE filename_t dir_name(filename_t path)
-{    
+{   
+#ifdef _WIN32
+	// support forward slash in windows
+	std::replace(path.begin(), path.end(), '/', folder_sep);
+#endif	
     auto pos = path.find_last_of(folder_sep);
     return pos != filename_t::npos ? path.substr(0, pos) : filename_t{};
 }
