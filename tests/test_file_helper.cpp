@@ -38,7 +38,6 @@ TEST_CASE("file_helper_size", "[file_helper::size()]]")
     REQUIRE(get_filesize(target_filename) == expected_size);
 }
 
-
 TEST_CASE("file_helper_reopen", "[file_helper::reopen()]]")
 {
     prepare_logdir();
