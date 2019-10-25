@@ -38,7 +38,7 @@ endif()
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/logs")
 enable_testing()
 
-macro(_spdlog_prepare_test test_target spdlog_lib)
+function(spdlog_prepare_test test_target spdlog_lib)
     add_executable(${test_target} ${SPDLOG_UTESTS_SOURCES})
 	spdlog_enable_warnings(${test_target})
     target_link_libraries(${test_target} PRIVATE ${spdlog_lib})
@@ -49,14 +49,14 @@ macro(_spdlog_prepare_test test_target spdlog_lib)
 		spdlog_enable_sanitizer(${test_target})
 	endif()
     add_test(NAME ${test_target} COMMAND ${test_target})   
-endmacro()
+endfunction()
 
 # The compiled library tests
 if(SPDLOG_BUILD_TESTS)
-    _spdlog_prepare_test(spdlog-utests spdlog::spdlog)
+    spdlog_prepare_test(spdlog-utests spdlog::spdlog)
 endif()
 
 # The header-only library version tests
 if(SPDLOG_BUILD_TESTS_HO)
-    _spdlog_prepare_test(spdlog-utests-ho spdlog::spdlog_header_only)
+    spdlog_prepare_test(spdlog-utests-ho spdlog::spdlog_header_only)
 endif()
