@@ -13,7 +13,6 @@ bool try_create_dir(const char *path, const char *normalized_path)
     return file_exists(normalized_path);
 }
 
-#include "spdlog/sinks/stdout_color_sinks.h"
 
 TEST_CASE("create_dir", "[create_dir]")
 {
@@ -26,7 +25,7 @@ TEST_CASE("create_dir", "[create_dir]")
 	REQUIRE(try_create_dir("test_logs/../test_logs/dir1/dir4", "test_logs/dir1/dir4"));
 
 #ifdef WIN32
-	// test backslash
+	// test backslash folder separator
 	REQUIRE(try_create_dir("test_logs\\dir1\\dir222", "test_logs\\dir1\\dir222"));
 	REQUIRE(try_create_dir("test_logs\\dir1\\dir223\\", "test_logs\\dir1\\dir223\\"));
 	REQUIRE(try_create_dir(".\\test_logs\\dir1\\dir2\\dir99\\..\\dir23", "test_logs\\dir1\\dir2\\dir23"));
@@ -45,13 +44,21 @@ TEST_CASE("dir_name", "[create_dir]")
     REQUIRE(dir_name(R"(dir\)") == "dir");
     REQUIRE(dir_name(R"(dir\\\)") == R"(dir\\)");
     REQUIRE(dir_name(R"(dir\file)") == "dir");
+	REQUIRE(dir_name(R"(dir/file)") == "dir");
     REQUIRE(dir_name(R"(dir\file.txt)") == "dir");
+	REQUIRE(dir_name(R"(dir/file)") == "dir");
     REQUIRE(dir_name(R"(dir\file.txt\)") == R"(dir\file.txt)");
+	REQUIRE(dir_name(R"(dir/file.txt/)") == R"(dir\file.txt)");
     REQUIRE(dir_name(R"(\dir\file.txt)") == R"(\dir)");
+	REQUIRE(dir_name(R"(/dir/file.txt)") == R"(\dir)");
     REQUIRE(dir_name(R"(\\dir\file.txt)") == R"(\\dir)");    
+	REQUIRE(dir_name(R"(//dir/file.txt)") == R"(\\dir)");
     REQUIRE(dir_name(R"(..\file.txt)") == "..");
+	REQUIRE(dir_name(R"(../file.txt)") == "..");
     REQUIRE(dir_name(R"(.\file.txt)") == ".");
+	REQUIRE(dir_name(R"(./file.txt)") == ".");
     REQUIRE(dir_name(R"(c:\\a\b\c\d\file.txt)") == R"(c:\\a\b\c\d)");
+	REQUIRE(dir_name(R"(c://a/b/c/d/file.txt)") == R"(c:\\a\b\c\d)");
 #else
 	REQUIRE(dir_name("dir/") == "dir");
 	REQUIRE(dir_name("dir///") == "dir//");
