@@ -49,12 +49,6 @@ function(spdlog_prepare_test test_target spdlog_lib)
 		spdlog_enable_sanitizer(${test_target})
 	endif()
     add_test(NAME ${test_target} COMMAND ${test_target})
-
-    if (CMAKE_SYSTEM_NAME STREQUAL Linux)
-        if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-            target_compile_definitions(${test_target} PRIVATE _FILE_OFFSET_BITS=64)
-        endif()
-    endif()
 endfunction()
 
 # The compiled library tests
