@@ -8,6 +8,9 @@
 #include "spdlog/details/synchronous_factory.h"
 
 #include <array>
+#ifndef SD_JOURNAL_SUPPRESS_LOCATION
+#define SD_JOURNAL_SUPPRESS_LOCATION
+#endif
 #include <systemd/sd-journal.h>
 
 namespace spdlog {
@@ -63,7 +66,7 @@ protected:
         else
         {
             err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d", syslog_level(msg.level),
-                "SOURCE_FILE=%s", msg.source.filename, "SOURCE_LINE=%d", msg.source.line, "SOURCE_FUNC=%s", msg.source.funcname, nullptr);
+                "CODE_FILE=%s", msg.source.filename, "CODE_LINE=%d", msg.source.line, "CODE_FUNC=%s", msg.source.funcname, nullptr);
         }
 
         if (err)
