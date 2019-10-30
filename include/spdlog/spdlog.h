@@ -285,12 +285,21 @@ inline void critical(wstring_view_t fmt, const Args &... args)
 // SPDLOG_LEVEL_OFF
 //
 
+#ifdef SPDLOG_LOGGER_CALL_LITE
+#define SPDLOG_LOGGER_CALL(logger, level, ...)                                                                                             \
+    do                                                                                                                                     \
+    {                                                                                                                                      \
+        if (logger->should_log(level) || logger->should_backtrace())                                                                       \
+            logger->log(level, __VA_ARGS__);                                                                                               \
+    } while (0)
+#else
 #define SPDLOG_LOGGER_CALL(logger, level, ...)                                                                                             \
     do                                                                                                                                     \
     {                                                                                                                                      \
         if (logger->should_log(level) || logger->should_backtrace())                                                                       \
             logger->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__);                                      \
     } while (0)
+#endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
 #define SPDLOG_LOGGER_TRACE(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__)
