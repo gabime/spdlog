@@ -40,6 +40,14 @@ TEST_CASE("disable param evaluation", "[macros]")
     SPDLOG_TRACE("Test message {}", throw std::runtime_error("Should not be evaluated"));
 }
 
+TEST_CASE("compile with reference to logger", "[macros]")
+{
+    auto logger = spdlog::create<spdlog::sinks::null_sink_mt>("refmacro");
+    auto& ref = *logger;
+    SPDLOG_LOGGER_TRACE(&ref, "Test message 1");
+    SPDLOG_LOGGER_DEBUG(&ref, "Test message 2");
+}
+
 // ensure that even if right macro level is on- don't evaluate if the logger's level is not high enough
 TEST_CASE("disable param evaluation2", "[macros]")
 {
