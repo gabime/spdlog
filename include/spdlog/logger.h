@@ -299,10 +299,16 @@ public:
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     // return true logging is enabled for the given level.
-    bool should_log(level::level_enum msg_level) const;
+    bool should_log(level::level_enum msg_level) const
+    {
+        return msg_level >= level_.load(std::memory_order_relaxed);
+    }
 
     // return true if backtrace logging is enabled.
-    bool should_backtrace() const;
+    bool should_backtrace() const
+    {
+        return tracer_.enabled();
+    }
 
     void set_level(level::level_enum log_level);
 
