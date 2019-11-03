@@ -172,13 +172,13 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
 }
 
 // protected methods
-SPDLOG_INLINE void logger::log_it_(const details::log_msg &log_msg)
+SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg, bool log_enabled, bool traceback_enabled) {}(const details::log_msg &log_msg, bool log_enabled, bool traceback_enabled)
 {
-    if (should_log(log_msg.level))
+    if (log_enabled)
     {
         sink_it_(log_msg);
     }
-    if (tracer_.enabled())
+    if (traceback_enabled)
     {
         tracer_.push_back(log_msg);
     }
