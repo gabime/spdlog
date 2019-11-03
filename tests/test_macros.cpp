@@ -49,7 +49,7 @@ TEST_CASE("pass logger pointer", "[macros]")
 }
 
 // ensure that even if right macro level is on- don't evaluate if the logger's level is not high enough
-//TEST_CASE("disable param evaluation2", "[macros]")
+// TEST_CASE("disable param evaluation2", "[macros]")
 //{
 //    auto logger = std::make_shared<spdlog::logger>("test-macro");
 //    logger->set_level(spdlog::level::off);
