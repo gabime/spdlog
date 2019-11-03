@@ -278,7 +278,7 @@ public:
             return;
         }
 
-        try
+        SPDLOG_TRY
         {
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(msg, buf);
