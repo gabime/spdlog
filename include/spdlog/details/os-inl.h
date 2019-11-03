@@ -485,7 +485,7 @@ SPDLOG_INLINE bool create_dir(filename_t path)
         return true;
     }
 
-    if(path.empty())
+    if (path.empty())
     {
         return false;
     }

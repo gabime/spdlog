@@ -30,7 +30,7 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
     close();
     filename_ = fname;
     auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
-    
+
     for (int tries = 0; tries < open_tries_; ++tries)
     {
         // create containing folder if not exists already.
