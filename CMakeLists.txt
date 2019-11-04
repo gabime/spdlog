@@ -72,7 +72,7 @@ if(WIN32)
     option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)
 endif()
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    option(SPDLOG_CLOCK_COARSE "Use the much faster(but less accurate) CLOCK_REALTIME_COARSE instead of the regular clock," OFF)
+    option(SPDLOG_CLOCK_COARSE "Use the much faster (but much less accurate) CLOCK_REALTIME_COARSE instead of the regular clock," OFF)
 endif()
 
 option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file descriptors" OFF)
