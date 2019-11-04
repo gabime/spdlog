@@ -14,14 +14,11 @@ set(SPDLOG_UTESTS_SOURCES
     test_misc.cpp
     test_pattern_formatter.cpp
     test_async.cpp
-    includes.h
     test_registry.cpp
     test_macros.cpp
     utils.cpp
-    utils.h
     main.cpp
     test_mpmc_q.cpp
-    test_sink.h
 	test_dup_filter.cpp
     test_fmt_helper.cpp
   	test_stdout_api.cpp
