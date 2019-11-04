@@ -41,10 +41,13 @@ spdlog_srcs = files([
     'src/async.cpp',
     'src/color_sinks.cpp',
     'src/file_sinks.cpp',
-    'src/fmt.cpp',
     'src/spdlog.cpp',
     'src/stdout_sinks.cpp'
 ])
+
+if not get_option('external_fmt')
+    spdlog_srcs+= 'src/fmt.cpp'
+endif
 
 if get_option('library_type') == 'static'
   spdlog = static_library(
@@ -76,7 +79,6 @@ spdlog_dep = declare_dependency(
 # ----------------------------------
 # ---   Header only dependency   ---
 # ----------------------------------
-
 spdlog_headeronly_dep = declare_dependency(
   include_directories : spdlog_inc,
   compile_args        : compile_args,
