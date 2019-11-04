@@ -63,19 +63,26 @@ option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 # install options
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
-
-if(WIN32)
-	option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
-    option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)    
-endif()
-
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
 
 
+# misc tweakme options
+if(WIN32)
+    option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
+    option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)
+endif()
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    option(SPDLOG_CLOCK_COARSE "Use the much faster(but less accurate) CLOCK_REALTIME_COARSE instead of the regular clock," OFF)
+endif()
+
+option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file descriptors" OFF)
+option(SPDLOG_NO_DATETIME, "Prevent spdlog from querying the clock on each log call if no datetime is needed" OFF)
+option(SPDLOG_NO_THREAD_ID "prevent spdlog from querying the thread id on each log call if thread id is not needed" OFF)
+option(SPDLOG_NO_TLS "prevent spdlog from using thread local storage" OFF)
+option(SPDLOG_NO_ATOMIC_LEVELS "prevent spdlog from using of std::atomic log levels (use only if your code never modifies log levels concurrently" OFF)
+
 find_package(Threads REQUIRED)
-
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
-
 #---------------------------------------------------------------------------------------
 # Static/Shared library (shared not supported in windows yet)
 #---------------------------------------------------------------------------------------
@@ -140,6 +147,9 @@ if(SPDLOG_FMT_EXTERNAL)
     set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
 endif()
 
+#---------------------------------------------------------------------------------------
+# Misc definitions according to options
+#---------------------------------------------------------------------------------------
 if(SPDLOG_WCHAR_SUPPORT)
 	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
@@ -158,6 +168,37 @@ if(SPDLOG_WCHAR_SUPPORT)
     if(NOT MSVC)
         target_compile_options(spdlog PRIVATE -fno-exceptions)
     endif()
+endif()
+
+if(SPDLOG_CLOCK_COARSE)
+    target_compile_definitions(spdlog PRIVATE SPDLOG_CLOCK_COARSE)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_CLOCK_COARSE)
+endif()
+
+if(SPDLOG_PREVENT_CHILD_FD)
+    target_compile_definitions(spdlog PRIVATE SPDLOG_PREVENT_CHILD_FD)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_PREVENT_CHILD_FD)
+endif()
+
+
+if(SPDLOG_NO_DATETIME)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_NO_DATETIME)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_DATETIME)
+endif()
+
+if(SPDLOG_NO_THREAD_ID)
+    target_compile_definitions(spdlog PRIVATE SPDLOG_NO_THREAD_ID)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_THREAD_ID)
+endif()
+
+if(SPDLOG_NO_TLS)
+    target_compile_definitions(spdlog PRIVATE SPDLOG_NO_TLS)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_TLS)
+endif()
+
+if(SPDLOG_NO_ATOMIC_LEVELS)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_NO_ATOMIC_LEVELS)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_ATOMIC_LEVELS)
 endif()
 
 
