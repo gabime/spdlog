@@ -141,7 +141,7 @@ SPDLOG_INLINE void prevent_child_fd(FILE *f)
     }
 #endif
 }
-#endif //SPDLOG_PREVENT_CHILD_FD
+#endif // SPDLOG_PREVENT_CHILD_FD
 
 // fopen_s on non windows for writing
 SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode)
