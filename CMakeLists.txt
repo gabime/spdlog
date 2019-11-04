@@ -147,7 +147,7 @@ if(SPDLOG_FMT_EXTERNAL)
 endif()
 
 #---------------------------------------------------------------------------------------
-# Misc definitions according to options
+# Misc definitions according to tweak options
 #---------------------------------------------------------------------------------------
 if(SPDLOG_WCHAR_SUPPORT)
 	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
