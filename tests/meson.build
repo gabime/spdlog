@@ -1,20 +1,20 @@
 test_sources = files([
-    'test_file_helper.cpp',
-    'test_file_logging.cpp',
-    'test_daily_logger.cpp',
-    'test_misc.cpp',
-    'test_pattern_formatter.cpp',
-    'test_async.cpp',
-    'includes.h',
-    'test_registry.cpp',
-    'test_macros.cpp',
-    'utils.cpp',
-    'main.cpp',
-    'test_mpmc_q.cpp',
-    'test_fmt_helper.cpp',
-    'test_stdout_api.cpp',
-    'test_dup_filter.cpp',
-    'test_backtrace.cpp'
+        'test_file_helper.cpp',
+        'test_file_logging.cpp',
+    	'test_daily_logger.cpp',
+        'test_misc.cpp',
+        'test_pattern_formatter.cpp',
+        'test_async.cpp',
+        'test_registry.cpp',
+        'test_macros.cpp',
+        'utils.cpp',
+        'main.cpp',
+        'test_mpmc_q.cpp',
+    	'test_dup_filter.cpp',
+        'test_fmt_helper.cpp',
+      	'test_stdout_api.cpp',
+    	'test_backtrace.cpp',
+    	'test_create_dir.cpp'
 ])
 
 
@@ -46,5 +46,5 @@ test_matrix =  [
 
 foreach i : test_matrix
   test_exe = executable(i[0], test_sources, dependencies: global_test_deps + [i[1]])
-  test('test_' + i[0], test_exe)
+  test('test_' + i[0], test_exe, is_parallel : false)
 endforeach
