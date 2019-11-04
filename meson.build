@@ -40,7 +40,7 @@ endif
 
 if get_option('wchar_filenames')
     if build_machine.system() != 'windows'
-        error('wchar_support only supported under windows')
+        error('wchar_filenames only supported under windows')
     endif
       compile_args += '-DSPDLOG_WCHAR_FILENAMES'
 endif
