@@ -126,15 +126,13 @@ SPDLOG_INLINE std::tm gmtime() SPDLOG_NOEXCEPT
     return gmtime(now_t);
 }
 
+#ifdef SPDLOG_PREVENT_CHILD_FD
 SPDLOG_INLINE void prevent_child_fd(FILE *f)
 {
-
 #ifdef _WIN32
-#if WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP | WINAPI_PARTITION_SYSTEM)
     auto file_handle = reinterpret_cast<HANDLE>(_get_osfhandle(::_fileno(f)));
     if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
         SPDLOG_THROW(spdlog_ex("SetHandleInformation failed", errno));
-#endif
 #else
     auto fd = ::fileno(f);
     if (::fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
@@ -143,6 +141,7 @@ SPDLOG_INLINE void prevent_child_fd(FILE *f)
     }
 #endif
 }
+#endif //SPDLOG_PREVENT_CHILD_FD
 
 // fopen_s on non windows for writing
 SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode)
@@ -158,6 +157,7 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
 #endif
 
 #ifdef SPDLOG_PREVENT_CHILD_FD
+    //  prevent child processes from inheriting log file descriptors
     if (*fp != nullptr)
     {
         prevent_child_fd(*fp);
