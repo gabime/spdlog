@@ -147,7 +147,7 @@ endif
 # ---   Conditionally add subdirs   ---
 # -------------------------------------
 
-if get_option('enable_tests')
+if get_option('enable_tests') or get_option('enable_tests-ho')
     subdir('tests')
 endif
 

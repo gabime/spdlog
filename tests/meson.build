@@ -37,8 +37,12 @@ endif
 # --------------------------------------
 # ---   Build the test executables   ---
 # --------------------------------------
-test_exe = executable('spdlog-utests', test_sources, dependencies: global_test_deps + [spdlog_dep])
-test('test_spdlog', test_exe, is_parallel : false)
+if get_option('enable_tests')
+    test_exe = executable('spdlog-utests', test_sources, dependencies: global_test_deps + [spdlog_dep])
+    test('test_spdlog', test_exe, is_parallel : false)
+endif
 
-test_exe = executable('spdlog-utests-ho', test_sources, dependencies: global_test_deps + [spdlog_headeronly_dep])
-test('test_spdlog-ho', test_exe, is_parallel : false)
+if get_option('enable_tests_ho')
+    test_exe = executable('spdlog-utests-ho', test_sources, dependencies: global_test_deps + [spdlog_headeronly_dep])
+    test('test_spdlog-ho', test_exe, is_parallel : false)
+endif
