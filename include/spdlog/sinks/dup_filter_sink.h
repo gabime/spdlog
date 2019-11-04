@@ -33,10 +33,6 @@
 //       [2019-06-25 17:50:56.512] [logger] [info] Skipped 3 duplicate messages..
 //       [2019-06-25 17:50:56.512] [logger] [info] Different Hello
 
-#ifdef SPDLOG_NO_DATETIME
-#error "spdlog::sinks::dup_filter_sink: cannot work when SPDLOG_NO_DATETIME is defined"
-#endif
-
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>

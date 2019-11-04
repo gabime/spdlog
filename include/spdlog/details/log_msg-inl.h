@@ -15,10 +15,7 @@ namespace details {
 SPDLOG_INLINE log_msg::log_msg(spdlog::source_loc loc, string_view_t logger_name, spdlog::level::level_enum lvl, spdlog::string_view_t msg)
     : logger_name(logger_name)
     , level(lvl)
-#ifndef SPDLOG_NO_DATETIME
     , time(os::now())
-#endif
-
 #ifndef SPDLOG_NO_THREAD_ID
     , thread_id(os::thread_id())
 #endif

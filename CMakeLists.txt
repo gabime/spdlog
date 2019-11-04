@@ -76,7 +76,6 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 endif()
 
 option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file descriptors" OFF)
-option(SPDLOG_NO_DATETIME, "Prevent spdlog from querying the clock on each log call if no datetime is needed" OFF)
 option(SPDLOG_NO_THREAD_ID "prevent spdlog from querying the thread id on each log call if thread id is not needed" OFF)
 option(SPDLOG_NO_TLS "prevent spdlog from using thread local storage" OFF)
 option(SPDLOG_NO_ATOMIC_LEVELS "prevent spdlog from using of std::atomic log levels (use only if your code never modifies log levels concurrently" OFF)
@@ -178,12 +177,6 @@ endif()
 if(SPDLOG_PREVENT_CHILD_FD)
     target_compile_definitions(spdlog PRIVATE SPDLOG_PREVENT_CHILD_FD)
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_PREVENT_CHILD_FD)
-endif()
-
-
-if(SPDLOG_NO_DATETIME)
-    target_compile_definitions(spdlog PUBLIC SPDLOG_NO_DATETIME)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_DATETIME)
 endif()
 
 if(SPDLOG_NO_THREAD_ID)

@@ -22,6 +22,7 @@ set(SPDLOG_UTESTS_SOURCES
     main.cpp
     test_mpmc_q.cpp
     test_sink.h
+	test_dup_filter.cpp
     test_fmt_helper.cpp
   	test_stdout_api.cpp
 	test_backtrace.cpp
@@ -34,12 +35,6 @@ endif()
 if(systemd_FOUND)
 	list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)
 endif()
-
-if(NOT SPDLOG_NO_DATETIME)
-	list(APPEND SPDLOG_UTESTS_SOURCES test_dup_filter.cpp)
-endif()
-
-
 
 
 enable_testing()

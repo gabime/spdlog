@@ -904,8 +904,6 @@ public:
         using std::chrono::milliseconds;
         using std::chrono::seconds;
 
-#ifndef SPDLOG_NO_DATETIME
-
         // cache the date/time part for the next second.
         auto duration = msg.time.time_since_epoch();
         auto secs = duration_cast<seconds>(duration);
@@ -940,10 +938,6 @@ public:
         fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
         dest.push_back(']');
         dest.push_back(' ');
-
-#else // no datetime needed
-        (void)tm_time;
-#endif
 
 #ifndef SPDLOG_NO_NAME
         if (msg.logger_name.size() > 0)
@@ -1014,14 +1008,13 @@ SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
 {
-#ifndef SPDLOG_NO_DATETIME
     auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
     if (secs != last_log_secs_)
     {
         cached_tm_ = get_time_(msg);
         last_log_secs_ = secs;
     }
-#endif
+
     for (auto &f : formatters_)
     {
         f->format(msg, cached_tm_, dest);

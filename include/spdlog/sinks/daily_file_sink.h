@@ -78,12 +78,7 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-#ifdef SPDLOG_NO_DATETIME
-        auto time = log_clock::now();
-#else
         auto time = msg.time;
-#endif
-
         bool should_rotate = time >= rotation_tp_;
         if (should_rotate)
         {
