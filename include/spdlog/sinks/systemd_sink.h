@@ -3,9 +3,9 @@
 
 #pragma once
 
-#include "spdlog/sinks/base_sink.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/details/synchronous_factory.h"
+#include <spdlog/sinks/base_sink.h>
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/details/synchronous_factory.h>
 
 #include <array>
 #ifndef SD_JOURNAL_SUPPRESS_LOCATION
