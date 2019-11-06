@@ -4,8 +4,8 @@
 #pragma once
 
 #include "dist_sink.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/details/log_msg.h"
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/details/log_msg.h>
 
 #include <mutex>
 #include <string>
@@ -16,7 +16,7 @@
 //
 // Example:
 //
-//     #include "spdlog/sinks/dup_filter_sink.h"
+//     #include <spdlog/sinks/dup_filter_sink.h>
 //
 //     int main() {
 //         auto dup_filter = std::make_shared<dup_filter_sink_st>(std::chrono::seconds(5));

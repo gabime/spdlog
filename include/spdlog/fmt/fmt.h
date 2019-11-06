@@ -22,6 +22,6 @@
 #include "bundled/core.h"
 #include "bundled/format.h"
 #else // SPDLOG_FMT_EXTERNAL is defined - use external fmtlib
-#include "fmt/core.h"
-#include "fmt/format.h"
+#include <fmt/core.h>
+#include <fmt/format.h>
 #endif
