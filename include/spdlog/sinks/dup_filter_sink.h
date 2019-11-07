@@ -72,7 +72,7 @@ protected:
         dist_sink<Mutex>::sink_it_(msg);
         last_msg_time_ = msg.time;
         skip_counter_ = 0;
-        last_msg_payload_.assign(msg.payload.data(), msg.payload.data() + msg.payload.size());
+        last_msg_payload_.assign(msg.payload.data(), msg.payload.data() + msg.payload.size());  // NOLINT
     }
 
     // return whether the log msg should be displayed (true) or skipped (false)

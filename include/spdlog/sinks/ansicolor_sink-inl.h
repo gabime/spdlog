@@ -117,7 +117,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_ccode_(const string_view_
 template<typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end)
 {
-    fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);
+    fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);  // NOLINT
 }
 
 // ansicolor_stdout_sink

@@ -65,6 +65,7 @@ protected:
             length = static_cast<size_t>(std::numeric_limits<int>::max());
         }
 
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-type-vararg)
         ::syslog(syslog_prio_from_level(msg), "%.*s", static_cast<int>(length), payload.data());
     }
 

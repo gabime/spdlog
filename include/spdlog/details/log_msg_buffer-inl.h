@@ -37,7 +37,7 @@ SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(const log_msg_buffer &ot
 {
     log_msg::operator=(other);
     buffer.clear();
-    buffer.append(other.buffer.data(), other.buffer.data() + other.buffer.size());
+    buffer.append(other.buffer.data(), other.buffer.data() + other.buffer.size());  // NOLINT
     update_string_views();
     return *this;
 }
@@ -53,7 +53,7 @@ SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(log_msg_buffer &&other)
 SPDLOG_INLINE void log_msg_buffer::update_string_views()
 {
     logger_name = string_view_t{buffer.data(), logger_name.size()};
-    payload = string_view_t{buffer.data() + logger_name.size(), payload.size()};
+    payload = string_view_t{buffer.data() + logger_name.size(), payload.size()};    // NOLINT
 }
 
 } // namespace details

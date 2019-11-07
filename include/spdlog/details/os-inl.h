@@ -91,11 +91,10 @@ SPDLOG_INLINE spdlog::log_clock::time_point now() SPDLOG_NOEXCEPT
 SPDLOG_INLINE std::tm localtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT
 {
 
+    std::tm tm = {};
 #ifdef _WIN32
-    std::tm tm;
     ::localtime_s(&tm, &time_tt);
 #else
-    std::tm tm;
     ::localtime_r(&time_tt, &tm);
 #endif
     return tm;
@@ -110,11 +109,10 @@ SPDLOG_INLINE std::tm localtime() SPDLOG_NOEXCEPT
 SPDLOG_INLINE std::tm gmtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT
 {
 
+    std::tm tm = {};
 #ifdef _WIN32
-    std::tm tm;
     ::gmtime_s(&tm, &time_tt);
 #else
-    std::tm tm;
     ::gmtime_r(&time_tt, &tm);
 #endif
     return tm;
@@ -153,6 +151,7 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
     *fp = ::_fsopen((filename.c_str()), mode.c_str(), _SH_DENYNO);
 #endif
 #else // unix
+    // NOLINTNEXTLINE(cppcoreguidelines-owning-memory)
     *fp = ::fopen((filename.c_str()), mode.c_str());
 #endif
 
@@ -200,7 +199,7 @@ SPDLOG_INLINE bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT
 #endif
     return attribs != INVALID_FILE_ATTRIBUTES;
 #else // common linux/unix all have the stat system call
-    struct stat buffer;
+    struct stat buffer = {};
     return (::stat(filename.c_str(), &buffer) == 0);
 #endif
 }
@@ -233,13 +232,13 @@ SPDLOG_INLINE size_t filesize(FILE *f)
     int fd = ::fileno(f);
 // 64 bits(but not in osx or cygwin, where fstat64 is deprecated)
 #if (defined(__linux__) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
-    struct stat64 st;
+    struct stat64 st = {};
     if (::fstat64(fd, &st) == 0)
     {
         return static_cast<size_t>(st.st_size);
     }
 #else // unix 32 bits or cygwin
-    struct stat st;
+    struct stat st = {};
 
     if (::fstat(fd, &st) == 0)
     {

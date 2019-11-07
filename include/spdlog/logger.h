@@ -151,6 +151,7 @@ public:
             return;
         }
 
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         details::log_msg log_msg(loc, name_, lvl, msg);
         log_it_(log_msg, log_enabled, traceback_enabled);
     }

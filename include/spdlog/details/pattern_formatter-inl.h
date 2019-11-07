@@ -73,6 +73,7 @@ private:
     void pad_it(size_t count)
     {
         // count = std::min(count, spaces_.size());
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         assert(count <= spaces_.size());
         fmt_helper::append_string_view(string_view_t(spaces_.data(), count), dest_);
     }
@@ -143,7 +144,7 @@ public:
 
 static const char *ampm(const tm &t)
 {
-    return t.tm_hour >= 12 ? "PM" : "AM";
+    return t.tm_hour >= 12 ? "PM" : "AM";   // NOLINT
 }
 
 static int to12h(const tm &t)
@@ -164,7 +165,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, memory_buf_t &dest) override
     {
-        string_view_t field_value{days[static_cast<size_t>(tm_time.tm_wday)]};
+        string_view_t field_value{days[static_cast<size_t>(tm_time.tm_wday)]};  // NOLINT
         ScopedPadder p(field_value.size(), padinfo_, dest);
         fmt_helper::append_string_view(field_value, dest);
     }
@@ -183,7 +184,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, memory_buf_t &dest) override
     {
-        string_view_t field_value{full_days[static_cast<size_t>(tm_time.tm_wday)]};
+        string_view_t field_value{full_days[static_cast<size_t>(tm_time.tm_wday)]}; // NOLINT
         ScopedPadder p(field_value.size(), padinfo_, dest);
         fmt_helper::append_string_view(field_value, dest);
     }
@@ -202,7 +203,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, memory_buf_t &dest) override
     {
-        string_view_t field_value{months[static_cast<size_t>(tm_time.tm_mon)]};
+        string_view_t field_value{months[static_cast<size_t>(tm_time.tm_mon)]}; // NOLINT
         ScopedPadder p(field_value.size(), padinfo_, dest);
         fmt_helper::append_string_view(field_value, dest);
     }
@@ -222,7 +223,7 @@ public:
 
     void format(const details::log_msg &, const std::tm &tm_time, memory_buf_t &dest) override
     {
-        string_view_t field_value{full_months[static_cast<size_t>(tm_time.tm_mon)]};
+        string_view_t field_value{full_months[static_cast<size_t>(tm_time.tm_mon)]};    // NOLINT
         ScopedPadder p(field_value.size(), padinfo_, dest);
         fmt_helper::append_string_view(field_value, dest);
     }
@@ -242,9 +243,9 @@ public:
         const size_t field_size = 24;
         ScopedPadder p(field_size, padinfo_, dest);
 
-        fmt_helper::append_string_view(days[static_cast<size_t>(tm_time.tm_wday)], dest);
+        fmt_helper::append_string_view(days[static_cast<size_t>(tm_time.tm_wday)], dest);   // NOLINT
         dest.push_back(' ');
-        fmt_helper::append_string_view(months[static_cast<size_t>(tm_time.tm_mon)], dest);
+        fmt_helper::append_string_view(months[static_cast<size_t>(tm_time.tm_mon)], dest);  // NOLINT
         dest.push_back(' ');
         fmt_helper::append_int(tm_time.tm_mday, dest);
         dest.push_back(' ');
@@ -805,7 +806,7 @@ public:
     static const char *basename(const char *filename)
     {
         const char *rv = std::strrchr(filename, os::folder_sep);
-        return rv != nullptr ? rv + 1 : filename;
+        return rv != nullptr ? rv + 1 : filename;   // NOLINT
     }
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override

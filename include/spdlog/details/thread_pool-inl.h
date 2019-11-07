@@ -112,6 +112,7 @@ bool SPDLOG_INLINE thread_pool::process_next_msg_()
     }
 
     default: {
+        // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
         assert(false && "Unexpected async_msg_type");
     }
     }

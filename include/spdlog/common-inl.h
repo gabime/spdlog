@@ -15,12 +15,12 @@ static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
 SPDLOG_INLINE string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
-    return level_string_views[l];
+    return level_string_views[l];   // NOLINT
 }
 
 SPDLOG_INLINE const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
-    return short_level_names[l];
+    return short_level_names[l];    // NOLINT
 }
 
 SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT

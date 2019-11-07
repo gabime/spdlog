@@ -22,7 +22,7 @@ inline void append_string_view(spdlog::string_view_t view, memory_buf_t &dest)
     auto *buf_ptr = view.data();
     if (buf_ptr != nullptr)
     {
-        dest.append(buf_ptr, buf_ptr + view.size());
+        dest.append(buf_ptr, buf_ptr + view.size());    // NOLINT
     }
 }
 
@@ -30,7 +30,7 @@ template<typename T>
 inline void append_int(T n, memory_buf_t &dest)
 {
     fmt::format_int i(n);
-    dest.append(i.data(), i.data() + i.size());
+    dest.append(i.data(), i.data() + i.size()); // NOLINT
 }
 
 template<typename T>
@@ -70,7 +70,7 @@ inline void pad_uint(T n, unsigned int width, memory_buf_t &dest)
     if (width > digits)
     {
         const char *zeroes = "0000000000000000000";
-        dest.append(zeroes, zeroes + width - digits);
+        dest.append(zeroes, zeroes + width - digits);   // NOLINT
     }
     append_int(n, dest);
 }

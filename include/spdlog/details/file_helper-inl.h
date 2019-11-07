@@ -29,6 +29,7 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
 {
     close();
     filename_ = fname;
+    // NOLINTNEXTLINE(cppcoreguidelines-pro-bounds-array-to-pointer-decay)
     auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
 
     for (int tries = 0; tries < open_tries_; ++tries)
@@ -64,7 +65,7 @@ SPDLOG_INLINE void file_helper::close()
 {
     if (fd_ != nullptr)
     {
-        std::fclose(fd_);
+        std::fclose(fd_);   // NOLINT(cppcoreguidelines-owning-memory)
         fd_ = nullptr;
     }
 }
