@@ -6,12 +6,11 @@
 #include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/synchronous_factory.h"
+#include "spdlog/details/circular_q.h"
 
 #include <mutex>
 #include <string>
 #include <vector>
-
-#include<boost/circular_buffer.hpp>
 
 namespace spdlog {
 namespace sinks {
@@ -30,7 +29,7 @@ protected:
     void flush_() override {};
 
 private:
-    boost::circular_buffer<std::string> buf;
+    details::circular_q<std::string> buf;
 };
 
 using ringbuffer_sink_mt = ringbuffer_sink<std::mutex>;

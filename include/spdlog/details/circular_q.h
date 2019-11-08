@@ -72,6 +72,20 @@ public:
         return v_[head_];
     }
 
+    // Return number of elements actually stored
+    size_t size() const
+    {
+        return (tail_ - head_) % max_items_;
+    }
+
+    // Return const reference to item by index.
+    // If index is out of range 0…size()-1, the behavior is undefined.
+    const T &at(size_t i) const
+    {
+        assert(i < size());
+        return v_[(head_+ i) % max_items_];
+    }
+
     // Pop item from front.
     // If there are no elements in the container, the behavior is undefined.
     void pop_front()
