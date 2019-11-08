@@ -42,9 +42,9 @@ SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(const log_msg_buffer &ot
     return *this;
 }
 
-SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(log_msg_buffer &&other)
+SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(log_msg_buffer &&other) SPDLOG_NOEXCEPT
 {
-    log_msg::operator=(std::move(other));
+    log_msg::operator=(other);
     buffer = std::move(other.buffer);
     update_string_views();
     return *this;

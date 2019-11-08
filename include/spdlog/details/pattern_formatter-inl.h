@@ -876,7 +876,7 @@ public:
         fmt_helper::pad6(static_cast<size_t>(delta_units.count()), dest);
     }
 
-protected:
+private:
     log_clock::time_point last_message_time_;
 };
 

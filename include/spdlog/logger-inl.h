@@ -150,7 +150,7 @@ SPDLOG_INLINE std::vector<sink_ptr> &logger::sinks()
 // error handler
 SPDLOG_INLINE void logger::set_error_handler(err_handler handler)
 {
-    custom_err_handler_ = handler;
+    custom_err_handler_ = std::move(handler);
 }
 
 // create new logger with same sinks and configuration.
