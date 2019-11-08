@@ -307,8 +307,10 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
     };
 
     auto offset_seconds = helper::calculate_gmt_offset(tm);
-#else
+#elif defined(_BSD_SOURCE) || defined(_GNU_SOURCE)
     auto offset_seconds = tm.tm_gmtoff;
+#else
+    auto offset_seconds = 0;
 #endif
 
     return static_cast<int>(offset_seconds / 60);
