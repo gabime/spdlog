@@ -20,7 +20,7 @@ public:
     log_msg_buffer() = default;
     explicit log_msg_buffer(const log_msg &orig_msg);
     log_msg_buffer(const log_msg_buffer &other);
-    log_msg_buffer(log_msg_buffer &&other);
+    log_msg_buffer(log_msg_buffer &&other) SPDLOG_NOEXCEPT;
     log_msg_buffer &operator=(const log_msg_buffer &other);
     log_msg_buffer &operator=(log_msg_buffer &&other);
 };
