@@ -27,7 +27,7 @@ SPDLOG_INLINE log_msg_buffer::log_msg_buffer(const log_msg_buffer &other)
 }
 
 SPDLOG_INLINE log_msg_buffer::log_msg_buffer(log_msg_buffer &&other) SPDLOG_NOEXCEPT
-    : log_msg{std::move(other)}
+    : log_msg{other}
     , buffer{std::move(other.buffer)}
 {
     update_string_views();
