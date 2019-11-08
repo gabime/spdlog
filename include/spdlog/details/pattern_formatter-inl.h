@@ -593,14 +593,7 @@ public:
         const size_t field_size = 6;
         ScopedPadder p(field_size, padinfo_, dest);
 
-#ifdef _WIN32
-        int total_minutes = get_cached_offset(msg, tm_time);
-#else
-        // No need to cache under gcc,
-        // it is very fast (already stored in tm.tm_gmtoff)
-        (void)(msg);
-        int total_minutes = os::utc_minutes_offset(tm_time);
-#endif
+        auto total_minutes = get_cached_offset(msg, tm_time);
         bool is_negative = total_minutes < 0;
         if (is_negative)
         {
@@ -619,7 +612,6 @@ public:
 
 private:
     log_clock::time_point last_update_{std::chrono::seconds(0)};
-#ifdef _WIN32
     int offset_minutes_{0};
 
     int get_cached_offset(const log_msg &msg, const std::tm &tm_time)
@@ -632,7 +624,6 @@ private:
         }
         return offset_minutes_;
     }
-#endif
 };
 
 // Thread id
