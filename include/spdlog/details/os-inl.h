@@ -277,7 +277,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
     return offset;
 #else
 
-#if defined(sun) || defined(__sun) || defined(_AIX)
+#if defined(sun) || defined(__sun) || defined(_AIX) || (!defined(_BSD_SOURCE) && !defined(_GNU_SOURCE))
     // 'tm_gmtoff' field is BSD extension and it's missing on SunOS/Solaris
     struct helper
     {
