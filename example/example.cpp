@@ -143,7 +143,7 @@ void async_example()
 #include "spdlog/fmt/bin_to_hex.h"
 void binary_example()
 {
-    std::vector<char> buf;
+    std::vector<char> buf(80);
     for (int i = 0; i < 80; i++)
     {
         buf.push_back(static_cast<char>(i & 0xff));
