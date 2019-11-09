@@ -75,7 +75,14 @@ public:
     // Return number of elements actually stored
     size_t size() const
     {
-        return (tail_ - head_) % max_items_;
+        if (tail_ > head_)
+        {
+           return (tail_ - head_) % max_items;
+        }
+        else
+        {
+            return max_items - (head_ - tail_ ) % max_items;
+        }
     }
 
     // Return const reference to item by index.
