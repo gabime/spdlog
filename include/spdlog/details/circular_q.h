@@ -75,7 +75,7 @@ public:
     // Return number of elements actually stored
     size_t size() const
     {
-        if (tail_ > head_)
+        if (tail_ >= head_)
         {
            return tail_ - head_;
         }
