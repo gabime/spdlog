@@ -7,6 +7,7 @@
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/synchronous_factory.h"
 #include "spdlog/details/circular_q.h"
+#include "spdlog/details/log_msg_buffer.h"
 
 #include <mutex>
 #include <string>
@@ -29,7 +30,7 @@ protected:
     void flush_() override {};
 
 private:
-    details::circular_q<std::string> buf;
+    details::circular_q<details::log_msg_buffer> buf_;
 };
 
 using ringbuffer_sink_mt = ringbuffer_sink<std::mutex>;

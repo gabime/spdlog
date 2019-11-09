@@ -16,15 +16,13 @@ namespace sinks {
 template<typename Mutex>
 SPDLOG_INLINE ringbuffer_sink<Mutex>::ringbuffer_sink(size_t buf_size)
 {
-    buf=details::circular_q<std::string>(buf_size);
+    buf_=details::circular_q<details::log_msg_buffer>(buf_size);
 }
 
 template<typename Mutex>
 SPDLOG_INLINE void ringbuffer_sink<Mutex>::sink_it_(const details::log_msg &msg)
 {
-    memory_buf_t formatted;
-    base_sink<Mutex>::formatter_->format(msg, formatted);
-    buf.push_back(fmt::to_string(formatted));
+    buf_.push_back(details::log_msg_buffer{msg});
 }
 
 template<typename Mutex>
@@ -34,9 +32,11 @@ SPDLOG_INLINE std::vector<std::string> ringbuffer_sink<Mutex>::last(size_t lim)
     std::vector<std::string> ret;
     ret.reserve(lim);
     size_t num=0;
-    for(size_t i=0; i<buf.size(); i++){
+    for(size_t i=0; i<buf_.size(); i++){
         num++;
-        ret.push_back(buf.at(i));
+        memory_buf_t formatted;
+        base_sink<Mutex>::formatter_->format(buf_.at(i), formatted);
+        ret.push_back(fmt::to_string(formatted));
         if(lim>0 && num==lim) break;
     }
     return ret;
