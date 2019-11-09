@@ -62,7 +62,7 @@
 #endif
 
 #ifndef SPDLOG_FUNCTION
-#define SPDLOG_FUNCTION __FUNCTION__
+#define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
 #endif
 
 #ifdef SPDLOG_NO_EXCEPTIONS
