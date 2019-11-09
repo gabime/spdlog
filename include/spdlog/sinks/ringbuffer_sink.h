@@ -3,9 +3,7 @@
 
 #pragma once
 
-#include "spdlog/details/null_mutex.h"
 #include "spdlog/sinks/base_sink.h"
-#include "spdlog/details/synchronous_factory.h"
 #include "spdlog/details/circular_q.h"
 #include "spdlog/details/log_msg_buffer.h"
 
@@ -22,15 +20,47 @@ template<typename Mutex>
 class ringbuffer_sink final : public base_sink<Mutex>
 {
 public:
-    explicit ringbuffer_sink(size_t buf_size);
-    std::vector<std::string> last(size_t lim=0);
+    explicit ringbuffer_sink(size_t n_items)
+        : q_{n_items}
+    {}
+
+    std::vector<details::log_msg_buffer> last_raw(size_t lim = 0)
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        auto n_items = lim > 0 ? (std::min)(lim, q_.size()) : q_.size();
+        std::vector<details::log_msg_buffer> ret;
+        ret.reserve(n_items);
+        for (size_t i = 0; i < n_items; i++)
+        {
+            ret.push_back(q_.at(i));
+        }
+        return ret;
+    }
+
+    std::vector<std::string> last_formatted(size_t lim = 0)
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        auto n_items = lim > 0 ? (std::min)(lim, q_.size()) : q_.size();
+        std::vector<std::string> ret;
+        ret.reserve(n_items);
+        for (size_t i = 0; i < n_items; i++)
+        {
+            memory_buf_t formatted;
+            base_sink<Mutex>::formatter_->format(q_.at(i), formatted);
+            ret.push_back(fmt::to_string(formatted));
+        }
+        return ret;
+    }
 
 protected:
-    void sink_it_(const details::log_msg &msg) override;
-    void flush_() override {};
+    void sink_it_(const details::log_msg &msg) override
+    {
+        q_.push_back(details::log_msg_buffer{msg});
+    }
+    void flush_() override {}
 
 private:
-    details::circular_q<details::log_msg_buffer> buf_;
+    details::circular_q<details::log_msg_buffer> q_;
 };
 
 using ringbuffer_sink_mt = ringbuffer_sink<std::mutex>;
@@ -38,23 +68,4 @@ using ringbuffer_sink_st = ringbuffer_sink<details::null_mutex>;
 
 } // namespace sinks
 
-//
-// factory functions
-//
-template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> basic_logger_mt(const std::string &logger_name, size_t buf_size)
-{
-    return Factory::template create<sinks::ringbuffer_sink_mt>(logger_name, buf_size);
-}
-
-template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name, size_t buf_size)
-{
-    return Factory::template create<sinks::ringbuffer_sink_st>(logger_name, buf_size);
-}
-
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "ringbuffer_sink-inl.h"
-#endif

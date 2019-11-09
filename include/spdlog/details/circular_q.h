@@ -77,11 +77,11 @@ public:
     {
         if (tail_ >= head_)
         {
-           return tail_ - head_;
+            return tail_ - head_;
         }
         else
         {
-            return max_items_ - (head_ - tail_ );
+            return max_items_ - (head_ - tail_);
         }
     }
 
@@ -90,7 +90,7 @@ public:
     const T &at(size_t i) const
     {
         assert(i < size());
-        return v_[(head_+ i) % max_items_];
+        return v_[(head_ + i) % max_items_];
     }
 
     // Pop item from front.
