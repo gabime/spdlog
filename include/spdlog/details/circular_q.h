@@ -77,11 +77,11 @@ public:
     {
         if (tail_ > head_)
         {
-           return (tail_ - head_) % max_items;
+           return (tail_ - head_) % max_items_;
         }
         else
         {
-            return max_items - (head_ - tail_ ) % max_items;
+            return max_items_ - (head_ - tail_ ) % max_items_;
         }
     }
 
