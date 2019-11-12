@@ -25,7 +25,8 @@ struct padding_info
     {
         left,
         right,
-        center
+        center,
+        clip_right,
     };
 
     padding_info() = default;

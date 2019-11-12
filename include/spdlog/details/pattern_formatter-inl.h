@@ -42,7 +42,14 @@ public:
 
         if (padinfo_.width_ <= wrapped_size)
         {
-            total_pad_ = 0;
+            if (padinfo_.side_ == padding_info::clip_right)
+            {
+                total_pad_ = (long)padinfo_.width_ - (long)wrapped_size;
+            }
+            else
+            {
+                total_pad_ = 0;
+            }
             return;
         }
 
@@ -70,16 +77,23 @@ public:
     }
 
 private:
-    void pad_it(size_t count)
+    void pad_it(long count)
     {
         // count = std::min(count, spaces_.size());
         assert(count <= spaces_.size());
-        fmt_helper::append_string_view(string_view_t(spaces_.data(), count), dest_);
+        if ( count >= 0 )
+        {
+            fmt_helper::append_string_view(string_view_t(spaces_.data(), count), dest_);
+        }
+        else
+        {
+            dest_.resize(dest_.size()+count);
+        }
     }
 
     const padding_info &padinfo_;
     memory_buf_t &dest_;
-    size_t total_pad_;
+    long total_pad_;
     string_view_t spaces_{"                                                                ", 64};
 };
 
@@ -1231,6 +1245,10 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::stri
         break;
     case '=':
         side = padding_info::center;
+        ++it;
+        break;
+    case '>':
+        side = padding_info::clip_right;
         ++it;
         break;
     default:
