@@ -1,4 +1,5 @@
 #include "includes.h"
+#include "test_sink.h"
 
 using spdlog::memory_buf_t;
 
@@ -138,58 +139,111 @@ TEST_CASE("color range test6", "[pattern_formatter]")
 TEST_CASE("level_left_padded", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%8l] %v", spdlog::pattern_time_type::local, "\n") == "[    info] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%8!l] %v", spdlog::pattern_time_type::local, "\n") == "[    info] Some message\n");
 }
 
 TEST_CASE("level_right_padded", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%-8l] %v", spdlog::pattern_time_type::local, "\n") == "[info    ] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%-8!l] %v", spdlog::pattern_time_type::local, "\n") == "[info    ] Some message\n");
 }
 
 TEST_CASE("level_center_padded", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%=8l] %v", spdlog::pattern_time_type::local, "\n") == "[  info  ] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%=8!l] %v", spdlog::pattern_time_type::local, "\n") == "[  info  ] Some message\n");
 }
 
 TEST_CASE("short level_left_padded", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%3L] %v", spdlog::pattern_time_type::local, "\n") == "[  I] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%3!L] %v", spdlog::pattern_time_type::local, "\n") == "[  I] Some message\n");
 }
 
 TEST_CASE("short level_right_padded", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%-3L] %v", spdlog::pattern_time_type::local, "\n") == "[I  ] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%-3!L] %v", spdlog::pattern_time_type::local, "\n") == "[I  ] Some message\n");
 }
 
 TEST_CASE("short level_center_padded", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%=3L] %v", spdlog::pattern_time_type::local, "\n") == "[ I ] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%=3!L] %v", spdlog::pattern_time_type::local, "\n") == "[ I ] Some message\n");
 }
 
 TEST_CASE("left_padded_short", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%3n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%3!n] %v", spdlog::pattern_time_type::local, "\n") == "[pat] Some message\n");
 }
 
 TEST_CASE("right_padded_short", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%-3n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%-3!n] %v", spdlog::pattern_time_type::local, "\n") == "[pat] Some message\n");
 }
 
 TEST_CASE("center_padded_short", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%=3n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%=3!n] %v", spdlog::pattern_time_type::local, "\n") == "[pat] Some message\n");
 }
 
 TEST_CASE("left_padded_huge", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%-300n] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[pattern_tester                                                  ] Some message\n");
+        "[pattern_tester                                                  ] Some message\n");
+
+    REQUIRE(log_to_str("Some message", "[%-300!n] %v", spdlog::pattern_time_type::local, "\n") ==
+        "[pattern_tester                                                  ] Some message\n");
 }
 
 TEST_CASE("left_padded_max", "[pattern_formatter]")
 {
     REQUIRE(log_to_str("Some message", "[%-64n] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[pattern_tester                                                  ] Some message\n");
+        "[pattern_tester                                                  ] Some message\n");
+
+    REQUIRE(log_to_str("Some message", "[%-64!n] %v", spdlog::pattern_time_type::local, "\n") ==
+        "[pattern_tester                                                  ] Some message\n");
+}
+
+// Test padding + truncate flag
+
+TEST_CASE("paddinng_truncate", "[pattern_formatter]")
+{
+    REQUIRE(log_to_str("123456", "%6!v", spdlog::pattern_time_type::local, "\n") == "123456\n");
+    REQUIRE(log_to_str("123456", "%5!v", spdlog::pattern_time_type::local, "\n") == "12345\n");
+    REQUIRE(log_to_str("123456", "%7!v", spdlog::pattern_time_type::local, "\n") == " 123456\n");
+
+    REQUIRE(log_to_str("123456", "%-6!v", spdlog::pattern_time_type::local, "\n") == "123456\n");
+    REQUIRE(log_to_str("123456", "%-5!v", spdlog::pattern_time_type::local, "\n") == "12345\n");
+    REQUIRE(log_to_str("123456", "%-7!v", spdlog::pattern_time_type::local, "\n") == "123456 \n");
+
+    REQUIRE(log_to_str("123456", "%=6!v", spdlog::pattern_time_type::local, "\n") == "123456\n");
+    REQUIRE(log_to_str("123456", "%=5!v", spdlog::pattern_time_type::local, "\n") == "12345\n");
+    REQUIRE(log_to_str("123456", "%=7!v", spdlog::pattern_time_type::local, "\n") == "123456 \n");
+
+    REQUIRE(log_to_str("123456", "%0!v", spdlog::pattern_time_type::local, "\n") == "\n");
+}
+
+TEST_CASE("paddinng_truncate_funcname", "[pattern_formatter]")
+{
+    spdlog::sinks::test_sink_st test_sink;
+
+    const char* pattern = "%v [%5!!]";
+    auto formatter = std::unique_ptr<spdlog::formatter>(new spdlog::pattern_formatter(pattern));
+    test_sink.set_formatter(std::move(formatter));
+
+    spdlog::details::log_msg msg1{spdlog::source_loc{"ignored", 1, "func"}, "test_logger", spdlog::level::info, "message"};
+    test_sink.log(msg1);
+
+    spdlog::details::log_msg msg2{spdlog::source_loc{"ignored", 1, "function"}, "test_logger", spdlog::level::info, "message"};
+    test_sink.log(msg2);
+
+    auto lines = test_sink.lines();
+    REQUIRE(lines[0] == "message [ func]");
+    REQUIRE(lines[1] == "message [funct]");
 }
 
 TEST_CASE("clone-default-formatter", "[pattern_formatter]")
