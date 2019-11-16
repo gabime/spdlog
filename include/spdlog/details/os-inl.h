@@ -238,9 +238,8 @@ SPDLOG_INLINE size_t filesize(FILE *f)
     {
         return static_cast<size_t>(st.st_size);
     }
-#else // unix 32 bits or cygwin
+#else // other unix or linux 32 bits or cygwin
     struct stat st;
-
     if (::fstat(fd, &st) == 0)
     {
         return static_cast<size_t>(st.st_size);
