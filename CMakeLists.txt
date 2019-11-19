@@ -63,31 +63,39 @@ option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 # install options
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
-
-if(WIN32)
-	option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
-    option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)    
-endif()
-
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
 
 
+# misc tweakme options
+if(WIN32)
+    option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
+    option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)
+endif()
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    option(SPDLOG_CLOCK_COARSE "Use the much faster (but much less accurate) CLOCK_REALTIME_COARSE instead of the regular clock," OFF)
+endif()
+
+option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file descriptors" OFF)
+option(SPDLOG_NO_THREAD_ID "prevent spdlog from querying the thread id on each log call if thread id is not needed" OFF)
+option(SPDLOG_NO_TLS "prevent spdlog from using thread local storage" OFF)
+option(SPDLOG_NO_ATOMIC_LEVELS "prevent spdlog from using of std::atomic log levels (use only if your code never modifies log levels concurrently" OFF)
+
 find_package(Threads REQUIRED)
-
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
-
 #---------------------------------------------------------------------------------------
 # Static/Shared library (shared not supported in windows yet)
 #---------------------------------------------------------------------------------------
 set(SPDLOG_SRCS
         src/spdlog.cpp
         src/stdout_sinks.cpp
-        src/fmt.cpp
         src/color_sinks.cpp
         src/file_sinks.cpp
         src/async.cpp)
 
-set(SPDLOG_CFLAGS "${PROJECT_NAME}")
+
+if(NOT SPDLOG_FMT_EXTERNAL)
+    list(APPEND SPDLOG_SRCS src/fmt.cpp)
+endif()
 
 if (SPDLOG_BUILD_SHARED)
     if(WIN32)
@@ -123,22 +131,24 @@ target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
 
 #---------------------------------------------------------------------------------------
-# Use fmt package if using exertnal fmt
+# Use fmt package if using external fmt
 #---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL)
     if (NOT TARGET fmt::fmt)
         find_package(fmt REQUIRED)
     endif ()
-
-    set(SPDLOG_CFLAGS "${SPDLOG_CFLAGS} -DSPDLOG_FMT_EXTERNAL")
-
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog PUBLIC fmt::fmt)
 
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
     target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
+
+    set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
 endif()
 
+#---------------------------------------------------------------------------------------
+# Misc definitions according to tweak options
+#---------------------------------------------------------------------------------------
 if(SPDLOG_WCHAR_SUPPORT)
 	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
@@ -157,6 +167,31 @@ if(SPDLOG_WCHAR_SUPPORT)
     if(NOT MSVC)
         target_compile_options(spdlog PRIVATE -fno-exceptions)
     endif()
+endif()
+
+if(SPDLOG_CLOCK_COARSE)
+    target_compile_definitions(spdlog PRIVATE SPDLOG_CLOCK_COARSE)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_CLOCK_COARSE)
+endif()
+
+if(SPDLOG_PREVENT_CHILD_FD)
+    target_compile_definitions(spdlog PRIVATE SPDLOG_PREVENT_CHILD_FD)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_PREVENT_CHILD_FD)
+endif()
+
+if(SPDLOG_NO_THREAD_ID)
+    target_compile_definitions(spdlog PRIVATE SPDLOG_NO_THREAD_ID)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_THREAD_ID)
+endif()
+
+if(SPDLOG_NO_TLS)
+    target_compile_definitions(spdlog PRIVATE SPDLOG_NO_TLS)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_TLS)
+endif()
+
+if(SPDLOG_NO_ATOMIC_LEVELS)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_NO_ATOMIC_LEVELS)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_ATOMIC_LEVELS)
 endif()
 
 
@@ -188,7 +223,7 @@ if (SPDLOG_INSTALL)
     set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfig.cmake")
     set(config_targets_file "spdlogConfigTargets.cmake")
     set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfigVersion.cmake")
-    set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/spdlog/cmake")
+    set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/cmake/spdlog")
     set(pkgconfig_install_dir "${CMAKE_INSTALL_LIBDIR}/pkgconfig")
     set(pkg_config "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.pc")
 
@@ -204,11 +239,17 @@ if (SPDLOG_INSTALL)
     endif()
 
     #---------------------------------------------------------------------------------------
-    # Package and version files
+    # Install pkg-config file
     #---------------------------------------------------------------------------------------
+    get_target_property(PKG_CONFIG_DEFINES spdlog INTERFACE_COMPILE_DEFINITIONS)
+    string(REPLACE ";" " -D" PKG_CONFIG_DEFINES "${PKG_CONFIG_DEFINES}")
+    string(CONCAT PKG_CONFIG_DEFINES "-D" "${PKG_CONFIG_DEFINES}")
     configure_file("cmake/${PROJECT_NAME}.pc.in" "${pkg_config}" @ONLY)
     install(FILES "${pkg_config}" DESTINATION "${pkgconfig_install_dir}")
 
+    #---------------------------------------------------------------------------------------
+    # Install CMake config files
+    #---------------------------------------------------------------------------------------
     install(EXPORT spdlog
             DESTINATION ${export_dest_dir}
             NAMESPACE spdlog::
@@ -216,6 +257,7 @@ if (SPDLOG_INSTALL)
 
     include(CMakePackageConfigHelpers)
     configure_file("${project_config_in}" "${project_config_out}" @ONLY)
+
     write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
     install(FILES
             "${project_config_out}"
@@ -227,3 +269,4 @@ if (SPDLOG_INSTALL)
     include(cmake/spdlogCPack.cmake)
 
 endif ()
+

@@ -20,19 +20,6 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-// Uncomment if date/time logging is not needed and never appear in the log
-// pattern.
-// This will prevent spdlog from querying the clock on each log call.
-//
-// WARNING: If the log pattern contains any date/time while this flag is on, the
-// result is undefined.
-//          You must set new pattern(spdlog::set_pattern(..") without any
-//          date/time in it
-//
-// #define SPDLOG_NO_DATETIME
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
 // Uncomment if thread id logging is not needed (i.e. no %t in the log pattern).
 // This will prevent spdlog from querying the thread id on each log call.
 //

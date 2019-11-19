@@ -7,16 +7,17 @@
 #include "spdlog/details/registry.h"
 #endif
 
-#include "spdlog/common.h"
-#include "spdlog/logger.h"
-#include "spdlog/details/pattern_formatter.h"
+#include <spdlog/common.h>
+#include <spdlog/details/periodic_worker.h>
+#include <spdlog/logger.h>
+#include <spdlog/details/pattern_formatter.h>
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
 // support for the default stdout color logger
 #ifdef _WIN32
-#include "spdlog/sinks/wincolor_sink.h"
+#include <spdlog/sinks/wincolor_sink.h>
 #else
-#include "spdlog/sinks/ansicolor_sink.h"
+#include <spdlog/sinks/ansicolor_sink.h>
 #endif
 #endif // SPDLOG_DISABLE_DEFAULT_LOGGER
 
@@ -256,10 +257,10 @@ SPDLOG_INLINE std::recursive_mutex &registry::tp_mutex()
     return tp_mutex_;
 }
 
-SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_regsistration)
+SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registration)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    automatic_registration_ = automatic_regsistration;
+    automatic_registration_ = automatic_registration;
 }
 
 SPDLOG_INLINE registry &registry::instance()

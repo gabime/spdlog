@@ -1,7 +1,7 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-// cirucal q view of std::vector.
+// circular q view of std::vector.
 #pragma once
 
 #include <vector>
@@ -70,6 +70,27 @@ public:
     T &front()
     {
         return v_[head_];
+    }
+
+    // Return number of elements actually stored
+    size_t size() const
+    {
+        if (tail_ >= head_)
+        {
+            return tail_ - head_;
+        }
+        else
+        {
+            return max_items_ - (head_ - tail_);
+        }
+    }
+
+    // Return const reference to item by index.
+    // If index is out of range 0…size()-1, the behavior is undefined.
+    const T &at(size_t i) const
+    {
+        assert(i < size());
+        return v_[(head_ + i) % max_items_];
     }
 
     // Pop item from front.

@@ -4,11 +4,11 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include "spdlog/sinks/wincolor_sink.h"
+#include <spdlog/sinks/wincolor_sink.h>
 #endif
 
-#include "spdlog/common.h"
-#include "spdlog/details/pattern_formatter.h"
+#include <spdlog/common.h>
+#include <spdlog/details/pattern_formatter.h>
 
 namespace spdlog {
 namespace sinks {
@@ -140,7 +140,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::print_range_(const memory_buf_t 
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const memory_buf_t &formatted)
 {
-    if(out_handle_ == nullptr) // no console and no file redirect
+    if (out_handle_ == nullptr) // no console and no file redirect
     {
         return;
     }

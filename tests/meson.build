@@ -5,18 +5,17 @@ test_sources = files([
     'test_misc.cpp',
     'test_pattern_formatter.cpp',
     'test_async.cpp',
-    'includes.h',
     'test_registry.cpp',
     'test_macros.cpp',
     'utils.cpp',
     'main.cpp',
     'test_mpmc_q.cpp',
+    'test_dup_filter.cpp',
     'test_fmt_helper.cpp',
     'test_stdout_api.cpp',
-    'test_dup_filter.cpp',
-    'test_backtrace.cpp'
+    'test_backtrace.cpp',
+    'test_create_dir.cpp'
 ])
-
 
 if  not get_option('no_exceptions')
     test_sources += 'test_errors.cpp'
@@ -35,19 +34,15 @@ if systemd_dep.found()
   global_test_deps += systemd_dep
 endif
 
-run_command('mkdir', 'logs')
 # --------------------------------------
 # ---   Build the test executables   ---
 # --------------------------------------
+if get_option('enable_tests')
+    test_exe = executable('spdlog-utests', test_sources, dependencies: global_test_deps + [spdlog_dep])
+    test('test_spdlog', test_exe, is_parallel : false)
+endif
 
-test_matrix =  [
-  ['spdlog-utests',    spdlog_dep],
-  ['spdlog-utests-ho', spdlog_headeronly_dep],
-]
-
-foreach i : test_matrix
-  test_exe = executable(i[0], test_sources, dependencies: global_test_deps + [i[1]])
-  test('test_' + i[0], test_exe)
-endforeach
-
-run_command(find_program('mkdir'), meson.current_build_dir() + '/logs')
+if get_option('enable_tests_ho')
+    test_exe = executable('spdlog-utests-ho', test_sources, dependencies: global_test_deps + [spdlog_headeronly_dep])
+    test('test_spdlog-ho', test_exe, is_parallel : false)
+endif

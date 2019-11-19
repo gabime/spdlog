@@ -4,10 +4,10 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include "spdlog/details/thread_pool.h"
+#include <spdlog/details/thread_pool.h>
 #endif
 
-#include "spdlog/common.h"
+#include <spdlog/common.h>
 
 namespace spdlog {
 namespace details {
@@ -98,24 +98,20 @@ bool SPDLOG_INLINE thread_pool::process_next_msg_()
 
     switch (incoming_async_msg.msg_type)
     {
-    case async_msg_type::log:
-    {
+    case async_msg_type::log: {
         incoming_async_msg.worker_ptr->backend_sink_it_(incoming_async_msg);
         return true;
     }
-    case async_msg_type::flush:
-    {
+    case async_msg_type::flush: {
         incoming_async_msg.worker_ptr->backend_flush_();
         return true;
     }
 
-    case async_msg_type::terminate:
-    {
+    case async_msg_type::terminate: {
         return false;
     }
 
-    default:
-    {
+    default: {
         assert(false && "Unexpected async_msg_type");
     }
     }

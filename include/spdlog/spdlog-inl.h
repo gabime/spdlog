@@ -4,11 +4,11 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include "spdlog/spdlog.h"
+#include <spdlog/spdlog.h>
 #endif
 
-#include "spdlog/common.h"
-#include "spdlog/details/pattern_formatter.h"
+#include <spdlog/common.h>
+#include <spdlog/details/pattern_formatter.h>
 
 namespace spdlog {
 
@@ -92,9 +92,9 @@ SPDLOG_INLINE void shutdown()
     details::registry::instance().shutdown();
 }
 
-SPDLOG_INLINE void set_automatic_registration(bool automatic_registation)
+SPDLOG_INLINE void set_automatic_registration(bool automatic_registration)
 {
-    details::registry::instance().set_automatic_registration(automatic_registation);
+    details::registry::instance().set_automatic_registration(automatic_registration);
 }
 
 SPDLOG_INLINE std::shared_ptr<spdlog::logger> default_logger()

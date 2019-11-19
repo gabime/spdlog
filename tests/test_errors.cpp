@@ -26,7 +26,7 @@ protected:
 TEST_CASE("default_error_handler", "[errors]]")
 {
     prepare_logdir();
-    std::string filename = "logs/simple_log.txt";
+    std::string filename = "test_logs/simple_log.txt";
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("test-error", filename, true);
     logger->set_pattern("%v");
@@ -43,7 +43,7 @@ struct custom_ex
 TEST_CASE("custom_error_handler", "[errors]]")
 {
     prepare_logdir();
-    std::string filename = "logs/simple_log.txt";
+    std::string filename = "test_logs/simple_log.txt";
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename, true);
     logger->flush_on(spdlog::level::info);
     logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
@@ -75,15 +75,15 @@ TEST_CASE("async_error_handler", "[errors]]")
     prepare_logdir();
     std::string err_msg("log failed with some msg");
 
-    std::string filename = "logs/simple_async_log.txt";
+    std::string filename = "test_logs/simple_async_log.txt";
     {
         spdlog::init_thread_pool(128, 1);
         auto logger = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("logger", filename, true);
         logger->set_error_handler([=](const std::string &) {
-            std::ofstream ofs("logs/custom_err.txt");
+            std::ofstream ofs("test_logs/custom_err.txt");
             if (!ofs)
             {
-                throw std::runtime_error("Failed open logs/custom_err.txt");
+                throw std::runtime_error("Failed open test_logs/custom_err.txt");
             }
             ofs << err_msg;
         });
@@ -94,7 +94,7 @@ TEST_CASE("async_error_handler", "[errors]]")
     }
     spdlog::init_thread_pool(128, 1);
     REQUIRE(count_lines(filename) == 2);
-    REQUIRE(file_contents("logs/custom_err.txt") == err_msg);
+    REQUIRE(file_contents("test_logs/custom_err.txt") == err_msg);
 }
 
 // Make sure async error handler is executed
@@ -103,12 +103,13 @@ TEST_CASE("async_error_handler2", "[errors]]")
     prepare_logdir();
     std::string err_msg("This is async handler error message");
     {
+        spdlog::details::os::create_dir("test_logs");
         spdlog::init_thread_pool(128, 1);
         auto logger = spdlog::create_async<failing_sink>("failed_logger");
         logger->set_error_handler([=](const std::string &) {
-            std::ofstream ofs("logs/custom_err2.txt");
+            std::ofstream ofs("test_logs/custom_err2.txt");
             if (!ofs)
-                throw std::runtime_error("Failed open logs/custom_err2.txt");
+                throw std::runtime_error("Failed open test_logs/custom_err2.txt");
             ofs << err_msg;
         });
         logger->info("Hello failure");
@@ -116,5 +117,5 @@ TEST_CASE("async_error_handler2", "[errors]]")
     }
 
     spdlog::init_thread_pool(128, 1);
-    REQUIRE(file_contents("logs/custom_err2.txt") == err_msg);
+    REQUIRE(file_contents("test_logs/custom_err2.txt") == err_msg);
 }

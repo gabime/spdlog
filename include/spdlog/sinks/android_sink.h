@@ -5,11 +5,11 @@
 
 #ifdef __ANDROID__
 
-#include "spdlog/details/fmt_helper.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/details/os.h"
-#include "spdlog/sinks/base_sink.h"
-#include "spdlog/details/synchronous_factory.h"
+#include <spdlog/details/fmt_helper.h>
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/details/os.h>
+#include <spdlog/sinks/base_sink.h>
+#include <spdlog/details/synchronous_factory.h>
 
 #include <android/log.h>
 #include <chrono>

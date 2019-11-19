@@ -12,4 +12,3 @@ foreach i : bench_matrix
   benchmark('bench_' + i[0], bench_exe, args: i[2])
 endforeach
 
-run_command(find_program('mkdir'), meson.current_build_dir() + '/logs')

@@ -9,11 +9,11 @@
 
 #pragma once
 
-#include "spdlog/common.h"
-#include "spdlog/details/registry.h"
-#include "spdlog/logger.h"
-#include "spdlog/version.h"
-#include "spdlog/details/synchronous_factory.h"
+#include <spdlog/common.h>
+#include <spdlog/details/registry.h>
+#include <spdlog/logger.h>
+#include <spdlog/version.h>
+#include <spdlog/details/synchronous_factory.h>
 
 #include <chrono>
 #include <functional>
@@ -100,7 +100,7 @@ void drop_all();
 void shutdown();
 
 // Automatic registration of loggers when using spdlog::create() or spdlog::create_async
-void set_automatic_registration(bool automatic_registation);
+void set_automatic_registration(bool automatic_registration);
 
 // API for using default logger (stdout_color_mt),
 // e.g: spdlog::info("Message {}", 1);
@@ -285,7 +285,7 @@ inline void critical(wstring_view_t fmt, const Args &... args)
 // SPDLOG_LEVEL_OFF
 //
 
-#define SPDLOG_LOGGER_CALL(logger, level, ...) logger->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__)
+#define SPDLOG_LOGGER_CALL(logger, level, ...) (logger)->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__)
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
 #define SPDLOG_LOGGER_TRACE(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__)

@@ -4,14 +4,14 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include "spdlog/sinks/rotating_file_sink.h"
+#include <spdlog/sinks/rotating_file_sink.h>
 #endif
 
-#include "spdlog/common.h"
+#include <spdlog/common.h>
 
-#include "spdlog/details/file_helper.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/fmt/fmt.h"
+#include <spdlog/details/file_helper.h>
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/fmt/fmt.h>
 
 #include <cerrno>
 #include <chrono>
@@ -88,11 +88,12 @@ template<typename Mutex>
 SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
 {
     using details::os::filename_to_str;
+    using details::os::path_exists;
     file_helper_.close();
     for (auto i = max_files_; i > 0; --i)
     {
         filename_t src = calc_filename(base_filename_, i - 1);
-        if (!details::file_helper::file_exists(src))
+        if (!path_exists(src))
         {
             continue;
         }

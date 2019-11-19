@@ -1,4 +1,17 @@
-Checks: 'modernize-*,modernize-use-override,google-*,-google-runtime-references,misc-*,clang-analyzer-*,-misc-non-private-member-variables-in-classes'
+Checks: '\
+cppcoreguidelines-*,\
+performance-*,\
+-performance-unnecessary-value-param,\
+modernize-*,\
+-modernize-use-trailing-return-type,\
+google-*,\
+-google-runtime-references,\
+misc-*,\
+-misc-non-private-member-variables-in-classes,\
+cert-*,\
+readability-*,\
+clang-analyzer-*'
+
 WarningsAsErrors: ''
 HeaderFilterRegex: 'async.h|async_logger.h|common.h|details|formatter.h|logger.h|sinks|spdlog.h|tweakme.h|version.h'
 AnalyzeTemporaryDtors: false

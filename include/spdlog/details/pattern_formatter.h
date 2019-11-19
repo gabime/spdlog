@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "spdlog/common.h"
-#include "spdlog/details/log_msg.h"
-#include "spdlog/details/os.h"
-#include "spdlog/formatter.h"
+#include <spdlog/common.h>
+#include <spdlog/details/log_msg.h>
+#include <spdlog/details/os.h>
+#include <spdlog/formatter.h>
 
 #include <chrono>
 #include <ctime>
@@ -29,17 +29,21 @@ struct padding_info
     };
 
     padding_info() = default;
-    padding_info(size_t width, padding_info::pad_side side)
+    padding_info(size_t width, padding_info::pad_side side, bool truncate)
         : width_(width)
         , side_(side)
+        , truncate_(truncate)
+        , enabled_(true)
     {}
 
     bool enabled() const
     {
-        return width_ != 0;
+        return enabled_;
     }
     const size_t width_ = 0;
     const pad_side side_ = left;
+    bool truncate_ = false;
+    bool enabled_ = false;
 };
 
 class flag_formatter

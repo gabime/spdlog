@@ -4,14 +4,14 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include "spdlog/details/pattern_formatter.h"
+#include <spdlog/details/pattern_formatter.h>
 #endif
 
-#include "spdlog/details/fmt_helper.h"
-#include "spdlog/details/log_msg.h"
-#include "spdlog/details/os.h"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/formatter.h"
+#include <spdlog/details/fmt_helper.h>
+#include <spdlog/details/log_msg.h>
+#include <spdlog/details/os.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/formatter.h>
 
 #include <array>
 #include <chrono>
@@ -39,47 +39,50 @@ public:
         : padinfo_(padinfo)
         , dest_(dest)
     {
-
-        if (padinfo_.width_ <= wrapped_size)
+        remaining_pad_ = static_cast<long>(padinfo.width_) - static_cast<long>(wrapped_size);
+        if (remaining_pad_ <= 0)
         {
-            total_pad_ = 0;
             return;
         }
 
-        total_pad_ = padinfo.width_ - wrapped_size;
         if (padinfo_.side_ == padding_info::left)
         {
-            pad_it(total_pad_);
-            total_pad_ = 0;
+            pad_it(remaining_pad_);
+            remaining_pad_ = 0;
         }
         else if (padinfo_.side_ == padding_info::center)
         {
-            auto half_pad = total_pad_ / 2;
-            auto reminder = total_pad_ & 1;
+            auto half_pad = remaining_pad_ / 2;
+            auto reminder = remaining_pad_ & 1;
             pad_it(half_pad);
-            total_pad_ = half_pad + reminder; // for the right side
+            remaining_pad_ = half_pad + reminder; // for the right side
         }
     }
 
     ~scoped_padder()
     {
-        if (total_pad_)
+        if (remaining_pad_ >= 0)
         {
-            pad_it(total_pad_);
+            pad_it(remaining_pad_);
+        }
+        else if (padinfo_.truncate_)
+        {
+            long new_size = static_cast<long>(dest_.size()) + remaining_pad_;
+            dest_.resize(static_cast<size_t>(new_size));
         }
     }
 
 private:
-    void pad_it(size_t count)
+    void pad_it(long count)
     {
         // count = std::min(count, spaces_.size());
-        assert(count <= spaces_.size());
+        // assert(count <= spaces_.size());
         fmt_helper::append_string_view(string_view_t(spaces_.data(), count), dest_);
     }
 
     const padding_info &padinfo_;
     memory_buf_t &dest_;
-    size_t total_pad_;
+    long remaining_pad_;
     string_view_t spaces_{"                                                                ", 64};
 };
 
@@ -593,14 +596,7 @@ public:
         const size_t field_size = 6;
         ScopedPadder p(field_size, padinfo_, dest);
 
-#ifdef _WIN32
-        int total_minutes = get_cached_offset(msg, tm_time);
-#else
-        // No need to chache under gcc,
-        // it is very fast (already stored in tm.tm_gmtoff)
-        (void)(msg);
-        int total_minutes = os::utc_minutes_offset(tm_time);
-#endif
+        auto total_minutes = get_cached_offset(msg, tm_time);
         bool is_negative = total_minutes < 0;
         if (is_negative)
         {
@@ -619,7 +615,6 @@ public:
 
 private:
     log_clock::time_point last_update_{std::chrono::seconds(0)};
-#ifdef _WIN32
     int offset_minutes_{0};
 
     int get_cached_offset(const log_msg &msg, const std::tm &tm_time)
@@ -632,7 +627,6 @@ private:
         }
         return offset_minutes_;
     }
-#endif
 };
 
 // Thread id
@@ -885,7 +879,7 @@ public:
         fmt_helper::pad6(static_cast<size_t>(delta_units.count()), dest);
     }
 
-protected:
+private:
     log_clock::time_point last_message_time_;
 };
 
@@ -903,8 +897,6 @@ public:
         using std::chrono::duration_cast;
         using std::chrono::milliseconds;
         using std::chrono::seconds;
-
-#ifndef SPDLOG_NO_DATETIME
 
         // cache the date/time part for the next second.
         auto duration = msg.time.time_since_epoch();
@@ -940,10 +932,6 @@ public:
         fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
         dest.push_back(']');
         dest.push_back(' ');
-
-#else // no datetime needed
-        (void)tm_time;
-#endif
 
 #ifndef SPDLOG_NO_NAME
         if (msg.logger_name.size() > 0)
@@ -1014,14 +1002,13 @@ SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
 {
-#ifndef SPDLOG_NO_DATETIME
     auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
     if (secs != last_log_secs_)
     {
         cached_tm_ = get_time_(msg);
         last_log_secs_ = secs;
     }
-#endif
+
     for (auto &f : formatters_)
     {
         f->format(msg, cached_tm_, dest);
@@ -1225,7 +1212,7 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
     }
 }
 
-// Extract given pad spec (e.g. %8X)
+// Extract given pad spec (e.g. %8X, %=8X, %-8!X, %8!X, %=8!X, %-8!X, %+8!X)
 // Advance the given it pass the end of the padding spec found (if any)
 // Return padding.
 SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end)
@@ -1256,7 +1243,7 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::stri
 
     if (it == end || !std::isdigit(static_cast<unsigned char>(*it)))
     {
-        return padding_info{0, side};
+        return padding_info{}; // no padding if no digit found here
     }
 
     auto width = static_cast<size_t>(*it) - '0';
@@ -1265,7 +1252,20 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::stri
         auto digit = static_cast<size_t>(*it) - '0';
         width = width * 10 + digit;
     }
-    return details::padding_info{std::min<size_t>(width, max_width), side};
+
+    // search for the optional truncate marker '!'
+    bool truncate;
+    if (it != end && *it == '!')
+    {
+        truncate = true;
+        ++it;
+    }
+    else
+    {
+        truncate = false;
+    }
+
+    return details::padding_info{std::min<size_t>(width, max_width), side, truncate};
 }
 
 SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &pattern)

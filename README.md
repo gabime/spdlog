@@ -30,6 +30,8 @@ $ cmake .. && make -j
 * Gentoo: `emerge dev-libs/spdlog`
 * Arch Linux: `yaourt -S spdlog-git`
 * vcpkg: `vcpkg install spdlog`
+* conan: `spdlog/[>=1.4.1]@bincrafters/stable`
+
 
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).

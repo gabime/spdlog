@@ -3,10 +3,14 @@
 
 #pragma once
 
-#include "spdlog/sinks/base_sink.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/details/synchronous_factory.h"
+#include <spdlog/sinks/base_sink.h>
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/details/synchronous_factory.h>
 
+#include <array>
+#ifndef SD_JOURNAL_SUPPRESS_LOCATION
+#define SD_JOURNAL_SUPPRESS_LOCATION
+#endif
 #include <systemd/sd-journal.h>
 
 namespace spdlog {
@@ -56,13 +60,14 @@ protected:
         if (msg.source.empty())
         {
             // Note: function call inside '()' to avoid macro expansion
-            err = (sd_journal_send)(
-                "MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d", syslog_level(msg.level), nullptr);
+            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d", syslog_level(msg.level),
+                "SYSLOG_IDENTIFIER=%.*s", static_cast<int>(msg.logger_name.size()), msg.logger_name.data(), nullptr);
         }
         else
         {
             err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d", syslog_level(msg.level),
-                "SOURCE_FILE=%s", msg.source.filename, "SOURCE_LINE=%d", msg.source.line, "SOURCE_FUNC=%s", msg.source.funcname, nullptr);
+                "SYSLOG_IDENTIFIER=%.*s", static_cast<int>(msg.logger_name.size()), msg.logger_name.data(), "CODE_FILE=%s",
+                msg.source.filename, "CODE_LINE=%d", msg.source.line, "CODE_FUNC=%s", msg.source.funcname, nullptr);
         }
 
         if (err)

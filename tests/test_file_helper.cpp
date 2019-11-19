@@ -6,7 +6,7 @@
 using spdlog::details::file_helper;
 using spdlog::details::log_msg;
 
-static const std::string target_filename = "logs/file_helper_test.txt";
+static const std::string target_filename = "test_logs/file_helper_test.txt";
 
 static void write_with_helper(file_helper &helper, size_t howmany)
 {
@@ -36,15 +36,6 @@ TEST_CASE("file_helper_size", "[file_helper::size()]]")
         REQUIRE(static_cast<size_t>(helper.size()) == expected_size);
     }
     REQUIRE(get_filesize(target_filename) == expected_size);
-}
-
-TEST_CASE("file_helper_exists", "[file_helper::file_exists()]]")
-{
-    prepare_logdir();
-    REQUIRE(!file_helper::file_exists(target_filename));
-    file_helper helper;
-    helper.open(target_filename);
-    REQUIRE(file_helper::file_exists(target_filename));
 }
 
 TEST_CASE("file_helper_reopen", "[file_helper::reopen()]]")

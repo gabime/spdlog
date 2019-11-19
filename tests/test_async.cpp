@@ -157,7 +157,7 @@ TEST_CASE("to_file", "[async]")
     prepare_logdir();
     size_t messages = 1024;
     size_t tp_threads = 1;
-    std::string filename = "logs/async_test.log";
+    std::string filename = "test_logs/async_test.log";
     {
         auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
         auto tp = std::make_shared<spdlog::details::thread_pool>(messages, tp_threads);
@@ -179,7 +179,7 @@ TEST_CASE("to_file multi-workers", "[async]")
     prepare_logdir();
     size_t messages = 1024 * 10;
     size_t tp_threads = 10;
-    std::string filename = "logs/async_test.log";
+    std::string filename = "test_logs/async_test.log";
     {
         auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
         auto tp = std::make_shared<spdlog::details::thread_pool>(messages, tp_threads);

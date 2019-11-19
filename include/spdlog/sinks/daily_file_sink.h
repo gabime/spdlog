@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "spdlog/common.h"
-#include "spdlog/details/file_helper.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/sinks/base_sink.h"
-#include "spdlog/details/os.h"
-#include "spdlog/details/synchronous_factory.h"
+#include <spdlog/common.h>
+#include <spdlog/details/file_helper.h>
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/fmt/fmt.h>
+#include <spdlog/sinks/base_sink.h>
+#include <spdlog/details/os.h>
+#include <spdlog/details/synchronous_factory.h>
 
 #include <chrono>
 #include <cstdio>
@@ -78,12 +78,7 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-#ifdef SPDLOG_NO_DATETIME
-        auto time = log_clock::now();
-#else
         auto time = msg.time;
-#endif
-
         bool should_rotate = time >= rotation_tp_;
         if (should_rotate)
         {
@@ -95,7 +90,7 @@ protected:
         base_sink<Mutex>::formatter_->format(msg, formatted);
         file_helper_.write(formatted);
 
-        // Do the cleaning ony at the end because it might throw on failure.
+        // Do the cleaning only at the end because it might throw on failure.
         if (should_rotate && max_files_ > 0)
         {
             delete_old_();

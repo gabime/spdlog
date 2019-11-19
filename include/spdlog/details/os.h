@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "spdlog/common.h"
+#include <spdlog/common.h>
 #include <ctime> // std::time_t
 
 namespace spdlog {
@@ -33,12 +33,14 @@ SPDLOG_CONSTEXPR static const char *default_eol = SPDLOG_EOL;
 
 // folder separator
 #ifdef _WIN32
-const char folder_sep = '\\';
+static const char folder_sep = '\\';
 #else
 SPDLOG_CONSTEXPR static const char folder_sep = '/';
 #endif
 
+#ifdef SPDLOG_PREVENT_CHILD_FD
 void prevent_child_fd(FILE *f);
+#endif
 
 // fopen_s on non windows for writing
 bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode);
@@ -53,7 +55,7 @@ int remove_if_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
 int rename(const filename_t &filename1, const filename_t &filename2) SPDLOG_NOEXCEPT;
 
 // Return if file exists.
-bool file_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
+bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT;
 
 // Return file size according to open FILE* object
 size_t filesize(FILE *f);
@@ -81,13 +83,24 @@ int pid() SPDLOG_NOEXCEPT;
 // Source: https://github.com/agauniyal/rang/
 bool is_color_terminal() SPDLOG_NOEXCEPT;
 
-// Detrmine if the terminal attached
+// Determine if the terminal attached
 // Source: https://github.com/agauniyal/rang/
 bool in_terminal(FILE *file) SPDLOG_NOEXCEPT;
 
 #if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target);
 #endif
+
+// Return directory name from given path or empty string
+// "abc/file" => "abc"
+// "abc/" => "abc"
+// "abc" => ""
+// "abc///" => "abc//"
+filename_t dir_name(filename_t path);
+
+// Create a dir from the given path.
+// Return true if succeeded or if this dir already exists.
+bool create_dir(filename_t path);
 
 } // namespace os
 } // namespace details

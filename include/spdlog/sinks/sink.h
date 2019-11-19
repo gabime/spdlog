@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include "spdlog/details/log_msg.h"
-#include "spdlog/formatter.h"
+#include <spdlog/details/log_msg.h>
+#include <spdlog/formatter.h>
 
 namespace spdlog {
 
