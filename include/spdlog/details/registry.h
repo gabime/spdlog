@@ -9,6 +9,7 @@
 // This class is thread safe
 
 #include <spdlog/common.h>
+#include <spdlog/async_logger.h>
 
 #include <chrono>
 #include <functional>
@@ -19,10 +20,13 @@
 
 namespace spdlog {
 class logger;
+class async_logger;
 
 namespace details {
 class thread_pool;
 class periodic_worker;
+
+static const size_t default_async_q_size = 8192;
 
 class registry
 {
@@ -92,6 +96,25 @@ public:
 		this->initialize_logger(new_logger);
 		return new_logger;
 	}
+
+    template<typename Sink, typename... SinkArgs>
+    std::shared_ptr<async_logger> create_async(std::string logger_name, 
+                                               async_overflow_policy OverflowPolicy,
+                                               SinkArgs &&... args)
+    {
+        // create global thread pool if not already exists..
+
+        std::lock_guard<std::recursive_mutex> tp_lock(tp_mutex_);
+        if (tp_ == nullptr)
+        {
+            tp_ = std::make_shared<details::thread_pool>(details::default_async_q_size, 1);
+        }
+
+        auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
+        auto new_logger = std::make_shared<async_logger>(std::move(logger_name), std::move(sink), std::move(tp_), OverflowPolicy);
+        this->initialize_logger(new_logger);
+        return new_logger;
+    }
 
 	// The unique global instance of the registry, usefult to access it
 	// from the global scope. NOTE It doesn't make it a singleton

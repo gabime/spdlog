@@ -24,10 +24,6 @@
 
 namespace spdlog {
 
-namespace details {
-static const size_t default_async_q_size = 8192;
-}
-
 // async logger factory - creates async loggers backed with thread pool.
 // if a global thread pool doesn't already exist, create it with default queue
 // size of 8192 items and single thread.
@@ -37,23 +33,8 @@ struct async_factory_impl
     template<typename Sink, typename... SinkArgs>
     static std::shared_ptr<async_logger> create(std::string logger_name, SinkArgs &&... args)
     {
-        auto &registry_inst = details::registry::instance();
-
-        // create global thread pool if not already exists..
-
-        auto &mutex = registry_inst.tp_mutex();
-        std::lock_guard<std::recursive_mutex> tp_lock(mutex);
-        auto tp = registry_inst.get_tp();
-        if (tp == nullptr)
-        {
-            tp = std::make_shared<details::thread_pool>(details::default_async_q_size, 1);
-            registry_inst.set_tp(tp);
-        }
-
-        auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
-        auto new_logger = std::make_shared<async_logger>(std::move(logger_name), std::move(sink), std::move(tp), OverflowPolicy);
-        registry_inst.initialize_logger(new_logger);
-        return new_logger;
+        return details::registry::instance().create_async<Sink>(
+            std::move(logger_name), OverflowPolicy, std::forward<SinkArgs>(args)...);
     }
 };
 
