@@ -462,7 +462,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
 #endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 
 // return true on success
-SPDLOG_INLINE bool mkdir_(const filename_t &path)
+static SPDLOG_INLINE bool mkdir_(const filename_t &path)
 {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES
