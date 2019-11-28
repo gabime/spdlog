@@ -77,7 +77,7 @@ private:
     {
         // count = std::min(count, spaces_.size());
         // assert(count <= spaces_.size());
-        fmt_helper::append_string_view(string_view_t(spaces_.data(), count), dest_);
+        fmt_helper::append_string_view(string_view_t(spaces_.data(), static_cast<size_t>(count)), dest_);
     }
 
     const padding_info &padinfo_;
