@@ -875,8 +875,10 @@ public:
         auto delta = (std::max)(msg.time - last_message_time_, log_clock::duration::zero());
         auto delta_units = std::chrono::duration_cast<DurationUnits>(delta);
         last_message_time_ = msg.time;
-        ScopedPadder p(6, padinfo_, dest);
-        fmt_helper::pad6(static_cast<size_t>(delta_units.count()), dest);
+        auto delta_count = static_cast<size_t>(delta_units.count());
+        auto n_digits = static_cast<size_t>(fmt_helper::count_digits(delta_count));
+        ScopedPadder p(n_digits, padinfo_, dest);
+        fmt_helper::append_int(delta_count, dest);
     }
 
 private:
