@@ -9,6 +9,7 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/os.h>
+#include <spdlog/details/circular_q.h>
 #include <spdlog/details/synchronous_factory.h>
 
 #include <chrono>
