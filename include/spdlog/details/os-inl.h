@@ -230,7 +230,12 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 #endif
 
 #else // unix
+// OpenBSD doesn't compile with :: before the fileno(..)
+#if defined(__OpenBSD__)
+    int fd = fileno(f);
+#else
     int fd = ::fileno(f);
+#endif
 // 64 bits(but not in osx or cygwin, where fstat64 is deprecated)
 #if (defined(__linux__) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
     struct stat64 st;
