@@ -105,6 +105,7 @@ else
     include_directories : spdlog_inc,
     dependencies        : dep_list,
     install             : not meson.is_subproject(),
+    version             : meson.project_version(),
     )
 endif
 
