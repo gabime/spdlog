@@ -63,8 +63,12 @@ option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 # install options
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
+option(SPDLOG_FMT_EXTERNAL_HO "Use external fmt header-only library instead of bundled" OFF)
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
 
+if (SPDLOG_FMT_EXTERNAL AND SPDLOG_FMT_EXTERNAL_HO)
+    message(FATAL_ERROR "SPDLOG_FMT_EXTERNAL and SPDLOG_FMT_EXTERNAL_HO are mutually exclusive")
+endif()
 
 # misc tweakme options
 if(WIN32)
@@ -93,7 +97,7 @@ set(SPDLOG_SRCS
         src/async.cpp)
 
 
-if(NOT SPDLOG_FMT_EXTERNAL)
+if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
     list(APPEND SPDLOG_SRCS src/fmt.cpp)
 endif()
 
@@ -133,15 +137,21 @@ target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 #---------------------------------------------------------------------------------------
 # Use fmt package if using external fmt
 #---------------------------------------------------------------------------------------
-if(SPDLOG_FMT_EXTERNAL)
+if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
     if (NOT TARGET fmt::fmt)
         find_package(fmt REQUIRED)
     endif ()
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
-    target_link_libraries(spdlog PUBLIC fmt::fmt)
-
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
-    target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
+
+    # use external fmt-header-nly
+    if(SPDLOG_FMT_EXTERNAL_HO)
+        target_link_libraries(spdlog PUBLIC fmt::fmt-header-only)
+        target_link_libraries(spdlog_header_only INTERFACE fmt::fmt-header-only)
+    else() # use external compile fmt
+        target_link_libraries(spdlog PUBLIC fmt::fmt)
+        target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
+    endif()
 
     set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
 endif()
@@ -233,7 +243,7 @@ if (SPDLOG_INSTALL)
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
     install(TARGETS spdlog spdlog_header_only EXPORT spdlog DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 
-    if(NOT SPDLOG_FMT_EXTERNAL)
+    if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
         install(DIRECTORY include/${PROJECT_NAME}/fmt/bundled/
                 DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/fmt/bundled/")
     endif()
