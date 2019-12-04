@@ -1145,10 +1145,11 @@ template <typename Char> class float_writer {
     if (specs_.format == float_format::exp) {
       // Insert a decimal point after the first digit and add an exponent.
       *it++ = static_cast<Char>(*digits_);
-      if (num_digits_ > 1) *it++ = decimal_point_;
-      it = copy_str<Char>(digits_ + 1, digits_ + num_digits_, it);
       int num_zeros = specs_.precision - num_digits_;
-      if (num_zeros > 0 && specs_.trailing_zeros)
+      bool trailing_zeros = num_zeros > 0 && specs_.trailing_zeros;
+      if (num_digits_ > 1 || trailing_zeros) *it++ = decimal_point_;
+      it = copy_str<Char>(digits_ + 1, digits_ + num_digits_, it);
+      if (trailing_zeros)
         it = std::fill_n(it, num_zeros, static_cast<Char>('0'));
       *it++ = static_cast<Char>(specs_.upper ? 'E' : 'e');
       return write_exponent<Char>(full_exp - 1, it);
