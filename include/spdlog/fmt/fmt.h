@@ -10,6 +10,12 @@
 // By default spdlog include its own copy.
 //
 
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
+
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #ifdef SPDLOG_HEADER_ONLY
 #ifndef FMT_HEADER_ONLY
@@ -25,3 +31,4 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 #endif
+#pragma GCC diagnostic pop

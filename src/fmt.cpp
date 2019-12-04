@@ -6,8 +6,16 @@
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.
 
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #include "spdlog/fmt/bundled/format-inl.h"
+
+#pragma GCC diagnostic pop
+
 
 
 FMT_BEGIN_NAMESPACE
