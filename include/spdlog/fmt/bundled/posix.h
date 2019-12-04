@@ -13,11 +13,10 @@
 #  undef __STRICT_ANSI__
 #endif
 
-#include <errno.h>
-#include <fcntl.h>   // for O_RDONLY
-#include <locale.h>  // for locale_t
-#include <stdio.h>
-#include <stdlib.h>  // for strtod_l
+#include <cerrno>
+#include <clocale>  // for locale_t
+#include <cstdio>
+#include <cstdlib>  // for strtod_l
 
 #include <cstddef>
 
@@ -26,6 +25,18 @@
 #endif
 
 #include "format.h"
+
+// UWP doesn't provide _pipe.
+#if FMT_HAS_INCLUDE("winapifamily.h")
+#  include <winapifamily.h>
+#endif
+#if FMT_HAS_INCLUDE("fcntl.h") && \
+    (!defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP))
+#  include <fcntl.h>  // for O_RDONLY
+#  define FMT_USE_FCNTL 1
+#else
+#  define FMT_USE_FCNTL 0
+#endif
 
 #ifndef FMT_POSIX
 #  if defined(_WIN32) && !defined(__MINGW32__)
@@ -54,8 +65,8 @@
 #ifndef _WIN32
 #  define FMT_RETRY_VAL(result, expression, error_result) \
     do {                                                  \
-      result = (expression);                              \
-    } while (result == error_result && errno == EINTR)
+      (result) = (expression);                            \
+    } while ((result) == (error_result) && errno == EINTR)
 #else
 #  define FMT_RETRY_VAL(result, expression, error_result) result = (expression)
 #endif
@@ -132,15 +143,14 @@ class buffered_file {
   explicit buffered_file(FILE* f) : file_(f) {}
 
  public:
+  buffered_file(const buffered_file&) = delete;
+  void operator=(const buffered_file&) = delete;
+
   // Constructs a buffered_file object which doesn't represent any file.
   buffered_file() FMT_NOEXCEPT : file_(nullptr) {}
 
   // Destroys the object closing the file it represents if any.
   FMT_API ~buffered_file() FMT_NOEXCEPT;
-
- private:
-  buffered_file(const buffered_file&) = delete;
-  void operator=(const buffered_file&) = delete;
 
  public:
   buffered_file(buffered_file&& other) FMT_NOEXCEPT : file_(other.file_) {
@@ -177,6 +187,7 @@ class buffered_file {
   }
 };
 
+#if FMT_USE_FCNTL
 // A file. Closed file is represented by a file object with descriptor -1.
 // Methods that are not declared with FMT_NOEXCEPT may throw
 // fmt::system_error in case of failure. Note that some errors such as
@@ -204,14 +215,13 @@ class file {
   // Opens a file and constructs a file object representing this file.
   FMT_API file(cstring_view path, int oflag);
 
- private:
+ public:
   file(const file&) = delete;
   void operator=(const file&) = delete;
 
- public:
   file(file&& other) FMT_NOEXCEPT : fd_(other.fd_) { other.fd_ = -1; }
 
-  file& operator=(file&& other) {
+  file& operator=(file&& other) FMT_NOEXCEPT {
     close();
     fd_ = other.fd_;
     other.fd_ = -1;
@@ -260,6 +270,7 @@ class file {
 
 // Returns the memory page size.
 long getpagesize();
+#endif  // FMT_USE_FCNTL
 
 #ifdef FMT_LOCALE
 // A "C" numeric locale.
@@ -283,11 +294,10 @@ class Locale {
 
   locale_t locale_;
 
-  Locale(const Locale&) = delete;
-  void operator=(const Locale&) = delete;
-
  public:
   using type = locale_t;
+  Locale(const Locale&) = delete;
+  void operator=(const Locale&) = delete;
 
   Locale() : locale_(newlocale(LC_NUMERIC_MASK, "C", nullptr)) {
     if (!locale_) FMT_THROW(system_error(errno, "cannot create locale"));

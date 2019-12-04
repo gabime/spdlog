@@ -1,4 +1,4 @@
-// Formatting library for C++
+// Formatting library for C++ - implementation
 //
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.
@@ -10,14 +10,11 @@
 
 #include "format.h"
 
-#include <string.h>
-
+#include <cassert>
 #include <cctype>
-#include <cerrno>
 #include <climits>
 #include <cmath>
 #include <cstdarg>
-#include <cstddef>  // for std::ptrdiff_t
 #include <cstring>  // for std::memmove
 #include <cwchar>
 #if !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
@@ -47,24 +44,21 @@
 
 #ifdef _MSC_VER
 #  pragma warning(push)
-#  pragma warning(disable : 4127)  // conditional expression is constant
 #  pragma warning(disable : 4702)  // unreachable code
-// Disable deprecation warning for strerror. The latter is not called but
-// MSVC fails to detect it.
-#  pragma warning(disable : 4996)
 #endif
 
 // Dummy implementations of strerror_r and strerror_s called if corresponding
 // system functions are not available.
-inline fmt::internal::null<> strerror_r(int, char*, ...) {
-  return fmt::internal::null<>();
-}
-inline fmt::internal::null<> strerror_s(char*, std::size_t, ...) {
-  return fmt::internal::null<>();
-}
+inline fmt::internal::null<> strerror_r(int, char*, ...) { return {}; }
+inline fmt::internal::null<> strerror_s(char*, std::size_t, ...) { return {}; }
 
 FMT_BEGIN_NAMESPACE
 namespace internal {
+
+FMT_FUNC void assert_fail(const char* file, int line, const char* message) {
+  print(stderr, "{}:{}: assertion failed: {}", file, line, message);
+  std::abort();
+}
 
 #ifndef _MSC_VER
 #  define FMT_SNPRINTF snprintf
@@ -81,7 +75,7 @@ inline int fmt_snprintf(char* buffer, size_t size, const char* format, ...) {
 
 using format_func = void (*)(internal::buffer<char>&, int, string_view);
 
-// Portable thread-safe version of strerror.
+// A portable thread-safe version of strerror.
 // Sets buffer to point to a string describing the error code.
 // This can be either a pointer to a string stored in buffer,
 // or a pointer to some static immutable string.
@@ -158,7 +152,7 @@ FMT_FUNC void format_error_code(internal::buffer<char>& out, int error_code,
   static const char ERROR_STR[] = "error ";
   // Subtract 2 to account for terminating null characters in SEP and ERROR_STR.
   std::size_t error_code_size = sizeof(SEP) + sizeof(ERROR_STR) - 2;
-  auto abs_value = static_cast<uint32_or_64_t<int>>(error_code);
+  auto abs_value = static_cast<uint32_or_64_or_128_t<int>>(error_code);
   if (internal::is_negative(error_code)) {
     abs_value = 0 - abs_value;
     ++error_code_size;
@@ -206,6 +200,9 @@ template <typename Locale> Locale locale_ref::get() const {
   return locale_ ? *static_cast<const std::locale*>(locale_) : std::locale();
 }
 
+template <typename Char> FMT_FUNC std::string grouping_impl(locale_ref loc) {
+  return std::use_facet<std::numpunct<Char>>(loc.get<std::locale>()).grouping();
+}
 template <typename Char> FMT_FUNC Char thousands_sep_impl(locale_ref loc) {
   return std::use_facet<std::numpunct<Char>>(loc.get<std::locale>())
       .thousands_sep();
@@ -217,6 +214,10 @@ template <typename Char> FMT_FUNC Char decimal_point_impl(locale_ref loc) {
 }  // namespace internal
 #else
 template <typename Char>
+FMT_FUNC std::string internal::grouping_impl(locale_ref) {
+  return "\03";
+}
+template <typename Char>
 FMT_FUNC Char internal::thousands_sep_impl(locale_ref) {
   return FMT_STATIC_THOUSANDS_SEPARATOR;
 }
@@ -226,8 +227,8 @@ FMT_FUNC Char internal::decimal_point_impl(locale_ref) {
 }
 #endif
 
-FMT_API FMT_FUNC format_error::~format_error() FMT_NOEXCEPT {}
-FMT_API FMT_FUNC system_error::~system_error() FMT_NOEXCEPT {}
+FMT_API FMT_FUNC format_error::~format_error() FMT_NOEXCEPT = default;
+FMT_API FMT_FUNC system_error::~system_error() FMT_NOEXCEPT = default;
 
 FMT_FUNC void system_error::init(int err_code, string_view format_str,
                                  format_args args) {
@@ -241,25 +242,11 @@ FMT_FUNC void system_error::init(int err_code, string_view format_str,
 namespace internal {
 
 template <> FMT_FUNC int count_digits<4>(internal::fallback_uintptr n) {
-  // Assume little endian; pointer formatting is implementation-defined anyway.
+  // fallback_uintptr is always stored in little endian.
   int i = static_cast<int>(sizeof(void*)) - 1;
   while (i > 0 && n.value[i] == 0) --i;
   auto char_digits = std::numeric_limits<unsigned char>::digits / 4;
   return i >= 0 ? i * char_digits + count_digits<4, unsigned>(n.value[i]) : 1;
-}
-
-template <typename T>
-int format_float(char* buf, std::size_t size, const char* format, int precision,
-                 T value) {
-#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
-  if (precision > 100000)
-    throw std::runtime_error(
-        "fuzz mode - avoid large allocation inside snprintf");
-#endif
-  // Suppress the warning about nonliteral format string.
-  auto snprintf_ptr = FMT_SNPRINTF;
-  return precision < 0 ? snprintf_ptr(buf, size, format, value)
-                       : snprintf_ptr(buf, size, format, precision, value);
 }
 
 template <typename T>
@@ -274,14 +261,14 @@ template <typename T>
 const char basic_data<T>::hex_digits[] = "0123456789abcdef";
 
 #define FMT_POWERS_OF_10(factor)                                             \
-  factor * 10, factor * 100, factor * 1000, factor * 10000, factor * 100000, \
-      factor * 1000000, factor * 10000000, factor * 100000000,               \
-      factor * 1000000000
+  factor * 10, (factor)*100, (factor)*1000, (factor)*10000, (factor)*100000, \
+      (factor)*1000000, (factor)*10000000, (factor)*100000000,               \
+      (factor)*1000000000
 
 template <typename T>
 const uint64_t basic_data<T>::powers_of_10_64[] = {
-    1, FMT_POWERS_OF_10(1), FMT_POWERS_OF_10(1000000000ull),
-    10000000000000000000ull};
+    1, FMT_POWERS_OF_10(1), FMT_POWERS_OF_10(1000000000ULL),
+    10000000000000000000ULL};
 
 template <typename T>
 const uint32_t basic_data<T>::zero_or_powers_of_10_32[] = {0,
@@ -289,8 +276,8 @@ const uint32_t basic_data<T>::zero_or_powers_of_10_32[] = {0,
 
 template <typename T>
 const uint64_t basic_data<T>::zero_or_powers_of_10_64[] = {
-    0, FMT_POWERS_OF_10(1), FMT_POWERS_OF_10(1000000000ull),
-    10000000000000000000ull};
+    0, FMT_POWERS_OF_10(1), FMT_POWERS_OF_10(1000000000ULL),
+    10000000000000000000ULL};
 
 // Normalized 64-bit significands of pow(10, k), for k = -348, -340, ..., 340.
 // These are generated by support/compute-powers.py.
@@ -346,10 +333,22 @@ template <typename T>
 const char basic_data<T>::background_color[] = "\x1b[48;2;";
 template <typename T> const char basic_data<T>::reset_color[] = "\x1b[0m";
 template <typename T> const wchar_t basic_data<T>::wreset_color[] = L"\x1b[0m";
+template <typename T> const char basic_data<T>::signs[] = {0, '-', '+', ' '};
 
 template <typename T> struct bits {
   static FMT_CONSTEXPR_DECL const int value =
       static_cast<int>(sizeof(T) * std::numeric_limits<unsigned char>::digits);
+};
+
+class fp;
+template <int SHIFT = 0> fp normalize(fp value);
+
+// Lower (upper) boundary is a value half way between a floating-point value
+// and its predecessor (successor). Boundaries have the same exponent as the
+// value so only significands are stored.
+struct boundaries {
+  uint64_t lower;
+  uint64_t upper;
 };
 
 // A handmade floating-point number f * pow(2, e).
@@ -363,7 +362,7 @@ class fp {
   static FMT_CONSTEXPR_DECL const int double_significand_size =
       std::numeric_limits<double>::digits - 1;
   static FMT_CONSTEXPR_DECL const uint64_t implicit_bit =
-      1ull << double_significand_size;
+      1ULL << double_significand_size;
 
  public:
   significand_type f;
@@ -377,94 +376,376 @@ class fp {
 
   // Constructs fp from an IEEE754 double. It is a template to prevent compile
   // errors on platforms where double is not IEEE754.
-  template <typename Double> explicit fp(Double d) {
+  template <typename Double> explicit fp(Double d) { assign(d); }
+
+  // Normalizes the value converted from double and multiplied by (1 << SHIFT).
+  template <int SHIFT> friend fp normalize(fp value) {
+    // Handle subnormals.
+    const auto shifted_implicit_bit = fp::implicit_bit << SHIFT;
+    while ((value.f & shifted_implicit_bit) == 0) {
+      value.f <<= 1;
+      --value.e;
+    }
+    // Subtract 1 to account for hidden bit.
+    const auto offset =
+        fp::significand_size - fp::double_significand_size - SHIFT - 1;
+    value.f <<= offset;
+    value.e -= offset;
+    return value;
+  }
+
+  // Assigns d to this and return true iff predecessor is closer than successor.
+  template <typename Double, FMT_ENABLE_IF(sizeof(Double) == sizeof(uint64_t))>
+  bool assign(Double d) {
     // Assume double is in the format [sign][exponent][significand].
     using limits = std::numeric_limits<Double>;
     const int exponent_size =
         bits<Double>::value - double_significand_size - 1;  // -1 for sign
     const uint64_t significand_mask = implicit_bit - 1;
-    const uint64_t exponent_mask = (~0ull >> 1) & ~significand_mask;
+    const uint64_t exponent_mask = (~0ULL >> 1) & ~significand_mask;
     const int exponent_bias = (1 << exponent_size) - limits::max_exponent - 1;
     auto u = bit_cast<uint64_t>(d);
-    auto biased_e = (u & exponent_mask) >> double_significand_size;
     f = u & significand_mask;
+    auto biased_e = (u & exponent_mask) >> double_significand_size;
+    // Predecessor is closer if d is a normalized power of 2 (f == 0) other than
+    // the smallest normalized number (biased_e > 1).
+    bool is_predecessor_closer = f == 0 && biased_e > 1;
     if (biased_e != 0)
       f += implicit_bit;
     else
       biased_e = 1;  // Subnormals use biased exponent 1 (min exponent).
     e = static_cast<int>(biased_e - exponent_bias - double_significand_size);
+    return is_predecessor_closer;
   }
 
-  // Normalizes the value converted from double and multiplied by (1 << SHIFT).
-  template <int SHIFT = 0> void normalize() {
-    // Handle subnormals.
-    auto shifted_implicit_bit = implicit_bit << SHIFT;
-    while ((f & shifted_implicit_bit) == 0) {
-      f <<= 1;
-      --e;
-    }
-    // Subtract 1 to account for hidden bit.
-    auto offset = significand_size - double_significand_size - SHIFT - 1;
-    f <<= offset;
-    e -= offset;
+  template <typename Double, FMT_ENABLE_IF(sizeof(Double) != sizeof(uint64_t))>
+  bool assign(Double) {
+    *this = fp();
+    return false;
   }
 
-  // Compute lower and upper boundaries (m^- and m^+ in the Grisu paper), where
-  // a boundary is a value half way between the number and its predecessor
+  // Assigns d to this together with computing lower and upper boundaries,
+  // where a boundary is a value half way between the number and its predecessor
   // (lower) or successor (upper). The upper boundary is normalized and lower
   // has the same exponent but may be not normalized.
-  void compute_boundaries(fp& lower, fp& upper) const {
-    lower =
-        f == implicit_bit ? fp((f << 2) - 1, e - 2) : fp((f << 1) - 1, e - 1);
-    upper = fp((f << 1) + 1, e - 1);
-    upper.normalize<1>();  // 1 is to account for the exponent shift above.
+  template <typename Double> boundaries assign_with_boundaries(Double d) {
+    bool is_lower_closer = assign(d);
+    fp lower =
+        is_lower_closer ? fp((f << 2) - 1, e - 2) : fp((f << 1) - 1, e - 1);
+    // 1 in normalize accounts for the exponent shift above.
+    fp upper = normalize<1>(fp((f << 1) + 1, e - 1));
     lower.f <<= lower.e - upper.e;
-    lower.e = upper.e;
+    return boundaries{lower.f, upper.f};
+  }
+
+  template <typename Double> boundaries assign_float_with_boundaries(Double d) {
+    assign(d);
+    constexpr int min_normal_e = std::numeric_limits<float>::min_exponent -
+                                 std::numeric_limits<double>::digits;
+    significand_type half_ulp = 1 << (std::numeric_limits<double>::digits -
+                                      std::numeric_limits<float>::digits - 1);
+    if (min_normal_e > e) half_ulp <<= min_normal_e - e;
+    fp upper = normalize<0>(fp(f + half_ulp, e));
+    fp lower = fp(
+        f - (half_ulp >> ((f == implicit_bit && e > min_normal_e) ? 1 : 0)), e);
+    lower.f <<= lower.e - upper.e;
+    return boundaries{lower.f, upper.f};
   }
 };
 
-// Returns an fp number representing x - y. Result may not be normalized.
-inline fp operator-(fp x, fp y) {
-  FMT_ASSERT(x.f >= y.f && x.e == y.e, "invalid operands");
-  return fp(x.f - y.f, x.e);
-}
+inline bool operator==(fp x, fp y) { return x.f == y.f && x.e == y.e; }
 
-// Computes an fp number r with r.f = x.f * y.f / pow(2, 64) rounded to nearest
-// with half-up tie breaking, r.e = x.e + y.e + 64. Result may not be
-// normalized.
-FMT_FUNC fp operator*(fp x, fp y) {
-  int exp = x.e + y.e + 64;
+// Computes lhs * rhs / pow(2, 64) rounded to nearest with half-up tie breaking.
+inline uint64_t multiply(uint64_t lhs, uint64_t rhs) {
 #if FMT_USE_INT128
-  auto product = static_cast<__uint128_t>(x.f) * y.f;
+  auto product = static_cast<__uint128_t>(lhs) * rhs;
   auto f = static_cast<uint64_t>(product >> 64);
-  if ((static_cast<uint64_t>(product) & (1ULL << 63)) != 0) ++f;
-  return fp(f, exp);
+  return (static_cast<uint64_t>(product) & (1ULL << 63)) != 0 ? f + 1 : f;
 #else
   // Multiply 32-bit parts of significands.
   uint64_t mask = (1ULL << 32) - 1;
-  uint64_t a = x.f >> 32, b = x.f & mask;
-  uint64_t c = y.f >> 32, d = y.f & mask;
+  uint64_t a = lhs >> 32, b = lhs & mask;
+  uint64_t c = rhs >> 32, d = rhs & mask;
   uint64_t ac = a * c, bc = b * c, ad = a * d, bd = b * d;
   // Compute mid 64-bit of result and round.
   uint64_t mid = (bd >> 32) + (ad & mask) + (bc & mask) + (1U << 31);
-  return fp(ac + (ad >> 32) + (bc >> 32) + (mid >> 32), exp);
+  return ac + (ad >> 32) + (bc >> 32) + (mid >> 32);
 #endif
 }
 
-// Returns cached power (of 10) c_k = c_k.f * pow(2, c_k.e) such that its
-// (binary) exponent satisfies min_exponent <= c_k.e <= min_exponent + 28.
+inline fp operator*(fp x, fp y) { return {multiply(x.f, y.f), x.e + y.e + 64}; }
+
+// Returns a cached power of 10 `c_k = c_k.f * pow(2, c_k.e)` such that its
+// (binary) exponent satisfies `min_exponent <= c_k.e <= min_exponent + 28`.
 FMT_FUNC fp get_cached_power(int min_exponent, int& pow10_exponent) {
-  const double one_over_log2_10 = 0.30102999566398114;  // 1 / log2(10)
+  const uint64_t one_over_log2_10 = 0x4d104d42;  // round(pow(2, 32) / log2(10))
   int index = static_cast<int>(
-      std::ceil((min_exponent + fp::significand_size - 1) * one_over_log2_10));
+      static_cast<int64_t>(
+          (min_exponent + fp::significand_size - 1) * one_over_log2_10 +
+          ((uint64_t(1) << 32) - 1)  // ceil
+          ) >>
+      32  // arithmetic shift
+  );
   // Decimal exponent of the first (smallest) cached power of 10.
   const int first_dec_exp = -348;
   // Difference between 2 consecutive decimal exponents in cached powers of 10.
   const int dec_exp_step = 8;
   index = (index - first_dec_exp - 1) / dec_exp_step + 1;
   pow10_exponent = first_dec_exp + index * dec_exp_step;
-  return fp(data::pow10_significands[index], data::pow10_exponents[index]);
+  return {data::pow10_significands[index], data::pow10_exponents[index]};
 }
+
+// A simple accumulator to hold the sums of terms in bigint::square if uint128_t
+// is not available.
+struct accumulator {
+  uint64_t lower;
+  uint64_t upper;
+
+  accumulator() : lower(0), upper(0) {}
+  explicit operator uint32_t() const { return static_cast<uint32_t>(lower); }
+
+  void operator+=(uint64_t n) {
+    lower += n;
+    if (lower < n) ++upper;
+  }
+  void operator>>=(int shift) {
+    assert(shift == 32);
+    (void)shift;
+    lower = (upper << 32) | (lower >> 32);
+    upper >>= 32;
+  }
+};
+
+class bigint {
+ private:
+  // A bigint is stored as an array of bigits (big digits), with bigit at index
+  // 0 being the least significant one.
+  using bigit = uint32_t;
+  using double_bigit = uint64_t;
+  enum { bigits_capacity = 32 };
+  basic_memory_buffer<bigit, bigits_capacity> bigits_;
+  int exp_;
+
+  static FMT_CONSTEXPR_DECL const int bigit_bits = bits<bigit>::value;
+
+  friend struct formatter<bigint>;
+
+  void subtract_bigits(int index, bigit other, bigit& borrow) {
+    auto result = static_cast<double_bigit>(bigits_[index]) - other - borrow;
+    bigits_[index] = static_cast<bigit>(result);
+    borrow = static_cast<bigit>(result >> (bigit_bits * 2 - 1));
+  }
+
+  void remove_leading_zeros() {
+    int num_bigits = static_cast<int>(bigits_.size()) - 1;
+    while (num_bigits > 0 && bigits_[num_bigits] == 0) --num_bigits;
+    bigits_.resize(num_bigits + 1);
+  }
+
+  // Computes *this -= other assuming aligned bigints and *this >= other.
+  void subtract_aligned(const bigint& other) {
+    FMT_ASSERT(other.exp_ >= exp_, "unaligned bigints");
+    FMT_ASSERT(compare(*this, other) >= 0, "");
+    bigit borrow = 0;
+    int i = other.exp_ - exp_;
+    for (int j = 0, n = static_cast<int>(other.bigits_.size()); j != n;
+         ++i, ++j) {
+      subtract_bigits(i, other.bigits_[j], borrow);
+    }
+    while (borrow > 0) subtract_bigits(i, 0, borrow);
+    remove_leading_zeros();
+  }
+
+  void multiply(uint32_t value) {
+    const double_bigit wide_value = value;
+    bigit carry = 0;
+    for (size_t i = 0, n = bigits_.size(); i < n; ++i) {
+      double_bigit result = bigits_[i] * wide_value + carry;
+      bigits_[i] = static_cast<bigit>(result);
+      carry = static_cast<bigit>(result >> bigit_bits);
+    }
+    if (carry != 0) bigits_.push_back(carry);
+  }
+
+  void multiply(uint64_t value) {
+    const bigit mask = ~bigit(0);
+    const double_bigit lower = value & mask;
+    const double_bigit upper = value >> bigit_bits;
+    double_bigit carry = 0;
+    for (size_t i = 0, n = bigits_.size(); i < n; ++i) {
+      double_bigit result = bigits_[i] * lower + (carry & mask);
+      carry =
+          bigits_[i] * upper + (result >> bigit_bits) + (carry >> bigit_bits);
+      bigits_[i] = static_cast<bigit>(result);
+    }
+    while (carry != 0) {
+      bigits_.push_back(carry & mask);
+      carry >>= bigit_bits;
+    }
+  }
+
+ public:
+  bigint() : exp_(0) {}
+  explicit bigint(uint64_t n) { assign(n); }
+  ~bigint() { assert(bigits_.capacity() <= bigits_capacity); }
+
+  bigint(const bigint&) = delete;
+  void operator=(const bigint&) = delete;
+
+  void assign(const bigint& other) {
+    bigits_.resize(other.bigits_.size());
+    auto data = other.bigits_.data();
+    std::copy(data, data + other.bigits_.size(), bigits_.data());
+    exp_ = other.exp_;
+  }
+
+  void assign(uint64_t n) {
+    int num_bigits = 0;
+    do {
+      bigits_[num_bigits++] = n & ~bigit(0);
+      n >>= bigit_bits;
+    } while (n != 0);
+    bigits_.resize(num_bigits);
+    exp_ = 0;
+  }
+
+  int num_bigits() const { return static_cast<int>(bigits_.size()) + exp_; }
+
+  bigint& operator<<=(int shift) {
+    assert(shift >= 0);
+    exp_ += shift / bigit_bits;
+    shift %= bigit_bits;
+    if (shift == 0) return *this;
+    bigit carry = 0;
+    for (size_t i = 0, n = bigits_.size(); i < n; ++i) {
+      bigit c = bigits_[i] >> (bigit_bits - shift);
+      bigits_[i] = (bigits_[i] << shift) + carry;
+      carry = c;
+    }
+    if (carry != 0) bigits_.push_back(carry);
+    return *this;
+  }
+
+  template <typename Int> bigint& operator*=(Int value) {
+    FMT_ASSERT(value > 0, "");
+    multiply(uint32_or_64_or_128_t<Int>(value));
+    return *this;
+  }
+
+  friend int compare(const bigint& lhs, const bigint& rhs) {
+    int num_lhs_bigits = lhs.num_bigits(), num_rhs_bigits = rhs.num_bigits();
+    if (num_lhs_bigits != num_rhs_bigits)
+      return num_lhs_bigits > num_rhs_bigits ? 1 : -1;
+    int i = static_cast<int>(lhs.bigits_.size()) - 1;
+    int j = static_cast<int>(rhs.bigits_.size()) - 1;
+    int end = i - j;
+    if (end < 0) end = 0;
+    for (; i >= end; --i, --j) {
+      bigit lhs_bigit = lhs.bigits_[i], rhs_bigit = rhs.bigits_[j];
+      if (lhs_bigit != rhs_bigit) return lhs_bigit > rhs_bigit ? 1 : -1;
+    }
+    if (i != j) return i > j ? 1 : -1;
+    return 0;
+  }
+
+  // Returns compare(lhs1 + lhs2, rhs).
+  friend int add_compare(const bigint& lhs1, const bigint& lhs2,
+                         const bigint& rhs) {
+    int max_lhs_bigits = (std::max)(lhs1.num_bigits(), lhs2.num_bigits());
+    int num_rhs_bigits = rhs.num_bigits();
+    if (max_lhs_bigits + 1 < num_rhs_bigits) return -1;
+    if (max_lhs_bigits > num_rhs_bigits) return 1;
+    auto get_bigit = [](const bigint& n, int i) -> bigit {
+      return i >= n.exp_ && i < n.num_bigits() ? n.bigits_[i - n.exp_] : 0;
+    };
+    double_bigit borrow = 0;
+    int min_exp = (std::min)((std::min)(lhs1.exp_, lhs2.exp_), rhs.exp_);
+    for (int i = num_rhs_bigits - 1; i >= min_exp; --i) {
+      double_bigit sum =
+          static_cast<double_bigit>(get_bigit(lhs1, i)) + get_bigit(lhs2, i);
+      bigit rhs_bigit = get_bigit(rhs, i);
+      if (sum > rhs_bigit + borrow) return 1;
+      borrow = rhs_bigit + borrow - sum;
+      if (borrow > 1) return -1;
+      borrow <<= bigit_bits;
+    }
+    return borrow != 0 ? -1 : 0;
+  }
+
+  // Assigns pow(10, exp) to this bigint.
+  void assign_pow10(int exp) {
+    assert(exp >= 0);
+    if (exp == 0) return assign(1);
+    // Find the top bit.
+    int bitmask = 1;
+    while (exp >= bitmask) bitmask <<= 1;
+    bitmask >>= 1;
+    // pow(10, exp) = pow(5, exp) * pow(2, exp). First compute pow(5, exp) by
+    // repeated squaring and multiplication.
+    assign(5);
+    bitmask >>= 1;
+    while (bitmask != 0) {
+      square();
+      if ((exp & bitmask) != 0) *this *= 5;
+      bitmask >>= 1;
+    }
+    *this <<= exp;  // Multiply by pow(2, exp) by shifting.
+  }
+
+  void square() {
+    basic_memory_buffer<bigit, bigits_capacity> n(std::move(bigits_));
+    int num_bigits = static_cast<int>(bigits_.size());
+    int num_result_bigits = 2 * num_bigits;
+    bigits_.resize(num_result_bigits);
+    using accumulator_t = conditional_t<FMT_USE_INT128, uint128_t, accumulator>;
+    auto sum = accumulator_t();
+    for (int bigit_index = 0; bigit_index < num_bigits; ++bigit_index) {
+      // Compute bigit at position bigit_index of the result by adding
+      // cross-product terms n[i] * n[j] such that i + j == bigit_index.
+      for (int i = 0, j = bigit_index; j >= 0; ++i, --j) {
+        // Most terms are multiplied twice which can be optimized in the future.
+        sum += static_cast<double_bigit>(n[i]) * n[j];
+      }
+      bigits_[bigit_index] = static_cast<bigit>(sum);
+      sum >>= bits<bigit>::value;  // Compute the carry.
+    }
+    // Do the same for the top half.
+    for (int bigit_index = num_bigits; bigit_index < num_result_bigits;
+         ++bigit_index) {
+      for (int j = num_bigits - 1, i = bigit_index - j; i < num_bigits;)
+        sum += static_cast<double_bigit>(n[i++]) * n[j--];
+      bigits_[bigit_index] = static_cast<bigit>(sum);
+      sum >>= bits<bigit>::value;
+    }
+    --num_result_bigits;
+    remove_leading_zeros();
+    exp_ *= 2;
+  }
+
+  // Divides this bignum by divisor, assigning the remainder to this and
+  // returning the quotient.
+  int divmod_assign(const bigint& divisor) {
+    FMT_ASSERT(this != &divisor, "");
+    if (compare(*this, divisor) < 0) return 0;
+    int num_bigits = static_cast<int>(bigits_.size());
+    FMT_ASSERT(divisor.bigits_[divisor.bigits_.size() - 1] != 0, "");
+    int exp_difference = exp_ - divisor.exp_;
+    if (exp_difference > 0) {
+      // Align bigints by adding trailing zeros to simplify subtraction.
+      bigits_.resize(num_bigits + exp_difference);
+      for (int i = num_bigits - 1, j = i + exp_difference; i >= 0; --i, --j)
+        bigits_[j] = bigits_[i];
+      std::uninitialized_fill_n(bigits_.data(), exp_difference, 0);
+      exp_ -= exp_difference;
+    }
+    int quotient = 0;
+    do {
+      subtract_aligned(divisor);
+      ++quotient;
+    } while (compare(*this, divisor) >= 0);
+    return quotient;
+  }
+};
 
 enum round_direction { unknown, up, down };
 
@@ -500,13 +781,13 @@ enum result {
 // error: the size of the region (lower, upper) outside of which numbers
 // definitely do not round to value (Delta in Grisu3).
 template <typename Handler>
-digits::result grisu_gen_digits(fp value, uint64_t error, int& exp,
-                                Handler& handler) {
-  fp one(1ull << -value.e, value.e);
+FMT_ALWAYS_INLINE digits::result grisu_gen_digits(fp value, uint64_t error,
+                                                  int& exp, Handler& handler) {
+  const fp one(1ULL << -value.e, value.e);
   // The integral part of scaled value (p1 in Grisu) = value / one. It cannot be
   // zero because it contains a product of two 64-bit numbers with MSB set (due
   // to normalization) - 1, shifted right by at most 60 bits.
-  uint32_t integral = static_cast<uint32_t>(value.f >> -one.e);
+  auto integral = static_cast<uint32_t>(value.f >> -one.e);
   FMT_ASSERT(integral != 0, "");
   FMT_ASSERT(integral == value.f >> -one.e, "");
   // The fractional part of scaled value (p2 in Grisu) c = value % one.
@@ -519,44 +800,39 @@ digits::result grisu_gen_digits(fp value, uint64_t error, int& exp,
   // Generate digits for the integral part. This can produce up to 10 digits.
   do {
     uint32_t digit = 0;
-    // This optimization by miloyip reduces the number of integer divisions by
+    auto divmod_integral = [&](uint32_t divisor) {
+      digit = integral / divisor;
+      integral %= divisor;
+    };
+    // This optimization by Milo Yip reduces the number of integer divisions by
     // one per iteration.
     switch (exp) {
     case 10:
-      digit = integral / 1000000000;
-      integral %= 1000000000;
+      divmod_integral(1000000000);
       break;
     case 9:
-      digit = integral / 100000000;
-      integral %= 100000000;
+      divmod_integral(100000000);
       break;
     case 8:
-      digit = integral / 10000000;
-      integral %= 10000000;
+      divmod_integral(10000000);
       break;
     case 7:
-      digit = integral / 1000000;
-      integral %= 1000000;
+      divmod_integral(1000000);
       break;
     case 6:
-      digit = integral / 100000;
-      integral %= 100000;
+      divmod_integral(100000);
       break;
     case 5:
-      digit = integral / 10000;
-      integral %= 10000;
+      divmod_integral(10000);
       break;
     case 4:
-      digit = integral / 1000;
-      integral %= 1000;
+      divmod_integral(1000);
       break;
     case 3:
-      digit = integral / 100;
-      integral %= 100;
+      divmod_integral(100);
       break;
     case 2:
-      digit = integral / 10;
-      integral %= 10;
+      divmod_integral(10);
       break;
     case 1:
       digit = integral;
@@ -640,7 +916,7 @@ struct fixed_handler {
 };
 
 // The shortest representation digit handler.
-template <int GRISU_VERSION> struct grisu_shortest_handler {
+struct grisu_shortest_handler {
   char* buf;
   int size;
   // Distance between scaled value and upper bound (wp_W in Grisu3).
@@ -666,11 +942,6 @@ template <int GRISU_VERSION> struct grisu_shortest_handler {
                           uint64_t error, int exp, bool integral) {
     buf[size++] = digit;
     if (remainder >= error) return digits::more;
-    if (GRISU_VERSION != 3) {
-      uint64_t d = integral ? diff : diff * data::powers_of_10_64[-exp];
-      round(d, divisor, remainder, error);
-      return digits::done;
-    }
     uint64_t unit = integral ? 1 : data::powers_of_10_64[-exp];
     uint64_t up = (diff - 1) * unit;  // wp_Wup
     round(up, divisor, remainder, error);
@@ -686,150 +957,288 @@ template <int GRISU_VERSION> struct grisu_shortest_handler {
   }
 };
 
-template <typename Double,
-          enable_if_t<(sizeof(Double) == sizeof(uint64_t)), int>>
-FMT_API bool grisu_format(Double value, buffer<char>& buf, int precision,
-                          unsigned options, int& exp) {
+// Formats value using a variation of the Fixed-Precision Positive
+// Floating-Point Printout ((FPP)^2) algorithm by Steele & White:
+// https://fmt.dev/p372-steele.pdf.
+template <typename Double>
+void fallback_format(Double d, buffer<char>& buf, int& exp10) {
+  bigint numerator;    // 2 * R in (FPP)^2.
+  bigint denominator;  // 2 * S in (FPP)^2.
+  // lower and upper are differences between value and corresponding boundaries.
+  bigint lower;             // (M^- in (FPP)^2).
+  bigint upper_store;       // upper's value if different from lower.
+  bigint* upper = nullptr;  // (M^+ in (FPP)^2).
+  fp value;
+  // Shift numerator and denominator by an extra bit or two (if lower boundary
+  // is closer) to make lower and upper integers. This eliminates multiplication
+  // by 2 during later computations.
+  // TODO: handle float
+  int shift = value.assign(d) ? 2 : 1;
+  uint64_t significand = value.f << shift;
+  if (value.e >= 0) {
+    numerator.assign(significand);
+    numerator <<= value.e;
+    lower.assign(1);
+    lower <<= value.e;
+    if (shift != 1) {
+      upper_store.assign(1);
+      upper_store <<= value.e + 1;
+      upper = &upper_store;
+    }
+    denominator.assign_pow10(exp10);
+    denominator <<= 1;
+  } else if (exp10 < 0) {
+    numerator.assign_pow10(-exp10);
+    lower.assign(numerator);
+    if (shift != 1) {
+      upper_store.assign(numerator);
+      upper_store <<= 1;
+      upper = &upper_store;
+    }
+    numerator *= significand;
+    denominator.assign(1);
+    denominator <<= shift - value.e;
+  } else {
+    numerator.assign(significand);
+    denominator.assign_pow10(exp10);
+    denominator <<= shift - value.e;
+    lower.assign(1);
+    if (shift != 1) {
+      upper_store.assign(1ULL << 1);
+      upper = &upper_store;
+    }
+  }
+  if (!upper) upper = &lower;
+  // Invariant: value == (numerator / denominator) * pow(10, exp10).
+  bool even = (value.f & 1) == 0;
+  int num_digits = 0;
+  char* data = buf.data();
+  for (;;) {
+    int digit = numerator.divmod_assign(denominator);
+    bool low = compare(numerator, lower) - even < 0;  // numerator <[=] lower.
+    // numerator + upper >[=] pow10:
+    bool high = add_compare(numerator, *upper, denominator) + even > 0;
+    data[num_digits++] = static_cast<char>('0' + digit);
+    if (low || high) {
+      if (!low) {
+        ++data[num_digits - 1];
+      } else if (high) {
+        int result = add_compare(numerator, numerator, denominator);
+        // Round half to even.
+        if (result > 0 || (result == 0 && (digit % 2) != 0))
+          ++data[num_digits - 1];
+      }
+      buf.resize(num_digits);
+      exp10 -= num_digits - 1;
+      return;
+    }
+    numerator *= 10;
+    lower *= 10;
+    if (upper != &lower) *upper *= 10;
+  }
+}
+
+// Formats value using the Grisu algorithm
+// (https://www.cs.tufts.edu/~nr/cs257/archive/florian-loitsch/printf.pdf)
+// if T is a IEEE754 binary32 or binary64 and snprintf otherwise.
+template <typename T>
+int format_float(T value, int precision, float_specs specs, buffer<char>& buf) {
+  static_assert(!std::is_same<T, float>(), "");
   FMT_ASSERT(value >= 0, "value is negative");
-  bool fixed = (options & grisu_options::fixed) != 0;
+
+  const bool fixed = specs.format == float_format::fixed;
   if (value <= 0) {  // <= instead of == to silence a warning.
     if (precision <= 0 || !fixed) {
-      exp = 0;
       buf.push_back('0');
-    } else {
-      exp = -precision;
-      buf.resize(to_unsigned(precision));
-      std::uninitialized_fill_n(buf.data(), precision, '0');
+      return 0;
     }
-    return true;
+    buf.resize(to_unsigned(precision));
+    std::uninitialized_fill_n(buf.data(), precision, '0');
+    return -precision;
   }
 
-  fp fp_value(value);
+  if (!specs.use_grisu) return snprintf_float(value, precision, specs, buf);
+
+  int exp = 0;
   const int min_exp = -60;  // alpha in Grisu.
   int cached_exp10 = 0;     // K in Grisu.
   if (precision != -1) {
-    if (precision > 17) return false;
-    fp_value.normalize();
-    auto cached_pow = get_cached_power(
-        min_exp - (fp_value.e + fp::significand_size), cached_exp10);
-    fp_value = fp_value * cached_pow;
+    if (precision > 17) return snprintf_float(value, precision, specs, buf);
+    fp normalized = normalize(fp(value));
+    const auto cached_pow = get_cached_power(
+        min_exp - (normalized.e + fp::significand_size), cached_exp10);
+    normalized = normalized * cached_pow;
     fixed_handler handler{buf.data(), 0, precision, -cached_exp10, fixed};
-    if (grisu_gen_digits(fp_value, 1, exp, handler) == digits::error)
-      return false;
-    buf.resize(to_unsigned(handler.size));
-  } else {
-    fp lower, upper;  // w^- and w^+ in the Grisu paper.
-    fp_value.compute_boundaries(lower, upper);
-    // Find a cached power of 10 such that multiplying upper by it will bring
-    // the exponent in the range [min_exp, -32].
-    auto cached_pow = get_cached_power(  // \tilde{c}_{-k} in Grisu.
-        min_exp - (upper.e + fp::significand_size), cached_exp10);
-    fp_value.normalize();
-    fp_value = fp_value * cached_pow;
-    lower = lower * cached_pow;  // \tilde{M}^- in Grisu.
-    upper = upper * cached_pow;  // \tilde{M}^+ in Grisu.
-    assert(min_exp <= upper.e && upper.e <= -32);
-    auto result = digits::result();
-    int size = 0;
-    if ((options & grisu_options::grisu3) != 0) {
-      --lower.f;  // \tilde{M}^- - 1 ulp -> M^-_{\downarrow}.
-      ++upper.f;  // \tilde{M}^+ + 1 ulp -> M^+_{\uparrow}.
-      // Numbers outside of (lower, upper) definitely do not round to value.
-      grisu_shortest_handler<3> handler{buf.data(), 0, (upper - fp_value).f};
-      result = grisu_gen_digits(upper, upper.f - lower.f, exp, handler);
-      size = handler.size;
-    } else {
-      ++lower.f;  // \tilde{M}^- + 1 ulp -> M^-_{\uparrow}.
-      --upper.f;  // \tilde{M}^+ - 1 ulp -> M^+_{\downarrow}.
-      grisu_shortest_handler<2> handler{buf.data(), 0, (upper - fp_value).f};
-      result = grisu_gen_digits(upper, upper.f - lower.f, exp, handler);
-      size = handler.size;
+    if (grisu_gen_digits(normalized, 1, exp, handler) == digits::error)
+      return snprintf_float(value, precision, specs, buf);
+    int num_digits = handler.size;
+    if (!fixed) {
+      // Remove trailing zeros.
+      while (num_digits > 0 && buf[num_digits - 1] == '0') {
+        --num_digits;
+        ++exp;
+      }
     }
-    if (result == digits::error) return false;
-    buf.resize(to_unsigned(size));
+    buf.resize(to_unsigned(num_digits));
+  } else {
+    fp fp_value;
+    auto boundaries = specs.binary32
+                          ? fp_value.assign_float_with_boundaries(value)
+                          : fp_value.assign_with_boundaries(value);
+    fp_value = normalize(fp_value);
+    // Find a cached power of 10 such that multiplying value by it will bring
+    // the exponent in the range [min_exp, -32].
+    const fp cached_pow = get_cached_power(
+        min_exp - (fp_value.e + fp::significand_size), cached_exp10);
+    // Multiply value and boundaries by the cached power of 10.
+    fp_value = fp_value * cached_pow;
+    boundaries.lower = multiply(boundaries.lower, cached_pow.f);
+    boundaries.upper = multiply(boundaries.upper, cached_pow.f);
+    assert(min_exp <= fp_value.e && fp_value.e <= -32);
+    --boundaries.lower;  // \tilde{M}^- - 1 ulp -> M^-_{\downarrow}.
+    ++boundaries.upper;  // \tilde{M}^+ + 1 ulp -> M^+_{\uparrow}.
+    // Numbers outside of (lower, upper) definitely do not round to value.
+    grisu_shortest_handler handler{buf.data(), 0,
+                                   boundaries.upper - fp_value.f};
+    auto result =
+        grisu_gen_digits(fp(boundaries.upper, fp_value.e),
+                         boundaries.upper - boundaries.lower, exp, handler);
+    if (result == digits::error) {
+      exp += handler.size - cached_exp10 - 1;
+      fallback_format(value, buf, exp);
+      return exp;
+    }
+    buf.resize(to_unsigned(handler.size));
   }
-  exp -= cached_exp10;
-  return true;
+  return exp - cached_exp10;
 }
 
-template <typename Double>
-char* sprintf_format(Double value, internal::buffer<char>& buf,
-                     sprintf_specs specs) {
+template <typename T>
+int snprintf_float(T value, int precision, float_specs specs,
+                   buffer<char>& buf) {
   // Buffer capacity must be non-zero, otherwise MSVC's vsnprintf_s will fail.
-  FMT_ASSERT(buf.capacity() != 0, "empty buffer");
+  FMT_ASSERT(buf.capacity() > buf.size(), "empty buffer");
+  static_assert(!std::is_same<T, float>(), "");
 
-  // Build format string.
-  enum { max_format_size = 10 };  // longest format: %#-*.*Lg
+  // Subtract 1 to account for the difference in precision since we use %e for
+  // both general and exponent format.
+  if (specs.format == float_format::general ||
+      specs.format == float_format::exp)
+    precision = (precision >= 0 ? precision : 6) - 1;
+
+  // Build the format string.
+  enum { max_format_size = 7 };  // Ths longest format is "%#.*Le".
   char format[max_format_size];
   char* format_ptr = format;
   *format_ptr++ = '%';
-  if (specs.alt || !specs.type) *format_ptr++ = '#';
-  if (specs.precision >= 0) {
+  if (specs.trailing_zeros) *format_ptr++ = '#';
+  if (precision >= 0) {
     *format_ptr++ = '.';
     *format_ptr++ = '*';
   }
-  if (std::is_same<Double, long double>::value) *format_ptr++ = 'L';
-
-  char type = specs.type;
-
-  if (type == '%')
-    type = 'f';
-  else if (type == 0 || type == 'n')
-    type = 'g';
-#if FMT_MSC_VER
-  if (type == 'F') {
-    // MSVC's printf doesn't support 'F'.
-    type = 'f';
-  }
-#endif
-  *format_ptr++ = type;
+  if (std::is_same<T, long double>()) *format_ptr++ = 'L';
+  *format_ptr++ = specs.format != float_format::hex
+                      ? (specs.format == float_format::fixed ? 'f' : 'e')
+                      : (specs.upper ? 'A' : 'a');
   *format_ptr = '\0';
 
   // Format using snprintf.
-  char* start = nullptr;
-  char* decimal_point_pos = nullptr;
+  auto offset = buf.size();
   for (;;) {
-    std::size_t buffer_size = buf.capacity();
-    start = &buf[0];
-    int result =
-        format_float(start, buffer_size, format, specs.precision, value);
-    if (result >= 0) {
-      unsigned n = internal::to_unsigned(result);
-      if (n < buf.capacity()) {
-        // Find the decimal point.
-        auto p = buf.data(), end = p + n;
-        if (*p == '+' || *p == '-') ++p;
-        if (specs.type != 'a' && specs.type != 'A') {
-          while (p < end && *p >= '0' && *p <= '9') ++p;
-          if (p < end && *p != 'e' && *p != 'E') {
-            decimal_point_pos = p;
-            if (!specs.type) {
-              // Keep only one trailing zero after the decimal point.
-              ++p;
-              if (*p == '0') ++p;
-              while (p != end && *p >= '1' && *p <= '9') ++p;
-              char* where = p;
-              while (p != end && *p == '0') ++p;
-              if (p == end || *p < '0' || *p > '9') {
-                if (p != end) std::memmove(where, p, to_unsigned(end - p));
-                n -= static_cast<unsigned>(p - where);
-              }
-            }
-          }
-        }
-        buf.resize(n);
-        break;  // The buffer is large enough - continue with formatting.
-      }
-      buf.reserve(n + 1);
-    } else {
-      // If result is negative we ask to increase the capacity by at least 1,
-      // but as std::vector, the buffer grows exponentially.
-      buf.reserve(buf.capacity() + 1);
+    auto begin = buf.data() + offset;
+    auto capacity = buf.capacity() - offset;
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+    if (precision > 100000)
+      throw std::runtime_error(
+          "fuzz mode - avoid large allocation inside snprintf");
+#endif
+    // Suppress the warning about a nonliteral format string.
+    auto snprintf_ptr = FMT_SNPRINTF;
+    int result = precision >= 0
+                     ? snprintf_ptr(begin, capacity, format, precision, value)
+                     : snprintf_ptr(begin, capacity, format, value);
+    if (result < 0) {
+      buf.reserve(buf.capacity() + 1);  // The buffer will grow exponentially.
+      continue;
     }
+    unsigned size = to_unsigned(result);
+    // Size equal to capacity means that the last character was truncated.
+    if (size >= capacity) {
+      buf.reserve(size + offset + 1);  // Add 1 for the terminating '\0'.
+      continue;
+    }
+    auto is_digit = [](char c) { return c >= '0' && c <= '9'; };
+    if (specs.format == float_format::fixed) {
+      if (precision == 0) {
+        buf.resize(size);
+        return 0;
+      }
+      // Find and remove the decimal point.
+      auto end = begin + size, p = end;
+      do {
+        --p;
+      } while (is_digit(*p));
+      int fraction_size = static_cast<int>(end - p - 1);
+      std::memmove(p, p + 1, fraction_size);
+      buf.resize(size - 1);
+      return -fraction_size;
+    }
+    if (specs.format == float_format::hex) {
+      buf.resize(size + offset);
+      return 0;
+    }
+    // Find and parse the exponent.
+    auto end = begin + size, exp_pos = end;
+    do {
+      --exp_pos;
+    } while (*exp_pos != 'e');
+    char sign = exp_pos[1];
+    assert(sign == '+' || sign == '-');
+    int exp = 0;
+    auto p = exp_pos + 2;  // Skip 'e' and sign.
+    do {
+      assert(is_digit(*p));
+      exp = exp * 10 + (*p++ - '0');
+    } while (p != end);
+    if (sign == '-') exp = -exp;
+    int fraction_size = 0;
+    if (exp_pos != begin + 1) {
+      // Remove trailing zeros.
+      auto fraction_end = exp_pos - 1;
+      while (*fraction_end == '0') --fraction_end;
+      // Move the fractional part left to get rid of the decimal point.
+      fraction_size = static_cast<int>(fraction_end - begin - 1);
+      std::memmove(begin + 1, begin + 2, fraction_size);
+    }
+    buf.resize(fraction_size + offset + 1);
+    return exp - fraction_size;
   }
-  return decimal_point_pos;
 }
 }  // namespace internal
+
+template <> struct formatter<internal::bigint> {
+  format_parse_context::iterator parse(format_parse_context& ctx) {
+    return ctx.begin();
+  }
+
+  format_context::iterator format(const internal::bigint& n,
+                                  format_context& ctx) {
+    auto out = ctx.out();
+    bool first = true;
+    for (auto i = n.bigits_.size(); i > 0; --i) {
+      auto value = n.bigits_[i - 1];
+      if (first) {
+        out = format_to(out, "{:x}", value);
+        first = false;
+        continue;
+      }
+      out = format_to(out, "{:08x}", value);
+    }
+    if (n.exp_ > 0)
+      out = format_to(out, "p{}", n.exp_ * internal::bigint::bigit_bits);
+    return out;
+  }
+};
 
 #if FMT_USE_WINDOWS_H
 
@@ -974,20 +1383,7 @@ FMT_FUNC void vprint(std::FILE* f, string_view format_str, format_args args) {
   internal::fwrite_fully(buffer.data(), 1, buffer.size(), f);
 }
 
-FMT_FUNC void vprint(std::FILE* f, wstring_view format_str, wformat_args args) {
-  wmemory_buffer buffer;
-  internal::vformat_to(buffer, format_str, args);
-  buffer.push_back(L'\0');
-  if (std::fputws(buffer.data(), f) == -1) {
-    FMT_THROW(system_error(errno, "cannot write to file"));
-  }
-}
-
 FMT_FUNC void vprint(string_view format_str, format_args args) {
-  vprint(stdout, format_str, args);
-}
-
-FMT_FUNC void vprint(wstring_view format_str, wformat_args args) {
   vprint(stdout, format_str, args);
 }
 

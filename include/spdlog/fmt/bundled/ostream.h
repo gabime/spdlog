@@ -46,9 +46,13 @@ template <class Char> class formatbuf : public std::basic_streambuf<Char> {
 
 template <typename Char> struct test_stream : std::basic_ostream<Char> {
  private:
-  struct null;
   // Hide all operator<< from std::basic_ostream<Char>.
-  void operator<<(null);
+  void_t<> operator<<(null<>);
+  void_t<> operator<<(const Char*);
+
+  template <typename T, FMT_ENABLE_IF(std::is_convertible<T, int>::value &&
+                                      !std::is_enum<T>::value)>
+  void_t<> operator<<(T);
 };
 
 // Checks if T has a user-defined operator<< (e.g. not a member of
@@ -56,9 +60,9 @@ template <typename Char> struct test_stream : std::basic_ostream<Char> {
 template <typename T, typename Char> class is_streamable {
  private:
   template <typename U>
-  static decltype((void)(std::declval<test_stream<Char>&>()
-                         << std::declval<U>()),
-                  std::true_type())
+  static bool_constant<!std::is_same<decltype(std::declval<test_stream<Char>&>()
+                                              << std::declval<U>()),
+                                     void_t<>>::value>
   test(int);
 
   template <typename> static std::false_type test(...);
@@ -75,8 +79,7 @@ void write(std::basic_ostream<Char>& os, buffer<Char>& buf) {
   const Char* buf_data = buf.data();
   using unsigned_streamsize = std::make_unsigned<std::streamsize>::type;
   unsigned_streamsize size = buf.size();
-  unsigned_streamsize max_size =
-      to_unsigned((std::numeric_limits<std::streamsize>::max)());
+  unsigned_streamsize max_size = to_unsigned(max_value<std::streamsize>());
   do {
     unsigned_streamsize n = size <= max_size ? size : max_size;
     os.write(buf_data, static_cast<std::streamsize>(n));
@@ -86,9 +89,11 @@ void write(std::basic_ostream<Char>& os, buffer<Char>& buf) {
 }
 
 template <typename Char, typename T>
-void format_value(buffer<Char>& buf, const T& value) {
+void format_value(buffer<Char>& buf, const T& value,
+                  locale_ref loc = locale_ref()) {
   formatbuf<Char> format_buf(buf);
   std::basic_ostream<Char> output(&format_buf);
+  if (loc) output.imbue(loc.get<std::locale>());
   output.exceptions(std::ios_base::failbit | std::ios_base::badbit);
   output << value;
   buf.resize(buf.size());
@@ -101,7 +106,7 @@ struct fallback_formatter<T, Char, enable_if_t<is_streamable<T, Char>::value>>
   template <typename Context>
   auto format(const T& value, Context& ctx) -> decltype(ctx.out()) {
     basic_memory_buffer<Char> buffer;
-    format_value(buffer, value);
+    format_value(buffer, value, ctx.locale());
     basic_string_view<Char> str(buffer.data(), buffer.size());
     return formatter<basic_string_view<Char>, Char>::format(str, ctx);
   }
