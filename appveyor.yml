@@ -4,7 +4,7 @@ environment:
   matrix:
   - GENERATOR: '"MinGW Makefiles"'
     BUILD_TYPE: Debug
-  - GENERATOR: '"MinGW Makefiles" -Dmingw32-make.exe'
+  - GENERATOR: '"MinGW Makefiles" -DCMAKE_MAKE_PROGRAM=mingw32-make.exe'
     BUILD_TYPE: Release
   - GENERATOR: '"Visual Studio 14 2015"'
     BUILD_TYPE: Debug
