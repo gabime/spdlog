@@ -12,24 +12,13 @@
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif
 
-// fix warning C4996 under vs2015 about std::copy in fmt
-#if defined(_MSC_VER) && _MSC_VER <= 1900
-#pragma warning( push )
-#pragma warning( disable : 4996 )
-#endif 
-
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #include "spdlog/fmt/bundled/format-inl.h"
 
 
 // pop warnings supressions
-
 #if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
-#endif
-
-#if defined(_MSC_VER) && _MSC_VER <= 1900
-#pragma warning( pop )
 #endif
 
 
