@@ -19,7 +19,7 @@ environment:
     WCHAR: 'ON'
   - GENERATOR: '"Visual Studio 15 2017 Win64"'
     BUILD_TYPE: Release
-    WCHAR: 'ON'
+    WCHAR: 'OFf'
 build_script:
 - cmd: >-
     set
