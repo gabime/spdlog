@@ -2,12 +2,6 @@ version: 1.0.{build}
 image: Visual Studio 2017
 environment:
   matrix:
-  - GENERATOR: '"MinGW Makefiles"'
-    BUILD_TYPE: Debug
-    WCHAR: 'OFF'
-  - GENERATOR: '"MSYS Makefiles"'
-    BUILD_TYPE: Release
-    WCHAR: 'OFF'
   - GENERATOR: '"Visual Studio 14 2015"'
     BUILD_TYPE: Debug
     WCHAR: 'OFF'
@@ -35,8 +29,6 @@ build_script:
     cd build 
 
     set PATH=%PATH%:C:\Program Files\Git\usr\bin
-
-    set PATH=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw32\bin;C:\msys64\usr\bin;%PATH% 
     
     cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DSPDLOG_WCHAR_SUPPORT=%WCHAR% -DSPDLOG_BUILD_EXAMPLE=ON -DSPDLOG_BUILD_EXAMPLE_HO=ON -DSPDLOG_BUILD_TESTS=ON -DSPDLOG_BUILD_TESTS_HO=OFF
 
