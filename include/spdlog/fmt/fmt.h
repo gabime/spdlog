@@ -14,7 +14,15 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-#endif
+#endif // __GNUC__ || __clang__
+
+
+
+// fix warning C4996 under vs2015 about std::copy in fmt
+#if defined(_MSC_VER) && _MSC_VER <= 1900
+#pragma warning( push )
+#pragma warning( disable : 4996 )
+#endif 
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #ifdef SPDLOG_HEADER_ONLY
@@ -32,6 +40,11 @@
 #include <fmt/format.h>
 #endif
 
+// pop warnings supressions
 #if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic pop
+#endif
+
+#if defined(_MSC_VER) && _MSC_VER <= 1900
+#pragma warning( pop )
 #endif
