@@ -26,7 +26,7 @@ build_script:
 
     cd build
 
-    set PATH=%PATH:C:\Program Files\Git\usr\bin;%
+    set PATH=%PATH%:C:\Program Files\Git\usr\bin
 
     set PATH=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\bin;C:\msys64\bin;%PATH%
     
