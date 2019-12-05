@@ -4,7 +4,7 @@ environment:
   matrix:
   - GENERATOR: '"MinGW Makefiles"'
     BUILD_TYPE: Debug
-  - GENERATOR: '"MinGW Makefiles"'
+  - GENERATOR: '"MinGW Makefiles" -Dmingw32-make.exe'
     BUILD_TYPE: Release
   - GENERATOR: '"Visual Studio 14 2015"'
     BUILD_TYPE: Debug
@@ -29,7 +29,7 @@ build_script:
     set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
 
     set PATH=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\bin;C:\msys64;%PATH%
-
+    
     cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DSPDLOG_WCHAR_SUPPORT=ON -DSPDLOG_BUILD_EXAMPLE=ON -DSPDLOG_BUILD_EXAMPLE_HO=ON -DSPDLOG_BUILD_TESTS=ON -DSPDLOG_BUILD_TESTS_HO=OFF
 
     cmake --build . --config %BUILD_TYPE%
