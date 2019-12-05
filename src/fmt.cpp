@@ -6,7 +6,7 @@
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.
 
-
+#if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
@@ -15,7 +15,7 @@
 #include "spdlog/fmt/bundled/format-inl.h"
 
 #pragma GCC diagnostic pop
-
+#endif
 
 
 FMT_BEGIN_NAMESPACE
