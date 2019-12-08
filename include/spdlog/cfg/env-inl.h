@@ -12,10 +12,9 @@
 #include "spdlog/details/registry.h"
 
 #include <string>
-#include <tuple>
+#include <utility>
 #include <sstream>
-#include <cctype>
-#include <algorithm>
+
 
 namespace spdlog {
 namespace cfg {
