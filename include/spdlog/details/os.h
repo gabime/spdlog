@@ -104,7 +104,7 @@ bool create_dir(filename_t path);
 
 // non thread safe, cross platform getenv/getenv_s
 // return empty string if field not found
-std::string getenv(const char* field);
+std::string getenv(const char *field);
 
 } // namespace os
 } // namespace details

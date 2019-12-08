@@ -16,7 +16,6 @@
 #pragma GCC diagnostic ignored "-Wsign-conversion"
 #endif // __GNUC__ || __clang__
 
-
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #ifdef SPDLOG_HEADER_ONLY
 #ifndef FMT_HEADER_ONLY
