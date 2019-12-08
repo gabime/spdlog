@@ -102,6 +102,10 @@ filename_t dir_name(filename_t path);
 // Return true if succeeded or if this dir already exists.
 bool create_dir(filename_t path);
 
+// non thread safe, cross platform getenv/getenv_s
+// return empty string if field not found
+std::string getenv(const char* field);
+
 } // namespace os
 } // namespace details
 } // namespace spdlog

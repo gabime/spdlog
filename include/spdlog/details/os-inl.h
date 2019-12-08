@@ -536,6 +536,20 @@ SPDLOG_INLINE filename_t dir_name(filename_t path)
     return pos != filename_t::npos ? path.substr(0, pos) : filename_t{};
 }
 
+std::string SPDLOG_INLINE getenv(const char* field)
+{
+#if defined(_MSC_VER) && !defined(__cplusplus_winrt)
+    size_t len = 0;
+    char buf[128];
+    bool ok = ::getenv_s(&len , buf, sizeof(buf), field) == 0;
+    return ok ? buf : std::string{};
+#else // revert to getenv
+    char *buf = ::getenv(field);
+    return buf ? buf : std::string{};
+#endif
+
+}
+
 } // namespace os
 } // namespace details
 } // namespace spdlog
