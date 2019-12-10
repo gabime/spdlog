@@ -15,7 +15,6 @@
 #include <utility>
 #include <sstream>
 
-
 namespace spdlog {
 namespace cfg {
 // inplace convert  to lowercase
@@ -71,7 +70,7 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
         auto kv = extract_kv_('=', token);
 
         // empty logger name or '*' marks all loggers
-        if(kv.first.empty())
+        if (kv.first.empty())
         {
             kv.first = "*";
         }
@@ -85,26 +84,26 @@ SPDLOG_INLINE cfg_map from_env()
     using details::os::getenv;
     cfg_map configs;
 
-    auto levels =  extract_key_vals_(getenv("SPDLOG_LEVEL"));
+    auto levels = extract_key_vals_(getenv("SPDLOG_LEVEL"));
     auto patterns = extract_key_vals_(getenv("SPDLOG_PATTERN"));
 
     // merge to single dict. and take into account "*"
     std::string default_level_name = "info";
     std::string default_pattern = "%+";
-    for(auto &name_level: levels)
+    for (auto &name_level : levels)
     {
         auto &logger_name = name_level.first;
         auto level_name = to_lower_(name_level.second);
         logger_cfg cfg;
         cfg.level_name = level_name;
         configs[logger_name] = cfg;
-        if(logger_name == "*")
+        if (logger_name == "*")
         {
             default_level_name = cfg.level_name;
         }
     }
 
-    for(auto &name_pattern: patterns)
+    for (auto &name_pattern : patterns)
     {
         auto &logger_name = name_pattern.first;
         auto &pattern = name_pattern.second;
@@ -120,21 +119,21 @@ SPDLOG_INLINE cfg_map from_env()
             cfg.pattern = pattern;
             configs.insert({logger_name, cfg});
         }
-        if(logger_name == "*")
+        if (logger_name == "*")
         {
             default_pattern = pattern;
         }
     }
 
-    //fill missing fields with the default values
-    for(auto &cfg:configs)
+    // fill missing fields with the default values
+    for (auto &cfg : configs)
     {
         auto &val = cfg.second;
-        if(val.pattern.empty())
+        if (val.pattern.empty())
         {
             val.pattern = default_pattern;
         }
-        if(val.level_name.empty())
+        if (val.level_name.empty())
         {
             val.level_name = default_level_name;
         }
