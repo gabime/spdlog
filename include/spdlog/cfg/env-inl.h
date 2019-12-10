@@ -58,8 +58,8 @@ inline name_val_pair extract_kv_(char sep, const std::string &str)
     return std::make_pair(trim_(k), trim_(v));
 }
 
-// return vector of key/value pairs from str.
-// str format: "a=A,b=B,c=C,d=D,.."
+// return vector of key/value pairs from sequence of "K1=V1,K2=V2,.."
+// "a=AAA,b=BBB,c=CCC,.." => {("a","AAA"),("b","BBB"),("c", "CCC"),...}
 SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(const std::string &str)
 {
     std::string token;
@@ -67,9 +67,13 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     std::unordered_map<std::string, std::string> rv;
     while (std::getline(token_stream, token, ','))
     {
+        if(token.empty())
+        {
+            continue;
+        }
         auto kv = extract_kv_('=', token);
 
-        // empty logger name or '*' marks all loggers
+        // '*' marks all loggers
         if (kv.first.empty())
         {
             kv.first = "*";
