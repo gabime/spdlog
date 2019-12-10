@@ -9,12 +9,13 @@
 
 int main(int, char *[])
 {
+    spdlog::set_pattern("%v");
     try
     {
         auto cfg = spdlog::cfg::from_env();
         for (auto &item : cfg)
         {
-            spdlog::info("['{}'] level: {} pattern: {}", item.first, spdlog::level::to_string_view(item.second.level), item.second.pattern);
+            spdlog::info("logger: '{}' level: '{}' pattern: '{}'", item.first, item.second.level_name, item.second.pattern);
         }
     }
     catch (spdlog::spdlog_ex &ex)

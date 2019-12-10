@@ -12,12 +12,7 @@ namespace spdlog {
 namespace cfg {
 struct logger_cfg
 {
-    logger_cfg(level::level_enum level, std::string pattern)
-        : level{level}
-        , pattern(std::move(pattern))
-    {}
-
-    level::level_enum level;
+    std::string level_name;
     std::string pattern;
 };
 using cfg_map = std::unordered_map<std::string, logger_cfg>;
