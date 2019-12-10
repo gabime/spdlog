@@ -26,7 +26,6 @@
 #ifndef FMT_USE_WINDOWS_H
 #define FMT_USE_WINDOWS_H 0
 #endif
-
 #include <spdlog/fmt/bundled/core.h>
 #include <spdlog/fmt/bundled/format.h>
 #else // SPDLOG_FMT_EXTERNAL is defined - use external fmtlib
