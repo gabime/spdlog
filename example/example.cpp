@@ -9,14 +9,16 @@
 
 int main(int, char *[])
 {
-    spdlog::set_pattern("%v");
     try
     {
-        auto cfg = spdlog::cfg::from_env();
-        for (auto &item : cfg)
-        {
-            spdlog::info("logger: '{}' level: '{}' pattern: '{}'", item.first, item.second.level_name, item.second.pattern);
-        }
+        spdlog::cfg::env::init();
+        spdlog::info("Hello");
+
+        //        auto cfg = spdlog::cfg::from_env();
+        //        for (auto &item : cfg)
+        //        {
+        //            spdlog::info("logger: '{}' level: '{}' pattern: '{}'", item.first, item.second.level_name, item.second.pattern);
+        //        }
     }
     catch (spdlog::spdlog_ex &ex)
     {

@@ -17,6 +17,17 @@
 
 namespace spdlog {
 namespace cfg {
+namespace env {
+
+struct logger_cfg
+{
+    std::string level_name;
+    std::string pattern;
+};
+
+using cfg_map = std::unordered_map<std::string, logger_cfg>;
+using name_val_pair = std::pair<std::string, std::string>;
+
 // inplace convert  to lowercase
 inline std::string &to_lower_(std::string &str)
 {
@@ -33,8 +44,6 @@ inline std::string &trim_(std::string &str)
     str.erase(0, str.find_first_not_of(spaces));
     return str;
 }
-
-using name_val_pair = std::pair<std::string, std::string>;
 
 // return (name,value) pair from given "name=value" string.
 // return empty string on missing parts
@@ -67,7 +76,7 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     std::unordered_map<std::string, std::string> rv;
     while (std::getline(token_stream, token, ','))
     {
-        if(token.empty())
+        if (token.empty())
         {
             continue;
         }
@@ -83,7 +92,7 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     return rv;
 }
 
-SPDLOG_INLINE cfg_map from_env()
+inline cfg_map from_env_()
 {
     using details::os::getenv;
     cfg_map configs;
@@ -145,5 +154,28 @@ SPDLOG_INLINE cfg_map from_env()
     return configs;
 }
 
+SPDLOG_INLINE void init()
+{
+    auto cfg_map = from_env_();
+    for (const auto &logger_cfg : cfg_map)
+    {
+        auto &logger_name = logger_cfg.first;
+        auto level = level::from_str(logger_cfg.second.level_name);
+        auto &pattern = logger_cfg.second.pattern;
+
+        if (logger_name == "*")
+        {
+            spdlog::set_level(level);
+            spdlog::set_pattern(pattern);
+        }
+        else if (auto logger = spdlog::get(logger_name))
+        {
+            logger->set_level(level);
+            logger->set_pattern(pattern);
+        }
+    }
+}
+
+} // namespace env
 } // namespace cfg
 } // namespace spdlog

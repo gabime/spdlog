@@ -7,25 +7,36 @@
 #include <string>
 #include <unordered_map>
 
-// config spdlog from environment variables
+//
+// Init levels and patterns from env variables SPDLOG_LEVEL and SPDLOG_PATTERN.
+// Inspired from Rust's "env_logger" crate (https://crates.io/crates/env_logger).
+//
+// Examples:
+//
+// set global level to debug:
+// export SPDLOG_LEVEL=debug
+//
+// turn off all logging except for logger1:
+// export SPDLOG_LEVEL="off,logger1=debug"
+//
+// turn off all logging except for logger1 and logger2:
+// export SPDLOG_LEVEL="off,logger1=debug,logger2=info"
+//
+// set global pattern:
+// export SPDLOG_PATTERN="[%x] [%l] [%n] %v"
+//
+// set pattern for logger1:
+// export SPDLOG_PATTERN="logger1=%v,*=[%x] [%l] [%n] %v"
+//
+// set global pattern and different pattern for logger1:
+// export SPDLOG_PATTERN="[%x] [%l] [%n] %v,logger1=[%u] %v"
+
 namespace spdlog {
 namespace cfg {
-struct logger_cfg
-{
-    std::string level_name;
-    std::string pattern;
-};
-using cfg_map = std::unordered_map<std::string, logger_cfg>;
+namespace env {
+void init();
+}
 
-// Init levels and patterns from env variabls SPDLOG_LEVEL & SPDLOG_PATTERN
-// Examples:
-// export SPDLOG_LEVEL=debug
-// export SPDLOG_LEVEL=logger1=%v,*=[%x] [%l] [%n] %v
-// export SPDLOG_LEVEL=logger1=debug,logger2=info,*=error
-// export SPDLOG_PATTERN=[%x] [%l] [%n] %v
-//
-// Note: will set the level to info if finds unknown level in SPDLOG_LEVEL
-cfg_map from_env();
 } // namespace cfg
 } // namespace spdlog
 
