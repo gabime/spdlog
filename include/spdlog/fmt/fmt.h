@@ -10,13 +10,6 @@
 // By default spdlog include its own copy.
 //
 
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#endif // __GNUC__ || __clang__
-
-
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #ifdef SPDLOG_HEADER_ONLY
 #ifndef FMT_HEADER_ONLY
@@ -31,9 +24,4 @@
 #else // SPDLOG_FMT_EXTERNAL is defined - use external fmtlib
 #include <fmt/core.h>
 #include <fmt/format.h>
-#endif
-
-// pop warnings supressions
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic pop
 #endif
