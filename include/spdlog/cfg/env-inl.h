@@ -99,11 +99,15 @@ inline details::registry::logger_cfgs from_env_()
         auto level_name = to_lower_(name_level.second);
         details::registry::logger_cfg cfg;
         cfg.level_name = level_name;
-        configs.loggers.emplace(logger_name, cfg);
         if (logger_name == "*")
         {
             configs.default_cfg.level_name = cfg.level_name;
         }
+        else
+        {
+            configs.loggers.emplace(logger_name, cfg);
+        }
+
     }
 
     for (auto &name_pattern : patterns)
@@ -116,16 +120,16 @@ inline details::registry::logger_cfgs from_env_()
         {
             it->second.pattern = pattern;
         }
+
+        if (logger_name == "*")
+        {
+            configs.default_cfg.pattern = pattern;
+        }
         else
         {
             details::registry::logger_cfg cfg;
             cfg.pattern = pattern;
-            //configs.loggers.insert({logger_name, cfg});
             configs.loggers.emplace(logger_name, cfg);
-        }
-        if (logger_name == "*")
-        {
-            configs.default_cfg.pattern = pattern;
         }
     }
 
