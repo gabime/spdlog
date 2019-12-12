@@ -6,19 +6,8 @@
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.
 
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-#endif
-
 #if !defined(SPDLOG_FMT_EXTERNAL)
 #include "spdlog/fmt/bundled/format-inl.h"
-
-// pop warnings supressions
-#if defined(__GNUC__) || defined(__clang__)
-#pragma GCC diagnostic pop
-#endif
 
 FMT_BEGIN_NAMESPACE
 template struct FMT_API internal::basic_data<void>;

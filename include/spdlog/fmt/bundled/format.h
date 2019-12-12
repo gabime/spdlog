@@ -69,7 +69,8 @@
 #  define FMT_HAS_BUILTIN(x) 0
 #endif
 
-#if FMT_HAS_CPP_ATTRIBUTE(fallthrough) >= 201603 && __cplusplus >= 201703
+#if FMT_HAS_CPP_ATTRIBUTE(fallthrough) && \
+    (__cplusplus >= 201703 || FMT_GCC_VERSION != 0)
 #  define FMT_FALLTHROUGH [[fallthrough]]
 #else
 #  define FMT_FALLTHROUGH
@@ -800,60 +801,6 @@ template <> int count_digits<4>(internal::fallback_uintptr n);
 #else
 #  define FMT_ALWAYS_INLINE
 #endif
-
-// Computes g = floor(log10(n)) and calls h.on<g>(n);
-template <typename Handler> FMT_ALWAYS_INLINE char* lg(uint32_t n, Handler h) {
-  return n < 100 ? n < 10 ? h.template on<0>(n) : h.template on<1>(n)
-                 : n < 1000000
-                       ? n < 10000 ? n < 1000 ? h.template on<2>(n)
-                                              : h.template on<3>(n)
-                                   : n < 100000 ? h.template on<4>(n)
-                                                : h.template on<5>(n)
-                       : n < 100000000 ? n < 10000000 ? h.template on<6>(n)
-                                                      : h.template on<7>(n)
-                                       : n < 1000000000 ? h.template on<8>(n)
-                                                        : h.template on<9>(n);
-}
-
-// An lg handler that formats a decimal number.
-// Usage: lg(n, decimal_formatter(buffer));
-class decimal_formatter {
- private:
-  char* buffer_;
-
-  void write_pair(unsigned N, uint32_t index) {
-    std::memcpy(buffer_ + N, data::digits + index * 2, 2);
-  }
-
- public:
-  explicit decimal_formatter(char* buf) : buffer_(buf) {}
-
-  template <unsigned N> char* on(uint32_t u) {
-    if (N == 0) {
-      *buffer_ = static_cast<char>(u) + '0';
-    } else if (N == 1) {
-      write_pair(0, u);
-    } else {
-      // The idea of using 4.32 fixed-point numbers is based on
-      // https://github.com/jeaiii/itoa
-      unsigned n = N - 1;
-      unsigned a = n / 5 * n * 53 / 16;
-      uint64_t t =
-          ((1ULL << (32 + a)) / data::zero_or_powers_of_10_32[n] + 1 - n / 9);
-      t = ((t * u) >> a) + n / 5 * 4;
-      write_pair(0, t >> 32);
-      for (unsigned i = 2; i < N; i += 2) {
-        t = 100ULL * static_cast<uint32_t>(t);
-        write_pair(i, t >> 32);
-      }
-      if (N % 2 == 0) {
-        buffer_[N] =
-            static_cast<char>((10ULL * static_cast<uint32_t>(t)) >> 32) + '0';
-      }
-    }
-    return buffer_ += N + 1;
-  }
-};
 
 #ifdef FMT_BUILTIN_CLZ
 // Optional version of count_digits for better performance on 32-bit platforms.
@@ -2620,7 +2567,7 @@ class format_string_checker {
  public:
   explicit FMT_CONSTEXPR format_string_checker(
       basic_string_view<Char> format_str, ErrorHandler eh)
-      : arg_id_(max_value<unsigned>()),
+      : arg_id_(-1),
         context_(format_str, eh),
         parse_funcs_{&parse_format_specs<Args, parse_context_type>...} {}
 
@@ -2661,7 +2608,7 @@ class format_string_checker {
   // Format specifier parsing function.
   using parse_func = const Char* (*)(parse_context_type&);
 
-  unsigned arg_id_;
+  int arg_id_;
   parse_context_type context_;
   parse_func parse_funcs_[num_args > 0 ? num_args : 1];
 };
