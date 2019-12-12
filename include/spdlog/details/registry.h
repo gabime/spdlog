@@ -24,9 +24,6 @@ namespace details {
 class thread_pool;
 class periodic_worker;
 
-
-
-
 class registry
 {
 public:

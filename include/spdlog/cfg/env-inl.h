@@ -18,7 +18,6 @@
 namespace spdlog {
 namespace env {
 
-
 using name_val_pair = std::pair<std::string, std::string>;
 
 // inplace convert  to lowercase

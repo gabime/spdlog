@@ -279,12 +279,10 @@ SPDLOG_INLINE void registry::set_configs(logger_cfgs configs)
             auto &pattern = cfg_it->second.pattern;
             logger->set_formatter(details::make_unique<pattern_formatter>(pattern));
         }
-        else //not found in cfgs - give it default settings
+        else // not found in cfgs - give it default settings
         {
             logger
         }
-
-
     }
 
     for (const auto &logger_cfg : configs)
@@ -293,18 +291,13 @@ SPDLOG_INLINE void registry::set_configs(logger_cfgs configs)
         auto level = level::from_str(logger_cfg.second.level_name);
         auto &pattern = logger_cfg.second.pattern;
 
-
         if (auto logger = this->get(logger_name))
         {
             logger->set_level(level);
             logger->set_pattern(pattern);
         }
-
     }
-
 }
-
-
 
 SPDLOG_INLINE registry &registry::instance()
 {
