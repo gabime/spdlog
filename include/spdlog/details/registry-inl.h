@@ -263,40 +263,25 @@ SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registrat
 SPDLOG_INLINE void registry::set_configs(logger_cfgs configs)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    logger_configs_ = std::move(configs);
-
     for (auto &l : loggers_)
     {
         auto &logger = l.second;
         auto cfg_it = configs.loggers.find(logger->name());
 
-        if (cfg_it != configs.loggers.end())
-        {
-            // set level
-            auto level = level::from_str(cfg_it->second.level_name);
-            logger->set_level(level);
-            // set pattern
-            auto &pattern = cfg_it->second.pattern;
-            logger->set_formatter(details::make_unique<pattern_formatter>(pattern));
+        // use default config if not found for this logger name
+        logger_cfg *cfg =  cfg_it != configs.loggers.end() ? &cfg_it->second : &configs.default_cfg;
+        if(cfg->level_name.empty()) {
+            cfg->level_name = configs.default_cfg.level_name;
         }
-        else // not found in cfgs - give it default settings
-        {
-            logger
-        }
-    }
 
-    for (const auto &logger_cfg : configs)
-    {
-        auto &logger_name = logger_cfg.first;
-        auto level = level::from_str(logger_cfg.second.level_name);
-        auto &pattern = logger_cfg.second.pattern;
-
-        if (auto logger = this->get(logger_name))
-        {
-            logger->set_level(level);
-            logger->set_pattern(pattern);
+        if(cfg->pattern.empty()) {
+            cfg->pattern = configs.default_cfg.pattern;
         }
+
+        logger->set_level(level::from_str(cfg->level_name));
+        logger->set_formatter(details::make_unique<pattern_formatter>(cfg->pattern));
     }
+    logger_cfgs_ = std::move(configs);
 }
 
 SPDLOG_INLINE registry &registry::instance()

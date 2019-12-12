@@ -29,8 +29,8 @@ class registry
 public:
     struct logger_cfg
     {
-        std::string level_name;
-        std::string pattern;
+        std::string level_name = "info";
+        std::string pattern = "%+";
     };
 
     struct logger_cfgs
@@ -112,7 +112,7 @@ private:
     std::unique_ptr<periodic_worker> periodic_flusher_;
     std::shared_ptr<logger> default_logger_;
     bool automatic_registration_ = true;
-    logger_configs logger_configs_;
+    logger_cfgs logger_cfgs_;
     size_t backtrace_n_messages_ = 0;
 };
 

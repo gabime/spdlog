@@ -84,27 +84,25 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     return rv;
 }
 
-inline details::logger_configs from_env_()
+inline details::registry::logger_cfgs from_env_()
 {
     using details::os::getenv;
-    details::logger_configs configs;
+    details::registry::logger_cfgs configs;
 
     auto levels = extract_key_vals_(getenv("SPDLOG_LEVEL"));
     auto patterns = extract_key_vals_(getenv("SPDLOG_PATTERN"));
 
     // merge to single dict. and take into account "*"
-    std::string default_level_name = "info";
-    std::string default_pattern = "%+";
     for (auto &name_level : levels)
     {
         auto &logger_name = name_level.first;
         auto level_name = to_lower_(name_level.second);
-        details::logger_cfg cfg;
+        details::registry::logger_cfg cfg;
         cfg.level_name = level_name;
-        configs[logger_name] = cfg;
+        configs.loggers.emplace(logger_name, cfg);
         if (logger_name == "*")
         {
-            default_level_name = cfg.level_name;
+            configs.default_cfg.level_name = cfg.level_name;
         }
     }
 
@@ -112,37 +110,25 @@ inline details::logger_configs from_env_()
     {
         auto &logger_name = name_pattern.first;
         auto &pattern = name_pattern.second;
-        auto it = configs.find(logger_name);
+        auto it = configs.loggers.find(logger_name);
 
-        if (it != configs.end())
+        if (it != configs.loggers.end())
         {
             it->second.pattern = pattern;
         }
         else
         {
-            details::logger_cfg cfg;
+            details::registry::logger_cfg cfg;
             cfg.pattern = pattern;
-            configs.insert({logger_name, cfg});
+            //configs.loggers.insert({logger_name, cfg});
+            configs.loggers.emplace(logger_name, cfg);
         }
         if (logger_name == "*")
         {
-            default_pattern = pattern;
+            configs.default_cfg.pattern = pattern;
         }
     }
 
-    // fill missing fields with the default values
-    for (auto &cfg : configs)
-    {
-        auto &val = cfg.second;
-        if (val.pattern.empty())
-        {
-            val.pattern = default_pattern;
-        }
-        if (val.level_name.empty())
-        {
-            val.level_name = default_level_name;
-        }
-    }
     return configs;
 }
 
