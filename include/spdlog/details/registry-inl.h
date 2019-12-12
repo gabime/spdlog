@@ -269,14 +269,25 @@ SPDLOG_INLINE void registry::set_configs(logger_cfgs configs)
         auto cfg_it = configs.loggers.find(logger->name());
 
         // use default config if not found for this logger name
-        logger_cfg *cfg =  cfg_it != configs.loggers.end() ? &cfg_it->second : &configs.default_cfg;
-        if(cfg->level_name.empty()) {
-            cfg->level_name = configs.default_cfg.level_name;
+
+        logger_cfg *cfg;
+        if(cfg_it != configs.loggers.end())
+        {
+            cfg = &cfg_it->second;
+            if(cfg->level_name.empty())
+            {
+                cfg->level_name = configs.default_cfg.level_name;
+            }
+            if(cfg->level_name.empty())
+            {
+                cfg->level_name = configs.default_cfg.level_name;
+            }
+        }
+        else
+        {
+            cfg = &configs.default_cfg;
         }
 
-        if(cfg->pattern.empty()) {
-            cfg->pattern = configs.default_cfg.pattern;
-        }
 
         logger->set_level(level::from_str(cfg->level_name));
         logger->set_formatter(details::make_unique<pattern_formatter>(cfg->pattern));

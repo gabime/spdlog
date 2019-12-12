@@ -29,14 +29,14 @@ class registry
 public:
     struct logger_cfg
     {
-        std::string level_name = "info";
-        std::string pattern = "%+";
+        std::string level_name;
+        std::string pattern;
     };
 
     struct logger_cfgs
     {
         std::unordered_map<std::string, logger_cfg> loggers;
-        logger_cfg default_cfg;
+        logger_cfg default_cfg = {"info", "%+"};
     };
 
     registry(const registry &) = delete;
