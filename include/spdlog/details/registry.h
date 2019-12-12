@@ -24,9 +24,24 @@ namespace details {
 class thread_pool;
 class periodic_worker;
 
+
+
+
 class registry
 {
 public:
+    struct logger_cfg
+    {
+        std::string level_name;
+        std::string pattern;
+    };
+
+    struct logger_cfgs
+    {
+        std::unordered_map<std::string, logger_cfg> loggers;
+        logger_cfg default_cfg;
+    };
+
     registry(const registry &) = delete;
     registry &operator=(const registry &) = delete;
 
@@ -79,6 +94,8 @@ public:
 
     void set_automatic_registration(bool automatic_registration);
 
+    void set_configs(logger_cfgs configs);
+
     static registry &instance();
 
 private:
@@ -98,6 +115,7 @@ private:
     std::unique_ptr<periodic_worker> periodic_flusher_;
     std::shared_ptr<logger> default_logger_;
     bool automatic_registration_ = true;
+    logger_configs logger_configs_;
     size_t backtrace_n_messages_ = 0;
 };
 

@@ -32,12 +32,9 @@
 // export SPDLOG_PATTERN="[%x] [%l] [%n] %v,logger1=[%u] %v"
 
 namespace spdlog {
-namespace cfg {
 namespace env {
 void init();
 }
-
-} // namespace cfg
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY

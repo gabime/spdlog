@@ -16,16 +16,9 @@
 #include <sstream>
 
 namespace spdlog {
-namespace cfg {
 namespace env {
 
-struct logger_cfg
-{
-    std::string level_name;
-    std::string pattern;
-};
 
-using cfg_map = std::unordered_map<std::string, logger_cfg>;
 using name_val_pair = std::pair<std::string, std::string>;
 
 // inplace convert  to lowercase
@@ -92,10 +85,10 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     return rv;
 }
 
-inline cfg_map from_env_()
+inline details::logger_configs from_env_()
 {
     using details::os::getenv;
-    cfg_map configs;
+    details::logger_configs configs;
 
     auto levels = extract_key_vals_(getenv("SPDLOG_LEVEL"));
     auto patterns = extract_key_vals_(getenv("SPDLOG_PATTERN"));
@@ -107,7 +100,7 @@ inline cfg_map from_env_()
     {
         auto &logger_name = name_level.first;
         auto level_name = to_lower_(name_level.second);
-        logger_cfg cfg;
+        details::logger_cfg cfg;
         cfg.level_name = level_name;
         configs[logger_name] = cfg;
         if (logger_name == "*")
@@ -128,7 +121,7 @@ inline cfg_map from_env_()
         }
         else
         {
-            logger_cfg cfg;
+            details::logger_cfg cfg;
             cfg.pattern = pattern;
             configs.insert({logger_name, cfg});
         }
@@ -156,26 +149,8 @@ inline cfg_map from_env_()
 
 SPDLOG_INLINE void init()
 {
-    auto cfg_map = from_env_();
-    for (const auto &logger_cfg : cfg_map)
-    {
-        auto &logger_name = logger_cfg.first;
-        auto level = level::from_str(logger_cfg.second.level_name);
-        auto &pattern = logger_cfg.second.pattern;
-
-        if (logger_name == "*")
-        {
-            spdlog::set_level(level);
-            spdlog::set_pattern(pattern);
-        }
-        else if (auto logger = spdlog::get(logger_name))
-        {
-            logger->set_level(level);
-            logger->set_pattern(pattern);
-        }
-    }
+    spdlog::details::registry::instance().set_configs(from_env_());
 }
 
 } // namespace env
-} // namespace cfg
 } // namespace spdlog
