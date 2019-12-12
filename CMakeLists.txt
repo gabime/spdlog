@@ -25,8 +25,11 @@ message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 #---------------------------------------------------------------------------------------
 # Compiler config
 #---------------------------------------------------------------------------------------
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+if (NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+endif()
+
 set(CMAKE_CXX_EXTENSIONS  OFF)
 
 if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
