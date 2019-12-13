@@ -79,7 +79,7 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     return rv;
 }
 
-inline details::registry::logger_levels levels_from_string_(const std::string& input)
+inline details::registry::logger_levels extract_levels_(const std::string& input)
 {
     auto key_vals = extract_key_vals_(input);
     details::registry::logger_levels rv;
@@ -110,7 +110,7 @@ inline details::registry::logger_levels levels_from_string_(const std::string& i
 
 SPDLOG_INLINE void load_levels()
 {
-    auto levels = levels_from_string_(details::os::getenv("SPDLOG_LEVEL"));
+    auto levels = extract_levels_(details::os::getenv("SPDLOG_LEVEL"));
     spdlog::details::registry::instance().set_levels(levels);
 }
 

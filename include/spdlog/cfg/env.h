@@ -26,7 +26,7 @@
 namespace spdlog {
 namespace env {
 void load_levels();
-}
+} // namespace env
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
