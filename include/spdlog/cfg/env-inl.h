@@ -14,7 +14,6 @@
 #include <string>
 #include <utility>
 #include <sstream>
-#include <cassert>
 
 namespace spdlog {
 namespace env {
