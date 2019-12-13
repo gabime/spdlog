@@ -260,6 +260,7 @@ SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registrat
     automatic_registration_ = automatic_registration;
 }
 
+
 SPDLOG_INLINE void registry::set_configs(logger_cfgs configs)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);

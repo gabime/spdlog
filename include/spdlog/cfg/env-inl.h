@@ -14,6 +14,7 @@
 #include <string>
 #include <utility>
 #include <sstream>
+#include <cassert>
 
 namespace spdlog {
 namespace env {
@@ -96,6 +97,7 @@ inline details::registry::logger_cfgs from_env_()
     for (auto &name_level : levels)
     {
         auto &logger_name = name_level.first;
+        assert(!logger_name.empty());
         auto level_name = to_lower_(name_level.second);
         details::registry::logger_cfg cfg;
         cfg.level_name = level_name;
