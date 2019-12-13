@@ -8,8 +8,9 @@
 #include <unordered_map>
 
 //
-// Init levels and patterns from env variables SPDLOG_LEVEL and SPDLOG_PATTERN.
+// Init levels and patterns from env variables SPDLOG_LEVEL
 // Inspired from Rust's "env_logger" crate (https://crates.io/crates/env_logger).
+// Note - fallback to "info" level on unrecognized levels
 //
 // Examples:
 //
@@ -21,19 +22,10 @@
 //
 // turn off all logging except for logger1 and logger2:
 // export SPDLOG_LEVEL="off,logger1=debug,logger2=info"
-//
-// set global pattern:
-// export SPDLOG_PATTERN="[%x] [%l] [%n] %v"
-//
-// set pattern for logger1:
-// export SPDLOG_PATTERN="logger1=%v,*=[%x] [%l] [%n] %v"
-//
-// set global pattern and different pattern for logger1:
-// export SPDLOG_PATTERN="[%x] [%l] [%n] %v,logger1=[%u] %v"
 
 namespace spdlog {
 namespace env {
-void init();
+void load_levels();
 }
 } // namespace spdlog
 

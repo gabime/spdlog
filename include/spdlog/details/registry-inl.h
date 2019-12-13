@@ -30,6 +30,12 @@
 namespace spdlog {
 namespace details {
 
+SPDLOG_INLINE level::level_enum registry::logger_levels::get_or_default(const std::string &name)
+{
+    auto it = levels.find(name);
+    return it != levels.end() ? it->second : default_level;
+}
+
 SPDLOG_INLINE registry::registry()
     : formatter_(new pattern_formatter())
 {
@@ -64,7 +70,7 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
         new_logger->set_error_handler(err_handler_);
     }
 
-    new_logger->set_level(level_);
+    new_logger->set_level(levels_.get_or_default(new_logger->name()));
     new_logger->flush_on(flush_level_);
 
     if (backtrace_n_messages_ > 0)
@@ -168,7 +174,7 @@ SPDLOG_INLINE void registry::set_level(level::level_enum log_level)
     {
         l.second->set_level(log_level);
     }
-    level_ = log_level;
+    levels_.default_level = log_level;
 }
 
 SPDLOG_INLINE void registry::flush_on(level::level_enum log_level)
@@ -260,23 +266,15 @@ SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registrat
     automatic_registration_ = automatic_registration;
 }
 
-
-SPDLOG_INLINE void registry::set_configs(logger_cfgs configs)
+SPDLOG_INLINE void registry::set_levels(logger_levels levels)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
+    levels_ = std::move(levels);
     for (auto &l : loggers_)
     {
         auto &logger = l.second;
-        auto cfg_it = configs.loggers.find(logger->name());
-
-        // use default config if not found for this logger name
-        logger_cfg *cfg =  cfg_it != configs.loggers.end() ? &cfg_it->second : &configs.default_cfg;
-        auto &level_name = cfg->level_name.empty() ? cfg->level_name: configs.default_cfg.level_name;
-        auto &pattern = cfg->pattern.empty() ? cfg->pattern: configs.default_cfg.pattern;
-        logger->set_level(level::from_str(level_name));
-        logger->set_formatter(details::make_unique<pattern_formatter>(pattern));
+        logger->set_level(levels_.get_or_default(logger->name()));
     }
-    logger_cfgs_ = std::move(configs);
 }
 
 SPDLOG_INLINE registry &registry::instance()
@@ -299,5 +297,6 @@ SPDLOG_INLINE void registry::register_logger_(std::shared_ptr<logger> new_logger
     throw_if_exists_(logger_name);
     loggers_[logger_name] = std::move(new_logger);
 }
+
 } // namespace details
 } // namespace spdlog

@@ -6,13 +6,18 @@
 
 #include <spdlog/spdlog.h>
 #include <spdlog/cfg/env.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 int main(int, char *[])
 {
     try
     {
-        spdlog::env::init();
-        spdlog::info("Hello");
+        spdlog::env::load_levels();
+        auto l1 = spdlog::stderr_color_st("l1");
+        auto l2 = spdlog::stderr_color_st("l2");
+        spdlog::info("Hello default logger");
+        l1->debug("Hello l1");
+        l2->trace("Hello l2");
     }
     catch (spdlog::spdlog_ex &ex)
     {

@@ -4,12 +4,12 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include "spdlog/cfg/env.h"
+#include <spdlog/cfg/env.h>
 #endif
 
-#include "spdlog/spdlog.h"
-#include "spdlog/details/os.h"
-#include "spdlog/details/registry.h"
+#include <spdlog/spdlog.h>
+#include <spdlog/details/os.h>
+#include <spdlog/details/registry.h>
 
 #include <string>
 #include <utility>
@@ -74,73 +74,43 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
             continue;
         }
         auto kv = extract_kv_('=', token);
-
-        // '*' marks all loggers
-        if (kv.first.empty())
-        {
-            kv.first = "*";
-        }
-        rv.insert(std::move(kv));
+        rv[kv.first] = kv.second;
     }
     return rv;
 }
 
-inline details::registry::logger_cfgs from_env_()
+inline details::registry::logger_levels from_env_()
 {
     using details::os::getenv;
-    details::registry::logger_cfgs configs;
+    auto key_vals = extract_key_vals_(getenv("SPDLOG_LEVEL"));
+    details::registry::logger_levels rv;
 
-    auto levels = extract_key_vals_(getenv("SPDLOG_LEVEL"));
-    auto patterns = extract_key_vals_(getenv("SPDLOG_PATTERN"));
-
-    // merge to single dict. and take into account "*"
-    for (auto &name_level : levels)
+    for (auto &name_level : key_vals)
     {
         auto &logger_name = name_level.first;
-        assert(!logger_name.empty());
         auto level_name = to_lower_(name_level.second);
-        details::registry::logger_cfg cfg;
-        cfg.level_name = level_name;
-        if (logger_name == "*")
+        auto level = level::from_str(level_name);
+        // fallback to "info" if unrecognized level name
+        if (level == level::off && level_name != "off")
         {
-            configs.default_cfg.level_name = cfg.level_name;
+            level = level::info;
+        }
+
+        if (logger_name.empty() || logger_name == "*")
+        {
+            rv.default_level = level;
         }
         else
         {
-            configs.loggers.emplace(logger_name, cfg);
-        }
-
-    }
-
-    for (auto &name_pattern : patterns)
-    {
-        auto &logger_name = name_pattern.first;
-        auto &pattern = name_pattern.second;
-        auto it = configs.loggers.find(logger_name);
-
-        if (it != configs.loggers.end())
-        {
-            it->second.pattern = pattern;
-        }
-
-        if (logger_name == "*")
-        {
-            configs.default_cfg.pattern = pattern;
-        }
-        else
-        {
-            details::registry::logger_cfg cfg;
-            cfg.pattern = pattern;
-            configs.loggers.emplace(logger_name, cfg);
+            rv.levels[logger_name] = level;
         }
     }
-
-    return configs;
+    return rv;
 }
 
-SPDLOG_INLINE void init()
+SPDLOG_INLINE void load_levels()
 {
-    spdlog::details::registry::instance().set_configs(from_env_());
+    spdlog::details::registry::instance().set_levels(from_env_());
 }
 
 } // namespace env

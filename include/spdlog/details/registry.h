@@ -27,16 +27,11 @@ class periodic_worker;
 class registry
 {
 public:
-    struct logger_cfg
+    struct logger_levels
     {
-        std::string level_name;
-        std::string pattern;
-    };
-
-    struct logger_cfgs
-    {
-        std::unordered_map<std::string, logger_cfg> loggers;
-        logger_cfg default_cfg = {"info", "%+"};
+        std::unordered_map<std::string, spdlog::level::level_enum> levels;
+        spdlog::level::level_enum default_level = level::info;
+        spdlog::level::level_enum get_or_default(const std::string &name);
     };
 
     registry(const registry &) = delete;
@@ -91,7 +86,7 @@ public:
 
     void set_automatic_registration(bool automatic_registration);
 
-    void set_configs(logger_cfgs configs);
+    void set_levels(logger_levels levels);
 
     static registry &instance();
 
@@ -104,15 +99,14 @@ private:
     std::mutex logger_map_mutex_, flusher_mutex_;
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
+    logger_levels levels_;
     std::unique_ptr<formatter> formatter_;
-    level::level_enum level_ = level::info;
     level::level_enum flush_level_ = level::off;
     void (*err_handler_)(const std::string &msg);
     std::shared_ptr<thread_pool> tp_;
     std::unique_ptr<periodic_worker> periodic_flusher_;
     std::shared_ptr<logger> default_logger_;
     bool automatic_registration_ = true;
-    logger_cfgs logger_cfgs_;
     size_t backtrace_n_messages_ = 0;
 };
 
