@@ -66,7 +66,7 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
 {
     std::string token;
     std::istringstream token_stream(str);
-    std::unordered_map<std::string, std::string> rv;
+    std::unordered_map<std::string, std::string> rv{};
     while (std::getline(token_stream, token, ','))
     {
         if (token.empty())
@@ -106,7 +106,6 @@ inline details::registry::logger_levels extract_levels_(const std::string& input
     }
     return rv;
 }
-
 
 SPDLOG_INLINE void load_levels()
 {
