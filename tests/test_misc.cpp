@@ -72,6 +72,7 @@ TEST_CASE("to_level_enum", "[convert_to_level_enum]")
     REQUIRE(spdlog::level::from_str("debug") == spdlog::level::debug);
     REQUIRE(spdlog::level::from_str("info") == spdlog::level::info);
     REQUIRE(spdlog::level::from_str("warning") == spdlog::level::warn);
+    REQUIRE(spdlog::level::from_str("warn") == spdlog::level::warn);
     REQUIRE(spdlog::level::from_str("error") == spdlog::level::err);
     REQUIRE(spdlog::level::from_str("critical") == spdlog::level::critical);
     REQUIRE(spdlog::level::from_str("off") == spdlog::level::off);
