@@ -79,7 +79,7 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     return rv;
 }
 
-inline details::registry::logger_levels extract_levels_(const std::string& input)
+inline details::registry::logger_levels extract_levels_(const std::string &input)
 {
     auto key_vals = extract_key_vals_(input);
     details::registry::logger_levels rv;

@@ -116,7 +116,6 @@ void daily_example()
     auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
 }
 
-
 // Load log levels from SPDLOG_LEVEL environment variable if exists.
 //
 // set global level to debug:

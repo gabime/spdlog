@@ -541,7 +541,7 @@ std::string SPDLOG_INLINE getenv(const char *field)
 
 #if defined(_MSC_VER)
 #if defined(__cplusplus_winrt)
-    return std::string{}; //not supported under uwp
+    return std::string{}; // not supported under uwp
 #else
     size_t len = 0;
     char buf[128];
