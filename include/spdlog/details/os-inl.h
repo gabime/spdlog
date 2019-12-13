@@ -538,6 +538,9 @@ SPDLOG_INLINE filename_t dir_name(filename_t path)
 
 std::string SPDLOG_INLINE getenv(const char *field)
 {
+#if defined(__cplusplus_winrt)
+    SPDLOG_THROW(spdlog_ex("getenv is not supported under uwp"));
+#endif
 #if defined(_MSC_VER) && !defined(__cplusplus_winrt)
     size_t len = 0;
     char buf[128];
