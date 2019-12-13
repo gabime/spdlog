@@ -38,7 +38,7 @@ inline std::string &trim_(std::string &str)
     return str;
 }
 
-// return (name,value) pair from given "name=value" string.
+// return (name,value) trimmed pair from given "name=value" string.
 // return empty string on missing parts
 // "key=val" => ("key", "val")
 // " key  =  val " => ("key", "val")
@@ -79,10 +79,9 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     return rv;
 }
 
-inline details::registry::logger_levels from_env_()
+inline details::registry::logger_levels from_string_(const std::string& input)
 {
-    using details::os::getenv;
-    auto key_vals = extract_key_vals_(getenv("SPDLOG_LEVEL"));
+    auto key_vals = extract_key_vals_(input);
     details::registry::logger_levels rv;
 
     for (auto &name_level : key_vals)
@@ -108,9 +107,11 @@ inline details::registry::logger_levels from_env_()
     return rv;
 }
 
+
 SPDLOG_INLINE void load_levels()
 {
-    spdlog::details::registry::instance().set_levels(from_env_());
+    auto levels = from_string_(details::os::getenv("SPDLOG_LEVEL"));
+    spdlog::details::registry::instance().set_levels(levels);
 }
 
 } // namespace env

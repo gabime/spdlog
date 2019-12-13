@@ -12,12 +12,15 @@ int main(int, char *[])
 {
     try
     {
+        spdlog::set_level(spdlog::level::warn);
         spdlog::env::load_levels();
+
         auto l1 = spdlog::stderr_color_st("l1");
         auto l2 = spdlog::stderr_color_st("l2");
+
         spdlog::info("Hello default logger");
         l1->debug("Hello l1");
-        l2->trace("Hello l2");
+//        l2->trace("Hello l2");
     }
     catch (spdlog::spdlog_ex &ex)
     {
