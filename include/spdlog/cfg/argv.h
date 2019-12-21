@@ -6,8 +6,17 @@
 #include <spdlog/details/os.h>
 
 //
-// Init levels from argv SPDLOG_LEVEL
-// Example: my_program.exe "SPDLOG_LEVEL=trace"
+// Init log levels using each argv entry that starts with "SPDLOG_LEVEL="
+//
+// set all loggers to debug level:
+// example.exe "SPDLOG_LEVEL=debug"
+
+// set logger1 to trace level
+// example.exe "SPDLOG_LEVEL=logger1=trace"
+
+// turn off all logging except for logger1 and logger2:
+// example.exe "SPDLOG_LEVEL=off,logger1=debug,logger2=info"
+
 
 namespace spdlog {
 namespace cfg {
