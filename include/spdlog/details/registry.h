@@ -9,7 +9,7 @@
 // This class is thread safe
 
 #include <spdlog/common.h>
-#include <spdlog/cfg/log_levels.h>
+#include <spdlog/loaders/log_levels.h>
 
 #include <chrono>
 #include <functional>
@@ -80,7 +80,7 @@ public:
 
     void set_automatic_registration(bool automatic_registration);
 
-    void update_levels(cfg::log_levels levels);
+    void update_levels(loaders::log_levels levels);
 
     static registry &instance();
 
@@ -93,7 +93,7 @@ private:
     std::mutex logger_map_mutex_, flusher_mutex_;
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
-    cfg::log_levels levels_;
+    loaders::log_levels levels_;
     std::unique_ptr<formatter> formatter_;
     level::level_enum flush_level_ = level::off;
     void (*err_handler_)(const std::string &msg);

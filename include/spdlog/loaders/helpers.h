@@ -3,13 +3,10 @@
 
 #pragma once
 
-#include <spdlog/cfg/log_levels.h>
-
-
-
+#include <spdlog/loaders/log_levels.h>
 
 namespace spdlog {
-namespace cfg {
+namespace loaders {
 namespace helpers {
 //
 // Init levels from given string
@@ -23,7 +20,7 @@ namespace helpers {
 log_levels extract_levels(const std::string &txt);
 }
 
-} // namespace cfg
+} // namespace loaders
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY

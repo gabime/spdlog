@@ -260,7 +260,7 @@ SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registrat
     automatic_registration_ = automatic_registration;
 }
 
-SPDLOG_INLINE void registry::update_levels(cfg::log_levels levels)
+SPDLOG_INLINE void registry::update_levels(loaders::log_levels levels)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     levels_ = std::move(levels);

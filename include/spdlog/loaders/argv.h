@@ -2,7 +2,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
-#include <spdlog/cfg/helpers.h>
+#include <spdlog/loaders/helpers.h>
 #include <spdlog/details/os.h>
 
 //
@@ -19,10 +19,10 @@
 
 
 namespace spdlog {
-namespace cfg {
-namespace argv {
+namespace loaders {
+
 // search for SPDLOG_LEVEL= in the args and use it to init the levels
-void load_levels(int args, const char *argv[])
+void load_argv(int args, const char *argv[])
 {
     const std::string spdlog_level_prefix = "SPDLOG_LEVEL=";
     for (int i = 1; i < args; i++)
@@ -36,6 +36,5 @@ void load_levels(int args, const char *argv[])
         }
     }
 }
-} // namespace argv
-} // namespace cfg
+} // namespace loaders
 } // namespace spdlog

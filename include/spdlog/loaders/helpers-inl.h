@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/cfg/helpers.h>
+#include <spdlog/loaders/helpers.h>
 #endif
 
 #include <spdlog/spdlog.h>
@@ -16,7 +16,7 @@
 #include <sstream>
 
 namespace spdlog {
-namespace cfg {
+namespace loaders {
 namespace helpers {
 
 
@@ -100,5 +100,5 @@ SPDLOG_INLINE log_levels extract_levels(const std::string &input)
 }
 
 } // namespace text_loader
-} // namespace cfg
+} // namespace loaders
 } // namespace spdlog

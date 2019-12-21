@@ -20,15 +20,14 @@ void syslog_example();
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/cfg/env.h>
-#include <spdlog/cfg/argv.h>
+#include <spdlog/loaders/env.h>
+#include <spdlog/loaders/argv.h>
 
-int main(int args, char *argv[])
+int main(int args, const char *argv[])
 {
-
-
-    //spdlog::cfg::env::load_levels();
-    spdlog::cfg::argv::load_levels(args, argv);
+    
+    spdlog::loaders::load_env();
+    spdlog::loaders::load_argv(args, argv);
     spdlog::info("HELLO INFO");
 
     auto l1 = spdlog::stderr_color_st("l1");

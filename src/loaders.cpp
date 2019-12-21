@@ -5,4 +5,4 @@
 #error Please define SPDLOG_COMPILED_LIB to compile this file.
 #endif
 
-#include "spdlog/cfg/helpers-inl.h"
+#include "spdlog/loaders/helpers-inl.h"
