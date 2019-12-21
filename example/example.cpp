@@ -23,10 +23,10 @@ void syslog_example();
 #include <spdlog/loaders/env.h>
 #include <spdlog/loaders/argv.h>
 
-int main(int args, const char *argv[])
+int main(int args, char *argv[])
 {
 
-    spdlog::loaders::load_env();
+    //spdlog::loaders::load_env();
     spdlog::loaders::load_argv(args, argv);
     spdlog::info("HELLO INFO");
 

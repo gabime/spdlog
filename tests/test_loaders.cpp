@@ -20,7 +20,7 @@ TEST_CASE("env", "[loaders]")
 TEST_CASE("argv1", "[loaders]")
 {
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=warn"};
-    load_argv(2, argv);
+    load_argv(2, const_cast<char**>(argv));
     auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
     REQUIRE(l1->level() == spdlog::level::warn);
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
@@ -30,7 +30,7 @@ TEST_CASE("argv1", "[loaders]")
 TEST_CASE("argv2", "[loaders]")
 {
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=warn,trace"};
-    load_argv(2, argv);
+    load_argv(2, const_cast<char**>(argv));
     auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
     REQUIRE(l1->level() == spdlog::level::warn);
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::trace);
@@ -40,7 +40,7 @@ TEST_CASE("argv2", "[loaders]")
 TEST_CASE("argv3", "[loaders]")
 {
     const char *argv[] = {"ignore", "SPDLOG_LEVEL="};
-    load_argv(2, argv);
+    load_argv(2, const_cast<char**>(argv));
     auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
     REQUIRE(l1->level() == spdlog::level::info);
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
@@ -50,7 +50,7 @@ TEST_CASE("argv3", "[loaders]")
 TEST_CASE("argv4", "[loaders]")
 {
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=junk"};
-    load_argv(2, argv);
+    load_argv(2, const_cast<char**>(argv));
     auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
     REQUIRE(l1->level() == spdlog::level::info);
     spdlog::drop(l1->name());

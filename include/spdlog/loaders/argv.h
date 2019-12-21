@@ -36,9 +36,5 @@ void load_argv(int args, char **argv)
     }
 }
 
-void load_argv(int args, const char **argv)
-{
-    return load_argv(args, const_cast<const char**>(argv));
-}
 } // namespace loaders
 } // namespace spdlog
