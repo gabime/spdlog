@@ -17,12 +17,11 @@
 // turn off all logging except for logger1 and logger2:
 // example.exe "SPDLOG_LEVEL=off,logger1=debug,logger2=info"
 
-
 namespace spdlog {
 namespace loaders {
 
 // search for SPDLOG_LEVEL= in the args and use it to init the levels
-void load_argv(int args, const char *argv[])
+void load_argv(int args, char **argv)
 {
     const std::string spdlog_level_prefix = "SPDLOG_LEVEL=";
     for (int i = 1; i < args; i++)
@@ -35,6 +34,11 @@ void load_argv(int args, const char *argv[])
             details::registry::instance().update_levels(std::move(levels));
         }
     }
+}
+
+void load_argv(int args, const char **argv)
+{
+    return load_argv(args, const_cast<const char**>(argv));
 }
 } // namespace loaders
 } // namespace spdlog

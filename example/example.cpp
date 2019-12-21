@@ -25,7 +25,7 @@ void syslog_example();
 
 int main(int args, const char *argv[])
 {
-    
+
     spdlog::loaders::load_env();
     spdlog::loaders::load_argv(args, argv);
     spdlog::info("HELLO INFO");

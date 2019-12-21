@@ -19,7 +19,6 @@ namespace spdlog {
 namespace loaders {
 namespace helpers {
 
-
 // inplace convert to lowercase
 inline std::string &to_lower_(std::string &str)
 {
@@ -99,6 +98,6 @@ SPDLOG_INLINE log_levels extract_levels(const std::string &input)
     return rv;
 }
 
-} // namespace text_loader
+} // namespace helpers
 } // namespace loaders
 } // namespace spdlog

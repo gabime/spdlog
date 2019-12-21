@@ -18,7 +18,7 @@ namespace helpers {
 // turn off all logging except for logger1 and logger2: "off,logger1=debug,logger2=info"
 //
 log_levels extract_levels(const std::string &txt);
-}
+} // namespace helpers
 
 } // namespace loaders
 } // namespace spdlog
