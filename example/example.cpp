@@ -25,7 +25,7 @@ void syslog_example();
 
 int main(int args, char *argv[])
 {
-    //spdlog::cfg::init_from_env();
+    // spdlog::cfg::init_from_env();
     spdlog::cfg::init_from_argv(args, argv);
     spdlog::info("HELLO INFO");
 

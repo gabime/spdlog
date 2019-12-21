@@ -30,7 +30,6 @@
 namespace spdlog {
 namespace details {
 
-
 SPDLOG_INLINE registry::registry()
     : formatter_(new pattern_formatter())
 {

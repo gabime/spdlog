@@ -95,7 +95,6 @@ inline log_levels extract_levels_(const std::string &input)
             level = level::info;
         }
         rv.set(logger_name, level);
-
     }
     return rv;
 }

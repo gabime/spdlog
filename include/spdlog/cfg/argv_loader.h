@@ -9,7 +9,6 @@
 // Init levels from argv SPDLOG_LEVEL
 // Example: my_program.exe "SPDLOG_LEVEL=trace"
 
-
 namespace spdlog {
 namespace cfg {
 // search for SPDLOG_LEVEL= in the args and use it to init the levels

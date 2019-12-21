@@ -28,7 +28,6 @@ class periodic_worker;
 class registry
 {
 public:
-
     registry(const registry &) = delete;
     registry &operator=(const registry &) = delete;
 
