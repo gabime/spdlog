@@ -25,9 +25,8 @@ void syslog_example();
 
 int main(int args, char *argv[])
 {
-    spdlog::cfg::init_from_env();
+    //spdlog::cfg::init_from_env();
     spdlog::cfg::init_from_argv(args, argv);
-    spdlog::debug("HELLO DEBUG");
     spdlog::info("HELLO INFO");
 
     auto l1 = spdlog::stderr_color_st("l1");

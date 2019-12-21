@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <spdlog/cfg/cfg.h>
 #include <spdlog/common.h>
 #include <string>
 #include <unordered_map>
@@ -26,7 +27,7 @@
 namespace spdlog {
 namespace cfg {
 namespace text_loader {
-details::registry::logger_levels load_levels(const std::string &cfg);
+log_levels load_levels(const std::string &txt);
 }
 
 } // namespace cfg

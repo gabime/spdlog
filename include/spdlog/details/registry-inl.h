@@ -30,11 +30,6 @@
 namespace spdlog {
 namespace details {
 
-SPDLOG_INLINE level::level_enum registry::logger_levels::get_or_default(const std::string &name)
-{
-    auto it = levels.find(name);
-    return it != levels.end() ? it->second : default_level;
-}
 
 SPDLOG_INLINE registry::registry()
     : formatter_(new pattern_formatter())
@@ -70,7 +65,7 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
         new_logger->set_error_handler(err_handler_);
     }
 
-    new_logger->set_level(levels_.get_or_default(new_logger->name()));
+    new_logger->set_level(levels_.get(new_logger->name()));
     new_logger->flush_on(flush_level_);
 
     if (backtrace_n_messages_ > 0)
@@ -174,7 +169,7 @@ SPDLOG_INLINE void registry::set_level(level::level_enum log_level)
     {
         l.second->set_level(log_level);
     }
-    levels_.default_level = log_level;
+    levels_.set("*", log_level);
 }
 
 SPDLOG_INLINE void registry::flush_on(level::level_enum log_level)
@@ -266,14 +261,14 @@ SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registrat
     automatic_registration_ = automatic_registration;
 }
 
-SPDLOG_INLINE void registry::set_levels(logger_levels levels)
+SPDLOG_INLINE void registry::set_levels(cfg::log_levels levels)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     levels_ = std::move(levels);
     for (auto &l : loggers_)
     {
         auto &logger = l.second;
-        logger->set_level(levels_.get_or_default(logger->name()));
+        logger->set_level(levels_.get(logger->name()));
     }
 }
 

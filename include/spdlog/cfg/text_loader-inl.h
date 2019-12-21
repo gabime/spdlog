@@ -79,10 +79,10 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     return rv;
 }
 
-inline details::registry::logger_levels extract_levels_(const std::string &input)
+inline log_levels extract_levels_(const std::string &input)
 {
     auto key_vals = extract_key_vals_(input);
-    details::registry::logger_levels rv;
+    log_levels rv;
 
     for (auto &name_level : key_vals)
     {
@@ -94,22 +94,15 @@ inline details::registry::logger_levels extract_levels_(const std::string &input
         {
             level = level::info;
         }
+        rv.set(logger_name, level);
 
-        if (logger_name.empty() || logger_name == "*")
-        {
-            rv.default_level = level;
-        }
-        else
-        {
-            rv.levels[logger_name] = level;
-        }
     }
     return rv;
 }
 
-SPDLOG_INLINE details::registry::logger_levels load_levels(const std::string &cfg)
+SPDLOG_INLINE log_levels load_levels(const std::string &txt)
 {
-    return extract_levels_(cfg);
+    return extract_levels_(txt);
 }
 
 } // namespace text_loader

@@ -9,6 +9,7 @@
 // This class is thread safe
 
 #include <spdlog/common.h>
+#include <spdlog/cfg/cfg.h>
 
 #include <chrono>
 #include <functional>
@@ -27,12 +28,6 @@ class periodic_worker;
 class registry
 {
 public:
-    struct logger_levels
-    {
-        std::unordered_map<std::string, spdlog::level::level_enum> levels;
-        spdlog::level::level_enum default_level = level::info;
-        spdlog::level::level_enum get_or_default(const std::string &name);
-    };
 
     registry(const registry &) = delete;
     registry &operator=(const registry &) = delete;
@@ -86,7 +81,7 @@ public:
 
     void set_automatic_registration(bool automatic_registration);
 
-    void set_levels(logger_levels levels);
+    void set_levels(cfg::log_levels levels);
 
     static registry &instance();
 
@@ -99,7 +94,7 @@ private:
     std::mutex logger_map_mutex_, flusher_mutex_;
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
-    logger_levels levels_;
+    cfg::log_levels levels_;
     std::unique_ptr<formatter> formatter_;
     level::level_enum flush_level_ = level::off;
     void (*err_handler_)(const std::string &msg);
