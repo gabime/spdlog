@@ -11,7 +11,11 @@ TEST_CASE("env", "[loaders]")
 {
     spdlog::drop("l1");
     auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
+#ifdef _MSVC
+    _putenv_s("SPDLOG_LEVEL", "l1=warn");
+#else
     setenv("SPDLOG_LEVEL", "l1=warn", 1);
+#endif
     load_env();
     REQUIRE(l1->level() == spdlog::level::warn);
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
