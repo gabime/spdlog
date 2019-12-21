@@ -55,3 +55,13 @@ TEST_CASE("argv4", "[loaders]")
     REQUIRE(l1->level() == spdlog::level::info);
     spdlog::drop(l1->name());
 }
+
+TEST_CASE("argv5", "[loaders]")
+{
+    const char *argv[] = {"ignore", "ignore", "SPDLOG_LEVEL=l1=warn,trace"};
+    load_argv(3, const_cast<char**>(argv));
+    auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
+    REQUIRE(l1->level() == spdlog::level::warn);
+    REQUIRE(spdlog::default_logger()->level() == spdlog::level::trace);
+    spdlog::drop(l1->name());
+}
