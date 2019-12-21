@@ -28,18 +28,21 @@ public:
         }
     }
 
+    void set_default(level::level_enum lvl)
+    {
+        default_level_ = lvl;
+    }
+
     level::level_enum get(const std::string &logger_name)
     {
         auto it = levels_.find(logger_name);
         return it != levels_.end() ? it->second : default_level_;
     }
 
-    level::level_enum get()
+    level::level_enum get_default()
     {
         return default_level_;
     }
-
-
 };
 } // namespace cfg
 } // namespace spdlog

@@ -168,7 +168,7 @@ SPDLOG_INLINE void registry::set_level(level::level_enum log_level)
     {
         l.second->set_level(log_level);
     }
-    levels_.set("*", log_level);
+    levels_.set_default(log_level);
 }
 
 SPDLOG_INLINE void registry::flush_on(level::level_enum log_level)
