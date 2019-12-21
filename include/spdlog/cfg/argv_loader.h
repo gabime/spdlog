@@ -23,11 +23,25 @@
 
 namespace spdlog {
 namespace cfg {
-void init_from_env()
+// search for SPDLOG_LEVEL= in the args and use it to init the levels
+void init_from_argv(int args, char *argv[])
 {
-    auto cfg = details::os::getenv("SPDLOG_LEVEL");
-    auto levels = text_loader::load_levels(cfg);
-    spdlog::details::registry::instance().set_levels(levels);
+    if (args < 2)
+    {
+        return;
+    }
+    const std::string spdlog_level_prefix = "SPDLOG_LEVEL=";
+    for (int i = 0; i < args; i++)
+    {
+        std::string arg = argv[i];
+        if (arg.find(spdlog_level_prefix) == 0)
+        {
+            auto cfg_string = arg.substr(spdlog_level_prefix.size());
+            auto levels = text_loader::load_levels(cfg_string);
+            spdlog::details::registry::instance().set_levels(levels);
+            return;
+        }
+    }
 }
 } // namespace cfg
 } // namespace spdlog

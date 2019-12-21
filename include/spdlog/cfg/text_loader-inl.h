@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/cfg/env.h>
+#include <spdlog/cfg/text_loader.h>
 #endif
 
 #include <spdlog/spdlog.h>
@@ -16,7 +16,8 @@
 #include <sstream>
 
 namespace spdlog {
-namespace env {
+namespace cfg {
+namespace text_loader {
 
 using name_val_pair = std::pair<std::string, std::string>;
 
@@ -106,11 +107,11 @@ inline details::registry::logger_levels extract_levels_(const std::string &input
     return rv;
 }
 
-SPDLOG_INLINE void load_levels()
+SPDLOG_INLINE details::registry::logger_levels load_levels(const std::string &cfg)
 {
-    auto levels = extract_levels_(details::os::getenv("SPDLOG_LEVEL"));
-    spdlog::details::registry::instance().set_levels(levels);
+    return extract_levels_(cfg);
 }
 
-} // namespace env
+} // namespace text_loader
+} // namespace cfg
 } // namespace spdlog

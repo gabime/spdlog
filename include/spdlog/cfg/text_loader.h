@@ -2,8 +2,10 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
-#include <spdlog/cfg/text_loader.h>
-#include <spdlog/details/os.h>
+
+#include <spdlog/common.h>
+#include <string>
+#include <unordered_map>
 
 //
 // Init levels and patterns from env variables SPDLOG_LEVEL
@@ -23,11 +25,13 @@
 
 namespace spdlog {
 namespace cfg {
-void init_from_env()
-{
-    auto cfg = details::os::getenv("SPDLOG_LEVEL");
-    auto levels = text_loader::load_levels(cfg);
-    spdlog::details::registry::instance().set_levels(levels);
+namespace text_loader {
+details::registry::logger_levels load_levels(const std::string &cfg);
 }
+
 } // namespace cfg
 } // namespace spdlog
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "text_loader-inl.h"
+#endif // SPDLOG_HEADER_ONLY
