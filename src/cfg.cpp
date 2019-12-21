@@ -6,4 +6,3 @@
 #endif
 
 #include "spdlog/cfg/helpers-inl.h"
-

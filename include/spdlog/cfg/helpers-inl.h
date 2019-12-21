@@ -19,7 +19,6 @@ namespace spdlog {
 namespace cfg {
 namespace helpers {
 
-using name_val_pair = std::pair<std::string, std::string>;
 
 // inplace convert to lowercase
 inline std::string &to_lower_(std::string &str)
@@ -44,7 +43,8 @@ inline std::string &trim_(std::string &str)
 // " key  =  val " => ("key", "val")
 // "key=" => ("key", "")
 // "val" => ("", "val")
-inline name_val_pair extract_kv_(char sep, const std::string &str)
+
+inline std::pair<std::string, std::string> extract_kv_(char sep, const std::string &str)
 {
     auto n = str.find(sep);
     std::string k, v;

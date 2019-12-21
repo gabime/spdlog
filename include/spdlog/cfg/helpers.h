@@ -4,9 +4,7 @@
 #pragma once
 
 #include <spdlog/cfg/log_levels.h>
-#include <spdlog/common.h>
 #include <string>
-#include <unordered_map>
 
 //
 // Init levels from given string
