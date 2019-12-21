@@ -82,7 +82,8 @@ spdlog_srcs = files([
     'src/color_sinks.cpp',
     'src/file_sinks.cpp',
     'src/spdlog.cpp',
-    'src/stdout_sinks.cpp'
+    'src/stdout_sinks.cpp',
+    'src/cfg.cpp'
 ])
 
 if not get_option('external_fmt')
