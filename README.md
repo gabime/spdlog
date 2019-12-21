@@ -77,7 +77,7 @@ int main()
     
     // Compile time log levels
     // define SPDLOG_ACTIVE_LEVEL to desired level
-    SPDLOG_TRACE("Some trace message with param {}", {});
+    SPDLOG_TRACE("Some trace message with param {}", 42);
     SPDLOG_DEBUG("Some debug message");
     
     // Set the default logger to file logger
