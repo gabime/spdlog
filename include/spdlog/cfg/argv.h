@@ -22,7 +22,7 @@ namespace spdlog {
 namespace cfg {
 namespace argv {
 // search for SPDLOG_LEVEL= in the args and use it to init the levels
-void load_levels(int args, char *argv[])
+void load_levels(int args, const char *argv[])
 {
     const std::string spdlog_level_prefix = "SPDLOG_LEVEL=";
     for (int i = 1; i < args; i++)

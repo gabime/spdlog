@@ -11,6 +11,7 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <stdlib.h>
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 

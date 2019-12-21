@@ -11,8 +11,7 @@ namespace spdlog {
 namespace cfg {
 class log_levels
 {
-    using levels_map = std::unordered_map<std::string, spdlog::level::level_enum>;
-    levels_map levels_;
+    std::unordered_map<std::string, spdlog::level::level_enum> levels_;
     spdlog::level::level_enum default_level_ = level::info;
 
 public:
