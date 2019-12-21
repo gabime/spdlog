@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/cfg/text_loader.h>
+#include <spdlog/cfg/helpers.h>
 #endif
 
 #include <spdlog/spdlog.h>
@@ -17,11 +17,11 @@
 
 namespace spdlog {
 namespace cfg {
-namespace text_loader {
+namespace helpers {
 
 using name_val_pair = std::pair<std::string, std::string>;
 
-// inplace convert  to lowercase
+// inplace convert to lowercase
 inline std::string &to_lower_(std::string &str)
 {
     std::transform(
@@ -62,7 +62,7 @@ inline name_val_pair extract_kv_(char sep, const std::string &str)
 
 // return vector of key/value pairs from sequence of "K1=V1,K2=V2,.."
 // "a=AAA,b=BBB,c=CCC,.." => {("a","AAA"),("b","BBB"),("c", "CCC"),...}
-SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(const std::string &str)
+inline std::unordered_map<std::string, std::string> extract_key_vals_(const std::string &str)
 {
     std::string token;
     std::istringstream token_stream(str);
@@ -79,7 +79,7 @@ SPDLOG_INLINE std::unordered_map<std::string, std::string> extract_key_vals_(con
     return rv;
 }
 
-inline log_levels extract_levels_(const std::string &input)
+SPDLOG_INLINE log_levels extract_levels(const std::string &input)
 {
     auto key_vals = extract_key_vals_(input);
     log_levels rv;
@@ -97,11 +97,6 @@ inline log_levels extract_levels_(const std::string &input)
         rv.set(logger_name, level);
     }
     return rv;
-}
-
-SPDLOG_INLINE log_levels load_levels(const std::string &txt)
-{
-    return extract_levels_(txt);
 }
 
 } // namespace text_loader

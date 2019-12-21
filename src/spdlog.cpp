@@ -17,7 +17,7 @@
 #include "spdlog/sinks/sink-inl.h"
 #include "spdlog/sinks/base_sink-inl.h"
 #include "spdlog/details/null_mutex.h"
-#include "spdlog/cfg/text_loader-inl.h"
+#include "spdlog/cfg/helpers-inl.h"
 
 #include <mutex>
 

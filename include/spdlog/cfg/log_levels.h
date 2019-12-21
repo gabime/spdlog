@@ -39,7 +39,7 @@ public:
     }
 
 private:
-    std::unordered_map<std::string, spdlog::level::level_enum> levels_;
+    levels_map levels_;
     spdlog::level::level_enum default_level_ = level::info;
 };
 } // namespace cfg

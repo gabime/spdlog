@@ -9,7 +9,7 @@
 // This class is thread safe
 
 #include <spdlog/common.h>
-#include <spdlog/cfg/cfg.h>
+#include <spdlog/cfg/log_levels.h>
 
 #include <chrono>
 #include <functional>
@@ -80,7 +80,7 @@ public:
 
     void set_automatic_registration(bool automatic_registration);
 
-    void set_levels(cfg::log_levels levels);
+    void update_levels(cfg::log_levels levels);
 
     static registry &instance();
 
