@@ -103,7 +103,7 @@ set(SPDLOG_SRCS
         src/color_sinks.cpp
         src/file_sinks.cpp
         src/async.cpp
-        src/loaders.cpp)
+        src/cfg.cpp)
 
 
 if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
