@@ -37,7 +37,7 @@ $ cmake .. && make -j
 * Very fast (see [benchmarks](#benchmarks) below).
 * Headers only, just copy and use. Or use as a compiled library.
 * Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
-* **New!** [Backtrace](#backtrace-support) support - store debug or other messages in a ring buffer and display later on demand.
+* **New!** [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display later on demand.
 * Fast asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
@@ -158,7 +158,7 @@ spdlog::dump_backtrace(); // log them now! show the last 32 messages
 #### Periodic flush
 ```c++
 // periodically flush all *registered* loggers every 3 seconds:
-// warning: only use if all your loggers are thread safe!
+// warning: only use if all your loggers are thread safe ("_mt" loggers)
 spdlog::flush_every(std::chrono::seconds(3));
 
 ```
@@ -321,7 +321,7 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 [info] daily_st         Elapsed: 0.42 secs        2,393,298/sec
 [info] null_st          Elapsed: 0.04 secs       27,446,957/sec
 [info] **************************************************************
-[info] 10 threads sharing same logger, 1,000,000 iterations
+[info] 10 threads, competing over the same logger object, 1,000,000 iterations
 [info] **************************************************************
 [info] basic_mt         Elapsed: 0.60 secs        1,659,613/sec
 [info] rotating_mt      Elapsed: 0.62 secs        1,612,493/sec
@@ -335,7 +335,6 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 [info] Threads      : 10
 [info] Queue        : 8,192 slots
 [info] Queue memory : 8,192 x 272 = 2,176 KB 
-[info] Total iters  : 3
 [info] -------------------------------------------------
 [info] 
 [info] *********************************
