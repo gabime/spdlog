@@ -11,7 +11,7 @@ TEST_CASE("env", "[loaders]")
 {
     spdlog::drop("l1");
     auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
-#ifdef _MSVC
+#ifdef _MSC_VER
     _putenv_s("SPDLOG_LEVEL", "l1=warn");
 #else
     setenv("SPDLOG_LEVEL", "l1=warn", 1);
