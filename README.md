@@ -158,7 +158,7 @@ spdlog::dump_backtrace(); // log them now! show the last 32 messages
 #### Periodic flush
 ```c++
 // periodically flush all *registered* loggers every 3 seconds:
-// warning: only use if all your loggers are thread safe!
+// warning: only use if all your loggers are thread safe ("_mt" loggers)
 spdlog::flush_every(std::chrono::seconds(3));
 
 ```
