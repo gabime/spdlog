@@ -335,7 +335,6 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 [info] Threads      : 10
 [info] Queue        : 8,192 slots
 [info] Queue memory : 8,192 x 272 = 2,176 KB 
-[info] Total iters  : 3
 [info] -------------------------------------------------
 [info] 
 [info] *********************************
