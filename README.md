@@ -321,7 +321,7 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 [info] daily_st         Elapsed: 0.42 secs        2,393,298/sec
 [info] null_st          Elapsed: 0.04 secs       27,446,957/sec
 [info] **************************************************************
-[info] 10 threads sharing same logger, 1,000,000 iterations
+[info] 10 threads  ompeting over the same logger, 1,000,000 iterations
 [info] **************************************************************
 [info] basic_mt         Elapsed: 0.60 secs        1,659,613/sec
 [info] rotating_mt      Elapsed: 0.62 secs        1,612,493/sec
