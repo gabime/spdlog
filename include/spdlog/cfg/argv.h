@@ -2,7 +2,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
-#include <spdlog/loaders/helpers.h>
+#include <spdlog/cfg/helpers.h>
 #include <spdlog/details/os.h>
 
 //
@@ -18,7 +18,7 @@
 // example.exe "SPDLOG_LEVEL=off,logger1=debug,logger2=info"
 
 namespace spdlog {
-namespace loaders {
+namespace cfg {
 
 // search for SPDLOG_LEVEL= in the args and use it to init the levels
 void load_argv(int args, char **argv)
@@ -36,5 +36,5 @@ void load_argv(int args, char **argv)
     }
 }
 
-} // namespace loaders
+} // namespace cfg
 } // namespace spdlog

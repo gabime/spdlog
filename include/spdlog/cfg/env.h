@@ -2,7 +2,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
-#include <spdlog/loaders/helpers.h>
+#include <spdlog/cfg/helpers.h>
 #include <spdlog/details/registry.h>
 #include <spdlog/details/os.h>
 
@@ -24,7 +24,7 @@
 // export SPDLOG_LEVEL="off,logger1=debug,logger2=info"
 
 namespace spdlog {
-namespace loaders {
+namespace cfg {
 void load_env()
 {
     auto env_val = details::os::getenv("SPDLOG_LEVEL");
@@ -32,5 +32,5 @@ void load_env()
     details::registry::instance().update_levels(std::move(levels));
 }
 
-} // namespace loaders
+} // namespace cfg
 } // namespace spdlog

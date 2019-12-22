@@ -15,7 +15,7 @@ test_sources = files([
     'test_stdout_api.cpp',
     'test_backtrace.cpp',
     'test_create_dir.cpp',
-    'test_loaders.cpp',
+    'test_cfg.cpp',
 ])
 
 if  not get_option('no_exceptions')

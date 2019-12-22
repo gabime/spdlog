@@ -1,13 +1,13 @@
 #include "includes.h"
 #include "test_sink.h"
 
-#include <spdlog/loaders/env.h>
-#include <spdlog/loaders/argv.h>
+#include <spdlog/cfg/env.h>
+#include <spdlog/cfg/argv.h>
 
-using spdlog::loaders::load_argv;
-using spdlog::loaders::load_env;
+using spdlog::cfg::load_argv;
+using spdlog::cfg::load_env;
 
-TEST_CASE("env", "[loaders]")
+TEST_CASE("env", "[cfg]")
 {
     spdlog::drop("l1");
     auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
@@ -21,7 +21,7 @@ TEST_CASE("env", "[loaders]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
 }
 
-TEST_CASE("argv1", "[loaders]")
+TEST_CASE("argv1", "[cfg]")
 {
     spdlog::drop("l1");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=warn"};
@@ -31,7 +31,7 @@ TEST_CASE("argv1", "[loaders]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
 }
 
-TEST_CASE("argv2", "[loaders]")
+TEST_CASE("argv2", "[cfg]")
 {
     spdlog::drop("l1");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=warn,trace"};
@@ -41,7 +41,7 @@ TEST_CASE("argv2", "[loaders]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::trace);
 }
 
-TEST_CASE("argv3", "[loaders]")
+TEST_CASE("argv3", "[cfg]")
 {
     spdlog::drop("l1");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL="};
@@ -51,7 +51,7 @@ TEST_CASE("argv3", "[loaders]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
 }
 
-TEST_CASE("argv4", "[loaders]")
+TEST_CASE("argv4", "[cfg]")
 {
     spdlog::drop("l1");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=junk"};
@@ -60,7 +60,7 @@ TEST_CASE("argv4", "[loaders]")
     REQUIRE(l1->level() == spdlog::level::info);
 }
 
-TEST_CASE("argv5", "[loaders]")
+TEST_CASE("argv5", "[cfg]")
 {
     spdlog::drop("l1");
     const char *argv[] = {"ignore", "ignore", "SPDLOG_LEVEL=l1=warn,trace"};
@@ -70,7 +70,7 @@ TEST_CASE("argv5", "[loaders]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::trace);
 }
 
-TEST_CASE("argv6", "[loaders]")
+TEST_CASE("argv6", "[cfg]")
 {
     spdlog::set_level(spdlog::level::err);
     const char *argv[] = {""};
@@ -79,7 +79,7 @@ TEST_CASE("argv6", "[loaders]")
 
 }
 
-TEST_CASE("argv7", "[loaders]")
+TEST_CASE("argv7", "[cfg]")
 {
     spdlog::set_level(spdlog::level::err);
     const char *argv[] = {""};

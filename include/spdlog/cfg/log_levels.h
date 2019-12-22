@@ -8,7 +8,7 @@
 #include <unordered_map>
 
 namespace spdlog {
-namespace loaders {
+namespace cfg {
 class log_levels
 {
     std::unordered_map<std::string, spdlog::level::level_enum> levels_;
@@ -43,5 +43,5 @@ public:
         return default_level_;
     }
 };
-} // namespace loaders
+} // namespace cfg
 } // namespace spdlog
