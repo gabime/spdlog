@@ -56,7 +56,7 @@
 
 // disable thread local on msvc 2013
 #ifndef SPDLOG_NO_TLS
-#if (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt)
+#if (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt) || (defined(__has_feature) && !__has_feature(cxx_thread_local))
 #define SPDLOG_NO_TLS 1
 #endif
 #endif
