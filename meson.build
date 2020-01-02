@@ -23,7 +23,7 @@ if get_option('external_fmt')
     if not meson.version().version_compare('>=0.49.0')
     warning('Finding fmt can fail with meson versions before 0.49.0')
     endif
-    dep_list     += dependency('fmt')
+    dep_list     += dependency('fmt', fallback :  ['fmt', 'fmt_dep'])
     compile_args += '-DSPDLOG_FMT_EXTERNAL'
 endif
 
