@@ -105,14 +105,15 @@ protected:
 private:
     void init_filenames_q()
     {
-        using details::os::file_exists;
+        using details::os::path_exists;
+
         filenames_q_ = details::circular_q<filename_t>(static_cast<size_t>(max_files_));
         std::vector<filename_t> filenames;
         auto now = log_clock::now();
         while (filenames.size() < max_files_)
         {
             auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
-            if (!file_exists(filename))
+            if (!path_exists(filename))
             {
                 break;
             }
