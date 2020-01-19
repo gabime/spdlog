@@ -66,7 +66,7 @@ public:
 
         if (max_files_ > 0)
         {
-            init_filenames_q();
+            init_filenames_q_();
         }
     }
 
@@ -103,7 +103,7 @@ protected:
     }
 
 private:
-    void init_filenames_q()
+    void init_filenames_q_()
     {
         using details::os::path_exists;
 
