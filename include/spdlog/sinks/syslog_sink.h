@@ -20,7 +20,7 @@ class syslog_sink : public base_sink<Mutex>
 {
 
 public:
-    syslog_sink(std::string ident, int syslog_option, int syslog_facility, bool enable_formatting)
+    syslog_sink(std::string ident = "", int syslog_option = 0, int syslog_facility = LOG_USER, bool enable_formatting = false)
         : enable_formatting_{enable_formatting}
         , syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
               /* spdlog::level::debug      */ LOG_DEBUG,
