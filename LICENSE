@@ -21,6 +21,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 -- NOTE: Third party dependecy used by this sofware --
-This software uses and includes the fmt lib (MIT License),
+This software depends on the fmt lib (MIT License),
 and users must comply to its license: https://github.com/fmtlib/fmt/blob/master/LICENSE.rst
 
