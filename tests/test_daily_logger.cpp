@@ -24,7 +24,7 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger]")
     logger->flush();
 
     auto filename = fmt::to_string(w);
-    REQUIRE(count_lines(filename) == 10);
+    require_message_count(filename, 10);
 }
 
 struct custom_daily_file_name_calculator
@@ -55,12 +55,10 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger]")
         logger->info("Test message {}", i);
     }
 
-    logger->
-
-        flush();
+    logger->flush();
 
     auto filename = fmt::to_string(w);
-    REQUIRE(count_lines(filename) == 10);
+    require_message_count(filename, 10);
 }
 
 /*
