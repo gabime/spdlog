@@ -21,7 +21,7 @@ void prepare_logdir()
 
 std::string file_contents(const std::string &filename)
 {
-    std::ifstream ifs(filename);
+    std::ifstream ifs(filename, std::ios_base::binary);
     if (!ifs)
     {
         throw std::runtime_error("Failed open file ");
