@@ -47,6 +47,7 @@ function(spdlog_prepare_test test_target spdlog_lib)
 		spdlog_enable_sanitizer(${test_target})
 	endif()
     add_test(NAME ${test_target} COMMAND ${test_target})
+    set_tests_properties(${test_target} PROPERTIES RUN_SERIAL ON)
 endfunction()
 
 # The compiled library tests
