@@ -1,4 +1,11 @@
+cmake_minimum_required(VERSION 3.2)
+
 project(spdlog_utests CXX)
+
+if(NOT TARGET spdlog)
+    # Stand-alone build
+    find_package(spdlog REQUIRED)
+endif()
 
 include(../cmake/utils.cmake)
 
