@@ -153,10 +153,26 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
     *fp = ::_fsopen((filename.c_str()), mode.c_str(), _SH_DENYNO);
 #endif
 #else // unix
+#if defined(SPDLOG_PREVENT_CHILD_FD) && (defined(_POSIX_VERSION) && _POSIX_VERSION >= 200809L)
+    //  prevent child processes from inheriting log file descriptors direcly on open
+    //  so there is no race with a possible fork and exec
+    const int mode_flag = mode == SPDLOG_FILENAME_T("ab") ? O_APPEND : O_TRUNC;
+    const int fd = ::open((filename.c_str()), O_CREAT | O_WRONLY | O_CLOEXEC | mode_flag, mode_t(0644));
+    if(fd == -1)
+    {
+        return false;
+    }
+    *fp = ::fdopen(fd, mode.c_str());
+    if (*fp == nullptr)
+    {
+        ::close(fd);
+    }
+#else
     *fp = ::fopen((filename.c_str()), mode.c_str());
 #endif
+#endif
 
-#ifdef SPDLOG_PREVENT_CHILD_FD
+#if defined(SPDLOG_PREVENT_CHILD_FD) && !(defined(_POSIX_VERSION) && _POSIX_VERSION >= 200809L)
     //  prevent child processes from inheriting log file descriptors
     if (*fp != nullptr)
     {
