@@ -126,23 +126,6 @@ SPDLOG_INLINE std::tm gmtime() SPDLOG_NOEXCEPT
     return gmtime(now_t);
 }
 
-#ifdef SPDLOG_PREVENT_CHILD_FD
-SPDLOG_INLINE void prevent_child_fd(FILE *f)
-{
-#ifdef _WIN32
-    auto file_handle = reinterpret_cast<HANDLE>(_get_osfhandle(::_fileno(f)));
-    if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
-        SPDLOG_THROW(spdlog_ex("SetHandleInformation failed", errno));
-#else
-    auto fd = ::fileno(f);
-    if (::fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
-    {
-        SPDLOG_THROW(spdlog_ex("fcntl with FD_CLOEXEC failed", errno));
-    }
-#endif
-}
-#endif // SPDLOG_PREVENT_CHILD_FD
-
 // fopen_s on non windows for writing
 SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode)
 {
@@ -152,10 +135,19 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
 #else
     *fp = ::_fsopen((filename.c_str()), mode.c_str(), _SH_DENYNO);
 #endif
+#if defined(SPDLOG_PREVENT_CHILD_FD)
+    if (*fp != nullptr)
+    {
+        auto file_handle = reinterpret_cast<HANDLE>(_get_osfhandle(::_fileno(*fp)));
+        if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
+        {
+            :fclose(*fp);
+            *fp = nullptr;
+        }
+    }
+#endif
 #else // unix
-#if defined(SPDLOG_PREVENT_CHILD_FD) && (defined(_POSIX_VERSION) && _POSIX_VERSION >= 200809L)
-    //  prevent child processes from inheriting log file descriptors direcly on open
-    //  so there is no race with a possible fork and exec
+#if defined(SPDLOG_PREVENT_CHILD_FD)
     const int mode_flag = mode == SPDLOG_FILENAME_T("ab") ? O_APPEND : O_TRUNC;
     const int fd = ::open((filename.c_str()), O_CREAT | O_WRONLY | O_CLOEXEC | mode_flag, mode_t(0644));
     if(fd == -1)
@@ -172,13 +164,6 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
 #endif
 #endif
 
-#if defined(SPDLOG_PREVENT_CHILD_FD) && !(defined(_POSIX_VERSION) && _POSIX_VERSION >= 200809L)
-    //  prevent child processes from inheriting log file descriptors
-    if (*fp != nullptr)
-    {
-        prevent_child_fd(*fp);
-    }
-#endif
     return *fp == nullptr;
 }
 
