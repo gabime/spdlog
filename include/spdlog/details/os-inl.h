@@ -126,23 +126,6 @@ SPDLOG_INLINE std::tm gmtime() SPDLOG_NOEXCEPT
     return gmtime(now_t);
 }
 
-#ifdef SPDLOG_PREVENT_CHILD_FD
-SPDLOG_INLINE void prevent_child_fd(FILE *f)
-{
-#ifdef _WIN32
-    auto file_handle = reinterpret_cast<HANDLE>(_get_osfhandle(::_fileno(f)));
-    if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
-        SPDLOG_THROW(spdlog_ex("SetHandleInformation failed", errno));
-#else
-    auto fd = ::fileno(f);
-    if (::fcntl(fd, F_SETFD, FD_CLOEXEC) == -1)
-    {
-        SPDLOG_THROW(spdlog_ex("fcntl with FD_CLOEXEC failed", errno));
-    }
-#endif
-}
-#endif // SPDLOG_PREVENT_CHILD_FD
-
 // fopen_s on non windows for writing
 SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode)
 {
@@ -152,17 +135,35 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
 #else
     *fp = ::_fsopen((filename.c_str()), mode.c_str(), _SH_DENYNO);
 #endif
-#else // unix
-    *fp = ::fopen((filename.c_str()), mode.c_str());
-#endif
-
-#ifdef SPDLOG_PREVENT_CHILD_FD
-    //  prevent child processes from inheriting log file descriptors
+#if defined(SPDLOG_PREVENT_CHILD_FD)
     if (*fp != nullptr)
     {
-        prevent_child_fd(*fp);
+        auto file_handle = reinterpret_cast<HANDLE>(_get_osfhandle(::_fileno(*fp)));
+        if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
+        {
+            :fclose(*fp);
+            *fp = nullptr;
+        }
     }
 #endif
+#else // unix
+#if defined(SPDLOG_PREVENT_CHILD_FD)
+    const int mode_flag = mode == SPDLOG_FILENAME_T("ab") ? O_APPEND : O_TRUNC;
+    const int fd = ::open((filename.c_str()), O_CREAT | O_WRONLY | O_CLOEXEC | mode_flag, mode_t(0644));
+    if(fd == -1)
+    {
+        return false;
+    }
+    *fp = ::fdopen(fd, mode.c_str());
+    if (*fp == nullptr)
+    {
+        ::close(fd);
+    }
+#else
+    *fp = ::fopen((filename.c_str()), mode.c_str());
+#endif
+#endif
+
     return *fp == nullptr;
 }
 
