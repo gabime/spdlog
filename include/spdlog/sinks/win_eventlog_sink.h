@@ -60,27 +60,6 @@ struct utils
     {
         report(message.c_str());
     }
-
-    /** Runs a func and reports an exception to stderr if any */
-    template <typename Result>
-    static Result report_exceptions(std::function<Result()> func, Result defaultValue)
-    {
-        try
-        {
-            return func();
-        }
-        catch (std::exception const& e)
-        {
-            report(e.what());
-            return defaultValue;
-        }
-    }
-
-    /** Runs a func and reports an exception to stderr if any */
-    static void report_exceptions(std::function<void()> func)
-    {
-        report_exceptions<int>([&func] () { func(); return 0; }, 0);
-    }
 };
 
 /** Windows error */
@@ -279,20 +258,22 @@ public:
         : source_(source)
     {
         using namespace internal;
-
-        utils::report_exceptions([this] () {
+        try
+        {
             current_user_sid_ = sid_t::get_current_user_sid();
-        });
+        }
+        catch (std::exception const& e)
+        {
+            utils::report(e.what());
+        }
     }
 
     ~win_eventlog_sink()
     {
         using namespace internal;
-        utils::report_exceptions([this]()
-        {
-            if (hEventLog_ && !DeregisterEventSource(hEventLog_))
-                utils::report(win32_error::format("DeregisterEventSource"));
-        });
+
+        if (hEventLog_ && !DeregisterEventSource(hEventLog_))
+            utils::report(win32_error::format("DeregisterEventSource"));
     }
 
     /** 
