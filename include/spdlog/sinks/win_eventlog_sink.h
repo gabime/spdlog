@@ -306,13 +306,23 @@ public:
 
         event_id_ = event_id;
 
-        std::string subkey = fmt::format("SYSTEM\\CurrentControlSet\\Services\\EventLog\\{}\\{}", log, source_);
+        std::string logSourceRegKeyName = fmt::format("SYSTEM\\CurrentControlSet\\Services\\EventLog\\{}\\{}", log, source_);
 
-        ::HKEY hkey {};
+        struct hkey_t
+        {
+            ::HKEY handle_ {};
+
+            ~hkey_t()
+            {
+                if (handle_)
+                    RegCloseKey(handle_);
+            }
+        } logSourceRegKey;
+
         DWORD disposition {};
-        long stat = RegCreateKeyEx(HKEY_LOCAL_MACHINE, subkey.c_str(), 0, NULL,
+        long stat = RegCreateKeyEx(HKEY_LOCAL_MACHINE, logSourceRegKeyName.c_str(), 0, NULL,
                                    REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, NULL,
-                                   &hkey, &disposition);
+                                   &logSourceRegKey.handle_, &disposition);
         if (stat == ERROR_SUCCESS)
         {
             if (disposition == REG_CREATED_NEW_KEY && !message_file_path.empty())
@@ -324,12 +334,12 @@ public:
                 std::vector<char>expanded_message_file_path(expanded_message_file_path_length);
                 ExpandEnvironmentStrings(message_file_path.c_str(), expanded_message_file_path.data(), expanded_message_file_path_length); // this can't fail if the preivous ExpandEnvironmentStrings succeeded
 
-                stat = RegSetValueEx(hkey, "EventMessageFile", 0, REG_SZ, (LPBYTE) expanded_message_file_path.data(), expanded_message_file_path_length);
+                stat = RegSetValueEx(logSourceRegKey.handle_, "EventMessageFile", 0, REG_SZ, (LPBYTE) expanded_message_file_path.data(), expanded_message_file_path_length);
                 if (stat != ERROR_SUCCESS)
                     SPDLOG_THROW(win32_error("RegSetValueEx", stat));
 
                 DWORD typesSupported = 7;
-                stat = RegSetValueEx(hkey, "TypesSupported", 0, REG_DWORD, (LPBYTE) &typesSupported, sizeof(DWORD));
+                stat = RegSetValueEx(logSourceRegKey.handle_, "TypesSupported", 0, REG_DWORD, (LPBYTE) &typesSupported, sizeof(DWORD));
                 if (stat != ERROR_SUCCESS)
                     SPDLOG_THROW(win32_error("RegSetValueEx", stat));
             }
@@ -338,8 +348,6 @@ public:
         {
             SPDLOG_THROW(win32_error("RegCreateKeyEx", stat));
         }
-
-        RegCloseKey(hkey);
     }
 
 };
