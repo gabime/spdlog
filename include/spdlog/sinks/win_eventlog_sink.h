@@ -7,8 +7,8 @@
 //                  each source used in the application
 // 
 // Since typically modifications of this kind require elevation, it's better to do it as a part of setup procedure.
-// However, the win_eventlog_sink constructor can do it for you in runtime if you set the message_file_path parameter to 
-// win_eventlog_sink::DEFAULT_MESSAGE_FILE
+// The snippet below uses mscoree.dll as the message file as it exists on most of the Windows systems anyway and 
+// happens to contain the needed resource.
 // 
 // You can also specify a custom message file if needed. 
 // Please refer to Event Log functions descriptions in MSDN for more details on custom message files.
@@ -45,22 +45,6 @@ namespace win_eventlog {
 
 namespace internal
 {
-
-struct utils
-{
-    /** Reports a message to stderr */
-    static void report(char const* message) SPDLOG_NOEXCEPT
-    {
-        fprintf(stderr, "%s", message);
-        fflush(stderr);
-    }
-
-    /** Reports a message to stderr */
-    static void report(std::string const& message) SPDLOG_NOEXCEPT
-    {
-        report(message.c_str());
-    }
-};
 
 /** Windows error */
 struct win32_error : public spdlog_ex
@@ -141,8 +125,8 @@ public:
 
             ~process_token_t()
             {
-                if (hasToken_ && !CloseHandle(hToken_))
-                    utils::report(win32_error::format("CloseHandle"));
+                if (hasToken_)
+                    CloseHandle(hToken_);
             }
         } current_process_token(GetCurrentProcess()); // GetCurrentProcess returns pseudohandle, no leak here!
 
@@ -205,10 +189,10 @@ template <typename Mutex>
 class win_eventlog_sink : public base_sink<Mutex>
 {
 private:
-    HANDLE hEventLog_ {NULL};
+    HANDLE          hEventLog_ {NULL};
     internal::sid_t current_user_sid_;
-    std::string source_;
-    WORD event_id_ {DEFAULT_EVENT_ID};
+    std::string     source_;
+    WORD            event_id_;
 
     HANDLE event_log_handle()
     {
@@ -251,90 +235,27 @@ protected:
     void flush_() override {}
 
 public:
-    static const std::string DEFAULT_MESSAGE_FILE;
-    static const WORD DEFAULT_EVENT_ID {1000};
-
-    win_eventlog_sink( std::string const& source ) 
+    win_eventlog_sink(std::string const& source, WORD event_id = 1000 /* according to mscoree.dll */)
         : source_(source)
+        , event_id_ (event_id)
     {
-        using namespace internal;
         try
         {
-            current_user_sid_ = sid_t::get_current_user_sid();
+            current_user_sid_ = internal::sid_t::get_current_user_sid();
         }
-        catch (std::exception const& e)
+        catch (...)
         {
-            utils::report(e.what());
+            // get_current_user_sid() is unlikely to fail and if it does, we can still proceed without 
+            // current_user_sid but in the event log the record will have no user name 
         }
     }
 
     ~win_eventlog_sink()
     {
-        using namespace internal;
-
-        if (hEventLog_ && !DeregisterEventSource(hEventLog_))
-            utils::report(win32_error::format("DeregisterEventSource"));
+        if (hEventLog_)
+            DeregisterEventSource(hEventLog_);
     }
-
-    /** 
-    Register the log source in the Windows registry.
-
-    Requires elevation on Windows Vista and later.
-    */
-    void add_registry_info(std::string const& log = "Application", std::string const& message_file_path = DEFAULT_MESSAGE_FILE, WORD event_id = DEFAULT_EVENT_ID) 
-    {
-        using namespace internal;
-
-        event_id_ = event_id;
-
-        std::string logSourceRegKeyName = fmt::format("SYSTEM\\CurrentControlSet\\Services\\EventLog\\{}\\{}", log, source_);
-
-        struct hkey_t
-        {
-            ::HKEY handle_ {};
-
-            ~hkey_t()
-            {
-                if (handle_)
-                    RegCloseKey(handle_);
-            }
-        } logSourceRegKey;
-
-        DWORD disposition {};
-        long stat = RegCreateKeyEx(HKEY_LOCAL_MACHINE, logSourceRegKeyName.c_str(), 0, NULL,
-                                   REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, NULL,
-                                   &logSourceRegKey.handle_, &disposition);
-        if (stat == ERROR_SUCCESS)
-        {
-            if (disposition == REG_CREATED_NEW_KEY && !message_file_path.empty())
-            {
-                auto const expanded_message_file_path_length = ExpandEnvironmentStrings(message_file_path.c_str(), (LPSTR) &disposition, 0);
-                if (!expanded_message_file_path_length)
-                    SPDLOG_THROW(win32_error("ExpandEnvironmentStrings"));
-
-                std::vector<char>expanded_message_file_path(expanded_message_file_path_length);
-                ExpandEnvironmentStrings(message_file_path.c_str(), expanded_message_file_path.data(), expanded_message_file_path_length); // this can't fail if the preivous ExpandEnvironmentStrings succeeded
-
-                stat = RegSetValueEx(logSourceRegKey.handle_, "EventMessageFile", 0, REG_SZ, (LPBYTE) expanded_message_file_path.data(), expanded_message_file_path_length);
-                if (stat != ERROR_SUCCESS)
-                    SPDLOG_THROW(win32_error("RegSetValueEx", stat));
-
-                DWORD typesSupported = 7;
-                stat = RegSetValueEx(logSourceRegKey.handle_, "TypesSupported", 0, REG_DWORD, (LPBYTE) &typesSupported, sizeof(DWORD));
-                if (stat != ERROR_SUCCESS)
-                    SPDLOG_THROW(win32_error("RegSetValueEx", stat));
-            }
-        }
-        else
-        {
-            SPDLOG_THROW(win32_error("RegCreateKeyEx", stat));
-        }
-    }
-
 };
-
-template <typename Mutex>
-const std::string win_eventlog_sink<Mutex>::DEFAULT_MESSAGE_FILE = "%systemroot%\\system32\\mscoree.dll";
 
 } // namespace win_eventlog
 
