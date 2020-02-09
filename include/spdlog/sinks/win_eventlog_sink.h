@@ -37,6 +37,7 @@ Windows Registry Editor Version 5.00
 
 #include <mutex>
 #include <string>
+#include <vector>
 
 namespace spdlog {
 namespace sinks {
@@ -55,7 +56,7 @@ struct win32_error : public spdlog_ex
         std::string system_message;
 
         LPSTR format_message_result {};
-        auto format_message_succeeded = FormatMessage(
+        auto format_message_succeeded = ::FormatMessage(
             FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
             error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR) &format_message_result, 0, nullptr);
 
@@ -65,7 +66,9 @@ struct win32_error : public spdlog_ex
         }
 
         if (format_message_result)
-            LocalFree((HLOCAL) format_message_result);
+        {
+            LocalFree((HLOCAL)format_message_result);
+        }
 
         return fmt::format("{}: {}{}", user_message, error_code, system_message);
     }
@@ -87,15 +90,19 @@ public:
     /** creates a wrapped SID copy */
     static sid_t duplicate_sid(PSID psid)
     {
-        if (!IsValidSid(psid))
+        if (!::IsValidSid(psid))
+        {
             SPDLOG_THROW(spdlog_ex("sid_t::sid_t(): invalid SID received"));
+        }
 
         auto const sid_length {::GetLengthSid(psid)};
 
         sid_t result;
         result.buffer_.resize(sid_length);
-        if (!CopySid(sid_length, (PSID) result.as_sid(), psid))
+        if (!::CopySid(sid_length, (PSID)result.as_sid(), psid))
+        {
             SPDLOG_THROW(win32_error("CopySid"));
+        }
 
         return result;
     }
@@ -112,34 +119,36 @@ public:
         /* create and init RAII holder for process token */
         struct process_token_t
         {
-            HANDLE hToken_;
-            bool hasToken_;
-
-            process_token_t(HANDLE process)
-                : hToken_(0)
-                , hasToken_(OpenProcessToken(process, TOKEN_QUERY, &hToken_))
+            HANDLE token_handle_= INVALID_HANDLE_VALUE;
+            explicit process_token_t(HANDLE process)                                
             {
-                if (!hasToken_)
+                if (!::OpenProcessToken(process, TOKEN_QUERY, &token_handle_))
+                {                    
                     SPDLOG_THROW(win32_error("OpenProcessToken"));
+                }
             }
 
             ~process_token_t()
             {
-                if (hasToken_)
-                    CloseHandle(hToken_);
+                ::CloseHandle(token_handle_);
             }
-        } current_process_token(GetCurrentProcess()); // GetCurrentProcess returns pseudohandle, no leak here!
+
+        } current_process_token(::GetCurrentProcess()); // GetCurrentProcess returns pseudohandle, no leak here!
 
         // Get the required size, this is expected to fail with ERROR_INSUFFICIENT_BUFFER and return the token size
         DWORD tusize = 0;
-        GetTokenInformation(current_process_token.hToken_, TokenUser, NULL, 0, &tusize);
-        if (GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+        ::GetTokenInformation(current_process_token.token_handle_, TokenUser, NULL, 0, &tusize);
+        if (::GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+        {
             SPDLOG_THROW(win32_error("GetTokenInformation"));
+        }
 
         // get user token
-        std::vector<unsigned char> buffer(tusize);
-        if (!GetTokenInformation(current_process_token.hToken_, TokenUser, (LPVOID) buffer.data(), tusize, &tusize))
+        std::vector<unsigned char> buffer(static_cast<size_t>(tusize));
+        if (!GetTokenInformation(current_process_token.token_handle_, TokenUser, (LPVOID)buffer.data(), tusize, &tusize))
+        {
             SPDLOG_THROW(win32_error("GetTokenInformation"));
+        }
 
         // create a wrapper of the SID data as stored in the user token
         return sid_t::duplicate_sid(((TOKEN_USER*) buffer.data())->User.Sid);
@@ -213,10 +222,9 @@ protected:
 
         memory_buf_t formatted;
         formatter_->format(msg, formatted);
-
-        auto formatted_string = fmt::to_string(formatted);
-        auto formatted_string_lpsz = formatted_string.c_str();
-
+        formatted.push_back('\0');
+        LPCSTR lp_str = static_cast<LPCSTR>(formatted.data());
+                
         bool succeeded = ReportEvent(
             event_log_handle(),
             eventlog::get_event_type(msg),
@@ -225,7 +233,7 @@ protected:
             current_user_sid_.as_sid(),
             1,
             0,
-            &formatted_string_lpsz,
+            &lp_str,
             nullptr);
 
         if (!succeeded)
