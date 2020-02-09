@@ -2,8 +2,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 // Writing to Windows Event Log requires the registry entries below to be present, with the following modifications:
-// 1. {log_name}    should be replaced with your log name (e.g. your application name)
-// 2. {source_name} should be replaced with the specific source name and the key should be duplicated for
+// 1. <log_name>    should be replaced with your log name (e.g. your application name)
+// 2. <source_name> should be replaced with the specific source name and the key should be duplicated for
 //                  each source used in the application
 // 
 // Since typically modifications of this kind require elevation, it's better to do it as a part of setup procedure.
@@ -17,9 +17,9 @@
 
 Windows Registry Editor Version 5.00
 
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\EventLog\{log_name}]
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\EventLog\<log_name>]
 
-[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\EventLog\{log_name}\{source_name}]
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\EventLog\<log_name>\<source_name>]
 "TypesSupported"=dword:00000007
 "EventMessageFile"=hex(2):25,00,73,00,79,00,73,00,74,00,65,00,6d,00,72,00,6f,\
   00,6f,00,74,00,25,00,5c,00,53,00,79,00,73,00,74,00,65,00,6d,00,33,00,32,00,\
