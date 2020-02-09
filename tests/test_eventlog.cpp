@@ -2,9 +2,12 @@
 #include "test_sink.h"
 #include "spdlog/fmt/bin_to_hex.h"
 
-#include "spdlog/sinks/eventlog_sink.h"
-
 #if _WIN32
+
+#include "spdlog/sinks/win_eventlog_sink.h"
+
+static const LPCSTR TEST_LOG = "my log";
+static const LPCSTR TEST_SOURCE = "my source";
 
 static void test_single_print(std::function<void(std::string const&)> do_print, std::string const& expectedContents, WORD expectedEventType)
 {
@@ -22,7 +25,7 @@ static void test_single_print(std::function<void(std::string const&)> do_print, 
             if (handle_)
                 REQUIRE(CloseEventLog(handle_));
         }
-    } eventLog {OpenEventLog(nullptr, "my_source")};
+    } eventLog {OpenEventLog(nullptr, TEST_SOURCE)};
 
     REQUIRE(eventLog.handle_);
 
@@ -49,7 +52,7 @@ TEST_CASE("eventlog", "[eventlog]")
 {
     using namespace spdlog;
 
-    auto test_sink = std::make_shared<sinks::eventlog_sink_mt>("my_source", "my_spd_log");
+    auto test_sink = std::make_shared<sinks::win_eventlog_sink_mt>(TEST_SOURCE);
 
     spdlog::logger test_logger("eventlog", test_sink);
     test_logger.set_level(level::trace);
