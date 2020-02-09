@@ -1,7 +1,7 @@
+#if _WIN32
+
 #include "includes.h"
 #include "test_sink.h"
-
-#if _WIN32
 
 #include "spdlog/sinks/win_eventlog_sink.h"
 
@@ -66,4 +66,4 @@ TEST_CASE("eventlog", "[eventlog]")
     test_single_print([&test_logger] (std::string const& msg) { test_logger.critical(msg); }, "my critical message", EVENTLOG_ERROR_TYPE);
 }
 
-#endif
+#endif //_WIN32

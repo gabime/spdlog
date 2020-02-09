@@ -145,7 +145,7 @@ public:
 
         // get user token
         std::vector<unsigned char> buffer(static_cast<size_t>(tusize));
-        if (!GetTokenInformation(current_process_token.token_handle_, TokenUser, (LPVOID)buffer.data(), tusize, &tusize))
+        if (!::GetTokenInformation(current_process_token.token_handle_, TokenUser, (LPVOID)buffer.data(), tusize, &tusize))
         {
             SPDLOG_THROW(win32_error("GetTokenInformation"));
         }
@@ -207,9 +207,11 @@ private:
     {
         if (!hEventLog_)
         {
-            hEventLog_ = RegisterEventSource(nullptr, source_.c_str());
-            if (!hEventLog_ || hEventLog_ == (HANDLE) ERROR_ACCESS_DENIED)
+            hEventLog_ = ::RegisterEventSource(nullptr, source_.c_str());
+            if (!hEventLog_ || hEventLog_ == (HANDLE)ERROR_ACCESS_DENIED)
+            {
                 SPDLOG_THROW(internal::win32_error("RegisterEventSource"));
+            }
         }
 
         return hEventLog_;
@@ -225,7 +227,7 @@ protected:
         formatted.push_back('\0');
         LPCSTR lp_str = static_cast<LPCSTR>(formatted.data());
                 
-        bool succeeded = ReportEvent(
+        auto succeeded = ::ReportEvent(
             event_log_handle(),
             eventlog::get_event_type(msg),
             eventlog::get_event_category(msg),
@@ -237,7 +239,9 @@ protected:
             nullptr);
 
         if (!succeeded)
+        {
             SPDLOG_THROW(win32_error("ReportEvent"));
+        }
     }
 
     void flush_() override {}
