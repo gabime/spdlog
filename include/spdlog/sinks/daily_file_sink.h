@@ -120,7 +120,8 @@ private:
             filenames.emplace_back(filename);
             now -= std::chrono::hours(24);
         }
-        for (auto iter = filenames.rbegin(); iter != filenames.rend(); ++iter) {
+        for (auto iter = filenames.rbegin(); iter != filenames.rend(); ++iter)
+        {
             filenames_q_.push_back(std::move(*iter));
         }
     }

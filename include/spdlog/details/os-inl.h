@@ -150,7 +150,7 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
 #if defined(SPDLOG_PREVENT_CHILD_FD)
     const int mode_flag = mode == SPDLOG_FILENAME_T("ab") ? O_APPEND : O_TRUNC;
     const int fd = ::open((filename.c_str()), O_CREAT | O_WRONLY | O_CLOEXEC | mode_flag, mode_t(0644));
-    if(fd == -1)
+    if (fd == -1)
     {
         return false;
     }

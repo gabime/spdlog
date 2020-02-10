@@ -5,12 +5,12 @@
 // 1. <log_name>    should be replaced with your log name (e.g. your application name)
 // 2. <source_name> should be replaced with the specific source name and the key should be duplicated for
 //                  each source used in the application
-// 
+//
 // Since typically modifications of this kind require elevation, it's better to do it as a part of setup procedure.
-// The snippet below uses mscoree.dll as the message file as it exists on most of the Windows systems anyway and 
+// The snippet below uses mscoree.dll as the message file as it exists on most of the Windows systems anyway and
 // happens to contain the needed resource.
-// 
-// You can also specify a custom message file if needed. 
+//
+// You can also specify a custom message file if needed.
 // Please refer to Event Log functions descriptions in MSDN for more details on custom message files.
 
 /*---------------------------------------------------------------------------------------
@@ -44,21 +44,20 @@ namespace sinks {
 
 namespace win_eventlog {
 
-namespace internal
-{
+namespace internal {
 
 /** Windows error */
 struct win32_error : public spdlog_ex
 {
     /** Formats an error report line: "user-message: error-code (system message)" */
-    static std::string format(std::string const& user_message, DWORD error_code = GetLastError())
+    static std::string format(std::string const &user_message, DWORD error_code = GetLastError())
     {
         std::string system_message;
 
-        LPSTR format_message_result {};
-        auto format_message_succeeded = ::FormatMessage(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
-            error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR) &format_message_result, 0, nullptr);
+        LPSTR format_message_result{};
+        auto format_message_succeeded =
+            ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
+                error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&format_message_result, 0, nullptr);
 
         if (format_message_succeeded && format_message_result)
         {
@@ -73,7 +72,7 @@ struct win32_error : public spdlog_ex
         return fmt::format("{}: {}{}", user_message, error_code, system_message);
     }
 
-    win32_error(std::string const& func_name, DWORD error = GetLastError())
+    win32_error(std::string const &func_name, DWORD error = GetLastError())
         : spdlog_ex(format(func_name, error))
     {}
 };
@@ -84,8 +83,7 @@ struct sid_t
     std::vector<char> buffer_;
 
 public:
-    sid_t()
-    {}
+    sid_t() {}
 
     /** creates a wrapped SID copy */
     static sid_t duplicate_sid(PSID psid)
@@ -95,7 +93,7 @@ public:
             SPDLOG_THROW(spdlog_ex("sid_t::sid_t(): invalid SID received"));
         }
 
-        auto const sid_length {::GetLengthSid(psid)};
+        auto const sid_length{::GetLengthSid(psid)};
 
         sid_t result;
         result.buffer_.resize(sid_length);
@@ -108,9 +106,9 @@ public:
     }
 
     /** Retrieves pointer to the internal buffer contents as SID* */
-    SID * as_sid() const
+    SID *as_sid() const
     {
-        return buffer_.empty() ? nullptr : (SID *) buffer_.data();
+        return buffer_.empty() ? nullptr : (SID *)buffer_.data();
     }
 
     /** Get SID for the current user */
@@ -119,11 +117,11 @@ public:
         /* create and init RAII holder for process token */
         struct process_token_t
         {
-            HANDLE token_handle_= INVALID_HANDLE_VALUE;
-            explicit process_token_t(HANDLE process)                                
+            HANDLE token_handle_ = INVALID_HANDLE_VALUE;
+            explicit process_token_t(HANDLE process)
             {
                 if (!::OpenProcessToken(process, TOKEN_QUERY, &token_handle_))
-                {                    
+                {
                     SPDLOG_THROW(win32_error("OpenProcessToken"));
                 }
             }
@@ -137,7 +135,7 @@ public:
 
         // Get the required size, this is expected to fail with ERROR_INSUFFICIENT_BUFFER and return the token size
         DWORD tusize = 0;
-        if(::GetTokenInformation(current_process_token.token_handle_, TokenUser, NULL, 0, &tusize))
+        if (::GetTokenInformation(current_process_token.token_handle_, TokenUser, NULL, 0, &tusize))
         {
             SPDLOG_THROW(win32_error("GetTokenInformation should fail"));
         }
@@ -150,57 +148,56 @@ public:
         }
 
         // create a wrapper of the SID data as stored in the user token
-        return sid_t::duplicate_sid(((TOKEN_USER*) buffer.data())->User.Sid);
+        return sid_t::duplicate_sid(((TOKEN_USER *)buffer.data())->User.Sid);
     }
 };
 
 struct eventlog
 {
-    static WORD get_event_type(details::log_msg const& msg)
+    static WORD get_event_type(details::log_msg const &msg)
     {
         switch (msg.level)
         {
-            case level::trace:
-            case level::debug:
-                return EVENTLOG_SUCCESS;
+        case level::trace:
+        case level::debug:
+            return EVENTLOG_SUCCESS;
 
-            case level::info:
-                return EVENTLOG_INFORMATION_TYPE;
+        case level::info:
+            return EVENTLOG_INFORMATION_TYPE;
 
-            case level::warn:
-                return EVENTLOG_WARNING_TYPE;
+        case level::warn:
+            return EVENTLOG_WARNING_TYPE;
 
-            case level::err:
-            case level::critical:
-            case level::off:
-                return EVENTLOG_ERROR_TYPE;
+        case level::err:
+        case level::critical:
+        case level::off:
+            return EVENTLOG_ERROR_TYPE;
 
-            default:
-                // should be unreachable
-                SPDLOG_THROW(std::logic_error(fmt::format("Unsupported log level {}", msg.level)));
+        default:
+            // should be unreachable
+            SPDLOG_THROW(std::logic_error(fmt::format("Unsupported log level {}", msg.level)));
         }
     }
 
-    static WORD get_event_category(details::log_msg const& msg)
+    static WORD get_event_category(details::log_msg const &msg)
     {
-        return (WORD) msg.level;
+        return (WORD)msg.level;
     }
 };
 
 } // namespace internal
 
-
 /*
  * Windows Event Log sink
  */
-template <typename Mutex>
+template<typename Mutex>
 class win_eventlog_sink : public base_sink<Mutex>
 {
 private:
-    HANDLE          hEventLog_ {NULL};
+    HANDLE hEventLog_{NULL};
     internal::sid_t current_user_sid_;
-    std::string     source_;
-    WORD            event_id_;
+    std::string source_;
+    WORD event_id_;
 
     HANDLE event_log_handle()
     {
@@ -225,17 +222,9 @@ protected:
         formatter_->format(msg, formatted);
         formatted.push_back('\0');
         LPCSTR lp_str = static_cast<LPCSTR>(formatted.data());
-                
-        auto succeeded = ::ReportEvent(
-            event_log_handle(),
-            eventlog::get_event_type(msg),
-            eventlog::get_event_category(msg),
-            event_id_,
-            current_user_sid_.as_sid(),
-            1,
-            0,
-            &lp_str,
-            nullptr);
+
+        auto succeeded = ::ReportEvent(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
+            current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr);
 
         if (!succeeded)
         {
@@ -246,9 +235,9 @@ protected:
     void flush_() override {}
 
 public:
-    win_eventlog_sink(std::string const& source, WORD event_id = 1000 /* according to mscoree.dll */)
+    win_eventlog_sink(std::string const &source, WORD event_id = 1000 /* according to mscoree.dll */)
         : source_(source)
-        , event_id_ (event_id)
+        , event_id_(event_id)
     {
         try
         {
@@ -256,8 +245,8 @@ public:
         }
         catch (...)
         {
-            // get_current_user_sid() is unlikely to fail and if it does, we can still proceed without 
-            // current_user_sid but in the event log the record will have no user name 
+            // get_current_user_sid() is unlikely to fail and if it does, we can still proceed without
+            // current_user_sid but in the event log the record will have no user name
         }
     }
 
@@ -275,4 +264,3 @@ using win_eventlog_sink_st = win_eventlog::win_eventlog_sink<details::null_mutex
 
 } // namespace sinks
 } // namespace spdlog
-
