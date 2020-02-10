@@ -47,7 +47,7 @@ protected:
         size_t bytes_sent = 0;
         while (bytes_sent < formatted.size())
         {
-            auto write_result = ::write(sock_, formatted.data(), formatted.size() - bytes_sent);
+            auto write_result = ::write(sock_, formatted.data() + bytes_sent, formatted.size() - bytes_sent);
             if (write_result < 0)
             {
                 SPDLOG_THROW(spdlog::spdlog_ex("write(2) failed", errno));
@@ -88,7 +88,12 @@ private:
         int last_errno = 0;
         for (auto *rp = addrinfo_result; rp != nullptr; rp = rp->ai_next)
         {
-            socket_rv = ::socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+ #ifdef SPDLOG_PREVENT_CHILD_FD
+            int const flags = SOCK_CLOEXEC;
+ #else
+            int const flags = 0;
+ #endif
+            socket_rv = ::socket(rp->ai_family, rp->ai_socktype | flags, rp->ai_protocol);
             if (socket_rv == -1)
             {
                 last_errno = errno;
