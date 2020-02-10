@@ -8,6 +8,9 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+namespace spdlog {
+	namespace sinks {
+
 template<typename Mutex>
 class tcp_sink : public spdlog::sinks::base_sink <Mutex>
 {
@@ -49,3 +52,4 @@ private:
 };
 using tcp_sink_mt = tcp_sink<std::mutex>;
 using tcp_sink_st = tcp_sink<spdlog::details::null_mutex>;
+}}
