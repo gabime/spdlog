@@ -169,9 +169,10 @@ TEST_CASE("to_file", "[async]")
         }
     }
 
-    REQUIRE(count_lines(filename) == messages);
+    require_message_count(filename, messages);
     auto contents = file_contents(filename);
-    REQUIRE(ends_with(contents, std::string("Hello message #1023\n")));
+    using spdlog::details::os::default_eol;
+    REQUIRE(ends_with(contents, fmt::format("Hello message #1023{}", default_eol)));
 }
 
 TEST_CASE("to_file multi-workers", "[async]")
@@ -191,5 +192,5 @@ TEST_CASE("to_file multi-workers", "[async]")
         }
     }
 
-    REQUIRE(count_lines(filename) == messages);
+    require_message_count(filename, messages);
 }
