@@ -24,6 +24,8 @@ template<typename Mutex>
 class tcp_sink : public spdlog::sinks::base_sink<Mutex>
 {
 public:
+    // connect to tcp host/port or throw if failed
+    // host can be hostname or ip address
     tcp_sink(std::string host, int port)
     {
         sock_ = connect_to(host, port);
