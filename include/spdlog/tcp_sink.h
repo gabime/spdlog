@@ -1,3 +1,5 @@
+// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/base_sink.h>
@@ -32,7 +34,9 @@ protected:
     {
         spdlog::memory_buf_t formatted;
         spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
-        send(sock , formatted.data() , formatted.size() , 0 );
+        int res = send(sock , formatted.data() , formatted.size() , 0 );
+        if(res < 0) 
+            SPDLOG_THROW(spdlog_ex("Message Send Failed", errno));
     }
 
     void flush_() override
