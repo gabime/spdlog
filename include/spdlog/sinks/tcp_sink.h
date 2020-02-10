@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <netdb.h>
 
 namespace spdlog {
 namespace sinks {
@@ -22,12 +23,16 @@ public:
         {
             SPDLOG_THROW(spdlog::spdlog_ex("Socket creation error", errno));
         }
-        serv_addr_.sin_family = AF_INET;
-        serv_addr_.sin_port = ::htons(static_cast<uint16_t>(port));
-        if (inet_pton(AF_INET, address.c_str(), &serv_addr_.sin_addr) <= 0)
+        struct hostent *he = gethostbyname(address.c_str());
+        if (he == nullptr)
         {
-            SPDLOG_THROW(spdlog::spdlog_ex("Invalid address/ Address not supported", errno));
+            SPDLOG_THROW(spdlog::spdlog_ex("gethostbyname failed", errno));
         }
+
+        serv_addr_.sin_family = AF_INET;
+
+        serv_addr_.sin_addr = *(struct in_addr *)(he->h_addr);
+        serv_addr_.sin_port = ::htons(static_cast<uint16_t>(port));
         if (connect(sock_, (struct sockaddr *)&serv_addr_, sizeof(serv_addr_)) < 0)
         {
             SPDLOG_THROW(spdlog::spdlog_ex("Connection Failed", errno));
@@ -47,6 +52,8 @@ protected:
     }
 
     void flush_() override {}
+
+private:
 
 private:
     int sock_;
