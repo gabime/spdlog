@@ -3,20 +3,20 @@
 
 #pragma once
 
-#include <arpa/inet.h>
-#include <fcntl.h>
-#include <memory>
-#include <mutex>
-#include <netdb.h>
-#include <poll.h>
 #include <spdlog/common.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
-#include <string>
+
+#include <arpa/inet.h>
+#include <fcntl.h>
+#include <netdb.h>
+#include <poll.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
-#pragma once
+#include <string>
+#include <memory>
+#include <mutex>
 
 namespace spdlog {
 namespace sinks {
