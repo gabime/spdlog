@@ -106,9 +106,9 @@ private:
             }
             else
             {
-                socket_rv = -1;
                 last_errno = errno;
                 ::close(socket_rv);
+                socket_rv = -1;
             }
         }
         ::freeaddrinfo(addrinfo_result);
