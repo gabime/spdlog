@@ -17,25 +17,16 @@ template<typename Mutex>
 class tcp_sink : public spdlog::sinks::base_sink<Mutex>
 {
 public:
-    tcp_sink(std::string address, int port)
+    tcp_sink(std::string host, int port)
     {
-        if ((sock_ = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-        {
-            SPDLOG_THROW(spdlog::spdlog_ex("Socket creation error", errno));
-        }
-        struct hostent *he = gethostbyname(address.c_str());
-        if (he == nullptr)
-        {
-            SPDLOG_THROW(spdlog::spdlog_ex("gethostbyname failed", errno));
-        }
+        sock_ = connect_to(host, port);
+    }
 
-        serv_addr_.sin_family = AF_INET;
-
-        serv_addr_.sin_addr = *(struct in_addr *)(he->h_addr);
-        serv_addr_.sin_port = ::htons(static_cast<uint16_t>(port));
-        if (connect(sock_, (struct sockaddr *)&serv_addr_, sizeof(serv_addr_)) < 0)
+    ~tcp_sink()
+    {
+        if (sock_ != -1)
         {
-            SPDLOG_THROW(spdlog::spdlog_ex("Connection Failed", errno));
+            ::close(sock_);
         }
     }
 
@@ -44,20 +35,78 @@ protected:
     {
         spdlog::memory_buf_t formatted;
         spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
-        auto res = ::send(sock_, formatted.data(), formatted.size(), 0);
-        if (res < 0)
+        size_t bytes_sent = 0;
+        while (bytes_sent < formatted.size())
         {
-            SPDLOG_THROW(spdlog::spdlog_ex("Message Send Failed", errno));
+            auto write_result = ::write(sock_, formatted.data(), formatted.size() - bytes_sent);
+            if (write_result < 0)
+            {
+                SPDLOG_THROW(spdlog::spdlog_ex("write(2) failed", errno));
+            }
+
+            if (write_result == 0) // (probably should not happen but in any case..)
+            {
+                break;
+            }
+            bytes_sent += static_cast<size_t>(write_result);
         }
     }
 
     void flush_() override {}
 
 private:
+    // try to connect and return socket fd or throw on failure
+    int connect_to(const std::string &host, int port)
+    {
+        struct addrinfo hints;
+        memset(&hints, 0, sizeof(struct addrinfo));
+        hints.ai_family = AF_INET;       // IPv4
+        hints.ai_socktype = SOCK_STREAM; // TCP
+        hints.ai_flags = AI_NUMERICSERV; // port passed as as numeric value
+        hints.ai_protocol = 0;
+
+        auto port_str = std::to_string(port);
+        struct addrinfo *addrinfo_result;
+        auto rv = ::getaddrinfo(host.c_str(), port_str.c_str(), &hints, &addrinfo_result);
+        if (rv != 0)
+        {
+            auto msg = fmt::format("::getaddrinfo failed: {}", gai_strerror(rv));
+            SPDLOG_THROW(spdlog::spdlog_ex(msg));
+        }
+
+        // Try each address until we successfully connect(2).
+        int socket_rv = -1;
+        int last_errno = 0;
+        for (auto *rp = addrinfo_result; rp != nullptr; rp = rp->ai_next)
+        {
+            socket_rv = ::socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+            if (socket_rv == -1)
+            {
+                last_errno = errno;
+                continue;
+            }
+            rv = ::connect(socket_rv, rp->ai_addr, rp->ai_addrlen);
+            if (rv == 0)
+            {
+                break;
+            }
+            else
+            {
+                socket_rv = -1;
+                last_errno = errno;
+                ::close(socket_rv);
+            }
+        }
+        ::freeaddrinfo(addrinfo_result);
+        if (socket_rv == -1)
+        {
+            SPDLOG_THROW(spdlog::spdlog_ex("::connect failed", last_errno));
+        }
+        return socket_rv;
+    }
 
 private:
-    int sock_;
-    struct sockaddr_in serv_addr_;
+    int sock_ = -1;
 };
 
 using tcp_sink_mt = tcp_sink<std::mutex>;
