@@ -14,17 +14,17 @@ class tcp_sink : public spdlog::sinks::base_sink <Mutex>
 public:
     tcp_sink(std::string address,int port)
     {
-        if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        if ((sock_ = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         {
             SPDLOG_THROW(spdlog::spdlog_ex("Socket creation error", errno));
         }
-        serv_addr.sin_family = AF_INET;
-        serv_addr.sin_port = htons(port);
-        if(inet_pton(AF_INET, address.c_str(), &serv_addr.sin_addr)<=0)
+        serv_addr_.sin_family = AF_INET;
+        serv_addr_.sin_port = htons(port);
+        if(inet_pton(AF_INET, address.c_str(), &serv_addr_.sin_addr)<=0)
         {
             SPDLOG_THROW(spdlog::spdlog_ex("Invalid address/ Address not supported", errno));
         }
-        if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+        if (connect(sock_, (struct sockaddr *)&serv_addr_, sizeof(serv_addr_)) < 0)
         {
             SPDLOG_THROW(spdlog::spdlog_ex("Connection Failed", errno));
         }
@@ -35,7 +35,7 @@ protected:
     {
         spdlog::memory_buf_t formatted;
         spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
-        int res = send(sock , formatted.data() , formatted.size() , 0 );
+        int res = send(sock_ , formatted.data() , formatted.size() , 0 );
         if(res < 0)
             SPDLOG_THROW(spdlog::spdlog_ex("Message Send Failed", errno));
     }
@@ -44,8 +44,8 @@ protected:
     {
     }
 private:
-    int sock;
-    struct sockaddr_in serv_addr;
+    int sock_;
+    struct sockaddr_in serv_addr_;
 };
 using tcp_sink_mt = tcp_sink<std::mutex>;
 using tcp_sink_st = tcp_sink<spdlog::details::null_mutex>;
