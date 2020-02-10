@@ -194,23 +194,23 @@ template<typename Mutex>
 class win_eventlog_sink : public base_sink<Mutex>
 {
 private:
-    HANDLE h_eventlog_{NULL};
+    HANDLE hEventLog_{NULL};
     internal::sid_t current_user_sid_;
     std::string source_;
     WORD event_id_;
 
     HANDLE event_log_handle()
     {
-        if (!h_eventlog_)
+        if (!hEventLog_)
         {
-            h_eventlog_ = ::RegisterEventSource(nullptr, source_.c_str());
-            if (!h_eventlog_ || h_eventlog_ == (HANDLE)ERROR_ACCESS_DENIED)
+            hEventLog_ = ::RegisterEventSource(nullptr, source_.c_str());
+            if (!hEventLog_ || hEventLog_ == (HANDLE)ERROR_ACCESS_DENIED)
             {
                 SPDLOG_THROW(internal::win32_error("RegisterEventSource"));
             }
         }
 
-        return h_eventlog_;
+        return hEventLog_;
     }
 
 protected:
@@ -241,7 +241,7 @@ public:
     {
         try
         {
-            current_user_sid_ = internal::sid_t::sid_t();
+            current_user_sid_ = internal::sid_t::get_current_user_sid();
         }
         catch (...)
         {
@@ -250,11 +250,10 @@ public:
         }
     }
 
-    ~win_eventlog_sink() override
+    ~win_eventlog_sink()
     {
-        if (h_eventlog_) {
-            DeregisterEventSource(h_eventlog_);
-        }
+        if (hEventLog_)
+            DeregisterEventSource(hEventLog_);
     }
 };
 
