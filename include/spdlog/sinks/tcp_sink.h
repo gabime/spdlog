@@ -3,20 +3,18 @@
 
 #pragma once
 
-#include <spdlog/common.h>
-#include <spdlog/sinks/base_sink.h>
-#include <spdlog/details/null_mutex.h>
-
-#include <sys/socket.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <netdb.h>
 #include <fcntl.h>
-#include <poll.h>
-
-#include <mutex>
-#include <string>
 #include <memory>
+#include <mutex>
+#include <netdb.h>
+#include <poll.h>
+#include <spdlog/common.h>
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/sinks/base_sink.h>
+#include <string>
+#include <sys/socket.h>
+#include <unistd.h>
 
 #pragma once
 
@@ -104,13 +102,30 @@ private:
             }
             struct SocketCloser
             {
-                using pointer = int;
-                void operator()(int socket_fd)
+                SocketCloser(int fd)
+                    : fd_{fd}
+                {}
+                int fd_;
+                ~SocketCloser()
                 {
-                    ::close(socket_fd);
+                    if (fd_ != -1)
+                    {
+                        ::close(fd_);
+                    }
+                }
+
+                int get()
+                {
+                    return fd_;
+                }
+                int release()
+                {
+                    int fd = fd_;
+                    fd_ = -1;
+                    return fd;
                 }
             };
-            std::unique_ptr<int, SocketCloser> socket_up(socket_rv);
+            SocketCloser socket_up(socket_rv);
             socket_rv = -1;
 
             int const oldFlag = ::fcntl(socket_up.get(), F_GETFL);
@@ -153,11 +168,10 @@ private:
 
                     timeout = std::chrono::nanoseconds{} > timeout ? std::chrono::nanoseconds{} : timeout;
 
-                    auto const stoptime =
-                        timeout > std::chrono::hours(24 * 365 * 100)
-                            ? std::chrono::steady_clock::time_point::max()
-                            : std::chrono::steady_clock::now() +
-                                  timeout; // TODO could overflow but the program run for ~191 years in that case so that should be OK
+                    auto const stoptime = timeout > std::chrono::hours(24 * 365 * 100)
+                                              ? std::chrono::steady_clock::time_point::max()
+                                              : std::chrono::steady_clock::now() + timeout; // TODO could overflow but the program run for
+                                                                                            // ~191 years in that case so that should be OK
 
                     auto ts = calcTs(timeout);
 
