@@ -31,7 +31,7 @@ public:
         sock_ = connect_to(host, port);
     }
 
-    ~tcp_sink()
+    ~tcp_sink() override
     {
         if (sock_ != -1)
         {
