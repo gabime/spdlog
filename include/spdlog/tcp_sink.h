@@ -13,17 +13,17 @@ public:
     {
         if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
         {
-            printf("\n Socket creation error \n");
+            SPDLOG_THROW(spdlog_ex("Socket creation error", errno));
         }
         serv_addr.sin_family = AF_INET;
         serv_addr.sin_port = htons(port);
         if(inet_pton(AF_INET, address.c_str(), &serv_addr.sin_addr)<=0)
         {
-            printf("\nInvalid address/ Address not supported \n");
+            SPDLOG_THROW(spdlog_ex("Invalid address/ Address not supported", errno));
         }
         if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         {
-            printf("\nConnection Failed \n");
+            SPDLOG_THROW(spdlog_ex("Connection Failed", errno));
         }
 
     }
@@ -32,8 +32,7 @@ protected:
     {
         spdlog::memory_buf_t formatted;
         spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
-        std::string message = fmt::to_string(formatted);
-        send(sock , message.c_str() , message.size() , 0 );
+        send(sock , formatted.data() , formatted.size() , 0 );
     }
 
     void flush_() override
