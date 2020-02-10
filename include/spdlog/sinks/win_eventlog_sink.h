@@ -137,10 +137,9 @@ public:
 
         // Get the required size, this is expected to fail with ERROR_INSUFFICIENT_BUFFER and return the token size
         DWORD tusize = 0;
-        ::GetTokenInformation(current_process_token.token_handle_, TokenUser, NULL, 0, &tusize);
-        if (::GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+        if(::GetTokenInformation(current_process_token.token_handle_, TokenUser, NULL, 0, &tusize))
         {
-            SPDLOG_THROW(win32_error("GetTokenInformation"));
+            SPDLOG_THROW(win32_error("GetTokenInformation should fail"));
         }
 
         // get user token
