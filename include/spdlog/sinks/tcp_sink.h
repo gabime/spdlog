@@ -5,10 +5,17 @@
 
 #include <spdlog/common.h>
 #include <spdlog/sinks/base_sink.h>
+#include <spdlog/details/null_mutex.h>
+
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <netdb.h>
+
+#include <mutex>
+#include <string>
+
+#pragma once
 
 namespace spdlog {
 namespace sinks {
