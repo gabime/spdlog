@@ -1,7 +1,7 @@
 # Copyright(c) 2019 spdlog authors
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.13)
 
 #---------------------------------------------------------------------------------------
 # Start spdlog project
@@ -9,6 +9,7 @@ cmake_minimum_required(VERSION 3.2)
 include(GNUInstallDirs)
 include(cmake/utils.cmake)
 include(cmake/ide.cmake)
+include(cmake/clang-tidy.cmake)
 
 spdlog_extract_version()
 
@@ -22,18 +23,19 @@ endif()
 project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
 message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
+
 #---------------------------------------------------------------------------------------
 # Compiler config
 #---------------------------------------------------------------------------------------
-if (NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 11)
+if(NOT CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
-endif()
 
-set(CMAKE_CXX_EXTENSIONS  OFF)
-
-if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
-	set(CMAKE_CXX_EXTENSIONS ON)
+    if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
+        set(CMAKE_CXX_EXTENSIONS ON)
+    else()
+        set(CMAKE_CXX_EXTENSIONS OFF)
+    endif()
 endif()
 
 
@@ -41,13 +43,13 @@ endif()
 # Set SPDLOG_MASTER_PROJECT to ON if we are building spdlog
 #---------------------------------------------------------------------------------------
 # Check if spdlog is being used directly or via add_subdirectory, but allow overriding
-if (NOT DEFINED SPDLOG_MASTER_PROJECT)
-    if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+if(NOT DEFINED SPDLOG_MASTER_PROJECT)
+    if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
         set(SPDLOG_MASTER_PROJECT ON)
     else()
         set(SPDLOG_MASTER_PROJECT OFF)
     endif()
-endif ()
+endif()
 
 # build shared option
 if(NOT WIN32)
@@ -60,7 +62,7 @@ option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
 
 # testing options
 option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
-option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" OFF)
+option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" ${SPDLOG_MASTER_PROJECT})
 
 # bench options
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
@@ -74,7 +76,7 @@ option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_FMT_EXTERNAL_HO "Use external fmt header-only library instead of bundled" OFF)
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
 
-if (SPDLOG_FMT_EXTERNAL AND SPDLOG_FMT_EXTERNAL_HO)
+if(SPDLOG_FMT_EXTERNAL AND SPDLOG_FMT_EXTERNAL_HO)
     message(FATAL_ERROR "SPDLOG_FMT_EXTERNAL and SPDLOG_FMT_EXTERNAL_HO are mutually exclusive")
 endif()
 
@@ -93,7 +95,9 @@ option(SPDLOG_NO_TLS "prevent spdlog from using thread local storage" OFF)
 option(SPDLOG_NO_ATOMIC_LEVELS "prevent spdlog from using of std::atomic log levels (use only if your code never modifies log levels concurrently" OFF)
 
 find_package(Threads REQUIRED)
-message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+
+
 #---------------------------------------------------------------------------------------
 # Static/Shared library (shared not supported in windows yet)
 #---------------------------------------------------------------------------------------
@@ -109,7 +113,7 @@ if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
     list(APPEND SPDLOG_SRCS src/fmt.cpp)
 endif()
 
-if (SPDLOG_BUILD_SHARED)
+if(SPDLOG_BUILD_SHARED)
     if(WIN32)
         message(FATAL_ERROR "spdlog shared lib is not yet supported under windows")
     endif()
@@ -122,13 +126,14 @@ add_library(spdlog::spdlog ALIAS spdlog)
 
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 spdlog_enable_warnings(spdlog)
 
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
+
 
 #---------------------------------------------------------------------------------------
 # Header only version
@@ -137,7 +142,7 @@ add_library(spdlog_header_only INTERFACE)
 add_library(spdlog::spdlog_header_only ALIAS spdlog_header_only)
 
 target_include_directories(spdlog_header_only INTERFACE
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
@@ -146,9 +151,9 @@ target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 # Use fmt package if using external fmt
 #---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
-    if (NOT TARGET fmt::fmt)
+    if(NOT TARGET fmt::fmt)
         find_package(fmt REQUIRED)
-    endif ()
+    endif()
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
 
@@ -164,23 +169,23 @@ if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
     set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
 endif()
 
+
 #---------------------------------------------------------------------------------------
 # Misc definitions according to tweak options
 #---------------------------------------------------------------------------------------
 if(SPDLOG_WCHAR_SUPPORT)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
- endif()
+    target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+endif()
 
- if(SPDLOG_WCHAR_FILENAMES)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_FILENAMES)
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_FILENAMES)
- endif()
+if(SPDLOG_WCHAR_FILENAMES)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_FILENAMES)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_FILENAMES)
+endif()
 
- if(SPDLOG_NO_EXCEPTIONS)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)	
-
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)
+if(SPDLOG_NO_EXCEPTIONS)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)
 
     if(NOT MSVC)
         target_compile_options(spdlog PRIVATE -fno-exceptions)
@@ -232,12 +237,13 @@ if(SPDLOG_BUILD_BENCH)
     add_subdirectory(bench)
 endif()
 
+
 #---------------------------------------------------------------------------------------
 # Install
 #---------------------------------------------------------------------------------------
-if (SPDLOG_INSTALL)
+if(SPDLOG_INSTALL)
     message(STATUS "Generating install")
-    set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/spdlogConfig.cmake.in")
+    set(project_config_in "${CMAKE_CURRENT_SOURCE_DIR}/cmake/spdlogConfig.cmake.in")
     set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfig.cmake")
     set(config_targets_file "spdlogConfigTargets.cmake")
     set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfigVersion.cmake")
@@ -274,8 +280,9 @@ if (SPDLOG_INSTALL)
             FILE ${config_targets_file})
 
     include(CMakePackageConfigHelpers)
-    configure_file("${project_config_in}" "${project_config_out}" @ONLY)
-
+    configure_package_config_file("${project_config_in}" "${project_config_out}"
+        INSTALL_DESTINATION ${export_dest_dir}
+    )
     write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
     install(FILES
             "${project_config_out}"
@@ -286,5 +293,5 @@ if (SPDLOG_INSTALL)
     #---------------------------------------------------------------------------------------
     include(cmake/spdlogCPack.cmake)
 
-endif ()
+endif()
 

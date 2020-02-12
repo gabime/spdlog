@@ -14,5 +14,5 @@ source_group("Header Files\\spdlog" FILES ${SPDLOG_TOP_HEADERS})
 source_group("Header Files\\spdlog\\details" FILES ${SPDLOG_DETAILS_HEADERS})
 source_group("Header Files\\spdlog\\sinks" FILES ${SPDLOG_SINKS_HEADERS})
 source_group("Header Files\\spdlog\\fmt" FILES ${SPDLOG_FMT_HEADERS})
-source_group("Header Files\\spdlog\\fmt\\bundled\\" FILES ${SPDLOG_FMT_BUNDELED_HEADERS})
+source_group("Header Files\\spdlog\\fmt\\bundled" FILES ${SPDLOG_FMT_BUNDELED_HEADERS})
 

@@ -2,7 +2,7 @@ option('external_fmt',      type: 'boolean', value: false,  description: 'Use ex
 option('enable_examples',   type: 'boolean', value: true,   description: 'Build examples')
 option('enable_benchmarks', type: 'boolean', value: false,  description: 'Build benchmarks')
 option('enable_tests',      type: 'boolean', value: true,   description: 'Build tests')
-option('enable_tests_ho',   type: 'boolean', value: false,  description: 'Build header-only tests')
+option('enable_tests_ho',   type: 'boolean', value: true,   description: 'Build header-only tests')
 option('library_type',      type: 'combo', choices: ['static', 'shared'], value: 'static', description: 'Library build type')
 option('no_exceptions',     type: 'boolean', value: false,  description: 'Disabled exceptions - abort() instead any error')
 

@@ -1,5 +1,8 @@
 # Auto generated files
 build/*
+/build-*/
+/testreports/
+/logs/
 *.slo
 *.lo
 *.o
