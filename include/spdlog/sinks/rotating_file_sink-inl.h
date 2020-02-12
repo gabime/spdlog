@@ -121,7 +121,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
 // delete the target if exists, and rename the src file  to target
 // return true on success, false otherwise.
 template<typename Mutex>
-SPDLOG_INLINE bool rotating_file_sink<Mutex>::rename_file_(yconst filename_t &src_filename, const filename_t &target_filename)
+SPDLOG_INLINE bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src_filename, const filename_t &target_filename)
 {
     // try to delete the target file in case it already exists.
     (void)details::os::remove(target_filename);
