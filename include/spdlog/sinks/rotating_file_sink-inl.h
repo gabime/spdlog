@@ -106,7 +106,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
             // this is a workaround to a windows issue, where very high rotation
             // rates can cause the rename to fail with permission denied (because of antivirus?).
             details::os::sleep_for_millis(100);
-            if (!rename_file(src, target))
+            if (!rename_file_(src, target))
             {
                 file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
                 current_size_ = 0;
