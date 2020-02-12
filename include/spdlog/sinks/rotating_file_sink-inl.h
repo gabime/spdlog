@@ -54,8 +54,9 @@ SPDLOG_INLINE filename_t rotating_file_sink<Mutex>::calc_filename(const filename
 }
 
 template<typename Mutex>
-SPDLOG_INLINE const filename_t &rotating_file_sink<Mutex>::filename() const
+SPDLOG_INLINE const filename_t &rotating_file_sink<Mutex>::filename()
 {
+    std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
     return file_helper_.filename();
 }
 

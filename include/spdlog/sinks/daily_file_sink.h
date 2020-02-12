@@ -70,8 +70,9 @@ public:
         }
     }
 
-    const filename_t &filename() const
+    const filename_t &filename()
     {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         return file_helper_.filename();
     }
 
