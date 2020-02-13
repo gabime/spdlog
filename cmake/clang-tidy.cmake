@@ -5,11 +5,12 @@ find_program(CLANG_TIDY_EXE
 if(CLANG_TIDY_EXE)
     message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
     set(DCMAKE_EXPORT_COMPILE_COMMANDS ON)
-    set(CLANG_TIDY_CHECKS "'-*,cppcoreguidelines-*,-cppcoreguidelines-macro-usage'")
-    set(CLANG_TIDY_CMD "${CLANG_TIDY_EXE};-checks=${CLANG_TIDY_CHECKS};-header-filter='${CMAKE_SOURCE_DIR}/*'")
+    set(CLANG_TIDY_CMD ${CLANG_TIDY_EXE})
     message(STATUS "cmake source dir: ${CMAKE_SOURCE_DIR}")
 
     if(ENABLE_CLANG_TIDY)
+        # NOTE: the project config file .clang-tidy is not found if the
+        # binary tree is not part of the source tree! CK
         set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_CMD} CACHE STRING "" FORCE)
     else()
         set(CMAKE_CXX_CLANG_TIDY "" CACHE STRING "" FORCE) # delete it
@@ -23,8 +24,8 @@ if(CLANG_TIDY_EXE)
 
     add_custom_command(TARGET check PRE_BUILD
         # -p BUILD_PATH Path used to read a compile command database (compile_commands.json).
-        # NOTE: we use defaults checks from .clang-tidy
-        COMMAND ${CLANG_TIDY_EXE} -p ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}
+        # NOTE: we use defaults checks from .clang-tidy and examples only!
+        COMMAND ${CLANG_TIDY_EXE} -p ${CMAKE_BINARY_DIR} example
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"   # location of compile_commands.json
         COMMENT "Running check on targets at ${CMAKE_SOURCE_DIR} ..."
         VERBATIM

@@ -13,11 +13,11 @@ readability-*,\
 clang-analyzer-*'
 
 WarningsAsErrors: ''
-HeaderFilterRegex: 'async.h|async_logger.h|common.h|details|formatter.h|logger.h|sinks|spdlog.h|tweakme.h|version.h'
+HeaderFilterRegex: 'include/spdlog/[^f].*'
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 
-CheckOptions:    
+CheckOptions:
   - key:             google-readability-braces-around-statements.ShortStatementLines
     value:           '1'
   - key:             google-readability-function-size.StatementThreshold
