@@ -61,8 +61,8 @@ option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
 
 # testing options
-option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
-option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" ${SPDLOG_MASTER_PROJECT})
+# option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
+# option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" ${SPDLOG_MASTER_PROJECT})
 
 # bench options
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
@@ -72,7 +72,7 @@ option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 
 # install options
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
-option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
+option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" ON)
 option(SPDLOG_FMT_EXTERNAL_HO "Use external fmt header-only library instead of bundled" OFF)
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
 

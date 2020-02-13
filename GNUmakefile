@@ -8,7 +8,8 @@ MAKEFLAGS+= --no-builtin-rules
 
 .PHONY: setup show all test lcov install check format clean distclean
 
-PROJECT_NAME:=$(shell basename $${PWD})
+# PROJECT_NAME:=$(shell basename $${PWD})
+PROJECT_NAME:=spdlog
 
 ##################################################
 # begin of config part
@@ -29,15 +30,15 @@ CHECKS?='-*,cppcoreguidelines-*,-cppcoreguidelines-macro-usage'
 
 # prevent hard config of find_package(asio 1.14.1 CONFIG CMAKE_FIND_ROOT_PATH_BOTH)
 ifeq (NO${CROSS_COMPILE},NO)
-    CC:=/opt/local/bin/clang
-    CXX:=/opt/local/bin/clang++
+    CC:=/opt/local/bin/gcc
+    CXX:=/opt/local/bin/g++
 
     # NOTE: Do not uses with DESTDIR! CMAKE_INSTALL_PREFIX?=/
     DESTDIR?=/tmp/staging/$(PROJECT_NAME)
     export DESTDIR
 
     CMAKE_STAGING_PREFIX?=/usr/local
-    CMAKE_PREFIX_PATH?="${DESTDIR}/${CMAKE_STAGING_PREFIX};/opt/local;/usr"
+    CMAKE_PREFIX_PATH?="${DESTDIR}/${CMAKE_STAGING_PREFIX};/usr/local;/opt/local;/usr"
 else
     CMAKE_STAGING_PREFIX?=/tmp/staging/${CROSS_COMPILE}$(PROJECT_NAME)
     CMAKE_PREFIX_PATH?="${CMAKE_STAGING_PREFIX}"
@@ -87,7 +88,7 @@ setup: $(BUILD_DIR) .clang-tidy compile_commands.json
       -DUSE_LCOV=$(USE_LOCV) -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) \
       -DCMAKE_PREFIX_PATH=$(CMAKE_PREFIX_PATH) \
       -DCMAKE_STAGING_PREFIX=$(CMAKE_STAGING_PREFIX) \
-	    -DSPDLOG_BUILD_EXAMPLE_HO=ON -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+      -DSPDLOG_BUILD_EXAMPLE_HO=off -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
       -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_C_COMPILER=${CC} -DCMAKE_CXX_COMPILER=${CXX} $(CURDIR)
 	touch $@
 
