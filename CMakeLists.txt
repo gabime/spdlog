@@ -61,8 +61,8 @@ option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
 
 # testing options
-# option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
-# option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_BUILD_TESTS "Build tests" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" OFF)
 
 # bench options
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)

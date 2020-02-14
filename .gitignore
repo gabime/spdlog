@@ -49,6 +49,7 @@ example/*
 !example/bench.cpp
 !example/utils.h
 !example/Makefile*
+!example/GNUMakefile
 !example/example.sln
 !example/example.vcxproj
 !example/CMakeLists.txt
