@@ -111,7 +111,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
 template<typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_ccode_(const string_view_t &color_code)
 {
-    fwrite(color_code.data(), sizeof(string_view_t::value_type), color_code.size(), target_file_);
+    fwrite(color_code.data(), sizeof(char), color_code.size(), target_file_);
 }
 
 template<typename ConsoleMutex>
