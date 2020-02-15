@@ -1,14 +1,19 @@
 # Copyright(c) 2019 spdlog authors
 # Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.1)
-project(spdlog_examples CXX)
+cmake_minimum_required(VERSION 3.2)
 
-include(../cmake/utils.cmake)
+project(spdlog_examples CXX)
 
 if(NOT TARGET spdlog)
     # Stand-alone build
-    find_package(spdlog REQUIRED)
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    #XXX MAYBE: include(../cmake/clang-tidy.cmake)
+    include(../cmake/utils.cmake)
+    #TODO spdlog_extract_version()
+
+    find_package(spdlog ${SPDLOG_VERSION} REQUIRED)
 endif()
 
 #---------------------------------------------------------------------------------------

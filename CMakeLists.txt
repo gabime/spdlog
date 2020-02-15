@@ -35,7 +35,7 @@ endif()
 set(CMAKE_CXX_EXTENSIONS  OFF)
 
 if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
-	set(CMAKE_CXX_EXTENSIONS ON)
+    set(CMAKE_CXX_EXTENSIONS ON)
 endif()
 
 
@@ -148,9 +148,9 @@ target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 # Use fmt package if using external fmt
 #---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
-    if (NOT TARGET fmt::fmt)
-        find_package(fmt REQUIRED)
-    endif ()
+    if(NOT TARGET fmt::fmt)
+        find_package(fmt 6.1.2 REQUIRED)
+    endif()
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
 
@@ -170,19 +170,18 @@ endif()
 # Misc definitions according to tweak options
 #---------------------------------------------------------------------------------------
 if(SPDLOG_WCHAR_SUPPORT)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
- endif()
+    target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+endif()
 
- if(SPDLOG_WCHAR_FILENAMES)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_FILENAMES)
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_FILENAMES)
- endif()
+if(SPDLOG_WCHAR_FILENAMES)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_FILENAMES)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_FILENAMES)
+endif()
 
- if(SPDLOG_NO_EXCEPTIONS)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)	
-
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)
+if(SPDLOG_NO_EXCEPTIONS)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)
 
     if(NOT MSVC)
         target_compile_options(spdlog PRIVATE -fno-exceptions)
@@ -276,8 +275,9 @@ if (SPDLOG_INSTALL)
             FILE ${config_targets_file})
 
     include(CMakePackageConfigHelpers)
-    configure_file("${project_config_in}" "${project_config_out}" @ONLY)
-
+    configure_package_config_file("${project_config_in}" "${project_config_out}"
+        INSTALL_DESTINATION ${export_dest_dir}
+    )
     write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
     install(FILES
             "${project_config_out}"
