@@ -1,4 +1,5 @@
-Checks: '\
+---
+Checks: "-*,\
 cppcoreguidelines-*,\
 performance-*,\
 -performance-unnecessary-value-param,\
@@ -10,14 +11,15 @@ misc-*,\
 -misc-non-private-member-variables-in-classes,\
 cert-*,\
 readability-*,\
-clang-analyzer-*'
+clang-analyzer-*\
+"
 
 WarningsAsErrors: ''
 HeaderFilterRegex: 'include/spdlog/[^f].*'
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 
-CheckOptions:    
+CheckOptions:
   - key:             google-readability-braces-around-statements.ShortStatementLines
     value:           '1'
   - key:             google-readability-function-size.StatementThreshold
