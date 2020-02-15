@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 3.2)
 #---------------------------------------------------------------------------------------
 include(cmake/utils.cmake)
 include(cmake/ide.cmake)
+include(cmake/clang-tidy.cmake)
 
 spdlog_extract_version()
 
@@ -180,8 +181,7 @@ if(SPDLOG_WCHAR_SUPPORT)
  endif()
 
  if(SPDLOG_NO_EXCEPTIONS)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)	
-
+	target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)
 	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)
 
     if(NOT MSVC)
