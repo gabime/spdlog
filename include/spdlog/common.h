@@ -147,6 +147,7 @@ enum level_enum
     err = SPDLOG_LEVEL_ERROR,
     critical = SPDLOG_LEVEL_CRITICAL,
     off = SPDLOG_LEVEL_OFF,
+    n_levels
 };
 
 #if !defined(SPDLOG_LEVEL_NAMES)
