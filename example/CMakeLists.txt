@@ -9,7 +9,6 @@ if(NOT TARGET spdlog)
     # Stand-alone build
     set(CMAKE_CXX_STANDARD 11)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
-    #XXX MAYBE: include(../cmake/clang-tidy.cmake)
     include(../cmake/utils.cmake)
     #TODO spdlog_extract_version()
 
