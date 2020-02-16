@@ -7,12 +7,16 @@ project(spdlog_examples CXX)
 
 if(NOT TARGET spdlog)
     # Stand-alone build
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    if(NOT DEFINED CMAKE_CXX_STANDARD)
+        set(CMAKE_CXX_STANDARD 11)
+        set(CMAKE_CXX_STANDARD_REQUIRED ON)
+    endif()
     include(../cmake/utils.cmake)
-    #TODO spdlog_extract_version()
+    spdlog_extract_version()
 
+    message(STATUS "find_package(spdlog ${SPDLOG_VERSION} REQUIRED) ...")
     find_package(spdlog ${SPDLOG_VERSION} REQUIRED)
+    message(STATUS "... sdplog ${spdlog_CONSIDERED_VERSIONS} found at ${spdlog_DIR}")
 endif()
 
 #---------------------------------------------------------------------------------------
