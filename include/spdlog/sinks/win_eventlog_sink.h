@@ -219,7 +219,7 @@ protected:
         using namespace internal;
 
         memory_buf_t formatted;
-        formatter_->format(msg, formatted);
+        base_sink<Mutex>::formatter_->format(msg, formatted);
         formatted.push_back('\0');
         LPCSTR lp_str = static_cast<LPCSTR>(formatted.data());
 
