@@ -24,7 +24,7 @@ namespace details {
 class thread_pool;
 class periodic_worker;
 
-class registry
+class SPDLOG_REGISTRY_ATTRIBUTES registry
 {
 public:
     registry(const registry &) = delete;

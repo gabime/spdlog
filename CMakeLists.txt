@@ -56,6 +56,7 @@ endif ()
 # build shared option
 if(NOT WIN32)
     option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
+    option(SPDLOG_DLL_LOCAL_REGISTRY "If enabled, the logger registry will not be shared between shared objects" OFF)
 endif()
 
 # example options
@@ -120,6 +121,10 @@ if (SPDLOG_BUILD_SHARED)
     add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
 else()
     add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
+endif()
+
+if (SPDLOG_DLL_LOCAL_REGISTRY)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_DLL_LOCAL_REGISTRY)
 endif()
 
 add_library(spdlog::spdlog ALIAS spdlog)

@@ -54,6 +54,12 @@
 #define SPDLOG_DEPRECATED
 #endif
 
+#if defined(SPDLOG_DLL_LOCAL_REGISTRY) && (defined(__GNUC__) || defined(__clang__))
+#define SPDLOG_REGISTRY_ATTRIBUTES __attribute__((visibility("hidden")))
+#else
+#define SPDLOG_REGISTRY_ATTRIBUTES
+#endif
+
 // disable thread local on msvc 2013
 #ifndef SPDLOG_NO_TLS
 #if (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt)
