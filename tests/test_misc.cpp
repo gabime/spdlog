@@ -112,6 +112,10 @@ TEST_CASE("clone-logger", "[clone]")
     REQUIRE(test_sink->lines()[0] == "Some message 1");
     REQUIRE(test_sink->lines()[1] == "Some message 2");
 
+    auto cloned_with_parent_name = cloned->clone("sub_logger", /* preserve_parent_name = */ true);
+
+    REQUIRE(cloned_with_parent_name->name() == "clone.sub_logger");
+
     spdlog::drop_all();
 }
 
@@ -138,6 +142,10 @@ TEST_CASE("clone async", "[clone]")
     REQUIRE(test_sink->lines().size() == 2);
     REQUIRE(test_sink->lines()[0] == "Some message 1");
     REQUIRE(test_sink->lines()[1] == "Some message 2");
+
+    auto cloned_with_parent_name = cloned->clone("sub_logger", /* preserve_parent_name = */ true);
+
+    REQUIRE(cloned_with_parent_name->name() == "clone.sub_logger");
 
     spdlog::drop_all();
 }

@@ -84,9 +84,14 @@ SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
     }
 }
 
-SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name)
+SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name, bool preserve_parent_name)
 {
     auto cloned = std::make_shared<spdlog::async_logger>(*this);
-    cloned->name_ = std::move(new_name);
+    if (preserve_parent_name) {
+        cloned->name_ += ".";
+        cloned->name_ += new_name;
+    } else {
+        cloned->name_ = std::move(new_name);
+    }
     return cloned;
 }
