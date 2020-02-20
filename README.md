@@ -300,6 +300,15 @@ void android_example()
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
 }
 ```
+---
+#### Compile-time format string syntax checking
+```C++
+#include "spdlog/spdlog.h"
+int main()
+{
+    spdlog::info(FMT_STRING("{:d} is an invalid format tag"));
+}
+```
 
 ## Benchmarks
 
