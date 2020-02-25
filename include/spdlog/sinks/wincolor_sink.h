@@ -52,7 +52,7 @@ protected:
     bool in_console_;
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
-    std::array<WORD , level::n_levels> colors_;
+    std::array<WORD, level::n_levels> colors_;
 
     // set foreground color and return the orig console attributes (for resetting later)
     WORD set_foreground_color_(WORD attribs);
