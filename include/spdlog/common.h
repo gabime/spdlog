@@ -15,18 +15,6 @@
 #include <type_traits>
 #include <functional>
 
-#ifdef _WIN32
-#ifndef NOMINMAX
-#define NOMINMAX // prevent windows redefining min/max
-#endif
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <windows.h>
-#endif //_WIN32
-
 #ifdef SPDLOG_COMPILED_LIB
 #undef SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE
