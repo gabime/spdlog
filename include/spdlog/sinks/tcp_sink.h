@@ -6,19 +6,32 @@
 #include <spdlog/common.h>
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/null_mutex.h>
-
-#include <sys/socket.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <netdb.h>
-
+#include <spdlog/details/tcp_client.h>
 #include <mutex>
 #include <string>
+#include <chrono>
+#include <functional>
 
 #pragma once
 
+// tcp client sink
+// connect to remote address and send the formatted log.
+// will attempt to reconnect if connection drops.
+
 namespace spdlog {
 namespace sinks {
+
+struct tcp_sink_config
+{
+    std::string server_host;
+    int server_port;
+    bool lazy_connect = false; // connect on first log call instead of in construction
+
+    tcp_sink_config(std::string host, int port)
+        : server_host{std::move(host)}
+        , server_port{port}
+    {}
+};
 
 template<typename Mutex>
 class tcp_sink : public spdlog::sinks::base_sink<Mutex>
@@ -26,101 +39,32 @@ class tcp_sink : public spdlog::sinks::base_sink<Mutex>
 public:
     // connect to tcp host/port or throw if failed
     // host can be hostname or ip address
-    tcp_sink(std::string host, int port)
+    tcp_sink(tcp_sink_config sink_config)
+        : config_{std::move(sink_config)}
     {
-        sock_ = connect_to(host, port);
-    }
-
-    ~tcp_sink() override
-    {
-        if (sock_ != -1)
+        if (!config_.lazy_connect)
         {
-            ::close(sock_);
+            this->client_.connect(config_.server_host, config_.server_port);
         }
     }
+
+    ~tcp_sink() override {}
 
 protected:
     void sink_it_(const spdlog::details::log_msg &msg) override
     {
         spdlog::memory_buf_t formatted;
         spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
-        size_t bytes_sent = 0;
-        while (bytes_sent < formatted.size())
+        if (!client_.is_connected())
         {
-            auto write_result = ::write(sock_, formatted.data() + bytes_sent, formatted.size() - bytes_sent);
-            if (write_result < 0)
-            {
-                SPDLOG_THROW(spdlog::spdlog_ex("write(2) failed", errno));
-            }
-
-            if (write_result == 0) // (probably should not happen but in any case..)
-            {
-                break;
-            }
-            bytes_sent += static_cast<size_t>(write_result);
+            client_.connect(config_.server_host, config_.server_port);
         }
+        client_.send(formatted.data(), formatted.size());
     }
 
     void flush_() override {}
-
-private:
-    // try to connect and return socket fd or throw on failure
-    int connect_to(const std::string &host, int port)
-    {
-        struct addrinfo hints;
-        memset(&hints, 0, sizeof(struct addrinfo));
-        hints.ai_family = AF_INET;       // IPv4
-        hints.ai_socktype = SOCK_STREAM; // TCP
-        hints.ai_flags = AI_NUMERICSERV; // port passed as as numeric value
-        hints.ai_protocol = 0;
-
-        auto port_str = std::to_string(port);
-        struct addrinfo *addrinfo_result;
-        auto rv = ::getaddrinfo(host.c_str(), port_str.c_str(), &hints, &addrinfo_result);
-        if (rv != 0)
-        {
-            auto msg = fmt::format("::getaddrinfo failed: {}", gai_strerror(rv));
-            SPDLOG_THROW(spdlog::spdlog_ex(msg));
-        }
-
-        // Try each address until we successfully connect(2).
-        int socket_rv = -1;
-        int last_errno = 0;
-        for (auto *rp = addrinfo_result; rp != nullptr; rp = rp->ai_next)
-        {
- #ifdef SPDLOG_PREVENT_CHILD_FD
-            int const flags = SOCK_CLOEXEC;
- #else
-            int const flags = 0;
- #endif
-            socket_rv = ::socket(rp->ai_family, rp->ai_socktype | flags, rp->ai_protocol);
-            if (socket_rv == -1)
-            {
-                last_errno = errno;
-                continue;
-            }
-            rv = ::connect(socket_rv, rp->ai_addr, rp->ai_addrlen);
-            if (rv == 0)
-            {
-                break;
-            }
-            else
-            {
-                last_errno = errno;
-                ::close(socket_rv);
-                socket_rv = -1;
-            }
-        }
-        ::freeaddrinfo(addrinfo_result);
-        if (socket_rv == -1)
-        {
-            SPDLOG_THROW(spdlog::spdlog_ex("::connect failed", last_errno));
-        }
-        return socket_rv;
-    }
-
-private:
-    int sock_ = -1;
+    tcp_sink_config config_;
+    details::tcp_client client_;
 };
 
 using tcp_sink_mt = tcp_sink<std::mutex>;
