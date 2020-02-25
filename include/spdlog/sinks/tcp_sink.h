@@ -14,9 +14,10 @@
 
 #pragma once
 
-// tcp client sink
-// connect to remote address and send the formatted log.
-// will attempt to reconnect if connection drops.
+// Simple tcp client sink
+// Connects to remote address and send the formatted log.
+// Will attempt to reconnect if connection drops.
+// If more complicated behaviour is needed (i.e get responses), you can inherit it and override the sink_it_ method.
 
 namespace spdlog {
 namespace sinks {
@@ -39,7 +40,7 @@ class tcp_sink : public spdlog::sinks::base_sink<Mutex>
 public:
     // connect to tcp host/port or throw if failed
     // host can be hostname or ip address
-    tcp_sink(tcp_sink_config sink_config)
+    explicit tcp_sink(tcp_sink_config sink_config)
         : config_{std::move(sink_config)}
     {
         if (!config_.lazy_connect)
@@ -48,7 +49,7 @@ public:
         }
     }
 
-    ~tcp_sink() override {}
+    ~tcp_sink() override = default;
 
 protected:
     void sink_it_(const spdlog::details::log_msg &msg) override

@@ -3,6 +3,10 @@
 
 #pragma once
 
+#ifdef _WIN32
+#error tcp_client not supported under windows yet
+#endif
+
 // tcp client helper
 #include <spdlog/common.h>
 #include <spdlog/details/os.h>
