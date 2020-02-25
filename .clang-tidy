@@ -13,7 +13,7 @@ readability-*,\
 clang-analyzer-*'
 
 WarningsAsErrors: ''
-HeaderFilterRegex: 'include/spdlog/[^f].*'
+HeaderFilterRegex: '*spdlog/[^f].*'
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 
