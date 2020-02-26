@@ -34,8 +34,16 @@ SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) SPDLOG
         }
         level++;
     }
-    // allow warn = warning before giving up
-    return name == "warn" ? level::warn : level::off;
+    // check also for "warn" and "err" before giving up..
+    if (name == "warn")
+    {
+        return level::warn;
+    }
+    if (name == "err")
+    {
+        return level::err;
+    }
+    return level::off;
 }
 } // namespace level
 
