@@ -8,15 +8,7 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
 
-#ifndef NOMINMAX
-#define NOMINMAX // prevent windows redefining min/max
-#endif
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-
-#include <windows.h>
+#include <spdlog/details/windows_include.h>
 #include <winbase.h>
 
 #include <mutex>
