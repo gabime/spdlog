@@ -23,16 +23,9 @@
 
 #ifdef _WIN32
 
-#ifndef NOMINMAX
-#define NOMINMAX // prevent windows redefining min/max
-#endif
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
 #include <io.h>      // _get_osfhandle and _isatty support
 #include <process.h> //  _get_pid support
-#include <windows.h>
+#include <spdlog/details/windows_include.h>
 
 #ifdef __MINGW32__
 #include <share.h>
