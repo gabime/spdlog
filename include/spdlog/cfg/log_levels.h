@@ -38,7 +38,7 @@ public:
         return it != levels_.end() ? it->second : default_level_;
     }
 
-    level::level_enum get_default()
+    level::level_enum default_level()
     {
         return default_level_;
     }
