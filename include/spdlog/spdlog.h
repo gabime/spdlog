@@ -39,7 +39,6 @@ inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs 
 // Initialize and register a logger,
 // formatter and flush level will be set according the global settings.
 //
-// NOTE:
 // Useful when creating loggers manually and initializing them according to the global settings.
 //
 // Example:
