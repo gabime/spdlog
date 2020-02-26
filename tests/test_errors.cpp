@@ -34,7 +34,8 @@ TEST_CASE("default_error_handler", "[errors]]")
     logger->info("Test message {}", 2);
     logger->flush();
 
-    REQUIRE(file_contents(filename) == std::string("Test message 2\n"));
+    using spdlog::details::os::default_eol;
+    REQUIRE(file_contents(filename) == fmt::format("Test message 2{}", default_eol));
     REQUIRE(count_lines(filename) == 1);
 }
 
@@ -51,7 +52,7 @@ TEST_CASE("custom_error_handler", "[errors]]")
 
     REQUIRE_THROWS_AS(logger->info("Bad format msg {} {}", "xxx"), custom_ex);
     logger->info("Good message #2");
-    REQUIRE(count_lines(filename) == 2);
+    require_message_count(filename, 2);
 }
 
 TEST_CASE("default_error_handler2", "[errors]]")
@@ -93,7 +94,7 @@ TEST_CASE("async_error_handler", "[errors]]")
         spdlog::drop("logger"); // force logger to drain the queue and shutdown
     }
     spdlog::init_thread_pool(128, 1);
-    REQUIRE(count_lines(filename) == 2);
+    require_message_count(filename, 2);
     REQUIRE(file_contents("test_logs/custom_err.txt") == err_msg);
 }
 

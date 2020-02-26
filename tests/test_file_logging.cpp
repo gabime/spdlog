@@ -15,8 +15,9 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     logger->info("Test message {}", 2);
 
     logger->flush();
-    REQUIRE(file_contents(filename) == std::string("Test message 1\nTest message 2\n"));
-    REQUIRE(count_lines(filename) == 2);
+    require_message_count(filename, 2);
+    using spdlog::details::os::default_eol;
+    REQUIRE(file_contents(filename) == fmt::format("Test message 1{}Test message 2{}", default_eol, default_eol));
 }
 
 TEST_CASE("flush_on", "[flush_on]]")
@@ -34,8 +35,10 @@ TEST_CASE("flush_on", "[flush_on]]")
     logger->info("Test message {}", 1);
     logger->info("Test message {}", 2);
 
-    REQUIRE(file_contents(filename) == std::string("Should not be flushed\nTest message 1\nTest message 2\n"));
-    REQUIRE(count_lines(filename) == 3);
+    require_message_count(filename, 3);
+    using spdlog::details::os::default_eol;
+    REQUIRE(file_contents(filename) ==
+            fmt::format("Should not be flushed{}Test message 1{}Test message 2{}", default_eol, default_eol, default_eol));
 }
 
 TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
@@ -52,7 +55,7 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
 
     logger->flush();
     auto filename = basename;
-    REQUIRE(count_lines(filename) == 10);
+    require_message_count(filename, 10);
 }
 
 TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
@@ -81,7 +84,8 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 
     logger->flush();
     auto filename = basename;
-    REQUIRE(count_lines(filename) == 10);
+    require_message_count(filename, 10);
+
     for (int i = 0; i < 1000; i++)
     {
 

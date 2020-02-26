@@ -38,10 +38,6 @@ static const char folder_sep = '\\';
 SPDLOG_CONSTEXPR static const char folder_sep = '/';
 #endif
 
-#ifdef SPDLOG_PREVENT_CHILD_FD
-void prevent_child_fd(FILE *f);
-#endif
-
 // fopen_s on non windows for writing
 bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode);
 

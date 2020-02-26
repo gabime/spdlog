@@ -13,7 +13,7 @@ readability-*,\
 clang-analyzer-*'
 
 WarningsAsErrors: ''
-HeaderFilterRegex: 'async.h|async_logger.h|common.h|details|formatter.h|logger.h|sinks|spdlog.h|tweakme.h|version.h'
+HeaderFilterRegex: '*spdlog/[^f].*'
 AnalyzeTemporaryDtors: false
 FormatStyle:     none
 

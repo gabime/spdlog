@@ -1,4 +1,11 @@
+cmake_minimum_required(VERSION 3.2)
+
 project(spdlog_utests CXX)
+
+if(NOT TARGET spdlog)
+    # Stand-alone build
+    find_package(spdlog REQUIRED)
+endif()
 
 include(../cmake/utils.cmake)
 
@@ -12,6 +19,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_file_logging.cpp
 	test_daily_logger.cpp
     test_misc.cpp
+    test_eventlog.cpp
     test_pattern_formatter.cpp
     test_async.cpp
     test_registry.cpp
@@ -48,6 +56,7 @@ function(spdlog_prepare_test test_target spdlog_lib)
 		spdlog_enable_sanitizer(${test_target})
 	endif()
     add_test(NAME ${test_target} COMMAND ${test_target})
+    set_tests_properties(${test_target} PROPERTIES RUN_SERIAL ON)
 endfunction()
 
 # The compiled library tests

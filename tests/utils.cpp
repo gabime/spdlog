@@ -21,7 +21,7 @@ void prepare_logdir()
 
 std::string file_contents(const std::string &filename)
 {
-    std::ifstream ifs(filename);
+    std::ifstream ifs(filename, std::ios_base::binary);
     if (!ifs)
     {
         throw std::runtime_error("Failed open file ");
@@ -42,6 +42,18 @@ std::size_t count_lines(const std::string &filename)
     while (std::getline(ifs, line))
         counter++;
     return counter;
+}
+
+void require_message_count(const std::string &filename, const std::size_t messages)
+{
+    if (strlen(spdlog::details::os::default_eol) == 0)
+    {
+        REQUIRE(count_lines(filename) == 1);
+    }
+    else
+    {
+        REQUIRE(count_lines(filename) == messages);
+    }
 }
 
 std::size_t get_filesize(const std::string &filename)

@@ -24,7 +24,7 @@ class rotating_file_sink final : public base_sink<Mutex>
 public:
     rotating_file_sink(filename_t base_filename, std::size_t max_size, std::size_t max_files, bool rotate_on_open = false);
     static filename_t calc_filename(const filename_t &filename, std::size_t index);
-    const filename_t &filename() const;
+    filename_t filename();
 
 protected:
     void sink_it_(const details::log_msg &msg) override;
@@ -40,7 +40,7 @@ private:
 
     // delete the target if exists, and rename the src file  to target
     // return true on success, false otherwise.
-    bool rename_file(const filename_t &src_filename, const filename_t &target_filename);
+    bool rename_file_(const filename_t &src_filename, const filename_t &target_filename);
 
     filename_t base_filename_;
     std::size_t max_size_;

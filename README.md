@@ -25,12 +25,13 @@ $ cmake .. && make -j
 
 ## Package managers:
 * Homebrew: `brew install spdlog`
+* MacPorts: `sudo port install spdlog`
 * FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
 * Fedora: `yum install spdlog`
 * Gentoo: `emerge dev-libs/spdlog`
 * Arch Linux: `yaourt -S spdlog-git`
 * vcpkg: `vcpkg install spdlog`
-* conan: `spdlog/[>=1.4.1]@bincrafters/stable`
+* conan: `spdlog/[>=1.4.1]`
 
 
 ## Features
@@ -297,6 +298,15 @@ void android_example()
     std::string tag = "spdlog-android";
     auto android_logger = spdlog::android_logger_mt("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
+}
+```
+---
+#### Compile-time format string syntax checking
+```C++
+#include "spdlog/spdlog.h"
+int main()
+{
+    spdlog::info(FMT_STRING("{:d} is an invalid format tag"));
 }
 ```
 

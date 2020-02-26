@@ -9,7 +9,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
-#include <unordered_map>
+#include <array>
 
 namespace spdlog {
 namespace sinks {
@@ -80,7 +80,7 @@ private:
     mutex_t &mutex_;
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
-    std::unordered_map<level::level_enum, string_view_t, level::level_hasher> colors_;
+    std::array<string_view_t, level::n_levels> colors_;
     void print_ccode_(const string_view_t &color_code);
     void print_range_(const memory_buf_t &formatted, size_t start, size_t end);
 };

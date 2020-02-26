@@ -3,14 +3,20 @@
 
 cmake_minimum_required(VERSION 3.2)
 
+ENABLE_LANGUAGE(C)
+
 #---------------------------------------------------------------------------------------
 # Start spdlog project
 #---------------------------------------------------------------------------------------
-include(GNUInstallDirs)
 include(cmake/utils.cmake)
 include(cmake/ide.cmake)
 
 spdlog_extract_version()
+
+project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
+message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
+
+include(GNUInstallDirs)
 
 #---------------------------------------------------------------------------------------
 # Set default build to release
@@ -19,8 +25,6 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
 endif()
 
-project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
-message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
 #---------------------------------------------------------------------------------------
 # Compiler config
@@ -91,6 +95,17 @@ option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file
 option(SPDLOG_NO_THREAD_ID "prevent spdlog from querying the thread id on each log call if thread id is not needed" OFF)
 option(SPDLOG_NO_TLS "prevent spdlog from using thread local storage" OFF)
 option(SPDLOG_NO_ATOMIC_LEVELS "prevent spdlog from using of std::atomic log levels (use only if your code never modifies log levels concurrently" OFF)
+
+# clang-tidy
+if(${CMAKE_VERSION} VERSION_GREATER "3.5") 
+    option(SPDLOG_TIDY "run clang-tidy" OFF)
+endif()
+
+if(SPDLOG_TIDY)
+    set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    message(STATUS "Enabled clang-tidy")
+endif()
 
 find_package(Threads REQUIRED)
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
@@ -286,6 +301,5 @@ if (SPDLOG_INSTALL)
     # Support creation of installable packages
     #---------------------------------------------------------------------------------------
     include(cmake/spdlogCPack.cmake)
-
 endif ()
 

@@ -52,6 +52,8 @@ template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
     std::lock_guard<mutex_t> lock(mutex_);
+    msg.color_range_start = 0;
+    msg.color_range_end = 0;
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     if (!in_console_)
@@ -59,7 +61,6 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
         write_to_file_(formatted);
         return;
     }
-
     if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
     {
         // before color range

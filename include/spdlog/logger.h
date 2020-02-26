@@ -144,6 +144,11 @@ public:
     template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
+        log(loc, lvl, string_view_t{msg});
+    }
+
+    void log(source_loc loc, level::level_enum lvl, string_view_t msg)
+    {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
         if (!log_enabled && !traceback_enabled)
