@@ -8,6 +8,7 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
 
+#include <spdlog/details/windows_include.h>
 #include <winbase.h>
 
 #include <mutex>

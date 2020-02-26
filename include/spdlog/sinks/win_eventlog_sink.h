@@ -30,10 +30,11 @@ Windows Registry Editor Version 5.00
 
 #pragma once
 
-#include <winbase.h>
-
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
+
+#include <spdlog/details/windows_include.h>
+#include <winbase.h>
 
 #include <mutex>
 #include <string>

@@ -12,6 +12,8 @@
 #include <mutex>
 #include <string>
 #include <array>
+
+#include <spdlog/details/windows_include.h>
 #include <wincon.h>
 
 namespace spdlog {
