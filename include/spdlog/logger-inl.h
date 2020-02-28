@@ -89,6 +89,8 @@ SPDLOG_INLINE void logger::set_formatter(std::unique_ptr<formatter> f)
         {
             // last element - we can be move it.
             (*it)->set_formatter(std::move(f));
+            
+            break;
         }
         else
         {
