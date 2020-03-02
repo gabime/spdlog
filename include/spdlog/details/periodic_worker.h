@@ -27,7 +27,7 @@ public:
     ~periodic_worker();
 
 private:
-    bool active_;
+    std::atomic<bool> active_;
     std::thread worker_thread_;
     std::mutex mutex_;
     std::condition_variable cv_;
