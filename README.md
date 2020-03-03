@@ -39,7 +39,7 @@ $ cmake .. && make -j
 * Headers only, just copy and use. Or use as a compiled library.
 * Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * **New!** [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display later on demand.
-* Fast asynchronous mode (optional)
+* Asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
 * Various log targets:
