@@ -73,7 +73,7 @@ struct win32_error : public spdlog_ex
         return fmt::format("{}: {}{}", user_message, error_code, system_message);
     }
 
-    win32_error(std::string const &func_name, DWORD error = GetLastError())
+    explicit win32_error(std::string const &func_name, DWORD error = GetLastError())
         : spdlog_ex(format(func_name, error))
     {}
 };
