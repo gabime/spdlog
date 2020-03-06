@@ -390,13 +390,13 @@ SPDLOG_INLINE int pid() SPDLOG_NOEXCEPT
 }
 
 // Determine if the terminal supports colors
-// Source: https://github.com/agauniyal/rang/
+// Based on: https://github.com/agauniyal/rang/
 SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT
 {
 #ifdef _WIN32
     return true;
 #else
-    static constexpr std::array<const char *, 14> Terms = {
+    static constexpr std::array<const char *, 14> terms = {
         {"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"}};
 
     const char *env_p = std::getenv("TERM");
@@ -406,7 +406,7 @@ SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT
     }
 
     static const bool result =
-        std::any_of(std::begin(Terms), std::end(Terms), [&](const char *term) { return std::strstr(env_p, term) != nullptr; });
+        std::any_of(terms.begin(), terms.end(), [&](const char *term) { return std::strstr(env_p, term) != nullptr; });
     return result;
 #endif
 }

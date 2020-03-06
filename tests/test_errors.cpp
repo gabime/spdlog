@@ -9,7 +9,7 @@ class failing_sink : public spdlog::sinks::base_sink<std::mutex>
 {
 public:
     failing_sink() = default;
-    ~failing_sink() final = default;
+    ~failing_sink() = default;
 
 protected:
     void sink_it_(const spdlog::details::log_msg &) final

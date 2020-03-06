@@ -113,7 +113,7 @@ bool SPDLOG_INLINE thread_pool::process_next_msg_()
     }
 
     default: {
-        assert(false && "Unexpected async_msg_type");
+        assert(false);
     }
     }
 

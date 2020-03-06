@@ -92,7 +92,7 @@ private:
     // Extract given pad spec (e.g. %8X)
     // Advance the given it pass the end of the padding spec found (if any)
     // Return padding.
-    details::padding_info handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end);
+    static details::padding_info handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end);
 
     void compile_pattern_(const std::string &pattern);
 };

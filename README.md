@@ -39,7 +39,7 @@ $ cmake .. && make -j
 * Headers only, just copy and use. Or use as a compiled library.
 * Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * **New!** [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display later on demand.
-* Fast asynchronous mode (optional)
+* Asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
 * Various log targets:
@@ -298,15 +298,6 @@ void android_example()
     std::string tag = "spdlog-android";
     auto android_logger = spdlog::android_logger_mt("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
-}
-```
----
-#### Compile-time format string syntax checking
-```C++
-#include "spdlog/spdlog.h"
-int main()
-{
-    spdlog::info(FMT_STRING("{:d} is an invalid format tag"));
 }
 ```
 
