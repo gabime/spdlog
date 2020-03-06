@@ -6,6 +6,7 @@
 
 #include <cstdio>
 
+void load_levels_example();
 void stdout_logger_example();
 void basic_example();
 void rotating_example();
@@ -23,6 +24,8 @@ void syslog_example();
 
 int main(int, char *[])
 {
+    // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
+    load_levels_example();
 
     spdlog::info("Welcome to spdlog version {}.{}.{}  !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
 
@@ -37,15 +40,6 @@ int main(int, char *[])
     spdlog::debug("This message should not be displayed!");
     spdlog::set_level(spdlog::level::trace); // Set specific logger's log level
     spdlog::debug("This message should be displayed..");
-
-    // Log levels can also loaded from argv/env using "SPDLOG_LEVEL"
-    // For example: set the global level to info and mylogger to to trace:
-    // SPDLOG_LEVEL=info,mylogger=trace && ./example
-    spdlog::cfg::load_env_levels();
-    // or from command line:
-    // ./example SPDLOG_LEVEL=info,mylogger=trace
-    // #include "spdlog/cfg/argv.h" // for loading levels from argv
-    // spdlog::cfg::load_argv_levels(args, argv);
 
     // Customize msg format for all loggers
     spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
@@ -126,6 +120,18 @@ void daily_example()
 {
     // Create a daily logger - a new file is created every day on 2:30am.
     auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
+}
+
+#include "spdlog/cfg/env.h"
+void load_levels_example()
+{
+    // Set the log level to "info" and mylogger to to "trace":
+    // SPDLOG_LEVEL=info,mylogger=trace && ./example
+    spdlog::cfg::load_env_levels();
+    // or from command line:
+    // ./example SPDLOG_LEVEL=info,mylogger=trace
+    // #include "spdlog/cfg/argv.h" // for loading levels from argv
+    // spdlog::cfg::load_argv_levels(args, argv);
 }
 
 #include "spdlog/async.h"
