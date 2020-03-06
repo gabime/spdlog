@@ -25,15 +25,6 @@ int main(int, char *[])
 {
     spdlog::info("Welcome to spdlog version {}.{}.{}  !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
 
-    // Optionally load log levels from the SPDLOG_LEVEL env variable or from argv.
-    // For example: set the global level to info and mylogger to to trace:
-    // SPDLOG_LEVEL=info,mylogger=trace && ./example
-    spdlog::cfg::load_env_levels();
-
-    // or from command line: "./example SPDLOG_LEVEL=info,mylogger=trace"
-    // #include "spdlog/cfg/argv.h" // for loading levels from argv
-    // spdlog::cfg::load_argv_levels(args, argv);
-
     spdlog::warn("Easy padding in numbers like {:08d}", 12);
     spdlog::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
     spdlog::info("Support for floats {:03.2f}", 1.23456);
@@ -45,6 +36,15 @@ int main(int, char *[])
     spdlog::debug("This message should not be displayed!");
     spdlog::set_level(spdlog::level::trace); // Set specific logger's log level
     spdlog::debug("This message should be displayed..");
+
+    // Optionally load log levels from argv/env using the SPDLOG_LEVEL var
+    // For example: set the global level to info and mylogger to to trace:
+    // SPDLOG_LEVEL=info,mylogger=trace && ./example
+    spdlog::cfg::load_env_levels();
+    // or from command line:
+    // ./example SPDLOG_LEVEL=info,mylogger=trace
+    // #include "spdlog/cfg/argv.h" // for loading levels from argv
+    // spdlog::cfg::load_argv_levels(args, argv);
 
     // Customize msg format for all loggers
     spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
