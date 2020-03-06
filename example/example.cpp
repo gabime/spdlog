@@ -28,11 +28,11 @@ int main(int, char *[])
     // Optionally load log levels from the SPDLOG_LEVEL env variable or from argv.
     // For example: set the global level to info and mylogger to to trace:
     // SPDLOG_LEVEL=info,mylogger=trace && ./example
-    spdlog::cfg::load_env();
+    spdlog::cfg::load_env_levels();
 
     // or from command line: "./example SPDLOG_LEVEL=info,mylogger=trace"
     // #include "spdlog/cfg/argv.h" // for loading levels from argv
-    // spdlog::cfg::load_argv(args, argv);
+    // spdlog::cfg::load_argv_levels(args, argv);
 
     spdlog::warn("Easy padding in numbers like {:08d}", 12);
     spdlog::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
