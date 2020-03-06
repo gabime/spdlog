@@ -88,7 +88,7 @@ int main()
 }
 
 ```
-#### load log levels from env variable
+#### load log levels from env variable/argv
 ```c++
 #include "spdlog/cfg/env.h"
 void load_levels_example()
