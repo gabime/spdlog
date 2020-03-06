@@ -7,13 +7,13 @@
 
 #include <mutex>
 
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/async.h"
+#include <spdlog/details/null_mutex.h>
+#include <spdlog/async.h>
 //
 // color sinks
 //
 #ifdef _WIN32
-#include "spdlog/sinks/wincolor_sink-inl.h"
+#include <spdlog/sinks/wincolor_sink-inl.h>
 template class spdlog::sinks::wincolor_sink<spdlog::details::console_mutex>;
 template class spdlog::sinks::wincolor_sink<spdlog::details::console_nullmutex>;
 template class spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_mutex>;

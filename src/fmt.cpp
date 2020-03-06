@@ -7,7 +7,7 @@
 // All rights reserved.
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
-#include "spdlog/fmt/bundled/format-inl.h"
+#include <spdlog/fmt/bundled/format-inl.h>
 
 FMT_BEGIN_NAMESPACE
 namespace internal {
