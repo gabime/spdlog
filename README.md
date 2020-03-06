@@ -50,7 +50,7 @@ $ cmake .. && make -j
     * Windows debugger (```OutputDebugString(..)```)
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Log filtering - log levels can be modified in runtime as well as in compile time.
-* Support for loading log levels can be argv or env vars 
+* Support for loading log levels from argv or from environment var.
 
  
 ## Usage samples
