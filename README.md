@@ -88,7 +88,7 @@ int main()
 }
 
 ```
-#### load log levels from env variable or from argv
+#### Load log levels from env variable or from argv
 ```c++
 #include "spdlog/cfg/env.h"
 void load_levels_example()
@@ -102,7 +102,7 @@ void load_levels_example()
     // spdlog::cfg::load_argv_levels(args, argv);
 }
 ```
-#### create stdout/stderr logger object
+#### Create stdout/stderr logger object
 ```c++
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
