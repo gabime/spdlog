@@ -36,7 +36,7 @@ $ cmake .. && make -j
 
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).
-* Headers only, just copy and use. Or use as a compiled library.
+* Headers only or compiled version
 * Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * **New!** [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display later on demand.
 * Asynchronous mode (optional)
@@ -49,7 +49,8 @@ $ cmake .. && make -j
     * syslog.
     * Windows debugger (```OutputDebugString(..)```)
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
-* Severity based filtering - threshold levels can be modified in runtime as well as in compile time.
+* Log filtering - log levels can be modified in runtime as well as in compile time.
+* Support for loading log levels can be argv or env vars 
 
  
 ## Usage samples
@@ -84,6 +85,21 @@ int main()
     // Set the default logger to file logger
     auto file_logger = spdlog::basic_logger_mt("basic_logger", "logs/basic.txt");
     spdlog::set_default_logger(file_logger);            
+}
+
+```
+#### load log levels from env variable
+```c++
+#include "spdlog/cfg/env.h"
+void load_levels_example()
+{
+    // Set the log level to "info" and mylogger to to "trace":
+    // SPDLOG_LEVEL=info,mylogger=trace && ./example
+    spdlog::cfg::load_env_levels();
+    // or from command line:
+    // ./example SPDLOG_LEVEL=info,mylogger=trace
+    // #include "spdlog/cfg/argv.h" // for loading levels from argv
+    // spdlog::cfg::load_argv_levels(args, argv);
 }
 ```
 #### create stdout/stderr logger object
