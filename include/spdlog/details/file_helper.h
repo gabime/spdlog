@@ -13,7 +13,7 @@ namespace details {
 // When failing to open a file, retry several times(5) with a delay interval(10 ms).
 // Throw spdlog_ex exception on errors.
 
-class file_helper
+class SPDLOG_API file_helper
 {
 public:
     explicit file_helper() = default;

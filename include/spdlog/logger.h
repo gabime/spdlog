@@ -39,7 +39,7 @@
 
 namespace spdlog {
 
-class logger
+class SPDLOG_API logger
 {
 public:
     // Empty logger

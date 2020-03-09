@@ -62,7 +62,7 @@ protected:
 
 } // namespace details
 
-class pattern_formatter final : public formatter
+class SPDLOG_API pattern_formatter final : public formatter
 {
 public:
     explicit pattern_formatter(

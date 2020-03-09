@@ -79,7 +79,7 @@ struct async_msg : log_msg_buffer
     {}
 };
 
-class thread_pool
+class SPDLOG_API thread_pool
 {
 public:
     using item_type = async_msg;
