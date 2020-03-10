@@ -54,9 +54,7 @@ if (NOT DEFINED SPDLOG_MASTER_PROJECT)
 endif ()
 
 # build shared option
-if(NOT WIN32)
-    option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
-endif()
+option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
 
 # example options
 option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
