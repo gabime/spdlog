@@ -25,7 +25,7 @@ namespace details {
 class thread_pool;
 class periodic_worker;
 
-class registry
+class SPDLOG_API registry
 {
 public:
     registry(const registry &) = delete;
@@ -86,7 +86,7 @@ public:
 
 private:
     registry();
-    ~registry() = default;
+    ~registry();
 
     void throw_if_exists_(const std::string &logger_name);
     void register_logger_(std::shared_ptr<logger> new_logger);

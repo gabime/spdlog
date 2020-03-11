@@ -30,7 +30,7 @@ namespace details {
 class thread_pool;
 }
 
-class async_logger final : public std::enable_shared_from_this<async_logger>, public logger
+class SPDLOG_API async_logger final : public std::enable_shared_from_this<async_logger>, public logger
 {
     friend class details::thread_pool;
 

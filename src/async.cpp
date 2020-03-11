@@ -10,4 +10,4 @@
 #include <spdlog/details/periodic_worker-inl.h>
 #include <spdlog/details/thread_pool-inl.h>
 
-template class spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;
+template class SPDLOG_API spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;

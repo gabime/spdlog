@@ -17,8 +17,18 @@
 
 #ifdef SPDLOG_COMPILED_LIB
 #undef SPDLOG_HEADER_ONLY
-#define SPDLOG_INLINE
+#   if defined(_WIN32) && defined(SPDLOG_SHARED_LIB)
+#       ifdef spdlog_EXPORTS
+#           define SPDLOG_API __declspec(dllexport)
+#       else
+#           define SPDLOG_API __declspec(dllimport)
+#       endif
+#   else
+#       define SPDLOG_API
+#   endif
+#   define SPDLOG_INLINE
 #else
+#define SPDLOG_API
 #define SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE inline
 #endif
@@ -153,9 +163,9 @@ enum level_enum
     }
 #endif
 
-string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
+SPDLOG_API string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
 using level_hasher = std::hash<int>;
 } // namespace level
@@ -183,7 +193,7 @@ enum class pattern_time_type
 //
 // Log exception
 //
-class spdlog_ex : public std::exception
+class SPDLOG_API spdlog_ex : public std::exception
 {
 public:
     explicit spdlog_ex(std::string msg);
