@@ -31,12 +31,11 @@ struct tcp_sink_config
 {
     std::string server_host;
     int server_port;
-    bool lazy_connect;  // connect on first log call instead of in construction
+    bool lazy_connect = false;  // connect on first log call instead of on construction
 
-    tcp_sink_config(std::string host, int port, bool lazy_connect)
+    tcp_sink_config(std::string host, int port)
         : server_host{std::move(host)}
         , server_port{port}
-        , lazy_connect{lazy_connect}
     {}
 };
 
