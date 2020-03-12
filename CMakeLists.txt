@@ -122,8 +122,12 @@ if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
     list(APPEND SPDLOG_SRCS src/fmt.cpp)
 endif()
 
+if(WIN32 AND SPDLOG_BUILD_SHARED)
+    list(APPEND SPDLOG_SRCS ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+endif()
+
 if (SPDLOG_BUILD_SHARED)
-    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
     target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED_LIB)
     if(WIN32)
 	    target_compile_options(spdlog PUBLIC /wd4251 /wd4275)
