@@ -20,6 +20,8 @@ function(spdlog_extract_version)
 	set(ver_patch ${CMAKE_MATCH_1})
 
     set(SPDLOG_VERSION_MAJOR ${ver_major} PARENT_SCOPE)
+	set(SPDLOG_VERSION_MINOR ${ver_minor} PARENT_SCOPE)
+	set(SPDLOG_VERSION_PATCH ${ver_patch} PARENT_SCOPE)
 	set (SPDLOG_VERSION "${ver_major}.${ver_minor}.${ver_patch}" PARENT_SCOPE)
 endfunction()
 
