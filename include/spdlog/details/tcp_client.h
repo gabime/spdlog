@@ -4,7 +4,7 @@
 #pragma once
 
 #ifdef _WIN32
-#error tcp_client not supported under windows yet
+#error include tcp_client-windows.h instead
 #endif
 
 // tcp client helper
