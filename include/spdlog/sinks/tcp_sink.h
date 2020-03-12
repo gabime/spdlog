@@ -6,7 +6,12 @@
 #include <spdlog/common.h>
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/null_mutex.h>
+#ifdef _WIN32
+#include <spdlog/details/tcp_client-windows.h>
+#else
 #include <spdlog/details/tcp_client.h>
+#endif
+
 #include <mutex>
 #include <string>
 #include <chrono>
@@ -26,11 +31,12 @@ struct tcp_sink_config
 {
     std::string server_host;
     int server_port;
-    bool lazy_connect = false; // connect on first log call instead of in construction
+    bool lazy_connect;  // connect on first log call instead of in construction
 
-    tcp_sink_config(std::string host, int port)
+    tcp_sink_config(std::string host, int port, bool lazy_connect)
         : server_host{std::move(host)}
         , server_port{port}
+        , lazy_connect{lazy_connect}
     {}
 };
 
@@ -40,14 +46,17 @@ class tcp_sink : public spdlog::sinks::base_sink<Mutex>
 public:
     // connect to tcp host/port or throw if failed
     // host can be hostname or ip address
-    explicit tcp_sink(tcp_sink_config sink_config)
-        : config_{std::move(sink_config)}
+
+    explicit tcp_sink(tcp_sink_config sink_config):
+        config_{std::move(sink_config)}
     {
         if (!config_.lazy_connect)
         {
             this->client_.connect(config_.server_host, config_.server_port);
         }
     }
+
+  
 
     ~tcp_sink() override = default;
 
