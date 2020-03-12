@@ -53,9 +53,7 @@ public:
         {
             this->client_.connect(config_.server_host, config_.server_port);
         }
-    }
-
-  
+    } 
 
     ~tcp_sink() override = default;
 
