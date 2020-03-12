@@ -75,11 +75,7 @@ public:
         int last_errno = 0;
         for (auto *rp = addrinfo_result; rp != nullptr; rp = rp->ai_next)
         {
-#ifdef SPDLOG_PREVENT_CHILD_FD
             int const flags = SOCK_CLOEXEC;
-#else
-            int const flags = 0;
-#endif
             socket_ = ::socket(rp->ai_family, rp->ai_socktype | flags, rp->ai_protocol);
             if (socket_ == -1)
             {
