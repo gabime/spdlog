@@ -113,21 +113,21 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 set(SPDLOG_SRCS
         src/spdlog.cpp
         src/stdout_sinks.cpp
-        src/color_sinks.cpp
+        src/color_sinks.cpp 
         src/file_sinks.cpp
         src/async.cpp
         src/cfg.cpp)
-
 
 if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
     list(APPEND SPDLOG_SRCS src/fmt.cpp)
 endif()
 
 if (SPDLOG_BUILD_SHARED)
-    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
+    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS} ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
     target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED_LIB)
     if(WIN32)
 	    target_compile_options(spdlog PUBLIC /wd4251 /wd4275)
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)        
     endif()
     if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
         target_compile_definitions(spdlog PRIVATE FMT_EXPORT PUBLIC FMT_SHARED)
