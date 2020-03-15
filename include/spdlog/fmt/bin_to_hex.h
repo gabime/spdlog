@@ -158,7 +158,7 @@ struct formatter<spdlog::details::dump_info<T>>
 
                 }
 
-                put_newline(inserter, i - the_range.begin());
+                put_newline(inserter, static_cast<size_t >(i - the_range.begin()));
 
                 // put first byte without delimiter in front of it
                 *inserter++ = hex_chars[(ch >> 4) & 0x0f];
