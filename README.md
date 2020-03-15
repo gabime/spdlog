@@ -32,6 +32,7 @@ $ cmake .. && make -j
 * Arch Linux: `yaourt -S spdlog-git`
 * vcpkg: `vcpkg install spdlog`
 * conan: `spdlog/[>=1.4.1]`
+* conda: `conda install -c conda-forge spdlog`
 
 
 ## Features
