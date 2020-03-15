@@ -177,14 +177,17 @@ struct formatter<spdlog::details::dump_info<T>>
         }
         if (show_ascii)
         {
-            auto blank_num = size_per_line - (the_range.end() - start_of_line);
-            while (blank_num-- > 0)
+            if (the_range.end() - the_range.begin() > size_per_line)
             {
-                *inserter++ = ' ';
-                *inserter++ = ' ';
-                if (put_delimiters)
+                auto blank_num = size_per_line - (the_range.end() - start_of_line);
+                while (blank_num-- > 0)
                 {
                     *inserter++ = ' ';
+                    *inserter++ = ' ';
+                    if (put_delimiters)
+                    {
+                        *inserter++ = ' ';
+                    }
                 }
             }
             *inserter++ = ' ';
