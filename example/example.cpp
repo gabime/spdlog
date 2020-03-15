@@ -172,6 +172,8 @@ void binary_example()
     // logger->info("uppercase: {:X}", spdlog::to_hex(buf));
     // logger->info("uppercase, no delimiters: {:Xs}", spdlog::to_hex(buf));
     // logger->info("uppercase, no delimiters, no position info: {:Xsp}", spdlog::to_hex(buf));
+    // logger->info("hexdump style: {:a}", spdlog::to_hex(buf));
+    // logger->info("hexdump style, 20 chars per line {:a}", spdlog::to_hex(buf, 20));
 }
 
 // Compile time log levels.
