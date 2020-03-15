@@ -14,7 +14,7 @@
 // {:s} - don't separate each byte with space.
 // {:p} - don't print the position on each line start.
 // {:n} - don't split the output to lines.
-// {:a} - show ASCII if :n is not set 
+// {:a} - show ASCII if :n is not set
 
 //
 // Examples:
@@ -155,10 +155,9 @@ struct formatter<spdlog::details::dump_info<T>>
                         auto pc = static_cast<unsigned char>(*j);
                         *inserter++ = std::isprint(pc) ? static_cast<char>(*j) : '.';
                     }
-
                 }
 
-                put_newline(inserter, static_cast<size_t >(i - the_range.begin()));
+                put_newline(inserter, static_cast<size_t>(i - the_range.begin()));
 
                 // put first byte without delimiter in front of it
                 *inserter++ = hex_chars[(ch >> 4) & 0x0f];
