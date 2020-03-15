@@ -17,16 +17,16 @@
 
 #ifdef SPDLOG_COMPILED_LIB
 #undef SPDLOG_HEADER_ONLY
-#   if defined(_WIN32) && defined(SPDLOG_SHARED_LIB)
-#       ifdef spdlog_EXPORTS
-#           define SPDLOG_API __declspec(dllexport)
-#       else
-#           define SPDLOG_API __declspec(dllimport)
-#       endif
-#   else
-#       define SPDLOG_API
-#   endif
-#   define SPDLOG_INLINE
+#if defined(_WIN32) && defined(SPDLOG_SHARED_LIB)
+#ifdef spdlog_EXPORTS
+#define SPDLOG_API __declspec(dllexport)
+#else
+#define SPDLOG_API __declspec(dllimport)
+#endif
+#else
+#define SPDLOG_API
+#endif
+#define SPDLOG_INLINE
 #else
 #define SPDLOG_API
 #define SPDLOG_HEADER_ONLY

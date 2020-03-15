@@ -31,7 +31,7 @@ struct tcp_sink_config
 {
     std::string server_host;
     int server_port;
-    bool lazy_connect = false;  // if true connect on first log call instead of on construction
+    bool lazy_connect = false; // if true connect on first log call instead of on construction
 
     tcp_sink_config(std::string host, int port)
         : server_host{std::move(host)}
@@ -46,14 +46,14 @@ public:
     // connect to tcp host/port or throw if failed
     // host can be hostname or ip address
 
-    explicit tcp_sink(tcp_sink_config sink_config):
-        config_{std::move(sink_config)}
+    explicit tcp_sink(tcp_sink_config sink_config)
+        : config_{std::move(sink_config)}
     {
         if (!config_.lazy_connect)
         {
             this->client_.connect(config_.server_host, config_.server_port);
         }
-    } 
+    }
 
     ~tcp_sink() override = default;
 

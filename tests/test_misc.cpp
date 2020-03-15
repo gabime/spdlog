@@ -209,14 +209,12 @@ TEST_CASE("to_hex_different_size_per_line", "[to_hex]")
     REQUIRE(ends_with(oss.str(), "0000: 090A0B410C4BFFFF" + std::string(spdlog::details::os::default_eol)));
 
     oss_logger.info("{:Xsa}", spdlog::to_hex(v, 6));
-    REQUIRE(ends_with(oss.str(),
-        "0000: 090A0B410C4B  ...A.K" + std::string(spdlog::details::os::default_eol)
-        + "0006: FFFF          .." + std::string(spdlog::details::os::default_eol)));
+    REQUIRE(ends_with(oss.str(), "0000: 090A0B410C4B  ...A.K" + std::string(spdlog::details::os::default_eol) + "0006: FFFF          .." +
+                                     std::string(spdlog::details::os::default_eol)));
 
     oss_logger.info("{:Xs}", spdlog::to_hex(v, 6));
-    REQUIRE(ends_with(oss.str(),
-        "0000: 090A0B410C4B" + std::string(spdlog::details::os::default_eol)
-        + "0006: FFFF" + std::string(spdlog::details::os::default_eol)));
+    REQUIRE(ends_with(oss.str(), "0000: 090A0B410C4B" + std::string(spdlog::details::os::default_eol) + "0006: FFFF" +
+                                     std::string(spdlog::details::os::default_eol)));
 }
 
 TEST_CASE("to_hex_no_ascii", "[to_hex]")

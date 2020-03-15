@@ -49,14 +49,11 @@ class tcp_client
         }
     }
 
-    static void throw_winsock_error_(const std::string& msg, int last_error)
+    static void throw_winsock_error_(const std::string &msg, int last_error)
     {
         char buf[512];
-        ::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, 
-            NULL,
-            last_error,
-            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), 
-            buf, (sizeof(buf) / sizeof(char)), NULL);
+        ::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, (sizeof(buf) / sizeof(char)), NULL);
 
         SPDLOG_THROW(spdlog_ex(fmt::format("tcp_sink - {}: {}", msg, buf)));
     }
@@ -111,20 +108,20 @@ public:
         auto rv = ::getaddrinfo(host.c_str(), port_str.c_str(), &hints, &addrinfo_result);
         int last_error = 0;
         if (rv != 0)
-        {            
+        {
             last_error = ::WSAGetLastError();
             WSACleanup();
             throw_winsock_error_("getaddrinfo failed", last_error);
         }
 
         // Try each address until we successfully connect(2).
-        
+
         for (auto *rp = addrinfo_result; rp != nullptr; rp = rp->ai_next)
         {
             socket_ = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
             if (socket_ == INVALID_SOCKET)
             {
-                last_error = ::WSAGetLastError();                
+                last_error = ::WSAGetLastError();
                 WSACleanup();
                 continue;
             }
@@ -141,7 +138,7 @@ public:
         ::freeaddrinfo(addrinfo_result);
         if (socket_ == INVALID_SOCKET)
         {
-            WSACleanup();            
+            WSACleanup();
             throw_winsock_error_("connect failed", last_error);
         }
 
@@ -160,7 +157,7 @@ public:
             const int send_flags = 0;
             auto write_result = ::send(socket_, data + bytes_sent, (int)(n_bytes - bytes_sent), send_flags);
             if (write_result == SOCKET_ERROR)
-            {                
+            {
                 int last_error = ::WSAGetLastError();
                 close();
                 throw_winsock_error_("send failed", last_error);

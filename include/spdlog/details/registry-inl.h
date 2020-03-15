@@ -187,7 +187,7 @@ SPDLOG_INLINE void registry::flush_on(level::level_enum log_level)
 SPDLOG_INLINE void registry::flush_every(std::chrono::seconds interval)
 {
     std::lock_guard<std::mutex> lock(flusher_mutex_);
-    auto clbk = [this](){this->flush_all();};
+    auto clbk = [this]() { this->flush_all(); };
     periodic_flusher_ = details::make_unique<periodic_worker>(clbk, interval);
 }
 
