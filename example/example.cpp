@@ -20,7 +20,7 @@ void err_handler_example();
 void syslog_example();
 
 #include "spdlog/spdlog.h"
-#include "spdlog/cfg/env.h" // for loading levels from the environment variables
+#include "spdlog/cfg/env.h" // for loading levels from the environment variable
 
 int main(int, char *[])
 {
