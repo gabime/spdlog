@@ -80,9 +80,7 @@ namespace fmt {
 template<typename T>
 struct formatter<spdlog::details::dump_info<T>>
 {
-    const std::size_t line_size = 100;
     const char delimiter = ' ';
-
     bool put_newlines = true;
     bool put_delimiters = true;
     bool use_uppercase = false;
@@ -148,8 +146,8 @@ struct formatter<spdlog::details::dump_info<T>>
             {
                 if (show_ascii && i != the_range.begin())
                 {
-                    *inserter++ = ' ';
-                    *inserter++ = ' ';
+                    *inserter++ = delimiter;
+                    *inserter++ = delimiter;
                     for (auto j = start_of_line; j < i; j++)
                     {
                         auto pc = static_cast<unsigned char>(*j);
@@ -174,23 +172,23 @@ struct formatter<spdlog::details::dump_info<T>>
             *inserter++ = hex_chars[(ch >> 4) & 0x0f];
             *inserter++ = hex_chars[ch & 0x0f];
         }
-        if (show_ascii)
+        if (show_ascii) // add ascii to last line
         {
             if (the_range.end() - the_range.begin() > size_per_line)
             {
                 auto blank_num = size_per_line - (the_range.end() - start_of_line);
                 while (blank_num-- > 0)
                 {
-                    *inserter++ = ' ';
-                    *inserter++ = ' ';
+                    *inserter++ = delimiter;
+                    *inserter++ = delimiter;
                     if (put_delimiters)
                     {
-                        *inserter++ = ' ';
+                        *inserter++ = delimiter;
                     }
                 }
             }
-            *inserter++ = ' ';
-            *inserter++ = ' ';
+            *inserter++ = delimiter;
+            *inserter++ = delimiter;
             for (auto j = start_of_line; j != the_range.end(); j++)
             {
                 auto pc = static_cast<unsigned char>(*j);
