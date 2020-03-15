@@ -90,7 +90,7 @@ struct null_scoped_padder
 };
 
 template<typename ScopedPadder>
-class name_formatter : public flag_formatter
+class name_formatter final : public flag_formatter
 {
 public:
     explicit name_formatter(padding_info padinfo)
@@ -106,7 +106,7 @@ public:
 
 // log level appender
 template<typename ScopedPadder>
-class level_formatter : public flag_formatter
+class level_formatter final : public flag_formatter
 {
 public:
     explicit level_formatter(padding_info padinfo)
@@ -123,7 +123,7 @@ public:
 
 // short log level appender
 template<typename ScopedPadder>
-class short_level_formatter : public flag_formatter
+class short_level_formatter final : public flag_formatter
 {
 public:
     explicit short_level_formatter(padding_info padinfo)
@@ -156,7 +156,7 @@ static int to12h(const tm &t)
 static std::array<const char *, 7> days{{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}};
 
 template<typename ScopedPadder>
-class a_formatter : public flag_formatter
+class a_formatter final : public flag_formatter
 {
 public:
     explicit a_formatter(padding_info padinfo)
@@ -194,7 +194,7 @@ public:
 static const std::array<const char *, 12> months{{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"}};
 
 template<typename ScopedPadder>
-class b_formatter : public flag_formatter
+class b_formatter final : public flag_formatter
 {
 public:
     explicit b_formatter(padding_info padinfo)
@@ -214,7 +214,7 @@ static const std::array<const char *, 12> full_months{
     {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}};
 
 template<typename ScopedPadder>
-class B_formatter : public flag_formatter
+class B_formatter final : public flag_formatter
 {
 public:
     explicit B_formatter(padding_info padinfo)
