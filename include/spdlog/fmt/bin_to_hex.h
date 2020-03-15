@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <cctype>
+
 //
 // Support for logging binary data as hex
 // format flags:
@@ -12,6 +14,7 @@
 // {:s} - don't separate each byte with space.
 // {:p} - don't print the position on each line start.
 // {:n} - don't split the output to lines.
+// {:a} - show ASCII if :n is not set
 
 //
 // Examples:
@@ -20,17 +23,19 @@
 // logger->info("Some buffer {}", spdlog::to_hex(v));
 // char buf[128];
 // logger->info("Some buffer {:X}", spdlog::to_hex(std::begin(buf), std::end(buf)));
+// logger->info("Some buffer {:X}", spdlog::to_hex(std::begin(buf), std::end(buf), 16));
 
 namespace spdlog {
 namespace details {
 
 template<typename It>
-class bytes_range
+class dump_info
 {
 public:
-    bytes_range(It range_begin, It range_end)
+    dump_info(It range_begin, It range_end, size_t size_per_line)
         : begin_(range_begin)
         , end_(range_end)
+        , size_per_line_(size_per_line)
     {}
 
     It begin() const
@@ -41,26 +46,31 @@ public:
     {
         return end_;
     }
+    size_t size_per_line() const
+    {
+        return size_per_line_;
+    }
 
 private:
     It begin_, end_;
+    size_t size_per_line_;
 };
 } // namespace details
 
-// create a bytes_range that wraps the given container
+// create a dump_info that wraps the given container
 template<typename Container>
-inline details::bytes_range<typename Container::const_iterator> to_hex(const Container &container)
+inline details::dump_info<typename Container::const_iterator> to_hex(const Container &container, size_t size_per_line = 32)
 {
     static_assert(sizeof(typename Container::value_type) == 1, "sizeof(Container::value_type) != 1");
     using Iter = typename Container::const_iterator;
-    return details::bytes_range<Iter>(std::begin(container), std::end(container));
+    return details::dump_info<Iter>(std::begin(container), std::end(container), size_per_line);
 }
 
-// create bytes_range from ranges
+// create dump_info from ranges
 template<typename It>
-inline details::bytes_range<It> to_hex(const It range_begin, const It range_end)
+inline details::dump_info<It> to_hex(const It range_begin, const It range_end, size_t size_per_line = 32)
 {
-    return details::bytes_range<It>(range_begin, range_end);
+    return details::dump_info<It>(range_begin, range_end, size_per_line);
 }
 
 } // namespace spdlog
@@ -68,15 +78,14 @@ inline details::bytes_range<It> to_hex(const It range_begin, const It range_end)
 namespace fmt {
 
 template<typename T>
-struct formatter<spdlog::details::bytes_range<T>>
+struct formatter<spdlog::details::dump_info<T>>
 {
-    const std::size_t line_size = 100;
     const char delimiter = ' ';
-
     bool put_newlines = true;
     bool put_delimiters = true;
     bool use_uppercase = false;
     bool put_positions = true; // position on start of each line
+    bool show_ascii = false;
 
     // parse the format string flags
     template<typename ParseContext>
@@ -98,6 +107,13 @@ struct formatter<spdlog::details::bytes_range<T>>
                 break;
             case 'n':
                 put_newlines = false;
+                show_ascii = false;
+                break;
+            case 'a':
+                if (put_newlines)
+                {
+                    show_ascii = true;
+                }
                 break;
             }
 
@@ -108,53 +124,83 @@ struct formatter<spdlog::details::bytes_range<T>>
 
     // format the given bytes range as hex
     template<typename FormatContext, typename Container>
-    auto format(const spdlog::details::bytes_range<Container> &the_range, FormatContext &ctx) -> decltype(ctx.out())
+    auto format(const spdlog::details::dump_info<Container> &the_range, FormatContext &ctx) -> decltype(ctx.out())
     {
         SPDLOG_CONSTEXPR const char *hex_upper = "0123456789ABCDEF";
         SPDLOG_CONSTEXPR const char *hex_lower = "0123456789abcdef";
         const char *hex_chars = use_uppercase ? hex_upper : hex_lower;
 
-        std::size_t pos = 0;
-        std::size_t column = line_size;
 #if FMT_VERSION < 60000
         auto inserter = ctx.begin();
 #else
         auto inserter = ctx.out();
 #endif
 
-        for (auto &item : the_range)
+        int size_per_line = static_cast<int>(the_range.size_per_line());
+        auto start_of_line = the_range.begin();
+        for (auto i = the_range.begin(); i != the_range.end(); i++)
         {
-            auto ch = static_cast<unsigned char>(item);
-            pos++;
+            auto ch = static_cast<unsigned char>(*i);
 
-            if (put_newlines && column >= line_size)
+            if (put_newlines && (i == the_range.begin() || i - start_of_line >= size_per_line))
             {
-                column = put_newline(inserter, pos);
+                if (show_ascii && i != the_range.begin())
+                {
+                    *inserter++ = delimiter;
+                    *inserter++ = delimiter;
+                    for (auto j = start_of_line; j < i; j++)
+                    {
+                        auto pc = static_cast<unsigned char>(*j);
+                        *inserter++ = std::isprint(pc) ? static_cast<char>(*j) : '.';
+                    }
+                }
+
+                put_newline(inserter, static_cast<size_t>(i - the_range.begin()));
 
                 // put first byte without delimiter in front of it
                 *inserter++ = hex_chars[(ch >> 4) & 0x0f];
                 *inserter++ = hex_chars[ch & 0x0f];
-                column += 2;
+                start_of_line = i;
                 continue;
             }
 
             if (put_delimiters)
             {
                 *inserter++ = delimiter;
-                ++column;
             }
 
             *inserter++ = hex_chars[(ch >> 4) & 0x0f];
             *inserter++ = hex_chars[ch & 0x0f];
-            column += 2;
+        }
+        if (show_ascii) // add ascii to last line
+        {
+            if (the_range.end() - the_range.begin() > size_per_line)
+            {
+                auto blank_num = size_per_line - (the_range.end() - start_of_line);
+                while (blank_num-- > 0)
+                {
+                    *inserter++ = delimiter;
+                    *inserter++ = delimiter;
+                    if (put_delimiters)
+                    {
+                        *inserter++ = delimiter;
+                    }
+                }
+            }
+            *inserter++ = delimiter;
+            *inserter++ = delimiter;
+            for (auto j = start_of_line; j != the_range.end(); j++)
+            {
+                auto pc = static_cast<unsigned char>(*j);
+                *inserter++ = std::isprint(pc) ? static_cast<char>(*j) : '.';
+            }
         }
         return inserter;
     }
 
     // put newline(and position header)
-    // return the next column
     template<typename It>
-    std::size_t put_newline(It inserter, std::size_t pos)
+    void put_newline(It inserter, std::size_t pos)
     {
 #ifdef _WIN32
         *inserter++ = '\r';
@@ -163,12 +209,7 @@ struct formatter<spdlog::details::bytes_range<T>>
 
         if (put_positions)
         {
-            fmt::format_to(inserter, "{:<04X}: ", pos - 1);
-            return 7;
-        }
-        else
-        {
-            return 1;
+            fmt::format_to(inserter, "{:<04X}: ", pos);
         }
     }
 };
