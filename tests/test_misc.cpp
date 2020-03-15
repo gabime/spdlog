@@ -202,7 +202,7 @@ TEST_CASE("to_hex_different_size_per_line", "[to_hex]")
     std::vector<unsigned char> v{9, 0xa, 0xb, 0x41, 0xc, 0x4b, 0xff, 0xff};
 
     oss_logger.info("{:Xsa}", spdlog::to_hex(v, 10));
-    REQUIRE(ends_with(oss.str(), "0000: 090A0B410C4BFFFF      ...A.K.." + std::string(spdlog::details::os::default_eol)));
+    REQUIRE(ends_with(oss.str(), "0000: 090A0B410C4BFFFF  ...A.K.." + std::string(spdlog::details::os::default_eol)));
 
     oss_logger.info("{:Xs}", spdlog::to_hex(v, 10));
     REQUIRE(ends_with(oss.str(), "0000: 090A0B410C4BFFFF" + std::string(spdlog::details::os::default_eol)));
