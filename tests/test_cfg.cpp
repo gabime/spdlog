@@ -12,7 +12,7 @@ TEST_CASE("env", "[cfg]")
 {
     spdlog::drop("l1");
     auto l1 = spdlog::create<test_sink_st>("l1");
-#ifdef _MSC_VER
+#ifdef CATCH_PLATFORM_WINDOWS
     _putenv_s("SPDLOG_LEVEL", "l1=warn");
 #else
     setenv("SPDLOG_LEVEL", "l1=warn", 1);
