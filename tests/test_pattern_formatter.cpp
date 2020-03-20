@@ -246,6 +246,8 @@ TEST_CASE("paddinng_truncate_funcname", "[pattern_formatter]")
     REQUIRE(lines[1] == "message [funct]");
 }
 
+
+
 TEST_CASE("clone-default-formatter", "[pattern_formatter]")
 {
     auto formatter_1 = std::make_shared<spdlog::pattern_formatter>();
@@ -305,6 +307,43 @@ TEST_CASE("clone-formatter-2", "[pattern_formatter]")
     REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
 }
 
+
+class custom_test_flag : public spdlog::custom_flag_formatter
+{
+public:
+    class custom_test_flag (std::string txt) : some_txt{std::move(txt)}
+    {}
+
+    void format(const spdlog::details::log_msg &, const std::tm &, spdlog::memory_buf_t &dest) override
+    {
+        dest.append(some_txt.data(), some_txt.data() + some_txt.size());
+    }
+
+    std::string some_txt;
+
+    std::unique_ptr<custom_flag_formatter> clone() const override
+    {
+        return spdlog::details::make_unique<custom_test_flag>(some_txt);
+    }
+};
+// test clone with custom flag formatters
+TEST_CASE("clone-custom_formatter", "[pattern_formatter]")
+{
+    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("[%n] [%t] %v", spdlog::pattern_time_type::utc, "");
+    formatter_1->add_flag_handler<custom_test_flag>('t', "custom_output").recompile();    
+    auto formatter_2 = formatter_1->clone();
+    std::string logger_name = "logger-name";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "some message");
+
+    memory_buf_t formatted_1;
+    memory_buf_t formatted_2;
+    formatter_1->format(msg, formatted_1);
+    formatter_2->format(msg, formatted_2);    
+    
+    REQUIRE(fmt::to_string(formatted_1) == "[logger-name] [custom_output] some message");
+    REQUIRE(fmt::to_string(formatted_2) == "[logger-name] [custom_output] some message");
+}
+
 //
 // Test source location formatting
 //
@@ -357,4 +396,17 @@ TEST_CASE("full filename formatter", "[pattern_formatter]")
     spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
     formatter.format(msg, formatted);
     REQUIRE(fmt::to_string(formatted) == test_path);
+}
+
+
+TEST_CASE("custom flags", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("[%n] [%t] [%u] %v", spdlog::pattern_time_type::utc, "");
+    formatter->add_flag_handler<custom_test_flag>('t', "custom1").add_flag_handler<custom_test_flag>('u', "custom2").recompile();
+        
+    memory_buf_t formatted;
+    
+    spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info, "some message");
+    formatter->format(msg, formatted);   
+    REQUIRE(fmt::to_string(formatted) == "[logger-name] [custom1] [custom2] some message");    
 }

@@ -974,11 +974,13 @@ private:
 
 } // namespace details
 
-SPDLOG_INLINE pattern_formatter::pattern_formatter(std::string pattern, pattern_time_type time_type, std::string eol)
+SPDLOG_INLINE pattern_formatter::pattern_formatter(
+    std::string pattern, pattern_time_type time_type, std::string eol, custom_flags custom_user_flags)
     : pattern_(std::move(pattern))
     , eol_(std::move(eol))
     , pattern_time_type_(time_type)
     , last_log_secs_(0)
+    , custom_handlers_(std::move(custom_user_flags))
 {
     std::memset(&cached_tm_, 0, sizeof(cached_tm_));
     compile_pattern_(pattern_);
@@ -997,7 +999,12 @@ SPDLOG_INLINE pattern_formatter::pattern_formatter(pattern_time_type time_type, 
 
 SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
 {
-    return details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_);
+    custom_flags cloned_custom_formatters;
+    for (auto &it : custom_handlers_)
+    {
+        cloned_custom_formatters[it.first] = it.second->clone();
+    }
+    return details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_, std::move(cloned_custom_formatters));
 }
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
@@ -1017,6 +1024,11 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
     details::fmt_helper::append_string_view(eol_, dest);
 }
 
+SPDLOG_INLINE void pattern_formatter::recompile()
+{
+    compile_pattern_(pattern_);
+}
+
 SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg)
 {
     if (pattern_time_type_ == pattern_time_type::local)
@@ -1029,6 +1041,12 @@ SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg)
 template<typename Padder>
 SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_info padding)
 {
+    auto it = custom_handlers_.find(flag);
+    if (it != custom_handlers_.end())
+    {
+        formatters_.push_back(it->second->clone());
+        return;
+    }
     switch (flag)
     {
 

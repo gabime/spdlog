@@ -14,6 +14,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 namespace spdlog {
 namespace details {
@@ -46,7 +47,7 @@ struct padding_info
     bool enabled_ = false;
 };
 
-class flag_formatter
+class SPDLOG_API flag_formatter
 {
 public:
     explicit flag_formatter(padding_info padinfo)
@@ -62,11 +63,19 @@ protected:
 
 } // namespace details
 
+class SPDLOG_API custom_flag_formatter : public details::flag_formatter
+{
+public:
+    virtual std::unique_ptr<custom_flag_formatter> clone() const = 0;
+};
+
 class SPDLOG_API pattern_formatter final : public formatter
 {
 public:
-    explicit pattern_formatter(
-        std::string pattern, pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol);
+    using custom_flags = std::unordered_map<char, std::unique_ptr<custom_flag_formatter>>;
+
+    explicit pattern_formatter(std::string pattern, pattern_time_type time_type = pattern_time_type::local,
+        std::string eol = spdlog::details::os::default_eol, custom_flags custom_user_flags = {});
 
     // use default pattern is not given
     explicit pattern_formatter(pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol);
@@ -77,6 +86,14 @@ public:
     std::unique_ptr<formatter> clone() const override;
     void format(const details::log_msg &msg, memory_buf_t &dest) override;
 
+    template<typename T, typename... Args>
+    pattern_formatter &add_flag_handler(char flag, const Args &... args)
+    {
+        custom_handlers_[flag] = details::make_unique<T>(args...);
+        return *this;        
+    }
+    void recompile();
+
 private:
     std::string pattern_;
     std::string eol_;
@@ -84,6 +101,7 @@ private:
     std::tm cached_tm_;
     std::chrono::seconds last_log_secs_;
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
+    custom_flags custom_handlers_;
 
     std::tm get_time_(const details::log_msg &msg);
     template<typename Padder>
