@@ -68,7 +68,7 @@ public:
         if (rv != 0)
         {
             auto msg = fmt::format("::getaddrinfo failed: {}", gai_strerror(rv));
-            SPDLOG_THROW(spdlog::spdlog_ex(msg));
+            throw_spdlog_ex(msg);
         }
 
         // Try each address until we successfully connect(2).
@@ -97,7 +97,7 @@ public:
         ::freeaddrinfo(addrinfo_result);
         if (socket_ == -1)
         {
-            SPDLOG_THROW(spdlog::spdlog_ex("::connect failed", last_errno));
+            throw_spdlog_ex("::connect failed", last_errno);
         }
 
         // set TCP_NODELAY
@@ -130,7 +130,7 @@ public:
             if (write_result < 0)
             {
                 close();
-                SPDLOG_THROW(spdlog::spdlog_ex("write(2) failed", errno));
+                throw_spdlog_ex("write(2) failed", errno);
             }
 
             if (write_result == 0) // (probably should not happen but in any case..)

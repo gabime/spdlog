@@ -262,7 +262,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
     auto rv = ::GetDynamicTimeZoneInformation(&tzinfo);
 #endif
     if (rv == TIME_ZONE_ID_INVALID)
-        SPDLOG_THROW(spdlog::spdlog_ex("Failed getting timezone info. ", errno));
+        throw_spdlog_ex("Failed getting timezone info. ", errno);
 
     int offset = -tzinfo.Bias;
     if (tm.tm_isdst)
@@ -429,7 +429,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
 {
     if (wstr.size() > static_cast<size_t>((std::numeric_limits<int>::max)()))
     {
-        SPDLOG_THROW(spdlog::spdlog_ex("UTF-16 string is too big to be converted to UTF-8"));
+        throw_spdlog_ex("UTF-16 string is too big to be converted to UTF-8");
     }
 
     int wstr_size = static_cast<int>(wstr.size());
@@ -457,7 +457,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
         }
     }
 
-    SPDLOG_THROW(spdlog::spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError())));
+    throw_spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
 }
 #endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 

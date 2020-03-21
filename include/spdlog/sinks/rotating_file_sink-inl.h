@@ -110,8 +110,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
             {
                 file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
                 current_size_ = 0;
-                SPDLOG_THROW(
-                    spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno));
+                throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
             }
         }
     }

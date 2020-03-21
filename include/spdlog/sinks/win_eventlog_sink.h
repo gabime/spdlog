@@ -176,7 +176,7 @@ struct eventlog
 
         default:
             // should be unreachable
-            SPDLOG_THROW(std::logic_error(fmt::format("Unsupported log level {}", msg.level)));
+            throw_spdlog_ex(fmt::format("Unsupported log level {}", msg.level));
         }
     }
 
