@@ -6,7 +6,7 @@
 #include "benchmark/benchmark.h"
 
 #include "spdlog/spdlog.h"
-#include "spdlog/details/pattern_formatter.h"
+#include "spdlog/pattern_formatter.h"
 
 void bench_formatter(benchmark::State &state, std::string pattern)
 {
