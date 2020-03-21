@@ -87,10 +87,10 @@ public:
     void format(const details::log_msg &msg, memory_buf_t &dest) override;
 
     template<typename T, typename... Args>
-    pattern_formatter &add_flag_handler(char flag, const Args &... args)
+    pattern_formatter &add_flag(char flag, const Args &... args)
     {
         custom_handlers_[flag] = details::make_unique<T>(args...);
-        return *this;        
+        return *this;
     }
     void recompile();
 

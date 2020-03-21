@@ -8,7 +8,7 @@
 #endif
 
 #include <spdlog/details/console_globals.h>
-#include <spdlog/details/pattern_formatter.h>
+#include <spdlog/pattern_formatter.h>
 #include <memory>
 
 namespace spdlog {

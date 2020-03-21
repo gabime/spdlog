@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/details/pattern_formatter.h>
+#include <spdlog/pattern_formatter.h>
 #endif
 
 #include <spdlog/details/fmt_helper.h>

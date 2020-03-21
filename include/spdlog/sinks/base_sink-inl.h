@@ -8,7 +8,7 @@
 #endif
 
 #include <spdlog/common.h>
-#include <spdlog/details/pattern_formatter.h>
+#include <spdlog/pattern_formatter.h>
 
 #include <memory>
 

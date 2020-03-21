@@ -330,7 +330,7 @@ public:
 TEST_CASE("clone-custom_formatter", "[pattern_formatter]")
 {
     auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("[%n] [%t] %v", spdlog::pattern_time_type::utc, "");
-    formatter_1->add_flag_handler<custom_test_flag>('t', "custom_output").recompile();    
+    formatter_1->add_flag<custom_test_flag>('t', "custom_output").recompile();    
     auto formatter_2 = formatter_1->clone();
     std::string logger_name = "logger-name";
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "some message");
@@ -402,7 +402,7 @@ TEST_CASE("full filename formatter", "[pattern_formatter]")
 TEST_CASE("custom flags", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("[%n] [%t] [%u] %v", spdlog::pattern_time_type::utc, "");
-    formatter->add_flag_handler<custom_test_flag>('t', "custom1").add_flag_handler<custom_test_flag>('u', "custom2").recompile();
+    formatter->add_flag<custom_test_flag>('t', "custom1").add_flag<custom_test_flag>('u', "custom2").recompile();
         
     memory_buf_t formatted;
     

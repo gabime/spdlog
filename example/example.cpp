@@ -18,6 +18,7 @@ void multi_sink_example();
 void user_defined_example();
 void err_handler_example();
 void syslog_example();
+void custom_flags_example();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h" // for loading levels from the environment variable
@@ -70,6 +71,7 @@ int main(int, char *[])
         user_defined_example();
         err_handler_example();
         trace_example();
+        custom_flags_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -250,5 +252,34 @@ void android_example()
     auto android_logger = spdlog::android_logger_mt("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
 }
-
 #endif
+
+
+// log patterns can now contain custom flags!
+// add custom flag '%*' which will be cound to a <my_formatter_flag> instance
+
+#include "spdlog/pattern_formatter.h"
+class my_formatter_flag : public spdlog::custom_flag_formatter
+{
+public:
+    void format(const spdlog::details::log_msg &, const std::tm &, spdlog::memory_buf_t &dest) override
+    {
+        std::string some_txt = "custom-flag";
+        dest.append(some_txt.data(), some_txt.data() + some_txt.size());
+    }
+
+    std::unique_ptr<custom_flag_formatter> clone() const override
+    {
+        return spdlog::details::make_unique<my_formatter_flag>();
+    }
+};
+
+
+void custom_flags_example()
+{    
+    
+    using spdlog::details::make_unique; //for pre c++14   
+    auto formatter = make_unique<spdlog::pattern_formatter>("[%+] [%*]");
+    formatter->add_flag<my_formatter_flag>('*').recompile();    
+    spdlog::set_formatter(std::move(formatter));    
+}
