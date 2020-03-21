@@ -204,7 +204,7 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 {
     if (f == nullptr)
     {
-        SPDLOG_THROW(spdlog_ex("Failed getting file size. fd is null"));
+        throw_spdlog_ex("Failed getting file size. fd is null");
     }
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = ::_fileno(f);
@@ -245,7 +245,8 @@ SPDLOG_INLINE size_t filesize(FILE *f)
     }
 #endif
 #endif
-    SPDLOG_THROW(spdlog_ex("Failed getting file size from fd", errno));
+    throw_spdlog_ex("Failed getting file size from fd", errno);
+    return 0; // will not be reached. 
 }
 
 // Return utc offset in minutes or throw spdlog_ex on failure

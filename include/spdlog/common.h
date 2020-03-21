@@ -204,6 +204,9 @@ private:
     std::string msg_;
 };
 
+void throw_spdlog_ex(const std::string &msg, int last_errno);
+void throw_spdlog_ex(std::string msg);
+
 struct source_loc
 {
     SPDLOG_CONSTEXPR source_loc() = default;
@@ -236,7 +239,6 @@ std::unique_ptr<T> make_unique(Args &&... args)
 }
 #endif
 } // namespace details
-
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY

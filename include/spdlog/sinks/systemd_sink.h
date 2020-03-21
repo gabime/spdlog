@@ -72,7 +72,7 @@ protected:
 
         if (err)
         {
-            SPDLOG_THROW(spdlog_ex("Failed writing to systemd", errno));
+            throw_spdlog_ex("Failed writing to systemd", errno);
         }
     }
 
