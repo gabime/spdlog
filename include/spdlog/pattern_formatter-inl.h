@@ -1024,8 +1024,9 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
     details::fmt_helper::append_string_view(eol_, dest);
 }
 
-SPDLOG_INLINE void pattern_formatter::recompile()
+SPDLOG_INLINE void pattern_formatter::set_pattern(std::string pattern)
 {
+    pattern_ = std::move(pattern);
     compile_pattern_(pattern_);
 }
 
@@ -1041,15 +1042,19 @@ SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg)
 template<typename Padder>
 SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_info padding)
 {
+    // process custom flags
     auto it = custom_handlers_.find(flag);
-    if (it != custom_handlers_.end())
+    if (it != custom_handlers_.end()) 
     {
-        formatters_.push_back(it->second->clone());
+        auto custom_handler = it->second->clone();
+        custom_handler->set_padding_info(padding);
+        formatters_.push_back(std::move(custom_handler));
         return;
     }
-    switch (flag)
-    {
 
+    // process built-in flags
+    switch (flag) 
+    {
     case ('+'): // default formatter
         formatters_.push_back(details::make_unique<details::full_formatter>(padding));
         break;

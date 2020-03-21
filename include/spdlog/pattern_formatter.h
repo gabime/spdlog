@@ -41,8 +41,8 @@ struct padding_info
     {
         return enabled_;
     }
-    const size_t width_ = 0;
-    const pad_side side_ = left;
+    size_t width_ = 0;
+    pad_side side_ = left;
     bool truncate_ = false;
     bool enabled_ = false;
 };
@@ -67,6 +67,11 @@ class SPDLOG_API custom_flag_formatter : public details::flag_formatter
 {
 public:
     virtual std::unique_ptr<custom_flag_formatter> clone() const = 0;
+
+    void set_padding_info(details::padding_info padding)
+    {
+        flag_formatter::padinfo_ = padding;
+    }
 };
 
 class SPDLOG_API pattern_formatter final : public formatter
@@ -92,7 +97,7 @@ public:
         custom_handlers_[flag] = details::make_unique<T>(args...);
         return *this;
     }
-    void recompile();
+    void set_pattern(std::string pattern);
 
 private:
     std::string pattern_;
