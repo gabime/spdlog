@@ -65,12 +65,12 @@ SPDLOG_INLINE const char *spdlog_ex::what() const SPDLOG_NOEXCEPT
 
 SPDLOG_INLINE void throw_spdlog_ex(const std::string &msg, int last_errno)
 {
-    SPDLOG_THROW( spdlog_ex(msg, last_errno));
+    SPDLOG_THROW(spdlog_ex(msg, last_errno));
 }
 
 SPDLOG_INLINE void throw_spdlog_ex(std::string msg)
 {
-    SPDLOG_THROW( spdlog_ex(std::move(msg)));
+    SPDLOG_THROW(spdlog_ex(std::move(msg)));
 }
 
 } // namespace spdlog
