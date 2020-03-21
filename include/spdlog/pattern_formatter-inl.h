@@ -933,16 +933,15 @@ public:
         dest.push_back(']');
         dest.push_back(' ');
 
-#ifndef SPDLOG_NO_NAME
+        // append logger name if exists
         if (msg.logger_name.size() > 0)
         {
             dest.push_back('[');
-            // fmt_helper::append_str(*msg.logger_name, dest);
             fmt_helper::append_string_view(msg.logger_name, dest);
             dest.push_back(']');
             dest.push_back(' ');
         }
-#endif
+
         dest.push_back('[');
         // wrap the level name with color
         msg.color_range_start = dest.size();
