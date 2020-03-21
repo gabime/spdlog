@@ -284,7 +284,7 @@ SPDLOG_INLINE void registry::throw_if_exists_(const std::string &logger_name)
 {
     if (loggers_.find(logger_name) != loggers_.end())
     {
-        SPDLOG_THROW(spdlog_ex("logger with name '" + logger_name + "' already exists"));
+        throw_spdlog_ex("logger with name '" + logger_name + "' already exists");
     }
 }
 

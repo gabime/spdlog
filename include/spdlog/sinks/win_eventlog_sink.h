@@ -91,7 +91,7 @@ public:
     {
         if (!::IsValidSid(psid))
         {
-            SPDLOG_THROW(spdlog_ex("sid_t::sid_t(): invalid SID received"));
+            throw_spdlog_ex("sid_t::sid_t(): invalid SID received");
         }
 
         auto const sid_length{::GetLengthSid(psid)};

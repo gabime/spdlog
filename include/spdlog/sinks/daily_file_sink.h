@@ -56,7 +56,7 @@ public:
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
         {
-            SPDLOG_THROW(spdlog_ex("daily_file_sink: Invalid rotation time in ctor"));
+            throw_spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
 
         auto now = log_clock::now();
@@ -164,7 +164,7 @@ private:
             if (!ok)
             {
                 filenames_q_.push_back(std::move(current_file));
-                SPDLOG_THROW(spdlog_ex("Failed removing daily file " + filename_to_str(old_filename), errno));
+                throw_spdlog_ex("Failed removing daily file " + filename_to_str(old_filename), errno);
             }
         }
         filenames_q_.push_back(std::move(current_file));
