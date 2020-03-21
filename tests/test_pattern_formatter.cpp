@@ -308,9 +308,7 @@ TEST_CASE("clone-formatter-2", "[pattern_formatter]")
 class custom_test_flag : public spdlog::custom_flag_formatter
 {
 public:
-    class custom_test_flag(std::string txt)
-        : some_txt{std::move(txt)}
-    {}
+    custom_test_flag(std::string txt) : some_txt{std::move(txt)} {}
 
     void format(const spdlog::details::log_msg &, const std::tm &, spdlog::memory_buf_t &dest) override
     {
