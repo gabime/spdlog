@@ -5,7 +5,7 @@
 
 namespace spdlog {
 class logger;
-class pattern_formatter;
+class formatter;
 
 namespace sinks {
 class sink;
