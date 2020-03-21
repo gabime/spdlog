@@ -255,7 +255,7 @@ void android_example()
 #endif
 
 
-// log patterns can contain custom flags.
+// Log patterns can contain custom flags.
 // this will add custom flag '%*' which will be bound to a <my_formatter_flag> instance
 #include "spdlog/pattern_formatter.h"
 class my_formatter_flag : public spdlog::custom_flag_formatter
