@@ -1044,7 +1044,7 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 {
     // process custom flags
     auto it = custom_handlers_.find(flag);
-    if (it != custom_handlers_.end()) 
+    if (it != custom_handlers_.end())
     {
         auto custom_handler = it->second->clone();
         custom_handler->set_padding_info(padding);
@@ -1053,7 +1053,7 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
     }
 
     // process built-in flags
-    switch (flag) 
+    switch (flag)
     {
     case ('+'): // default formatter
         formatters_.push_back(details::make_unique<details::full_formatter>(padding));

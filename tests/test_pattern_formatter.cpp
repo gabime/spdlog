@@ -308,7 +308,9 @@ TEST_CASE("clone-formatter-2", "[pattern_formatter]")
 class custom_test_flag : public spdlog::custom_flag_formatter
 {
 public:
-    custom_test_flag(std::string txt) : some_txt{std::move(txt)} {}
+    custom_test_flag(std::string txt)
+        : some_txt{std::move(txt)}
+    {}
 
     void format(const spdlog::details::log_msg &, const std::tm &, spdlog::memory_buf_t &dest) override
     {
@@ -316,7 +318,7 @@ public:
         {
             throw spdlog::spdlog_ex("custom_flag_exception_test");
         }
-        some_txt = std::string(padinfo_.width_, ' ') + some_txt;        
+        some_txt = std::string(padinfo_.width_, ' ') + some_txt;
         dest.append(some_txt.data(), some_txt.data() + some_txt.size());
     }
     spdlog::details::padding_info get_padding_info()
