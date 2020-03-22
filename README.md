@@ -307,10 +307,8 @@ public:
 };
 
 void custom_flags_example()
-{
-
-    using spdlog::details::make_unique; // for pre c++14
-    auto formatter = make_unique<spdlog::pattern_formatter>();
+{    
+    auto formatter = std::make_unique<spdlog::pattern_formatter>();
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     spdlog::set_formatter(std::move(formatter));
 }
