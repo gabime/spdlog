@@ -20,10 +20,7 @@ inline spdlog::string_view_t to_string_view(const memory_buf_t &buf) SPDLOG_NOEX
 inline void append_string_view(spdlog::string_view_t view, memory_buf_t &dest)
 {
     auto *buf_ptr = view.data();
-    if (buf_ptr != nullptr)
-    {
-        dest.append(buf_ptr, buf_ptr + view.size());
-    }
+    dest.append(buf_ptr, buf_ptr + view.size());
 }
 
 template<typename T>
