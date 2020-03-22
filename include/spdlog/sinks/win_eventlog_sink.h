@@ -175,8 +175,7 @@ struct eventlog
             return EVENTLOG_ERROR_TYPE;
 
         default:
-            // should be unreachable
-            throw_spdlog_ex(fmt::format("Unsupported log level {}", msg.level));
+            return EVENTLOG_INFORMATION_TYPE;
         }
     }
 
