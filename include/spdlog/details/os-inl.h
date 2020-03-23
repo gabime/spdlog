@@ -134,7 +134,7 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
         auto file_handle = reinterpret_cast<HANDLE>(_get_osfhandle(::_fileno(*fp)));
         if (!::SetHandleInformation(file_handle, HANDLE_FLAG_INHERIT, 0))
         {
-            :fclose(*fp);
+            ::fclose(*fp);
             *fp = nullptr;
         }
     }
