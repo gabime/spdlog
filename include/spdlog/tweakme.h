@@ -24,7 +24,7 @@
 // This will prevent spdlog from querying the thread id on each log call.
 //
 // WARNING: If the log pattern contains thread id (i.e, %t) while this flag is
-// on, the result is undefined.
+// on, zero will be logged as thread id.
 //
 // #define SPDLOG_NO_THREAD_ID
 ///////////////////////////////////////////////////////////////////////////////
