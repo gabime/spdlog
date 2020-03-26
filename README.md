@@ -29,7 +29,7 @@ $ cmake .. && make -j
 * FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
 * Fedora: `yum install spdlog`
 * Gentoo: `emerge dev-libs/spdlog`
-* Arch Linux: `yay -S spdlog-git`
+* Arch Linux: `pacman -S spdlog`
 * vcpkg: `vcpkg install spdlog`
 * conan: `spdlog/[>=1.4.1]`
 * conda: `conda install -c conda-forge spdlog`
