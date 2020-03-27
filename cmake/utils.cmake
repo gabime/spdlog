@@ -28,9 +28,9 @@ endfunction()
 
 # Turn on warnings on the given target
 function(spdlog_enable_warnings target_name)
-	set(MSVC_OPTIONS "/W3")
+	list(APPEND MSVC_OPTIONS "/W3")
 	if(MSVC_VERSION GREATER  1900)  #Allow non fatal security wanrnings for msvc 2015
-		set(MSVC_OPTIONS "${MSVC_OPTIONS} /WX")
+		list(APPEND MSVC_OPTIONS "/WX")
 	endif()
     target_compile_options(${target_name} PRIVATE
         $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
