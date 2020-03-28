@@ -43,7 +43,7 @@ static void test_single_print(std::function<void(std::string const &)> do_log, s
 
     REQUIRE(record->NumStrings == 1);
     REQUIRE(record->EventType == expected_ev_type);
-    REQUIRE(record->TimeGenerated == expected_time_generated);
+    REQUIRE((expected_time_generated - record->TimeGenerated) <= 3u);
 
     std::string message_in_log(((char *)record + record->StringOffset));
     REQUIRE(message_in_log == expected_contents + spdlog::details::os::default_eol);
