@@ -176,20 +176,13 @@ endif
 # ---   Summary   ---
 # -------------------
 
-summary_str = '''spdlog build summary:
-  - using external fmt:  @0@
-  - building tests:      @1@
-  - building examples:   @2@
-  - building benchmarks: @3@
-  - library type:        @4@
-  - no exceptions:       @5@
-'''.format(
-  get_option('external_fmt'),
-  get_option('enable_tests'),
-  get_option('enable_examples'),
-  get_option('enable_benchmarks'),
-  get_option('library_type'),
-  get_option('no_exceptions')
-)
-
-message(summary_str)
+if meson.version().version_compare('>=0.53.0')
+    summary({
+        'external fmt':        get_option('external_fmt'),
+        'building tests':      get_option('enable_tests'),
+        'building examples':   get_option('enable_examples'),
+        'building benchmarks': get_option('enable_benchmarks'),
+        'library type':        get_option('library_type'),
+        'no exceptions':       get_option('no_exceptions'),
+    })
+endif
