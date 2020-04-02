@@ -12,8 +12,10 @@ project('spdlog', ['cpp'],
 # ------------------------
 # ---   Dependencies   ---
 # ------------------------
-dep_list = []
+dep_list     = []
 compile_args = []
+private_args = []
+public_args  = []
 
 # Threads
 dep_list += dependency('threads')
@@ -21,10 +23,13 @@ dep_list += dependency('threads')
 # Check for FMT
 if get_option('external_fmt')
     if not meson.version().version_compare('>=0.49.0')
-    warning('Finding fmt can fail with meson versions before 0.49.0')
+        warning('Finding fmt can fail with meson versions before 0.49.0')
     endif
     dep_list     += dependency('fmt', fallback :  ['fmt', 'fmt_dep'])
     compile_args += '-DSPDLOG_FMT_EXTERNAL'
+else
+    public_args  += ['-DFMT_SHARED']
+    private_args += ['-DFMT_EXPORT']
 endif
 
 if get_option('no_exceptions')
@@ -69,7 +74,9 @@ if get_option('no_atomic_levels')
 endif
 
 compile_args_compiled = compile_args + ['-DSPDLOG_COMPILED_LIB']
-compile_args_ho = compile_args
+compile_args_private  = compile_args_compiled + public_args
+compile_args_public   = compile_args_compiled + private_args
+compile_args_ho       = compile_args
 
 # ------------------------------------
 # ---   Compiled library version   ---
@@ -99,21 +106,25 @@ if get_option('library_type') == 'static'
     dependencies        : dep_list,
     install             : not meson.is_subproject()
     )
+
+    dep_args = compile_args_compiled
 else
     spdlog = shared_library('spdlog',
     spdlog_srcs,
-    cpp_args            : compile_args_compiled,
+    cpp_args            : compile_args_private,
     include_directories : spdlog_inc,
     dependencies        : dep_list,
     install             : not meson.is_subproject(),
     version             : meson.project_version(),
     )
+
+    dep_args = compile_args_public
 endif
 
 spdlog_dep = declare_dependency(
       link_with           : spdlog,
       include_directories : spdlog_inc,
-      compile_args        : compile_args_compiled,
+      compile_args        : dep_args,
       dependencies        : dep_list,
       version             : meson.project_version(),
 )
