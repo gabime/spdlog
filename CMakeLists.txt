@@ -79,6 +79,9 @@ option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/
 # sanitizer options
 option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 
+# warning options
+option(SPDLOG_ENABLE_WARNINGS "Enable compiler warnings" ON)
+
 # install options
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
