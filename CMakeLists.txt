@@ -80,7 +80,7 @@ option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/
 option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 
 # warning options
-option(SPDLOG_ENABLE_WARNINGS "Enable compiler warnings" ON)
+option(SPDLOG_ENABLE_WARNINGS "Enable compiler warnings" OFF)
 
 # install options
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
