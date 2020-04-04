@@ -11,10 +11,8 @@
 //
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
-#ifdef SPDLOG_HEADER_ONLY
-#ifndef FMT_HEADER_ONLY
+#if !defined(SPDLOG_COMPILED_LIB) && !defined(FMT_HEADER_ONLY)
 #define FMT_HEADER_ONLY
-#endif
 #endif
 #ifndef FMT_USE_WINDOWS_H
 #define FMT_USE_WINDOWS_H 0
