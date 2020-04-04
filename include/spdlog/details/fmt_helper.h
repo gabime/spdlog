@@ -63,11 +63,9 @@ template<typename T>
 inline void pad_uint(T n, unsigned int width, memory_buf_t &dest)
 {
     static_assert(std::is_unsigned<T>::value, "pad_uint must get unsigned T");
-    auto digits = count_digits(n);
-    if (width > digits)
+    for(auto digits = count_digits(n); digits < width; digits++)
     {
-        const char *zeroes = "0000000000000000000";
-        dest.append(zeroes, zeroes + width - digits);
+        dest.push_back('0');
     }
     append_int(n, dest);
 }
