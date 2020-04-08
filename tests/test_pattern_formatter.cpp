@@ -336,7 +336,6 @@ public:
 // test clone with custom flag formatters
 TEST_CASE("clone-custom_formatter", "[pattern_formatter]")
 {
-
     auto formatter_1 = std::make_shared<spdlog::pattern_formatter>();
     formatter_1->add_flag<custom_test_flag>('t', "custom_output").set_pattern("[%n] [%t] %v");
     auto formatter_2 = formatter_1->clone();
