@@ -30,7 +30,11 @@ public:
     ~ansicolor_sink() override = default;
 
     ansicolor_sink(const ansicolor_sink &other) = delete;
+    ansicolor_sink(ansicolor_sink &&other) = delete;
+
     ansicolor_sink &operator=(const ansicolor_sink &other) = delete;
+    ansicolor_sink &operator=(ansicolor_sink &&other) = delete;
+
     void set_color(level::level_enum color_level, string_view_t color);
     void set_color_mode(color_mode mode);
     bool should_color();
