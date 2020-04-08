@@ -1,16 +1,26 @@
-Checks: '\
-cppcoreguidelines-*,\
-performance-*,\
--performance-unnecessary-value-param,\
-modernize-*,\
--modernize-use-trailing-return-type,\
-google-*,\
--google-runtime-references,\
-misc-*,\
--misc-non-private-member-variables-in-classes,\
-cert-*,\
-readability-*,\
-clang-analyzer-*'
+Checks: 'cppcoreguidelines-*,
+performance-*,
+modernize-*,
+google-*,
+misc-*,
+cert-*,
+readability-*,
+clang-analyzer-*,
+-performance-unnecessary-value-param,
+-modernize-use-trailing-return-type,
+-google-runtime-references,
+-misc-non-private-member-variables-in-classes,
+-readability-braces-around-statements,
+-google-readability-braces-around-statements,
+-cppcoreguidelines-avoid-magic-numbers,
+-readability-magic-numbers,
+-readability-magic-numbers,
+-cppcoreguidelines-pro-type-vararg,
+-cppcoreguidelines-pro-bounds-pointer-arithmetic,
+-cppcoreguidelines-avoid-c-arrays,
+-modernize-avoid-c-arrays,
+-cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+-readability-named-parameter'
 
 WarningsAsErrors: ''
 HeaderFilterRegex: '*spdlog/[^f].*'
