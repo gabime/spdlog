@@ -113,7 +113,7 @@ std::size_t count_files(const std::string &folder)
         throw std::runtime_error("Failed open folder " + folder);
     }
 
-    struct dirent *ep;
+    struct dirent *ep = nullptr;
     while ((ep = readdir(dp)) != nullptr)
     {
         if (ep->d_name[0] != '.')

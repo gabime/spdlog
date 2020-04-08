@@ -20,7 +20,10 @@ clang-analyzer-*,
 -cppcoreguidelines-avoid-c-arrays,
 -modernize-avoid-c-arrays,
 -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
--readability-named-parameter'
+-readability-named-parameter,
+-cert-env33-c
+'
+
 
 WarningsAsErrors: ''
 HeaderFilterRegex: '*spdlog/[^f].*'

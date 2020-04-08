@@ -2,11 +2,11 @@
 #include "spdlog/sinks/dup_filter_sink.h"
 #include "test_sink.h"
 
-using namespace spdlog;
-using namespace spdlog::sinks;
-
 TEST_CASE("dup_filter_test1", "[dup_filter_sink]")
 {
+    using spdlog::sinks::dup_filter_sink_st;
+    using spdlog::sinks::test_sink_mt;
+
     dup_filter_sink_st dup_sink{std::chrono::seconds{5}};
     auto test_sink = std::make_shared<test_sink_mt>();
     dup_sink.add_sink(test_sink);
@@ -21,6 +21,9 @@ TEST_CASE("dup_filter_test1", "[dup_filter_sink]")
 
 TEST_CASE("dup_filter_test2", "[dup_filter_sink]")
 {
+    using spdlog::sinks::dup_filter_sink_st;
+    using spdlog::sinks::test_sink_mt;
+
     dup_filter_sink_st dup_sink{std::chrono::seconds{0}};
     auto test_sink = std::make_shared<test_sink_mt>();
     dup_sink.add_sink(test_sink);
@@ -36,6 +39,9 @@ TEST_CASE("dup_filter_test2", "[dup_filter_sink]")
 
 TEST_CASE("dup_filter_test3", "[dup_filter_sink]")
 {
+    using spdlog::sinks::dup_filter_sink_st;
+    using spdlog::sinks::test_sink_mt;
+
     dup_filter_sink_st dup_sink{std::chrono::seconds{1}};
     auto test_sink = std::make_shared<test_sink_mt>();
     dup_sink.add_sink(test_sink);
@@ -51,6 +57,9 @@ TEST_CASE("dup_filter_test3", "[dup_filter_sink]")
 
 TEST_CASE("dup_filter_test4", "[dup_filter_sink]")
 {
+    using spdlog::sinks::dup_filter_sink_mt;
+    using spdlog::sinks::test_sink_mt;
+
     dup_filter_sink_mt dup_sink{std::chrono::milliseconds{10}};
     auto test_sink = std::make_shared<test_sink_mt>();
     dup_sink.add_sink(test_sink);
@@ -63,6 +72,9 @@ TEST_CASE("dup_filter_test4", "[dup_filter_sink]")
 
 TEST_CASE("dup_filter_test5", "[dup_filter_sink]")
 {
+    using spdlog::sinks::dup_filter_sink_mt;
+    using spdlog::sinks::test_sink_mt;
+
     dup_filter_sink_mt dup_sink{std::chrono::seconds{5}};
     auto test_sink = std::make_shared<test_sink_mt>();
     dup_sink.add_sink(test_sink);

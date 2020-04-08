@@ -21,11 +21,11 @@ TEST_CASE("basic_logging ", "[basic_logging]")
 {
     // const char
     REQUIRE(log_info("Hello") == "Hello");
-    REQUIRE(log_info("") == "");
+    REQUIRE(log_info("").empty());
 
     // std::string
     REQUIRE(log_info(std::string("Hello")) == "Hello");
-    REQUIRE(log_info(std::string()) == std::string());
+    REQUIRE(log_info(std::string()).empty());
 
     // Numbers
     REQUIRE(log_info(5) == "5");
@@ -37,8 +37,8 @@ TEST_CASE("basic_logging ", "[basic_logging]")
 
 TEST_CASE("log_levels", "[log_levels]")
 {
-    REQUIRE(log_info("Hello", spdlog::level::err) == "");
-    REQUIRE(log_info("Hello", spdlog::level::critical) == "");
+    REQUIRE(log_info("Hello", spdlog::level::err).empty());
+    REQUIRE(log_info("Hello", spdlog::level::critical).empty());
     REQUIRE(log_info("Hello", spdlog::level::info) == "Hello");
     REQUIRE(log_info("Hello", spdlog::level::debug) == "Hello");
     REQUIRE(log_info("Hello", spdlog::level::trace) == "Hello");
@@ -81,11 +81,9 @@ TEST_CASE("to_level_enum", "[convert_to_level_enum]")
 
 TEST_CASE("periodic flush", "[periodic_flush]")
 {
-    using namespace spdlog;
-
-    auto logger = spdlog::create<sinks::test_sink_mt>("periodic_flush");
-
-    auto test_sink = std::static_pointer_cast<sinks::test_sink_mt>(logger->sinks()[0]);
+    using spdlog::sinks::test_sink_mt;
+    auto logger = spdlog::create<test_sink_mt>("periodic_flush");
+    auto test_sink = std::static_pointer_cast<test_sink_mt>(logger->sinks()[0]);
 
     spdlog::flush_every(std::chrono::seconds(1));
     std::this_thread::sleep_for(std::chrono::milliseconds(1250));
@@ -96,8 +94,8 @@ TEST_CASE("periodic flush", "[periodic_flush]")
 
 TEST_CASE("clone-logger", "[clone]")
 {
-    using namespace spdlog;
-    auto test_sink = std::make_shared<sinks::test_sink_mt>();
+    using spdlog::sinks::test_sink_mt;
+    auto test_sink = std::make_shared<test_sink_mt>();
     auto logger = std::make_shared<spdlog::logger>("orig", test_sink);
     logger->set_pattern("%v");
     auto cloned = logger->clone("clone");
@@ -118,10 +116,9 @@ TEST_CASE("clone-logger", "[clone]")
 
 TEST_CASE("clone async", "[clone]")
 {
-    using namespace spdlog;
-
+    using spdlog::sinks::test_sink_st;
     spdlog::init_thread_pool(4, 1);
-    auto test_sink = std::make_shared<sinks::test_sink_st>();
+    auto test_sink = std::make_shared<test_sink_st>();
     auto logger = std::make_shared<spdlog::async_logger>("orig", test_sink, spdlog::thread_pool());
     logger->set_pattern("%v");
     auto cloned = logger->clone("clone");

@@ -27,7 +27,7 @@ TEST_CASE("custom eol", "[pattern_formatter]")
 
 TEST_CASE("empty format", "[pattern_formatter]")
 {
-    REQUIRE(log_to_str("Some message", "", spdlog::pattern_time_type::local, "") == "");
+    REQUIRE(log_to_str("Some message", "", spdlog::pattern_time_type::local, "").empty());
 }
 
 TEST_CASE("empty format2", "[pattern_formatter]")
@@ -308,7 +308,7 @@ TEST_CASE("clone-formatter-2", "[pattern_formatter]")
 class custom_test_flag : public spdlog::custom_flag_formatter
 {
 public:
-    custom_test_flag(std::string txt)
+     explicit custom_test_flag(std::string txt)
         : some_txt{std::move(txt)}
     {}
 
@@ -358,9 +358,9 @@ TEST_CASE("clone-custom_formatter", "[pattern_formatter]")
 //
 
 #ifdef _WIN32
-static const char *test_path = "\\a\\b\\myfile.cpp";
+static const char *const test_path = "\\a\\b\\myfile.cpp";
 #else
-static const char *test_path = "/a/b//myfile.cpp";
+static const char * const test_path = "/a/b//myfile.cpp";
 #endif
 
 TEST_CASE("short filename formatter-1", "[pattern_formatter]")
