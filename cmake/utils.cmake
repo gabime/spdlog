@@ -27,7 +27,7 @@ endfunction()
 
 
 # Turn on warnings on the given target
-function(SPDLOG_BUILD_WARNINGS target_name)
+function(spdlog_enable_warnings target_name)
     if(SPDLOG_BUILD_WARNINGS)
         if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
             list(APPEND MSVC_OPTIONS "/W3")

@@ -159,7 +159,7 @@ target_include_directories(spdlog PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
-SPDLOG_BUILD_WARNINGS(spdlog)
+spdlog_enable_warnings(spdlog)
 
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
@@ -258,7 +258,7 @@ endif()
 if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO)
     message(STATUS "Generating example(s)")
     add_subdirectory(example)
-    SPDLOG_BUILD_WARNINGS(example)
+    spdlog_enable_warnings(example)
     if(SPDLOG_BUILD_EXAMPLE_HO)
         SPDLOG_BUILD_WARNINGS(example_header_only)
     endif()
