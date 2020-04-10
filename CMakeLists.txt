@@ -260,7 +260,7 @@ if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO)
     add_subdirectory(example)
     spdlog_enable_warnings(example)
     if(SPDLOG_BUILD_EXAMPLE_HO)
-        SPDLOG_BUILD_WARNINGS(example_header_only)
+        spdlog_enable_warnings(example_header_only)
     endif()
 endif()
 
