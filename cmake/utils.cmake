@@ -27,8 +27,8 @@ endfunction()
 
 
 # Turn on warnings on the given target
-function(spdlog_enable_warnings target_name)
-    if(SPDLOG_ENABLE_WARNINGS)
+function(SPDLOG_BUILD_WARNINGS target_name)
+    if(SPDLOG_BUILD_WARNINGS)
         if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
             list(APPEND MSVC_OPTIONS "/W3")
             if(MSVC_VERSION GREATER  1900)  #Allow non fatal security wanrnings for msvc 2015

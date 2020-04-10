@@ -80,7 +80,7 @@ option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/
 option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 
 # warning options
-option(SPDLOG_ENABLE_WARNINGS "Enable compiler warnings" OFF)
+option(SPDLOG_BUILD_WARNINGS "Enable compiler warnings" OFF)
 
 # install options
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
@@ -159,7 +159,7 @@ target_include_directories(spdlog PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
-spdlog_enable_warnings(spdlog)
+SPDLOG_BUILD_WARNINGS(spdlog)
 
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
@@ -258,9 +258,9 @@ endif()
 if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO)
     message(STATUS "Generating example(s)")
     add_subdirectory(example)
-    spdlog_enable_warnings(example)
+    SPDLOG_BUILD_WARNINGS(example)
     if(SPDLOG_BUILD_EXAMPLE_HO)
-        spdlog_enable_warnings(example_header_only)
+        SPDLOG_BUILD_WARNINGS(example_header_only)
     endif()
 endif()
 
