@@ -86,7 +86,7 @@ TEST_CASE("full_queue", "[mpmc_blocking_q]")
     spdlog::details::mpmc_blocking_queue<int> q(q_size);
     for (int i = 0; i < static_cast<int>(q_size); i++)
     {
-        q.enqueue(i+0); // i+0 to force rvalue and avoid tidy warnings on the same time if we std::move(i) instead
+        q.enqueue(i + 0); // i+0 to force rvalue and avoid tidy warnings on the same time if we std::move(i) instead
     }
 
     q.enqueue_nowait(123456);

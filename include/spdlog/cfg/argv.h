@@ -38,7 +38,7 @@ void load_argv_levels(int argc, const char **argv)
 
 void load_argv_levels(int argc, char **argv)
 {
-    load_argv_levels(argc, const_cast<const char**>(argv));
+    load_argv_levels(argc, const_cast<const char **>(argv));
 }
 
 } // namespace cfg

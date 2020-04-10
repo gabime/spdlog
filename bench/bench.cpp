@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
             threads = std::stoi(argv[2]);
         }
 
-        if(threads > max_threads)
+        if (threads > max_threads)
         {
             throw std::runtime_error(fmt::format("Number of threads exceeds maximum({}})", max_threads));
         }
@@ -139,9 +139,9 @@ int main(int argc, char *argv[])
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 {
-    using std::chrono::high_resolution_clock;
     using std::chrono::duration;
     using std::chrono::duration_cast;
+    using std::chrono::high_resolution_clock;
 
     auto start = high_resolution_clock::now();
     for (auto i = 0; i < howmany; ++i)
@@ -158,9 +158,9 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
 {
-    using std::chrono::high_resolution_clock;
     using std::chrono::duration;
     using std::chrono::duration_cast;
+    using std::chrono::high_resolution_clock;
 
     std::vector<std::thread> threads;
     threads.reserve(thread_count);

@@ -63,7 +63,7 @@ template<typename T>
 inline void pad_uint(T n, unsigned int width, memory_buf_t &dest)
 {
     static_assert(std::is_unsigned<T>::value, "pad_uint must get unsigned T");
-    for(auto digits = count_digits(n); digits < width; digits++)
+    for (auto digits = count_digits(n); digits < width; digits++)
     {
         dest.push_back('0');
     }

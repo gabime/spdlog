@@ -1,7 +1,7 @@
 #include "includes.h"
 
-static const char * const tested_logger_name = "null_logger";
-static const char * const tested_logger_name2 = "null_logger2";
+static const char *const tested_logger_name = "null_logger";
+static const char *const tested_logger_name2 = "null_logger2";
 
 #ifndef SPDLOG_NO_EXCEPTIONS
 TEST_CASE("register_drop", "[registry]")

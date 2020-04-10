@@ -113,7 +113,7 @@ static void test_rotate(int days_to_run, uint16_t max_days, uint16_t expected_n_
     using spdlog::log_clock;
     using spdlog::details::log_msg;
     using spdlog::sinks::daily_file_sink_st;
-    
+
     prepare_logdir();
 
     std::string basename = "test_logs/daily_rotate.txt";
