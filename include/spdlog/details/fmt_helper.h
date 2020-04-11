@@ -73,8 +73,20 @@ inline void pad_uint(T n, unsigned int width, memory_buf_t &dest)
 template<typename T>
 inline void pad3(T n, memory_buf_t &dest)
 {
-    pad_uint(n, 3, dest);
+    if(n < 1000)
+    {
+        dest.push_back(n / 100 + '0');
+        n = n % 100;
+        dest.push_back((n / 10) + '0');
+        dest.push_back((n % 10) + '0');
+    }
+    else
+    {
+        append_int(n, dest);
+    }
 }
+
+
 
 template<typename T>
 inline void pad6(T n, memory_buf_t &dest)
