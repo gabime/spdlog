@@ -73,7 +73,7 @@ inline void pad_uint(T n, unsigned int width, memory_buf_t &dest)
 template<typename T>
 inline void pad3(T n, memory_buf_t &dest)
 {
-    static_assert(std::is_unsigned<T>::value, "pad_uint must get unsigned T");
+    static_assert(std::is_unsigned<T>::value, "pad3 must get unsigned T");
     if(n < 1000)
     {
         dest.push_back(static_cast<char>(n / 100 + '0'));
