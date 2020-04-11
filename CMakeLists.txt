@@ -59,6 +59,8 @@ if (NOT DEFINED SPDLOG_MASTER_PROJECT)
     endif()
 endif ()
 
+option(SPDLOG_BUILD_ALL "Build all artifacts" OFF)
+
 # build shared option
 option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
 
@@ -255,7 +257,7 @@ endif()
 #---------------------------------------------------------------------------------------
 # Build binaries
 #---------------------------------------------------------------------------------------
-if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO)
+if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO OR SPDLOG_BUILD_ALL)
     message(STATUS "Generating example(s)")
     add_subdirectory(example)
     spdlog_enable_warnings(example)
@@ -264,13 +266,13 @@ if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO)
     endif()
 endif()
 
-if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_TESTS_HO)
+if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_TESTS_HO OR SPDLOG_BUILD_ALL)
     message(STATUS "Generating tests")
     enable_testing()
     add_subdirectory(tests)
 endif()
 
-if(SPDLOG_BUILD_BENCH)
+if(SPDLOG_BUILD_BENCH OR SPDLOG_BUILD_ALL)
     message(STATUS "Generating benchmarks")
     add_subdirectory(bench)
 endif()
