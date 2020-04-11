@@ -644,6 +644,22 @@ public:
     }
 };
 
+// If padding is not needed, there is no need to count the digits of the thread id
+template<>
+class t_formatter<null_scoped_padder> final : public flag_formatter
+{
+public:
+    explicit t_formatter(padding_info padinfo)
+        : flag_formatter(padinfo)
+    {}
+
+    void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
+    {
+        fmt_helper::append_int(msg.thread_id, dest);
+    }
+};
+
+
 // Current pid
 template<typename ScopedPadder>
 class pid_formatter final : public flag_formatter
@@ -661,6 +677,23 @@ public:
         fmt_helper::append_int(pid, dest);
     }
 };
+
+// If padding is not needed, there is no need to count the digits of the pid
+template<>
+class pid_formatter<null_scoped_padder> final : public flag_formatter
+{
+public:
+    explicit pid_formatter(padding_info padinfo)
+        : flag_formatter(padinfo)
+    {}
+
+    void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override
+    {
+        const auto pid = static_cast<uint32_t>(details::os::pid());
+        fmt_helper::append_int(pid, dest);
+    }
+};
+
 
 template<typename ScopedPadder>
 class v_formatter final : public flag_formatter
@@ -857,7 +890,6 @@ public:
 
 // print elapsed time since last message
 template<typename ScopedPadder, typename Units>
-
 class elapsed_formatter final : public flag_formatter
 {
 public:
@@ -876,6 +908,31 @@ public:
         auto delta_count = static_cast<size_t>(delta_units.count());
         auto n_digits = static_cast<size_t>(fmt_helper::count_digits(delta_count));
         ScopedPadder p(n_digits, padinfo_, dest);
+        fmt_helper::append_int(delta_count, dest);
+    }
+
+private:
+    log_clock::time_point last_message_time_;
+};
+
+// If padding is not needed, there is no need to count the digits of the value
+template<typename Units>
+class elapsed_formatter<null_scoped_padder, Units> final : public flag_formatter
+{
+public:
+    using DurationUnits = Units;
+
+    explicit elapsed_formatter(padding_info padinfo)
+        : flag_formatter(padinfo)
+        , last_message_time_(log_clock::now())
+    {}
+
+    void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
+    {
+        auto delta = (std::max)(msg.time - last_message_time_, log_clock::duration::zero());
+        auto delta_units = std::chrono::duration_cast<DurationUnits>(delta);
+        last_message_time_ = msg.time;
+        auto delta_count = static_cast<size_t>(delta_units.count());
         fmt_helper::append_int(delta_count, dest);
     }
 
