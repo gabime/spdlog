@@ -659,7 +659,6 @@ public:
     }
 };
 
-
 // Current pid
 template<typename ScopedPadder>
 class pid_formatter final : public flag_formatter
@@ -693,7 +692,6 @@ public:
         fmt_helper::append_int(pid, dest);
     }
 };
-
 
 template<typename ScopedPadder>
 class v_formatter final : public flag_formatter
