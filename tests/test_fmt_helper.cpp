@@ -36,7 +36,10 @@ TEST_CASE("pad2", "[fmt_helper]")
 {
     test_pad2(0, "00");
     test_pad2(3, "03");
+    test_pad2(10, "10");
     test_pad2(23, "23");
+    test_pad2(99, "99");
+    test_pad2(100, "100");
     test_pad2(123, "123");
     test_pad2(1234, "1234");
     test_pad2(-5, "-5");
@@ -46,8 +49,13 @@ TEST_CASE("pad3", "[fmt_helper]")
 {
     test_pad3(0, "000");
     test_pad3(3, "003");
+    test_pad3(10, "010");
     test_pad3(23, "023");
+    test_pad3(99, "099");
+    test_pad3(100, "100");
     test_pad3(123, "123");
+    test_pad3(999, "999");
+    test_pad3(1000, "1000");
     test_pad3(1234, "1234");
 }
 
