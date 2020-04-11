@@ -20,7 +20,7 @@
 #include <thread>
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log);
-void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count);
+void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, size_t thread_count);
 
 // void bench_default_api(int howmany, std::shared_ptr<spdlog::logger> log);
 // void bench_c_string(int howmany, std::shared_ptr<spdlog::logger> log);
@@ -29,7 +29,7 @@ static const size_t file_size = 30 * 1024 * 1024;
 static const size_t rotating_files = 5;
 static const int max_threads = 1000;
 
-void bench_threaded_logging(int threads, int iters)
+void bench_threaded_logging(size_t threads, int iters)
 {
     spdlog::info("**************************************************************");
     spdlog::info("Multi threaded: {:n} threads, {:n} messages", threads, iters);
@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
     spdlog::set_automatic_registration(false);
     spdlog::default_logger()->set_pattern("[%^%l%$] %v");
     int iters = 250000;
-    int threads = 4;
+    size_t threads = 4;
     try
     {
 
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
         }
         if (argc > 2)
         {
-            threads = std::stoi(argv[2]);
+            threads = std::stoul(argv[2]);
         }
 
         if (threads > max_threads)
@@ -156,7 +156,7 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
     spdlog::drop(log->name());
 }
 
-void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count)
+void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, size_t thread_count)
 {
     using std::chrono::duration;
     using std::chrono::duration_cast;
@@ -165,10 +165,10 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
     std::vector<std::thread> threads;
     threads.reserve(thread_count);
     auto start = high_resolution_clock::now();
-    for (int t = 0; t < thread_count; ++t)
+    for (size_t t = 0; t < thread_count; ++t)
     {
         threads.emplace_back([&]() {
-            for (int j = 0; j < howmany / thread_count; j++)
+            for (int j = 0; j < howmany / static_cast<int>(thread_count); j++)
             {
                 log->info("Hello logger: msg number {}", j);
             }
