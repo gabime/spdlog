@@ -404,3 +404,8 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 
 ## Documentation
 Documentation can be found in the [wiki](https://github.com/gabime/spdlog/wiki/1.-QuickStart) pages.
+
+
+Thanks to [JetBrains](https://www.jetbrains.com/?from=spdlog) for donating licenses to their products to help developing **spdlog** <img src="logos/jetbrains-variant-4.svg" width="75" />
+
+
