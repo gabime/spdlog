@@ -412,7 +412,7 @@ template <typename Char> struct ansi_color_escape {
 
   FMT_CONSTEXPR const Char* begin() const FMT_NOEXCEPT { return buffer; }
   FMT_CONSTEXPR const Char* end() const FMT_NOEXCEPT {
-    return buffer + std::strlen(buffer);
+    return buffer + std::char_traits<Char>::length(buffer);
   }
 
  private:
@@ -491,10 +491,8 @@ void vformat_to(basic_memory_buffer<Char>& buf, const text_style& ts,
         internal::make_background_color<Char>(ts.get_background());
     buf.append(background.begin(), background.end());
   }
-  vformat_to(buf, format_str, args);
-  if (has_style) {
-    internal::reset_color<Char>(buf);
-  }
+  internal::vformat_to(buf, format_str, args);
+  if (has_style) internal::reset_color<Char>(buf);
 }
 }  // namespace internal
 
@@ -540,7 +538,7 @@ void print(const text_style& ts, const S& format_str, const Args&... args) {
 template <typename S, typename Char = char_t<S>>
 inline std::basic_string<Char> vformat(
     const text_style& ts, const S& format_str,
-    basic_format_args<buffer_context<Char>> args) {
+    basic_format_args<buffer_context<type_identity_t<Char>>> args) {
   basic_memory_buffer<Char> buf;
   internal::vformat_to(buf, ts, to_string_view(format_str), args);
   return fmt::to_string(buf);
@@ -562,7 +560,7 @@ template <typename S, typename... Args, typename Char = char_t<S>>
 inline std::basic_string<Char> format(const text_style& ts, const S& format_str,
                                       const Args&... args) {
   return vformat(ts, to_string_view(format_str),
-                 {internal::make_args_checked<Args...>(format_str, args...)});
+                 internal::make_args_checked<Args...>(format_str, args...));
 }
 
 FMT_END_NAMESPACE

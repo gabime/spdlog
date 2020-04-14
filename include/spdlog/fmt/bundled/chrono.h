@@ -8,13 +8,13 @@
 #ifndef FMT_CHRONO_H_
 #define FMT_CHRONO_H_
 
-#include "format.h"
-#include "locale.h"
-
 #include <chrono>
 #include <ctime>
 #include <locale>
 #include <sstream>
+
+#include "format.h"
+#include "locale.h"
 
 FMT_BEGIN_NAMESPACE
 
@@ -495,12 +495,12 @@ FMT_CONSTEXPR const Char* parse_chrono_format(const Char* begin,
       handler.on_text(ptr - 1, ptr);
       break;
     case 'n': {
-      const char newline[] = "\n";
+      const Char newline[] = {'\n'};
       handler.on_text(newline, newline + 1);
       break;
     }
     case 't': {
-      const char tab[] = "\t";
+      const Char tab[] = {'\t'};
       handler.on_text(tab, tab + 1);
       break;
     }
@@ -759,18 +759,30 @@ inline std::chrono::duration<Rep, std::milli> get_milliseconds(
   return std::chrono::duration<Rep, std::milli>(static_cast<Rep>(ms));
 }
 
-template <typename Rep, typename OutputIt>
-OutputIt format_chrono_duration_value(OutputIt out, Rep val, int precision) {
-  if (precision >= 0) return format_to(out, "{:.{}f}", val, precision);
-  return format_to(out, std::is_floating_point<Rep>::value ? "{:g}" : "{}",
+template <typename Char, typename Rep, typename OutputIt>
+OutputIt format_duration_value(OutputIt out, Rep val, int precision) {
+  const Char pr_f[] = {'{', ':', '.', '{', '}', 'f', '}', 0};
+  if (precision >= 0) return format_to(out, pr_f, val, precision);
+  const Char fp_f[] = {'{', ':', 'g', '}', 0};
+  const Char format[] = {'{', '}', 0};
+  return format_to(out, std::is_floating_point<Rep>::value ? fp_f : format,
                    val);
 }
 
-template <typename Period, typename OutputIt>
-static OutputIt format_chrono_duration_unit(OutputIt out) {
-  if (const char* unit = get_units<Period>()) return format_to(out, "{}", unit);
-  if (Period::den == 1) return format_to(out, "[{}]s", Period::num);
-  return format_to(out, "[{}/{}]s", Period::num, Period::den);
+template <typename Char, typename Period, typename OutputIt>
+OutputIt format_duration_unit(OutputIt out) {
+  if (const char* unit = get_units<Period>()) {
+    string_view s(unit);
+    if (const_check(std::is_same<Char, wchar_t>())) {
+      utf8_to_utf16 u(s);
+      return std::copy(u.c_str(), u.c_str() + u.size(), out);
+    }
+    return std::copy(s.begin(), s.end(), out);
+  }
+  const Char num_f[] = {'[', '{', '}', ']', 's', 0};
+  if (Period::den == 1) return format_to(out, num_f, Period::num);
+  const Char num_def_f[] = {'[', '{', '}', '/', '{', '}', ']', 's', 0};
+  return format_to(out, num_def_f, Period::num, Period::den);
 }
 
 template <typename FormatContext, typename OutputIt, typename Rep,
@@ -871,13 +883,13 @@ struct chrono_formatter {
   void write_pinf() { std::copy_n("inf", 3, out); }
   void write_ninf() { std::copy_n("-inf", 4, out); }
 
-  void format_localized(const tm& time, const char* format) {
+  void format_localized(const tm& time, char format, char modifier = 0) {
     if (isnan(val)) return write_nan();
     auto locale = context.locale().template get<std::locale>();
     auto& facet = std::use_facet<std::time_put<char_type>>(locale);
     std::basic_ostringstream<char_type> os;
     os.imbue(locale);
-    facet.put(os, os, ' ', &time, format, format + std::strlen(format));
+    facet.put(os, os, ' ', &time, format, modifier);
     auto str = os.str();
     std::copy(str.begin(), str.end(), out);
   }
@@ -907,7 +919,7 @@ struct chrono_formatter {
     if (ns == numeric_system::standard) return write(hour(), 2);
     auto time = tm();
     time.tm_hour = to_nonnegative_int(hour(), 24);
-    format_localized(time, "%OH");
+    format_localized(time, 'H', 'O');
   }
 
   void on_12_hour(numeric_system ns) {
@@ -916,7 +928,7 @@ struct chrono_formatter {
     if (ns == numeric_system::standard) return write(hour12(), 2);
     auto time = tm();
     time.tm_hour = to_nonnegative_int(hour12(), 12);
-    format_localized(time, "%OI");
+    format_localized(time, 'I', 'O');
   }
 
   void on_minute(numeric_system ns) {
@@ -925,7 +937,7 @@ struct chrono_formatter {
     if (ns == numeric_system::standard) return write(minute(), 2);
     auto time = tm();
     time.tm_min = to_nonnegative_int(minute(), 60);
-    format_localized(time, "%OM");
+    format_localized(time, 'M', 'O');
   }
 
   void on_second(numeric_system ns) {
@@ -950,13 +962,12 @@ struct chrono_formatter {
     }
     auto time = tm();
     time.tm_sec = to_nonnegative_int(second(), 60);
-    format_localized(time, "%OS");
+    format_localized(time, 'S', 'O');
   }
 
   void on_12_hour_time() {
     if (handle_nan_inf()) return;
-
-    format_localized(time(), "%r");
+    format_localized(time(), 'r');
   }
 
   void on_24_hour_time() {
@@ -980,16 +991,18 @@ struct chrono_formatter {
 
   void on_am_pm() {
     if (handle_nan_inf()) return;
-    format_localized(time(), "%p");
+    format_localized(time(), 'p');
   }
 
   void on_duration_value() {
     if (handle_nan_inf()) return;
     write_sign();
-    out = format_chrono_duration_value(out, val, precision);
+    out = format_duration_value<char_type>(out, val, precision);
   }
 
-  void on_duration_unit() { out = format_chrono_duration_unit<Period>(out); }
+  void on_duration_unit() {
+    out = format_duration_unit<char_type, Period>(out);
+  }
 };
 }  // namespace internal
 
@@ -1024,7 +1037,7 @@ struct formatter<std::chrono::duration<Rep, Period>, Char> {
     }
 
     void on_error(const char* msg) { FMT_THROW(format_error(msg)); }
-    void on_fill(Char fill) { f.specs.fill[0] = fill; }
+    void on_fill(basic_string_view<Char> fill) { f.specs.fill = fill; }
     void on_align(align_t align) { f.specs.align = align; }
     void on_width(int width) { f.specs.width = width; }
     void on_precision(int _precision) { f.precision = _precision; }
@@ -1088,8 +1101,8 @@ struct formatter<std::chrono::duration<Rep, Period>, Char> {
     internal::handle_dynamic_spec<internal::precision_checker>(
         precision, precision_ref, ctx);
     if (begin == end || *begin == '}') {
-      out = internal::format_chrono_duration_value(out, d.count(), precision);
-      internal::format_chrono_duration_unit<Period>(out);
+      out = internal::format_duration_value<Char>(out, d.count(), precision);
+      internal::format_duration_unit<Char, Period>(out);
     } else {
       internal::chrono_formatter<FormatContext, decltype(out), Rep, Period> f(
           ctx, out, d);

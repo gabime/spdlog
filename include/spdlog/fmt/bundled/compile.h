@@ -9,6 +9,7 @@
 #define FMT_COMPILE_H_
 
 #include <vector>
+
 #include "format.h"
 
 FMT_BEGIN_NAMESPACE
@@ -350,6 +351,8 @@ template <int N, typename... Args> struct get_type_impl<N, type_list<Args...>> {
 template <int N, typename T>
 using get_type = typename get_type_impl<N, T>::type;
 
+template <typename T> struct is_compiled_format : std::false_type {};
+
 template <typename Char> struct text {
   basic_string_view<Char> data;
   using char_type = Char;
@@ -360,6 +363,9 @@ template <typename Char> struct text {
     return copy_str<Char>(data.begin(), data.end(), out);
   }
 };
+
+template <typename Char>
+struct is_compiled_format<text<Char>> : std::true_type {};
 
 template <typename Char>
 constexpr text<Char> make_text(basic_string_view<Char> s, size_t pos,
@@ -406,6 +412,9 @@ template <typename Char, typename T, int N> struct field {
   }
 };
 
+template <typename Char, typename T, int N>
+struct is_compiled_format<field<Char, T, N>> : std::true_type {};
+
 template <typename L, typename R> struct concat {
   L lhs;
   R rhs;
@@ -417,6 +426,9 @@ template <typename L, typename R> struct concat {
     return rhs.format(out, args...);
   }
 };
+
+template <typename L, typename R>
+struct is_compiled_format<concat<L, R>> : std::true_type {};
 
 template <typename L, typename R>
 constexpr concat<L, R> make_concat(L lhs, R rhs) {
@@ -508,8 +520,7 @@ constexpr auto compile(S format_str) {
 
 template <typename CompiledFormat, typename... Args,
           typename Char = typename CompiledFormat::char_type,
-          FMT_ENABLE_IF(!std::is_base_of<internal::basic_compiled_format,
-                                         CompiledFormat>::value)>
+          FMT_ENABLE_IF(internal::is_compiled_format<CompiledFormat>::value)>
 std::basic_string<Char> format(const CompiledFormat& cf, const Args&... args) {
   basic_memory_buffer<Char> buffer;
   cf.format(std::back_inserter(buffer), args...);
@@ -517,8 +528,7 @@ std::basic_string<Char> format(const CompiledFormat& cf, const Args&... args) {
 }
 
 template <typename OutputIt, typename CompiledFormat, typename... Args,
-          FMT_ENABLE_IF(!std::is_base_of<internal::basic_compiled_format,
-                                         CompiledFormat>::value)>
+          FMT_ENABLE_IF(internal::is_compiled_format<CompiledFormat>::value)>
 OutputIt format_to(OutputIt out, const CompiledFormat& cf,
                    const Args&... args) {
   return cf.format(out, args...);
@@ -549,7 +559,7 @@ std::basic_string<Char> format(const CompiledFormat& cf, const Args&... args) {
   using range = buffer_range<Char>;
   using context = buffer_context<Char>;
   internal::cf::vformat_to<context>(range(buffer), cf,
-                                    {make_format_args<context>(args...)});
+                                    make_format_args<context>(args...));
   return to_string(buffer);
 }
 
@@ -561,8 +571,8 @@ OutputIt format_to(OutputIt out, const CompiledFormat& cf,
   using char_type = typename CompiledFormat::char_type;
   using range = internal::output_range<OutputIt, char_type>;
   using context = format_context_t<OutputIt, char_type>;
-  return internal::cf::vformat_to<context>(
-      range(out), cf, {make_format_args<context>(args...)});
+  return internal::cf::vformat_to<context>(range(out), cf,
+                                           make_format_args<context>(args...));
 }
 
 template <typename OutputIt, typename CompiledFormat, typename... Args,

@@ -12,7 +12,9 @@
 #ifndef FMT_RANGES_H_
 #define FMT_RANGES_H_
 
+#include <initializer_list>
 #include <type_traits>
+
 #include "format.h"
 
 // output only up to N items from the range.
@@ -104,10 +106,7 @@ struct is_range_<
 /// tuple_size and tuple_element check.
 template <typename T> class is_tuple_like_ {
   template <typename U>
-  static auto check(U* p)
-      -> decltype(std::tuple_size<U>::value,
-                  (void)std::declval<typename std::tuple_element<0, U>::type>(),
-                  int());
+  static auto check(U* p) -> decltype(std::tuple_size<U>::value, int());
   template <typename> static void check(...);
 
  public:
@@ -358,6 +357,29 @@ template <typename... T>
 FMT_CONSTEXPR tuple_arg_join<wchar_t, T...> join(const std::tuple<T...>& tuple,
                                                  wstring_view sep) {
   return {tuple, sep};
+}
+
+/**
+  \rst
+  Returns an object that formats `initializer_list` with elements separated by
+  `sep`.
+
+  **Example**::
+
+    fmt::print("{}", fmt::join({1, 2, 3}, ", "));
+    // Output: "1, 2, 3"
+  \endrst
+ */
+template <typename T>
+arg_join<internal::iterator_t<const std::initializer_list<T>>, char> join(
+    std::initializer_list<T> list, string_view sep) {
+  return join(std::begin(list), std::end(list), sep);
+}
+
+template <typename T>
+arg_join<internal::iterator_t<const std::initializer_list<T>>, wchar_t> join(
+    std::initializer_list<T> list, wstring_view sep) {
+  return join(std::begin(list), std::end(list), sep);
 }
 
 FMT_END_NAMESPACE

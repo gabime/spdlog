@@ -28,7 +28,7 @@ template <bool IsSigned> struct int_checker {
 
 template <> struct int_checker<true> {
   template <typename T> static bool fits_in_int(T value) {
-    return value >= std::numeric_limits<int>::min() &&
+    return value >= (std::numeric_limits<int>::min)() &&
            value <= max_value<int>();
   }
   static bool fits_in_int(int) { return true; }
@@ -303,6 +303,8 @@ class printf_arg_formatter : public internal::arg_formatter_base<Range> {
 };
 
 template <typename T> struct printf_formatter {
+  printf_formatter() = delete;
+
   template <typename ParseContext>
   auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
     return ctx.begin();
@@ -320,6 +322,7 @@ template <typename OutputIt, typename Char> class basic_printf_context {
  public:
   /** The character type for the output. */
   using char_type = Char;
+  using iterator = OutputIt;
   using format_arg = basic_format_arg<basic_printf_context>;
   template <typename T> using formatter_type = printf_formatter<T>;
 
@@ -354,6 +357,8 @@ template <typename OutputIt, typename Char> class basic_printf_context {
 
   OutputIt out() { return out_; }
   void advance_to(OutputIt it) { out_ = it; }
+
+  internal::locale_ref locale() { return {}; }
 
   format_arg arg(int id) const { return args_.get(id); }
 
@@ -406,8 +411,9 @@ basic_printf_context<OutputIt, Char>::get_arg(int arg_index) {
 }
 
 template <typename OutputIt, typename Char>
-int basic_printf_context<OutputIt, Char>::parse_header(
-    const Char*& it, const Char* end, format_specs& specs) {
+int basic_printf_context<OutputIt, Char>::parse_header(const Char*& it,
+                                                       const Char* end,
+                                                       format_specs& specs) {
   int arg_index = -1;
   char_type c = *it;
   if (c >= '0' && c <= '9') {
@@ -476,8 +482,8 @@ OutputIt basic_printf_context<OutputIt, Char>::format() {
         specs.precision = parse_nonnegative_int(it, end, eh);
       } else if (c == '*') {
         ++it;
-        specs.precision =
-            static_cast<int>(visit_format_arg(internal::printf_precision_handler(), get_arg()));
+        specs.precision = static_cast<int>(
+            visit_format_arg(internal::printf_precision_handler(), get_arg()));
       } else {
         specs.precision = 0;
       }
@@ -596,7 +602,8 @@ inline format_arg_store<wprintf_context, Args...> make_wprintf_args(
 
 template <typename S, typename Char = char_t<S>>
 inline std::basic_string<Char> vsprintf(
-    const S& format, basic_format_args<basic_printf_context_t<Char>> args) {
+    const S& format,
+    basic_format_args<basic_printf_context_t<type_identity_t<Char>>> args) {
   basic_memory_buffer<Char> buffer;
   printf(buffer, to_string_view(format), args);
   return to_string(buffer);
@@ -615,12 +622,13 @@ template <typename S, typename... Args,
           typename Char = enable_if_t<internal::is_string<S>::value, char_t<S>>>
 inline std::basic_string<Char> sprintf(const S& format, const Args&... args) {
   using context = basic_printf_context_t<Char>;
-  return vsprintf(to_string_view(format), {make_format_args<context>(args...)});
+  return vsprintf(to_string_view(format), make_format_args<context>(args...));
 }
 
 template <typename S, typename Char = char_t<S>>
-inline int vfprintf(std::FILE* f, const S& format,
-                    basic_format_args<basic_printf_context_t<Char>> args) {
+inline int vfprintf(
+    std::FILE* f, const S& format,
+    basic_format_args<basic_printf_context_t<type_identity_t<Char>>> args) {
   basic_memory_buffer<Char> buffer;
   printf(buffer, to_string_view(format), args);
   std::size_t size = buffer.size();
@@ -643,12 +651,13 @@ template <typename S, typename... Args,
 inline int fprintf(std::FILE* f, const S& format, const Args&... args) {
   using context = basic_printf_context_t<Char>;
   return vfprintf(f, to_string_view(format),
-                  {make_format_args<context>(args...)});
+                  make_format_args<context>(args...));
 }
 
 template <typename S, typename Char = char_t<S>>
-inline int vprintf(const S& format,
-                   basic_format_args<basic_printf_context_t<Char>> args) {
+inline int vprintf(
+    const S& format,
+    basic_format_args<basic_printf_context_t<type_identity_t<Char>>> args) {
   return vfprintf(stdout, to_string_view(format), args);
 }
 
@@ -666,12 +675,13 @@ template <typename S, typename... Args,
 inline int printf(const S& format_str, const Args&... args) {
   using context = basic_printf_context_t<char_t<S>>;
   return vprintf(to_string_view(format_str),
-                 {make_format_args<context>(args...)});
+                 make_format_args<context>(args...));
 }
 
 template <typename S, typename Char = char_t<S>>
-inline int vfprintf(std::basic_ostream<Char>& os, const S& format,
-                    basic_format_args<basic_printf_context_t<Char>> args) {
+inline int vfprintf(
+    std::basic_ostream<Char>& os, const S& format,
+    basic_format_args<basic_printf_context_t<type_identity_t<Char>>> args) {
   basic_memory_buffer<Char> buffer;
   printf(buffer, to_string_view(format), args);
   internal::write(os, buffer);
@@ -682,9 +692,9 @@ inline int vfprintf(std::basic_ostream<Char>& os, const S& format,
 template <typename ArgFormatter, typename Char,
           typename Context =
               basic_printf_context<typename ArgFormatter::iterator, Char>>
-typename ArgFormatter::iterator vprintf(internal::buffer<Char>& out,
-                                        basic_string_view<Char> format_str,
-                                        basic_format_args<Context> args) {
+typename ArgFormatter::iterator vprintf(
+    internal::buffer<Char>& out, basic_string_view<Char> format_str,
+    basic_format_args<type_identity_t<Context>> args) {
   typename ArgFormatter::iterator iter(out);
   Context(iter, format_str, args).template format<ArgFormatter>();
   return iter;
@@ -704,7 +714,7 @@ inline int fprintf(std::basic_ostream<Char>& os, const S& format_str,
                    const Args&... args) {
   using context = basic_printf_context_t<Char>;
   return vfprintf(os, to_string_view(format_str),
-                  {make_format_args<context>(args...)});
+                  make_format_args<context>(args...));
 }
 FMT_END_NAMESPACE
 
