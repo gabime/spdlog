@@ -74,6 +74,25 @@ public:
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
     template<typename... Args>
+    void log(log_clock::time_point &log_time, source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
+    {
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
+        {
+            return;
+        }
+        SPDLOG_TRY
+        {
+            memory_buf_t buf;
+            fmt::format_to(buf, fmt, args...);
+            details::log_msg log_msg(log_time, loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            log_it_(log_msg, log_enabled, traceback_enabled);
+        }
+        SPDLOG_LOGGER_CATCH()
+    }
+
+    template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
     {
         bool log_enabled = should_log(lvl);
@@ -142,9 +161,29 @@ public:
 
     // T can be statically converted to string_view
     template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
+    void log(log_clock::time_point &log_time, source_loc loc, level::level_enum lvl, const T &msg)
+    {
+        log(log_time, loc, lvl, string_view_t{msg});
+    }
+
+    // T can be statically converted to string_view
+    template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         log(loc, lvl, string_view_t{msg});
+    }
+
+    void log(log_clock::time_point &log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
+    {
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
+        {
+            return;
+        }
+
+        details::log_msg log_msg(log_time, loc, name_, lvl, msg);
+        log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
     void log(source_loc loc, level::level_enum lvl, string_view_t msg)
@@ -163,6 +202,15 @@ public:
     void log(level::level_enum lvl, string_view_t msg)
     {
         log(source_loc{}, lvl, msg);
+    }
+
+    // T cannot be statically converted to string_view or wstring_view
+    template<class T, typename std::enable_if<!std::is_convertible<const T &, spdlog::string_view_t>::value &&
+                                                  !is_convertible_to_wstring_view<const T &>::value,
+                          T>::type * = nullptr>
+    void log(log_clock::time_point &log_time, source_loc loc, level::level_enum lvl, const T &msg)
+    {
+        log(log_time, loc, lvl, "{}", msg);
     }
 
     // T cannot be statically converted to string_view or wstring_view
@@ -214,6 +262,29 @@ public:
 #ifndef _WIN32
 #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
 #else
+
+    template<typename... Args>
+    void log(log_clock::time_point &log_time, source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
+    {
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
+        {
+            return;
+        }
+        SPDLOG_TRY
+        {
+            // format to wmemory_buffer and convert to utf8
+            fmt::wmemory_buffer wbuf;
+            fmt::format_to(wbuf, fmt, args...);
+
+            memory_buf_t buf;
+            details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
+            details::log_msg log_msg(log_time, loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            log_it_(log_msg, log_enabled, traceback_enabled);
+        }
+        SPDLOG_LOGGER_CATCH()
+    }
 
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
@@ -278,6 +349,27 @@ public:
     void critical(wstring_view_t fmt, const Args &... args)
     {
         log(level::critical, fmt, args...);
+    }
+
+    // T can be statically converted to wstring_view
+    template<class T, typename std::enable_if<is_convertible_to_wstring_view<const T &>::value, T>::type * = nullptr>
+    void log(log_clock::time_point &log_time, source_loc loc, level::level_enum lvl, const T &msg)
+    {
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
+        {
+            return;
+        }
+
+        SPDLOG_TRY
+        {
+            memory_buf_t buf;
+            details::os::wstr_to_utf8buf(msg, buf);
+            details::log_msg log_msg(log_time, loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            log_it_(log_msg, log_enabled, traceback_enabled);
+        }
+        SPDLOG_LOGGER_CATCH()
     }
 
     // T can be statically converted to wstring_view
