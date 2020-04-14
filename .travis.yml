@@ -30,14 +30,15 @@ addons: &clang35
       - ubuntu-toolchain-r-test
       - llvm-toolchain-precise-3.5
       
-# Clang 7.0
-addons: &clang70
-  apt:
-    packages:
-      - clang-7      
-    sources:
-      - ubuntu-toolchain-r-test
-      - llvm-toolchain-trusty-7
+
+addons: &clang90
+apt:
+  sources:
+    - ubuntu-toolchain-r-test
+    - sourceline: 'deb https://apt.llvm.org/xenial/ llvm-toolchain-xenial-9 main'
+      key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+  packages:
+    - clang-9
 
 
 
@@ -65,12 +66,11 @@ matrix:
       os: linux
       addons: *clang35
 
-      # Test clang-7.0: C++11, Build=Debug, ASAN=On
-    - env: CLANG_VERSION=7 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
-      dist: bionic      
-
+      # Test clang-9.0: C++11, Build=Debug, ASAN=On
+    - env: CLANG_VERSION=9 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
+    # Test clang-9.0: C++11, Build=Release, ASAN=On
     - env: CLANG_VERSION=7 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
-      dist: bionic
+
       
       # osx
     - env: BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
