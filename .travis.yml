@@ -69,7 +69,7 @@ matrix:
       # Test clang-9.0: C++11, Build=Debug, ASAN=On
     - env: CLANG_VERSION=9 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
     # Test clang-9.0: C++11, Build=Release, ASAN=On
-    - env: CLANG_VERSION=7 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
+    - env: CLANG_VERSION=9 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
 
       
       # osx
