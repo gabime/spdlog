@@ -31,17 +31,6 @@ addons: &clang35
       - llvm-toolchain-precise-3.5
       
 
-addons: &clang100
-apt:
-  sources:
-    - ubuntu-toolchain-r-test
-    - deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main
-    - sourceline: 'deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main'
-      key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
-  packages:
-    - clang-10
-
-
 
 matrix:
   include:
@@ -67,19 +56,6 @@ matrix:
       os: linux
       addons: *clang35
 
-      # Test clang-9.0: C++11, Build=Debug, ASAN=On
-    - env: CLANG_VERSION=9 BUILD_TYPE=Debug CPP=11 ASAN=On TSAN=Off
-      os: linux
-      dist: bionic
-      addons: *clang100
-
-    # Test clang-9.0: C++11, Build=Release, ASAN=Off
-    - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=11 ASAN=On TSAN=Off
-      os: linux
-      dist: bionic
-      addons: *clang900
-
-      
       # osx
     - env: BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
       os: osx
