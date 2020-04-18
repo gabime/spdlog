@@ -32,7 +32,8 @@ set(SPDLOG_UTESTS_SOURCES
   	test_stdout_api.cpp
 	test_backtrace.cpp
 	test_create_dir.cpp
-		test_cfg.cpp)
+	test_cfg.cpp
+	test_time_point.cpp)
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
 	list(APPEND SPDLOG_UTESTS_SOURCES test_errors.cpp)
