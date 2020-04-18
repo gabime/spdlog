@@ -71,12 +71,12 @@ matrix:
       os: osx
 
     # Test clang-10.0: C++11, Build=Debug/Release
-    - env: CLANG_VERSION=10.0 BUILD_TYPE=Debug CPP=11
+    - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=11
       os: linux
       dist: bionic
       addons: *clang10
 
-    - env: CLANG_VERSION=10.0 BUILD_TYPE=Release CPP=11
+    - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=11
       os: linux
       dist: bionic
       addons: *clang10
