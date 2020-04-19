@@ -147,6 +147,19 @@ public:
         log(loc, lvl, string_view_t{msg});
     }
 
+    void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
+    {
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
+        {
+            return;
+        }
+
+        details::log_msg log_msg(log_time, loc, name_, lvl, msg);
+        log_it_(log_msg, log_enabled, traceback_enabled);
+    }
+
     void log(source_loc loc, level::level_enum lvl, string_view_t msg)
     {
         bool log_enabled = should_log(lvl);
