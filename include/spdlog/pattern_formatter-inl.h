@@ -95,7 +95,10 @@ struct null_scoped_padder
     null_scoped_padder(size_t /*wrapped_size*/, const padding_info & /*padinfo*/, memory_buf_t & /*dest*/) {}
 
     template<typename T>
-    static unsigned int count_digits(T /* number */) { return 0;}
+    static unsigned int count_digits(T /* number */)
+    {
+        return 0;
+    }
 };
 
 template<typename ScopedPadder>
@@ -653,7 +656,6 @@ public:
     }
 };
 
-
 // Current pid
 template<typename ScopedPadder>
 class pid_formatter final : public flag_formatter
@@ -766,7 +768,7 @@ public:
         }
 
         size_t text_size;
-        if(padinfo_.enabled())
+        if (padinfo_.enabled())
         {
             // calc text size for padding based on "filename:line"
             text_size = std::char_traits<char>::length(msg.source.filename) + ScopedPadder::count_digits(msg.source.line) + 1;
@@ -899,7 +901,6 @@ public:
 private:
     log_clock::time_point last_message_time_;
 };
-
 
 // Full info formatter
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
