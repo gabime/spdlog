@@ -978,6 +978,8 @@ public:
             fmt_helper::append_string_view(filename, dest);
             dest.push_back(':');
             fmt_helper::append_int(msg.source.line, dest);
+            dest.push_back(':');
+            fmt_helper::append_string_view(msg.source.funcname, dest);
             dest.push_back(']');
             dest.push_back(' ');
         }
