@@ -136,7 +136,9 @@ void basic_logfile_example()
 void rotating_example()
 {
     // Create a file rotating logger with 5mb size max and 3 rotated files
-    auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
+    auto max_size = 1048576 * 5;
+    auot max_files = 3;
+    auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", max_size, max_files);
 }
 ```
 
