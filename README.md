@@ -341,7 +341,7 @@ void android_example()
 #### Load log levels from env variable or from argv
 ```c++
 #include "spdlog/cfg/env.h"
-void load_levels_example()
+int main (int argc, char *argv[])
 {
     // Set the log level to "info" and mylogger to to "trace":
     // SPDLOG_LEVEL=info,mylogger=trace && ./example
