@@ -86,20 +86,7 @@ int main()
 }
 
 ```
-#### Load log levels from env variable or from argv
-```c++
-#include "spdlog/cfg/env.h"
-void load_levels_example()
-{
-    // Set the log level to "info" and mylogger to to "trace":
-    // SPDLOG_LEVEL=info,mylogger=trace && ./example
-    spdlog::cfg::load_env_levels();
-    // or from command line:
-    // ./example SPDLOG_LEVEL=info,mylogger=trace
-    // #include "spdlog/cfg/argv.h" // for loading levels from argv
-    // spdlog::cfg::load_argv_levels(args, argv);
-}
-```
+---
 #### Create stdout/stderr logger object
 ```c++
 #include "spdlog/spdlog.h"
@@ -112,6 +99,7 @@ void stdout_example()
     spdlog::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name)");
 }
 ```
+
 ---
 #### Basic file logger
 ```c++
@@ -326,7 +314,6 @@ void err_handler_example()
 
 ```
 
-
 ---
 #### syslog 
 ```c++
@@ -347,6 +334,22 @@ void android_example()
     std::string tag = "spdlog-android";
     auto android_logger = spdlog::android_logger_mt("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
+}
+```
+
+---
+#### Load log levels from env variable or from argv
+```c++
+#include "spdlog/cfg/env.h"
+void load_levels_example()
+{
+    // Set the log level to "info" and mylogger to to "trace":
+    // SPDLOG_LEVEL=info,mylogger=trace && ./example
+    spdlog::cfg::load_env_levels();
+    // or from command line:
+    // ./example SPDLOG_LEVEL=info,mylogger=trace
+    // #include "spdlog/cfg/argv.h" // for loading levels from argv
+    // spdlog::cfg::load_argv_levels(args, argv);
 }
 ```
 
