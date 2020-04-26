@@ -108,7 +108,7 @@ void basic_logfile_example()
 {
     try 
     {
-        auto my_logger = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
+        auto logger = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
     }
     catch (const spdlog::spdlog_ex &ex)
     {
@@ -137,7 +137,7 @@ void rotating_example()
 void daily_example()
 {
     // Create a daily logger - a new file is created every day on 2:30am
-    auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
+    auto logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
 }
 
 ```
