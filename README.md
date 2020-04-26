@@ -353,6 +353,7 @@ void load_levels_example()
 }
 ```
 
+---
 ## Benchmarks
 
 Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/bench.cpp) done in Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
