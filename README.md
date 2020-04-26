@@ -37,7 +37,6 @@ $ cmake .. && make -j
 * Very fast (see [benchmarks](#benchmarks) below).
 * Headers only or compiled
 * Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
-* **New!** [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display later on demand.
 * Asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
@@ -50,7 +49,7 @@ $ cmake .. && make -j
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Log filtering - log levels can be modified in runtime as well as in compile time.
 * Support for loading log levels from argv or from environment var.
-
+* [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display later on demand.
  
 ## Usage samples
 
