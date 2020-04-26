@@ -35,7 +35,7 @@ $ cmake .. && make -j
 
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).
-* Headers only or compiled version
+* Headers only or compiled
 * Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * **New!** [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display later on demand.
 * Asynchronous mode (optional)
