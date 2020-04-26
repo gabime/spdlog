@@ -339,18 +339,21 @@ void android_example()
 
 ---
 #### Load log levels from env variable or from argv
+
 ```c++
 #include "spdlog/cfg/env.h"
 int main (int argc, char *argv[])
 {
-    // Set the log level to "info" and mylogger to to "trace":
-    // SPDLOG_LEVEL=info,mylogger=trace && ./example
     spdlog::cfg::load_env_levels();
     // or from command line:
     // ./example SPDLOG_LEVEL=info,mylogger=trace
     // #include "spdlog/cfg/argv.h" // for loading levels from argv
     // spdlog::cfg::load_argv_levels(args, argv);
 }
+```
+
+```console
+export SPDLOG_LEVEL=info,mylogger=trace && ./example
 ```
 
 ---
