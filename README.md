@@ -351,9 +351,11 @@ int main (int argc, char *argv[])
     // spdlog::cfg::load_argv_levels(args, argv);
 }
 ```
+And then:
 
 ```console
-export SPDLOG_LEVEL=info,mylogger=trace && ./example
+export SPDLOG_LEVEL=info,mylogger=trace
+./example
 ```
 
 ---
