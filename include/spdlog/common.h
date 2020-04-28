@@ -27,11 +27,11 @@
 #define SPDLOG_API
 #endif
 #define SPDLOG_INLINE
-#else
+#else // !defined(_WIN32) || !defined(SPDLOG_SHARED_LIB)
 #define SPDLOG_API
 #define SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE inline
-#endif
+#endif // #ifdef SPDLOG_COMPILED_LIB
 
 #include <spdlog/fmt/fmt.h>
 
