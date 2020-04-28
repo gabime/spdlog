@@ -23,7 +23,7 @@
 #else
 #define SPDLOG_API __declspec(dllimport)
 #endif
-#else  // !defined(_WIN32) || !defined(SPDLOG_SHARED_LIB)
+#else // !defined(_WIN32) || !defined(SPDLOG_SHARED_LIB)
 #define SPDLOG_API
 #endif
 #define SPDLOG_INLINE
