@@ -5,21 +5,31 @@ environment:
   - GENERATOR: '"Visual Studio 14 2015"'
     BUILD_TYPE: Debug
     WCHAR: 'OFF'
+    BUILD_SHARED: 'OFF'
   - GENERATOR: '"Visual Studio 14 2015"'
     BUILD_TYPE: Release
     WCHAR: 'ON'
+    BUILD_SHARED: 'OFF'
   - GENERATOR: '"Visual Studio 14 2015 Win64"'
     BUILD_TYPE: Debug
     WCHAR: 'ON'
+    BUILD_SHARED: 'OFF'
   - GENERATOR: '"Visual Studio 14 2015 Win64"'
     BUILD_TYPE: Release
     WCHAR: 'ON'
+    BUILD_SHARED: 'OFF'
   - GENERATOR: '"Visual Studio 15 2017 Win64"'
     BUILD_TYPE: Debug
     WCHAR: 'ON'
+    BUILD_SHARED: 'OFF'
   - GENERATOR: '"Visual Studio 15 2017 Win64"'
     BUILD_TYPE: Release
-    WCHAR: 'OFf'
+    WCHAR: 'OFF'
+    BUILD_SHARED: 'OFF'
+  - GENERATOR: '"Visual Studio 15 2017 Win64"'
+    BUILD_TYPE: Release
+    WCHAR: 'OFF'
+    BUILD_SHARED: 'ON'
 build_script:
 - cmd: >-
     set
@@ -28,11 +38,11 @@ build_script:
     
     cd build 
 
-    set PATH=%PATH%:C:\Program Files\Git\usr\bin
+    set PATH=%PATH%:C:\Program Files\Git\usr\bin:.
     
-    cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DSPDLOG_WCHAR_SUPPORT=%WCHAR% -DSPDLOG_BUILD_EXAMPLE=ON -DSPDLOG_BUILD_EXAMPLE_HO=ON -DSPDLOG_BUILD_TESTS=ON -DSPDLOG_BUILD_TESTS_HO=OFF -DSPDLOG_ENABLE_WARNINGS=ON
+    cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DSPDLOG_WCHAR_SUPPORT=%WCHAR% -DSPDLOG_BUILD_SHARED=%BUILD_SHARED% -DSPDLOG_BUILD_EXAMPLE=ON -DSPDLOG_BUILD_EXAMPLE_HO=ON -DSPDLOG_BUILD_TESTS=ON -DSPDLOG_BUILD_TESTS_HO=OFF -DSPDLOG_ENABLE_WARNINGS=ON
 
     cmake --build . --config %BUILD_TYPE%
 
 test_script:
-- ctest -VV -C "%BUILD_TYPE%"
+  - ctest -VV -C "%BUILD_TYPE%"
