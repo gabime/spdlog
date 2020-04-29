@@ -45,7 +45,7 @@ build_script:
       cmake --build . --config %BUILD_TYPE%
 
 before_test:
-  - set PATH=%PATH%:.\%BUILD_TYPE%
+  - set PATH=%PATH%:C:\projects\spdlog\build\%BUILD_TYPE%
   
 test_script:
   - ctest -VV -C "%BUILD_TYPE%"
