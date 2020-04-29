@@ -38,14 +38,14 @@ build_script:
 
       cd build
 
-      set PATH=%PATH%:C:\Program Files\Git\usr\bin
+      set PATH=%PATH%;C:\Program Files\Git\usr\bin
 
       cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DSPDLOG_WCHAR_SUPPORT=%WCHAR% -DSPDLOG_BUILD_SHARED=%BUILD_SHARED% -DSPDLOG_BUILD_EXAMPLE=ON -DSPDLOG_BUILD_EXAMPLE_HO=ON -DSPDLOG_BUILD_TESTS=ON -DSPDLOG_BUILD_TESTS_HO=OFF -DSPDLOG_ENABLE_WARNINGS=ON
 
       cmake --build . --config %BUILD_TYPE%
 
 before_test:
-  - set PATH=%PATH%:C:\projects\spdlog\build\%BUILD_TYPE%
+  - set PATH=%PATH%;C:\projects\spdlog\build\%BUILD_TYPE%
   
 test_script:
   - C:\projects\spdlog\build\tests\%BUILD_TYPE%\spdlog-utests.exe
