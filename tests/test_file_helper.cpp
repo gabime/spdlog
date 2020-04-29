@@ -44,7 +44,7 @@ TEST_CASE("file_helper_reopen", "[file_helper::reopen()]]")
     file_helper helper;
     helper.open(target_filename);
     write_with_helper(helper, 12);
-    REQUIRE(helper.size() == 13);
+    REQUIRE(helper.size() == 12);
     helper.reopen(true);
     REQUIRE(helper.size() == 0);
 }
