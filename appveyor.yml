@@ -48,4 +48,4 @@ before_test:
   - set PATH=%PATH%:C:\projects\spdlog\build\%BUILD_TYPE%
   
 test_script:
-  - ctest -VV -C "%BUILD_TYPE%"
+  - C:\projects\spdlog\build\tests\%BUILD_TYPE%\spdlog-utests.exe
