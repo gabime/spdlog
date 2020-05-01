@@ -9,7 +9,7 @@ namespace spdlog {
 namespace details {
 
 // Extend log_msg with internal buffer to store its payload.
-// THis is needed since log_msg holds string_views that points to stack data.
+// This is needed since log_msg holds string_views that points to stack data.
 
 class SPDLOG_API log_msg_buffer : public log_msg
 {
