@@ -412,7 +412,7 @@ SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT
 #endif
 }
 
-// Detrmine if the terminal attached
+// Determine if the terminal attached
 // Source: https://github.com/agauniyal/rang/
 SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
 {

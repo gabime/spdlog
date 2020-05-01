@@ -388,7 +388,7 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 [info] daily_mt         Elapsed: 0.61 secs        1,638,305/sec
 [info] null_mt          Elapsed: 0.16 secs        6,272,758/sec
 ```
-#### ASynchronous mode
+#### Asynchronous mode
 ```
 [info] -------------------------------------------------
 [info] Messages     : 1,000,000
