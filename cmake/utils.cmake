@@ -45,7 +45,6 @@ function(spdlog_enable_warnings target_name)
               -Wfatal-errors>
               $<$<CXX_COMPILER_ID:MSVC>:${MSVC_OPTIONS}>)
   endif()
-
 endfunction()
 
 # Enable address sanitizer (gcc/clang only)
