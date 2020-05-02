@@ -109,8 +109,4 @@ script:
       
   - make VERBOSE=1 -j2
   - ctest -j2 --output-on-failure
-
-
-
-notifications:
-  email: false
+  
