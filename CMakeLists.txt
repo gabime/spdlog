@@ -43,7 +43,7 @@ endif()
 set(CMAKE_CXX_EXTENSIONS  OFF)
 
 if(CMAKE_SYSTEM_NAME MATCHES "CYGWIN")
-	set(CMAKE_CXX_EXTENSIONS ON)
+    set(CMAKE_CXX_EXTENSIONS ON)
 endif()
 
 
@@ -109,7 +109,7 @@ option(SPDLOG_NO_TLS "prevent spdlog from using thread local storage" OFF)
 option(SPDLOG_NO_ATOMIC_LEVELS "prevent spdlog from using of std::atomic log levels (use only if your code never modifies log levels concurrently" OFF)
 
 # clang-tidy
-if(${CMAKE_VERSION} VERSION_GREATER "3.5") 
+if(${CMAKE_VERSION} VERSION_GREATER "3.5")
     option(SPDLOG_TIDY "run clang-tidy" OFF)
 endif()
 
@@ -127,7 +127,7 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 set(SPDLOG_SRCS
         src/spdlog.cpp
         src/stdout_sinks.cpp
-        src/color_sinks.cpp 
+        src/color_sinks.cpp
         src/file_sinks.cpp
         src/async.cpp
         src/cfg.cpp)
@@ -145,7 +145,7 @@ if (SPDLOG_BUILD_SHARED)
     target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED_LIB)
     if(WIN32)
         target_compile_options(spdlog PUBLIC /wd4251 /wd4275)
-	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)        
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)
     endif()
     if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
         target_compile_definitions(spdlog PRIVATE FMT_EXPORT PUBLIC FMT_SHARED)
@@ -209,19 +209,19 @@ endif()
 # Misc definitions according to tweak options
 #---------------------------------------------------------------------------------------
 if(SPDLOG_WCHAR_SUPPORT)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
  endif()
 
  if(SPDLOG_WCHAR_FILENAMES)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_FILENAMES)
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_FILENAMES)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_FILENAMES)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_FILENAMES)
  endif()
 
  if(SPDLOG_NO_EXCEPTIONS)
-	target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)	
+    target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)
 
-	target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)
 
     if(NOT MSVC)
         target_compile_options(spdlog PRIVATE -fno-exceptions)
