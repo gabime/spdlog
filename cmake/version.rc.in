@@ -21,7 +21,7 @@ BEGIN
     BLOCK "StringFileInfo"
     BEGIN
         BLOCK "040904b0"
-        BEGIN            
+        BEGIN
             VALUE "FileDescription", "spdlog dll\0"
             VALUE "FileVersion", "@SPDLOG_VERSION@.0\0"
             VALUE "InternalName", "spdlog.dll\0"
