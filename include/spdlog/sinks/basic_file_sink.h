@@ -21,14 +21,15 @@ class basic_file_sink final : public base_sink<Mutex>
 {
 public:
     explicit basic_file_sink(const filename_t &filename, bool truncate = false);
-    const filename_t &filename() const;
+    explicit basic_file_sink(const filename_t &filename, bool truncate , file_event_handlers);
+    const filename_t &filename() const;    
 
 protected:
     void sink_it_(const details::log_msg &msg) override;
     void flush_() override;
 
 private:
-    details::file_helper file_helper_;
+    details::file_helper file_helper_;    
 };
 
 using basic_file_sink_mt = basic_file_sink<std::mutex>;

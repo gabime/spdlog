@@ -20,6 +20,10 @@
 namespace spdlog {
 namespace details {
 
+SPDLOG_INLINE file_helper::file_helper(file_event_handlers event_handlers)
+    : event_handlers_{std::move(event_handlers_)}
+{}
+
 SPDLOG_INLINE file_helper::~file_helper()
 {
     close();
@@ -37,6 +41,10 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
         os::create_dir(os::dir_name(fname));
         if (!os::fopen_s(&fd_, fname, mode))
         {
+            if (event_handlers_.after_open)
+            {
+                event_handlers_.after_open(filename_, fd_);
+            }
             return;
         }
 
@@ -64,8 +72,18 @@ SPDLOG_INLINE void file_helper::close()
 {
     if (fd_ != nullptr)
     {
+        if (event_handlers_.before_close)
+        {
+            event_handlers_.before_close(filename_, fd_);
+        }
+
         std::fclose(fd_);
         fd_ = nullptr;
+
+        if (event_handlers_.after_close)
+        {
+            event_handlers_.after_close(filename_);
+        }
     }
 }
 
