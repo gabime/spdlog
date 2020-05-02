@@ -1,5 +1,4 @@
-# Copyright(c) 2019 spdlog authors
-# Distributed under the MIT License (http://opensource.org/licenses/MIT)
+# Copyright(c) 2019 spdlog authors Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 cmake_minimum_required(VERSION 3.1)
 project(spdlog_bench CXX)
