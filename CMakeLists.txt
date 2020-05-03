@@ -125,7 +125,11 @@ target_include_directories(spdlog PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
-spdlog_enable_warnings(spdlog)
+
+option(SPDLOG_DISABLE_WARNINGS "Skip enabling warnings when building spdlog" off)
+if(NOT SPDLOG_DISABLE_WARNINGS)
+	spdlog_enable_warnings(spdlog)
+endif()
 
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR})
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
