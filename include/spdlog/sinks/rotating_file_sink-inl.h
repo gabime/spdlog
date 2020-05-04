@@ -25,14 +25,20 @@ namespace sinks {
 
 template<typename Mutex>
 SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
-    filename_t base_filename, std::size_t max_size, std::size_t max_files, bool rotate_on_open)
+    filename_t base_filename, std::size_t max_size, std::size_t max_files, bool rotate_on_open, uid_t uid, gid_t gid)
     : base_filename_(std::move(base_filename))
     , max_size_(max_size)
     , max_files_(max_files)
+	, uid_ (uid)
+	, gid_ (gid)
 {
     file_helper_.open(calc_filename(base_filename_, 0));
+
     current_size_ = file_helper_.size(); // expensive. called only once
-    if (rotate_on_open && current_size_ > 0)
+
+	set_file_ownership(calc_filename(base_filename_, 0));
+
+	if (rotate_on_open && current_size_ > 0)
     {
         rotate_();
     }
@@ -110,11 +116,16 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
             {
                 file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
                 current_size_ = 0;
-                throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
+                auto last_error = errno;
+                set_file_ownership(calc_filename(base_filename_, 0));
+                throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), last_error);
             }
         }
+
+		set_file_ownership(target);
     }
     file_helper_.reopen(true);
+    set_file_ownership(calc_filename(base_filename_, 0));
 }
 
 // delete the target if exists, and rename the src file  to target
@@ -125,6 +136,14 @@ SPDLOG_INLINE bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src
     // try to delete the target file in case it already exists.
     (void)details::os::remove(target_filename);
     return details::os::rename(src_filename, target_filename) == 0;
+}
+template<typename Mutex>
+SPDLOG_INLINE void rotating_file_sink<Mutex>::set_file_ownership(filename_t filename)
+{
+	if (chown(filename.data(), uid_, gid_) < 0) {
+		throw spdlog_ex(
+			"set_file_ownership: failed changing file ownership " + details::os::filename_to_str(filename), errno);
+	}
 }
 
 } // namespace sinks
