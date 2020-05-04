@@ -122,7 +122,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_range_(const memory_buf_t
 }
 
 template<typename ConsoleMutex>
-SPDLOG_INLINE std::string ansicolor_sink<ConsoleMutex>::to_string_(const string_view_t& sv)
+SPDLOG_INLINE std::string ansicolor_sink<ConsoleMutex>::to_string_(const string_view_t &sv)
 {
     return std::string(sv.data(), sv.size());
 }
