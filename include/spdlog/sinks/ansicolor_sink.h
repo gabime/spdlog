@@ -87,7 +87,7 @@ private:
     std::array<std::string, level::n_levels> colors_;
     void print_ccode_(const string_view_t &color_code);
     void print_range_(const memory_buf_t &formatted, size_t start, size_t end);
-    std::string to_string_(const string_view_t& sv);
+    static std::string to_string_(const string_view_t& sv);
 };
 
 template<typename ConsoleMutex>
