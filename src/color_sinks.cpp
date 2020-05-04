@@ -22,12 +22,12 @@ template class SPDLOG_API spdlog::sinks::wincolor_stderr_sink<spdlog::details::c
 template class SPDLOG_API spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_nullmutex>;
 #else
 #include "spdlog/sinks/ansicolor_sink-inl.h"
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_mutex>;
-template class spdlog::sinks::ansicolor_sink<spdlog::details::console_nullmutex>;
-template class spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_mutex>;
-template class spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_nullmutex>;
-template class spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_mutex>;
-template class spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API spdlog::sinks::ansicolor_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API spdlog::sinks::ansicolor_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_nullmutex>;
 #endif
 
 // factory methods for color loggers
