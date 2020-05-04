@@ -21,20 +21,20 @@ SPDLOG_INLINE ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, co
 
 {
     set_color_mode(mode);
-    colors_[level::trace] = white;
-    colors_[level::debug] = cyan;
-    colors_[level::info] = green;
-    colors_[level::warn] = yellow_bold;
-    colors_[level::err] = red_bold;
-    colors_[level::critical] = bold_on_red;
-    colors_[level::off] = reset;
+    colors_[level::trace] = to_string_(white);
+    colors_[level::debug] = to_string_(cyan);
+    colors_[level::info] = to_string_(green);
+    colors_[level::warn] = to_string_(yellow_bold);
+    colors_[level::err] = to_string_(red_bold);
+    colors_[level::critical] = to_string_(bold_on_red);
+    colors_[level::off] = to_string_(reset);
 }
 
 template<typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color(level::level_enum color_level, string_view_t color)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    colors_[color_level] = color;
+    colors_[color_level] = to_string_(color);
 }
 
 template<typename ConsoleMutex>
@@ -119,6 +119,12 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end)
 {
     fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);
+}
+
+template<typename ConsoleMutex>
+SPDLOG_INLINE std::string ansicolor_sink<ConsoleMutex>::to_string_(const string_view_t& sv)
+{
+    return std::string(sv.data(), sv.size());
 }
 
 // ansicolor_stdout_sink
