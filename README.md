@@ -349,7 +349,7 @@ int main (int argc, char *argv[])
     // or from command line:
     // ./example SPDLOG_LEVEL=info,mylogger=trace
     // #include "spdlog/cfg/argv.h" // for loading levels from argv
-    // spdlog::cfg::load_argv_levels(args, argv);
+    // spdlog::cfg::load_argv_levels(argc, argv);
 }
 ```
 So then you can:
