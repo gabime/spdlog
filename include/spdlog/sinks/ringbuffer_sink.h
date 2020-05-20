@@ -28,11 +28,10 @@ public:
     std::vector<details::log_msg_buffer> last_raw(size_t lim = 0)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-        auto items_available = q_.size();
-        auto n_items = lim > 0 ? (std::min)(lim, items_available) : items_available;
+        auto n_items = lim > 0 ? (std::min)(lim, q_.size()) : q_.size();
         std::vector<details::log_msg_buffer> ret;
         ret.reserve(n_items);
-        for (size_t i = (items_available - n_items); i < items_available; i++)
+        for (size_t i = 0; i < n_items; i++)
         {
             ret.push_back(q_.at(i));
         }
@@ -42,11 +41,10 @@ public:
     std::vector<std::string> last_formatted(size_t lim = 0)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-        auto items_available = q_.size();
-        auto n_items = lim > 0 ? (std::min)(lim, items_available) : items_available;
+        auto n_items = lim > 0 ? (std::min)(lim, q_.size()) : q_.size();
         std::vector<std::string> ret;
         ret.reserve(n_items);
-        for (size_t i = (items_available - n_items); i < items_available; i++)
+        for (size_t i = 0; i < n_items; i++)
         {
             memory_buf_t formatted;
             base_sink<Mutex>::formatter_->format(q_.at(i), formatted);
