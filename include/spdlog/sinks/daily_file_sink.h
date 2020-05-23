@@ -26,13 +26,41 @@ namespace sinks {
  */
 struct daily_filename_calculator
 {
-    // Create filename for the form basename.YYYY-MM-DD
+    // Create filename for the form basename_YYYY-MM-DD
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
     {
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
         return fmt::format(
-            SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
+            SPDLOG_FILENAME_T("{}{}{:04d}-{:02d}-{:02d}{}"), basename, filename_prefix_symbol(), now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
+    }
+
+    // Extract the YYYY-MM-DD suffix from the file name that was based on base_filename and calculated using calc_filename.
+    static filename_t extract_date_suffix(const filename_t &base_filename, const filename_t &filename)
+    {
+        const filename_t base_filename_no_ext = std::get<0>(details::file_helper::split_by_extension(base_filename));
+
+        const filename_t prefix = base_filename_no_ext + filename_prefix_symbol();
+
+        const bool starts_with_base_filename = filename.size() >= prefix.size() && std::equal(prefix.begin(), prefix.end(), filename.begin());
+
+        if(starts_with_base_filename)
+        {
+            const filename_t filename_no_ext = std::get<0>(details::file_helper::split_by_extension(filename));
+            const filename_t::size_type last_prefix_symbol = filename_no_ext.find_last_of(filename_prefix_symbol());
+
+            if(last_prefix_symbol < filename_no_ext.size())
+            {
+                return filename_no_ext.substr(last_prefix_symbol + 1);
+            }
+        }
+
+        return SPDLOG_FILENAME_T("");
+    }
+
+    static filename_t filename_prefix_symbol()
+    {
+        return SPDLOG_FILENAME_T("_");
     }
 };
 

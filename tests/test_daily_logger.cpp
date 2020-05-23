@@ -99,6 +99,28 @@ TEST_CASE("daily_file_sink::daily_filename_calculator", "[daily_file_sink]]")
 }
 #endif
 
+TEST_CASE("daily_file_sink::daily_filename_calculator::extract_date_suffix", "[daily_file_sink]]")
+{
+    auto now = spdlog::details::os::localtime();
+
+    auto basename = "daily.txt";
+
+    auto filename = spdlog::sinks::daily_filename_calculator::calc_filename(basename, now);
+
+    auto date_suffix = spdlog::sinks::daily_filename_calculator::extract_date_suffix(basename, filename);
+
+    auto expected_suffix = fmt::format(SPDLOG_FILENAME_T("{:04d}-{:02d}-{:02d}"), now.tm_year + 1900, now.tm_mon + 1, now.tm_mday);
+
+    REQUIRE(date_suffix == expected_suffix);
+}
+
+TEST_CASE("daily_file_sink::daily_filename_calculator::extract_date_suffix2", "[daily_file_sink]]")
+{
+    auto date_suffix = spdlog::sinks::daily_filename_calculator::extract_date_suffix("basename", "filename");
+
+    REQUIRE(date_suffix == "");
+}
+
 /* Test removal of old files */
 static spdlog::details::log_msg create_msg(std::chrono::seconds offset)
 {
