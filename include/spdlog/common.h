@@ -6,6 +6,10 @@
 #include <spdlog/tweakme.h>
 #include <spdlog/details/null_mutex.h>
 
+#ifdef _WIN32
+#include <spdlog/details/windows_include.h>
+#endif
+
 #include <atomic>
 #include <chrono>
 #include <initializer_list>
@@ -88,9 +92,15 @@ class sink;
 
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 using filename_t = std::wstring;
+using win32_find_data = WIN32_FIND_DATAW;
+#define find_first_file  FindFirstFileW
+#define find_next_file  FindNextFileW
 #define SPDLOG_FILENAME_T(s) L##s
 #else
 using filename_t = std::string;
+using win32_find_data = WIN32_FIND_DATAA;
+#define find_first_file  FindFirstFileA
+#define find_next_file  FindNextFileA
 #define SPDLOG_FILENAME_T(s) s
 #endif
 

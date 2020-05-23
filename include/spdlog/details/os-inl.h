@@ -554,21 +554,20 @@ std::string SPDLOG_INLINE getenv(const char *field)
 }
 
 #ifdef _WIN32
-#ifdef SPDLOG_WCHAR_FILENAMES
-SPDLOG_INLINE std::vector<std::wstring> get_directory_files(const std::wstring &directory) SPDLOG_NOEXCEPT
+SPDLOG_INLINE std::vector<filename_t> get_directory_files(const filename_t &directory) SPDLOG_NOEXCEPT
 {
-    std::vector<std::wstring> files;
+    std::vector<filename_t> files;
 
     HANDLE dir;
-    WIN32_FIND_DATAW file_data;
+    win32_find_data file_data;
 
-    if ((dir = FindFirstFileW((directory + L"/*").c_str(), &file_data)) == INVALID_HANDLE_VALUE)
+    if ((dir = find_first_file((directory + SPDLOG_FILENAME_T("/*")).c_str(), &file_data)) == INVALID_HANDLE_VALUE)
         return files;
 
     do
     {
-        const std::wstring file_name = file_data.cFileName;
-        const std::wstring full_file_name = directory + L"/" + file_name;
+        const filename_t file_name = file_data.cFileName;
+        const filename_t full_file_name = directory + SPDLOG_FILENAME_T("/") + file_name;
         const bool is_directory = (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 
         if (file_name[0] == '.')
@@ -578,43 +577,12 @@ SPDLOG_INLINE std::vector<std::wstring> get_directory_files(const std::wstring &
             continue;
 
         files.push_back(full_file_name);
-    } while (FindNextFileW(dir, &file_data));
+    } while (find_next_file(dir, &file_data));
 
     FindClose(dir);
 
     return files;
 }
-#else
-SPDLOG_INLINE std::vector<std::string> get_directory_files(const std::string &directory) SPDLOG_NOEXCEPT
-{
-    std::vector<std::string> files;
-
-    HANDLE dir;
-    WIN32_FIND_DATAA file_data;
-
-    if ((dir = FindFirstFileA((directory + "/*").c_str(), &file_data)) == INVALID_HANDLE_VALUE)
-        return files;
-
-    do
-    {
-        const std::string file_name = file_data.cFileName;
-        const std::string full_file_name = directory + "/" + file_name;
-        const bool is_directory = (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
-
-        if (file_name[0] == '.')
-            continue;
-
-        if (is_directory)
-            continue;
-
-        files.push_back(full_file_name);
-    } while (FindNextFileA(dir, &file_data));
-
-    FindClose(dir);
-
-    return files;
-}
-#endif
 #else
 SPDLOG_INLINE std::vector<std::string> get_directory_files(const std::string &directory) SPDLOG_NOEXCEPT
 {
