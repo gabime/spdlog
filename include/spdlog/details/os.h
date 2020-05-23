@@ -102,6 +102,12 @@ SPDLOG_API bool create_dir(filename_t path);
 // return empty string if field not found
 SPDLOG_API std::string getenv(const char *field);
 
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
+SPDLOG_API std::vector<std::wstring> get_directory_files(const std::wstring &directory) SPDLOG_NOEXCEPT;
+#else
+SPDLOG_API std::vector<std::string> get_directory_files(const std::string &directory) SPDLOG_NOEXCEPT;
+#endif
+
 } // namespace os
 } // namespace details
 } // namespace spdlog

@@ -21,6 +21,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#ifndef _WIN32
+#include <dirent.h>
+#endif
+
 #ifdef _WIN32
 
 #include <io.h>      // _get_osfhandle and _isatty support
@@ -548,6 +552,108 @@ std::string SPDLOG_INLINE getenv(const char *field)
     return buf ? buf : std::string{};
 #endif
 }
+
+#ifdef _WIN32
+#ifdef SPDLOG_WCHAR_FILENAMES
+SPDLOG_INLINE std::vector<std::wstring> get_directory_files(const std::wstring &directory) SPDLOG_NOEXCEPT
+{
+    std::vector<std::wstring> files;
+
+    HANDLE dir;
+    WIN32_FIND_DATAW file_data;
+
+    if ((dir = FindFirstFileW((directory + L"/*").c_str(), &file_data)) == INVALID_HANDLE_VALUE)
+        return files;
+
+    do
+    {
+        const std::wstring file_name = file_data.cFileName;
+        const std::wstring full_file_name = directory + L"/" + file_name;
+        const bool is_directory = (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+
+        if (file_name[0] == '.')
+            continue;
+
+        if (is_directory)
+            continue;
+
+        files.push_back(full_file_name);
+    } while (FindNextFileW(dir, &file_data));
+
+    FindClose(dir);
+
+    return files;
+}
+#else
+SPDLOG_INLINE std::vector<std::string> get_directory_files(const std::string &directory) SPDLOG_NOEXCEPT
+{
+    std::vector<std::string> files;
+
+    HANDLE dir;
+    WIN32_FIND_DATAA file_data;
+
+    if ((dir = FindFirstFileA((directory + "/*").c_str(), &file_data)) == INVALID_HANDLE_VALUE)
+        return files;
+
+    do
+    {
+        const std::string file_name = file_data.cFileName;
+        const std::string full_file_name = directory + "/" + file_name;
+        const bool is_directory = (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+
+        if (file_name[0] == '.')
+            continue;
+
+        if (is_directory)
+            continue;
+
+        files.push_back(full_file_name);
+    } while (FindNextFileA(dir, &file_data));
+
+    FindClose(dir);
+
+    return files;
+}
+#endif
+#else
+SPDLOG_INLINE std::vector<std::string> get_directory_files(const std::string &directory) SPDLOG_NOEXCEPT
+{
+    std::vector<std::string> files;
+
+    struct dirent* ent = nullptr;
+    struct stat st;
+
+    DIR *dir = opendir(directory.c_str());
+
+    if(dir == nullptr)
+    {
+        return files;
+    }
+
+    while ((ent = readdir(dir)) != nullptr)
+    {
+        const std::string file_name = ent->d_name;
+        const std::string full_file_name = directory + "/" + file_name;
+
+        if (file_name[0] == '.')
+            continue;
+
+        if (::stat(full_file_name.c_str(), &st) == -1)
+            continue;
+
+        const bool is_directory = (st.st_mode & S_IFDIR) != 0;
+
+        if (is_directory)
+            continue;
+
+        files.push_back(full_file_name);
+    }
+
+    closedir(dir);
+
+    return files;
+}
+#endif
 
 } // namespace os
 } // namespace details
