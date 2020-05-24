@@ -17,6 +17,7 @@
 #include <ctime>
 #include <mutex>
 #include <string>
+#include <map>
 
 namespace spdlog {
 namespace sinks {
@@ -58,6 +59,26 @@ struct daily_filename_calculator
         return SPDLOG_FILENAME_T("");
     }
 
+    static std::map<filename_t, filename_t> calc_dates_to_filenames(const filename_t &base_filename)
+    {
+        const filename_t dir = details::os::dir_name(base_filename);
+        const std::vector<filename_t> dir_files = details::os::get_directory_files(dir);
+
+        // lexicographical order ensures files are sorted by created date.
+        std::map<filename_t, filename_t> dates_to_filenames;
+
+        for(const filename_t& dir_file : dir_files)
+        {
+            const filename_t date_suffix = daily_filename_calculator::extract_date_suffix(base_filename, dir_file);
+            if(!date_suffix.empty())
+            {
+                dates_to_filenames[date_suffix] = dir_file;
+            }
+        }
+
+        return dates_to_filenames;
+    }
+
     static filename_t filename_prefix_symbol()
     {
         return SPDLOG_FILENAME_T("_");
@@ -74,7 +95,9 @@ class daily_file_sink final : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time
-    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false, uint16_t max_files = 0)
+    // initial_file_tp - useful for testing especially when we want to verify the delete_old_files_on_init behaviour
+    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false, uint16_t max_files = 0, bool delete_old_files_on_init = false,
+    log_clock::time_point initial_file_tp = log_clock::now())
         : base_filename_(std::move(base_filename))
         , rotation_h_(rotation_hour)
         , rotation_m_(rotation_minute)
@@ -87,14 +110,13 @@ public:
             throw_spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
 
-        auto now = log_clock::now();
-        auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
+        auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(initial_file_tp));
         file_helper_.open(filename, truncate_);
         rotation_tp_ = next_rotation_tp_();
 
         if (max_files_ > 0)
         {
-            init_filenames_q_();
+            init_filenames_q_(delete_old_files_on_init);
         }
     }
 
@@ -132,26 +154,45 @@ protected:
     }
 
 private:
-    void init_filenames_q_()
+    void init_filenames_q_(bool delete_old_file_on_init)
     {
         using details::os::path_exists;
+        using details::os::remove_if_exists;
 
         filenames_q_ = details::circular_q<filename_t>(static_cast<size_t>(max_files_));
-        std::vector<filename_t> filenames;
-        auto now = log_clock::now();
-        while (filenames.size() < max_files_)
+
+        // Because the map key is the date in yyyy-mm--dd, it is sorted by lexicographical order.
+        const std::map<filename_t, filename_t> dates_to_filenames = daily_filename_calculator::calc_dates_to_filenames(base_filename_);
+
+        const auto first_valid_file_pos = max_files_ > 0 && dates_to_filenames.size() > max_files_ ? dates_to_filenames.size() - max_files_ : 0;
+
+        auto first_valid_file_iter = dates_to_filenames.begin();
+
+        if(first_valid_file_pos > 0)
         {
-            auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
-            if (!path_exists(filename))
-            {
-                break;
-            }
-            filenames.emplace_back(filename);
-            now -= std::chrono::hours(24);
+            std::advance(first_valid_file_iter, first_valid_file_pos);
         }
-        for (auto iter = filenames.rbegin(); iter != filenames.rend(); ++iter)
+
+        std::vector<filename_t> recent_files;
+        for(auto iter = first_valid_file_iter; iter != dates_to_filenames.end(); ++iter)
         {
-            filenames_q_.push_back(std::move(*iter));
+            recent_files.emplace_back(iter->second);
+        }
+
+        for (auto iter = recent_files.begin(); iter != recent_files.end(); ++iter)
+        {
+            if(path_exists(*iter))
+            {
+                filenames_q_.push_back(std::move(*iter));
+            }
+        }
+
+        if(max_files_ > 0 && delete_old_file_on_init)
+        {
+            for(auto iter = dates_to_filenames.begin(); iter != first_valid_file_iter; ++iter)
+            {
+                remove_if_exists(iter->second);
+            }
         }
     }
 
@@ -218,15 +259,17 @@ using daily_file_sink_st = daily_file_sink<details::null_mutex>;
 //
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_mt(
-    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0)
+    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0, bool delete_old_files_on_init = false,
+    log_clock::time_point initial_file_tp = log_clock::now())
 {
-    return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, truncate, max_files);
+    return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, truncate, max_files, delete_old_files_on_init, initial_file_tp);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_st(
-    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0)
+    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0, bool delete_old_files_on_init = false,
+    log_clock::time_point initial_file_tp = log_clock::now())
 {
-    return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute, truncate, max_files);
+    return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute, truncate, max_files, delete_old_files_on_init, initial_file_tp);
 }
 } // namespace spdlog

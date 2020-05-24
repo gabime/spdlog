@@ -169,3 +169,33 @@ TEST_CASE("daily_logger rotate", "[daily_file_sink]")
     test_rotate(days_to_run, 11, 10);
     test_rotate(days_to_run, 20, 10);
 }
+
+TEST_CASE("daily_logger should delete oldest file on init", "[daily_file_sink]")
+{
+    using spdlog::log_clock;
+    using spdlog::details::log_msg;
+    using spdlog::sinks::daily_file_sink_st;
+
+    prepare_logdir();
+
+    std::string basename = "test_logs/daily_rotate.txt";
+
+    daily_file_sink_st sink{basename, 2, 30, false, 8, true};
+
+    // simulate messages with 24 intervals. create more than max files of second sink below
+    for (int i = 0; i < 8; i++)
+    {
+        auto offset = std::chrono::seconds{24 * 3600 * i};
+        sink.log(create_msg(offset));
+    }
+
+    REQUIRE(count_files("test_logs") == static_cast<size_t>(8));
+
+    // This will create a 9th file in logdir, therefore the ctor wil delete the oldest two files.
+    auto initial_file_tp = log_clock::now() + std::chrono::seconds{24 * 3600 * 8};
+
+    // Second sink should load existing files in the logdir and delete the oldest because the max files count is 7
+    daily_file_sink_st sink2{basename, 2, 30, false, 7, true, initial_file_tp};
+
+    REQUIRE(count_files("test_logs") == static_cast<size_t>(7));
+}
