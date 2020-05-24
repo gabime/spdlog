@@ -98,10 +98,13 @@ using win32_find_data = WIN32_FIND_DATAW;
 #define SPDLOG_FILENAME_T(s) L##s
 #else
 using filename_t = std::string;
+#define SPDLOG_FILENAME_T(s) s
+#endif
+
+#if defined(_WIN32) && !defined(SPDLOG_WCHAR_FILENAMES)
 using win32_find_data = WIN32_FIND_DATAA;
 #define find_first_file  FindFirstFileA
 #define find_next_file  FindNextFileA
-#define SPDLOG_FILENAME_T(s) s
 #endif
 
 using log_clock = std::chrono::system_clock;
