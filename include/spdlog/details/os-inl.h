@@ -622,7 +622,7 @@ SPDLOG_INLINE std::vector<std::string> get_directory_files(const std::string &di
         if (is_directory)
             continue;
 
-        files.push_back(full_file_name);
+        files.emplace_back(std::move(full_file_name));
     }
 
     closedir(dir);
