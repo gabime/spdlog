@@ -581,7 +581,7 @@ SPDLOG_INLINE std::vector<filename_t> get_directory_files(const filename_t &dire
 
         const filename_t full_file_name = directory + SPDLOG_FILENAME_T("/") + file_name;
 
-        files.push_back(full_file_name);
+        files.emplace_back(std::move(full_file_name));
     } while (find_next_file(dir, &file_data));
 
     FindClose(dir);
