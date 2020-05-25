@@ -605,7 +605,7 @@ SPDLOG_INLINE std::vector<std::string> get_directory_files(const std::string &di
 
     while ((ent = readdir(dir)) != nullptr)
     {
-        const std::string file_name::value_type* = ent->d_name;
+        const std::string::value_type* file_name = ent->d_name;
 
         if (file_name[0] == '.')
         {
