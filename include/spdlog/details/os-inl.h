@@ -566,15 +566,20 @@ SPDLOG_INLINE std::vector<filename_t> get_directory_files(const filename_t &dire
 
     do
     {
-        const filename_t file_name = file_data.cFileName;
-        const filename_t full_file_name = directory + SPDLOG_FILENAME_T("/") + file_name;
+        const filename_t::value_type* file_name = file_data.cFileName;
+        if (file_name[0] == '.')
+        {
+            continue;
+        }
+
         const bool is_directory = (file_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
 
-        if (file_name[0] == '.')
-            continue;
-
         if (is_directory)
+        {
             continue;
+        }
+
+        const filename_t full_file_name = directory + SPDLOG_FILENAME_T("/") + file_name;
 
         files.push_back(full_file_name);
     } while (find_next_file(dir, &file_data));
