@@ -35,6 +35,11 @@ struct custom_daily_file_name_calculator
         fmt::format_to(w, "{}{:04d}{:02d}{:02d}", basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday);
         return fmt::to_string(w);
     }
+
+    static std::map<spdlog::filename_t, spdlog::filename_t> calc_dates_to_filenames(const spdlog::filename_t &base_filename)
+    {
+        return {};
+    }
 };
 
 TEST_CASE("daily_logger with custom calculator", "[daily_logger]")
