@@ -161,8 +161,9 @@ private:
 
         filenames_q_ = details::circular_q<filename_t>(static_cast<size_t>(max_files_));
 
-        // Because the map key is the date in yyyy-mm--dd, it is sorted by lexicographical order.
-        const std::map<filename_t, filename_t> dates_to_filenames = daily_filename_calculator::calc_dates_to_filenames(base_filename_);
+        // The returned map from FileNameCalc::calc_dates_to_filenames must be ordered from earliest date to latest. The default implementation uses
+        // YYYY-MM-DD format for the date to allow lexicographical order.
+        const std::map<filename_t, filename_t> dates_to_filenames = FileNameCalc::calc_dates_to_filenames(base_filename_);
 
         const auto first_valid_file_pos = max_files_ > 0 && dates_to_filenames.size() > max_files_ ? dates_to_filenames.size() - max_files_ : 0;
 
