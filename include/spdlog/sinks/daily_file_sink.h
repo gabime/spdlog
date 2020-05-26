@@ -155,7 +155,7 @@ private:
         using details::os::filename_to_str;
         using details::os::remove_if_exists;
 
-        filename_t current_file = filename();
+        filename_t current_file = file_helper_.filename();
         if (filenames_q_.full())
         {
             auto old_filename = std::move(filenames_q_.front());
