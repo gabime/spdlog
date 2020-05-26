@@ -18,7 +18,7 @@
 #include <vector>
 
 // The fmt library version in the form major * 10000 + minor * 100 + patch.
-#define FMT_VERSION 60200
+#define FMT_VERSION 60201
 
 #ifdef __has_feature
 #  define FMT_HAS_FEATURE(x) __has_feature(x)
@@ -830,7 +830,8 @@ template <typename Char> struct string_value {
 template <typename Context> struct custom_value {
   using parse_context = basic_format_parse_context<typename Context::char_type>;
   const void* value;
-  void (*format)(const void* arg, parse_context& parse_ctx, Context& ctx);
+  void (*format)(const void* arg,
+                 typename Context::parse_context_type& parse_ctx, Context& ctx);
 };
 
 // A formatting argument value.
@@ -890,9 +891,9 @@ template <typename Context> class value {
  private:
   // Formats an argument of a custom type, such as a user-defined class.
   template <typename T, typename Formatter>
-  static void format_custom_arg(
-      const void* arg, basic_format_parse_context<char_type>& parse_ctx,
-      Context& ctx) {
+  static void format_custom_arg(const void* arg,
+                                typename Context::parse_context_type& parse_ctx,
+                                Context& ctx) {
     Formatter f;
     parse_ctx.advance_to(f.parse(parse_ctx));
     ctx.advance_to(f.format(*static_cast<const T*>(arg), ctx));
@@ -1061,7 +1062,7 @@ template <typename Context> class basic_format_arg {
    public:
     explicit handle(internal::custom_value<Context> custom) : custom_(custom) {}
 
-    void format(basic_format_parse_context<char_type>& parse_ctx,
+    void format(typename Context::parse_context_type& parse_ctx,
                 Context& ctx) const {
       custom_.format(custom_.value, parse_ctx, ctx);
     }
@@ -1207,13 +1208,16 @@ FMT_CONSTEXPR basic_format_arg<Context> make_arg(const T& value) {
   return arg;
 }
 
-template <bool IS_PACKED, typename Context, typename T,
+// The type template parameter is there to avoid an ODR violation when using
+// a fallback formatter in one translation unit and an implicit conversion in
+// another (not recommended).
+template <bool IS_PACKED, typename Context, type, typename T,
           FMT_ENABLE_IF(IS_PACKED)>
 inline value<Context> make_arg(const T& val) {
   return arg_mapper<Context>().map(val);
 }
 
-template <bool IS_PACKED, typename Context, typename T,
+template <bool IS_PACKED, typename Context, type, typename T,
           FMT_ENABLE_IF(!IS_PACKED)>
 inline basic_format_arg<Context> make_arg(const T& value) {
   return make_arg<Context>(value);
@@ -1272,6 +1276,7 @@ template <typename OutputIt, typename Char> class basic_format_context {
  public:
   using iterator = OutputIt;
   using format_arg = basic_format_arg<basic_format_context>;
+  using parse_context_type = basic_format_parse_context<Char>;
   template <typename T> using formatter_type = formatter<T, char_type>;
 
   basic_format_context(const basic_format_context&) = delete;
@@ -1346,7 +1351,9 @@ class format_arg_store
 #if FMT_GCC_VERSION && FMT_GCC_VERSION < 409
         basic_format_args<Context>(*this),
 #endif
-        data_{internal::make_arg<is_packed, Context>(args)...} {
+        data_{internal::make_arg<
+            is_packed, Context,
+            internal::mapped_type_constant<Args, Context>::value>(args)...} {
   }
 };
 

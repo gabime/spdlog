@@ -9,9 +9,14 @@
 #define FMT_OSTREAM_H_
 
 #include <ostream>
+
 #include "format.h"
 
 FMT_BEGIN_NAMESPACE
+
+template <typename CHar> class basic_printf_parse_context;
+template <typename OutputIt, typename Char> class basic_printf_context;
+
 namespace internal {
 
 template <class Char> class formatbuf : public std::basic_streambuf<Char> {
@@ -93,9 +98,9 @@ void format_value(buffer<Char>& buf, const T& value,
                   locale_ref loc = locale_ref()) {
   formatbuf<Char> format_buf(buf);
   std::basic_ostream<Char> output(&format_buf);
-  #if !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
+#if !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
   if (loc) output.imbue(loc.get<std::locale>());
-  #endif
+#endif
   output.exceptions(std::ios_base::failbit | std::ios_base::badbit);
   output << value;
   buf.resize(buf.size());
@@ -104,13 +109,31 @@ void format_value(buffer<Char>& buf, const T& value,
 // Formats an object of type T that has an overloaded ostream operator<<.
 template <typename T, typename Char>
 struct fallback_formatter<T, Char, enable_if_t<is_streamable<T, Char>::value>>
-    : formatter<basic_string_view<Char>, Char> {
-  template <typename Context>
-  auto format(const T& value, Context& ctx) -> decltype(ctx.out()) {
+    : private formatter<basic_string_view<Char>, Char> {
+  auto parse(basic_format_parse_context<Char>& ctx) -> decltype(ctx.begin()) {
+    return formatter<basic_string_view<Char>, Char>::parse(ctx);
+  }
+  template <typename ParseCtx,
+            FMT_ENABLE_IF(std::is_same<
+                          ParseCtx, basic_printf_parse_context<Char>>::value)>
+  auto parse(ParseCtx& ctx) -> decltype(ctx.begin()) {
+    return ctx.begin();
+  }
+
+  template <typename OutputIt>
+  auto format(const T& value, basic_format_context<OutputIt, Char>& ctx)
+      -> OutputIt {
     basic_memory_buffer<Char> buffer;
     format_value(buffer, value, ctx.locale());
     basic_string_view<Char> str(buffer.data(), buffer.size());
     return formatter<basic_string_view<Char>, Char>::format(str, ctx);
+  }
+  template <typename OutputIt>
+  auto format(const T& value, basic_printf_context<OutputIt, Char>& ctx)
+      -> OutputIt {
+    basic_memory_buffer<Char> buffer;
+    format_value(buffer, value, ctx.locale());
+    return std::copy(buffer.begin(), buffer.end(), ctx.out());
   }
 };
 }  // namespace internal
