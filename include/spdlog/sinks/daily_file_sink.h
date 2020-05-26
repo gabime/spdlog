@@ -70,6 +70,12 @@ public:
         }
     }
 
+    filename_t filename()
+    {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        return file_helper_.filename();
+    }
+
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
