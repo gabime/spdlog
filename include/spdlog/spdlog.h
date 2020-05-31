@@ -121,152 +121,101 @@ SPDLOG_API spdlog::logger *default_logger_raw();
 
 SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logger);
 
-template<typename... Args>
-inline void log(source_loc source, level::level_enum lvl, string_view_t fmt, const Args &... args)
+template<typename FormatString, typename... Args>
+inline void log(source_loc source, level::level_enum lvl, FormatString &&fmt, Args &&... args)
 {
-    default_logger_raw()->log(source, lvl, fmt, args...);
+    default_logger_raw()->log(source, lvl, std::forward<FormatString>(fmt), std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline void log(level::level_enum lvl, string_view_t fmt, const Args &... args)
+template<typename FormatString, typename... Args>
+inline void log(level::level_enum lvl, FormatString &&fmt, Args &&... args)
 {
-    default_logger_raw()->log(source_loc{}, lvl, fmt, args...);
+    default_logger_raw()->log(source_loc{}, lvl, std::forward<FormatString>(fmt), std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline void trace(string_view_t fmt, const Args &... args)
+template<typename FormatString, typename... Args>
+inline void trace(FormatString &&fmt, Args &&... args)
 {
-    default_logger_raw()->trace(fmt, args...);
+    default_logger_raw()->trace(std::forward<FormatString>(fmt), std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline void debug(string_view_t fmt, const Args &... args)
+template<typename FormatString, typename... Args>
+inline void debug(FormatString &&fmt, Args &&... args)
 {
-    default_logger_raw()->debug(fmt, args...);
+    default_logger_raw()->debug(std::forward<FormatString>(fmt), std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline void info(string_view_t fmt, const Args &... args)
+template<typename FormatString, typename... Args>
+inline void info(FormatString &&fmt, Args &&... args)
 {
-    default_logger_raw()->info(fmt, args...);
+    default_logger_raw()->info(std::forward<FormatString>(fmt), std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline void warn(string_view_t fmt, const Args &... args)
+template<typename FormatString, typename... Args>
+inline void warn(FormatString &&fmt, Args &&... args)
 {
-    default_logger_raw()->warn(fmt, args...);
+    default_logger_raw()->warn(std::forward<FormatString>(fmt), std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline void error(string_view_t fmt, const Args &... args)
+template<typename FormatString, typename... Args>
+inline void error(FormatString &&fmt, Args &&... args)
 {
-    default_logger_raw()->error(fmt, args...);
+    default_logger_raw()->error(std::forward<FormatString>(fmt), std::forward<Args>(args)...);
 }
 
-template<typename... Args>
-inline void critical(string_view_t fmt, const Args &... args)
+template<typename FormatString, typename... Args>
+inline void critical(FormatString &&fmt, const Args &... args)
 {
-    default_logger_raw()->critical(fmt, args...);
-}
-
-template<typename T>
-inline void log(source_loc source, level::level_enum lvl, const T &msg)
-{
-    default_logger_raw()->log(source, lvl, msg);
+    default_logger_raw()->critical(std::forward<FormatString>(fmt), args...);
 }
 
 template<typename T>
-inline void log(level::level_enum lvl, const T &msg)
+inline void log(source_loc source, level::level_enum lvl, T &&msg)
 {
-    default_logger_raw()->log(lvl, msg);
+    default_logger_raw()->log(source, lvl, std::forward<T>(msg));
 }
 
 template<typename T>
-inline void trace(const T &msg)
+inline void log(level::level_enum lvl, T &&msg)
 {
-    default_logger_raw()->trace(msg);
+    default_logger_raw()->log(lvl, std::forward<T>(msg));
 }
 
 template<typename T>
-inline void debug(const T &msg)
+inline void trace(T &&msg)
 {
-    default_logger_raw()->debug(msg);
+    default_logger_raw()->trace(std::forward<T>(msg));
 }
 
 template<typename T>
-inline void info(const T &msg)
+inline void debug(T &&msg)
 {
-    default_logger_raw()->info(msg);
+    default_logger_raw()->debug(std::forward<T>(msg));
 }
 
 template<typename T>
-inline void warn(const T &msg)
+inline void info(T &&msg)
 {
-    default_logger_raw()->warn(msg);
+    default_logger_raw()->info(std::forward<T>(msg));
 }
 
 template<typename T>
-inline void error(const T &msg)
+inline void warn(T &&msg)
 {
-    default_logger_raw()->error(msg);
+    default_logger_raw()->warn(std::forward<T>(msg));
 }
 
 template<typename T>
-inline void critical(const T &msg)
+inline void error(T &&msg)
 {
-    default_logger_raw()->critical(msg);
+    default_logger_raw()->error(std::forward<T>(msg));
 }
 
-#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-template<typename... Args>
-inline void log(source_loc source, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
+template<typename T>
+inline void critical(T &&msg)
 {
-    default_logger_raw()->log(source, lvl, fmt, args...);
+    default_logger_raw()->critical(std::forward<T>(msg));
 }
-
-template<typename... Args>
-inline void log(level::level_enum lvl, wstring_view_t fmt, const Args &... args)
-{
-    default_logger_raw()->log(lvl, fmt, args...);
-}
-
-template<typename... Args>
-inline void trace(wstring_view_t fmt, const Args &... args)
-{
-    default_logger_raw()->trace(fmt, args...);
-}
-
-template<typename... Args>
-inline void debug(wstring_view_t fmt, const Args &... args)
-{
-    default_logger_raw()->debug(fmt, args...);
-}
-
-template<typename... Args>
-inline void info(wstring_view_t fmt, const Args &... args)
-{
-    default_logger_raw()->info(fmt, args...);
-}
-
-template<typename... Args>
-inline void warn(wstring_view_t fmt, const Args &... args)
-{
-    default_logger_raw()->warn(fmt, args...);
-}
-
-template<typename... Args>
-inline void error(wstring_view_t fmt, const Args &... args)
-{
-    default_logger_raw()->error(fmt, args...);
-}
-
-template<typename... Args>
-inline void critical(wstring_view_t fmt, const Args &... args)
-{
-    default_logger_raw()->critical(fmt, args...);
-}
-
-#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 } // namespace spdlog
 

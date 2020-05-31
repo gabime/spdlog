@@ -3,7 +3,7 @@
 #include "spdlog/fmt/bin_to_hex.h"
 
 template<class T>
-std::string log_info(const T &what, spdlog::level::level_enum logger_level = spdlog::level::info)
+std::string log_info(T &&what, spdlog::level::level_enum logger_level = spdlog::level::info)
 {
 
     std::ostringstream oss;
@@ -12,7 +12,7 @@ std::string log_info(const T &what, spdlog::level::level_enum logger_level = spd
     spdlog::logger oss_logger("oss", oss_sink);
     oss_logger.set_level(logger_level);
     oss_logger.set_pattern("%v");
-    oss_logger.info(what);
+    oss_logger.info(std::forward<T>(what));
 
     return oss.str().substr(0, oss.str().length() - strlen(spdlog::details::os::default_eol));
 }
@@ -268,4 +268,35 @@ TEST_CASE("default logger API", "[default logger]")
     REQUIRE(oss.str().empty());
     spdlog::drop_all();
     spdlog::set_pattern("%v");
+}
+
+TEST_CASE("{fmt} FMT_STRING functionality preserved (positive test)", "[fmt]")
+{
+    std::ostringstream oss;
+    auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+
+    spdlog::set_default_logger(std::make_shared<spdlog::logger>("oss", oss_sink));
+    spdlog::default_logger()->set_level(spdlog::level::trace);
+    spdlog::set_pattern("%v");
+
+    const std::string expected_output_all(
+        std::string("The best part of {fmt} is the compile time checking: 42") + std::string(spdlog::details::os::default_eol));
+    spdlog::trace(FMT_STRING("The best part of {{fmt}} is the compile time checking: {:d}"), 42);
+    REQUIRE(oss.str() == expected_output_all);
+    oss.str("");
+    spdlog::debug(FMT_STRING("The best part of {{fmt}} is the compile time checking: {:d}"), 42);
+    REQUIRE(oss.str() == expected_output_all);
+    oss.str("");
+    spdlog::info(FMT_STRING("The best part of {{fmt}} is the compile time checking: {:d}"), 42);
+    REQUIRE(oss.str() == expected_output_all);
+    oss.str("");
+    spdlog::warn(FMT_STRING("The best part of {{fmt}} is the compile time checking: {:d}"), 42);
+    REQUIRE(oss.str() == expected_output_all);
+    oss.str("");
+    spdlog::error(FMT_STRING("The best part of {{fmt}} is the compile time checking: {:d}"), 42);
+    REQUIRE(oss.str() == expected_output_all);
+    oss.str("");
+    spdlog::critical(FMT_STRING("The best part of {{fmt}} is the compile time checking: {:d}"), 42);
+    REQUIRE(oss.str() == expected_output_all);
+    oss.str("");
 }
