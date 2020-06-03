@@ -68,29 +68,3 @@ endif()
 if(SPDLOG_BUILD_TESTS_HO OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests-ho spdlog::spdlog_header_only)
 endif()
-
-# Set up compilation failure test case (only available if compiler supports relaxed constexpr and c++ standard is > 11)
-set(HAVE_CXX_RELAXED_CONSTEXPR)
-if(CMAKE_CXX_STANDARD GREATER 11) # If we're in c++11 mode we don't have relaxed constexpr, even if our compiler is new enough.
-    list(FIND CMAKE_CXX_COMPILE_FEATURES "cxx_relaxed_constexpr" HAVE_CXX_RELAXED_CONSTEXPR)
-endif()
-if(HAVE_CXX_RELAXED_CONSTEXPR AND (SPDLOG_BUILD_FAILING_TESTS OR SPDLOG_BUILD_ALL))
-    message(STATUS "Enabling negative compilation unit test target")
-    set(SPDLOG_FAIL_COMPILATION_TARGET spdlog_fail_compilation_utests)
-    add_executable(${SPDLOG_FAIL_COMPILATION_TARGET}
-        test_compilation_failures.cpp
-        main.cpp)
-    spdlog_enable_warnings(${SPDLOG_FAIL_COMPILATION_TARGET})
-    target_link_libraries(${SPDLOG_FAIL_COMPILATION_TARGET} PRIVATE spdlog::spdlog)
-    set_target_properties(${SPDLOG_FAIL_COMPILATION_TARGET} PROPERTIES
-        EXCLUDE_FROM_ALL TRUE
-        EXCLUDE_FROM_DEFAULT_BUILD TRUE)
-    add_test(NAME ${SPDLOG_FAIL_COMPILATION_TARGET}
-        COMMAND ${CMAKE_COMMAND} --build . --target ${SPDLOG_FAIL_COMPILATION_TARGET} --config $<CONFIG>
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-    set_tests_properties(${SPDLOG_FAIL_COMPILATION_TARGET} PROPERTIES PASS_REGULAR_EXPRESSION "invalid type specifier")
-    
-    add_custom_target(${SPDLOG_FAIL_COMPILATION_TARGET}_run_target
-        COMMAND ${CMAKE_CTEST_COMMAND} -R ${SPDLOG_FAIL_COMPILATION_TARGET} --output-on-failure
-        COMMENT "Running tests that fail to compile.")
-endif()
