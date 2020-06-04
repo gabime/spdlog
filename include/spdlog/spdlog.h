@@ -122,51 +122,51 @@ SPDLOG_API spdlog::logger *default_logger_raw();
 SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logger);
 
 template<typename FormatString, typename... Args>
-inline void log(source_loc source, level::level_enum lvl, FormatString &&fmt, const Args &... args)
+inline void log(source_loc source, level::level_enum lvl, const FormatString &fmt, const Args &... args)
 {
-    default_logger_raw()->log(source, lvl, std::forward<FormatString>(fmt), args...);
+    default_logger_raw()->log(source, lvl, fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void log(level::level_enum lvl, FormatString &&fmt, const Args &... args)
+inline void log(level::level_enum lvl, const FormatString &fmt, const Args &... args)
 {
-    default_logger_raw()->log(source_loc{}, lvl, std::forward<FormatString>(fmt), args...);
+    default_logger_raw()->log(source_loc{}, lvl, fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void trace(FormatString &&fmt, const Args &... args)
+inline void trace(const FormatString &fmt, const Args &... args)
 {
-    default_logger_raw()->trace(std::forward<FormatString>(fmt), args...);
+    default_logger_raw()->trace(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void debug(FormatString &&fmt, const Args &... args)
+inline void debug(const FormatString &fmt, const Args &... args)
 {
-    default_logger_raw()->debug(std::forward<FormatString>(fmt), args...);
+    default_logger_raw()->debug(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void info(FormatString &&fmt, const Args &... args)
+inline void info(const FormatString &fmt, const Args &... args)
 {
-    default_logger_raw()->info(std::forward<FormatString>(fmt), args...);
+    default_logger_raw()->info(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void warn(FormatString &&fmt, const Args &... args)
+inline void warn(const FormatString &fmt, const Args &... args)
 {
-    default_logger_raw()->warn(std::forward<FormatString>(fmt), args...);
+    default_logger_raw()->warn(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void error(FormatString &&fmt, const Args &... args)
+inline void error(const FormatString &fmt, const Args &... args)
 {
-    default_logger_raw()->error(std::forward<FormatString>(fmt), args...);
+    default_logger_raw()->error(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void critical(FormatString &&fmt, const Args &... args)
+inline void critical(const FormatString &fmt, const Args &... args)
 {
-    default_logger_raw()->critical(std::forward<FormatString>(fmt), args...);
+    default_logger_raw()->critical(fmt, args...);
 }
 
 template<typename T>

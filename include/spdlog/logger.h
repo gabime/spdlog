@@ -74,11 +74,10 @@ public:
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
     // FormatString is a type derived from fmt::compile_string
-    template<typename FormatString, typename std::enable_if<std::is_base_of<fmt::compile_string, FormatString>::value, int>::type = 0,
-        typename... Args>
-    void log(source_loc loc, level::level_enum lvl, FormatString &&fmt, const Args &... args)
+    template<typename FormatString, typename std::enable_if<fmt::is_compile_string<FormatString>::value, int>::type = 0, typename... Args>
+    void log(source_loc loc, level::level_enum lvl, const FormatString &fmt, const Args &... args)
     {
-        log_(loc, lvl, std::forward<FormatString>(fmt), args...);
+        log_(loc, lvl, fmt, args...);
     }
 
     // FormatString is NOT a type derived from fmt::compile_string but is a string_view_t or can be implicitly converted to one
@@ -89,45 +88,45 @@ public:
     }
 
     template<typename FormatString, typename... Args>
-    void log(level::level_enum lvl, FormatString &&fmt, const Args &... args)
+    void log(level::level_enum lvl, const FormatString &fmt, const Args &... args)
     {
-        log(source_loc{}, lvl, std::forward<FormatString>(fmt), args...);
+        log(source_loc{}, lvl, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void trace(FormatString &&fmt, const Args &... args)
+    void trace(const FormatString &fmt, const Args &... args)
     {
-        log(level::trace, std::forward<FormatString>(fmt), args...);
+        log(level::trace, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void debug(FormatString &&fmt, const Args &... args)
+    void debug(const FormatString &fmt, const Args &... args)
     {
-        log(level::debug, std::forward<FormatString>(fmt), args...);
+        log(level::debug, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void info(FormatString &&fmt, const Args &... args)
+    void info(const FormatString &fmt, const Args &... args)
     {
-        log(level::info, std::forward<FormatString>(fmt), args...);
+        log(level::info, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void warn(FormatString &&fmt, const Args &... args)
+    void warn(const FormatString &fmt, const Args &... args)
     {
-        log(level::warn, std::forward<FormatString>(fmt), args...);
+        log(level::warn, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void error(FormatString &&fmt, const Args &... args)
+    void error(const FormatString &fmt, const Args &... args)
     {
-        log(level::err, std::forward<FormatString>(fmt), args...);
+        log(level::err, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void critical(FormatString &&fmt, const Args &... args)
+    void critical(const FormatString &fmt, const Args &... args)
     {
-        log(level::critical, std::forward<FormatString>(fmt), args...);
+        log(level::critical, fmt, args...);
     }
 
     template<typename T>
@@ -136,8 +135,10 @@ public:
         log(source_loc{}, lvl, msg);
     }
 
-    // T can be statically converted to string_view
-    template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value, T>::type * = nullptr>
+    // T can be statically converted to string_view and isn't a fmt::compile_string
+    template<class T,
+        typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value && !fmt::is_compile_string<T>::value, T>::type
+            * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         log(loc, lvl, string_view_t{msg});
@@ -326,7 +327,7 @@ protected:
 
     // common implementation for after templated public api has been resolved
     template<typename FormatString, typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, FormatString &&fmt, const Args &... args)
+    void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, const Args &... args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -337,7 +338,7 @@ protected:
         SPDLOG_TRY
         {
             memory_buf_t buf;
-            fmt::format_to(buf, std::forward<FormatString>(fmt), args...);
+            fmt::format_to(buf, fmt, args...);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
