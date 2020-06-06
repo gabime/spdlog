@@ -7,6 +7,7 @@
 #include <spdlog/details/file_helper.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/details/synchronous_factory.h>
+#include <spdlog/details/os.h>
 
 #include <chrono>
 #include <mutex>
