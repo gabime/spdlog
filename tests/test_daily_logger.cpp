@@ -61,28 +61,6 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger]")
     require_message_count(filename, 10);
 }
 
-/*
- * File name calculations
- */
-
-TEST_CASE("rotating_file_sink::calc_filename1", "[rotating_file_sink]]")
-{
-    auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename("rotated.txt", 3);
-    REQUIRE(filename == "rotated.3.txt");
-}
-
-TEST_CASE("rotating_file_sink::calc_filename2", "[rotating_file_sink]]")
-{
-    auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename("rotated", 3);
-    REQUIRE(filename == "rotated.3");
-}
-
-TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
-{
-    auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename("rotated.txt", 0);
-    REQUIRE(filename == "rotated.txt");
-}
-
 // regex supported only from gcc 4.9 and above
 #if defined(_MSC_VER) || !(__GNUC__ <= 4 && __GNUC_MINOR__ < 9)
 
