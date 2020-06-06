@@ -39,6 +39,16 @@ void bench_logger(benchmark::State &state, std::shared_ptr<spdlog::logger> logge
     }
 }
 
+void bench_logger_fmt_string(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
+{
+    int i = 0;
+    for (auto _ : state)
+    {
+        logger->info(FMT_STRING("Hello logger: msg number {}..............."), ++i);
+        ;
+    }
+}
+
 void bench_disabled_macro(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
 {
     int i = 0;
@@ -88,6 +98,7 @@ int main(int argc, char *argv[])
     auto null_logger_st = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_st>());
     benchmark::RegisterBenchmark("null_sink_st (500_bytes c_str)", bench_c_string, std::move(null_logger_st));
     benchmark::RegisterBenchmark("null_sink_st", bench_logger, null_logger_st);
+    benchmark::RegisterBenchmark("null_sink_fmt_string", bench_logger_fmt_string, null_logger_st);
     // with backtrace of 64
     auto tracing_null_logger_st = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_st>());
     tracing_null_logger_st->enable_backtrace(64);
