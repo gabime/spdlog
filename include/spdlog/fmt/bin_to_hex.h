@@ -126,8 +126,8 @@ struct formatter<spdlog::details::dump_info<T>>
     template<typename FormatContext, typename Container>
     auto format(const spdlog::details::dump_info<Container> &the_range, FormatContext &ctx) -> decltype(ctx.out())
     {
-        SPDLOG_CONSTEXPR const char *hex_upper = "0123456789ABCDEF";
-        SPDLOG_CONSTEXPR const char *hex_lower = "0123456789abcdef";
+        constexpr const char *hex_upper = "0123456789ABCDEF";
+        constexpr const char *hex_lower = "0123456789abcdef";
         const char *hex_chars = use_uppercase ? hex_upper : hex_lower;
 
 #if FMT_VERSION < 60000

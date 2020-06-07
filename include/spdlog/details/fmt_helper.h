@@ -12,7 +12,7 @@ namespace spdlog {
 namespace details {
 namespace fmt_helper {
 
-inline spdlog::string_view_t to_string_view(const memory_buf_t &buf) SPDLOG_NOEXCEPT
+inline spdlog::string_view_t to_string_view(const memory_buf_t &buf) noexcept
 {
     return spdlog::string_view_t{buf.data(), buf.size()};
 }

@@ -25,7 +25,7 @@ public:
     backtracer() = default;
     backtracer(const backtracer &other);
 
-    backtracer(backtracer &&other) SPDLOG_NOEXCEPT;
+    backtracer(backtracer &&other) noexcept;
     backtracer &operator=(backtracer other);
 
     void enable(size_t size);

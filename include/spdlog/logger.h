@@ -68,10 +68,10 @@ public:
     virtual ~logger() = default;
 
     logger(const logger &other);
-    logger(logger &&other) SPDLOG_NOEXCEPT;
-    logger &operator=(logger other) SPDLOG_NOEXCEPT;
+    logger(logger &&other) noexcept;
+    logger &operator=(logger other) noexcept;
 
-    void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
+    void swap(spdlog::logger &other) noexcept;
 
     // FormatString is a type derived from fmt::compile_string
     template<typename FormatString, typename std::enable_if<fmt::is_compile_string<FormatString>::value, int>::type * = nullptr,

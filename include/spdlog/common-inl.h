@@ -13,17 +13,17 @@ static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 
 static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
-SPDLOG_INLINE string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
+SPDLOG_INLINE string_view_t &to_string_view(spdlog::level::level_enum l) noexcept
 {
     return level_string_views[l];
 }
 
-SPDLOG_INLINE const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
+SPDLOG_INLINE const char *to_short_c_str(spdlog::level::level_enum l) noexcept
 {
     return short_level_names[l];
 }
 
-SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT
+SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) noexcept
 {
     int level = 0;
     for (const auto &level_str : level_string_views)
@@ -58,7 +58,7 @@ SPDLOG_INLINE spdlog_ex::spdlog_ex(const std::string &msg, int last_errno)
     msg_ = fmt::to_string(outbuf);
 }
 
-SPDLOG_INLINE const char *spdlog_ex::what() const SPDLOG_NOEXCEPT
+SPDLOG_INLINE const char *spdlog_ex::what() const noexcept
 {
     return msg_.c_str();
 }
