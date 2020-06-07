@@ -94,7 +94,7 @@ public:
     template<typename T, typename... Args>
     pattern_formatter &add_flag(char flag, const Args &... args)
     {
-        custom_handlers_[flag] = details::make_unique<T>(args...);
+        custom_handlers_[flag] = std::make_unique<T>(args...);
         return *this;
     }
     void set_pattern(std::string pattern);

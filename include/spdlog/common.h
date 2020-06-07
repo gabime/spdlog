@@ -9,7 +9,6 @@
 #include <atomic>
 #include <chrono>
 #include <initializer_list>
-#include <memory>
 #include <exception>
 #include <string>
 #include <type_traits>
@@ -209,21 +208,4 @@ struct source_loc
     const char *funcname{nullptr};
 };
 
-namespace details {
-// make_unique support for pre c++14
-
-#if __cplusplus >= 201402L // C++14 and beyond
-using std::make_unique;
-#define SPDLOG_VALIDATE_FMT(f) FMT_STRING(f)
-#else
-#define SPDLOG_VALIDATE_FMT(f) FMT_STRING(f)
-
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args &&... args)
-{
-    static_assert(!std::is_array<T>::value, "arrays not supported");
-    return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
-#endif
-} // namespace details
 } // namespace spdlog

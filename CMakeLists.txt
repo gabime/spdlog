@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.2)
 if (${CMAKE_VERSION} VERSION_LESS 3.11)
     cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 else ()
-    cmake_policy(VERSION 3.14)
+    cmake_policy(VERSION 3.11)
 endif ()
 
 enable_language(C)
@@ -34,7 +34,7 @@ endif ()
 # Compiler config
 # ---------------------------------------------------------------------------------------
 if (NOT CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD 14)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif ()
 

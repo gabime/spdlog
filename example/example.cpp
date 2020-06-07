@@ -257,6 +257,7 @@ void android_example()
 // Log patterns can contain custom flags.
 // this will add custom flag '%*' which will be bound to a <my_formatter_flag> instance
 #include "spdlog/pattern_formatter.h"
+#include <memory>
 class my_formatter_flag : public spdlog::custom_flag_formatter
 {
 public:
@@ -268,15 +269,14 @@ public:
 
     std::unique_ptr<custom_flag_formatter> clone() const override
     {
-        return spdlog::details::make_unique<my_formatter_flag>();
+        return std::make_unique<my_formatter_flag>();
     }
 };
 
 void custom_flags_example()
 {
-
-    using spdlog::details::make_unique; // for pre c++14
-    auto formatter = make_unique<spdlog::pattern_formatter>();
+    
+    auto formatter = std::make_unique<spdlog::pattern_formatter>();
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     spdlog::set_formatter(std::move(formatter));
 }

@@ -183,7 +183,7 @@ SPDLOG_INLINE void registry::flush_every(std::chrono::seconds interval)
 {
     std::lock_guard<std::mutex> lock(flusher_mutex_);
     auto clbk = [this]() { this->flush_all(); };
-    periodic_flusher_ = details::make_unique<periodic_worker>(clbk, interval);
+    periodic_flusher_ = std::make_unique<periodic_worker>(clbk, interval);
 }
 
 SPDLOG_INLINE void registry::set_error_handler(void (*handler)(const std::string &msg))
