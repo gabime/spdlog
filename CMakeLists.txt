@@ -124,12 +124,10 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # Static/Shared library (shared not supported in windows yet)
 # ---------------------------------------------------------------------------------------
 set(SPDLOG_SRCS
-        src/ansicolor_sink.cpp
+
         src/async.cpp
         src/async_logger.cpp
         src/backtracer.cpp
-        src/base_sink.cpp
-        src/basic_file_sink.cpp
         src/common.cpp
         src/file_helper.cpp
         src/fmt.cpp
@@ -141,14 +139,22 @@ set(SPDLOG_SRCS
         src/pattern_formatter.cpp
         src/periodic_worker.cpp
         src/registry.cpp
-        src/rotating_file_sink.cpp
-        src/sink.cpp
         src/spdlog.cpp
         src/spdlog-inl.cpp
-        src/stdout_color_sinks.cpp
-        src/stdout_sinks.cpp
         src/thread_pool.cpp
+        src/sinks/stdout_color_sinks.cpp
+        src/sinks/stdout_sinks.cpp
+        src/sinks/rotating_file_sink.cpp
+        src/sinks/sink.cpp
+        src/sinks/base_sink.cpp
+        src/sinks/basic_file_sink.cpp
         )
+
+if (WIN32)
+    list(APPEND SPDLOG_SRCS src/sinks/wincolor_sink.cpp)
+else ()
+    list(APPEND SPDLOG_SRCS src/sinks/ansicolor_sink.cpp)
+endif ()
 
 if (NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
     list(APPEND SPDLOG_SRCS src/fmt.cpp)
