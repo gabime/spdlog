@@ -4,7 +4,7 @@
 #include <spdlog/sinks/wincolor_sink.h>
 #include <spdlog/common.h>
 #include <spdlog/pattern_formatter.h>
-
+#include <memory>
 namespace spdlog {
 namespace sinks {
 
@@ -12,7 +12,7 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(HANDLE out_handle, color_mode mode)
     : out_handle_(out_handle)
     , mutex_(ConsoleMutex::mutex())
-    , formatter_(details::make_unique<spdlog::pattern_formatter>())
+    , formatter_(std::make_unique<spdlog::pattern_formatter>())
 {
     // check if out_handle is points to the actual console.
     // ::GetConsoleMode() should return 0 if it is redirected or not valid console handle.

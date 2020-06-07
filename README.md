@@ -290,7 +290,7 @@ public:
 
     std::unique_ptr<custom_flag_formatter> clone() const override
     {
-        return spdlog::details::make_unique<my_formatter_flag>();
+        return std::make_unique<my_formatter_flag>();
     }
 };
 
