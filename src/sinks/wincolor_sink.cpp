@@ -5,6 +5,7 @@
 #include <spdlog/common.h>
 #include <spdlog/pattern_formatter.h>
 #include <memory>
+
 namespace spdlog {
 namespace sinks {
 
@@ -173,3 +174,11 @@ SPDLOG_INLINE wincolor_stderr_sink<ConsoleMutex>::wincolor_stderr_sink(color_mod
 
 } // namespace sinks
 } // namespace spdlog
+
+// template instantiations
+template class SPDLOG_API spdlog::sinks::wincolor_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_nullmutex>;
