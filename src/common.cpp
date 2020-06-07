@@ -9,17 +9,17 @@ static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 
 static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
-SPDLOG_INLINE string_view_t &to_string_view(spdlog::level::level_enum l) noexcept
+string_view_t &to_string_view(spdlog::level::level_enum l) noexcept
 {
     return level_string_views[l];
 }
 
-SPDLOG_INLINE const char *to_short_c_str(spdlog::level::level_enum l) noexcept
+const char *to_short_c_str(spdlog::level::level_enum l) noexcept
 {
     return short_level_names[l];
 }
 
-SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) noexcept
+spdlog::level::level_enum from_str(const std::string &name) noexcept
 {
     int level = 0;
     for (const auto &level_str : level_string_views)
@@ -43,28 +43,28 @@ SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) noexce
 }
 } // namespace level
 
-SPDLOG_INLINE spdlog_ex::spdlog_ex(std::string msg)
+spdlog_ex::spdlog_ex(std::string msg)
     : msg_(std::move(msg))
 {}
 
-SPDLOG_INLINE spdlog_ex::spdlog_ex(const std::string &msg, int last_errno)
+spdlog_ex::spdlog_ex(const std::string &msg, int last_errno)
 {
     memory_buf_t outbuf;
     fmt::format_system_error(outbuf, last_errno, msg);
     msg_ = fmt::to_string(outbuf);
 }
 
-SPDLOG_INLINE const char *spdlog_ex::what() const noexcept
+const char *spdlog_ex::what() const noexcept
 {
     return msg_.c_str();
 }
 
-SPDLOG_INLINE void throw_spdlog_ex(const std::string &msg, int last_errno)
+void throw_spdlog_ex(const std::string &msg, int last_errno)
 {
     SPDLOG_THROW(spdlog_ex(msg, last_errno));
 }
 
-SPDLOG_INLINE void throw_spdlog_ex(std::string msg)
+void throw_spdlog_ex(std::string msg)
 {
     SPDLOG_THROW(spdlog_ex(std::move(msg)));
 }

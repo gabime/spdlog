@@ -6,7 +6,7 @@
 namespace spdlog {
 namespace details {
 
-SPDLOG_INLINE periodic_worker::periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval)
+periodic_worker::periodic_worker(const std::function<void()> &callback_fun, std::chrono::seconds interval)
 {
     active_ = (interval > std::chrono::seconds::zero());
     if (!active_)
@@ -28,7 +28,7 @@ SPDLOG_INLINE periodic_worker::periodic_worker(const std::function<void()> &call
 }
 
 // stop the worker thread and join it
-SPDLOG_INLINE periodic_worker::~periodic_worker()
+periodic_worker::~periodic_worker()
 {
     if (worker_thread_.joinable())
     {

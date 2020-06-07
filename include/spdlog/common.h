@@ -22,18 +22,9 @@
 #endif
 #else // !defined(_WIN32) || !defined(SPDLOG_SHARED_LIB)
 #define SPDLOG_API
-#define SPDLOG_INLINE
 #endif
 
 #include <spdlog/fmt/fmt.h>
-
-#if defined(__GNUC__) || defined(__clang__)
-#define SPDLOG_DEPRECATED __attribute__((deprecated))
-#elif defined(_MSC_VER)
-#define SPDLOG_DEPRECATED __declspec(deprecated)
-#else
-#define SPDLOG_DEPRECATED
-#endif
 
 // disable thread local on msvc 2013
 #ifndef SPDLOG_NO_TLS
