@@ -1,14 +1,9 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
-
-#ifndef SPDLOG_HEADER_ONLY
 #include <spdlog/sinks/rotating_file_sink.h>
-#endif
-
 #include <spdlog/common.h>
-
+#include <spdlog/details/os.h>
 #include <spdlog/details/file_helper.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/fmt/fmt.h>
@@ -129,3 +124,7 @@ SPDLOG_INLINE bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src
 
 } // namespace sinks
 } // namespace spdlog
+
+// template instantiations
+template class SPDLOG_API spdlog::sinks::rotating_file_sink<std::mutex>;
+template class SPDLOG_API spdlog::sinks::rotating_file_sink<spdlog::details::null_mutex>;

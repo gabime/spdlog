@@ -14,6 +14,7 @@
 #include <functional>
 #include <mutex>
 #include <thread>
+#include <spdlog/common.h>
 namespace spdlog {
 namespace details {
 

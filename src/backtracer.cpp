@@ -1,11 +1,8 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
-
-#ifndef SPDLOG_HEADER_ONLY
 #include <spdlog/details/backtracer.h>
-#endif
+
 namespace spdlog {
 namespace details {
 SPDLOG_INLINE backtracer::backtracer(const backtracer &other)

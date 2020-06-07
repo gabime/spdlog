@@ -39,7 +39,3 @@ template<typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stderr_color_st(const std::string &logger_name, color_mode mode = color_mode::automatic);
 
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "stdout_color_sinks-inl.h"
-#endif

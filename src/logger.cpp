@@ -1,12 +1,7 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
-
-#ifndef SPDLOG_HEADER_ONLY
 #include <spdlog/logger.h>
-#endif
-
 #include <spdlog/sinks/sink.h>
 #include <spdlog/details/backtracer.h>
 #include <spdlog/pattern_formatter.h>
@@ -25,12 +20,13 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , tracer_(other.tracer_)
 {}
 
-SPDLOG_INLINE logger::logger(logger &&other) noexcept : name_(std::move(other.name_)),
-                                                               sinks_(std::move(other.sinks_)),
-                                                               level_(other.level_.load(std::memory_order_relaxed)),
-                                                               flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
-                                                               custom_err_handler_(std::move(other.custom_err_handler_)),
-                                                               tracer_(std::move(other.tracer_))
+SPDLOG_INLINE logger::logger(logger &&other) noexcept
+    : name_(std::move(other.name_))
+    , sinks_(std::move(other.sinks_))
+    , level_(other.level_.load(std::memory_order_relaxed))
+    , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
+    , custom_err_handler_(std::move(other.custom_err_handler_))
+    , tracer_(std::move(other.tracer_))
 
 {}
 

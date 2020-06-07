@@ -1,11 +1,7 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
-
-#ifndef SPDLOG_HEADER_ONLY
 #include <spdlog/details/log_msg_buffer.h>
-#endif
 
 namespace spdlog {
 namespace details {
@@ -26,7 +22,9 @@ SPDLOG_INLINE log_msg_buffer::log_msg_buffer(const log_msg_buffer &other)
     update_string_views();
 }
 
-SPDLOG_INLINE log_msg_buffer::log_msg_buffer(log_msg_buffer &&other) noexcept : log_msg{other}, buffer{std::move(other.buffer)}
+SPDLOG_INLINE log_msg_buffer::log_msg_buffer(log_msg_buffer &&other) noexcept
+    : log_msg{other}
+    , buffer{std::move(other.buffer)}
 {
     update_string_views();
 }

@@ -15,8 +15,6 @@
 #include <type_traits>
 #include <functional>
 
-#ifdef SPDLOG_COMPILED_LIB
-#undef SPDLOG_HEADER_ONLY
 #if defined(_WIN32) && defined(SPDLOG_SHARED_LIB)
 #ifdef spdlog_EXPORTS
 #define SPDLOG_API __declspec(dllexport)
@@ -25,13 +23,8 @@
 #endif
 #else // !defined(_WIN32) || !defined(SPDLOG_SHARED_LIB)
 #define SPDLOG_API
-#endif
 #define SPDLOG_INLINE
-#else // !defined(SPDLOG_COMPILED_LIB)
-#define SPDLOG_API
-#define SPDLOG_HEADER_ONLY
-#define SPDLOG_INLINE inline
-#endif // #ifdef SPDLOG_COMPILED_LIB
+#endif
 
 #include <spdlog/fmt/fmt.h>
 
@@ -234,7 +227,3 @@ std::unique_ptr<T> make_unique(Args &&... args)
 #endif
 } // namespace details
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "common-inl.h"
-#endif
