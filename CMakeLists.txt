@@ -129,7 +129,6 @@ set(SPDLOG_SRCS
         src/spdlog-inl.cpp
         src/async.cpp
         src/async_logger.cpp
-        src/backtracer.cpp
         src/common.cpp
         src/fmt.cpp
 

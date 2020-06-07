@@ -30,7 +30,6 @@ set(SPDLOG_UTESTS_SOURCES
         test_dup_filter.cpp
         test_fmt_helper.cpp
         test_stdout_api.cpp
-        test_backtrace.cpp
         test_create_dir.cpp
         test_cfg.cpp
         test_time_point.cpp)

@@ -49,7 +49,6 @@ $ cmake .. && make -j
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Log filtering - log levels can be modified in runtime as well as in compile time.
 * Support for loading log levels from argv or from environment var.
-* [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display later on demand.
  
 ## Usage samples
 
@@ -140,24 +139,6 @@ void daily_example()
     auto logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
 }
 
-```
-
----
-#### Backtrace support
-```c++
-// Loggers can store in a ring buffer all messages (including debug/trace) and display later on demand.
-// When needed, call dump_backtrace() to see them
-
-spdlog::enable_backtrace(32); // Store the latest 32 messages in a buffer. Older messages will be dropped.
-// or my_logger->enable_backtrace(32)..
-for(int i = 0; i < 100; i++)
-{
-  spdlog::debug("Backtrace message {}", i); // not logged yet..
-}
-// e.g. if some error happened:
-spdlog::dump_backtrace(); // log them now! show the last 32 messages
-
-// or my_logger->dump_backtrace(32)..
 ```
 
 ---
