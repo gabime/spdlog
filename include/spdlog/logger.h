@@ -362,7 +362,3 @@ protected:
 void swap(logger &a, logger &b);
 
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "logger-inl.h"
-#endif

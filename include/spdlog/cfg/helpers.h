@@ -22,7 +22,3 @@ SPDLOG_API log_levels extract_levels(const std::string &txt);
 
 } // namespace cfg
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "helpers-inl.h"
-#endif // SPDLOG_HEADER_ONLY

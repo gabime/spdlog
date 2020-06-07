@@ -174,7 +174,6 @@ endif ()
 
 add_library(spdlog::spdlog ALIAS spdlog)
 
-target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
@@ -197,15 +196,12 @@ if (SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
         find_package(fmt 5.3.0 REQUIRED)
     endif ()
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
 
     # use external fmt-header-nly
     if (SPDLOG_FMT_EXTERNAL_HO)
         target_link_libraries(spdlog PUBLIC fmt::fmt-header-only)
-        target_link_libraries(spdlog_header_only INTERFACE fmt::fmt-header-only)
     else () # use external compile fmt
         target_link_libraries(spdlog PUBLIC fmt::fmt)
-        target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
     endif ()
 
     set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
@@ -216,18 +212,14 @@ endif ()
 # ---------------------------------------------------------------------------------------
 if (SPDLOG_WCHAR_SUPPORT)
     target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 endif ()
 
 if (SPDLOG_WCHAR_FILENAMES)
     target_compile_definitions(spdlog PUBLIC SPDLOG_WCHAR_FILENAMES)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_WCHAR_FILENAMES)
 endif ()
 
 if (SPDLOG_NO_EXCEPTIONS)
     target_compile_definitions(spdlog PUBLIC SPDLOG_NO_EXCEPTIONS)
-
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_EXCEPTIONS)
 
     if (NOT MSVC)
         target_compile_options(spdlog PRIVATE -fno-exceptions)
@@ -236,27 +228,22 @@ endif ()
 
 if (SPDLOG_CLOCK_COARSE)
     target_compile_definitions(spdlog PRIVATE SPDLOG_CLOCK_COARSE)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_CLOCK_COARSE)
 endif ()
 
 if (SPDLOG_PREVENT_CHILD_FD)
     target_compile_definitions(spdlog PRIVATE SPDLOG_PREVENT_CHILD_FD)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_PREVENT_CHILD_FD)
 endif ()
 
 if (SPDLOG_NO_THREAD_ID)
     target_compile_definitions(spdlog PRIVATE SPDLOG_NO_THREAD_ID)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_THREAD_ID)
 endif ()
 
 if (SPDLOG_NO_TLS)
     target_compile_definitions(spdlog PRIVATE SPDLOG_NO_TLS)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_TLS)
 endif ()
 
 if (SPDLOG_NO_ATOMIC_LEVELS)
     target_compile_definitions(spdlog PUBLIC SPDLOG_NO_ATOMIC_LEVELS)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_NO_ATOMIC_LEVELS)
 endif ()
 
 # ---------------------------------------------------------------------------------------

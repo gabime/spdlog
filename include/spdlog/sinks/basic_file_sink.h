@@ -52,7 +52,3 @@ inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name, c
 }
 
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "basic_file_sink-inl.h"
-#endif

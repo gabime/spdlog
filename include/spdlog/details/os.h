@@ -105,7 +105,3 @@ SPDLOG_API std::string getenv(const char *field);
 } // namespace os
 } // namespace details
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "os-inl.h"
-#endif

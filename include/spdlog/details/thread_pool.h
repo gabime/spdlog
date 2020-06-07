@@ -115,7 +115,3 @@ private:
 
 } // namespace details
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "thread_pool-inl.h"
-#endif

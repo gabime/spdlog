@@ -11,7 +11,7 @@
 //
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
-#if !defined(SPDLOG_COMPILED_LIB) && !defined(FMT_HEADER_ONLY)
+#if !defined(FMT_HEADER_ONLY)
 #define FMT_HEADER_ONLY
 #endif
 #ifndef FMT_USE_WINDOWS_H

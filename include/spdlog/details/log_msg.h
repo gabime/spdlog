@@ -30,7 +30,3 @@ struct SPDLOG_API log_msg
 };
 } // namespace details
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "log_msg-inl.h"
-#endif

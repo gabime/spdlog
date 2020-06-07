@@ -27,7 +27,3 @@ public:
 
 } // namespace details
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#include "log_msg_buffer-inl.h"
-#endif
