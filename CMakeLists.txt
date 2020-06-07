@@ -126,7 +126,6 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 set(SPDLOG_SRCS
         src/logger.cpp
         src/spdlog.cpp
-        src/spdlog-inl.cpp
         src/async.cpp
         src/async_logger.cpp
         src/common.cpp
