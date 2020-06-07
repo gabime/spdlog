@@ -73,8 +73,7 @@ public:
     void swap(spdlog::logger &other) noexcept;
 
     // FormatString is a type derived from fmt::compile_string
-    template<typename FormatString, typename std::enable_if_t<fmt::is_compile_string<FormatString>::value, int> * = nullptr,
-        typename... Args>
+    template<typename FormatString, typename std::enable_if_t<fmt::is_compile_string<FormatString>::value, int> = 0, typename... Args>
     void log(source_loc loc, level::level_enum lvl, const FormatString &fmt, const Args &... args)
     {
         log_(loc, lvl, fmt, args...);
@@ -137,7 +136,7 @@ public:
 
     // T can be statically converted to string_view and isn't a fmt::compile_string
     template<class T, typename std::enable_if_t<
-                          std::is_convertible<const T &, spdlog::string_view_t>::value && !fmt::is_compile_string<T>::value, T> * = nullptr>
+                          std::is_convertible<const T &, spdlog::string_view_t>::value && !fmt::is_compile_string<T>::value, int> = 0>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         log(loc, lvl, string_view_t{msg});
@@ -171,9 +170,9 @@ public:
     }
 
     // T cannot be statically converted to string_view or wstring_view
-    template<class T, typename std::enable_if_t<!std::is_convertible<const T &, spdlog::string_view_t>::value &&
-                                                    !is_convertible_to_wstring_view<const T &>::value,
-                          T> * = nullptr>
+    template<class T,
+        typename std::enable_if_t<
+            !std::is_convertible<const T &, spdlog::string_view_t>::value && !is_convertible_to_wstring_view<const T &>::value, int> = 0>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         log(loc, lvl, "{}", msg);
@@ -242,7 +241,7 @@ public:
     }
 
     // T can be statically converted to wstring_view
-    template<class T, typename std::enable_if_t<is_convertible_to_wstring_view<const T &>::value, T> * = nullptr>
+    template<class T, typename std::enable_if_t<is_convertible_to_wstring_view<const T &>::value, int> = 0>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         if (!should_log(lvl))
