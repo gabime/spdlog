@@ -146,27 +146,24 @@ public:
 
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
     {
-        bool log_enabled = should_log(lvl);
-
-        if (!log_enabled)
+        if (!should_log(lvl))
         {
             return;
         }
 
         details::log_msg log_msg(log_time, loc, name_, lvl, msg);
-        log_it_(log_msg, log_enabled);
+        sink_it_(log_msg);
     }
 
     void log(source_loc loc, level::level_enum lvl, string_view_t msg)
     {
-        bool log_enabled = should_log(lvl);
-        if (!log_enabled)
+        if (!should_log(lvl))
         {
             return;
         }
 
         details::log_msg log_msg(loc, name_, lvl, msg);
-        log_it_(log_msg, log_enabled);
+        sink_it_(log_msg);
     }
 
     void log(level::level_enum lvl, string_view_t msg)
@@ -227,8 +224,7 @@ public:
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
     {
-        bool log_enabled = should_log(lvl);
-        if (!log_enabled)
+        if (!should_log(lvl))
         {
             return;
         }
@@ -241,7 +237,7 @@ public:
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            log_it_(log_msg, log_enabled);
+            sink_it_(log_msg);
         }
         SPDLOG_LOGGER_CATCH()
     }
@@ -250,8 +246,7 @@ public:
     template<class T, typename std::enable_if<is_convertible_to_wstring_view<const T &>::value, T>::type * = nullptr>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
-        bool log_enabled = should_log(lvl);
-        if (!log_enabled)
+        if (!should_log(lvl))
         {
             return;
         }
@@ -261,7 +256,7 @@ public:
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(msg, buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            log_it_(log_msg, log_enabled);
+            sink_it_(log_msg);
         }
         SPDLOG_LOGGER_CATCH()
     }
@@ -313,8 +308,7 @@ protected:
     template<typename FormatString, typename... Args>
     void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, const Args &... args)
     {
-        bool log_enabled = should_log(lvl);
-        if (!log_enabled)
+        if (!should_log(lvl))
         {
             return;
         }
@@ -323,13 +317,12 @@ protected:
             memory_buf_t buf;
             fmt::format_to(buf, fmt, args...);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            log_it_(log_msg, log_enabled);
+            sink_it_(log_msg);
         }
         SPDLOG_LOGGER_CATCH()
     }
 
     // log the given message (if the given log level is high enough),
-    void log_it_(const details::log_msg &log_msg, bool log_enabled);
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
     bool should_flush_(const details::log_msg &msg);
