@@ -124,24 +124,25 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # Static/Shared library (shared not supported in windows yet)
 # ---------------------------------------------------------------------------------------
 set(SPDLOG_SRCS
-
+        src/logger.cpp
+        src/spdlog.cpp
+        src/spdlog-inl.cpp
         src/async.cpp
         src/async_logger.cpp
         src/backtracer.cpp
         src/common.cpp
-        src/file_helper.cpp
         src/fmt.cpp
-        src/helpers.cpp
-        src/logger.cpp
-        src/log_msg_buffer.cpp
-        src/log_msg.cpp
-        src/os.cpp
+
+        src/details/helpers.cpp
+        src/details/file_helper.cpp
+        src/details/log_msg.cpp
+        src/details/log_msg_buffer.cpp
+        src/details/os.cpp
         src/pattern_formatter.cpp
-        src/periodic_worker.cpp
-        src/registry.cpp
-        src/spdlog.cpp
-        src/spdlog-inl.cpp
-        src/thread_pool.cpp
+        src/details/periodic_worker.cpp
+        src/details/registry.cpp
+        src/details/thread_pool.cpp
+
         src/sinks/stdout_color_sinks.cpp
         src/sinks/stdout_sinks.cpp
         src/sinks/rotating_file_sink.cpp
