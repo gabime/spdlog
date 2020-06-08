@@ -57,11 +57,7 @@ matrix:
       os: linux
       addons: *gcc7
 
-    # Test clang-3.5: C++11, Build=Debug/Release
-    - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=14
-      os: linux
-      addons: *clang35
-
+    # Test clang-3.5: C++11, Build=Release
     - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=14
       os: linux
       addons: *clang35
