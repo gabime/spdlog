@@ -45,38 +45,38 @@ addons: &clang10
 matrix:
   include:
     # Test gcc-4.8: C++11, Build=Debug/Release
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=14
       os: linux
       addons: *gcc48
 
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=14
       os: linux
       addons: *gcc48
 
-    - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
+    - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=14
       os: linux
       addons: *gcc7
 
     # Test clang-3.5: C++11, Build=Debug/Release
-    - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=11
+    - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=14
       os: linux
       addons: *clang35
 
-    - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=11
+    - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=14
       os: linux
       addons: *clang35
 
       # osx
-    - env: BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
+    - env: BUILD_TYPE=Release CPP=14 ASAN=Off TSAN=Off
       os: osx
 
     # Test clang-10.0: C++11, Build=Debug/Release
-    - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=11
+    - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=14
       os: linux
       dist: bionic
       addons: *clang10
 
-    - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=11 ASAN=On
+    - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=14 ASAN=On
       os: linux
       dist: bionic
       addons: *clang10
