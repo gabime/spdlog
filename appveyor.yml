@@ -29,7 +29,7 @@ environment:
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       WCHAR: 'OFF'
-      BUILD_SHARED: 'OFF'
+      BUILD_SHARED: 'ON'
 build_script:
   - cmd: >-
       set
