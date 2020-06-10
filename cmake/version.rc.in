@@ -1,5 +1,5 @@
 #define APSTUDIO_READONLY_SYMBOLS
-#include "winres.h"
+#include <windows.h>
 #undef APSTUDIO_READONLY_SYMBOLS
 
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
