@@ -1,0 +1,2 @@
+[libfuzzer]
+dict = spdlog_fuzzer.dict
