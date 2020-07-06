@@ -5,6 +5,10 @@
 
 #pragma once
 
+// fmt 7.0.0 renamed the internal namespace to detail
+// The former is still provided as an alias if the FMT_USE_INTERNAL macro is defined.
+#define FMT_USE_INTERNAL
+
 //
 // Include a bundled header-only copy of fmtlib or an external one.
 // By default spdlog include its own copy.
