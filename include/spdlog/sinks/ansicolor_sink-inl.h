@@ -43,20 +43,31 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
     // Wrap the originally formatted message in color codes.
     // If color is not supported in the terminal, log as is instead.
     std::lock_guard<mutex_t> lock(mutex_);
-    msg.color_range_start = 0;
-    msg.color_range_end = 0;
+    msg.color_range_start.clear();
+    msg.color_range_end.clear();
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
-    if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
+    if (should_do_colors_ && !msg.color_range_start.empty() && msg.color_range_start.size() == msg.color_range_end.size())
     {
         // before color range
-        print_range_(formatted, 0, msg.color_range_start);
-        // in color range
-        print_ccode_(colors_[msg.level]);
-        print_range_(formatted, msg.color_range_start, msg.color_range_end);
-        print_ccode_(reset);
-        // after color range
-        print_range_(formatted, msg.color_range_end, formatted.size());
+        print_range_(formatted, 0, msg.color_range_start[0]);
+
+        for(size_t i=0; i<msg.color_range_start.size(); i++)
+        {
+            // in color range
+            print_ccode_(colors_[msg.level]);
+            print_range_(formatted, msg.color_range_start[i], msg.color_range_end[i]);
+            print_ccode_(reset);
+            // after color range
+            if(i+1 < msg.color_range_end.size())
+            {
+                print_range_(formatted, msg.color_range_end[i], msg.color_range_start[i+1]);
+            }
+            else
+            {
+                print_range_(formatted, msg.color_range_end[i], formatted.size());
+            }
+        }
     }
     else // no color
     {

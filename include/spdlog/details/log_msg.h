@@ -22,8 +22,8 @@ struct SPDLOG_API log_msg
     size_t thread_id{0};
 
     // wrapping the formatted text with color (updated by pattern_formatter).
-    mutable size_t color_range_start{0};
-    mutable size_t color_range_end{0};
+    mutable std::vector<size_t> color_range_start;
+    mutable std::vector<size_t> color_range_end;
 
     source_loc source;
     string_view_t payload;

@@ -52,8 +52,8 @@ template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    msg.color_range_start = 0;
-    msg.color_range_end = 0;
+    msg.color_range_start.clear();
+    msg.color_range_end.clear();
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     if (!in_console_)
@@ -61,17 +61,29 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
         write_to_file_(formatted);
         return;
     }
-    if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
+    if (should_do_colors_ && !msg.color_range_start.empty() && msg.color_range_start.size() == msg.color_range_end.size())
     {
         // before color range
-        print_range_(formatted, 0, msg.color_range_start);
+        print_range_(formatted, 0, msg.color_range_start[0]);
 
-        // in color range
-        auto orig_attribs = set_foreground_color_(colors_[msg.level]);
-        print_range_(formatted, msg.color_range_start, msg.color_range_end);
-        // reset to orig colors
-        ::SetConsoleTextAttribute(out_handle_, orig_attribs);
-        print_range_(formatted, msg.color_range_end, formatted.size());
+        for(size_t i=0; i<msg.color_range_start.size(); i++)
+        {
+            // in color range
+            auto orig_attribs = set_foreground_color_(colors_[msg.level]);
+            print_range_(formatted, msg.color_range_start[i], msg.color_range_end[i]);
+            // reset to orig colors
+            ::SetConsoleTextAttribute(out_handle_, orig_attribs);
+
+            // after color range
+            if(i+1 < msg.color_range_end.size())
+            {
+                print_range_(formatted, msg.color_range_end[i], msg.color_range_start[i+1]);
+            }
+            else
+            {
+                print_range_(formatted, msg.color_range_end[i], formatted.size());
+            }
+        }
     }
     else // print without colors if color range is invalid (or color is disabled)
     {

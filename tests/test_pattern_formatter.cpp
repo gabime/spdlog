@@ -69,8 +69,10 @@ TEST_CASE("color range test1", "[pattern_formatter]")
     std::string logger_name = "test";
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, spdlog::string_view_t(buf.data(), buf.size()));
     formatter->format(msg, formatted);
-    REQUIRE(msg.color_range_start == 0);
-    REQUIRE(msg.color_range_end == 5);
+    REQUIRE(msg.color_range_start.size() == 1);
+    REQUIRE(msg.color_range_end.size() == 1);
+    REQUIRE(msg.color_range_start[0] == 0);
+    REQUIRE(msg.color_range_end[0] == 5);
     REQUIRE(log_to_str("hello", "%^%v%$", spdlog::pattern_time_type::local, "\n") == "hello\n");
 }
 
@@ -81,8 +83,10 @@ TEST_CASE("color range test2", "[pattern_formatter]")
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "");
     memory_buf_t formatted;
     formatter->format(msg, formatted);
-    REQUIRE(msg.color_range_start == 0);
-    REQUIRE(msg.color_range_end == 0);
+    REQUIRE(msg.color_range_start.size() == 1);
+    REQUIRE(msg.color_range_end.size() == 1);
+    REQUIRE(msg.color_range_start[0] == 0);
+    REQUIRE(msg.color_range_end[0] == 0);
     REQUIRE(log_to_str("", "%^%$", spdlog::pattern_time_type::local, "\n") == "\n");
 }
 
@@ -93,8 +97,10 @@ TEST_CASE("color range test3", "[pattern_formatter]")
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
     memory_buf_t formatted;
     formatter->format(msg, formatted);
-    REQUIRE(msg.color_range_start == 0);
-    REQUIRE(msg.color_range_end == 3);
+    REQUIRE(msg.color_range_start.size() == 1);
+    REQUIRE(msg.color_range_end.size() == 1);
+    REQUIRE(msg.color_range_start[0] == 0);
+    REQUIRE(msg.color_range_end[0] == 3);
 }
 
 TEST_CASE("color range test4", "[pattern_formatter]")
@@ -105,8 +111,10 @@ TEST_CASE("color range test4", "[pattern_formatter]")
 
     memory_buf_t formatted;
     formatter->format(msg, formatted);
-    REQUIRE(msg.color_range_start == 2);
-    REQUIRE(msg.color_range_end == 5);
+    REQUIRE(msg.color_range_start.size() == 1);
+    REQUIRE(msg.color_range_end.size() == 1);
+    REQUIRE(msg.color_range_start[0] == 2);
+    REQUIRE(msg.color_range_end[0] == 5);
     REQUIRE(log_to_str("ignored", "XX%^YYY%$", spdlog::pattern_time_type::local, "\n") == "XXYYY\n");
 }
 
@@ -117,8 +125,9 @@ TEST_CASE("color range test5", "[pattern_formatter]")
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
     memory_buf_t formatted;
     formatter->format(msg, formatted);
-    REQUIRE(msg.color_range_start == 2);
-    REQUIRE(msg.color_range_end == 0);
+    REQUIRE(msg.color_range_start.size() == 1);
+    REQUIRE(msg.color_range_end.empty());
+    REQUIRE(msg.color_range_start[0] == 2);
 }
 
 TEST_CASE("color range test6", "[pattern_formatter]")
@@ -128,8 +137,39 @@ TEST_CASE("color range test6", "[pattern_formatter]")
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
     memory_buf_t formatted;
     formatter->format(msg, formatted);
-    REQUIRE(msg.color_range_start == 0);
-    REQUIRE(msg.color_range_end == 2);
+    REQUIRE(msg.color_range_start.empty());
+    REQUIRE(msg.color_range_end.size() == 1);
+    REQUIRE(msg.color_range_end[0] == 2);
+}
+
+TEST_CASE("color multi-range test1", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%$%^%$");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+    REQUIRE(msg.color_range_start.size() == 2);
+    REQUIRE(msg.color_range_end.size() == 2);
+    REQUIRE(msg.color_range_start[0] == 0);
+    REQUIRE(msg.color_range_start[1] == 0);
+    REQUIRE(msg.color_range_end[0] == 0);
+    REQUIRE(msg.color_range_end[1] == 0);
+}
+
+TEST_CASE("color multi-range test2", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^***%$***%^***%$");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+    REQUIRE(msg.color_range_start.size() == 2);
+    REQUIRE(msg.color_range_end.size() == 2);
+    REQUIRE(msg.color_range_start[0] == 0);
+    REQUIRE(msg.color_range_start[1] == 6);
+    REQUIRE(msg.color_range_end[0] == 3);
+    REQUIRE(msg.color_range_end[1] == 9);
 }
 
 //
