@@ -65,6 +65,11 @@ public:
         : logger(std::move(name), sinks.begin(), sinks.end())
     {}
 
+    // Logger with sinks init list
+    logger(std::string name, std::vector<sink_ptr> sinks)
+        : logger(std::move(name), sinks.begin(), sinks.end())
+    {}
+
     virtual ~logger() = default;
 
     logger(const logger &other);
