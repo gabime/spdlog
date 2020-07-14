@@ -49,6 +49,9 @@ void bench_formatters()
         "[%D %X] [%l] [%n] %v",
         "[%Y-%m-%d %H:%M:%S.%e] [%l] [%n] %v",
         "[%Y-%m-%d %H:%M:%S.%e] [%l] [%n] [%t] %v",
+        "%^[%Y-%m-%d %H:%M:%S.%e]%$ [%l] [%n] [%t] %v",
+        "%^[%Y-%m-%d %H:%M:%S.%e]%$ [%l] %^[%n]%$ [%t] %v",
+        "%^[%Y-%m-%d %H:%M:%S.%e]%$ [%l] %^[%n]%$ [%t] %^%v%$",
     };
     for (auto &pattern : patterns)
     {
