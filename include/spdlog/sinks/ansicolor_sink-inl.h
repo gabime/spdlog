@@ -44,9 +44,9 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
     // If color is not supported in the terminal, log as is instead.
     std::lock_guard<mutex_t> lock(mutex_);
     msg.num_start_ranges = 0;
-    memset(msg.color_ranges_start, 0, sizeof(size_t) * spdlog::details::MAX_RANGES);
+    memset(msg.color_ranges_start, 0, sizeof(size_t) * MAX_RANGES);
     msg.num_end_ranges = 0;
-    memset(msg.color_ranges_end, 0, sizeof(size_t) * spdlog::details::MAX_RANGES);
+    memset(msg.color_ranges_end, 0, sizeof(size_t) * MAX_RANGES);
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     if (should_do_colors_ && msg.num_start_ranges == msg.num_end_ranges)

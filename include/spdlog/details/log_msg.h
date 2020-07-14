@@ -9,7 +9,6 @@
 namespace spdlog {
 namespace details {
 
-const size_t MAX_RANGES = 5;
 struct SPDLOG_API log_msg
 {
     log_msg() = default;

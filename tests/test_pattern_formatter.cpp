@@ -172,6 +172,24 @@ TEST_CASE("color multi-range test2", "[pattern_formatter]")
     REQUIRE(msg.color_ranges_end[1] == 9);
 }
 
+// Test case where users supplies more ranges then are allowed.  MAX_RANGES is defined as 3 by default.
+TEST_CASE("color multi-range test3", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^***%$***%^***%$***%^***%$***%^***%$");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+    REQUIRE(msg.num_start_ranges == 3);
+    REQUIRE(msg.num_end_ranges == 3);
+    REQUIRE(msg.color_ranges_start[0] == 0);
+    REQUIRE(msg.color_ranges_start[1] == 6);
+    REQUIRE(msg.color_ranges_start[2] == 12);
+    REQUIRE(msg.color_ranges_end[0] == 3);
+    REQUIRE(msg.color_ranges_end[1] == 9);
+    REQUIRE(msg.color_ranges_end[2] == 15);
+}
+
 //
 // Test padding
 //
