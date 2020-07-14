@@ -53,9 +53,9 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
     std::lock_guard<mutex_t> lock(mutex_);
     msg.num_start_ranges = 0;
-    memset(msg.color_ranges_start, 0, sizeof(size_t) * spdlog::details::MAX_RANGES);
+    memset(msg.color_ranges_start, 0, sizeof(size_t) * MAX_RANGES);
     msg.num_end_ranges = 0;
-    memset(msg.color_ranges_end, 0, sizeof(size_t) * spdlog::details::MAX_RANGES);
+    memset(msg.color_ranges_end, 0, sizeof(size_t) * MAX_RANGES);
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     if (!in_console_)
