@@ -734,7 +734,8 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
-        msg.color_range_start.push_back(dest.size());
+        if(msg.num_start_ranges < MAX_RANGES)
+            msg.color_ranges_start[msg.num_start_ranges++] = dest.size();
     }
 };
 
@@ -747,7 +748,8 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
-        msg.color_range_end.push_back(dest.size());
+        if(msg.num_end_ranges < MAX_RANGES)
+            msg.color_ranges_end[msg.num_end_ranges++] = dest.size();
     }
 };
 
@@ -963,10 +965,13 @@ public:
 
         dest.push_back('[');
         // wrap the level name with color
-        msg.color_range_start.push_back(dest.size());
+        if(msg.num_start_ranges < MAX_RANGES)
+            msg.color_ranges_start[msg.num_start_ranges++] = dest.size();
         // fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
         fmt_helper::append_string_view(level::to_string_view(msg.level), dest);
-        msg.color_range_end.push_back(dest.size());
+
+        if(msg.num_end_ranges < MAX_RANGES)
+            msg.color_ranges_end[msg.num_end_ranges++] = dest.size();
         dest.push_back(']');
         dest.push_back(' ');
 

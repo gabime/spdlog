@@ -90,6 +90,17 @@ TEST_CASE("stderr_multi_color_range", "[stderr]")
     spdlog::drop_all();
 }
 
+TEST_CASE("stderr_no_color_range", "[stderr]")
+{
+    auto l = spdlog::stderr_color_mt("test");
+    l->set_pattern("No Color Ranges -- %v");
+    l->info("uncolored text");
+    l->warn("uncolored text");
+    l->error("uncolored text");
+    l->critical("uncolored text");
+    spdlog::drop_all();
+}
+
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 TEST_CASE("wchar_api", "[stdout]")

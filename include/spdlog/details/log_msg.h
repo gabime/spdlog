@@ -8,6 +8,8 @@
 
 namespace spdlog {
 namespace details {
+
+const size_t MAX_RANGES = 5;
 struct SPDLOG_API log_msg
 {
     log_msg() = default;
@@ -22,8 +24,10 @@ struct SPDLOG_API log_msg
     size_t thread_id{0};
 
     // wrapping the formatted text with color (updated by pattern_formatter).
-    mutable std::vector<size_t> color_range_start;
-    mutable std::vector<size_t> color_range_end;
+    mutable size_t color_ranges_start[MAX_RANGES] = {0};
+    mutable size_t num_start_ranges = 0;
+    mutable size_t color_ranges_end[MAX_RANGES] = {0};
+    mutable size_t num_end_ranges = 0;
 
     source_loc source;
     string_view_t payload;

@@ -52,8 +52,10 @@ template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    msg.color_range_start.clear();
-    msg.color_range_end.clear();
+    msg.num_start_ranges = 0;
+    memset(msg.color_ranges_start, 0, sizeof(size_t) * spdlog::details::MAX_RANGES);
+    msg.num_end_ranges = 0;
+    memset(msg.color_ranges_end, 0, sizeof(size_t) * spdlog::details::MAX_RANGES);
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     if (!in_console_)
@@ -61,28 +63,39 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
         write_to_file_(formatted);
         return;
     }
-    if (should_do_colors_ && !msg.color_range_start.empty() && msg.color_range_start.size() == msg.color_range_end.size())
+    if (should_do_colors_ && msg.num_start_ranges == msg.num_end_ranges)
     {
-        // before color range
-        print_range_(formatted, 0, msg.color_range_start[0]);
+        if(msg.num_start_ranges > 0)
+        {
+            // before color range
+            print_range_(formatted, 0, msg.color_ranges_start[0]);
 
-        for(size_t i=0; i<msg.color_range_start.size(); i++)
+            for(size_t i=0; i<msg.num_start_ranges; i++)
+            {
+                // in color range
+                auto orig_attribs = set_foreground_color_(colors_[msg.level]);
+                print_range_(formatted, msg.color_ranges_start[i], msg.color_ranges_end[i]);
+                // reset to orig colors
+                ::SetConsoleTextAttribute(out_handle_, orig_attribs);
+
+                // after color range
+                if(i+1 < msg.num_start_ranges)
+                {
+                    print_range_(formatted, msg.color_ranges_end[i], msg.color_ranges_start[i+1]);
+                }
+                else
+                {
+                    print_range_(formatted, msg.color_ranges_end[i], formatted.size());
+                }
+            }
+        }
+        else
         {
             // in color range
             auto orig_attribs = set_foreground_color_(colors_[msg.level]);
-            print_range_(formatted, msg.color_range_start[i], msg.color_range_end[i]);
+            print_range_(formatted, 0, formatted.size());
             // reset to orig colors
             ::SetConsoleTextAttribute(out_handle_, orig_attribs);
-
-            // after color range
-            if(i+1 < msg.color_range_end.size())
-            {
-                print_range_(formatted, msg.color_range_end[i], msg.color_range_start[i+1]);
-            }
-            else
-            {
-                print_range_(formatted, msg.color_range_end[i], formatted.size());
-            }
         }
     }
     else // print without colors if color range is invalid (or color is disabled)
