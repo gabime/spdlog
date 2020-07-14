@@ -8,8 +8,8 @@
 #include <spdlog/common.h>
 #include <spdlog/details/os.h>
 
-#include <windows.h>
 #include <winsock2.h>
+#include <windows.h>
 #include <ws2tcpip.h>
 #include <stdlib.h>
 #include <stdio.h>
