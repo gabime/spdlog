@@ -1,0 +1,10 @@
+// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
+
+#pragma once
+
+constexpr int SPDLOG_VER_MAJOR{@PROJECT_VERSION_MAJOR@};
+constexpr int SPDLOG_VER_MINOR{@PROJECT_VERSION_MINOR@};
+constexpr int SPDLOG_VER_PATCH{@PROJECT_VERSION_PATCH@};
+
+constexpr int SPDLOG_VERSION{SPDLOG_VER_MAJOR * 10000 + SPDLOG_VER_MINOR * 100 + SPDLOG_VER_PATCH};

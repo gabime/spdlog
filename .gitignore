@@ -81,3 +81,6 @@ cmake-build-*/
 *.tcl
 *.user
 *.sln
+
+# Generated version.h
+/include/spdlog/version.h

@@ -8,18 +8,16 @@ else()
     cmake_policy(VERSION 3.11)
 endif()
 
-enable_language(C)
-
 # ---------------------------------------------------------------------------------------
 # Start spdlog project
 # ---------------------------------------------------------------------------------------
+project(spdlog VERSION "1.7.0" LANGUAGES CXX)
+message(STATUS "Build spdlog: ${PROJECT_VERSION}")
+
 include(cmake/utils.cmake)
 include(cmake/ide.cmake)
 
-spdlog_extract_version()
-
-project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
-message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.h.in ${SPDLOG_HEADERS_DIR}/spdlog/version.h   @ONLY)
 
 include(GNUInstallDirs)
 
