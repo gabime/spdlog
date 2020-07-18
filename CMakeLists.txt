@@ -1,13 +1,6 @@
 # Copyright(c) 2019 spdlog authors Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.2)
-
-if(${CMAKE_VERSION} VERSION_LESS 3.11)
-    cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
-else()
-    cmake_policy(VERSION 3.11)
-endif()
-
+cmake_minimum_required(VERSION 3.13)
 enable_language(C)
 
 # ---------------------------------------------------------------------------------------
