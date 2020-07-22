@@ -29,21 +29,27 @@ endfunction()
 function(spdlog_enable_warnings target_name)
     if(SPDLOG_BUILD_WARNINGS)
         if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-            list(APPEND MSVC_OPTIONS "/W3")
+            list(APPEND WARNING_OPTIONS "/W3")
             if(MSVC_VERSION GREATER 1900) # Allow non fatal security warnings for msvc 2015
-                list(APPEND MSVC_OPTIONS "/WX")
+                list(APPEND WARNING_OPTIONS "/WX")
             endif()
+        elseif(CMAKE_CXX_COMPILER_ID STREQUAL ".*Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            list(APPEND WARNING_OPTIONS
+                -Wall
+                -Wconversion
+                -Werror
+                -Wextra
+                -Wfatal-errors
+                -Wpedantic
+                -Wshadow
+            )
         endif()
 
         target_compile_options(
             ${target_name}
-            PRIVATE $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-                    -Wall
-                    -Wextra
-                    -Wconversion
-                    -pedantic
-                    -Wfatal-errors>
-                    $<$<CXX_COMPILER_ID:MSVC>:${MSVC_OPTIONS}>)
+            PRIVATE
+                ${WARNING_OPTIONS}
+        )
     endif()
 endfunction()
 
