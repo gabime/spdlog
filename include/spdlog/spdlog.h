@@ -67,8 +67,14 @@ SPDLOG_API void disable_backtrace();
 // call dump backtrace on default logger
 SPDLOG_API void dump_backtrace();
 
+// Get global logging level
+SPDLOG_API level::level_enum get_level();
+
 // Set global logging level
 SPDLOG_API void set_level(level::level_enum log_level);
+
+// Determine whether the default logger should log messages with a certain level
+SPDLOG_API bool should_log(level::level_enum lvl);
 
 // Set global flush level
 SPDLOG_API void flush_on(level::level_enum log_level);
