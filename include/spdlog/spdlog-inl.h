@@ -47,7 +47,7 @@ SPDLOG_INLINE void dump_backtrace()
     default_logger_raw()->dump_backtrace();
 }
 
-SPDLOG_API level::level_enum get_level()
+SPDLOG_INLINE level::level_enum get_level()
 {
     return default_logger_raw()->level();
 }
