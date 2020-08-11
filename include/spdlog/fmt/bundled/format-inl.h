@@ -23,7 +23,7 @@
 
 #ifdef _WIN32
 #  include <io.h>
-#  include <windows.h>
+#  include <spdlog/details/windows_include.h>
 #endif
 
 #ifdef _MSC_VER
