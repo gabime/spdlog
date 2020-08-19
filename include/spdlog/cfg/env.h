@@ -25,7 +25,7 @@
 
 namespace spdlog {
 namespace cfg {
-void load_env_levels()
+inline void load_env_levels()
 {
     auto env_val = details::os::getenv("SPDLOG_LEVEL");
     auto levels = helpers::extract_levels(env_val);
