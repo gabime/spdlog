@@ -71,8 +71,10 @@
 
 #ifdef _MSC_VER
 #  define FMT_MSC_VER _MSC_VER
+#  define FMT_SUPPRESS_MSC_WARNING(n) __pragma(warning(suppress : n))
 #else
 #  define FMT_MSC_VER 0
+#define FMT_SUPPRESS_MSC_WARNING(n)
 #endif
 
 // Check if relaxed C++14 constexpr is supported.
@@ -324,7 +326,8 @@ FMT_CONSTEXPR typename std::make_unsigned<Int>::type to_unsigned(Int value) {
   return static_cast<typename std::make_unsigned<Int>::type>(value);
 }
 
-constexpr unsigned char micro[] = "\u00B5";
+// constexpr unsigned char micro[] = "\u00B5";
+FMT_SUPPRESS_MSC_WARNING(4566) constexpr unsigned char micro[] = "\u00B5";
 
 template <typename Char> constexpr bool is_unicode() {
   return FMT_UNICODE || sizeof(Char) != 1 ||
