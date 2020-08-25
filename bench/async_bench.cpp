@@ -9,7 +9,7 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/fmt/bundled/locale.h"
 
 #include "utils.h"
 #include <atomic>
@@ -29,7 +29,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4996) // disable fopen warning under msvc
-#endif                          // _MSC_VER
+#endif // _MSC_VER
 
 int count_lines(const char *filename)
 {
@@ -48,14 +48,14 @@ int count_lines(const char *filename)
 
 void verify_file(const char *filename, int expected_count)
 {
-    spdlog::info("Verifying {} to contain {:n} line..", filename, expected_count);
+    spdlog::info("Verifying {} to contain {} line..", filename, expected_count);
     auto count = count_lines(filename);
     if (count != expected_count)
     {
-        spdlog::error("Test failed. {} has {:n} lines instead of {:n}", filename, count, expected_count);
+        spdlog::error("Test failed. {} has {} lines instead of {}", filename, count, expected_count);
         exit(1);
     }
-    spdlog::info("Line count OK ({:n})\n", count);
+    spdlog::info("Line count OK ({})\n", count);
 }
 
 #ifdef _MSC_VER
@@ -98,11 +98,12 @@ int main(int argc, char *argv[])
 
         auto slot_size = sizeof(spdlog::details::async_msg);
         spdlog::info("-------------------------------------------------");
-        spdlog::info("Messages     : {:n}", howmany);
-        spdlog::info("Threads      : {:n}", threads);
-        spdlog::info("Queue        : {:n} slots", queue_size);
-        spdlog::info("Queue memory : {:n} x {} = {:n} KB ", queue_size, slot_size, (queue_size * slot_size) / 1024);
-        spdlog::info("Total iters  : {:n}", iters);
+        spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Messages     : {:L}", howmany));
+        spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Threads      : {:L}", threads));
+        spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Queue        : {:L} slots", queue_size));
+        spdlog::info(fmt::format(
+            std::locale("en_US.UTF-8"), "Queue memory : {:L} x {:L} = {:L} KB ", queue_size, slot_size, (queue_size * slot_size) / 1024));
+        spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Total iters  : {:L}", iters));
         spdlog::info("-------------------------------------------------");
 
         const char *filename = "logs/basic_async.log";
@@ -175,5 +176,5 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> logger, int thread_co
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    spdlog::info("Elapsed: {} secs\t {:n}/sec", delta_d, int(howmany / delta_d));
+    spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Elapsed: {} secs\t {:L}/sec", delta_d, int(howmany / delta_d)));
 }
