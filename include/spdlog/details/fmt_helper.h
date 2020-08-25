@@ -38,11 +38,11 @@ inline unsigned int count_digits(T n)
 // fmt 7.0.0 renamed the internal namespace to detail.
 // See: https://github.com/fmtlib/fmt/issues/1538
 #if FMT_VERSION < 70000
-internal
+            internal
 #else
-detail
+            detail
 #endif
-::count_digits(static_cast<count_type>(n)));
+        ::count_digits(static_cast<count_type>(n)));
 }
 
 inline void pad2(int n, memory_buf_t &dest)

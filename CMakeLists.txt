@@ -192,7 +192,8 @@ endif()
 # Misc definitions according to tweak options
 # ---------------------------------------------------------------------------------------
 set(SPDLOG_WCHAR_TO_UTF8_SUPPORT ${SPDLOG_WCHAR_SUPPORT})
-foreach(SPDLOG_OPTION
+foreach(
+    SPDLOG_OPTION
     SPDLOG_WCHAR_TO_UTF8_SUPPORT
     SPDLOG_WCHAR_FILENAMES
     SPDLOG_NO_EXCEPTIONS
@@ -200,8 +201,7 @@ foreach(SPDLOG_OPTION
     SPDLOG_PREVENT_CHILD_FD
     SPDLOG_NO_THREAD_ID
     SPDLOG_NO_TLS
-    SPDLOG_NO_ATOMIC_LEVELS
-)
+    SPDLOG_NO_ATOMIC_LEVELS)
     if(${SPDLOG_OPTION})
         target_compile_definitions(spdlog PUBLIC ${SPDLOG_OPTION})
         target_compile_definitions(spdlog_header_only INTERFACE ${SPDLOG_OPTION})
