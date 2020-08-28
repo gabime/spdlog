@@ -13,6 +13,7 @@ void rotating_example();
 void daily_example();
 void async_example();
 void binary_example();
+void stopwatch_example();
 void trace_example();
 void multi_sink_example();
 void user_defined_example();
@@ -71,6 +72,7 @@ int main(int, char *[])
         user_defined_example();
         err_handler_example();
         trace_example();
+        stopwatch_example();
         custom_flags_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
@@ -190,6 +192,16 @@ void trace_example()
     // trace from logger object
     auto logger = spdlog::get("file_logger");
     SPDLOG_LOGGER_TRACE(logger, "another trace message");
+}
+
+// stopwatch example
+#include "spdlog/stopwatch.h"
+#include <thread>
+void stopwatch_example()
+{
+    spdlog::stopwatch sw;
+    std::this_thread::sleep_for(std::chrono::milliseconds(123));
+    spdlog::info("Stopwatch: {} seconds", sw);
 }
 
 // A logger with multiple sinks (stdout and file) - each with a different format and log level.
