@@ -173,7 +173,6 @@ spdlog::flush_every(std::chrono::seconds(3));
 #### Stopwatch
 ```c++
 // Stopwatch support for spdlog  (using std::chrono::high_resolution_clock).
-// Displays elapsed seconds since construction as double.
 #include "spdlog/stopwatch.h"
 void stopwatch_example()
 {
