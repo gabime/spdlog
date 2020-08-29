@@ -170,6 +170,21 @@ spdlog::flush_every(std::chrono::seconds(3));
 ```
 
 ---
+#### Stopwatch
+```c++
+// Stopwatch support for spdlog  (using std::chrono::high_resolution_clock).
+// Displays elapsed seconds since construction as double.
+#include "spdlog/stopwatch.h"
+void stopwatch_example()
+{
+    spdlog::stopwatch sw;    
+    spdlog::debug("Elapsed {}", sw);
+    spdlog::debug("Elapsed {:.3}", sw);       
+}
+
+```
+
+---
 #### Log binary data in hex
 ```c++
 // many types of std::container<char> types can be used.
