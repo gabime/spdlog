@@ -1246,9 +1246,24 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 
     default: // Unknown flag appears as is
         auto unknown_flag = details::make_unique<details::aggregate_formatter>();
-        unknown_flag->add_ch('%');
-        unknown_flag->add_ch(flag);
-        formatters_.push_back((std::move(unknown_flag)));
+
+        if (!padding.truncate_)
+        {
+            unknown_flag->add_ch('%');
+            unknown_flag->add_ch(flag);
+            formatters_.push_back((std::move(unknown_flag)));
+        }
+        // fix issue #1617 (prev char was '!' and should have been treated as funcname flag instead of truncating flag)
+        // spdlog::set_pattern("[%10!] %v") => "[      main] some message"
+        // spdlog::set_pattern("[%3!!] %v") => "[mai] some message"
+        else
+        {
+            padding.truncate_ = false;
+            formatters_.push_back(details::make_unique<details::source_funcname_formatter<Padder>>(padding));
+            unknown_flag->add_ch(flag);
+            formatters_.push_back((std::move(unknown_flag)));
+        }
+
         break;
     }
 }
