@@ -5,11 +5,11 @@
 sudo: required
 language: cpp
 
-# gcc 4.8
-addons: &gcc48
+# gcc 4.9
+addons: &gcc49
   apt:
     packages:
-      - g++-4.8
+      - g++-4.9
     sources:
       - ubuntu-toolchain-r-test
 
@@ -44,39 +44,35 @@ addons: &clang10
 
 matrix:
   include:
-    # Test gcc-4.8: C++11, Build=Debug/Release
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11
+    # Test gcc-4.9: C++14, Build=Debug/Release
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Debug CPP=14
       os: linux
-      addons: *gcc48
+      addons: *gcc49
 
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release CPP=14
       os: linux
-      addons: *gcc48
+      addons: *gcc49
 
-    - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
+    - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=14
       os: linux
       addons: *gcc7
 
-    # Test clang-3.5: C++11, Build=Debug/Release
-    - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=11
-      os: linux
-      addons: *clang35
-
-    - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=11
+    # Test clang-3.5: C++11, Build=Release
+    - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=14
       os: linux
       addons: *clang35
 
       # osx
-    - env: BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
+    - env: BUILD_TYPE=Release CPP=14 ASAN=Off TSAN=Off
       os: osx
 
     # Test clang-10.0: C++11, Build=Debug/Release
-    - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=11
+    - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=14
       os: linux
       dist: bionic
       addons: *clang10
 
-    - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=11 ASAN=On
+    - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=14 ASAN=On
       os: linux
       dist: bionic
       addons: *clang10
@@ -100,11 +96,9 @@ script:
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
       -DCMAKE_CXX_STANDARD=$CPP \
       -DSPDLOG_BUILD_EXAMPLE=ON \
-      -DSPDLOG_BUILD_EXAMPLE_HO=ON \
       -DSPDLOG_BUILD_WARNINGS=ON \
       -DSPDLOG_BUILD_BENCH=OFF \
       -DSPDLOG_BUILD_TESTS=ON \
-      -DSPDLOG_BUILD_TESTS_HO=OFF \
       -DSPDLOG_SANITIZE_ADDRESS=$ASAN 
       
   - make VERBOSE=1 -j2

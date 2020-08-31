@@ -4,6 +4,8 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/common.h>
 #include <spdlog/details/os.h>
+#include <spdlog/details/null_mutex.h>
+#include <mutex>
 
 namespace spdlog {
 namespace sinks {
