@@ -115,7 +115,13 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # ---------------------------------------------------------------------------------------
 # Static/Shared library (shared not supported in windows yet)
 # ---------------------------------------------------------------------------------------
-set(SPDLOG_SRCS src/spdlog.cpp src/stdout_sinks.cpp src/color_sinks.cpp src/file_sinks.cpp src/async.cpp src/cfg.cpp)
+set(SPDLOG_SRCS
+        src/logger.cpp
+        src/spdlog.cpp
+        src/async.cpp
+        src/async_logger.cpp
+        src/common.cpp
+        src/fmt.cpp
 
         src/details/helpers.cpp
         src/details/file_helper.cpp
@@ -165,7 +171,6 @@ endif()
 
 add_library(spdlog::spdlog ALIAS spdlog)
 
-target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                          "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
@@ -188,7 +193,6 @@ if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
         find_package(fmt 5.3.0 REQUIRED)
     endif()
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
 
     # use external fmt-header-nly
     if(SPDLOG_FMT_EXTERNAL_HO)
