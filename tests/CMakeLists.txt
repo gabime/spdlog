@@ -1,5 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
-
+cmake_minimum_required(VERSION 3.10)
 project(spdlog_utests CXX)
 
 if (NOT TARGET spdlog)
@@ -32,7 +31,8 @@ set(SPDLOG_UTESTS_SOURCES
         test_stdout_api.cpp
         test_create_dir.cpp
         test_cfg.cpp
-        test_time_point.cpp)
+        test_time_point.cpp
+        test_stopwatch.cpp)
 
 if (NOT SPDLOG_NO_EXCEPTIONS)
     list(APPEND SPDLOG_UTESTS_SOURCES test_errors.cpp)

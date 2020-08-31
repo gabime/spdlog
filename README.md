@@ -25,7 +25,7 @@ $ cmake .. && make -j
 * Homebrew: `brew install spdlog`
 * MacPorts: `sudo port install spdlog`
 * FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
-* Fedora: `yum install spdlog`
+* Fedora: `dnf install spdlog`
 * Gentoo: `emerge dev-libs/spdlog`
 * Arch Linux: `pacman -S spdlog`
 * vcpkg: `vcpkg install spdlog`
@@ -147,6 +147,20 @@ void daily_example()
 // periodically flush all *registered* loggers every 3 seconds:
 // warning: only use if all your loggers are thread safe ("_mt" loggers)
 spdlog::flush_every(std::chrono::seconds(3));
+
+```
+
+---
+#### Stopwatch
+```c++
+// Stopwatch support for spdlog
+#include "spdlog/stopwatch.h"
+void stopwatch_example()
+{
+    spdlog::stopwatch sw;    
+    spdlog::debug("Elapsed {}", sw);
+    spdlog::debug("Elapsed {:.3}", sw);       
+}
 
 ```
 
@@ -399,6 +413,6 @@ Documentation can be found in the [wiki](https://github.com/gabime/spdlog/wiki/1
 
 ---
 
-Thanks to [JetBrains](https://www.jetbrains.com/?from=spdlog) for donating licenses to their products to help developing **spdlog** <a href="https://www.jetbrains.com/?from=spdlog"><img src="logos/jetbrains-variant-4.svg" width="94" align="center" /></a>
+Thanks to [JetBrains](https://www.jetbrains.com/?from=spdlog) for donating product licenses to help develop **spdlog** <a href="https://www.jetbrains.com/?from=spdlog"><img src="logos/jetbrains-variant-4.svg" width="94" align="center" /></a>
 
 

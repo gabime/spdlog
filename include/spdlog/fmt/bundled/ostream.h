@@ -14,10 +14,10 @@
 
 FMT_BEGIN_NAMESPACE
 
-template <typename CHar> class basic_printf_parse_context;
+template <typename Char> class basic_printf_parse_context;
 template <typename OutputIt, typename Char> class basic_printf_context;
 
-namespace internal {
+namespace detail {
 
 template <class Char> class formatbuf : public std::basic_streambuf<Char> {
  private:
@@ -80,7 +80,7 @@ template <typename T, typename Char> class is_streamable {
 
 // Write the content of buf to os.
 template <typename Char>
-void write(std::basic_ostream<Char>& os, buffer<Char>& buf) {
+void write_buffer(std::basic_ostream<Char>& os, buffer<Char>& buf) {
   const Char* buf_data = buf.data();
   using unsigned_streamsize = std::make_unsigned<std::streamsize>::type;
   unsigned_streamsize size = buf.size();
@@ -101,8 +101,8 @@ void format_value(buffer<Char>& buf, const T& value,
 #if !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
   if (loc) output.imbue(loc.get<std::locale>());
 #endif
-  output.exceptions(std::ios_base::failbit | std::ios_base::badbit);
   output << value;
+  output.exceptions(std::ios_base::failbit | std::ios_base::badbit);
   buf.resize(buf.size());
 }
 
@@ -110,7 +110,8 @@ void format_value(buffer<Char>& buf, const T& value,
 template <typename T, typename Char>
 struct fallback_formatter<T, Char, enable_if_t<is_streamable<T, Char>::value>>
     : private formatter<basic_string_view<Char>, Char> {
-  auto parse(basic_format_parse_context<Char>& ctx) -> decltype(ctx.begin()) {
+  FMT_CONSTEXPR auto parse(basic_format_parse_context<Char>& ctx)
+      -> decltype(ctx.begin()) {
     return formatter<basic_string_view<Char>, Char>::parse(ctx);
   }
   template <typename ParseCtx,
@@ -136,14 +137,14 @@ struct fallback_formatter<T, Char, enable_if_t<is_streamable<T, Char>::value>>
     return std::copy(buffer.begin(), buffer.end(), ctx.out());
   }
 };
-}  // namespace internal
+}  // namespace detail
 
 template <typename Char>
 void vprint(std::basic_ostream<Char>& os, basic_string_view<Char> format_str,
             basic_format_args<buffer_context<type_identity_t<Char>>> args) {
   basic_memory_buffer<Char> buffer;
-  internal::vformat_to(buffer, format_str, args);
-  internal::write(os, buffer);
+  detail::vformat_to(buffer, format_str, args);
+  detail::write_buffer(os, buffer);
 }
 
 /**
@@ -156,10 +157,10 @@ void vprint(std::basic_ostream<Char>& os, basic_string_view<Char> format_str,
   \endrst
  */
 template <typename S, typename... Args,
-          typename Char = enable_if_t<internal::is_string<S>::value, char_t<S>>>
+          typename Char = enable_if_t<detail::is_string<S>::value, char_t<S>>>
 void print(std::basic_ostream<Char>& os, const S& format_str, Args&&... args) {
   vprint(os, to_string_view(format_str),
-         internal::make_args_checked<Args...>(format_str, args...));
+         detail::make_args_checked<Args...>(format_str, args...));
 }
 FMT_END_NAMESPACE
 

@@ -227,7 +227,7 @@ TEST_CASE("paddinng_truncate", "[pattern_formatter]")
     REQUIRE(log_to_str("123456", "%0!v", spdlog::pattern_time_type::local, "\n") == "\n");
 }
 
-TEST_CASE("paddinng_truncate_funcname", "[pattern_formatter]")
+TEST_CASE("padding_truncate_funcname", "[pattern_formatter]")
 {
     spdlog::sinks::test_sink_st test_sink;
 
@@ -237,13 +237,28 @@ TEST_CASE("paddinng_truncate_funcname", "[pattern_formatter]")
 
     spdlog::details::log_msg msg1{spdlog::source_loc{"ignored", 1, "func"}, "test_logger", spdlog::level::info, "message"};
     test_sink.log(msg1);
+    REQUIRE(test_sink.lines()[0] == "message [ func]");
 
     spdlog::details::log_msg msg2{spdlog::source_loc{"ignored", 1, "function"}, "test_logger", spdlog::level::info, "message"};
     test_sink.log(msg2);
+    REQUIRE(test_sink.lines()[1] == "message [funct]");
+}
 
-    auto lines = test_sink.lines();
-    REQUIRE(lines[0] == "message [ func]");
-    REQUIRE(lines[1] == "message [funct]");
+TEST_CASE("padding_funcname", "[pattern_formatter]")
+{
+    spdlog::sinks::test_sink_st test_sink;
+
+    const char *pattern = "%v [%10!]";
+    auto formatter = std::unique_ptr<spdlog::formatter>(new spdlog::pattern_formatter(pattern));
+    test_sink.set_formatter(std::move(formatter));
+
+    spdlog::details::log_msg msg1{spdlog::source_loc{"ignored", 1, "func"}, "test_logger", spdlog::level::info, "message"};
+    test_sink.log(msg1);
+    REQUIRE(test_sink.lines()[0] == "message [      func]");
+
+    spdlog::details::log_msg msg2{spdlog::source_loc{"ignored", 1, "func567890123"}, "test_logger", spdlog::level::info, "message"};
+    test_sink.log(msg2);
+    REQUIRE(test_sink.lines()[1] == "message [func567890123]");
 }
 
 TEST_CASE("clone-default-formatter", "[pattern_formatter]")

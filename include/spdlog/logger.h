@@ -170,9 +170,9 @@ public:
     }
 
     // T cannot be statically converted to string_view or wstring_view
-    template<class T,
-        typename std::enable_if_t<
-            !std::is_convertible<const T &, spdlog::string_view_t>::value && !is_convertible_to_wstring_view<const T &>::value, int> = 0>
+    template<class T, typename std::enable_if<!std::is_convertible<const T &, spdlog::string_view_t>::value &&
+                                                  !is_convertible_to_wstring_view<const T &>::value,
+                          int>::type = 0>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         log(loc, lvl, "{}", msg);
