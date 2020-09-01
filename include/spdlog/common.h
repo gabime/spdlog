@@ -167,7 +167,6 @@ SPDLOG_API string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOE
 SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
 SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
-using level_hasher = std::hash<int>;
 } // namespace level
 
 //
