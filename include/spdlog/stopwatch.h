@@ -18,7 +18,7 @@
 //
 // If other units are needed (e.g. millis instead of double), include "fmt/chrono.h" and use "duration_cast<..>(sw.elapsed())":
 //
-// #include <fmt/chrono.h>
+// #include <spdlog/fmt/chrono.h>
 //..
 // using std::chrono::duration_cast;
 // using std::chrono::milliseconds;
