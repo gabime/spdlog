@@ -91,3 +91,28 @@ TEST_CASE("argv7", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::err);
     spdlog::set_level(spdlog::level::info);
 }
+
+TEST_CASE("level-not-found-test1", "[cfg]")
+{
+    spdlog::drop("l1");
+    const char *argv[] = {"ignore", ""};
+    load_argv_levels(2, argv);
+    auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
+    l1->set_level(spdlog::level::trace);
+    REQUIRE(l1->level() == spdlog::level::trace);
+    REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
+}
+
+TEST_CASE("level-not-found-test2", "[cfg]")
+{
+    spdlog::drop("l1");
+    const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=trace"};
+    load_argv_levels(2, argv);
+
+    auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
+    auto l2 = spdlog::create<spdlog::sinks::test_sink_st>("l2");
+
+    REQUIRE(l1->level() == spdlog::level::trace);
+    REQUIRE(l2->level() == spdlog::level::info);
+    REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
+}
