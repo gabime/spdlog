@@ -28,8 +28,11 @@ namespace cfg {
 inline void load_env_levels()
 {
     auto env_val = details::os::getenv("SPDLOG_LEVEL");
-    auto levels = helpers::extract_levels(env_val);
-    details::registry::instance().update_levels(std::move(levels));
+    if (!env_val.empty())
+    {
+        auto levels = helpers::extract_levels(env_val);
+        details::registry::instance().update_levels(std::move(levels));
+    }
 }
 
 } // namespace cfg
