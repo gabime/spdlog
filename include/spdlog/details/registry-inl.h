@@ -67,7 +67,8 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
         new_logger->set_error_handler(err_handler_);
     }
 
-    new_logger->set_level(levels_.get(new_logger->name()));
+    levels_.update_logger_level(*new_logger);
+
     new_logger->flush_on(flush_level_);
 
     if (backtrace_n_messages_ > 0)
@@ -270,7 +271,7 @@ SPDLOG_INLINE void registry::update_levels(cfg::log_levels levels)
     for (auto &l : loggers_)
     {
         auto &logger = l.second;
-        logger->set_level(levels_.get(logger->name()));
+        levels_.update_logger_level(*logger);
     }
 }
 

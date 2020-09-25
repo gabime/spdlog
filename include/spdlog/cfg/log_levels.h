@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <spdlog/common.h>
+#include <spdlog/logger.h>
 #include <string>
 #include <unordered_map>
 
@@ -17,30 +17,30 @@ class log_levels
 public:
     void set(const std::string &logger_name, level::level_enum lvl)
     {
-        if (logger_name.empty())
-        {
-            default_level_ = lvl;
-        }
-        else
-        {
-            levels_[logger_name] = lvl;
-        }
+        levels_[logger_name] = lvl;
     }
 
     void set_default(level::level_enum lvl)
     {
-        default_level_ = lvl;
+        levels_[""] = lvl;
     }
 
-    level::level_enum get(const std::string &logger_name)
+    // configure log level of given logger if it appears in the config list or if default level is set
+    void update_logger_level(spdlog::logger &logger)
     {
+        auto &logger_name = logger.name();
         auto it = levels_.find(logger_name);
-        return it != levels_.end() ? it->second : default_level_;
-    }
 
-    level::level_enum default_level()
-    {
-        return default_level_;
+        // if logger was not configured, check if default log level was configured
+        if (it == levels_.end())
+        {
+            it = levels_.find(""); //
+        }
+
+        if (it != levels_.end())
+        {
+            logger.set_level(it->second);
+        }
     }
 };
 } // namespace cfg
