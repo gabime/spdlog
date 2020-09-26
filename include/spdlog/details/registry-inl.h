@@ -66,6 +66,7 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
     {
         new_logger->set_error_handler(err_handler_);
     }
+    // check if log level for this logger name was already configured
     auto cfg_level_it = cfg_levels_.find(new_logger->name());
     if (cfg_level_it == cfg_levels_.end())
     {
@@ -277,32 +278,22 @@ SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registrat
 
 SPDLOG_INLINE void registry::set_levels(std::unordered_map<std::string, spdlog::level::level_enum> levels)
 {
-
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     cfg_levels_ = std::move(levels);
-    // update global level if found
+
+    // for each logger update level according to given map
+    // "*" entry means all loggers
     auto global_level_it = cfg_levels_.find("*");
-    if (global_level_it != cfg_levels_.end())
+    for (auto &logger : loggers_)
     {
-        auto global_level = global_level_it->second;
-        for (auto &logger : loggers_)
+        auto cfg_entry = cfg_levels_.find(logger.first);
+        if (cfg_entry != cfg_levels_.end())
         {
-            logger.second->set_level(global_level);
+            logger.second->set_level(cfg_entry->second);
         }
-    }
-    // update specific loggers
-    for (const auto &item : cfg_levels_)
-    {
-        const auto &logger_name = item.first;
-        if (logger_name == "*")
+        else if (global_level_it != cfg_levels_.end())
         {
-            continue;
-        }
-        auto existing_logger_it = loggers_.find(logger_name);
-        if (existing_logger_it != loggers_.end())
-        {
-            auto level = item.second;
-            existing_logger_it->second->set_level(level);
+            logger.second->set_level(global_level_it->second);
         }
     }
 }

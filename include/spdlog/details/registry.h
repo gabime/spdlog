@@ -9,7 +9,6 @@
 // This class is thread safe
 
 #include <spdlog/common.h>
-#include <spdlog/cfg/log_levels.h>
 
 #include <chrono>
 #include <functional>
