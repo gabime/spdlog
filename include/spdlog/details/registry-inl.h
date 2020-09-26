@@ -57,28 +57,6 @@ SPDLOG_INLINE void registry::register_logger(std::shared_ptr<logger> new_logger)
     register_logger_(std::move(new_logger));
 }
 
-// set level if this logger was configured in the cfg_levels_
-// return true if found and set
-SPDLOG_INLINE bool registry::set_level_from_cfg_(logger *logger)
-{
-    if (cfg_levels_.empty())
-    {
-        return false;
-    }
-    auto cfg_level_it = cfg_levels_.find(logger->name());
-    if (cfg_level_it == cfg_levels_.end())
-    {
-        // if logger name not found, set it anyway if "*" exists (i.e. all loggers)
-        cfg_level_it = cfg_levels_.find("*");
-    }
-    if (cfg_level_it != cfg_levels_.end())
-    {
-        logger->set_level(cfg_level_it->second);
-        return true;
-    }
-    return false;
-}
-
 SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logger)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
@@ -89,10 +67,10 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
         new_logger->set_error_handler(err_handler_);
     }
 
-    if (!set_level_from_cfg_(new_logger.get()))
-    {
-        new_logger->set_level(global_log_level_);
-    }
+    // set new level according to previously configured level or default level
+    auto it = log_levels_.find(new_logger->name());
+    auto new_level = it != log_levels_.end() ? it->second : global_log_level_;
+    new_logger->set_level(new_level);
 
     new_logger->flush_on(flush_level_);
 
@@ -289,14 +267,24 @@ SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registrat
     automatic_registration_ = automatic_registration;
 }
 
-SPDLOG_INLINE void registry::set_levels(std::unordered_map<std::string, spdlog::level::level_enum> levels)
+SPDLOG_INLINE void registry::set_levels(log_levels levels, level::level_enum *global_level)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    cfg_levels_ = std::move(levels);
+    log_levels_ = std::move(levels);
+    auto global_level_requested = global_level != nullptr;
+    global_log_level_ = global_level_requested ? *global_level : global_log_level_;
 
     for (auto &logger : loggers_)
     {
-        set_level_from_cfg_(logger.second.get());
+        auto logger_entry = log_levels_.find(logger.first);
+        if (logger_entry != log_levels_.end())
+        {
+            logger.second->set_level(logger_entry->second);
+        }
+        else if (global_level_requested)
+        {
+            logger.second->set_level(*global_level);
+        }
     }
 }
 

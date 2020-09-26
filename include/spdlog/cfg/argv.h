@@ -30,8 +30,7 @@ inline void load_argv_levels(int argc, const char **argv)
         if (arg.find(spdlog_level_prefix) == 0)
         {
             auto levels_string = arg.substr(spdlog_level_prefix.size());
-            auto levels = helpers::extract_levels(levels_string);
-            details::registry::instance().set_levels(std::move(levels));
+            helpers::load_levels(levels_string);
         }
     }
 }

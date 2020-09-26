@@ -30,8 +30,7 @@ inline void load_env_levels()
     auto env_val = details::os::getenv("SPDLOG_LEVEL");
     if (!env_val.empty())
     {
-        auto levels = helpers::extract_levels(env_val);
-        details::registry::instance().set_levels(std::move(levels));
+        helpers::load_levels(env_val);
     }
 }
 
