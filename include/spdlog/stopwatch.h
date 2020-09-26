@@ -5,7 +5,7 @@
 
 #include <spdlog/fmt/fmt.h>
 
-// Stopwatch support for spdlog  (using std::chrono::high_resolution_clock).
+// Stopwatch support for spdlog  (using std::chrono::steady_clock).
 // Displays elapsed seconds since construction as double.
 //
 // Usage:
@@ -27,7 +27,7 @@
 namespace spdlog {
 class stopwatch
 {
-    using clock = std::chrono::high_resolution_clock;
+    using clock = std::chrono::steady_clock;
     std::chrono::time_point<clock> start_tp_;
 
 public:

@@ -9,7 +9,7 @@
 
 //
 // Support for logging binary data as hex
-// format flags:
+// format flags, any combination of the followng:
 // {:X} - print in uppercase.
 // {:s} - don't separate each byte with space.
 // {:p} - don't print the position on each line start.
