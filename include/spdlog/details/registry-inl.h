@@ -69,7 +69,7 @@ SPDLOG_INLINE bool registry::set_level_from_cfg_(logger *logger)
     if (cfg_level_it == cfg_levels_.end())
     {
         // if logger name not found, set it anyway if "*" exists (i.e. all loggers)
-        cfg_level_it = cfg_levels_.find(("*"));
+        cfg_level_it = cfg_levels_.find("*");
     }
     if (cfg_level_it != cfg_levels_.end())
     {
