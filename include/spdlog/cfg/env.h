@@ -17,7 +17,7 @@
 // export SPDLOG_LEVEL=debug
 //
 // turn off all logging except for logger1:
-// export SPDLOG_LEVEL="off,logger1=debug"
+// export SPDLOG_LEVEL="*=off,logger1=debug"
 //
 
 // turn off all logging except for logger1 and logger2:
