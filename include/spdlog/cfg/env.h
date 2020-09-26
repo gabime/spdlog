@@ -31,7 +31,7 @@ inline void load_env_levels()
     if (!env_val.empty())
     {
         auto levels = helpers::extract_levels(env_val);
-        details::registry::instance().update_levels(std::move(levels));
+        details::registry::instance().set_levels(std::move(levels));
     }
 }
 

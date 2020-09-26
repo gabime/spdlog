@@ -1,3 +1,4 @@
+
 #include "includes.h"
 #include "test_sink.h"
 
@@ -149,6 +150,31 @@ TEST_CASE("level-not-set-test4", "[cfg]")
     auto l2 = spdlog::create<spdlog::sinks::test_sink_st>("l2");
 
     REQUIRE(l1->level() == spdlog::level::trace);
+    // REQUIRE(l2->level() == spdlog::level::warn);
+    // REQUIRE(spdlog::default_logger()->level() == spdlog::level::warn);
+}
+
+TEST_CASE("level-not-set-test5", "[cfg]")
+{
+    spdlog::drop("l1");
+    spdlog::drop("l2");
+    const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=junk,warn"};
+
+    load_argv_levels(2, argv);
+
+    auto l1 = spdlog::create<spdlog::sinks::test_sink_st>("l1");
+    auto l2 = spdlog::create<spdlog::sinks::test_sink_st>("l2");
+
+    REQUIRE(l1->level() == spdlog::level::warn);
     REQUIRE(l2->level() == spdlog::level::warn);
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::warn);
+}
+
+TEST_CASE("restore-to-default", "[cfg]")
+{
+    spdlog::drop("l1");
+    spdlog::drop("l2");
+    const char *argv[] = {"ignore", "SPDLOG_LEVEL=info"};
+    load_argv_levels(2, argv);
+    REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
 }

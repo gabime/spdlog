@@ -66,8 +66,19 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
     {
         new_logger->set_error_handler(err_handler_);
     }
-
-    levels_.update_logger_level(*new_logger);
+    auto cfg_level_it = cfg_levels_.find(new_logger->name());
+    if (cfg_level_it == cfg_levels_.end())
+    {
+        cfg_level_it = cfg_levels_.find(("*"));
+    }
+    if (cfg_level_it != cfg_levels_.end())
+    {
+        new_logger->set_level(cfg_level_it->second);
+    }
+    else
+    {
+        new_logger->set_level(global_log_level_);
+    }
 
     new_logger->flush_on(flush_level_);
 
@@ -172,7 +183,7 @@ SPDLOG_INLINE void registry::set_level(level::level_enum log_level)
     {
         l.second->set_level(log_level);
     }
-    levels_.set_default(log_level);
+    global_log_level_ = log_level;
 }
 
 SPDLOG_INLINE void registry::flush_on(level::level_enum log_level)
@@ -264,14 +275,35 @@ SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registrat
     automatic_registration_ = automatic_registration;
 }
 
-SPDLOG_INLINE void registry::update_levels(cfg::log_levels levels)
+SPDLOG_INLINE void registry::set_levels(std::unordered_map<std::string, spdlog::level::level_enum> levels)
 {
+
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    levels_ = std::move(levels);
-    for (auto &l : loggers_)
+    cfg_levels_ = std::move(levels);
+    // update global level if found
+    auto global_level_it = cfg_levels_.find("*");
+    if (global_level_it != cfg_levels_.end())
     {
-        auto &logger = l.second;
-        levels_.update_logger_level(*logger);
+        auto global_level = global_level_it->second;
+        for (auto &logger : loggers_)
+        {
+            logger.second->set_level(global_level);
+        }
+    }
+    // update specific loggers
+    for (const auto &item : cfg_levels_)
+    {
+        const auto &logger_name = item.first;
+        if (logger_name == "*")
+        {
+            continue;
+        }
+        auto existing_logger_it = loggers_.find(logger_name);
+        if (existing_logger_it != loggers_.end())
+        {
+            auto level = item.second;
+            existing_logger_it->second->set_level(level);
+        }
     }
 }
 

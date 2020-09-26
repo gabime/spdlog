@@ -73,27 +73,31 @@ inline std::unordered_map<std::string, std::string> extract_key_vals_(const std:
             continue;
         }
         auto kv = extract_kv_('=', token);
+        if (kv.first.empty())
+        {
+            kv.first = "*";
+        }
         rv[kv.first] = kv.second;
     }
     return rv;
 }
 
-SPDLOG_INLINE log_levels extract_levels(const std::string &input)
+SPDLOG_INLINE std::unordered_map<std::string, spdlog::level::level_enum> extract_levels(const std::string &input)
 {
     auto key_vals = extract_key_vals_(input);
-    log_levels rv;
+    std::unordered_map<std::string, spdlog::level::level_enum> rv;
 
     for (auto &name_level : key_vals)
     {
         auto &logger_name = name_level.first;
         auto level_name = to_lower_(name_level.second);
         auto level = level::from_str(level_name);
-        // fallback to "info" if unrecognized level name
+        // ignore unrecognized level names
         if (level == level::off && level_name != "off")
         {
-            level = level::info;
+            continue;
         }
-        rv.set(logger_name, level);
+        rv[logger_name] = level;
     }
     return rv;
 }

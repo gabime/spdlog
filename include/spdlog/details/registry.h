@@ -80,7 +80,7 @@ public:
 
     void set_automatic_registration(bool automatic_registration);
 
-    void update_levels(cfg::log_levels levels);
+    void set_levels(std::unordered_map<std::string, spdlog::level::level_enum> levels);
 
     static registry &instance();
 
@@ -93,8 +93,9 @@ private:
     std::mutex logger_map_mutex_, flusher_mutex_;
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
-    cfg::log_levels levels_;
+    std::unordered_map<std::string, spdlog::level::level_enum> cfg_levels_;
     std::unique_ptr<formatter> formatter_;
+    spdlog::level::level_enum global_log_level_ = level::info;
     level::level_enum flush_level_ = level::off;
     void (*err_handler_)(const std::string &msg);
     std::shared_ptr<thread_pool> tp_;

@@ -12,7 +12,7 @@ namespace cfg {
 class log_levels
 {
     std::unordered_map<std::string, spdlog::level::level_enum> levels_;
-    spdlog::level::level_enum default_level_ = level::info;
+    spdlog::level::level_enum global_level_ = level::info;
 
 public:
     void set(const std::string &logger_name, level::level_enum lvl)
@@ -20,27 +20,32 @@ public:
         levels_[logger_name] = lvl;
     }
 
-    void set_default(level::level_enum lvl)
+    void set_global_level(level::level_enum lvl)
     {
-        levels_[""] = lvl;
+        global_level_ = lvl;
     }
 
-    // configure log level of given logger if it appears in the config list or if default level is set
-    void update_logger_level(spdlog::logger &logger)
+    level::level_enum default_level()
     {
-        auto &logger_name = logger.name();
-        auto it = levels_.find(logger_name);
+        return global_level_;
+    }
 
-        // if logger was not configured, check if default log level was configured
+    // update log level of given logger if it appears in the config list or if default level is set
+    // return true if updated
+    bool update_logger_level(spdlog::logger &logger)
+    {
+        // if logger was not configured, check if global log level was configured
+        auto it = levels_.find(logger.name());
         if (it == levels_.end())
         {
-            it = levels_.find(""); //
+            it = levels_.find("*");
         }
-
         if (it != levels_.end())
         {
             logger.set_level(it->second);
+            return true;
         }
+        return false;
     }
 };
 } // namespace cfg
