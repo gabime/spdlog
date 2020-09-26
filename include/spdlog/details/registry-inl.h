@@ -57,7 +57,7 @@ SPDLOG_INLINE void registry::register_logger(std::shared_ptr<logger> new_logger)
     register_logger_(std::move(new_logger));
 }
 
-// set level if this logger was configured if the cfg_levels_
+// set level if this logger was configured in the cfg_levels_
 // return true if found and set
 SPDLOG_INLINE bool registry::set_level_from_cfg_(logger *logger)
 {
