@@ -29,7 +29,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4996) // disable fopen warning under msvc
-#endif                          // _MSC_VER
+#endif // _MSC_VER
 
 int count_lines(const char *filename)
 {

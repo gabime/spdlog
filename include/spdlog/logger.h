@@ -75,56 +75,56 @@ public:
 
     // FormatString is a type derived from fmt::compile_string
     template<typename FormatString, typename std::enable_if<fmt::is_compile_string<FormatString>::value, int>::type = 0, typename... Args>
-    void log(source_loc loc, level::level_enum lvl, const FormatString &fmt, const Args &... args)
+    void log(source_loc loc, level::level_enum lvl, const FormatString &fmt, const Args &...args)
     {
         log_(loc, lvl, fmt, args...);
     }
 
     // FormatString is NOT a type derived from fmt::compile_string but is a string_view_t or can be implicitly converted to one
     template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &... args)
+    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, const Args &...args)
     {
         log_(loc, lvl, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void log(level::level_enum lvl, const FormatString &fmt, const Args &... args)
+    void log(level::level_enum lvl, const FormatString &fmt, const Args &...args)
     {
         log(source_loc{}, lvl, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void trace(const FormatString &fmt, const Args &... args)
+    void trace(const FormatString &fmt, const Args &...args)
     {
         log(level::trace, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void debug(const FormatString &fmt, const Args &... args)
+    void debug(const FormatString &fmt, const Args &...args)
     {
         log(level::debug, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void info(const FormatString &fmt, const Args &... args)
+    void info(const FormatString &fmt, const Args &...args)
     {
         log(level::info, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void warn(const FormatString &fmt, const Args &... args)
+    void warn(const FormatString &fmt, const Args &...args)
     {
         log(level::warn, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void error(const FormatString &fmt, const Args &... args)
+    void error(const FormatString &fmt, const Args &...args)
     {
         log(level::err, fmt, args...);
     }
 
     template<typename FormatString, typename... Args>
-    void critical(const FormatString &fmt, const Args &... args)
+    void critical(const FormatString &fmt, const Args &...args)
     {
         log(level::critical, fmt, args...);
     }
@@ -225,7 +225,7 @@ public:
 #else
 
     template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &... args)
+    void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, const Args &...args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -326,7 +326,7 @@ protected:
 
     // common implementation for after templated public api has been resolved
     template<typename FormatString, typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, const Args &... args)
+    void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, const Args &...args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();

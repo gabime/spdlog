@@ -31,7 +31,7 @@ using default_factory = synchronous_factory;
 // Example:
 //   spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
 template<typename Sink, typename... SinkArgs>
-inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... sink_args)
+inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&...sink_args)
 {
     return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
@@ -128,49 +128,49 @@ SPDLOG_API spdlog::logger *default_logger_raw();
 SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logger);
 
 template<typename FormatString, typename... Args>
-inline void log(source_loc source, level::level_enum lvl, const FormatString &fmt, const Args &... args)
+inline void log(source_loc source, level::level_enum lvl, const FormatString &fmt, const Args &...args)
 {
     default_logger_raw()->log(source, lvl, fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void log(level::level_enum lvl, const FormatString &fmt, const Args &... args)
+inline void log(level::level_enum lvl, const FormatString &fmt, const Args &...args)
 {
     default_logger_raw()->log(source_loc{}, lvl, fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void trace(const FormatString &fmt, const Args &... args)
+inline void trace(const FormatString &fmt, const Args &...args)
 {
     default_logger_raw()->trace(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void debug(const FormatString &fmt, const Args &... args)
+inline void debug(const FormatString &fmt, const Args &...args)
 {
     default_logger_raw()->debug(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void info(const FormatString &fmt, const Args &... args)
+inline void info(const FormatString &fmt, const Args &...args)
 {
     default_logger_raw()->info(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void warn(const FormatString &fmt, const Args &... args)
+inline void warn(const FormatString &fmt, const Args &...args)
 {
     default_logger_raw()->warn(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void error(const FormatString &fmt, const Args &... args)
+inline void error(const FormatString &fmt, const Args &...args)
 {
     default_logger_raw()->error(fmt, args...);
 }
 
 template<typename FormatString, typename... Args>
-inline void critical(const FormatString &fmt, const Args &... args)
+inline void critical(const FormatString &fmt, const Args &...args)
 {
     default_logger_raw()->critical(fmt, args...);
 }
