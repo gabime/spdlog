@@ -153,8 +153,8 @@ TEST_CASE("level-not-set-test4", "[cfg]")
     auto l2 = spdlog::create<spdlog::sinks::test_sink_st>("l2");
 
     REQUIRE(l1->level() == spdlog::level::trace);
-    // REQUIRE(l2->level() == spdlog::level::warn);
-    // REQUIRE(spdlog::default_logger()->level() == spdlog::level::warn);
+    REQUIRE(l2->level() == spdlog::level::warn);
+    REQUIRE(spdlog::default_logger()->level() == spdlog::level::warn);
 }
 
 TEST_CASE("level-not-set-test5", "[cfg]")
