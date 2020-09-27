@@ -7,7 +7,10 @@
 #include <spdlog/details/synchronous_factory.h>
 #include <spdlog/sinks/sink.h>
 #include <cstdio>
+
+#ifdef _WIN32
 #include <spdlog/details/windows_include.h>
+#endif
 
 namespace spdlog {
 
