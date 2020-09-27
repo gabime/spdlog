@@ -45,12 +45,12 @@ public:
             return;
         }
 
-        if (padinfo_.side_ == padding_info::left)
+        if (padinfo_.side_ == padding_info::pad_side::left)
         {
             pad_it(remaining_pad_);
             remaining_pad_ = 0;
         }
-        else if (padinfo_.side_ == padding_info::center)
+        else if (padinfo_.side_ == padding_info::pad_side::center)
         {
             auto half_pad = remaining_pad_ / 2;
             auto reminder = remaining_pad_ & 1;
@@ -1285,15 +1285,15 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::stri
     switch (*it)
     {
     case '-':
-        side = padding_info::right;
+        side = padding_info::pad_side::right;
         ++it;
         break;
     case '=':
-        side = padding_info::center;
+        side = padding_info::pad_side::center;
         ++it;
         break;
     default:
-        side = details::padding_info::left;
+        side = details::padding_info::pad_side::left;
         break;
     }
 

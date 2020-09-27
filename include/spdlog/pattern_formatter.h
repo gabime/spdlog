@@ -22,7 +22,7 @@ namespace details {
 // padding information.
 struct padding_info
 {
-    enum pad_side
+    enum class pad_side
     {
         left,
         right,
@@ -42,7 +42,7 @@ struct padding_info
         return enabled_;
     }
     size_t width_ = 0;
-    pad_side side_ = left;
+    pad_side side_ = pad_side::left;
     bool truncate_ = false;
     bool enabled_ = false;
 };
