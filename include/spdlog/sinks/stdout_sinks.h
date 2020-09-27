@@ -7,6 +7,7 @@
 #include <spdlog/details/synchronous_factory.h>
 #include <spdlog/sinks/sink.h>
 #include <cstdio>
+#include <spdlog/details/windows_include.h>
 
 namespace spdlog {
 
@@ -36,6 +37,9 @@ protected:
     mutex_t &mutex_;
     FILE *file_;
     std::unique_ptr<spdlog::formatter> formatter_;
+#ifdef _WIN32
+    HANDLE handle_;    
+#endif // WIN32
 };
 
 template<typename ConsoleMutex>
