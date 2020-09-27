@@ -49,7 +49,11 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
 #ifdef _WIN32
     auto size = static_cast<DWORD>(formatted.size());
     DWORD bytes_written = 0;
-    ::WriteFile(handle_, formatted.data(), size, &bytes_written, nullptr);
+    bool ok = ::WriteFile(handle_, formatted.data(), size, &bytes_written, nullptr) != 0;
+    if (!ok)
+    {
+        throw_spdlog_ex("stdout_sink_base: WriteFile() failed. GetLastError(): " + std::to_string(::GetLastError()));
+    }
 #else
     ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
     ::fflush(file_); // flush every line to terminal
