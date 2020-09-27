@@ -146,11 +146,6 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const memory_buf_
         return;
     }
     auto size = static_cast<DWORD>(formatted.size());
-    if (size == 0)
-    {
-        return;
-    }
-
     DWORD bytes_written = 0;
     bool ok = ::WriteFile(out_handle_, formatted.data(), size, &bytes_written, nullptr) != 0;
     if (!ok)
