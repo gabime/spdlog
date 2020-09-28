@@ -96,3 +96,58 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
     auto filename1 = basename + ".1";
     REQUIRE(get_filesize(filename1) <= max_size);
 }
+
+TEST_CASE("rotating_file_logger_compress_callback", "[rotating_logger]]")
+{
+    prepare_logdir();
+    size_t max_size = 1024 * 10;
+    std::string basename = "test_logs/rotating_log";
+    std::string ext = ".txt";
+    std::string logfilename = basename + ext;
+    std::string compress_ext = ".gz";
+
+    auto callback = [=](spdlog::filename_t filename){
+        // Here could be gzip filename which will rename it to filename.gz
+        rename(filename.c_str(), std::string(filename + compress_ext).c_str());
+    };
+
+    {
+        // make an initial logger to create the first output file
+        auto logger = spdlog::rotating_logger_mt("logger", logfilename, max_size, 2,
+            compress_ext, callback, true);
+        for (int i = 0; i < 10; ++i)
+        {
+            logger->info("Test message {}", i);
+        }
+        // drop causes the logger destructor to be called, which is required so the
+        // next logger can rename the first output file.
+        spdlog::drop(logger->name());
+    }
+
+    auto logger = spdlog::rotating_logger_mt("logger", logfilename, max_size, 2,
+        compress_ext, callback, true);
+    for (int i = 0; i < 10; ++i)
+    {
+        logger->info("Test message {}", i);
+    }
+
+    logger->flush();
+
+    require_message_count(logfilename, 10);
+
+    for (int i = 0; i < 1024; i++)
+    {
+        logger->info("Test message {}", i);
+    }
+
+    logger->flush();
+    REQUIRE(get_filesize(logfilename) <= max_size);
+
+    // test_logs/rotating_log.1.txt.gz
+    auto filename1 = basename + ".1" + ext + compress_ext;
+    REQUIRE(get_filesize(filename1) <= max_size);
+
+    // test_logs/rotating_log.2.txt.gz
+    auto filename2 = basename + ".2" + ext + compress_ext;
+    REQUIRE(get_filesize(filename2) <= max_size);
+}
