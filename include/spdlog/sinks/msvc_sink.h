@@ -8,11 +8,12 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
 
-#include <spdlog/details/windows_include.h>
-#include <winbase.h>
-
 #include <mutex>
 #include <string>
+
+
+// Avoid including windows.h (https://stackoverflow.com/a/30741042)
+extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char *lpOutputString);
 
 namespace spdlog {
 namespace sinks {
@@ -23,12 +24,11 @@ template<typename Mutex>
 class msvc_sink : public base_sink<Mutex>
 {
 public:
-    explicit msvc_sink() {}
+    msvc_sink() = default;
 
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
         OutputDebugStringA(fmt::to_string(formatted).c_str());
