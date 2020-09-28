@@ -247,11 +247,11 @@ SPDLOG_INLINE void logger::err_handler_(const std::string &msg)
         auto tm_time = details::os::localtime(system_clock::to_time_t(now));
         char date_buf[64];
         std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
-        #if !defined(R_R_H) || !defined(USING_R)
+#if !defined(R_R_H) || !defined(USING_R)
         std::fprintf(stderr, "[*** LOG ERROR #%04zu ***] [%s] [%s] {%s}\n", err_counter, date_buf, name().c_str(), msg.c_str());
-        #else
+#else // compiled under R environment
         REprintf("[*** LOG ERROR #%04zu ***] [%s] [%s] {%s}\n", err_counter, date_buf, name().c_str(), msg.c_str());
-        #endif
+#endif
     }
 }
 } // namespace spdlog
