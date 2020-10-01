@@ -292,3 +292,4 @@ void custom_flags_example()
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     spdlog::set_formatter(std::move(formatter));
 }
+//HAPPY CODING
