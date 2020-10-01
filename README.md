@@ -34,9 +34,9 @@ $ cmake .. && make -j
 
 
 ## Features
-* Very fast (see [benchmarks](#benchmarks) below).
-* Headers only or compiled
-* Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
+* Very swift (see [benchmarks](#benchmarks) below).
+* Headers only or compiled.
+* Features rich formatting using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * Asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
@@ -44,7 +44,7 @@ $ cmake .. && make -j
     * Rotating log files.
     * Daily log files.
     * Console logging (colors supported).
-    * syslog.
+    * Syslog.
     * Windows debugger (```OutputDebugString(..)```)
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Log filtering - log levels can be modified in runtime as well as in compile time.
@@ -423,7 +423,7 @@ Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/ben
 ```
 
 ## Documentation
-Documentation can be found in the [wiki](https://github.com/gabime/spdlog/wiki/1.-QuickStart) pages.
+Documentation could be found in the [wiki](https://github.com/gabime/spdlog/wiki/1.-QuickStart) pages.
 
 ---
 
