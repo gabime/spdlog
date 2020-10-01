@@ -107,7 +107,10 @@ TEST_CASE("rotating_file_logger_compress_callback", "[rotating_logger]]")
     std::string compress_ext = ".gz";
 
     auto callback = [=](spdlog::filename_t filename){
-        // Here could be gzip filename which will rename it to filename.gz
+        // Example usage on *nix OS:
+        // std::system(std::string("gzip " + filename).c_str());
+
+        // for testing we use rename(), simulating gzipping
         rename(filename.c_str(), std::string(filename + compress_ext).c_str());
     };
 
