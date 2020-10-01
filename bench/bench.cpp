@@ -14,11 +14,9 @@
 #include "spdlog/fmt/bundled/locale.h"
 
 #include "utils.h"
-#include <atomic>
-#include <cstdlib> // EXIT_FAILURE
-#include <memory>
-#include <string>
-#include <thread>
+//#include <cstdlib> // EXIT_FAILURE
+
+#include<bits/stdc++.h>
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log);
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, size_t thread_count);
