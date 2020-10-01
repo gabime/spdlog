@@ -156,7 +156,7 @@ spdlog::dump_backtrace(); // log them now! show the last 32 messages
 ```
 
 ---
-#### Periodic flush
+#### Periodic flush in c++
 ```c++
 // periodically flush all *registered* loggers every 3 seconds:
 // warning: only use if all your loggers are thread safe ("_mt" loggers)
@@ -179,7 +179,7 @@ void stopwatch_example()
 ```
 
 ---
-#### Log binary data in hex
+#### Log binary data in hex in c++
 ```c++
 // many types of std::container<char> types can be used.
 // ranges are supported too.
