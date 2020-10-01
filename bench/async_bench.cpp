@@ -12,11 +12,8 @@
 #include "spdlog/fmt/bundled/locale.h"
 
 #include "utils.h"
-#include <atomic>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <thread>
+
+#include<bits/stdc++.h>
 
 using namespace std;
 using namespace std::chrono;
