@@ -124,6 +124,22 @@ void rotating_example()
 }
 ```
 
+It's possible to use callback for manipulating (compressing, copying somewhere, etc) the newly completed and rotated log file (essentially `rotating.1.txt` in this example). If that callback compresses and appends extension (ex. `.gz`) it has to be mentioned in the parameters, otherwise keep it empty string. The callback can be any functional which accepts `spdlog::filename_t` parameter to manipulate it.
+```c++
+#include "spdlog/sinks/rotating_file_sink.h"
+#include <cstdlib>
+void rotating_example()
+{
+    // Create a file rotating logger with 5mb size max and 3 rotated files
+    auto max_size = 1048576 * 5;
+    auto max_files = 3;
+    auto logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", max_size, max_files, ".gz", [](spdlog::filename_t filename){
+        std::system(std::string("gzip " + filename).c_str());
+    });
+}
+```
+
+
 ---
 #### Daily files
 ```c++
