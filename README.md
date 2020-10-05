@@ -15,7 +15,7 @@ $ cmake .. && make -j
       
    see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v1.x/example/CMakeLists.txt) on how to use.
 
-## Platforms
+## You can also try these Platforms
  * Linux, FreeBSD, OpenBSD, Solaris, AIX
  * Windows (msvc 2013+, cygwin)
  * macOS (clang 3.5+)
@@ -53,7 +53,7 @@ $ cmake .. && make -j
  
 ## Usage samples
 
-#### Basic usage
+#### Basic usage for all
 ```c++
 #include "spdlog/spdlog.h"
 
