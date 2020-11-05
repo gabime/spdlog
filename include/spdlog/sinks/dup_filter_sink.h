@@ -64,7 +64,7 @@ protected:
         {
             memory_buf_t buf;
             fmt::format_to(buf, "Skipped {} duplicate messages..", skip_counter_);
-            details::log_msg skipped_msg{msg.logger_name, msg.level, string_view_t{buf.data(), buf.size()}};
+            details::log_msg skipped_msg{msg.logger_name, level::info, string_view_t{buf.data(), buf.size()}};
             dist_sink<Mutex>::sink_it_(skipped_msg);
         }
 
