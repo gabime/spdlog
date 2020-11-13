@@ -110,6 +110,12 @@ public:
         return q_.overrun_counter();
     }
 
+    size_t size()
+    {
+        std::unique_lock<std::mutex> lock(queue_mutex_);
+        return q_.size();
+    }
+
 private:
     std::mutex queue_mutex_;
     std::condition_variable push_cv_;
