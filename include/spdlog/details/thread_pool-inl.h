@@ -68,6 +68,11 @@ size_t SPDLOG_INLINE thread_pool::overrun_counter()
     return q_.overrun_counter();
 }
 
+size_t SPDLOG_INLINE thread_pool::queue_size()
+{
+    return q_.size();
+}
+
 void SPDLOG_INLINE thread_pool::post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy)
 {
     if (overflow_policy == async_overflow_policy::block)
