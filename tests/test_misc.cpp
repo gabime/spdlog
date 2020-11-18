@@ -114,6 +114,54 @@ TEST_CASE("clone-logger", "[clone]")
     spdlog::drop_all();
 }
 
+TEST_CASE("clone-logger-with-context", "[clone]")
+{
+    using spdlog::sinks::test_sink_mt;
+    auto test_sink = std::make_shared<test_sink_mt>();
+    auto logger = std::make_shared<spdlog::logger>("orig", test_sink);
+    logger->with_field("key", "value");
+    logger->set_pattern("[%V] %v");
+    auto cloned = logger->clone("clone");
+
+    REQUIRE(cloned->name() == "clone");
+    REQUIRE(logger->sinks() == cloned->sinks());
+    REQUIRE(logger->level() == cloned->level());
+    REQUIRE(logger->flush_level() == cloned->flush_level());
+    logger->info("Some message 1");
+    cloned->info("Some message 2");
+
+    REQUIRE(test_sink->lines().size() == 2);
+    REQUIRE(test_sink->lines()[0] == "[key=value] Some message 1");
+    REQUIRE(test_sink->lines()[1] == "[key=value] Some message 2");
+
+    spdlog::drop_all();
+}
+
+TEST_CASE("clone-logger-modify-context", "[clone]")
+{
+    using spdlog::sinks::test_sink_mt;
+    auto test_sink = std::make_shared<test_sink_mt>();
+    auto logger = std::make_shared<spdlog::logger>("orig", test_sink);
+    logger->set_pattern("[%V] %v");
+    logger->with_field("key1", "val1");
+
+    auto cloned = logger->clone("clone");
+    cloned->with_field("key2", "val2");
+
+    REQUIRE(cloned->name() == "clone");
+    REQUIRE(logger->sinks() == cloned->sinks());
+    REQUIRE(logger->level() == cloned->level());
+    REQUIRE(logger->flush_level() == cloned->flush_level());
+    logger->info("Some message 1");
+    cloned->info("Some message 2");
+
+    REQUIRE(test_sink->lines().size() == 2);
+    REQUIRE(test_sink->lines()[0] == "[key1=val1] Some message 1");
+    REQUIRE(test_sink->lines()[1] == "[key1=val1 key2=val2] Some message 2");
+
+    spdlog::drop_all();
+}
+
 TEST_CASE("clone async", "[clone]")
 {
     using spdlog::sinks::test_sink_st;

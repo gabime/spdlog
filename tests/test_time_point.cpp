@@ -15,7 +15,7 @@ TEST_CASE("time_point1", "[time_point log_msg]")
     test_sink->set_delay(std::chrono::milliseconds(10));
     for (int i = 0; i < 5; i++)
     {
-        spdlog::details::log_msg msg{tp, source, "test_logger", spdlog::level::info, "message"};
+        spdlog::details::log_msg msg{tp, source, "test_logger", spdlog::level::info, "message", ""};
         test_sink->log(msg);
     }
 

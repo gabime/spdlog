@@ -152,7 +152,7 @@ public:
             return;
         }
 
-        details::log_msg log_msg(log_time, loc, name_, lvl, msg);
+        details::log_msg log_msg(log_time, loc, name_, lvl, msg, string_view_t(context_.data(), context_.size()));
         log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
@@ -165,7 +165,7 @@ public:
             return;
         }
 
-        details::log_msg log_msg(loc, name_, lvl, msg);
+        details::log_msg log_msg(loc, name_, lvl, msg, string_view_t(context_.data(), context_.size()));
         log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
@@ -241,7 +241,7 @@ public:
 
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
-            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()), string_view_t(context_.data(), context_.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH()
@@ -262,7 +262,7 @@ public:
         {
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(msg, buf);
-            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()), string_view_t(context_.data(), context_.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH()
@@ -316,6 +316,32 @@ public:
     // create new logger with same sinks and configuration.
     virtual std::shared_ptr<logger> clone(std::string logger_name);
 
+    // add in context a new pair key=value
+    template <typename Key, typename Value>
+    logger &with_field(const Key &key, const Value &value)
+    {
+        if (context_.size() > 0)
+        {
+            static const std::string space = " ";
+            context_.append(space.data(), space.data() + space.size());
+        }
+        auto *buf_ptr = key.data();
+        context_.append(buf_ptr, buf_ptr + key.size());
+
+        static const std::string eq = "=";
+        context_.append(eq.data(), eq.data() + eq.size());
+
+        buf_ptr = value.data();
+        context_.append(buf_ptr, buf_ptr + value.size());
+        return *this;
+    }
+
+    logger &with_field(const char *key, const char *value)
+    {
+        return with_field(string_view_t(key), string_view_t(value));
+    }
+
+
 protected:
     std::string name_;
     std::vector<sink_ptr> sinks_;
@@ -323,6 +349,7 @@ protected:
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
     details::backtracer tracer_;
+    memory_buf_t context_;
 
     // common implementation for after templated public api has been resolved
     template<typename FormatString, typename... Args>
@@ -338,7 +365,7 @@ protected:
         {
             memory_buf_t buf;
             fmt::format_to(buf, fmt, std::forward<Args>(args)...);
-            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()), string_view_t(context_.data(), context_.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH()

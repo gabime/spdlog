@@ -20,6 +20,8 @@ void user_defined_example();
 void err_handler_example();
 void syslog_example();
 void custom_flags_example();
+void context_example();
+void hierarchical_context_example();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h" // for loading levels from the environment variable
@@ -74,6 +76,8 @@ int main(int, char *[])
         trace_example();
         stopwatch_example();
         custom_flags_example();
+        context_example();
+        hierarchical_context_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -291,4 +295,41 @@ void custom_flags_example()
     auto formatter = make_unique<spdlog::pattern_formatter>();
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     spdlog::set_formatter(std::move(formatter));
+}
+
+#include "spdlog/sinks/stdout_sinks.h"
+void context_example()
+{
+    auto logger = spdlog::stdout_logger_mt("name");
+    logger->with_field("key1", "value1");
+    std::string k2 = "key2";
+    std::string v2 = "value2";
+    logger->with_field(k2, v2);
+
+    // the context is not printed because the flag %V is missing
+    logger->set_pattern("[%T] %v");
+    logger->info("example without context: {}", 42);
+
+    // the context will be printed
+    logger->set_pattern("[%T] [%V] %v");
+    logger->info("example with context: {}", 42);
+
+    spdlog::drop("name");
+}
+
+void hierarchical_context_example()
+{
+    auto f = [](spdlog::logger *log)
+    {
+        auto new_log = log->clone("cloned");
+        new_log->with_field("key2", "val2").info("context print 2");
+    };
+    auto logger = spdlog::stdout_logger_mt("name");
+    logger->set_pattern("[%V] %v");
+    logger->with_field("key1", "value1").info("context print 1");
+    f(logger.get());
+    logger->info("context print 3");
+
+    spdlog::drop("name");
+    spdlog::drop("cloned");
 }

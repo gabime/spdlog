@@ -689,6 +689,21 @@ public:
     }
 };
 
+template<typename ScopedPadder>
+class V_formatter final : public flag_formatter
+{
+public:
+    explicit V_formatter(padding_info padinfo)
+        : flag_formatter(padinfo)
+    {}
+
+    void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
+    {
+        ScopedPadder p(msg.context.size(), padinfo_, dest);
+        fmt_helper::append_string_view(msg.context, dest);
+    }
+};
+
 class ch_formatter final : public flag_formatter
 {
 public:
@@ -1095,6 +1110,10 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 
     case ('v'): // the message text
         formatters_.push_back(details::make_unique<details::v_formatter<Padder>>(padding));
+        break;
+
+    case ('V'): // the context
+        formatters_.push_back(details::make_unique<details::V_formatter<Padder>>(padding));
         break;
 
     case ('a'): // weekday
