@@ -11,6 +11,7 @@
 #include <spdlog/details/os.h>
 #include <spdlog/details/registry.h>
 
+#include <algorithm>
 #include <string>
 #include <utility>
 #include <sstream>
