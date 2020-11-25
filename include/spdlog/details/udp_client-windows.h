@@ -21,13 +21,14 @@
 
 namespace spdlog {
 namespace details {
-class tcp_client
+class udp_client
 {
     SOCKET socket_ = INVALID_SOCKET;
+    sockaddr_in addr_ = { 0 };
 
     static bool winsock_initialized_()
     {
-        SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        SOCKET s = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP);
         if (s == INVALID_SOCKET)
         {
             return false;
@@ -59,9 +60,28 @@ class tcp_client
     }
 
 public:
-    bool is_connected() const
+    bool is_init() const
     {
         return socket_ != INVALID_SOCKET;
+    }
+
+    bool init(const std::string &host, int port)
+    {
+        // initialize winsock if needed
+        if (!winsock_initialized_())
+        {
+            init_winsock_();
+        }
+
+        if (is_init())
+        {
+            close();
+        }
+
+        addr_.sin_family = AF_INET;
+        addr_.sin_port = htons(port);
+        addr_.sin_addr.S_un.S_addr = inet_addr(host.c_str());
+        return true;
     }
 
     void close()
@@ -76,98 +96,19 @@ public:
         return socket_;
     }
 
-    ~tcp_client()
+    ~udp_client()
     {
         close();
     }
 
-    // try to connect or throw on failure
-    void connect(const std::string &host, int port)
-    {
-        // initialize winsock if needed
-        if (!winsock_initialized_())
-        {
-            init_winsock_();
-        }
-
-        if (is_connected())
-        {
-            close();
-        }
-        struct addrinfo hints
-        {};
-        ZeroMemory(&hints, sizeof(hints));
-
-        hints.ai_family = AF_INET;       // IPv4
-        hints.ai_socktype = SOCK_STREAM; // TCP
-        hints.ai_flags = AI_NUMERICSERV; // port passed as as numeric value
-        hints.ai_protocol = 0;
-
-        auto port_str = std::to_string(port);
-        struct addrinfo *addrinfo_result;
-        auto rv = ::getaddrinfo(host.c_str(), port_str.c_str(), &hints, &addrinfo_result);
-        int last_error = 0;
-        if (rv != 0)
-        {
-            last_error = ::WSAGetLastError();
-            WSACleanup();
-            throw_winsock_error_("getaddrinfo failed", last_error);
-        }
-
-        // Try each address until we successfully connect(2).
-
-        for (auto *rp = addrinfo_result; rp != nullptr; rp = rp->ai_next)
-        {
-            socket_ = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-            if (socket_ == INVALID_SOCKET)
-            {
-                last_error = ::WSAGetLastError();
-                WSACleanup();
-                continue;
-            }
-            if (::connect(socket_, rp->ai_addr, (int)rp->ai_addrlen) == 0)
-            {
-                break;
-            }
-            else
-            {
-                last_error = ::WSAGetLastError();
-                close();
-            }
-        }
-        ::freeaddrinfo(addrinfo_result);
-        if (socket_ == INVALID_SOCKET)
-        {
-            WSACleanup();
-            throw_winsock_error_("connect failed", last_error);
-        }
-
-        // set TCP_NODELAY
-        int enable_flag = 1;
-        ::setsockopt(socket_, IPPROTO_TCP, TCP_NODELAY, (char *)&enable_flag, sizeof(enable_flag));
-    }
-
-    // Send exactly n_bytes of the given data.
-    // On error close the connection and throw.
     void send(const char *data, size_t n_bytes)
     {
-        size_t bytes_sent = 0;
-        while (bytes_sent < n_bytes)
+        size_t toslen = 0;
+        size_t tolen = sizeof(struct sockaddr);
+        if (( toslen = sendto(socket_, data, n_bytes, 0, (struct sockaddr *)&addr_, tolen)) == -1)
         {
-            const int send_flags = 0;
-            auto write_result = ::send(socket_, data + bytes_sent, (int)(n_bytes - bytes_sent), send_flags);
-            if (write_result == SOCKET_ERROR)
-            {
-                int last_error = ::WSAGetLastError();
-                close();
-                throw_winsock_error_("send failed", last_error);
-            }
-
-            if (write_result == 0) // (probably should not happen but in any case..)
-            {
-                break;
-            }
-            bytes_sent += static_cast<size_t>(write_result);
+            throw_spdlog_ex("write(2) failed", errno);
+            close();
         }
     }
 };
