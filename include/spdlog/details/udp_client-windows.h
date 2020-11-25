@@ -80,7 +80,7 @@ public:
 
         addr_.sin_family = AF_INET;
         addr_.sin_port = htons(port);
-        addr_.sin_addr.S_un.S_addr = inet_addr(host.c_str());
+        InetPton(AF_INET, TEXT(host.c_str()), &addr_.sin_addr.s_addr);
         return true;
     }
 
