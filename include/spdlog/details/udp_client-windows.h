@@ -103,8 +103,8 @@ public:
 
     void send(const char *data, size_t n_bytes)
     {
-        size_t toslen = 0;
-        size_t tolen = sizeof(struct sockaddr);
+        int toslen = 0;
+        int tolen = sizeof(struct sockaddr);
         if (( toslen = sendto(socket_, data, n_bytes, 0, (struct sockaddr *)&addr_, tolen)) == -1)
         {
             throw_spdlog_ex("write(2) failed", errno);
