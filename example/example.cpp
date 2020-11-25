@@ -20,6 +20,7 @@ void user_defined_example();
 void err_handler_example();
 void syslog_example();
 void custom_flags_example();
+void udp_example();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h" // for loading levels from the environment variable
@@ -74,7 +75,7 @@ int main(int, char *[])
         trace_example();
         stopwatch_example();
         custom_flags_example();
-
+        udp_example();
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
         spdlog::flush_every(std::chrono::seconds(3));
@@ -197,6 +198,7 @@ void trace_example()
 // stopwatch example
 #include "spdlog/stopwatch.h"
 #include <thread>
+#include <spdlog/sinks/udp_sink.h>
 void stopwatch_example()
 {
     spdlog::stopwatch sw;
@@ -291,4 +293,15 @@ void custom_flags_example()
     auto formatter = make_unique<spdlog::pattern_formatter>();
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     spdlog::set_formatter(std::move(formatter));
+}
+
+void udp_example()
+{
+    // using spdlog::details::make_unique;
+    //auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
+    spdlog::sinks::udp_sink_config cfg("127.0.0.1", 11091);
+    auto my_logger = spdlog::udp_logger_mt("udplog", cfg);
+    my_logger->set_level(spdlog::level::debug);
+    my_logger->info("hello world");
+    my_logger->info("are you ok");
 }
