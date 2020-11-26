@@ -87,7 +87,7 @@ TEST_CASE("async periodic flush", "[async]")
     auto test_sink = std::static_pointer_cast<spdlog::sinks::test_sink_mt>(logger->sinks()[0]);
 
     spdlog::flush_every(std::chrono::seconds(1));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+    std::this_thread::sleep_for(std::chrono::milliseconds(1700));
     REQUIRE(test_sink->flush_counter() == 1);
     spdlog::flush_every(std::chrono::seconds(0));
     spdlog::drop_all();
