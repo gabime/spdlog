@@ -40,8 +40,7 @@ struct null_atomic_int
 
     int exchange(int new_value, std::memory_order = std::memory_order_relaxed)
     {
-        std::swap(new_value, value);
-        return new_value; // return value before the call
+        return std::exchange(new_value, value);
     }
 };
 
