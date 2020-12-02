@@ -1621,8 +1621,8 @@ OutputIt write_nonfinite(OutputIt out, bool isinf,
   constexpr size_t str_size = 3;
   auto sign = fspecs.sign;
   auto size = str_size + (sign ? 1 : 0);
-  using iterator = remove_reference_t<decltype(reserve(out, 0))>;
-  return write_padded(out, specs, size, [=](iterator it) {
+  using pad_iterator = remove_reference_t<decltype(reserve(out, 0))>;
+  return write_padded(out, specs, size, [=](pad_iterator it) {
     if (sign) *it++ = static_cast<Char>(data::signs[sign]);
     return copy_str<Char>(str, str + str_size, it);
   });
