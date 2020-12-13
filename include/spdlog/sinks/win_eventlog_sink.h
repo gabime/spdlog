@@ -226,14 +226,15 @@ protected:
         formatted.push_back('\0');
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-            auto buf = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(formatted.data());
+        auto buf = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(formatted.data());
+        LPCWSTR lp_wstr = reinterpret_cast<LPCWSTR>(buf.c_str());
 
-            succeeded = ::ReportEventW(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
-                current_user_sid_.as_sid(), 1, 0, (LPCWSTR*)buf.c_str(), nullptr);
+        succeeded = ::ReportEventW(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
+                current_user_sid_.as_sid(), 1, 0, &lp_wstr, nullptr);
 #else
-            LPCSTR lp_str = reinterpret_cast<LPCSTR>(formatted.data());
+        LPCSTR lp_str = reinterpret_cast<LPCSTR>(formatted.data());
 
-            succeeded = ::ReportEventA(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
+        succeeded = ::ReportEventA(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
                 current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr);
 #endif
 
