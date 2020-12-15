@@ -39,8 +39,6 @@ Windows Registry Editor Version 5.00
 #include <mutex>
 #include <string>
 #include <vector>
-#include <locale>
-#include <codecvt>
 
 namespace spdlog {
 namespace sinks {
@@ -226,22 +224,35 @@ protected:
         formatted.push_back('\0');
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-        auto buf = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(formatted.data());
-        LPCWSTR lp_wstr = reinterpret_cast<LPCWSTR>(buf.c_str());
+        try
+        {
+            memory_buf_t buf;
+            details::os::utf8_to_wstrbuf(string_view_t(formatted.data(), formatted.size()), buf);
 
-        succeeded = ::ReportEventW(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
+            LPCWSTR lp_wstr = reinterpret_cast<LPCWSTR>(buf.data());
+            succeeded = ::ReportEventW(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
                 current_user_sid_.as_sid(), 1, 0, &lp_wstr, nullptr);
+
+            if (!succeeded)
+            {
+                SPDLOG_THROW(win32_error("ReportEvent"));
+            }
+        }
+        catch (...)
+        {
+            // WCHAR string conversion can fail and if it does, we shouldn't call to report event function.
+        }
 #else
         LPCSTR lp_str = reinterpret_cast<LPCSTR>(formatted.data());
 
         succeeded = ::ReportEventA(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
                 current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr);
-#endif
 
         if (!succeeded)
         {
             SPDLOG_THROW(win32_error("ReportEvent"));
         }
+#endif
     }
 
     void flush_() override {}
