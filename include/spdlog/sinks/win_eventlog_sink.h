@@ -57,7 +57,7 @@ struct win32_error : public spdlog_ex
 
         LPSTR format_message_result{};
         auto format_message_succeeded =
-            ::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
+            ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
                 error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&format_message_result, 0, nullptr);
 
         if (format_message_succeeded && format_message_result)
@@ -203,7 +203,7 @@ private:
     {
         if (!hEventLog_)
         {
-            hEventLog_ = ::RegisterEventSource(nullptr, source_.c_str());
+            hEventLog_ = ::RegisterEventSourceA(nullptr, source_.c_str());
             if (!hEventLog_ || hEventLog_ == (HANDLE)ERROR_ACCESS_DENIED)
             {
                 SPDLOG_THROW(internal::win32_error("RegisterEventSource"));
@@ -218,18 +218,41 @@ protected:
     {
         using namespace internal;
 
+        bool succeeded;
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
         formatted.push_back('\0');
-        LPCSTR lp_str = static_cast<LPCSTR>(formatted.data());
 
-        auto succeeded = ::ReportEvent(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
-            current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr);
+#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+        try
+        {
+            memory_buf_t buf;
+            details::os::utf8_to_wstrbuf(string_view_t(formatted.data(), formatted.size()), buf);
+
+            LPCWSTR lp_wstr = reinterpret_cast<LPCWSTR>(buf.data());
+            succeeded = ::ReportEventW(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
+                current_user_sid_.as_sid(), 1, 0, &lp_wstr, nullptr);
+
+            if (!succeeded)
+            {
+                SPDLOG_THROW(win32_error("ReportEvent"));
+            }
+        }
+        catch (...)
+        {
+            // WCHAR string conversion can fail and if it does, we shouldn't call to report event function.
+        }
+#else
+        LPCSTR lp_str = reinterpret_cast<LPCSTR>(formatted.data());
+
+        succeeded = ::ReportEventA(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
+                current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr);
 
         if (!succeeded)
         {
             SPDLOG_THROW(win32_error("ReportEvent"));
         }
+#endif
     }
 
     void flush_() override {}
