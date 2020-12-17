@@ -47,23 +47,40 @@ matrix:
     # Test gcc-4.8: C++11, Build=Debug/Release
     - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11
       os: linux
+      arch: amd64
+      addons: *gcc48
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11
+      os: linux
+      arch: ppc64le
       addons: *gcc48
 
     - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
       os: linux
+      arch: amd64
+      addons: *gcc48
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
+      os: linux
+      arch: ppc64le
       addons: *gcc48
 
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
       os: linux
+      arch: amd64
+      addons: *gcc7
+    - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
+      os: linux
+      arch: ppc64le
       addons: *gcc7
 
     # Test clang-3.5: C++11, Build=Debug/Release
     - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=11
       os: linux
+      arch: amd64
       addons: *clang35
 
     - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=11
       os: linux
+      arch: amd64
       addons: *clang35
 
       # osx
@@ -73,11 +90,23 @@ matrix:
     # Test clang-10.0: C++11, Build=Debug/Release
     - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=11
       os: linux
+      arch: amd64
+      dist: bionic
+      addons: *clang10
+    - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=11
+      os: linux
+      arch: ppc64le
       dist: bionic
       addons: *clang10
 
     - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=11 ASAN=On
       os: linux
+      arch: amd64
+      dist: bionic
+      addons: *clang10
+    - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=11 ASAN=On
+      os: linux
+      arch: ppc64le
       dist: bionic
       addons: *clang10
 
@@ -89,6 +118,7 @@ before_script:
   - which $CXX
   - which $CC
   - $CXX --version
+  - if [[ "${TRAVIS_ARCH}" = "ppc64le" ]]; then mkdir -p /tmp/cmake-source && cd /tmp/cmake-source && wget https://github.com/Kitware/CMake/releases/download/v3.18.5/cmake-3.18.5.tar.gz && tar -xvf cmake-3.18.5.tar.gz && cd cmake-3.18.5 && mkdir -p build && cd build sudo apt update -y && sudo apt install -y libssl-dev && ../bootstrap --prefix=/tmp/cmake && make -j4 install; export PATH=/tmp/cmake/bin:${PATH};fi
   - cmake --version
 
 script:
