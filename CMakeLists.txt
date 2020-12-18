@@ -100,6 +100,7 @@ option(
     SPDLOG_NO_ATOMIC_LEVELS
     "prevent spdlog from using of std::atomic log levels (use only if your code never modifies log levels concurrently"
     OFF)
+option(SPDLOG_DISABLE_DEFAULT_LOGGER "Disable default logger creation" OFF)
 
 # clang-tidy
 if(${CMAKE_VERSION} VERSION_GREATER "3.5")
@@ -201,7 +202,8 @@ foreach(
     SPDLOG_PREVENT_CHILD_FD
     SPDLOG_NO_THREAD_ID
     SPDLOG_NO_TLS
-    SPDLOG_NO_ATOMIC_LEVELS)
+    SPDLOG_NO_ATOMIC_LEVELS
+    SPDLOG_DISABLE_DEFAULT_LOGGER)
     if(${SPDLOG_OPTION})
         target_compile_definitions(spdlog PUBLIC ${SPDLOG_OPTION})
         target_compile_definitions(spdlog_header_only INTERFACE ${SPDLOG_OPTION})
