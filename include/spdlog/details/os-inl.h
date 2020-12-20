@@ -397,17 +397,26 @@ SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT
 #ifdef _WIN32
     return true;
 #else
-    static constexpr std::array<const char *, 14> terms = {
-        {"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm"}};
 
-    const char *env_p = std::getenv("TERM");
-    if (env_p == nullptr)
-    {
-        return false;
-    }
+    static const bool result = []() {
+        const char *env_colorterm_p = std::getenv("COLORTERM");
+        if (env_colorterm_p != nullptr)
+        {
+            return true;
+        }
 
-    static const bool result =
-        std::any_of(terms.begin(), terms.end(), [&](const char *term) { return std::strstr(env_p, term) != nullptr; });
+        static constexpr std::array<const char *, 15> terms = {{"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux",
+            "msys", "putty", "rxvt", "screen", "vt100", "xterm", "alacritty"}};
+
+        const char *env_term_p = std::getenv("TERM");
+        if (env_term_p == nullptr)
+        {
+            return false;
+        }
+
+        return std::any_of(terms.begin(), terms.end(), [&](const char *term) { return std::strstr(env_term_p, term) != nullptr; });
+    }();
+
     return result;
 #endif
 }
