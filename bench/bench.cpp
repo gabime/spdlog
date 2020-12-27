@@ -11,7 +11,12 @@
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
+
+#ifdef SPDLOG_FMT_EXTERNAL
+#include <fmt/locale.h>
+#else
 #include "spdlog/fmt/bundled/locale.h"
+#endif
 
 #include "utils.h"
 #include <atomic>

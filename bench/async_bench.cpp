@@ -9,7 +9,12 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
+
+#ifdef SPDLOG_FMT_EXTERNAL
+#include <fmt/locale.h>
+#else
 #include "spdlog/fmt/bundled/locale.h"
+#endif
 
 #include "utils.h"
 #include <atomic>
