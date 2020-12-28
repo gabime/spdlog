@@ -81,7 +81,30 @@ int main()
 }
 
 ```
+
 ---
+
+#### Switch logging output to stderr
+
+```c++
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/spdlog.h"
+
+int main()
+{
+    // Replace the default logger with a (color, single-threaded) stderr
+    // logger with name "" (but first replace it with an arbitrarily-named
+    // logger to prevent a name clash)
+    spdlog::set_default_logger( spdlog::stderr_color_st( "some_arbitrary_name" ) );
+    spdlog::set_default_logger( spdlog::stderr_color_st( "" ) );
+
+    spdlog::info("This message will go to stderr");
+}
+
+```
+
+---
+
 #### Create stdout/stderr logger object
 ```c++
 #include "spdlog/spdlog.h"
