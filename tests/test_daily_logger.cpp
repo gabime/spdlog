@@ -25,7 +25,7 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger]")
 
 #ifdef SPDLOG_WCHAR_FILENAMES
     spdlog::memory_buf_t buf;
-    spdlog::details::os::wstr_to_utf8buf(fmt::to_string(w));
+    spdlog::details::os::wstr_to_utf8buf(fmt::to_string(w), buf);
     auto filename = fmt::to_string(buf);
 #else
     auto filename = fmt::to_string(w);
@@ -65,7 +65,7 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger]")
 
 #ifdef SPDLOG_WCHAR_FILENAMES
     spdlog::memory_buf_t buf;
-    spdlog::details::os::wstr_to_utf8buf(fmt::to_string(w));
+    spdlog::details::os::wstr_to_utf8buf(fmt::to_string(w), buf);
     auto filename = fmt::to_string(buf);
 #else
     auto filename = fmt::to_string(w);

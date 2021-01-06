@@ -8,11 +8,13 @@
 #error "Invalid SPDLOG_ACTIVE_LEVEL in test. Should be SPDLOG_LEVEL_DEBUG"
 #endif
 
+#define TEST_FILENAME "test_logs/simple_log"
+
 TEST_CASE("debug and trace w/o format string", "[macros]]")
 {
 
     prepare_logdir();
-    std::string filename = "test_logs/simple_log";
+    spdlog::filename_t filename = SPDLOG_FILENAME_T(TEST_FILENAME);
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");
@@ -23,8 +25,8 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
     logger->flush();
 
     using spdlog::details::os::default_eol;
-    REQUIRE(ends_with(file_contents(filename), fmt::format("Test message 2{}", default_eol)));
-    REQUIRE(count_lines(filename) == 1);
+    REQUIRE(ends_with(file_contents(TEST_FILENAME), fmt::format("Test message 2{}", default_eol)));
+    REQUIRE(count_lines(TEST_FILENAME) == 1);
 
     spdlog::set_default_logger(logger);
 
@@ -32,8 +34,8 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
     SPDLOG_DEBUG("Test message {}", 4);
     logger->flush();
 
-    require_message_count(filename, 2);
-    REQUIRE(ends_with(file_contents(filename), fmt::format("Test message 4{}", default_eol)));
+    require_message_count(TEST_FILENAME, 2);
+    REQUIRE(ends_with(file_contents(TEST_FILENAME), fmt::format("Test message 4{}", default_eol)));
 }
 
 TEST_CASE("disable param evaluation", "[macros]")

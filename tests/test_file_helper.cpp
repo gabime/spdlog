@@ -3,6 +3,8 @@
  */
 #include "includes.h"
 
+#define TEST_FILENAME "test_logs/file_helper_test.txt"
+
 using spdlog::details::file_helper;
 
 static void write_with_helper(file_helper &helper, size_t howmany)
@@ -18,7 +20,7 @@ TEST_CASE("file_helper_filename", "[file_helper::filename()]]")
     prepare_logdir();
 
     file_helper helper;
-    spdlog::filename_t target_filename = SPDLOG_FILENAME_T("test_logs/file_helper_test.txt");
+    spdlog::filename_t target_filename = SPDLOG_FILENAME_T(TEST_FILENAME);
     helper.open(target_filename);
     REQUIRE(helper.filename() == target_filename);
 }
@@ -26,7 +28,7 @@ TEST_CASE("file_helper_filename", "[file_helper::filename()]]")
 TEST_CASE("file_helper_size", "[file_helper::size()]]")
 {
     prepare_logdir();
-    spdlog::filename_t target_filename = SPDLOG_FILENAME_T("test_logs/file_helper_test.txt");
+    spdlog::filename_t target_filename = SPDLOG_FILENAME_T(TEST_FILENAME);
     size_t expected_size = 123;
     {
         file_helper helper;
@@ -34,13 +36,13 @@ TEST_CASE("file_helper_size", "[file_helper::size()]]")
         write_with_helper(helper, expected_size);
         REQUIRE(static_cast<size_t>(helper.size()) == expected_size);
     }
-    REQUIRE(get_filesize(target_filename) == expected_size);
+    REQUIRE(get_filesize(TEST_FILENAME) == expected_size);
 }
 
 TEST_CASE("file_helper_reopen", "[file_helper::reopen()]]")
 {
     prepare_logdir();
-    spdlog::filename_t target_filename = SPDLOG_FILENAME_T("test_logs/file_helper_test.txt");
+    spdlog::filename_t target_filename = SPDLOG_FILENAME_T(TEST_FILENAME);
     file_helper helper;
     helper.open(target_filename);
     write_with_helper(helper, 12);
@@ -52,7 +54,7 @@ TEST_CASE("file_helper_reopen", "[file_helper::reopen()]]")
 TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]]")
 {
     prepare_logdir();
-    spdlog::filename_t target_filename = SPDLOG_FILENAME_T("test_logs/file_helper_test.txt");
+    spdlog::filename_t target_filename = SPDLOG_FILENAME_T(TEST_FILENAME);
     size_t expected_size = 14;
     file_helper helper;
     helper.open(target_filename);
