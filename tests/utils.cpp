@@ -84,7 +84,7 @@ bool ends_with(std::string const &value, std::string const &ending)
 std::size_t count_files(const std::string &folder)
 {
     size_t counter = 0;
-    WIN32_FIND_DATA ffd;
+    WIN32_FIND_DATAA ffd;
 
     // Start iterating over the files in the folder directory.
     HANDLE hFind = ::FindFirstFileA((folder + "\\*").c_str(), &ffd);
@@ -94,7 +94,7 @@ std::size_t count_files(const std::string &folder)
         {
             if (ffd.cFileName[0] != '.')
                 counter++;
-        } while (::FindNextFile(hFind, &ffd) != 0);
+        } while (::FindNextFileA(hFind, &ffd) != 0);
         ::FindClose(hFind);
     }
     else

@@ -533,15 +533,10 @@ SPDLOG_INLINE bool create_dir(filename_t path)
         return false;
     }
 
-#ifdef _WIN32
-    // support forward slash in windows
-    std::replace(path.begin(), path.end(), '/', folder_sep);
-#endif
-
     size_t search_offset = 0;
     do
     {
-        auto token_pos = path.find(folder_sep, search_offset);
+        auto token_pos = path.find_first_of(folder_seps_filename, search_offset);
         // treat the entire path as a folder if no folder separator not found
         if (token_pos == filename_t::npos)
         {
@@ -567,11 +562,7 @@ SPDLOG_INLINE bool create_dir(filename_t path)
 // "abc///" => "abc//"
 SPDLOG_INLINE filename_t dir_name(filename_t path)
 {
-#ifdef _WIN32
-    // support forward slash in windows
-    std::replace(path.begin(), path.end(), '/', folder_sep);
-#endif
-    auto pos = path.find_last_of(folder_sep);
+    auto pos = path.find_last_of(folder_seps_filename);
     return pos != filename_t::npos ? path.substr(0, pos) : filename_t{};
 }
 
