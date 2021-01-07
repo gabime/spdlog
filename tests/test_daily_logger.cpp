@@ -52,8 +52,8 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger]")
     // calculate filename (time based)
     spdlog::filename_t basename = SPDLOG_FILENAME_T("test_logs/daily_dateonly");
     std::tm tm = spdlog::details::os::localtime();
-    spdlog::memory_buf_t w;
-    fmt::format_to(w, "{}{:04d}{:02d}{:02d}", basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+    spdlog::filename_memory_buf_t w;
+    fmt::format_to(w, SPDLOG_FILENAME_T("{}{:04d}{:02d}{:02d}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
     for (int i = 0; i < 10; ++i)

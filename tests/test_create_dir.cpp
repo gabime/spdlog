@@ -55,26 +55,20 @@ TEST_CASE("dir_name", "[create_dir]")
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(dir\file.txt)")) == SPDLOG_FILENAME_T("dir"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(dir/file)")) == SPDLOG_FILENAME_T("dir"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(dir\file.txt\)")) == SPDLOG_FILENAME_T(R"(dir\file.txt)"));
-    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(dir/file.txt/)")) == SPDLOG_FILENAME_T(R"(dir\file.txt)"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(\dir\file.txt)")) == SPDLOG_FILENAME_T(R"(\dir)"));
-    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(/dir/file.txt)")) == SPDLOG_FILENAME_T(R"(\dir)"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(\\dir\file.txt)")) == SPDLOG_FILENAME_T(R"(\\dir)"));
-    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(//dir/file.txt)")) == SPDLOG_FILENAME_T(R"(\\dir)"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(..\file.txt)")) == SPDLOG_FILENAME_T(".."));
-    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(../file.txt)")) == SPDLOG_FILENAME_T(".."));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(.\file.txt)")) == SPDLOG_FILENAME_T("."));
-    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(./file.txt)")) == SPDLOG_FILENAME_T("."));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(c:\\a\b\c\d\file.txt)")) == SPDLOG_FILENAME_T(R"(c:\\a\b\c\d)"));
-    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(c://a/b/c/d/file.txt)")) == SPDLOG_FILENAME_T(R"(c:\\a\b\c\d)"));
-#else
-    REQUIRE(dir_name("dir/") == "dir");
-    REQUIRE(dir_name("dir///") == "dir//");
-    REQUIRE(dir_name("dir/file") == "dir");
-    REQUIRE(dir_name("dir/file.txt") == "dir");
-    REQUIRE(dir_name("dir/file.txt/") == "dir/file.txt");
-    REQUIRE(dir_name("/dir/file.txt") == "/dir");
-    REQUIRE(dir_name("//dir/file.txt") == "//dir");
-    REQUIRE(dir_name("../file.txt") == "..");
-    REQUIRE(dir_name("./file.txt") == ".");
+    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(c://a/b/c/d/file.txt)")) == SPDLOG_FILENAME_T(R"(c://a/b/c/d)"));
 #endif
+    REQUIRE(dir_name(SPDLOG_FILENAME_T("dir/")) == SPDLOG_FILENAME_T("dir"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T("dir///")) == SPDLOG_FILENAME_T("dir//"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T("dir/file")) == SPDLOG_FILENAME_T("dir"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T("dir/file.txt")) == SPDLOG_FILENAME_T("dir"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T("dir/file.txt/")) == SPDLOG_FILENAME_T("dir/file.txt"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T("/dir/file.txt")) == SPDLOG_FILENAME_T("/dir"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T("//dir/file.txt")) == SPDLOG_FILENAME_T("//dir"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T("../file.txt")) == SPDLOG_FILENAME_T(".."));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T("./file.txt")) == SPDLOG_FILENAME_T("."));
 }

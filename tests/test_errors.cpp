@@ -100,7 +100,7 @@ TEST_CASE("async_error_handler2", "[errors]]")
     prepare_logdir();
     std::string err_msg("This is async handler error message");
     {
-        spdlog::details::os::create_dir("test_logs");
+        spdlog::details::os::create_dir(SPDLOG_FILENAME_T("test_logs"));
         spdlog::init_thread_pool(128, 1);
         auto logger = spdlog::create_async<failing_sink>("failed_logger");
         logger->set_error_handler([=](const std::string &) {
