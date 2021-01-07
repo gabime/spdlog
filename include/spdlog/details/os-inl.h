@@ -469,7 +469,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
     throw_spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
 }
 
-SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, memory_buf_t &target)
+SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
 {
     if (str.size() > static_cast<size_t>((std::numeric_limits<int>::max)()))
     {
@@ -484,7 +484,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, memory_buf_t &target)
     }
 
     int result_size = static_cast<int>(target.capacity());
-    if ((str_size + 1) * 2 < result_size)
+    if (str_size + 1 > result_size)
     {
         result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, NULL, 0);
     }
@@ -492,7 +492,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, memory_buf_t &target)
     if (result_size > 0)
     {
         target.resize(result_size);
-        result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, (LPWSTR)target.data(), result_size);
+        result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, target.data(), result_size);
 
         if (result_size > 0)
         {

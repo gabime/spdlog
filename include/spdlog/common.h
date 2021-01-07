@@ -103,6 +103,7 @@ using err_handler = std::function<void(const std::string &err_msg)>;
 using string_view_t = fmt::basic_string_view<char>;
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
+using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 using filename_memory_buf_t = fmt::basic_memory_buffer<filename_t::value_type, 250>;
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
