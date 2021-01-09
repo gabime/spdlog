@@ -29,12 +29,27 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
 {
     close();
     filename_ = fname;
-    auto *mode = truncate ? SPDLOG_FILENAME_T("wb") : SPDLOG_FILENAME_T("ab");
+
+    auto *mode = SPDLOG_FILENAME_T("ab");
+    auto *trunc_mode = SPDLOG_FILENAME_T("wb");
 
     for (int tries = 0; tries < open_tries_; ++tries)
     {
         // create containing folder if not exists already.
         os::create_dir(os::dir_name(fname));
+        if (truncate)
+        {
+            // Truncate by opening-and-closing a tmp file in "wb" mode, always
+            // opening the actual log-we-write-to in "ab" mode, since that
+            // interacts more politely with eternal processes that might
+            // rotate/truncate the file underneath us.
+            std::FILE *tmp;
+            if (os::fopen_s(&tmp, fname, trunc_mode))
+            {
+                continue;
+            }
+            std::fclose(tmp);
+        }
         if (!os::fopen_s(&fd_, fname, mode))
         {
             return;
