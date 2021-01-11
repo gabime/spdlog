@@ -127,7 +127,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
-        string_view_t &level_name = level::to_string_view(msg.level);
+        const string_view_t &level_name = level::to_string_view(msg.level);
         ScopedPadder p(level_name.size(), padinfo_, dest);
         fmt_helper::append_string_view(level_name, dest);
     }
