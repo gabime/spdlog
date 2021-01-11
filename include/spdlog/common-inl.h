@@ -9,7 +9,11 @@
 
 namespace spdlog {
 namespace level {
-static FMT_CONSTEXPR string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
+
+#if __cplusplus >= 201402L
+constexpr
+#endif
+static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 
 static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
