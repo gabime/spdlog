@@ -372,7 +372,7 @@ TEST_CASE("clone-custom_formatter", "[pattern_formatter]")
 //
 
 #ifdef _WIN32
-static const char *const test_path = "\\a\\b\\myfile.cpp";
+static const char *const test_path = "\\a\\b\\c/myfile.cpp";
 #else
 static const char *const test_path = "/a/b//myfile.cpp";
 #endif

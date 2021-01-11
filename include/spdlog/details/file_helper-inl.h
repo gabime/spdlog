@@ -133,7 +133,7 @@ SPDLOG_INLINE std::tuple<filename_t, filename_t> file_helper::split_by_extension
     }
 
     // treat cases like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"
-    auto folder_index = fname.rfind(details::os::folder_sep);
+    auto folder_index = fname.find_last_of(details::os::folder_seps_filename);
     if (folder_index != filename_t::npos && folder_index >= ext_index - 1)
     {
         return std::make_tuple(fname, filename_t());

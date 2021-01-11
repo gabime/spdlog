@@ -32,11 +32,16 @@ SPDLOG_API std::tm gmtime() SPDLOG_NOEXCEPT;
 SPDLOG_CONSTEXPR static const char *default_eol = SPDLOG_EOL;
 
 // folder separator
+#if !defined(SPDLOG_FOLDER_SEPS)
 #ifdef _WIN32
-static const char folder_sep = '\\';
+#define SPDLOG_FOLDER_SEPS "\\/"
 #else
-SPDLOG_CONSTEXPR static const char folder_sep = '/';
+#define SPDLOG_FOLDER_SEPS "/"
 #endif
+#endif
+
+SPDLOG_CONSTEXPR static const char folder_seps[] = SPDLOG_FOLDER_SEPS;
+SPDLOG_CONSTEXPR static const filename_t::value_type folder_seps_filename[] = SPDLOG_FILENAME_T(SPDLOG_FOLDER_SEPS);
 
 // fopen_s on non windows for writing
 SPDLOG_API bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode);
@@ -86,7 +91,7 @@ SPDLOG_API bool in_terminal(FILE *file) SPDLOG_NOEXCEPT;
 #if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 SPDLOG_API void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target);
 
-SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, memory_buf_t &target);
+SPDLOG_API void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target);
 #endif
 
 // Return directory name from given path or empty string

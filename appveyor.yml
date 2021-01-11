@@ -5,31 +5,51 @@ environment:
     - GENERATOR: '"Visual Studio 14 2015"'
       BUILD_TYPE: Debug
       WCHAR: 'OFF'
+      WCHAR_FILES: 'OFF'
       BUILD_SHARED: 'OFF'
+      BUILD_EXAMPLE: 'ON'
     - GENERATOR: '"Visual Studio 14 2015"'
       BUILD_TYPE: Release
       WCHAR: 'ON'
+      WCHAR_FILES: 'OFF'
       BUILD_SHARED: 'OFF'
+      BUILD_EXAMPLE: 'ON'
     - GENERATOR: '"Visual Studio 14 2015 Win64"'
       BUILD_TYPE: Debug
       WCHAR: 'ON'
+      WCHAR_FILES: 'OFF'
       BUILD_SHARED: 'OFF'
+      BUILD_EXAMPLE: 'ON'
     - GENERATOR: '"Visual Studio 14 2015 Win64"'
       BUILD_TYPE: Release
       WCHAR: 'ON'
+      WCHAR_FILES: 'OFF'
       BUILD_SHARED: 'OFF'
+      BUILD_EXAMPLE: 'ON'
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Debug
       WCHAR: 'ON'
+      WCHAR_FILES: 'OFF'
       BUILD_SHARED: 'OFF'
+      BUILD_EXAMPLE: 'ON'
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       WCHAR: 'OFF'
+      WCHAR_FILES: 'OFF'
       BUILD_SHARED: 'OFF'
+      BUILD_EXAMPLE: 'ON'
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       WCHAR: 'OFF'
+      WCHAR_FILES: 'OFF'
       BUILD_SHARED: 'ON'
+      BUILD_EXAMPLE: 'ON'
+    - GENERATOR: '"Visual Studio 15 2017 Win64"'
+      BUILD_TYPE: Release
+      WCHAR: 'ON'
+      WCHAR_FILES: 'ON'
+      BUILD_SHARED: 'ON'
+      BUILD_EXAMPLE: 'OFF'
 build_script:
   - cmd: >-
       set
@@ -40,7 +60,7 @@ build_script:
 
       set PATH=%PATH%;C:\Program Files\Git\usr\bin
 
-      cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DSPDLOG_WCHAR_SUPPORT=%WCHAR% -DSPDLOG_BUILD_SHARED=%BUILD_SHARED% -DSPDLOG_BUILD_EXAMPLE=ON -DSPDLOG_BUILD_EXAMPLE_HO=ON -DSPDLOG_BUILD_TESTS=ON -DSPDLOG_BUILD_TESTS_HO=OFF -DSPDLOG_BUILD_WARNINGS=ON
+      cmake .. -G %GENERATOR% -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DSPDLOG_WCHAR_SUPPORT=%WCHAR% -DSPDLOG_WCHAR_FILENAMES=%WCHAR_FILES% -DSPDLOG_BUILD_SHARED=%BUILD_SHARED% -DSPDLOG_BUILD_EXAMPLE=%BUILD_EXAMPLE% -DSPDLOG_BUILD_EXAMPLE_HO=%BUILD_EXAMPLE% -DSPDLOG_BUILD_TESTS=ON -DSPDLOG_BUILD_TESTS_HO=OFF -DSPDLOG_BUILD_WARNINGS=ON
 
       cmake --build . --config %BUILD_TYPE%
 

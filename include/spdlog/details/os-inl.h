@@ -436,7 +436,7 @@ SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
 #if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
 {
-    if (wstr.size() > static_cast<size_t>((std::numeric_limits<int>::max)()))
+    if (wstr.size() > static_cast<size_t>(std::numeric_limits<int>::max()) / 2 - 1)
     {
         throw_spdlog_ex("UTF-16 string is too big to be converted to UTF-8");
     }
@@ -469,9 +469,9 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
     throw_spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
 }
 
-SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, memory_buf_t &target)
+SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
 {
-    if (str.size() > static_cast<size_t>((std::numeric_limits<int>::max)()))
+    if (str.size() > static_cast<size_t>(std::numeric_limits<int>::max()) - 1)
     {
         throw_spdlog_ex("UTF-8 string is too big to be converted to UTF-16");
     }
@@ -484,7 +484,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, memory_buf_t &target)
     }
 
     int result_size = static_cast<int>(target.capacity());
-    if ((str_size + 1) * 2 < result_size)
+    if (str_size + 1 > result_size)
     {
         result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, NULL, 0);
     }
@@ -492,7 +492,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, memory_buf_t &target)
     if (result_size > 0)
     {
         target.resize(result_size);
-        result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, (LPWSTR)target.data(), result_size);
+        result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, target.data(), result_size);
 
         if (result_size > 0)
         {
@@ -533,15 +533,10 @@ SPDLOG_INLINE bool create_dir(filename_t path)
         return false;
     }
 
-#ifdef _WIN32
-    // support forward slash in windows
-    std::replace(path.begin(), path.end(), '/', folder_sep);
-#endif
-
     size_t search_offset = 0;
     do
     {
-        auto token_pos = path.find(folder_sep, search_offset);
+        auto token_pos = path.find_first_of(folder_seps_filename, search_offset);
         // treat the entire path as a folder if no folder separator not found
         if (token_pos == filename_t::npos)
         {
@@ -567,11 +562,7 @@ SPDLOG_INLINE bool create_dir(filename_t path)
 // "abc///" => "abc//"
 SPDLOG_INLINE filename_t dir_name(filename_t path)
 {
-#ifdef _WIN32
-    // support forward slash in windows
-    std::replace(path.begin(), path.end(), '/', folder_sep);
-#endif
-    auto pos = path.find_last_of(folder_sep);
+    auto pos = path.find_last_of(folder_seps_filename);
     return pos != filename_t::npos ? path.substr(0, pos) : filename_t{};
 }
 

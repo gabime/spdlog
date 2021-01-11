@@ -88,7 +88,9 @@ class sink;
 
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 using filename_t = std::wstring;
-#define SPDLOG_FILENAME_T(s) L##s
+// allow macro expansion to occur in SPDLOG_FILENAME_T
+#define SPDLOG_FILENAME_T_INNER(s) L##s
+#define SPDLOG_FILENAME_T(s) SPDLOG_FILENAME_T_INNER(s)
 #else
 using filename_t = std::string;
 #define SPDLOG_FILENAME_T(s) s
@@ -101,6 +103,7 @@ using err_handler = std::function<void(const std::string &err_msg)>;
 using string_view_t = fmt::basic_string_view<char>;
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
+using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #ifndef _WIN32
