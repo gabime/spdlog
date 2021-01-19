@@ -22,7 +22,7 @@ namespace spdlog {
 namespace sinks {
 
 /*
- * Generator of Houlry log file names in format basename.YYYY-MM-DD-HH.ext
+ * Generator of Hourly log file names in format basename.YYYY-MM-DD-HH.ext
  */
 struct hourly_filename_calculator
 {
@@ -156,7 +156,7 @@ private:
             if (!ok)
             {
                 filenames_q_.push_back(std::move(current_file));
-                throw_spdlog_ex("Failed removing hourly file " + filename_to_str(old_filename), errno);
+                SPDLOG_THROW(spdlog_ex("Failed removing hourly file " + filename_to_str(old_filename), errno));
             }
         }
         filenames_q_.push_back(std::move(current_file));
