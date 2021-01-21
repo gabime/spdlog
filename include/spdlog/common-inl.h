@@ -9,11 +9,15 @@
 
 namespace spdlog {
 namespace level {
+
+#if __cplusplus >= 201402L
+constexpr
+#endif
 static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 
 static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
-SPDLOG_INLINE string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
+SPDLOG_INLINE const string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT
 {
     return level_string_views[l];
 }
