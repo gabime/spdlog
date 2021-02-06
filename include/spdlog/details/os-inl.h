@@ -436,7 +436,7 @@ SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
 #if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
 {
-    if (wstr.size() > static_cast<size_t>(std::numeric_limits<int>::max()) / 2 - 1)
+    if (wstr.size() > static_cast<size_t>((std::numeric_limits<int>::max)()) / 2 - 1)
     {
         throw_spdlog_ex("UTF-16 string is too big to be converted to UTF-8");
     }
@@ -471,7 +471,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
 
 SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
 {
-    if (str.size() > static_cast<size_t>(std::numeric_limits<int>::max()) - 1)
+    if (str.size() > static_cast<size_t>((std::numeric_limits<int>::max)()) - 1)
     {
         throw_spdlog_ex("UTF-8 string is too big to be converted to UTF-16");
     }
