@@ -29,9 +29,8 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color
 {
     // check if out_handle is points to the actual console.
     // ::GetConsoleMode() should return 0 if it is redirected or not valid console handle.
-    DWORD console_mode;
+    DWORD console_mode;    
     in_console_ = ::GetConsoleMode(static_cast<HANDLE>(out_handle_), &console_mode) != 0;
-
     set_color_mode(mode);
     colors_[level::trace] = WHITE;
     colors_[level::debug] = CYAN;
@@ -59,6 +58,12 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color(level::level_enum leve
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
+    if (out_handle_ == INVALID_HANDLE_VALUE)
+    {
+        // nothing better to do if we don't have valid handle
+        return;
+    }
+
     std::lock_guard<mutex_t> lock(mutex_);
     msg.color_range_start = 0;
     msg.color_range_end = 0;
@@ -148,11 +153,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::print_range_(const memory_buf_t 
 
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const memory_buf_t &formatted)
-{
-    if (out_handle_ == nullptr) // no console and no file redirect
-    {
-        return;
-    }
+{  
     auto size = static_cast<DWORD>(formatted.size());
     DWORD bytes_written = 0;
     bool ok = ::WriteFile(static_cast<HANDLE>(out_handle_), formatted.data(), size, &bytes_written, nullptr) != 0;
