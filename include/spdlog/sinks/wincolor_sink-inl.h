@@ -130,12 +130,10 @@ std::uint16_t SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_foreground_color_(s
     {
         return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // white
     }
-
-    WORD back_color = orig_buffer_info.wAttributes;
-    // retrieve the current background color
-    back_color &= static_cast<WORD>(~(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY));
-    // keep the background color unchanged
-    auto ignored = ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), static_cast<WORD>(attribs) | back_color);
+    
+    // change only the foreground bits (lowest 4 bits) 
+    auto new_attribs = static_cast<WORD>(attribs) | (orig_buffer_info.wAttributes & 0xfff0);
+    auto ignored = ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), new_attribs);
     (void)(ignored);
     return static_cast<std::uint16_t>(orig_buffer_info.wAttributes); // return orig attribs
 }
