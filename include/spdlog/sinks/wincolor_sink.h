@@ -41,8 +41,7 @@ public:
 protected:
     using mutex_t = typename ConsoleMutex::mutex_t;
     void *out_handle_;
-    mutex_t &mutex_;
-    bool in_console_;
+    mutex_t &mutex_;    
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
     std::array<std::uint16_t, level::n_levels> colors_;

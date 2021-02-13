@@ -22,12 +22,7 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color
     , formatter_(details::make_unique<spdlog::pattern_formatter>())
 {
 
-    // check if out_handle is points to the actual console.
-    // ::GetConsoleMode() should return 0 if it is redirected or not valid console handle.
-    DWORD console_mode;
-    in_console_ = ::GetConsoleMode(static_cast<HANDLE>(out_handle_), &console_mode) != 0;
     set_color_mode_impl(mode);
-
     // set level colors
     colors_[level::trace] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
     colors_[level::debug] = FOREGROUND_GREEN | FOREGROUND_BLUE;                      // cyan
@@ -65,17 +60,11 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
     msg.color_range_start = 0;
     msg.color_range_end = 0;
     memory_buf_t formatted;
-    formatter_->format(msg, formatted);
-    if (!in_console_)
-    {
-        write_to_file_(formatted);
-        return;
-    }
+    formatter_->format(msg, formatted); 
     if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
     {
         // before color range
         print_range_(formatted, 0, msg.color_range_start);
-
         // in color range
         auto orig_attribs = static_cast<WORD>(set_foreground_color_(colors_[msg.level]));
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
@@ -85,7 +74,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
     }
     else // print without colors if color range is invalid (or color is disabled)
     {
-        print_range_(formatted, 0, formatted.size());
+        write_to_file_(formatted);
     }
 }
 
@@ -119,7 +108,21 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color_mode_impl(color_mode mode)
 {
-    should_do_colors_ = mode != color_mode::never;    
+    switch (mode)
+    {
+    case color_mode::always:
+        should_do_colors_ = true;
+        break;
+    case color_mode::never:
+        should_do_colors_ = false;
+        break;    
+    default:
+        // should do colors only if out_handle_  points to actual console.        
+        DWORD console_mode;
+        bool in_console = ::GetConsoleMode(static_cast<HANDLE>(out_handle_), &console_mode) != 0;
+        should_do_colors_ = in_console;
+        break;
+    }
 }
 
 // set foreground color and return the orig console attributes (for resetting later)
