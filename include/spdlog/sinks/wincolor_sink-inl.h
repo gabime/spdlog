@@ -58,7 +58,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color(level::level_enum leve
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
-    if (out_handle_ == INVALID_HANDLE_VALUE)
+    if (out_handle_ == nullptr || out_handle_ == INVALID_HANDLE_VALUE)
     {        
         return;
     }
