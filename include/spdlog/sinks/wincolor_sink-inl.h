@@ -60,7 +60,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
     msg.color_range_start = 0;
     msg.color_range_end = 0;
     memory_buf_t formatted;
-    formatter_->format(msg, formatted); 
+    formatter_->format(msg, formatted);
     if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
     {
         // before color range
@@ -108,20 +108,16 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color_mode_impl(color_mode mode)
 {
-    switch (mode)
+    if (mode == color_mode::automatic)
     {
-    case color_mode::always:
-        should_do_colors_ = true;
-        break;
-    case color_mode::never:
-        should_do_colors_ = false;
-        break;    
-    default:
-        // should do colors only if out_handle_  points to actual console.        
+        // should do colors only if out_handle_  points to actual console.
         DWORD console_mode;
         bool in_console = ::GetConsoleMode(static_cast<HANDLE>(out_handle_), &console_mode) != 0;
         should_do_colors_ = in_console;
-        break;
+    }
+    else
+    {
+        should_do_colors_ = mode == color_mode::always ? true : false;
     }
 }
 
