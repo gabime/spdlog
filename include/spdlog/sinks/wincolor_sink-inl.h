@@ -144,9 +144,12 @@ std::uint16_t SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_foreground_color_(s
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end)
 {
-    auto size = static_cast<DWORD>(end - start);
-    auto ignored = ::WriteConsoleA(static_cast<HANDLE>(out_handle_), formatted.data() + start, size, nullptr, nullptr);
-    (void)(ignored);
+    if (end > start)
+    {
+        auto size = static_cast<DWORD>(end - start);
+        auto ignored = ::WriteConsoleA(static_cast<HANDLE>(out_handle_), formatted.data() + start, size, nullptr, nullptr);
+        (void)(ignored);
+    }
 }
 
 template<typename ConsoleMutex>
