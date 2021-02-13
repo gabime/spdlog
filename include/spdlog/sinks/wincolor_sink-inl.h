@@ -155,11 +155,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const memory_buf_
 {  
     auto size = static_cast<DWORD>(formatted.size());
     DWORD bytes_written = 0;
-    bool ok = ::WriteFile(static_cast<HANDLE>(out_handle_), formatted.data(), size, &bytes_written, nullptr) != 0;
-    if (!ok)
-    {
-        throw_spdlog_ex("wincolor_sink: ::WriteFile() failed. GetLastError(): " + std::to_string(::GetLastError()));
-    }
+    ::WriteFile(static_cast<HANDLE>(out_handle_), formatted.data(), size, &bytes_written, nullptr);
 }
 
 // wincolor_stdout_sink
