@@ -23,14 +23,7 @@ namespace sinks {
 template<typename ConsoleMutex>
 class wincolor_sink : public sink
 {
-public:
-    const std::uint16_t BOLD;
-    const std::uint16_t RED;
-    const std::uint16_t GREEN;
-    const std::uint16_t CYAN;
-    const std::uint16_t WHITE;
-    const std::uint16_t YELLOW;
-
+public:   
     wincolor_sink(void *out_handle, color_mode mode);
     ~wincolor_sink() override;
 

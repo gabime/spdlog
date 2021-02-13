@@ -17,27 +17,25 @@ namespace spdlog {
 namespace sinks {
 template<typename ConsoleMutex>
 SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color_mode mode)
-    : BOLD(FOREGROUND_INTENSITY)
-    , RED(FOREGROUND_RED)
-    , GREEN(FOREGROUND_GREEN)
-    , CYAN(FOREGROUND_GREEN | FOREGROUND_BLUE)
-    , WHITE(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE)
-    , YELLOW(FOREGROUND_RED | FOREGROUND_GREEN)
-    , out_handle_(out_handle)
+    : out_handle_(out_handle)
     , mutex_(ConsoleMutex::mutex())
     , formatter_(details::make_unique<spdlog::pattern_formatter>())
 {
+
     // check if out_handle is points to the actual console.
     // ::GetConsoleMode() should return 0 if it is redirected or not valid console handle.
-    DWORD console_mode;    
+    DWORD console_mode;
     in_console_ = ::GetConsoleMode(static_cast<HANDLE>(out_handle_), &console_mode) != 0;
     set_color_mode(mode);
-    colors_[level::trace] = WHITE;
-    colors_[level::debug] = CYAN;
-    colors_[level::info] = GREEN;
-    colors_[level::warn] = YELLOW | BOLD;
-    colors_[level::err] = RED | BOLD;                         // red bold
-    colors_[level::critical] = BACKGROUND_RED | WHITE | BOLD; // white bold on red background
+
+    // set level colors
+    colors_[level::trace] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
+    colors_[level::debug] = FOREGROUND_GREEN | FOREGROUND_BLUE;                      // cyan
+    colors_[level::info] = FOREGROUND_GREEN;                                         // green
+    colors_[level::warn] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // intense yellow
+    colors_[level::err] = FOREGROUND_RED | FOREGROUND_INTENSITY;                     // intense red
+    colors_[level::critical] =
+        BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // intense white on red background
     colors_[level::off] = 0;
 }
 
@@ -59,7 +57,7 @@ template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
     if (out_handle_ == nullptr || out_handle_ == INVALID_HANDLE_VALUE)
-    {        
+    {
         return;
     }
 
@@ -131,13 +129,13 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
 // set foreground color and return the orig console attributes (for resetting later)
 template<typename ConsoleMutex>
 std::uint16_t SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_foreground_color_(std::uint16_t attribs)
-{        
+{
     CONSOLE_SCREEN_BUFFER_INFO orig_buffer_info;
     if (!::GetConsoleScreenBufferInfo(static_cast<HANDLE>(out_handle_), &orig_buffer_info))
-    {        
-        return WHITE;
+    {
+        return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // white
     }
-   
+
     WORD back_color = orig_buffer_info.wAttributes;
     // retrieve the current background color
     back_color &= static_cast<WORD>(~(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY));
@@ -158,7 +156,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::print_range_(const memory_buf_t 
 
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const memory_buf_t &formatted)
-{  
+{
     auto size = static_cast<DWORD>(formatted.size());
     DWORD bytes_written = 0;
     auto ignored = ::WriteFile(static_cast<HANDLE>(out_handle_), formatted.data(), size, &bytes_written, nullptr);
