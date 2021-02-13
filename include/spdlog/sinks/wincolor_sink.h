@@ -55,6 +55,8 @@ protected:
 
     // in case we are redirected to file (not in console mode)
     void write_to_file_(const memory_buf_t &formatted);
+
+    void set_color_mode_impl(color_mode mode);
 };
 
 template<typename ConsoleMutex>

@@ -26,7 +26,7 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color
     // ::GetConsoleMode() should return 0 if it is redirected or not valid console handle.
     DWORD console_mode;
     in_console_ = ::GetConsoleMode(static_cast<HANDLE>(out_handle_), &console_mode) != 0;
-    set_color_mode(mode);
+    set_color_mode_impl(mode);
 
     // set level colors
     colors_[level::trace] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
@@ -112,18 +112,14 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_formatter(std::unique_ptr<sp
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
 {
-    switch (mode)
-    {
-    case color_mode::always:
-    case color_mode::automatic:
-        should_do_colors_ = true;
-        break;
-    case color_mode::never:
-        should_do_colors_ = false;
-        break;
-    default:
-        should_do_colors_ = true;
-    }
+    std::lock_guard<mutex_t> lock(mutex_);
+    set_color_mode_impl(mode);
+}
+
+template<typename ConsoleMutex>
+void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color_mode_impl(color_mode mode)
+{
+    should_do_colors_ = mode != color_mode::never;    
 }
 
 // set foreground color and return the orig console attributes (for resetting later)
