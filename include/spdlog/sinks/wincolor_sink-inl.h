@@ -59,8 +59,7 @@ template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 {
     if (out_handle_ == INVALID_HANDLE_VALUE)
-    {
-        // nothing better to do if we don't have valid handle
+    {        
         return;
     }
 
