@@ -128,7 +128,8 @@ std::uint16_t SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_foreground_color_(s
     CONSOLE_SCREEN_BUFFER_INFO orig_buffer_info;
     if (!::GetConsoleScreenBufferInfo(static_cast<HANDLE>(out_handle_), &orig_buffer_info))
     {
-        return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // white
+        // just return white if failed getting console info
+        return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; 
     }
     
     // change only the foreground bits (lowest 4 bits) 
