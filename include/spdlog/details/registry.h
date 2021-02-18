@@ -99,7 +99,7 @@ private:
     std::unique_ptr<formatter> formatter_;
     spdlog::level::level_enum global_log_level_ = level::info;
     level::level_enum flush_level_ = level::off;
-    void (*err_handler_)(const std::string &msg);
+    void (*err_handler_)(const std::string &msg) = nullptr;
     std::shared_ptr<thread_pool> tp_;
     std::unique_ptr<periodic_worker> periodic_flusher_;
     std::shared_ptr<logger> default_logger_;
