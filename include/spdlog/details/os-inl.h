@@ -246,7 +246,6 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 #endif
 #endif
     throw_spdlog_ex("Failed getting file size from fd", errno);
-    return 0; // will not be reached.
 }
 
 // Return utc offset in minutes or throw spdlog_ex on failure
