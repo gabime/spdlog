@@ -43,93 +43,93 @@ struct daily_filename_calculator
     // Create formatting filename for the form basename.
     static filename_t calc_filename_fmt(const filename_t &filename, const tm &now_tm)
     {
-		filename_t dest = "";
+        filename_t dest = "";
         int total_minutes;
-		for (size_t i = 0; i < filename.size (); ++i)
-		{
-			if (filename [i] == '%') {
-				if (i == filename.size () - 1)
-					throw_spdlog_ex("daily_file_sink: Invalid format");
-				i += 1;
-				char ch = filename [i];
-				switch (ch)
-				{
-				case 'a':
+        for (size_t i = 0; i < filename.size (); ++i)
+        {
+            if (filename [i] == '%') {
+                if (i == filename.size () - 1)
+                    throw_spdlog_ex("daily_file_sink: Invalid format");
+                i += 1;
+                char ch = filename [i];
+                switch (ch)
+                {
+                case 'a':
                     dest += spdlog::details::days[static_cast<size_t>(now_tm.tm_wday)];
-					break;
-				case 'A':
-					dest += spdlog::details::full_days[static_cast<size_t>(now_tm.tm_wday)];
-					break;
-				case 'b':
-					dest += spdlog::details::months[static_cast<size_t>(now_tm.tm_mon)];
-					break;
-				case 'B':
-					dest += spdlog::details::full_months[static_cast<size_t>(now_tm.tm_mon)];
-					break;
-				case 'c':
-					dest += calc_filename_fmt("%a %b %d %H:%M:%S %Y", now_tm);
-					break;
-				case 'C':
-					dest += fmt::format ("{}", (now_tm.tm_year + 1900) % 100);
-					break;
-				case 'Y':
-					dest += fmt::format ("{}", now_tm.tm_year + 1900);
-					break;
-				case 'D':
-				case 'x':
-					dest += calc_filename_fmt("%m %d %C", now_tm);
-					break;
-				case 'm':
-					dest += fmt::format ("{:02}", now_tm.tm_mon + 1);
-					break;
-				case 'd':
-					dest += fmt::format ("{:02}", now_tm.tm_mday);
-					break;
-				case 'H':
-					dest += fmt::format ("{:02}", now_tm.tm_hour);
-					break;
-				case 'I':
-					dest += fmt::format ("{:02}", (now_tm.tm_hour % 12) == 0 ? 12 : (now_tm.tm_hour % 12));
-					break;
-				case 'M':
-					dest += fmt::format ("{:02}", now_tm.tm_min);
-					break;
-				case 'S':
-					dest += fmt::format ("{:02}", now_tm.tm_sec);
-					break;
-				case 'p':
-					dest += (now_tm.tm_hour >= 1 && now_tm.tm_hour <= 12 ? "AM" : "PM");
-					break;
-				case 'r':
-					dest += calc_filename_fmt("%I:%M:%S %p", now_tm);
-					break;
-				case 'R':
-					dest += calc_filename_fmt("%H:%M", now_tm);
-					break;
-				case 'T':
-				case 'X':
-					dest += calc_filename_fmt("%H:%M:%S", now_tm);
-					break;
-				case 'z':
-					total_minutes = spdlog::details::os::utc_minutes_offset ();
-					if (total_minutes >= 0) {
-						dest += fmt::format ("+{:02}:{:02}", total_minutes / 60, total_minutes % 60);
-					} else {
-						total_minutes = -total_minutes;
-						dest += fmt::format ("-{:02}:{:02}", total_minutes / 60, total_minutes % 60);
-					}
-					break;
-				case '%':
-					dest += '%';
-					break;
+                    break;
+                case 'A':
+                    dest += spdlog::details::full_days[static_cast<size_t>(now_tm.tm_wday)];
+                    break;
+                case 'b':
+                    dest += spdlog::details::months[static_cast<size_t>(now_tm.tm_mon)];
+                    break;
+                case 'B':
+                    dest += spdlog::details::full_months[static_cast<size_t>(now_tm.tm_mon)];
+                    break;
+                case 'c':
+                    dest += calc_filename_fmt("%a %b %d %H:%M:%S %Y", now_tm);
+                    break;
+                case 'C':
+                    dest += fmt::format ("{}", (now_tm.tm_year + 1900) % 100);
+                    break;
+                case 'Y':
+                    dest += fmt::format ("{}", now_tm.tm_year + 1900);
+                    break;
+                case 'D':
+                case 'x':
+                    dest += calc_filename_fmt("%m %d %C", now_tm);
+                    break;
+                case 'm':
+                    dest += fmt::format ("{:02}", now_tm.tm_mon + 1);
+                    break;
+                case 'd':
+                    dest += fmt::format ("{:02}", now_tm.tm_mday);
+                    break;
+                case 'H':
+                    dest += fmt::format ("{:02}", now_tm.tm_hour);
+                    break;
+                case 'I':
+                    dest += fmt::format ("{:02}", (now_tm.tm_hour % 12) == 0 ? 12 : (now_tm.tm_hour % 12));
+                    break;
+                case 'M':
+                    dest += fmt::format ("{:02}", now_tm.tm_min);
+                    break;
+                case 'S':
+                    dest += fmt::format ("{:02}", now_tm.tm_sec);
+                    break;
+                case 'p':
+                    dest += (now_tm.tm_hour >= 1 && now_tm.tm_hour <= 12 ? "AM" : "PM");
+                    break;
+                case 'r':
+                    dest += calc_filename_fmt("%I:%M:%S %p", now_tm);
+                    break;
+                case 'R':
+                    dest += calc_filename_fmt("%H:%M", now_tm);
+                    break;
+                case 'T':
+                case 'X':
+                    dest += calc_filename_fmt("%H:%M:%S", now_tm);
+                    break;
+                case 'z':
+                    total_minutes = spdlog::details::os::utc_minutes_offset ();
+                    if (total_minutes >= 0) {
+                        dest += fmt::format ("+{:02}:{:02}", total_minutes / 60, total_minutes % 60);
+                    } else {
+                        total_minutes = -total_minutes;
+                        dest += fmt::format ("-{:02}:{:02}", total_minutes / 60, total_minutes % 60);
+                    }
+                    break;
+                case '%':
+                    dest += '%';
+                    break;
                 default:
                     throw_spdlog_ex("daily_file_sink: Invalid format");
-				}
-			} else {
-				dest += filename [i];
-			}
-		}
-		return dest;
+                }
+            } else {
+                dest += filename [i];
+            }
+        }
+        return dest;
     }
 };
 
