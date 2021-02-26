@@ -45,7 +45,7 @@ struct daily_filename_format_calculator
     // Create filename by formatting %Y_%m_%d.log
     static filename_t calc_filename (const filename_t &filename, const tm &now_tm)
     {
-        filename_t fmt_filename = fmt::format("{{:{}}}", filename);
+        filename_t fmt_filename = fmt::format(SPDLOG_FILENAME_T ("{{:{}}}"), filename);
         return fmt::format(fmt_filename, now_tm);
     }
 };
