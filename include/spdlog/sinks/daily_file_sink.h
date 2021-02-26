@@ -7,6 +7,7 @@
 #include <spdlog/details/file_helper.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/fmt/fmt.h>
+#include <spdlog/fmt/chrono.h>
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/os.h>
 #include <spdlog/details/circular_q.h>
@@ -39,97 +40,18 @@ struct daily_filename_calculator
         return fmt::format(
             SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
     }
+};
 
-    // Create formatting filename for the form basename.
-    static filename_t calc_filename_fmt(const filename_t &filename, const tm &now_tm)
+/*
+ * Generator of daily log file names by formatting
+ */
+struct daily_filename_format_calculator
+{
+    // Create filename by formatting %Y_%m_%d.log
+    static filename_t calc_filename (const filename_t &filename, const tm &now_tm)
     {
-        filename_t dest = "";
-        int total_minutes;
-        for (size_t i = 0; i < filename.size (); ++i)
-        {
-            if (filename [i] == '%') {
-                if (i == filename.size () - 1)
-                    throw_spdlog_ex("daily_file_sink: Invalid format");
-                i += 1;
-                char ch = filename [i];
-                switch (ch)
-                {
-                case 'a':
-                    dest += spdlog::details::days[static_cast<size_t>(now_tm.tm_wday)];
-                    break;
-                case 'A':
-                    dest += spdlog::details::full_days[static_cast<size_t>(now_tm.tm_wday)];
-                    break;
-                case 'b':
-                    dest += spdlog::details::months[static_cast<size_t>(now_tm.tm_mon)];
-                    break;
-                case 'B':
-                    dest += spdlog::details::full_months[static_cast<size_t>(now_tm.tm_mon)];
-                    break;
-                case 'c':
-                    dest += calc_filename_fmt("%a %b %d %H:%M:%S %Y", now_tm);
-                    break;
-                case 'C':
-                    dest += fmt::format ("{}", (now_tm.tm_year + 1900) % 100);
-                    break;
-                case 'Y':
-                    dest += fmt::format ("{}", now_tm.tm_year + 1900);
-                    break;
-                case 'D':
-                case 'x':
-                    dest += calc_filename_fmt("%m %d %C", now_tm);
-                    break;
-                case 'm':
-                    dest += fmt::format ("{:02}", now_tm.tm_mon + 1);
-                    break;
-                case 'd':
-                    dest += fmt::format ("{:02}", now_tm.tm_mday);
-                    break;
-                case 'H':
-                    dest += fmt::format ("{:02}", now_tm.tm_hour);
-                    break;
-                case 'I':
-                    dest += fmt::format ("{:02}", (now_tm.tm_hour % 12) == 0 ? 12 : (now_tm.tm_hour % 12));
-                    break;
-                case 'M':
-                    dest += fmt::format ("{:02}", now_tm.tm_min);
-                    break;
-                case 'S':
-                    dest += fmt::format ("{:02}", now_tm.tm_sec);
-                    break;
-                case 'p':
-                    dest += (now_tm.tm_hour >= 1 && now_tm.tm_hour <= 12 ? "AM" : "PM");
-                    break;
-                case 'r':
-                    dest += calc_filename_fmt("%I:%M:%S %p", now_tm);
-                    break;
-                case 'R':
-                    dest += calc_filename_fmt("%H:%M", now_tm);
-                    break;
-                case 'T':
-                case 'X':
-                    dest += calc_filename_fmt("%H:%M:%S", now_tm);
-                    break;
-                case 'z':
-                    total_minutes = spdlog::details::os::utc_minutes_offset ();
-                    if (total_minutes >= 0) {
-                        dest += fmt::format ("+{:02}:{:02}", total_minutes / 60, total_minutes % 60);
-                    } else {
-                        total_minutes = -total_minutes;
-                        dest += fmt::format ("-{:02}:{:02}", total_minutes / 60, total_minutes % 60);
-                    }
-                    break;
-                case '%':
-                    dest += '%';
-                    break;
-                default:
-                    throw_spdlog_ex("daily_file_sink: Invalid format");
-                }
-            } else {
-                dest += filename [i];
-            }
-        }
-        return dest;
+        std::string fmt_filename = fmt::format("{{:{}}}", filename);
+        return fmt::format(fmt_filename, now_tm);
     }
 };
 
@@ -143,14 +65,13 @@ class daily_file_sink final : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time
-    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false, uint16_t max_files = 0, bool is_fmt = false)
+    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false, uint16_t max_files = 0)
         : base_filename_(std::move(base_filename))
         , rotation_h_(rotation_hour)
         , rotation_m_(rotation_minute)
         , truncate_(truncate)
         , max_files_(max_files)
         , filenames_q_()
-        , is_fmt_(is_fmt)
     {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 || rotation_minute > 59)
         {
@@ -158,8 +79,7 @@ public:
         }
 
         auto now = log_clock::now();
-        auto filename = is_fmt_ ? FileNameCalc::calc_filename_fmt(base_filename_, now_tm(now))
-                                : FileNameCalc::calc_filename(base_filename_, now_tm(now));
+        auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
         file_helper_.open(filename, truncate_);
         rotation_tp_ = next_rotation_tp_();
 
@@ -182,8 +102,7 @@ protected:
         bool should_rotate = time >= rotation_tp_;
         if (should_rotate)
         {
-            auto filename = is_fmt_ ? FileNameCalc::calc_filename_fmt(base_filename_, now_tm(time))
-                                    : FileNameCalc::calc_filename(base_filename_, now_tm(time));
+            auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(time));
             file_helper_.open(filename, truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
@@ -213,8 +132,7 @@ private:
         auto now = log_clock::now();
         while (filenames.size() < max_files_)
         {
-            auto filename = is_fmt_ ? FileNameCalc::calc_filename_fmt(base_filename_, now_tm(now))
-                                    : FileNameCalc::calc_filename(base_filename_, now_tm(now));
+            auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
             if (!path_exists(filename))
             {
                 break;
@@ -279,11 +197,12 @@ private:
     bool truncate_;
     uint16_t max_files_;
     details::circular_q<filename_t> filenames_q_;
-    bool is_fmt_;
 };
 
 using daily_file_sink_mt = daily_file_sink<std::mutex>;
 using daily_file_sink_st = daily_file_sink<details::null_mutex>;
+using daily_file_format_sink_mt = daily_file_sink<std::mutex, daily_filename_format_calculator>;
+using daily_file_format_sink_st = daily_file_sink<details::null_mutex, daily_filename_format_calculator>;
 
 } // namespace sinks
 
@@ -294,27 +213,27 @@ template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_mt(
     const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0)
 {
-    return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, truncate, max_files, false);
+    return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, truncate, max_files);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_format_mt(
     const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0)
 {
-    return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, truncate, max_files, true);
+    return Factory::template create<sinks::daily_file_format_sink_mt>(logger_name, filename, hour, minute, truncate, max_files);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_st(
     const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0)
 {
-    return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute, truncate, max_files, false);
+    return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute, truncate, max_files);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_format_st(
     const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0)
 {
-    return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute, truncate, max_files, true);
+    return Factory::template create<sinks::daily_file_format_sink_st>(logger_name, filename, hour, minute, truncate, max_files);
 }
 } // namespace spdlog
