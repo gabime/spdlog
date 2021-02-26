@@ -38,8 +38,7 @@ struct daily_filename_calculator
 };
 
 /*
- * Generator of daily log file names with strftime support. 
- * For example "myfile_Y_%m_%d.log"
+ * Generator of daily log file names with strftime format.
  */
 struct daily_filename_format_calculator
 {
