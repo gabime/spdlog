@@ -19,11 +19,6 @@
 #include <mutex>
 #include <string>
 
-extern std::array<const char *, 7> spdlog::details::days;
-extern std::array<const char *, 7> spdlog::details::full_days;
-extern const std::array<const char *, 12> spdlog::details::months;
-extern const std::array<const char *, 12> spdlog::details::full_months;
-
 namespace spdlog {
 namespace sinks {
 
