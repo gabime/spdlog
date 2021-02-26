@@ -38,13 +38,14 @@ struct daily_filename_calculator
 };
 
 /*
- * Generator of daily log file names by formatting
+ * Generator of daily log file names with strftime support. 
+ * For example "myfile_Y_%m_%d.log"
  */
 struct daily_filename_format_calculator
 {
-    // Create filename by formatting %Y_%m_%d.log
     static filename_t calc_filename (const filename_t &filename, const tm &now_tm)
     {
+         // generate fmt datetime format string, e.g. {:%Y-%m-%d}.
         filename_t fmt_filename = fmt::format(SPDLOG_FILENAME_T ("{{:{}}}"), filename);
         return fmt::format(fmt_filename, now_tm);
     }
