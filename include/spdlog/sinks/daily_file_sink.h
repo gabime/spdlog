@@ -39,6 +39,10 @@ struct daily_filename_calculator
 
 /*
  * Generator of daily log file names with strftime format.
+ * Usages:  
+ *    auto sink =  std::make_shared<spdlog::sinks::daily_file_format_sink_mt>("myapp-%Y-%m-%d:%H:%M:%S.log", hour, minute);"
+ *    auto logger = spdlog::daily_logger_format_mt("loggername, "myapp-%Y-%m-%d:%X.log", hour,  minute)"
+ *  
  */
 struct daily_filename_format_calculator
 {
