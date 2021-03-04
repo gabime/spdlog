@@ -59,3 +59,4 @@ function(spdlog_enable_sanitizer target_name)
     target_compile_options(${target_name} PRIVATE -fno-omit-frame-pointer)
     target_link_libraries(${target_name} PRIVATE -fsanitize=address,undefined -fuse-ld=gold)
 endfunction()
+
