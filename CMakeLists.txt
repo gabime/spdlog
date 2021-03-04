@@ -2,8 +2,6 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-cmake_policy(SET CMP0091 NEW)
-
 # ---------------------------------------------------------------------------------------
 # Start spdlog project
 # ---------------------------------------------------------------------------------------
@@ -11,6 +9,8 @@ include(cmake/utils.cmake)
 include(cmake/ide.cmake)
 
 spdlog_extract_version()
+
+cmake_policy(SET CMP0091 NEW) # for choosing msvc static/dynamic runtime library 
 
 project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
 message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
