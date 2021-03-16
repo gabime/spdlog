@@ -206,8 +206,8 @@ private:
     std::string msg_;
 };
 
-SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
-SPDLOG_API void throw_spdlog_ex(std::string msg);
+[[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
+[[noreturn]] SPDLOG_API void throw_spdlog_ex(std::string msg);
 
 struct source_loc
 {
