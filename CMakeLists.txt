@@ -82,10 +82,11 @@ option(SPDLOG_BUILD_WARNINGS "Enable compiler warnings" OFF)
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_FMT_EXTERNAL_HO "Use external fmt header-only library instead of bundled" OFF)
+option(SPDLOG_FMT_EXTERNAL_STD "Use C++20 standard fmt instead of bundled" OFF)
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
 
-if(SPDLOG_FMT_EXTERNAL AND SPDLOG_FMT_EXTERNAL_HO)
-    message(FATAL_ERROR "SPDLOG_FMT_EXTERNAL and SPDLOG_FMT_EXTERNAL_HO are mutually exclusive")
+if(SPDLOG_FMT_EXTERNAL AND SPDLOG_FMT_EXTERNAL_HO OR SPDLOG_FMT_EXTERNAL AND SPDLOG_FMT_EXTERNAL_STD OR SPDLOG_FMT_EXTERNAL_HO AND SPDLOG_FMT_EXTERNAL_STD)
+    message(FATAL_ERROR "SPDLOG_FMT_EXTERNAL and SPDLOG_FMT_EXTERNAL_HO and SPDLOG_FMT_EXTERNAL_STD are mutually exclusive")
 endif()
 
 # misc tweakme options
@@ -140,7 +141,7 @@ if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
         target_compile_options(spdlog PUBLIC 
             $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<NOT:$<COMPILE_LANGUAGE:CUDA>>>:/wd4251 /wd4275>)
     endif()
-    if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
+    if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO AND NOT SPDLOG_FMT_EXTERNAL_STD)
         target_compile_definitions(spdlog PRIVATE FMT_EXPORT PUBLIC FMT_SHARED)
     endif()
 else()
@@ -193,6 +194,9 @@ if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
     endif()
 
     set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
+elif(SPDLOG_FMT_EXTERNAL_STD)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL_STD)
+    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL_STD)
 endif()
 
 # ---------------------------------------------------------------------------------------
@@ -267,7 +271,7 @@ if(SPDLOG_INSTALL)
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-    if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
+    if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO AND NOT SPDLOG_FMT_EXTERNAL_STD)
         install(DIRECTORY include/${PROJECT_NAME}/fmt/bundled/
                 DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/fmt/bundled/")
     endif()

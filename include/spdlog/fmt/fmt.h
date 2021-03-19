@@ -22,6 +22,10 @@
 #include <spdlog/fmt/bundled/core.h>
 #include <spdlog/fmt/bundled/format.h>
 #else // SPDLOG_FMT_EXTERNAL is defined - use external fmtlib
+#if !defined(SPDLOG_STD_FMT)
 #include <fmt/core.h>
 #include <fmt/format.h>
+#else
+#include <format>
+#endif
 #endif
