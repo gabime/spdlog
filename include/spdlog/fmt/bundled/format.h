@@ -2814,6 +2814,8 @@ FMT_CONSTEXPR const Char* parse_align(const Char* begin, const Char* end,
     case '^':
       align = align::center;
       break;
+    default:
+      break;
     }
     if (align != align::none) {
       if (p != begin) {
@@ -2896,6 +2898,8 @@ FMT_CONSTEXPR const Char* parse_format_specs(const Char* begin, const Char* end,
   case ' ':
     handler.on_space();
     ++begin;
+    break;
+  default:
     break;
   }
   if (begin == end) return begin;

@@ -1350,6 +1350,8 @@ FMT_CONSTEXPR_DECL FMT_INLINE auto visit_format_arg(
     return vis(arg.value_.pointer);
   case detail::type::custom_type:
     return vis(typename basic_format_arg<Context>::handle(arg.value_.custom));
+  default:
+    break;
   }
   return vis(monostate());
 }

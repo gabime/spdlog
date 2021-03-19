@@ -106,6 +106,8 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
     case color_mode::never:
         should_do_colors_ = false;
         return;
+    default:
+        should_do_colors_ = false;
     }
 }
 
