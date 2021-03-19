@@ -18,6 +18,7 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <experimental/source_location>
 #include <string>
 
 namespace spdlog {
@@ -272,5 +273,174 @@ inline void critical(const T &msg)
 #define SPDLOG_LOGGER_CRITICAL(logger, ...) (void)0
 #define SPDLOG_CRITICAL(...) (void)0
 #endif
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "spdlog-inl.h"
+#endif
+
+using srcloc = std::experimental::fundamentals_v2::source_location;
+
+template <typename... Args>
+constexpr void spdlog_logger_call(const srcloc& loc, spdlog::logger* logger, spdlog::level::level_enum level, Args... args)
+{
+    logger->log(spdlog::source_loc{loc}, level, args...);
+}
+
+template <typename... Args>
+struct spdlog_trace
+{
+    constexpr spdlog_trace(Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE)
+            spdlog_logger_call(loc, spdlog::default_logger_raw(), spdlog::level::trace, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_logger_trace
+{
+    constexpr spdlog_logger_trace(spdlog::logger* logger, Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE)
+            spdlog_logger_call(loc, logger, spdlog::level::trace, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_debug
+{
+    constexpr spdlog_debug(Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG)
+            spdlog_logger_call(loc, spdlog::default_logger_raw(), spdlog::level::debug, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_logger_debug
+{
+    constexpr spdlog_logger_debug(spdlog::logger* logger, Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG)
+            spdlog_logger_call(loc, logger, spdlog::level::debug, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_info
+{
+    constexpr spdlog_info(Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_INFO)
+            spdlog_logger_call(loc, spdlog::default_logger_raw(), spdlog::level::info, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_logger_info
+{
+    constexpr spdlog_logger_info(spdlog::logger* logger, Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_INFO)
+            spdlog_logger_call(loc, logger, spdlog::level::info, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_warn
+{
+    constexpr spdlog_warn(Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_WARN)
+            spdlog_logger_call(loc, spdlog::default_logger_raw(), spdlog::level::warn, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_logger_warn
+{
+    constexpr spdlog_logger_warn(spdlog::logger* logger, Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_WARN)
+            spdlog_logger_call(loc, logger, spdlog::level::warn, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_error
+{
+    constexpr spdlog_error(Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_ERROR)
+            spdlog_logger_call(loc, spdlog::default_logger_raw(), spdlog::level::err, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_logger_error
+{
+    constexpr spdlog_logger_error(spdlog::logger* logger, Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_ERROR)
+            spdlog_logger_call(loc, logger, spdlog::level::err, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_critical
+{
+    constexpr spdlog_critical(Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL)
+            spdlog_logger_call(loc, spdlog::default_logger_raw(), spdlog::level::critical, args...);
+    }
+};
+
+template <typename... Args>
+struct spdlog_logger_critical
+{
+    constexpr spdlog_logger_critical(spdlog::logger* logger, Args&&... args, const srcloc& loc = srcloc::current())
+    {
+        if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL)
+            spdlog_logger_call(loc, logger, spdlog::level::critical, args...);
+    }
+};
+
+template <typename... Args>
+spdlog_trace(Args&&...) -> spdlog_trace<Args...>;
+
+template <typename... Args>
+spdlog_debug(Args&&...) -> spdlog_debug<Args...>;
+
+template <typename... Args>
+spdlog_info(Args&&...) -> spdlog_info<Args...>;
+
+template <typename... Args>
+spdlog_warn(Args&&...) -> spdlog_warn<Args...>;
+
+template <typename... Args>
+spdlog_error(Args&&...) -> spdlog_error<Args...>;
+
+template <typename... Args>
+spdlog_critical(Args&&...) -> spdlog_critical<Args...>;
+
+template <typename... Args>
+spdlog_logger_trace(spdlog::logger*, Args&&...) -> spdlog_logger_trace<Args...>;
+
+template <typename... Args>
+spdlog_logger_debug(spdlog::logger*, Args&&...) -> spdlog_logger_debug<Args...>;
+
+template <typename... Args>
+spdlog_logger_info(spdlog::logger*, Args&&...) -> spdlog_logger_info<Args...>;
+
+template <typename... Args>
+spdlog_logger_warn(spdlog::logger*, Args&&...) -> spdlog_logger_warn<Args...>;
+
+template <typename... Args>
+spdlog_logger_error(spdlog::logger*, Args&&...) -> spdlog_logger_error<Args...>;
+
+template <typename... Args>
+spdlog_logger_critical(spdlog::logger*, Args&&...) -> spdlog_logger_critical<Args...>;
+
 
 #endif // SPDLOG_H

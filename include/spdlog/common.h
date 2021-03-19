@@ -10,6 +10,7 @@
 #include <chrono>
 #include <initializer_list>
 #include <exception>
+#include <experimental/source_location>
 #include <string>
 #include <type_traits>
 #include <functional>
@@ -183,8 +184,15 @@ SPDLOG_API void throw_spdlog_ex(std::string msg);
 
 struct source_loc
 {
+    using srcloc = std::experimental::fundamentals_v2::source_location;
+
     constexpr source_loc() = default;
-    constexpr source_loc(const char *filename_in, int line_in, const char *funcname_in)
+    constexpr source_loc(const srcloc& srcloc)
+        : filename{srcloc.file_name()}
+        , line{srcloc.line()}
+        , funcname{srcloc.function_name()}
+    {}
+    constexpr source_loc(const char *filename_in, unsigned line_in, const char *funcname_in)
         : filename{filename_in}
         , line{line_in}
         , funcname{funcname_in}
@@ -195,7 +203,7 @@ struct source_loc
         return line == 0;
     }
     const char *filename{nullptr};
-    int line{0};
+    unsigned line{0};
     const char *funcname{nullptr};
 };
 

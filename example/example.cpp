@@ -26,6 +26,18 @@ void custom_flags_example();
 
 int main(int, char *[])
 {
+    spdlog::set_level(spdlog::level::debug);
+
+    spdlog_trace(">>>TRACE");
+    spdlog_logger_trace(spdlog::default_logger_raw(), ">>>TRACE");
+
+    spdlog_debug(">>>DEBUG");
+    spdlog_logger_debug(spdlog::default_logger_raw(), ">>>DEBUG");
+
+    spdlog_critical(">>>CRITICAL");
+    spdlog_logger_critical(spdlog::default_logger_raw(), ">>>CRITICAL");
+
+
     // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
     load_levels_example();
 
