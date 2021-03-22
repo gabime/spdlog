@@ -205,6 +205,14 @@ if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
 endif()
 
 # ---------------------------------------------------------------------------------------
+# Add required libraries for Android CMake build
+# ---------------------------------------------------------------------------------------
+if (ANDROID)
+    target_link_libraries(spdlog PUBLIC log)
+    target_link_libraries(spdlog_header_only INTERFACE log)
+endif ()
+
+# ---------------------------------------------------------------------------------------
 # Misc definitions according to tweak options
 # ---------------------------------------------------------------------------------------
 if (SPDLOG_WCHAR_SUPPORT)
