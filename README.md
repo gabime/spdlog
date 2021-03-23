@@ -47,7 +47,8 @@ $ cmake .. && make -j
     * Daily log files.
     * Console logging (colors supported).
     * syslog.
-    * Windows debugger (```OutputDebugString(..)```)
+    * Windows event log.
+    * Windows debugger (```OutputDebugString(..)```).
     * Easily extendable with custom log targets  (just implement a single function in the [sink](include/spdlog/sinks/sink.h) interface).
 * Log filtering - log levels can be modified in runtime as well as in compile time.
 * Support for loading log levels from argv or from environment var.
