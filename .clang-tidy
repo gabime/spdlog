@@ -2,7 +2,7 @@ Checks: 'cppcoreguidelines-*,
 performance-*,
 modernize-*,
 google-*,
-misc-*,
+misc-*
 cert-*,
 readability-*,
 clang-analyzer-*,
