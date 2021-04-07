@@ -78,14 +78,6 @@
 #define SPDLOG_CATCH_ALL() catch (...)
 #endif
 
-namespace spdlog {
-
-class formatter;
-
-namespace sinks {
-class sink;
-}
-
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 using filename_t = std::wstring;
 // allow macro expansion to occur in SPDLOG_FILENAME_T
