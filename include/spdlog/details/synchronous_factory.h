@@ -22,3 +22,4 @@ struct synchronous_factory
     }
 };
 } // namespace spdlog
+
