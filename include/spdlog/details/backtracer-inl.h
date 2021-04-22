@@ -22,7 +22,7 @@ SPDLOG_INLINE backtracer::backtracer(backtracer &&other) SPDLOG_NOEXCEPT
     messages_ = std::move(other.messages_);
 }
 
-SPDLOG_INLINE backtracer &backtracer::operator=(backtracer other)
+SPDLOG_INLINE backtracer &backtracer::operator=(backtracer other) &
 {
     std::lock_guard<std::mutex> lock(mutex_);
     enabled_ = other.enabled();

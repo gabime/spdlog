@@ -31,7 +31,7 @@ public:
         return socket_ != -1;
     }
 
-    void close()
+    void close() &
     {
         if (is_connected())
         {
@@ -51,7 +51,7 @@ public:
     }
 
     // try to connect or throw on failure
-    void connect(const std::string &host, int port)
+    void connect(const std::string &host, int port) &
     {
         close();
         struct addrinfo hints

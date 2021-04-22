@@ -31,8 +31,8 @@ public:
     registry(const registry &) = delete;
     registry &operator=(const registry &) = delete;
 
-    void register_logger(std::shared_ptr<logger> new_logger);
-    void initialize_logger(std::shared_ptr<logger> new_logger);
+    void register_logger(std::shared_ptr<logger> new_logger) &;
+    void initialize_logger(std::shared_ptr<logger> new_logger) &;
     std::shared_ptr<logger> get(const std::string &logger_name);
     std::shared_ptr<logger> default_logger();
 
@@ -44,26 +44,26 @@ public:
 
     // set default logger.
     // default logger is stored in default_logger_ (for faster retrieval) and in the loggers_ map.
-    void set_default_logger(std::shared_ptr<logger> new_default_logger);
+    void set_default_logger(std::shared_ptr<logger> new_default_logger) &;
 
-    void set_tp(std::shared_ptr<thread_pool> tp);
+    void set_tp(std::shared_ptr<thread_pool> tp) &;
 
     std::shared_ptr<thread_pool> get_tp();
 
     // Set global formatter. Each sink in each logger will get a clone of this object
-    void set_formatter(std::unique_ptr<formatter> formatter);
+    void set_formatter(std::unique_ptr<formatter> formatter) &;
 
-    void enable_backtrace(size_t n_messages);
+    void enable_backtrace(size_t n_messages) &;
 
-    void disable_backtrace();
+    void disable_backtrace() &;
 
-    void set_level(level::level_enum log_level);
+    void set_level(level::level_enum log_level) &;
 
-    void flush_on(level::level_enum log_level);
+    void flush_on(level::level_enum log_level) &;
 
-    void flush_every(std::chrono::seconds interval);
+    void flush_every(std::chrono::seconds interval) &;
 
-    void set_error_handler(void (*handler)(const std::string &msg));
+    void set_error_handler(void (*handler)(const std::string &msg)) &;
 
     void apply_all(const std::function<void(const std::shared_ptr<logger>)> &fun);
 
@@ -78,10 +78,10 @@ public:
 
     std::recursive_mutex &tp_mutex();
 
-    void set_automatic_registration(bool automatic_registration);
+    void set_automatic_registration(bool automatic_registration) &;
 
     // set levels for all existing/future loggers. global_level can be null if should not set.
-    void set_levels(log_levels levels, level::level_enum *global_level);
+    void set_levels(log_levels levels, level::level_enum *global_level) &;
 
     static registry &instance();
 
@@ -90,8 +90,9 @@ private:
     ~registry();
 
     void throw_if_exists_(const std::string &logger_name);
-    void register_logger_(std::shared_ptr<logger> new_logger);
+    void register_logger_(std::shared_ptr<logger> new_logger) &;
     bool set_level_from_cfg_(logger *logger);
+
     std::mutex logger_map_mutex_, flusher_mutex_;
     std::recursive_mutex tp_mutex_;
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;

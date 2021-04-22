@@ -26,7 +26,7 @@ public:
     backtracer(const backtracer &other);
 
     backtracer(backtracer &&other) SPDLOG_NOEXCEPT;
-    backtracer &operator=(backtracer other);
+    backtracer &operator=(backtracer other) &;
 
     void enable(size_t size);
     void disable();
@@ -43,4 +43,3 @@ public:
 #ifdef SPDLOG_HEADER_ONLY
 #include "backtracer-inl.h"
 #endif
-

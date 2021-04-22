@@ -29,7 +29,7 @@ public:
 
 #ifndef __MINGW32__
     // try to enqueue and block if no room left
-    void enqueue(T &&item)
+    void enqueue(T &&item) &
     {
         {
             std::unique_lock<std::mutex> lock(queue_mutex_);
@@ -40,7 +40,7 @@ public:
     }
 
     // enqueue immediately. overrun oldest message in the queue if no room left.
-    void enqueue_nowait(T &&item)
+    void enqueue_nowait(T &&item) &
     {
         {
             std::unique_lock<std::mutex> lock(queue_mutex_);
@@ -71,7 +71,7 @@ public:
     // so release the mutex at the very end each function.
 
     // try to enqueue and block if no room left
-    void enqueue(T &&item)
+    void enqueue(T &&item) &
     {
         std::unique_lock<std::mutex> lock(queue_mutex_);
         pop_cv_.wait(lock, [this] { return !this->q_.full(); });
@@ -80,7 +80,7 @@ public:
     }
 
     // enqueue immediately. overrun oldest message in the queue if no room left.
-    void enqueue_nowait(T &&item)
+    void enqueue_nowait(T &&item) &
     {
         std::unique_lock<std::mutex> lock(queue_mutex_);
         q_.push_back(std::move(item));
@@ -104,20 +104,20 @@ public:
 
 #endif
 
-    size_t overrun_counter()
+    size_t overrun_counter() const
     {
         std::unique_lock<std::mutex> lock(queue_mutex_);
         return q_.overrun_counter();
     }
 
-    size_t size()
+    size_t size() const
     {
         std::unique_lock<std::mutex> lock(queue_mutex_);
         return q_.size();
     }
 
 private:
-    std::mutex queue_mutex_;
+    mutable std::mutex queue_mutex_;
     std::condition_variable push_cv_;
     std::condition_variable pop_cv_;
     spdlog::details::circular_q<T> q_;

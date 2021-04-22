@@ -30,7 +30,7 @@ public:
     {}
 
     circular_q(const circular_q &) = default;
-    circular_q &operator=(const circular_q &) = default;
+    circular_q &operator=(const circular_q &) & = default;
 
     // move cannot be default,
     // since we need to reset head_, tail_, etc to zero in the moved object
@@ -39,14 +39,14 @@ public:
         copy_moveable(std::move(other));
     }
 
-    circular_q &operator=(circular_q &&other) SPDLOG_NOEXCEPT
+    circular_q &operator=(circular_q &&other) & SPDLOG_NOEXCEPT
     {
         copy_moveable(std::move(other));
         return *this;
     }
 
     // push back, overrun (oldest) item if no room left
-    void push_back(T &&item)
+    void push_back(T &&item) &
     {
         if (max_items_ > 0)
         {
@@ -63,14 +63,19 @@ public:
 
     // Return reference to the front item.
     // If there are no elements in the container, the behavior is undefined.
-    const T &front() const
+    const T &front() const &
     {
         return v_[head_];
     }
 
-    T &front()
+    T &front() &
     {
         return v_[head_];
+    }
+
+    T front() &&
+    {
+        return std::move(v_[head_]);
     }
 
     // Return number of elements actually stored
@@ -96,7 +101,7 @@ public:
 
     // Pop item from front.
     // If there are no elements in the container, the behavior is undefined.
-    void pop_front()
+    void pop_front() &
     {
         head_ = (head_ + 1) % max_items_;
     }

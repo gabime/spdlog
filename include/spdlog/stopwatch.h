@@ -40,7 +40,7 @@ public:
         return std::chrono::duration<double>(clock::now() - start_tp_);
     }
 
-    void reset()
+    void reset() &
     {
         start_tp_ = clock ::now();
     }

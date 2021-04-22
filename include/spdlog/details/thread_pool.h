@@ -49,7 +49,7 @@ struct async_msg : log_msg_buffer
         , worker_ptr(std::move(other.worker_ptr))
     {}
 
-    async_msg &operator=(async_msg &&other)
+    async_msg &operator=(async_msg &&other) &
     {
         *static_cast<log_msg_buffer *>(this) = std::move(other);
         msg_type = other.msg_type;
@@ -58,7 +58,7 @@ struct async_msg : log_msg_buffer
     }
 #else // (_MSC_VER) && _MSC_VER <= 1800
     async_msg(async_msg &&) = default;
-    async_msg &operator=(async_msg &&) = default;
+    async_msg &operator=(async_msg &&) & = default;
 #endif
 
     // construct from log_msg with given type
@@ -96,21 +96,21 @@ public:
 
     void post_log(async_logger_ptr &&worker_ptr, const details::log_msg &msg, async_overflow_policy overflow_policy);
     void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy);
-    size_t overrun_counter();
-    size_t queue_size();
+    size_t overrun_counter() const;
+    size_t queue_size() const;
 
 private:
     q_type q_;
 
     std::vector<std::thread> threads_;
 
-    void post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy);
-    void worker_loop_();
+    void post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy) &;
+    void worker_loop_() &;
 
     // process next message in the queue
     // return true if this thread should still be active (while no terminate msg
     // was received)
-    bool process_next_msg_();
+    bool process_next_msg_() &;
 };
 
 } // namespace details

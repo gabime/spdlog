@@ -63,17 +63,17 @@ void SPDLOG_INLINE thread_pool::post_flush(async_logger_ptr &&worker_ptr, async_
     post_async_msg_(async_msg(std::move(worker_ptr), async_msg_type::flush), overflow_policy);
 }
 
-size_t SPDLOG_INLINE thread_pool::overrun_counter()
+size_t SPDLOG_INLINE thread_pool::overrun_counter() const
 {
     return q_.overrun_counter();
 }
 
-size_t SPDLOG_INLINE thread_pool::queue_size()
+size_t SPDLOG_INLINE thread_pool::queue_size() const
 {
     return q_.size();
 }
 
-void SPDLOG_INLINE thread_pool::post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy)
+void SPDLOG_INLINE thread_pool::post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy) &
 {
     if (overflow_policy == async_overflow_policy::block)
     {
@@ -85,7 +85,7 @@ void SPDLOG_INLINE thread_pool::post_async_msg_(async_msg &&new_msg, async_overf
     }
 }
 
-void SPDLOG_INLINE thread_pool::worker_loop_()
+void SPDLOG_INLINE thread_pool::worker_loop_() &
 {
     while (process_next_msg_()) {}
 }
@@ -93,7 +93,7 @@ void SPDLOG_INLINE thread_pool::worker_loop_()
 // process next message in the queue
 // return true if this thread should still be active (while no terminate msg
 // was received)
-bool SPDLOG_INLINE thread_pool::process_next_msg_()
+bool SPDLOG_INLINE thread_pool::process_next_msg_() &
 {
     async_msg incoming_async_msg;
     bool dequeued = q_.dequeue_for(incoming_async_msg, std::chrono::seconds(10));

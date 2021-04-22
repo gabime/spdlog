@@ -1064,7 +1064,7 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
     details::fmt_helper::append_string_view(eol_, dest);
 }
 
-SPDLOG_INLINE void pattern_formatter::set_pattern(std::string pattern)
+SPDLOG_INLINE void pattern_formatter::set_pattern(std::string pattern) &
 {
     pattern_ = std::move(pattern);
     compile_pattern_(pattern_);

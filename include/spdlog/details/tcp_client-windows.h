@@ -64,7 +64,7 @@ public:
         return socket_ != INVALID_SOCKET;
     }
 
-    void close()
+    void close() &
     {
         ::closesocket(socket_);
         socket_ = INVALID_SOCKET;
@@ -82,7 +82,7 @@ public:
     }
 
     // try to connect or throw on failure
-    void connect(const std::string &host, int port)
+    void connect(const std::string &host, int port) &
     {
         // initialize winsock if needed
         if (!winsock_initialized_())

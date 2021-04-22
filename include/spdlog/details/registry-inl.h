@@ -51,13 +51,13 @@ SPDLOG_INLINE registry::registry()
 
 SPDLOG_INLINE registry::~registry() = default;
 
-SPDLOG_INLINE void registry::register_logger(std::shared_ptr<logger> new_logger)
+SPDLOG_INLINE void registry::register_logger(std::shared_ptr<logger> new_logger) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     register_logger_(std::move(new_logger));
 }
 
-SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logger)
+SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logger) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     new_logger->set_formatter(formatter_->clone());
@@ -109,7 +109,7 @@ SPDLOG_INLINE logger *registry::get_default_raw()
 
 // set default logger.
 // default logger is stored in default_logger_ (for faster retrieval) and in the loggers_ map.
-SPDLOG_INLINE void registry::set_default_logger(std::shared_ptr<logger> new_default_logger)
+SPDLOG_INLINE void registry::set_default_logger(std::shared_ptr<logger> new_default_logger) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     // remove previous default logger from the map
@@ -124,7 +124,7 @@ SPDLOG_INLINE void registry::set_default_logger(std::shared_ptr<logger> new_defa
     default_logger_ = std::move(new_default_logger);
 }
 
-SPDLOG_INLINE void registry::set_tp(std::shared_ptr<thread_pool> tp)
+SPDLOG_INLINE void registry::set_tp(std::shared_ptr<thread_pool> tp) &
 {
     std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
     tp_ = std::move(tp);
@@ -137,7 +137,7 @@ SPDLOG_INLINE std::shared_ptr<thread_pool> registry::get_tp()
 }
 
 // Set global formatter. Each sink in each logger will get a clone of this object
-SPDLOG_INLINE void registry::set_formatter(std::unique_ptr<formatter> formatter)
+SPDLOG_INLINE void registry::set_formatter(std::unique_ptr<formatter> formatter) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     formatter_ = std::move(formatter);
@@ -147,7 +147,7 @@ SPDLOG_INLINE void registry::set_formatter(std::unique_ptr<formatter> formatter)
     }
 }
 
-SPDLOG_INLINE void registry::enable_backtrace(size_t n_messages)
+SPDLOG_INLINE void registry::enable_backtrace(size_t n_messages) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     backtrace_n_messages_ = n_messages;
@@ -158,7 +158,7 @@ SPDLOG_INLINE void registry::enable_backtrace(size_t n_messages)
     }
 }
 
-SPDLOG_INLINE void registry::disable_backtrace()
+SPDLOG_INLINE void registry::disable_backtrace() &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     backtrace_n_messages_ = 0;
@@ -168,7 +168,7 @@ SPDLOG_INLINE void registry::disable_backtrace()
     }
 }
 
-SPDLOG_INLINE void registry::set_level(level::level_enum log_level)
+SPDLOG_INLINE void registry::set_level(level::level_enum log_level) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     for (auto &l : loggers_)
@@ -178,7 +178,7 @@ SPDLOG_INLINE void registry::set_level(level::level_enum log_level)
     global_log_level_ = log_level;
 }
 
-SPDLOG_INLINE void registry::flush_on(level::level_enum log_level)
+SPDLOG_INLINE void registry::flush_on(level::level_enum log_level) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     for (auto &l : loggers_)
@@ -188,14 +188,14 @@ SPDLOG_INLINE void registry::flush_on(level::level_enum log_level)
     flush_level_ = log_level;
 }
 
-SPDLOG_INLINE void registry::flush_every(std::chrono::seconds interval)
+SPDLOG_INLINE void registry::flush_every(std::chrono::seconds interval) &
 {
     std::lock_guard<std::mutex> lock(flusher_mutex_);
     auto clbk = [this]() { this->flush_all(); };
     periodic_flusher_ = details::make_unique<periodic_worker>(clbk, interval);
 }
 
-SPDLOG_INLINE void registry::set_error_handler(void (*handler)(const std::string &msg))
+SPDLOG_INLINE void registry::set_error_handler(void (*handler)(const std::string &msg)) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     for (auto &l : loggers_)
@@ -261,13 +261,13 @@ SPDLOG_INLINE std::recursive_mutex &registry::tp_mutex()
     return tp_mutex_;
 }
 
-SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registration)
+SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registration) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     automatic_registration_ = automatic_registration;
 }
 
-SPDLOG_INLINE void registry::set_levels(log_levels levels, level::level_enum *global_level)
+SPDLOG_INLINE void registry::set_levels(log_levels levels, level::level_enum *global_level) &
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     log_levels_ = std::move(levels);
@@ -302,7 +302,7 @@ SPDLOG_INLINE void registry::throw_if_exists_(const std::string &logger_name)
     }
 }
 
-SPDLOG_INLINE void registry::register_logger_(std::shared_ptr<logger> new_logger)
+SPDLOG_INLINE void registry::register_logger_(std::shared_ptr<logger> new_logger) &
 {
     auto logger_name = new_logger->name();
     throw_if_exists_(logger_name);
