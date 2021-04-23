@@ -89,7 +89,7 @@ private:
     registry();
     ~registry();
 
-    void throw_if_exists_(const std::string &logger_name);
+    void throw_if_exists_(const std::string &logger_name) const;
     void register_logger_(std::shared_ptr<logger> new_logger) &;
     bool set_level_from_cfg_(logger *logger);
 

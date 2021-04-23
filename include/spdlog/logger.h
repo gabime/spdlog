@@ -287,7 +287,7 @@ public:
     level::level_enum level() const;
 
     std::string name() &&;
-    const std::string &name() const&;
+    const std::string &name() const &;
     std::string &name() &;
 
     // set formatting for the sinks in this logger.
@@ -316,7 +316,7 @@ public:
     void set_error_handler(err_handler) &;
 
     // create new logger with same sinks and configuration.
-    virtual std::shared_ptr<logger> clone(std::string logger_name) const&;
+    virtual std::shared_ptr<logger> clone(std::string logger_name) const &;
 
 protected:
     std::string name_;

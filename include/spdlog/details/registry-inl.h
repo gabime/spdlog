@@ -294,7 +294,7 @@ SPDLOG_INLINE registry &registry::instance()
     return s_instance;
 }
 
-SPDLOG_INLINE void registry::throw_if_exists_(const std::string &logger_name)
+SPDLOG_INLINE void registry::throw_if_exists_(const std::string &logger_name) const
 {
     if (loggers_.find(logger_name) != loggers_.end())
     {
