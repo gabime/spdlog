@@ -64,7 +64,18 @@ if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests spdlog::spdlog)
 endif()
 
+include(CheckCXXCompilerFlag)
+check_cxx_compiler_flag(-Wl,--wrap=fflush HAVE_WL_WRAP_FLAG)
+if (HAVE_WL_WRAP_FLAG AND NOT SPDLOG_NO_EXCEPTIONS)
+    set(SPDLOG_TEST_IO_ERRORS ON CACHE BOOL
+        "Wrap fwrite/fflush to check error propagation in HO tests. Requires GNU ld.")
+endif()
+
 # The header-only library version tests
 if(SPDLOG_BUILD_TESTS_HO OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests-ho spdlog::spdlog_header_only)
+    if(SPDLOG_TEST_IO_ERRORS)
+        target_link_options(spdlog-utests-ho PRIVATE -Wl,--wrap=fflush,--wrap=fwrite)
+        target_sources(spdlog-utests-ho PRIVATE test_io_errors.cpp)
+    endif()
 endif()
