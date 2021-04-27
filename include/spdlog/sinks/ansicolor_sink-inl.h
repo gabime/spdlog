@@ -52,9 +52,9 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
         // before color range
         print_range_(formatted, 0, msg.color_range_start);
         // in color range
-        print_ccode_(colors_[msg.level]);
+        print_view_(colors_[msg.level]);
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
-        print_ccode_(reset);
+        print_view_(reset);
         // after color range
         print_range_(formatted, msg.color_range_end, formatted.size());
     }
@@ -62,14 +62,20 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
     {
         print_range_(formatted, 0, formatted.size());
     }
-    fflush(target_file_);
+    if (fflush(target_file_))
+    {
+        throw_spdlog_ex("ansicolor_sink: fflush() failed", errno);
+    }
 }
 
 template<typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::flush()
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    fflush(target_file_);
+    if (0 != fflush(target_file_))
+    {
+        throw_spdlog_ex("ansicolor_sink: fflush() failed", errno);
+    }
 }
 
 template<typename ConsoleMutex>
@@ -112,15 +118,18 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color_mode(color_mode mode)
 }
 
 template<typename ConsoleMutex>
-SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_ccode_(const string_view_t &color_code)
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_view_(const string_view_t &sv)
 {
-    fwrite(color_code.data(), sizeof(char), color_code.size(), target_file_);
+    if (sv.size() != fwrite(sv.data(), sizeof(char), sv.size(), target_file_))
+    {
+        throw_spdlog_ex("ansicolor_sink: fwrite() failed", errno);
+    }
 }
 
 template<typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end)
 {
-    fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);
+    print_view_(string_view_t{formatted.data() + start, end - start});
 }
 
 template<typename ConsoleMutex>
