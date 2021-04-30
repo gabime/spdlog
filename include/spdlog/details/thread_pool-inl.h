@@ -49,7 +49,7 @@ SPDLOG_INLINE thread_pool::~thread_pool()
             t.join();
         }
     }
-    SPDLOG_CATCH_ALL() {}
+    SPDLOG_CATCH_STD
 }
 
 void SPDLOG_INLINE thread_pool::post_log(async_logger_ptr &&worker_ptr, const details::log_msg &msg, async_overflow_policy overflow_policy)

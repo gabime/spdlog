@@ -71,11 +71,12 @@
         printf("spdlog fatal error: %s\n", ex.what());                                                                                     \
         std::abort();                                                                                                                      \
     } while (0)
-#define SPDLOG_CATCH_ALL()
+#define SPDLOG_CATCH_STD
 #else
 #define SPDLOG_TRY try
 #define SPDLOG_THROW(ex) throw(ex)
-#define SPDLOG_CATCH_ALL() catch (...)
+#define SPDLOG_CATCH_STD                                                                                                                   \
+    catch (const std::exception &) {}
 #endif
 
 namespace spdlog {

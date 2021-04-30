@@ -31,7 +31,8 @@
     }                                                                                                                                      \
     catch (...)                                                                                                                            \
     {                                                                                                                                      \
-        err_handler_("Unknown exception in logger");                                                                                       \
+        err_handler_("Rethrowing unknown exception in logger");                                                                            \
+        throw;                                                                                                                             \
     }
 #else
 #define SPDLOG_LOGGER_CATCH()
@@ -75,56 +76,56 @@ public:
 
     // FormatString is a type derived from fmt::compile_string
     template<typename FormatString, typename std::enable_if<fmt::is_compile_string<FormatString>::value, int>::type = 0, typename... Args>
-    void log(source_loc loc, level::level_enum lvl, const FormatString &fmt, Args&&...args)
+    void log(source_loc loc, level::level_enum lvl, const FormatString &fmt, Args &&...args)
     {
         log_(loc, lvl, fmt, std::forward<Args>(args)...);
     }
 
     // FormatString is NOT a type derived from fmt::compile_string but is a string_view_t or can be implicitly converted to one
     template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, Args&&...args)
+    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&...args)
     {
         log_(loc, lvl, fmt, std::forward<Args>(args)...);
     }
 
     template<typename FormatString, typename... Args>
-    void log(level::level_enum lvl, const FormatString &fmt, Args&&...args)
+    void log(level::level_enum lvl, const FormatString &fmt, Args &&...args)
     {
         log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
     }
 
     template<typename FormatString, typename... Args>
-    void trace(const FormatString &fmt, Args&&...args)
+    void trace(const FormatString &fmt, Args &&...args)
     {
         log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
     template<typename FormatString, typename... Args>
-    void debug(const FormatString &fmt, Args&&...args)
+    void debug(const FormatString &fmt, Args &&...args)
     {
         log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
     template<typename FormatString, typename... Args>
-    void info(const FormatString &fmt, Args&&...args)
+    void info(const FormatString &fmt, Args &&...args)
     {
         log(level::info, fmt, std::forward<Args>(args)...);
     }
 
     template<typename FormatString, typename... Args>
-    void warn(const FormatString &fmt, Args&&...args)
+    void warn(const FormatString &fmt, Args &&...args)
     {
         log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
     template<typename FormatString, typename... Args>
-    void error(const FormatString &fmt, Args&&...args)
+    void error(const FormatString &fmt, Args &&...args)
     {
         log(level::err, fmt, std::forward<Args>(args)...);
     }
 
     template<typename FormatString, typename... Args>
-    void critical(const FormatString &fmt, Args&&...args)
+    void critical(const FormatString &fmt, Args &&...args)
     {
         log(level::critical, fmt, std::forward<Args>(args)...);
     }
@@ -225,7 +226,7 @@ public:
 #else
 
     template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, Args&&...args)
+    void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, Args &&...args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -326,7 +327,7 @@ protected:
 
     // common implementation for after templated public api has been resolved
     template<typename FormatString, typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, Args&&...args)
+    void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, Args &&...args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
