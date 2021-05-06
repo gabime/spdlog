@@ -199,6 +199,12 @@ SPDLOG_INLINE bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT
 #endif
 }
 
+#ifdef _MSC_VER
+    // avoid warning about unreachable statement at the end of filesize()
+    #pragma warning(push)
+    #pragma warning(disable: 4702)
+#endif
+
 // Return file size according to open FILE* object
 SPDLOG_INLINE size_t filesize(FILE *f)
 {
@@ -248,6 +254,10 @@ SPDLOG_INLINE size_t filesize(FILE *f)
     throw_spdlog_ex("Failed getting file size from fd", errno);
     return 0; // will not be reached.
 }
+
+#ifdef _MSC_VER
+    #pragma warning(pop)
+#endif
 
 // Return utc offset in minutes or throw spdlog_ex on failure
 SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
