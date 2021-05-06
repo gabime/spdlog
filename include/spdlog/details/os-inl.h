@@ -214,7 +214,7 @@ SPDLOG_INLINE size_t filesize(FILE *f)
     }
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = ::_fileno(f);
-#if _WIN64 // 64 bits
+#if defined(_WIN64) // 64 bits
     __int64 ret = ::_filelengthi64(fd);
     if (ret >= 0)
     {
