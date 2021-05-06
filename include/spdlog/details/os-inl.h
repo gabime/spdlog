@@ -246,7 +246,11 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 #endif
 #endif
     throw_spdlog_ex("Failed getting file size from fd", errno);
+
+    // avoid C4702 warning about unreachable statement.
+#ifndef _MSC_VER
     return 0; // will not be reached.
+#endif
 }
 
 // Return utc offset in minutes or throw spdlog_ex on failure
