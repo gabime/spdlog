@@ -152,10 +152,38 @@ enum level_enum
     n_levels
 };
 
+#if !defined(SPDLOG_LEVEL_NAME_TRACE)
+#define SPDLOG_LEVEL_NAME_TRACE "trace"
+#endif
+
+#if !defined(SPDLOG_LEVEL_NAME_DEBUG)
+#define SPDLOG_LEVEL_NAME_DEBUG "debug"
+#endif
+
+#if !defined(SPDLOG_LEVEL_NAME_INFO)
+#define SPDLOG_LEVEL_NAME_INFO "info"
+#endif
+
+#if !defined(SPDLOG_LEVEL_NAME_WARNING)
+#define SPDLOG_LEVEL_NAME_WARNING "warning"
+#endif
+
+#if !defined(SPDLOG_LEVEL_NAME_ERROR)
+#define SPDLOG_LEVEL_NAME_ERROR "error"
+#endif
+
+#if !defined(SPDLOG_LEVEL_NAME_CRITICAL)
+#define SPDLOG_LEVEL_NAME_CRITICAL "critical"
+#endif
+
+#if !defined(SPDLOG_LEVEL_NAME_OFF)
+#define SPDLOG_LEVEL_NAME_OFF "off"
+#endif
+
 #if !defined(SPDLOG_LEVEL_NAMES)
 #define SPDLOG_LEVEL_NAMES                                                                                                                 \
     {                                                                                                                                      \
-        "trace", "debug", "info", "warning", "error", "critical", "off"                                                                    \
+        SPDLOG_LEVEL_NAME_TRACE, SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO, SPDLOG_LEVEL_NAME_WARNING, SPDLOG_LEVEL_NAME_ERROR, SPDLOG_LEVEL_NAME_CRITICAL, SPDLOG_LEVEL_NAME_OFF                                                                    \
     }
 #endif
 
