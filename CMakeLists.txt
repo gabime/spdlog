@@ -236,6 +236,38 @@ if(SPDLOG_NO_EXCEPTIONS AND NOT MSVC)
 endif()
 
 # ---------------------------------------------------------------------------------------
+# Allow override of level names
+# ---------------------------------------------------------------------------------------
+if(NOT SPDLOG_LEVEL_NAME_TRACE)
+    set(SPDLOG_LEVEL_NAME_TRACE trace)
+endif()
+if(NOT SPDLOG_LEVEL_NAME_DEBUG)
+    set(SPDLOG_LEVEL_NAME_DEBUG debug)
+endif()
+if(NOT SPDLOG_LEVEL_NAME_INFO)
+    set(SPDLOG_LEVEL_NAME_INFO info)
+endif()
+if(NOT SPDLOG_LEVEL_NAME_WARNING)
+    set(SPDLOG_LEVEL_NAME_WARNING warning)
+endif()
+if(NOT SPDLOG_LEVEL_NAME_ERROR)
+    set(SPDLOG_LEVEL_NAME_ERROR error)
+endif()
+if(NOT SPDLOG_LEVEL_NAME_CRITICAL)
+    set(SPDLOG_LEVEL_NAME_CRITICAL critical)
+endif()
+if(NOT SPDLOG_LEVEL_NAME_OFF)
+    set(SPDLOG_LEVEL_NAME_OFF off)
+endif()
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_TRACE=\"${SPDLOG_LEVEL_NAME_TRACE}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_DEBUG=\"${SPDLOG_LEVEL_NAME_DEBUG}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_INFO=\"${SPDLOG_LEVEL_NAME_INFO}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_WARNING=\"${SPDLOG_LEVEL_NAME_WARNING}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_ERROR=\"${SPDLOG_LEVEL_NAME_ERROR}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_CRITICAL=\"${SPDLOG_LEVEL_NAME_CRITICAL}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_OFF=\"${SPDLOG_LEVEL_NAME_OFF}\")
+
+# ---------------------------------------------------------------------------------------
 # Build binaries
 # ---------------------------------------------------------------------------------------
 if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO OR SPDLOG_BUILD_ALL)
