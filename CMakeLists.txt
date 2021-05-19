@@ -236,6 +236,25 @@ if(SPDLOG_NO_EXCEPTIONS AND NOT MSVC)
 endif()
 
 # ---------------------------------------------------------------------------------------
+# Allow override of level names
+# ---------------------------------------------------------------------------------------
+set(SPDLOG_LEVEL_NAME_TRACE "trace" CACHE STRING "custom level name")
+set(SPDLOG_LEVEL_NAME_DEBUG "debug" CACHE STRING "custom level name")
+set(SPDLOG_LEVEL_NAME_INFO "info" CACHE STRING "custom level name")
+set(SPDLOG_LEVEL_NAME_WARNING "warning" CACHE STRING "custom level name")
+set(SPDLOG_LEVEL_NAME_ERROR "error" CACHE STRING "custom level name")
+set(SPDLOG_LEVEL_NAME_CRITICAL "critical" CACHE STRING "custom level name")
+set(SPDLOG_LEVEL_NAME_OFF "off" CACHE STRING "custom level name")
+
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_TRACE=\"${SPDLOG_LEVEL_NAME_TRACE}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_DEBUG=\"${SPDLOG_LEVEL_NAME_DEBUG}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_INFO=\"${SPDLOG_LEVEL_NAME_INFO}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_WARNING=\"${SPDLOG_LEVEL_NAME_WARNING}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_ERROR=\"${SPDLOG_LEVEL_NAME_ERROR}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_CRITICAL=\"${SPDLOG_LEVEL_NAME_CRITICAL}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_OFF=\"${SPDLOG_LEVEL_NAME_OFF}\")
+
+# ---------------------------------------------------------------------------------------
 # Build binaries
 # ---------------------------------------------------------------------------------------
 if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO OR SPDLOG_BUILD_ALL)

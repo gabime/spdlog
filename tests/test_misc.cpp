@@ -55,14 +55,6 @@ TEST_CASE("level_to_string_view", "[convert_to_string_view")
     REQUIRE(spdlog::level::to_string_view(spdlog::level::off) == "off");
 }
 
-TEST_CASE("set_level_to_string_view", "[set_string_view")
-{
-    spdlog::level::set_string_view(spdlog::level::info, "INF");
-    REQUIRE(spdlog::level::to_string_view(spdlog::level::info) == "INF");
-    spdlog::level::set_string_view(spdlog::level::info, "info"); // set it back
-    REQUIRE(spdlog::level::to_string_view(spdlog::level::info) == "info");
-}
-
 TEST_CASE("to_short_c_str", "[convert_to_short_c_str]")
 {
     REQUIRE(std::string(spdlog::level::to_short_c_str(spdlog::level::trace)) == "T");
