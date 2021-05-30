@@ -36,3 +36,4 @@ SPDLOG_INLINE std::shared_ptr<logger> stderr_color_st(const std::string &logger_
     return Factory::template create<sinks::stderr_color_sink_st>(logger_name, mode);
 }
 } // namespace spdlog
+

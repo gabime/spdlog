@@ -24,3 +24,4 @@
 template SPDLOG_API spdlog::logger::logger(std::string name, sinks_init_list::iterator begin, sinks_init_list::iterator end);
 template class SPDLOG_API spdlog::sinks::base_sink<std::mutex>;
 template class SPDLOG_API spdlog::sinks::base_sink<spdlog::details::null_mutex>;
+
