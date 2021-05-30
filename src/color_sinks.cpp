@@ -49,3 +49,4 @@ template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_color_mt<spdl
     const std::string &logger_name, color_mode mode);
 template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_color_st<spdlog::async_factory>(
     const std::string &logger_name, color_mode mode);
+
