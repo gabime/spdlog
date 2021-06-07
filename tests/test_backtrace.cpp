@@ -48,7 +48,7 @@ TEST_CASE("bactrace-async", "[bactrace]")
     for (int i = 0; i < 100; i++)
         logger->debug("debug message {}", i);
 
-    sleep_for_millis(10);
+    sleep_for_millis(100);
     REQUIRE(test_sink->lines().size() == 1);
     REQUIRE(test_sink->lines()[0] == "info message");
 
