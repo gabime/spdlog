@@ -366,7 +366,7 @@ SPDLOG_INLINE size_t thread_id() SPDLOG_NOEXCEPT
 
 // This is avoid msvc issue in sleep_for that happens if the clock changes.
 // See https://github.com/gabime/spdlog/issues/609
-SPDLOG_INLINE void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT
+SPDLOG_INLINE void sleep_for_millis(unsigned int milliseconds) SPDLOG_NOEXCEPT
 {
 #if defined(_WIN32)
     ::Sleep(milliseconds);
