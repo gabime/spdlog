@@ -46,7 +46,7 @@ struct async_factory_impl
         auto tp = registry_inst.get_tp();
         if (tp == nullptr)
         {
-            tp = std::make_shared<details::thread_pool>(details::default_async_q_size, 1);
+            tp = std::make_shared<details::thread_pool>(details::default_async_q_size, 1U);
             registry_inst.set_tp(tp);
         }
 
