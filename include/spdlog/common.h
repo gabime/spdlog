@@ -15,20 +15,24 @@
 #include <type_traits>
 #include <functional>
 
-#ifdef SPDLOG_COMPILED_LIB
-#undef SPDLOG_HEADER_ONLY
-#if defined(_WIN32) && defined(SPDLOG_SHARED_LIB)
+#ifdef _WIN32
+#ifdef SPDLOG_SHARED_LIB
 #ifdef spdlog_EXPORTS
 #define SPDLOG_API __declspec(dllexport)
-#else
+#else // !defined(spdlog_EXPORTS)
 #define SPDLOG_API __declspec(dllimport)
-#endif
-#else // !defined(_WIN32) || !defined(SPDLOG_SHARED_LIB)
+#endif // spdlog_EXPORTS
+#else // !defined(SPDLOG_SHARED_LIB)
 #define SPDLOG_API
+#endif // SPDLOG_SHARED_LIB
+#else // !defined(_WIN32)
+#define SPDLOG_API __attribute__((visibility("default")))
 #endif
+
+#ifdef SPDLOG_COMPILED_LIB
+#undef SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE
 #else // !defined(SPDLOG_COMPILED_LIB)
-#define SPDLOG_API
 #define SPDLOG_HEADER_ONLY
 #define SPDLOG_INLINE inline
 #endif // #ifdef SPDLOG_COMPILED_LIB
