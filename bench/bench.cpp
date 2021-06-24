@@ -13,9 +13,9 @@
 #include "spdlog/sinks/rotating_file_sink.h"
 
 #ifdef SPDLOG_FMT_EXTERNAL
-#include <fmt/locale.h>
+#    include <fmt/locale.h>
 #else
-#include "spdlog/fmt/bundled/locale.h"
+#    include "spdlog/fmt/bundled/format.h"
 #endif
 
 #include "utils.h"
