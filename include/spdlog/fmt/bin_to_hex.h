@@ -209,7 +209,7 @@ struct formatter<spdlog::details::dump_info<T>>
 
         if (put_positions)
         {
-            fmt::format_to(inserter, "{:<04X}: ", pos);
+            fmt::format_to(inserter, "{:04X}: ", pos);
         }
     }
 };
