@@ -15,7 +15,7 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger]")
     spdlog::filename_t basename = SPDLOG_FILENAME_T("test_logs/daily_dateonly");
     std::tm tm = spdlog::details::os::localtime();
     filename_memory_buf_t w;
-    fmt::format_to(w, SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+    fmt::format_to(std::back_inserter(w), SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
     for (int i = 0; i < 10; ++i)
@@ -40,7 +40,8 @@ struct custom_daily_file_name_calculator
     static spdlog::filename_t calc_filename(const spdlog::filename_t &basename, const tm &now_tm)
     {
         filename_memory_buf_t w;
-        fmt::format_to(w, SPDLOG_FILENAME_T("{}{:04d}{:02d}{:02d}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday);
+        fmt::format_to(std::back_inserter(w), SPDLOG_FILENAME_T("{}{:04d}{:02d}{:02d}"), basename, now_tm.tm_year + 1900,
+            now_tm.tm_mon + 1, now_tm.tm_mday);
         return fmt::to_string(w);
     }
 };
@@ -55,7 +56,7 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger]")
     spdlog::filename_t basename = SPDLOG_FILENAME_T("test_logs/daily_dateonly");
     std::tm tm = spdlog::details::os::localtime();
     filename_memory_buf_t w;
-    fmt::format_to(w, SPDLOG_FILENAME_T("{}{:04d}{:02d}{:02d}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+    fmt::format_to(std::back_inserter(w), SPDLOG_FILENAME_T("{}{:04d}{:02d}{:02d}"), basename, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
 
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
     for (int i = 0; i < 10; ++i)

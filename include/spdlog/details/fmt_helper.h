@@ -4,6 +4,7 @@
 
 #include <chrono>
 #include <type_traits>
+#include <iterator>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/common.h>
 
@@ -54,7 +55,7 @@ inline void pad2(int n, memory_buf_t &dest)
     }
     else // unlikely, but just in case, let fmt deal with it
     {
-        fmt::format_to(dest, "{:02}", n);
+        fmt::format_to(std::back_inserter(dest), "{:02}", n);
     }
 }
 

@@ -23,6 +23,8 @@
 #endif
 
 #include <vector>
+#include <iterator>
+
 #ifndef SPDLOG_NO_EXCEPTIONS
 #define SPDLOG_LOGGER_CATCH()                                                                                                              \
     catch (const std::exception &ex)                                                                                                       \
@@ -238,7 +240,7 @@ public:
         {
             // format to wmemory_buffer and convert to utf8
             fmt::wmemory_buffer wbuf;
-            fmt::format_to(wbuf, fmt, std::forward<Args>(args)...);
+            fmt::format_to(std::back_inserter(wbuf), fmt, std::forward<Args>(args)...);
 
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
@@ -338,7 +340,7 @@ protected:
         SPDLOG_TRY
         {
             memory_buf_t buf;
-            fmt::format_to(buf, fmt, std::forward<Args>(args)...);
+            fmt::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
