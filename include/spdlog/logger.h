@@ -239,6 +239,7 @@ public:
         SPDLOG_TRY
         {
             // format to wmemory_buffer and convert to utf8
+
             fmt::wmemory_buffer wbuf;
             fmt::format_to(std::back_inserter(wbuf), fmt::runtime(fmt), std::forward<Args>(args)...);
 
