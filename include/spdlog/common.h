@@ -16,67 +16,67 @@
 #include <functional>
 
 #ifdef SPDLOG_COMPILED_LIB
-#undef SPDLOG_HEADER_ONLY
-#if defined(_WIN32) && defined(SPDLOG_SHARED_LIB)
-#ifdef spdlog_EXPORTS
-#define SPDLOG_API __declspec(dllexport)
-#else
-#define SPDLOG_API __declspec(dllimport)
-#endif
-#else // !defined(_WIN32) || !defined(SPDLOG_SHARED_LIB)
-#define SPDLOG_API
-#endif
-#define SPDLOG_INLINE
+#    undef SPDLOG_HEADER_ONLY
+#    if defined(_WIN32) && defined(SPDLOG_SHARED_LIB)
+#        ifdef spdlog_EXPORTS
+#            define SPDLOG_API __declspec(dllexport)
+#        else
+#            define SPDLOG_API __declspec(dllimport)
+#        endif
+#    else // !defined(_WIN32) || !defined(SPDLOG_SHARED_LIB)
+#        define SPDLOG_API
+#    endif
+#    define SPDLOG_INLINE
 #else // !defined(SPDLOG_COMPILED_LIB)
-#define SPDLOG_API
-#define SPDLOG_HEADER_ONLY
-#define SPDLOG_INLINE inline
+#    define SPDLOG_API
+#    define SPDLOG_HEADER_ONLY
+#    define SPDLOG_INLINE inline
 #endif // #ifdef SPDLOG_COMPILED_LIB
 
 #include <spdlog/fmt/fmt.h>
 
 // visual studio upto 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
-#define SPDLOG_NOEXCEPT _NOEXCEPT
-#define SPDLOG_CONSTEXPR
+#    define SPDLOG_NOEXCEPT _NOEXCEPT
+#    define SPDLOG_CONSTEXPR
 #else
-#define SPDLOG_NOEXCEPT noexcept
-#define SPDLOG_CONSTEXPR constexpr
+#    define SPDLOG_NOEXCEPT noexcept
+#    define SPDLOG_CONSTEXPR constexpr
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
-#define SPDLOG_DEPRECATED __attribute__((deprecated))
+#    define SPDLOG_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER)
-#define SPDLOG_DEPRECATED __declspec(deprecated)
+#    define SPDLOG_DEPRECATED __declspec(deprecated)
 #else
-#define SPDLOG_DEPRECATED
+#    define SPDLOG_DEPRECATED
 #endif
 
 // disable thread local on msvc 2013
 #ifndef SPDLOG_NO_TLS
-#if (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt)
-#define SPDLOG_NO_TLS 1
-#endif
+#    if (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt)
+#        define SPDLOG_NO_TLS 1
+#    endif
 #endif
 
 #ifndef SPDLOG_FUNCTION
-#define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
+#    define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
 #endif
 
 #ifdef SPDLOG_NO_EXCEPTIONS
-#define SPDLOG_TRY
-#define SPDLOG_THROW(ex)                                                                                                                   \
-    do                                                                                                                                     \
-    {                                                                                                                                      \
-        printf("spdlog fatal error: %s\n", ex.what());                                                                                     \
-        std::abort();                                                                                                                      \
-    } while (0)
-#define SPDLOG_CATCH_STD
+#    define SPDLOG_TRY
+#    define SPDLOG_THROW(ex)                                                                                                               \
+        do                                                                                                                                 \
+        {                                                                                                                                  \
+            printf("spdlog fatal error: %s\n", ex.what());                                                                                 \
+            std::abort();                                                                                                                  \
+        } while (0)
+#    define SPDLOG_CATCH_STD
 #else
-#define SPDLOG_TRY try
-#define SPDLOG_THROW(ex) throw(ex)
-#define SPDLOG_CATCH_STD                                                                                                                   \
-    catch (const std::exception &) {}
+#    define SPDLOG_TRY try
+#    define SPDLOG_THROW(ex) throw(ex)
+#    define SPDLOG_CATCH_STD                                                                                                               \
+        catch (const std::exception &) {}
 #endif
 
 namespace spdlog {
@@ -90,11 +90,11 @@ class sink;
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 using filename_t = std::wstring;
 // allow macro expansion to occur in SPDLOG_FILENAME_T
-#define SPDLOG_FILENAME_T_INNER(s) L##s
-#define SPDLOG_FILENAME_T(s) SPDLOG_FILENAME_T_INNER(s)
+#    define SPDLOG_FILENAME_T_INNER(s) L##s
+#    define SPDLOG_FILENAME_T(s) SPDLOG_FILENAME_T_INNER(s)
 #else
 using filename_t = std::string;
-#define SPDLOG_FILENAME_T(s) s
+#    define SPDLOG_FILENAME_T(s) s
 #endif
 
 using log_clock = std::chrono::system_clock;
@@ -107,13 +107,13 @@ using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-#ifndef _WIN32
-#error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
-#else
+#    ifndef _WIN32
+#        error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
+#    else
 template<typename T>
 struct is_convertible_to_wstring_view : std::is_convertible<T, wstring_view_t>
 {};
-#endif // _WIN32
+#    endif // _WIN32
 #else
 template<typename>
 struct is_convertible_to_wstring_view : std::false_type
@@ -135,7 +135,7 @@ using level_t = std::atomic<int>;
 #define SPDLOG_LEVEL_OFF 6
 
 #if !defined(SPDLOG_ACTIVE_LEVEL)
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+#    define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #endif
 
 // Log level enum
@@ -152,47 +152,28 @@ enum level_enum
     n_levels
 };
 
-#if !defined(SPDLOG_LEVEL_NAME_TRACE)
-#define SPDLOG_LEVEL_NAME_TRACE "trace"
-#endif
-
-#if !defined(SPDLOG_LEVEL_NAME_DEBUG)
-#define SPDLOG_LEVEL_NAME_DEBUG "debug"
-#endif
-
-#if !defined(SPDLOG_LEVEL_NAME_INFO)
-#define SPDLOG_LEVEL_NAME_INFO "info"
-#endif
-
-#if !defined(SPDLOG_LEVEL_NAME_WARNING)
-#define SPDLOG_LEVEL_NAME_WARNING "warning"
-#endif
-
-#if !defined(SPDLOG_LEVEL_NAME_ERROR)
-#define SPDLOG_LEVEL_NAME_ERROR "error"
-#endif
-
-#if !defined(SPDLOG_LEVEL_NAME_CRITICAL)
-#define SPDLOG_LEVEL_NAME_CRITICAL "critical"
-#endif
-
-#if !defined(SPDLOG_LEVEL_NAME_OFF)
-#define SPDLOG_LEVEL_NAME_OFF "off"
-#endif
+#define SPDLOG_LEVEL_NAME_TRACE string_view_t("trace", 5)
+#define SPDLOG_LEVEL_NAME_DEBUG string_view_t("debug", 5)
+#define SPDLOG_LEVEL_NAME_INFO string_view_t("info", 4)
+#define SPDLOG_LEVEL_NAME_WARNING string_view_t("warning", 7)
+#define SPDLOG_LEVEL_NAME_ERROR string_view_t("error", 5)
+#define SPDLOG_LEVEL_NAME_CRITICAL string_view_t("critical", 8)
+#define SPDLOG_LEVEL_NAME_OFF string_view_t("off", 3)
 
 #if !defined(SPDLOG_LEVEL_NAMES)
-#define SPDLOG_LEVEL_NAMES                                                                                                                 \
-    {                                                                                                                                      \
-        SPDLOG_LEVEL_NAME_TRACE, SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO, SPDLOG_LEVEL_NAME_WARNING, SPDLOG_LEVEL_NAME_ERROR, SPDLOG_LEVEL_NAME_CRITICAL, SPDLOG_LEVEL_NAME_OFF                                                                    \
-    }
+#    define SPDLOG_LEVEL_NAMES                                                                                                             \
+        {                                                                                                                                  \
+            SPDLOG_LEVEL_NAME_TRACE, SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO, SPDLOG_LEVEL_NAME_WARNING, SPDLOG_LEVEL_NAME_ERROR,  \
+                SPDLOG_LEVEL_NAME_CRITICAL, SPDLOG_LEVEL_NAME_OFF                                                                          \
+        }
 #endif
 
 #if !defined(SPDLOG_SHORT_LEVEL_NAMES)
 
-#define SPDLOG_SHORT_LEVEL_NAMES                                                                                                           \
-    {                                                                                                                                      \
-        "T", "D", "I", "W", "E", "C", "O"                                                                                                  \
-    }
+#    define SPDLOG_SHORT_LEVEL_NAMES                                                                                                       \
+        {                                                                                                                                  \
+            "T", "D", "I", "W", "E", "C", "O"                                                                                              \
+        }
 #endif
 
 SPDLOG_API const string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
@@ -273,6 +254,5 @@ std::unique_ptr<T> make_unique(Args &&...args)
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "common-inl.h"
+#    include "common-inl.h"
 #endif
-
