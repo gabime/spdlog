@@ -50,7 +50,7 @@ environment:
       WCHAR: 'ON'
       WCHAR_FILES: 'ON'
       BUILD_EXAMPLE: 'OFF'
-    - GENERATOR: '"Visual Studio 16 2019 Win64"'
+    - GENERATOR: '"Visual Studio 16 2019 -A x64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
       WCHAR: 'OFF'
