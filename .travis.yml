@@ -80,6 +80,11 @@ matrix:
       os: linux
       dist: bionic
       addons: *clang10
+      
+     - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=17 ASAN=On
+      os: linux
+      dist: bionic
+      addons: *clang10
 
 
 before_script:
