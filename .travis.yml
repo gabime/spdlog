@@ -5,11 +5,11 @@
 sudo: required
 language: cpp
 
-# gcc 4.8
-addons: &gcc48
+# gcc t
+addons: &gcc5
   apt:
     packages:
-      - g++-4.8
+      - g++-5.0
     sources:
       - ubuntu-toolchain-r-test
 
