@@ -7,6 +7,7 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/details/log_msg.h>
 
+#include <iterator>
 #include <mutex>
 #include <string>
 #include <chrono>
