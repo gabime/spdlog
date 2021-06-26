@@ -9,7 +9,7 @@ language: cpp
 addons: &gcc5
   apt:
     packages:
-      - g++-5.0
+      - g++-5
     sources:
       - ubuntu-toolchain-r-test
 
@@ -47,11 +47,11 @@ matrix:
     # Test gcc-4.8: C++11, Build=Debug/Release
     - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11
       os: linux
-      addons: *gcc48
+      addons: *gcc5
 
     - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
       os: linux
-      addons: *gcc48
+      addons: *gcc5
 
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
       os: linux
