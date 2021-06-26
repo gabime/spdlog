@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 
         if (threads > max_threads)
         {
-            throw std::runtime_error(fmt::format("Number of threads exceeds maximum({}})", max_threads));
+            throw std::runtime_error(fmt::format("Number of threads exceeds maximum({})", max_threads));
         }
 
         bench_single_threaded(iters);
