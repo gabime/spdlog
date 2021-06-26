@@ -6,10 +6,10 @@ sudo: required
 language: cpp
 
 # gcc t
-addons: &gcc6
+addons: &gcc48
   apt:
     packages:
-      - g++-6
+      - g++-4.8
     sources:
       - ubuntu-toolchain-r-test
 
@@ -45,14 +45,14 @@ addons: &clang10
 matrix:
   include:
     # Test gcc-4.8: C++11, Build=Debug/Release
-    - env: GCC_VERSION=6 BUILD_TYPE=Debug CPP=11
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11
       os: linux
-      addons: *gcc6
+      addons: *gcc48
 
-    - env: GCC_VERSION=6 BUILD_TYPE=Release CPP=11
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
       os: linux
-      addons: *gcc6
-
+      addons: *gcc48
+    # Test gcc-7: C++11, Build=Debug/Release
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
       os: linux
       addons: *gcc7
@@ -81,7 +81,7 @@ matrix:
       dist: bionic
       addons: *clang10
       
-    # Test clang-10.0: C++11, Build=Debug/Release
+    # Test clang-10.0: C++17, Build=Debug/Release
     - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=17 ASAN=Off
       os: linux
       dist: bionic
