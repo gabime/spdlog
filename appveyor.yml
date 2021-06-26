@@ -1,5 +1,5 @@
 version: 1.0.{build}
-image: Visual Studio 2017
+image: Visual Studio 2019
 environment:
   matrix:
     - GENERATOR: '"Visual Studio 14 2015"'
