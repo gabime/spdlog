@@ -35,6 +35,10 @@
 
 #include <spdlog/fmt/fmt.h>
 
+#if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+#    include <spdlog/fmt/xchar.h>
+#endif
+
 // visual studio upto 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #    define SPDLOG_NOEXCEPT _NOEXCEPT
