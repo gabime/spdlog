@@ -1,5 +1,6 @@
 version: 1.0.{build}
-image: Visual Studio 2019
+image: Visual Studio 2017
+image
 environment:
   matrix:
     - GENERATOR: '"Visual Studio 14 2015"'
@@ -56,6 +57,7 @@ environment:
       WCHAR: 'OFF'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'OFF'
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
 build_script:
   - cmd: >-
       set
