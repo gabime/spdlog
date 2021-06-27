@@ -83,7 +83,9 @@ mongocxx::instance mongo_sink<std::mutex>::instance_{};
 using mongo_sink_mt = mongo_sink<std::mutex>;
 using mongo_sink_st = mongo_sink<spdlog::details::null_mutex>;
 
-template <typename Factory = spdlog::synchronous_factory>
+} // namespace sinks
+  
+  template <typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger>
 mongo_logger_mt(const std::string &logger_name, const std::string &db_name,
                 const std::string &collection_name,
@@ -100,6 +102,6 @@ mongo_logger_st(const std::string &logger_name, const std::string &db_name,
   return Factory::template create<sinks::mongo_sink_st>(logger_name, db_name,
                                                         collection_name, uri);
 }
-} // namespace sinks
+  
 } // namespace spdlog
 
