@@ -43,7 +43,7 @@ public:
   ~mongo_sink() { flush_(); }
 
 protected:
-  void sink_it_(const details::log_msg &msg) {
+  void sink_it_(const details::log_msg &msg) override {
     using bsoncxx::builder::stream::document;
     using bsoncxx::builder::stream::finalize;
 
@@ -61,14 +61,7 @@ protected:
     }
   }
 
-  void flush_() {}
-
-  void set_pattern_(const std::string &pattern) {
-    formatter_ = std::unique_ptr<spdlog::pattern_formatter>(
-        new spdlog::pattern_formatter(pattern, pattern_time_type::local, ""));
-  }
-
-  void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter) {}
+  void flush_() override {}
 
 private:
   static mongocxx::instance instance_;
