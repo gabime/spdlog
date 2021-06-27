@@ -35,7 +35,7 @@ public:
       db_name_ = db_name;
       coll_name_ = collection_name;
       set_pattern("%v");
-    } catch (const std::exception &e) {
+    } catch (const std::exception) {
       throw spdlog_ex("Error opening database");
     }
   }
