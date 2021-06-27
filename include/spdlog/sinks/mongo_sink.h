@@ -13,7 +13,8 @@
 #include "spdlog/common.h"
 #include "spdlog/details/log_msg.h"
 #include "spdlog/pattern_formatter.h"
-#include "spdlog/sinks/sink.h"
+#include "spdlog/sinks/base_sink.h"
+#include <spdlog/details/synchronous_factory.h>
 
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/types.hpp>
@@ -23,11 +24,9 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
 
-#include <mutex>
-
 namespace spdlog {
 namespace sinks {
-class mongo_sink : public sink {
+template <typename Mutex> class mongo_sink : public base_sink<Mutex> {
 public:
   mongo_sink(const std::string &db_name, const std::string &collection_name,
              const std::string &uri = "mongodb://localhost:27017") {
@@ -37,29 +36,20 @@ public:
       coll_name_ = collection_name;
       set_pattern("%v");
     } catch (const std::exception &e) {
-      std::cerr << e.what() << '\n';
       throw spdlog_ex("Error opening database");
     }
   }
 
-  void set_pattern(const std::string &pattern) override {
-    formatter_ = std::unique_ptr<spdlog::pattern_formatter>(
-        new spdlog::pattern_formatter(pattern, pattern_time_type::local, ""));
-  }
+  ~mongo_sink() { flush_(); }
 
-  void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) {}
-
-  ~mongo_sink() { flush(); }
-
-  void flush() override {}
-
-  void log(const details::log_msg &msg) override {
+protected:
+  void sink_it_(const details::log_msg &msg) {
     using bsoncxx::builder::stream::document;
     using bsoncxx::builder::stream::finalize;
 
     if (client_ != nullptr) {
       memory_buf_t formatted;
-      formatter_->format(msg, formatted);
+      base_sink<Mutex>::formatter_->format(msg, formatted);
       auto doc = document{}
                  << "timestamp" << bsoncxx::types::b_date(msg.time) << "level"
                  << level::to_string_view(msg.level).data() << "message"
@@ -67,19 +57,49 @@ public:
                  << "logger_name"
                  << std::string(msg.logger_name.begin(), msg.logger_name.end())
                  << "thread_id" << static_cast<int>(msg.thread_id) << finalize;
-      std::lock_guard<std::mutex> guard(mtx_);
       client_->database(db_name_).collection(coll_name_).insert_one(doc.view());
     }
   }
 
+  void flush_() {}
+
+  void set_pattern_(const std::string &pattern) {
+    formatter_ = std::unique_ptr<spdlog::pattern_formatter>(
+        new spdlog::pattern_formatter(pattern, pattern_time_type::local, ""));
+  }
+
+  void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter) {}
+
 private:
   static mongocxx::instance instance_;
-  std::mutex mtx_;
   std::string db_name_;
   std::string coll_name_;
   std::unique_ptr<mongocxx::client> client_ = nullptr;
-  std::unique_ptr<spdlog::pattern_formatter> formatter_;
 };
-mongocxx::instance mongo_sink::instance_{};
+mongocxx::instance mongo_sink<std::mutex>::instance_{};
+
+#include "spdlog/details/null_mutex.h"
+#include <mutex>
+using mongo_sink_mt = mongo_sink<std::mutex>;
+using mongo_sink_st = mongo_sink<spdlog::details::null_mutex>;
+
+template <typename Factory = spdlog::synchronous_factory>
+inline std::shared_ptr<logger>
+mongo_logger_mt(const std::string &logger_name, const std::string &db_name,
+                const std::string &collection_name,
+                const std::string &uri = "mongodb://localhost:27017") {
+  return Factory::template create<sinks::mongo_sink_mt>(logger_name, db_name,
+                                                        collection_name, uri);
+}
+
+template <typename Factory = spdlog::synchronous_factory>
+inline std::shared_ptr<logger>
+mongo_logger_st(const std::string &logger_name, const std::string &db_name,
+                const std::string &collection_name,
+                const std::string &uri = "mongodb://localhost:27017") {
+  return Factory::template create<sinks::mongo_sink_st>(logger_name, db_name,
+                                                        collection_name, uri);
+}
 } // namespace sinks
 } // namespace spdlog
+
