@@ -4,7 +4,7 @@
 #pragma once
 
 //
-// Custom sink for QPlainTextEdit or QTextEdit and its childs(QTextBrowser...
+// Custom sink for QPlainTextEdit or QTextEdit and its children(QTextBrowser...
 // etc) Building and using requires Qt library.
 //
 
