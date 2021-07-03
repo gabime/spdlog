@@ -16,7 +16,7 @@
 #include <type_traits>
 
 // The fmt library version in the form major * 10000 + minor * 100 + patch.
-#define FMT_VERSION 80000
+#define FMT_VERSION 80001
 
 #ifdef __clang__
 #  define FMT_CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
@@ -24,7 +24,7 @@
 #  define FMT_CLANG_VERSION 0
 #endif
 
-#if defined(__GNUC__) && !defined(__clang__)
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER)
 #  define FMT_GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
 #  define FMT_GCC_PRAGMA(arg) _Pragma(arg)
 #else
@@ -64,7 +64,8 @@
 #  define FMT_HAS_FEATURE(x) 0
 #endif
 
-#if defined(__has_include) && !defined(__INTELLISENSE__) && \
+#if defined(__has_include) &&                             \
+    (!defined(__INTELLISENSE__) || FMT_MSC_VER > 1900) && \
     (!FMT_ICC_VERSION || FMT_ICC_VERSION >= 1600)
 #  define FMT_HAS_INCLUDE(x) __has_include(x)
 #else
@@ -316,9 +317,9 @@ FMT_BEGIN_NAMESPACE
 FMT_MODULE_EXPORT_BEGIN
 
 // Implementations of enable_if_t and other metafunctions for older systems.
-template <bool B, class T = void>
+template <bool B, typename T = void>
 using enable_if_t = typename std::enable_if<B, T>::type;
-template <bool B, class T, class F>
+template <bool B, typename T, typename F>
 using conditional_t = typename std::conditional<B, T, F>::type;
 template <bool B> using bool_constant = std::integral_constant<bool, B>;
 template <typename T>
@@ -331,6 +332,11 @@ template <typename T> using type_identity_t = typename type_identity<T>::type;
 struct monostate {
   constexpr monostate() {}
 };
+
+// Suppress "unused variable" warnings with the method described in
+// https://herbsutter.com/2009/10/18/mailbag-shutting-up-compiler-warnings/.
+// (void)var does not work on many Intel compilers.
+template <typename... T> FMT_CONSTEXPR void ignore_unused(const T&...) {}
 
 // An enable_if helper to be used in template parameters which results in much
 // shorter symbols: https://godbolt.org/z/sWw4vP. Extra parentheses are needed
@@ -360,7 +366,8 @@ FMT_NORETURN FMT_API void assert_fail(const char* file, int line,
 #ifndef FMT_ASSERT
 #  ifdef NDEBUG
 // FMT_ASSERT is not empty to avoid -Werror=empty-body.
-#    define FMT_ASSERT(condition, message) ((void)0)
+#    define FMT_ASSERT(condition, message) \
+      ::fmt::ignore_unused((condition), (message))
 #  else
 #    define FMT_ASSERT(condition, message)                                    \
       ((condition) /* void() fails with -Winvalid-constexpr on clang 4.0.1 */ \
@@ -525,39 +532,21 @@ using string_view = basic_string_view<char>;
 template <typename T> struct is_char : std::false_type {};
 template <> struct is_char<char> : std::true_type {};
 
-/**
-  \rst
-  Returns a string view of `s`. In order to add custom string type support to
-  {fmt} provide an overload of `to_string_view` for it in the same namespace as
-  the type for the argument-dependent lookup to work.
-
-  **Example**::
-
-    namespace my_ns {
-    inline string_view to_string_view(const my_string& s) {
-      return {s.data(), s.length()};
-    }
-    }
-    std::string message = fmt::format(my_string("The answer is {}"), 42);
-  \endrst
- */
+// Returns a string view of `s`.
 template <typename Char, FMT_ENABLE_IF(is_char<Char>::value)>
 FMT_INLINE auto to_string_view(const Char* s) -> basic_string_view<Char> {
   return s;
 }
-
 template <typename Char, typename Traits, typename Alloc>
 inline auto to_string_view(const std::basic_string<Char, Traits, Alloc>& s)
     -> basic_string_view<Char> {
   return s;
 }
-
 template <typename Char>
 constexpr auto to_string_view(basic_string_view<Char> s)
     -> basic_string_view<Char> {
   return s;
 }
-
 template <typename Char,
           FMT_ENABLE_IF(!std::is_empty<detail::std_string_view<Char>>::value)>
 inline auto to_string_view(detail::std_string_view<Char> s)
@@ -624,7 +613,7 @@ template <typename S> using char_t = typename detail::char_t_impl<S>::type;
   \rst
   Parsing context consisting of a format string range being parsed and an
   argument counter for automatic indexing.
-  You can use the ```format_parse_context`` type alias for ``char`` instead.
+  You can use the ``format_parse_context`` type alias for ``char`` instead.
   \endrst
  */
 template <typename Char, typename ErrorHandler = detail::error_handler>
@@ -2420,7 +2409,7 @@ FMT_CONSTEXPR FMT_INLINE void parse_format_string(
       if (pbegin == pend) return;
       for (;;) {
         const Char* p = nullptr;
-        if (!find<IS_CONSTEXPR>(pbegin, pend, '}', p))
+        if (!find<IS_CONSTEXPR>(pbegin, pend, Char('}'), p))
           return handler_.on_text(pbegin, pend);
         ++p;
         if (p == pend || *p != '}')
@@ -2435,7 +2424,7 @@ FMT_CONSTEXPR FMT_INLINE void parse_format_string(
     // Doing two passes with memchr (one for '{' and another for '}') is up to
     // 2.5x faster than the naive one-pass implementation on big format strings.
     const Char* p = begin;
-    if (*begin != '{' && !find<IS_CONSTEXPR>(begin + 1, end, '{', p))
+    if (*begin != '{' && !find<IS_CONSTEXPR>(begin + 1, end, Char('{'), p))
       return write(begin, end);
     write(begin, p);
     begin = parse_replacement_field(p, end, handler);
@@ -2588,8 +2577,8 @@ FMT_CONSTEXPR auto check_cstring_type_spec(Char spec, ErrorHandler&& eh = {})
   return false;
 }
 
-template <typename Char, typename ErrorHandler>
-FMT_CONSTEXPR void check_string_type_spec(Char spec, ErrorHandler&& eh) {
+template <typename Char, typename ErrorHandler = error_handler>
+FMT_CONSTEXPR void check_string_type_spec(Char spec, ErrorHandler&& eh = {}) {
   if (spec != 0 && spec != 's') eh.on_error("invalid type specifier");
 }
 
@@ -2656,21 +2645,28 @@ constexpr auto get_arg_index_by_name(basic_string_view<Char> name) -> int {
   if constexpr (detail::is_statically_named_arg<T>()) {
     if (name == T::name) return N;
   }
-  if constexpr (sizeof...(Args) > 0)
+  if constexpr (sizeof...(Args) > 0) {
     return get_arg_index_by_name<N + 1, Args...>(name);
-  (void)name;  // Workaround an MSVC bug about "unused" parameter.
-  return invalid_arg_index;
+  } else {
+    (void)name;  // Workaround an MSVC bug about "unused" parameter.
+    return invalid_arg_index;
+  }
 }
 #endif
 
 template <typename... Args, typename Char>
 FMT_CONSTEXPR auto get_arg_index_by_name(basic_string_view<Char> name) -> int {
 #if FMT_USE_NONTYPE_TEMPLATE_PARAMETERS
-  if constexpr (sizeof...(Args) > 0)
+  if constexpr (sizeof...(Args) > 0) {
     return get_arg_index_by_name<0, Args...>(name);
-#endif
+  } else {
+    (void)name;
+    return invalid_arg_index;
+  }
+#else
   (void)name;
   return invalid_arg_index;
+#endif
 }
 
 template <typename Char, typename ErrorHandler, typename... Args>
@@ -2731,14 +2727,14 @@ void check_format_string(S format_str) {
                                         remove_cvref_t<Args>...>;
   FMT_CONSTEXPR bool invalid_format =
       (parse_format_string<true>(s, checker(s, {})), true);
-  (void)invalid_format;
+  ignore_unused(invalid_format);
 }
 
 template <typename Char>
 void vformat_to(
     buffer<Char>& buf, basic_string_view<Char> fmt,
     basic_format_args<FMT_BUFFER_CONTEXT(type_identity_t<Char>)> args,
-    detail::locale_ref loc = {});
+    locale_ref loc = {});
 
 FMT_API void vprint_mojibake(std::FILE*, string_view, format_args);
 #ifndef _WIN32
@@ -2896,7 +2892,7 @@ template <typename OutputIt,
 auto vformat_to(OutputIt out, string_view fmt, format_args args) -> OutputIt {
   using detail::get_buffer;
   auto&& buf = get_buffer<char>(out);
-  detail::vformat_to(buf, string_view(fmt), args);
+  detail::vformat_to(buf, string_view(fmt), args, {});
   return detail::get_iterator(buf);
 }
 
@@ -2933,7 +2929,7 @@ auto vformat_to_n(OutputIt out, size_t n, string_view fmt, format_args args)
   using buffer =
       detail::iterator_buffer<OutputIt, char, detail::fixed_buffer_traits>;
   auto buf = buffer(out, n);
-  detail::vformat_to(buf, fmt, args);
+  detail::vformat_to(buf, fmt, args, {});
   return {buf.out(), buf.count()};
 }
 
@@ -2955,7 +2951,7 @@ FMT_INLINE auto format_to_n(OutputIt out, size_t n, format_string<T...> fmt,
 template <typename... T>
 FMT_INLINE auto formatted_size(format_string<T...> fmt, T&&... args) -> size_t {
   auto buf = detail::counting_buffer<>();
-  detail::vformat_to(buf, string_view(fmt), fmt::make_format_args(args...));
+  detail::vformat_to(buf, string_view(fmt), fmt::make_format_args(args...), {});
   return buf.count();
 }
 

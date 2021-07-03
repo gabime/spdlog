@@ -507,7 +507,7 @@ void vformat_to(buffer<Char>& buf, const text_style& ts,
     auto background = detail::make_background_color<Char>(ts.get_background());
     buf.append(background.begin(), background.end());
   }
-  detail::vformat_to(buf, format_str, args);
+  detail::vformat_to(buf, format_str, args, {});
   if (has_style) detail::reset_color<Char>(buf);
 }
 

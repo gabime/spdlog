@@ -142,7 +142,7 @@ FMT_DEPRECATED auto format_to(basic_memory_buffer<Char, SIZE, Allocator>& buf,
                               const S& format_str, Args&&... args) ->
     typename buffer_context<Char>::iterator {
   const auto& vargs = fmt::make_args_checked<Args...>(format_str, args...);
-  detail::vformat_to(buf, to_string_view(format_str), vargs);
+  detail::vformat_to(buf, to_string_view(format_str), vargs, {});
   return detail::buffer_appender<Char>(buf);
 }
 

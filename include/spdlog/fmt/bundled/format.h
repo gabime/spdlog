@@ -520,9 +520,9 @@ FMT_CONSTEXPR inline size_t compute_width(string_view s) {
           1 +
           (error == 0 && cp >= 0x1100 &&
            (cp <= 0x115f ||  // Hangul Jamo init. consonants
-            cp == 0x2329 ||  // LEFT-POINTING ANGLE BRACKET〈
-            cp == 0x232a ||  // RIGHT-POINTING ANGLE BRACKET 〉
-            // CJK ... Yi except Unicode Character “〿”:
+            cp == 0x2329 ||  // LEFT-POINTING ANGLE BRACKET
+            cp == 0x232a ||  // RIGHT-POINTING ANGLE BRACKET
+            // CJK ... Yi except IDEOGRAPHIC HALF FILL SPACE:
             (cp >= 0x2e80 && cp <= 0xa4cf && cp != 0x303f) ||
             (cp >= 0xac00 && cp <= 0xd7a3) ||    // Hangul Syllables
             (cp >= 0xf900 && cp <= 0xfaff) ||    // CJK Compatibility Ideographs
@@ -603,7 +603,7 @@ enum { inline_buffer_size = 500 };
   A dynamically growing memory buffer for trivially copyable/constructible types
   with the first ``SIZE`` elements stored in the object itself.
 
-  You can use the ```memory_buffer`` type alias for ``char`` instead.
+  You can use the ``memory_buffer`` type alias for ``char`` instead.
 
   **Example**::
 
@@ -859,7 +859,7 @@ template <typename T = void> struct basic_data {
   static const uint64_t log10_2_significand = 0x4d104d427de7fbcc;
 
   // GCC generates slightly better code for pairs than chars.
-  FMT_API static constexpr const char digits[][2] = {
+  FMT_API static constexpr const char digits[100][2] = {
       {'0', '0'}, {'0', '1'}, {'0', '2'}, {'0', '3'}, {'0', '4'}, {'0', '5'},
       {'0', '6'}, {'0', '7'}, {'0', '8'}, {'0', '9'}, {'1', '0'}, {'1', '1'},
       {'1', '2'}, {'1', '3'}, {'1', '4'}, {'1', '5'}, {'1', '6'}, {'1', '7'},
@@ -879,11 +879,13 @@ template <typename T = void> struct basic_data {
       {'9', '6'}, {'9', '7'}, {'9', '8'}, {'9', '9'}};
 
   FMT_API static constexpr const char hex_digits[] = "0123456789abcdef";
-  FMT_API static constexpr const char signs[] = {0, '-', '+', ' '};
+  FMT_API static constexpr const char signs[4] = {0, '-', '+', ' '};
   FMT_API static constexpr const unsigned prefixes[4] = {0, 0, 0x1000000u | '+',
                                                          0x1000000u | ' '};
-  FMT_API static constexpr const char left_padding_shifts[] = {31, 31, 0, 1, 0};
-  FMT_API static constexpr const char right_padding_shifts[] = {0, 31, 0, 1, 0};
+  FMT_API static constexpr const char left_padding_shifts[5] = {31, 31, 0, 1,
+                                                                0};
+  FMT_API static constexpr const char right_padding_shifts[5] = {0, 31, 0, 1,
+                                                                 0};
 };
 
 #ifdef FMT_SHARED
@@ -1023,7 +1025,7 @@ template <> inline auto decimal_point(locale_ref loc) -> wchar_t {
 
 // Compares two characters for equality.
 template <typename Char> auto equal2(const Char* lhs, const char* rhs) -> bool {
-  return lhs[0] == rhs[0] && lhs[1] == rhs[1];
+  return lhs[0] == Char(rhs[0]) && lhs[1] == Char(rhs[1]);
 }
 inline auto equal2(const char* lhs, const char* rhs) -> bool {
   return memcmp(lhs, rhs, 2) == 0;
@@ -1567,6 +1569,7 @@ FMT_CONSTEXPR auto write(OutputIt out,
                          basic_string_view<type_identity_t<Char>> s,
                          const basic_format_specs<Char>& specs, locale_ref)
     -> OutputIt {
+  check_string_type_spec(specs.type);
   return write(out, s, specs);
 }
 template <typename Char, typename OutputIt>
@@ -2621,9 +2624,10 @@ auto to_string(const basic_memory_buffer<Char, SIZE>& buf)
 FMT_BEGIN_DETAIL_NAMESPACE
 
 template <typename Char>
-void vformat_to(buffer<Char>& buf, basic_string_view<Char> fmt,
-                basic_format_args<buffer_context<type_identity_t<Char>>> args,
-                locale_ref loc) {
+void vformat_to(
+    buffer<Char>& buf, basic_string_view<Char> fmt,
+    basic_format_args<FMT_BUFFER_CONTEXT(type_identity_t<Char>)> args,
+    locale_ref loc) {
   // workaround for msvc bug regarding name-lookup in module
   // link names into function scope
   using detail::arg_formatter;
@@ -2703,10 +2707,6 @@ void vformat_to(buffer<Char>& buf, basic_string_view<Char> fmt,
 }
 
 #ifndef FMT_HEADER_ONLY
-extern template void vformat_to(detail::buffer<char>&, string_view,
-                                basic_format_args<format_context>,
-                                detail::locale_ref);
-
 extern template FMT_API auto thousands_sep_impl<char>(locale_ref)
     -> thousands_sep_result<char>;
 extern template FMT_API auto thousands_sep_impl<wchar_t>(locale_ref)
@@ -2730,6 +2730,8 @@ extern template auto snprintf_float<long double>(long double value,
 #endif  // FMT_HEADER_ONLY
 
 FMT_END_DETAIL_NAMESPACE
+
+#if FMT_USE_USER_DEFINED_LITERALS
 inline namespace literals {
 /**
   \rst
@@ -2741,18 +2743,18 @@ inline namespace literals {
     fmt::print("Elapsed time: {s:.2f} seconds", "s"_a=1.23);
   \endrst
  */
-#if FMT_USE_NONTYPE_TEMPLATE_PARAMETERS
+#  if FMT_USE_NONTYPE_TEMPLATE_PARAMETERS
 template <detail_exported::fixed_string Str>
 constexpr auto operator""_a()
     -> detail::udl_arg<remove_cvref_t<decltype(Str.data[0])>,
                        sizeof(Str.data) / sizeof(decltype(Str.data[0])), Str> {
   return {};
 }
-#else
+#  else
 constexpr auto operator"" _a(const char* s, size_t) -> detail::udl_arg<char> {
   return {s};
 }
-#endif
+#  endif
 
 /**
   \rst
@@ -2769,6 +2771,7 @@ constexpr auto operator"" _format(const char* s, size_t n)
   return {{s, n}};
 }
 }  // namespace literals
+#endif  // FMT_USE_USER_DEFINED_LITERALS
 
 template <typename Locale, FMT_ENABLE_IF(detail::is_locale<Locale>::value)>
 inline auto vformat(const Locale& loc, string_view fmt, format_args args)

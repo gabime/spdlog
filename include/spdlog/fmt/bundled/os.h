@@ -394,7 +394,7 @@ struct ostream_params {
 
 FMT_END_DETAIL_NAMESPACE
 
-static constexpr detail::buffer_size buffer_size;
+constexpr detail::buffer_size buffer_size;
 
 /** A fast output stream which is not thread-safe. */
 class FMT_API ostream final : private detail::buffer<char> {

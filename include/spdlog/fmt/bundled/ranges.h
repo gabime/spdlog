@@ -392,7 +392,8 @@ struct formatter<tuple_join_view<Char, T...>, Char> {
   auto format(const tuple_join_view<Char, T...>& value, FormatContext& ctx,
               detail::index_sequence<N...>) ->
       typename FormatContext::iterator {
-    return format_args(value, ctx, std::get<N>(value.tuple)...);
+    using std::get;
+    return format_args(value, ctx, get<N>(value.tuple)...);
   }
 
   template <typename FormatContext>

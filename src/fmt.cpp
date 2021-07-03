@@ -3,13 +3,11 @@
 // All rights reserved.
 
 #ifndef SPDLOG_COMPILED_LIB
-#error Please define SPDLOG_COMPILED_LIB to compile this file.
+#    error Please define SPDLOG_COMPILED_LIB to compile this file.
 #endif
 
 #if !defined(SPDLOG_FMT_EXTERNAL)
-#include <spdlog/fmt/bundled/format-inl.h>
-
-
+#    include <spdlog/fmt/bundled/format-inl.h>
 
 FMT_BEGIN_NAMESPACE
 namespace detail {
@@ -45,6 +43,9 @@ template FMT_API char detail::decimal_point_impl(locale_ref);
 
 template FMT_API void detail::buffer<char>::append(const char *, const char *);
 
+// DEPRECATED!
+// There is no correspondent extern template in format.h because of
+// incompatibility between clang and gcc (#2377).
 template FMT_API void detail::vformat_to(
     detail::buffer<char> &, string_view, basic_format_args<FMT_BUFFER_CONTEXT(char)>, detail::locale_ref);
 

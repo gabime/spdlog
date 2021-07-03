@@ -563,7 +563,6 @@ class bigint {
       (*this)[bigit_index] = static_cast<bigit>(sum);
       sum >>= bits<bigit>::value;
     }
-    --num_result_bigits;
     remove_leading_zeros();
     exp_ *= 2;
   }
