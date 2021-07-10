@@ -52,8 +52,12 @@ matrix:
     - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
       os: linux
       addons: *gcc48
+      
     # Test gcc-7: C++11, Build=Debug/Release
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
+      os: linux
+      addons: *gcc7
+    - env: GCC_VERSION=7 BUILD_TYPE=Deubg CPP=11
       os: linux
       addons: *gcc7
 
@@ -86,6 +90,11 @@ matrix:
       os: linux
       dist: bionic
       addons: *clang10
+    - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=17 ASAN=Off
+      os: linux
+      dist: bionic
+      addons: *clang10
+            
 
 
 before_script:
