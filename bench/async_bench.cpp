@@ -103,12 +103,11 @@ int main(int argc, char *argv[])
 
         auto slot_size = sizeof(spdlog::details::async_msg);
         spdlog::info("-------------------------------------------------");
-        spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Messages     : {:L}", howmany));
-        spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Threads      : {:L}", threads));
-        spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Queue        : {:L} slots", queue_size));
-        spdlog::info(fmt::format(
-            std::locale("en_US.UTF-8"), "Queue memory : {:L} x {:L} = {:L} KB ", queue_size, slot_size, (queue_size * slot_size) / 1024));
-        spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Total iters  : {:L}", iters));
+        spdlog::info("Messages     : {:L}", howmany);
+        spdlog::info("Threads      : {:L}", threads);
+        spdlog::info("Queue        : {:L} slots", queue_size);
+        spdlog::info("Queue memory : {:L} x {:L} = {:L} KB ", queue_size, slot_size, (queue_size * slot_size) / 1024);
+        spdlog::info("Total iters  : {:L}", iters);
         spdlog::info("-------------------------------------------------");
 
         const char *filename = "logs/basic_async.log";
@@ -181,5 +180,5 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> logger, int thread_co
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    spdlog::info(fmt::format(std::locale("en_US.UTF-8"), "Elapsed: {} secs\t {:L}/sec", delta_d, int(howmany / delta_d)));
+    spdlog::info("Elapsed: {} secs\t {:L}/sec", delta_d, int(howmany / delta_d));
 }

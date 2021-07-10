@@ -35,8 +35,14 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-#    include <spdlog/fmt/xchar.h>
+// backward compatibility with fmt versions older than 8
+#if FMT_VERSION >= 80000
+#    define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
+#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+#        include <spdlog/fmt/xchar.h>
+#    endif
+#else
+#    define SPDLOG_FMT_RUNTIME(format_string) format_string
 #endif
 
 // visual studio upto 2013 does not support noexcept nor constexpr
