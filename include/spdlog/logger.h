@@ -23,7 +23,6 @@
 #endif
 
 #include <vector>
-#include <iterator>
 
 #ifndef SPDLOG_NO_EXCEPTIONS
 #    define SPDLOG_LOGGER_CATCH()                                                                                                          \
@@ -241,8 +240,8 @@ public:
             // format to wmemory_buffer and convert to utf8
 
             fmt::wmemory_buffer wbuf;
-            fmt::format_to(std::back_inserter(wbuf), fmt, std::forward<Args>(args)...);
-
+            // fmt::format_to(std::back_inserter(wbuf), fmt, std::forward<Args>(args)...);
+            fmt::detail::vformat_to(wbuf, fmt::to_string_view(fmt), fmt::make_format_args(args...), {});
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
@@ -341,7 +340,8 @@ protected:
         SPDLOG_TRY
         {
             memory_buf_t buf;
-            fmt::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
+            // faster than fmt::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
+            fmt::detail::vformat_to(buf, fmt::string_view(fmt), fmt::make_format_args(args...), {});
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
