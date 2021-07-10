@@ -21,6 +21,16 @@ addons: &gcc7
     sources:
       - ubuntu-toolchain-r-test
 
+
+# gcc 9.0
+addons: &gcc9
+  apt:
+    packages:
+      - g++-9
+    sources:
+      - ubuntu-toolchain-r-test
+
+
 # Clang 3.5
 addons: &clang35
   apt:
@@ -48,18 +58,25 @@ matrix:
     - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11
       os: linux
       addons: *gcc48
-
     - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
       os: linux
       addons: *gcc48
       
     # Test gcc-7: C++11, Build=Debug/Release
+    - env: GCC_VERSION=7 BUILD_TYPE=Debug CPP=11
+      os: linux
+      addons: *gcc7
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
       os: linux
       addons: *gcc7
-    - env: GCC_VERSION=7 BUILD_TYPE=Deubg CPP=11
+      
+       # Test gcc-9: C++17, Build=Debug/Release
+    - env: GCC_VERSION=9 BUILD_TYPE=Debug CPP=17
       os: linux
-      addons: *gcc7
+      addons: *gcc9
+    - env: GCC_VERSION=9 BUILD_TYPE=Release CPP=17
+      os: linux
+      addons: *gcc9
 
     # Test clang-3.5: C++11, Build=Debug/Release
     - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=11
