@@ -99,10 +99,15 @@ endif ()
 if (WIN32)
     option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
     option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)
+else ()
+    SET(SPDLOG_WCHAR_SUPPORT OFF CACHE BOOL "non supported option" FORCE)
+    SET(SPDLOG_WCHAR_FILENAMES OFF CACHE BOOL "non supported option" FORCE)
 endif ()
+
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    option(SPDLOG_CLOCK_COARSE
-            "Use the much faster (but much less accurate) CLOCK_REALTIME_COARSE instead of the regular clock," OFF)
+    option(SPDLOG_CLOCK_COARSE "Use CLOCK_REALTIME_COARSE instead of the regular clock," OFF)
+else ()
+    SET(SPDLOG_CLOCK_COARSE OFF CACHE BOOL "non supported option" FORCE)
 endif ()
 
 option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file descriptors" OFF)
