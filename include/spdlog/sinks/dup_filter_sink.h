@@ -62,10 +62,10 @@ protected:
 
         // log the "skipped.." message
         if (skip_counter_ > 0)
-        {         
+        {
             char buf[64];
             auto msg_size = ::snprintf(buf, sizeof(buf), "Skipped %u duplicate messages..", static_cast<unsigned>(skip_counter_));
-            if (msg_size > 0 && msg_size < sizeof(buf))
+            if (msg_size > 0 && static_cast<size_t>(msg_size) < sizeof(buf))
             {
                 details::log_msg skipped_msg{msg.logger_name, level::info, string_view_t{buf, static_cast<size_t>(msg_size)}};
                 dist_sink<Mutex>::sink_it_(skipped_msg);
