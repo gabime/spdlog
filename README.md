@@ -143,7 +143,7 @@ void daily_example()
 ---
 #### Backtrace support
 ```c++
-// Instead of actual logging, debug messages can be stored in a ring buffer for a later use.
+// Debug messages can be stored in a ring buffer instead of being logged immediately.
 // This is useful in order to display debug logs only when really nededed (e.g. when error happens).
 // When needed, call dump_backtrace() to see them.
 
