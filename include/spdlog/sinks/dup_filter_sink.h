@@ -51,7 +51,7 @@ protected:
     std::string last_msg_payload_;
     size_t skip_counter_ = 0;
 
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const char*tag, const details::log_msg &msg) override
     {
         bool filtered = filter_(msg);
         if (!filtered)

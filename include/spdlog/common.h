@@ -96,7 +96,7 @@ class formatter;
 namespace sinks {
 class sink;
 }
-
+static const char* spdlog_default_tag = "SPD_Log_TAG";
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 using filename_t = std::wstring;
 // allow macro expansion to occur in SPDLOG_FILENAME_T

@@ -99,7 +99,7 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const char*tag, const details::log_msg &msg) override
     {
         auto time = msg.time;
         bool should_rotate = time >= rotation_tp_;

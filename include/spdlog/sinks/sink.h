@@ -13,7 +13,7 @@ class SPDLOG_API sink
 {
 public:
     virtual ~sink() = default;
-    virtual void log(const details::log_msg &msg) = 0;
+    virtual void log(const char* tag, const details::log_msg &msg) = 0;
     virtual void flush() = 0;
     virtual void set_pattern(const std::string &pattern) = 0;
     virtual void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) = 0;

@@ -55,7 +55,7 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const char*tag, const details::log_msg &msg) override
     {
         for (auto &sink : sinks_)
         {

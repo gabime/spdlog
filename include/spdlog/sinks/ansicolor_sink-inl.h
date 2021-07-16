@@ -38,7 +38,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color(level::level_enum col
 }
 
 template<typename ConsoleMutex>
-SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const char* tag,  const details::log_msg &msg)
 {
     // Wrap the originally formatted message in color codes.
     // If color is not supported in the terminal, log as is instead.

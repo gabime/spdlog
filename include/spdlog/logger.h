@@ -84,15 +84,15 @@ public:
 
     // FormatString is NOT a type derived from fmt::compile_string but is a string_view_t or can be implicitly converted to one
     template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&...args)
+    void log(const char* tag, source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&...args)
     {
-        log_(loc, lvl, fmt, std::forward<Args>(args)...);
+        log_(tag, loc, lvl, fmt, std::forward<Args>(args)...);
     }
 
     template<typename FormatString, typename... Args>
     void log(level::level_enum lvl, const FormatString &fmt, Args &&...args)
     {
-        log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
+        log(default_tag(), source_loc{}, lvl, fmt, std::forward<Args>(args)...);
     }
 
     template<typename FormatString, typename... Args>
@@ -132,17 +132,17 @@ public:
     }
 
     template<typename T>
-    void log(level::level_enum lvl, const T &msg)
+    void log(const char*tag, level::level_enum lvl, const T &msg)
     {
-        log(source_loc{}, lvl, msg);
+        log(tag, source_loc{}, lvl, msg);
     }
 
     // T can be statically converted to string_view and isn't a fmt::compile_string
     template<class T, typename std::enable_if<
                           std::is_convertible<const T &, spdlog::string_view_t>::value && !fmt::is_compile_string<T>::value, int>::type = 0>
-    void log(source_loc loc, level::level_enum lvl, const T &msg)
+    void log(const char* tag, source_loc loc, level::level_enum lvl, const T &msg)
     {
-        log(loc, lvl, string_view_t{msg});
+        log(tag, loc, lvl, string_view_t{msg});
     }
 
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
@@ -155,10 +155,10 @@ public:
         }
 
         details::log_msg log_msg(log_time, loc, name_, lvl, msg);
-        log_it_(log_msg, log_enabled, traceback_enabled);
+        log_it_("", log_msg, log_enabled, traceback_enabled);
     }
 
-    void log(source_loc loc, level::level_enum lvl, string_view_t msg)
+    void log(const char* tag, source_loc loc, level::level_enum lvl, string_view_t msg)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -168,12 +168,12 @@ public:
         }
 
         details::log_msg log_msg(loc, name_, lvl, msg);
-        log_it_(log_msg, log_enabled, traceback_enabled);
+        log_it_(tag, log_msg, log_enabled, traceback_enabled);
     }
 
-    void log(level::level_enum lvl, string_view_t msg)
+    void log(const char* tag, level::level_enum lvl, string_view_t msg)
     {
-        log(source_loc{}, lvl, msg);
+        log(tag, source_loc{}, lvl, msg);
     }
 
     // T cannot be statically converted to string_view or wstring_view
@@ -186,40 +186,77 @@ public:
     }
 
     template<typename T>
+    void trace(const char* tag, const T &msg)
+    {
+        log(tag, level::trace, msg);
+    }
+
+    template<typename T>
     void trace(const T &msg)
     {
-        log(level::trace, msg);
+        trace(default_tag(), msg);
+    }
+
+    template<typename T>
+    void debug(const char* tag, const T &msg)
+    {
+        log(tag, level::debug, msg);
     }
 
     template<typename T>
     void debug(const T &msg)
     {
-        log(level::debug, msg);
+        debug(default_tag(), msg);
+    }
+
+    template<typename T>
+    void info(const char* tag, const T &msg)
+    {
+        log(tag, level::info, msg);
     }
 
     template<typename T>
     void info(const T &msg)
     {
-        log(level::info, msg);
+        info(default_tag(), msg);
+    }
+
+    template<typename T>
+    void warn(const char* tag, const T &msg)
+    {
+        log(tag, level::warn, msg);
     }
 
     template<typename T>
     void warn(const T &msg)
     {
-        log(level::warn, msg);
+        warn(default_tag(), msg);
+    }
+
+    template<typename T>
+    void error(const char* tag, const T &msg)
+    {
+        log(tag, level::err, msg);
     }
 
     template<typename T>
     void error(const T &msg)
     {
-        log(level::err, msg);
+        error(default_tag(), msg);
+    }
+
+    template<typename T>
+    void critical(const char* tag, const T &msg)
+    {
+        log(tag, level::critical, msg);
     }
 
     template<typename T>
     void critical(const T &msg)
     {
-        log(level::critical, msg);
+        critical(default_tag(), msg);
     }
+
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #    ifndef _WIN32
@@ -327,7 +364,7 @@ protected:
 
     // common implementation for after templated public api has been resolved
     template<typename FormatString, typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, Args &&...args)
+    void log_(const char* tag, source_loc loc, level::level_enum lvl, const FormatString &fmt, Args &&...args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -341,15 +378,15 @@ protected:
             // faster than fmt::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
             fmt::detail::vformat_to(buf, fmt::string_view(fmt), fmt::make_format_args(args...), {});
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            log_it_(log_msg, log_enabled, traceback_enabled);
+            log_it_(tag, log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH()
     }
 
     // log the given message (if the given log level is high enough),
     // and save backtrace (if backtrace is enabled).
-    void log_it_(const details::log_msg &log_msg, bool log_enabled, bool traceback_enabled);
-    virtual void sink_it_(const details::log_msg &msg);
+    void log_it_(const char*tag, const details::log_msg &log_msg, bool log_enabled, bool traceback_enabled);
+    virtual void sink_it_(const char*tag, const details::log_msg &msg);
     virtual void flush_();
     void dump_backtrace_();
     bool should_flush_(const details::log_msg &msg);
@@ -357,6 +394,7 @@ protected:
     // handle errors during logging.
     // default handler prints the error to stderr at max rate of 1 message/sec.
     void err_handler_(const std::string &msg);
+    const char* default_tag() { return spdlog_default_tag; }
 };
 
 void swap(logger &a, logger &b);

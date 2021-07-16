@@ -24,7 +24,7 @@ SPDLOG_INLINE spdlog::async_logger::async_logger(
 {}
 
 // send the log message to the thread pool
-SPDLOG_INLINE void spdlog::async_logger::sink_it_(const details::log_msg &msg)
+SPDLOG_INLINE void spdlog::async_logger::sink_it_(const char*tag, const details::log_msg &msg)
 {
     if (auto pool_ptr = thread_pool_.lock())
     {
@@ -52,7 +52,7 @@ SPDLOG_INLINE void spdlog::async_logger::flush_()
 //
 // backend functions - called from the thread pool to do the actual job
 //
-SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg &msg)
+SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const char*tag, const details::log_msg &msg)
 {
     for (auto &sink : sinks_)
     {
@@ -60,7 +60,7 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
         {
             SPDLOG_TRY
             {
-                sink->log(msg);
+                sink->log(tag, msg);
             }
             SPDLOG_LOGGER_CATCH()
         }

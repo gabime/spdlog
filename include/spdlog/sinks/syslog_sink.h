@@ -45,7 +45,7 @@ public:
     syslog_sink &operator=(const syslog_sink &) = delete;
 
 protected:
-    void sink_it_(const details::log_msg &msg) override
+    void sink_it_(const char* tag, const details::log_msg &msg) override
     {
         string_view_t payload;
         memory_buf_t formatted;

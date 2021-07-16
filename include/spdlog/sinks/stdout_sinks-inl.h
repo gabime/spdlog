@@ -50,7 +50,7 @@ SPDLOG_INLINE stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
 }
 
 template<typename ConsoleMutex>
-SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &msg)
+SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const char* tag, const details::log_msg &msg)
 {
 #ifdef _WIN32
     if (handle_ == INVALID_HANDLE_VALUE)

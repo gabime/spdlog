@@ -39,7 +39,7 @@ public:
     void set_color_mode(color_mode mode);
     bool should_color();
 
-    void log(const details::log_msg &msg) override;
+    void log(const char* tag, const details::log_msg &msg) override;
     void flush() override;
     void set_pattern(const std::string &pattern) final;
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;

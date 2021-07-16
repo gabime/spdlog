@@ -163,11 +163,11 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
 }
 
 // protected methods
-SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg, bool log_enabled, bool traceback_enabled)
+SPDLOG_INLINE void logger::log_it_(const char*tag, const spdlog::details::log_msg &log_msg, bool log_enabled, bool traceback_enabled)
 {
     if (log_enabled)
     {
-        sink_it_(log_msg);
+        sink_it_(tag, log_msg);
     }
     if (traceback_enabled)
     {
@@ -175,7 +175,7 @@ SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg, bool
     }
 }
 
-SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
+SPDLOG_INLINE void logger::sink_it_(const char*tag, const details::log_msg &msg)
 {
     for (auto &sink : sinks_)
     {
@@ -183,7 +183,7 @@ SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
         {
             SPDLOG_TRY
             {
-                sink->log(msg);
+                sink->log(tag, msg);
             }
             SPDLOG_LOGGER_CATCH()
         }
@@ -212,9 +212,9 @@ SPDLOG_INLINE void logger::dump_backtrace_()
     using details::log_msg;
     if (tracer_.enabled())
     {
-        sink_it_(log_msg{name(), level::info, "****************** Backtrace Start ******************"});
-        tracer_.foreach_pop([this](const log_msg &msg) { this->sink_it_(msg); });
-        sink_it_(log_msg{name(), level::info, "****************** Backtrace End ********************"});
+        sink_it_("", log_msg{name(), level::info, "****************** Backtrace Start ******************"});
+        tracer_.foreach_pop([this](const log_msg &msg) { this->sink_it_("", msg); });
+        sink_it_("", log_msg{name(), level::info, "****************** Backtrace End ********************"});
     }
 }
 

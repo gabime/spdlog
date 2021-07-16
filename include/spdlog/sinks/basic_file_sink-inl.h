@@ -26,7 +26,7 @@ SPDLOG_INLINE const filename_t &basic_file_sink<Mutex>::filename() const
 }
 
 template<typename Mutex>
-SPDLOG_INLINE void basic_file_sink<Mutex>::sink_it_(const details::log_msg &msg)
+SPDLOG_INLINE void basic_file_sink<Mutex>::sink_it_(const char*tag, const details::log_msg &msg)
 {
     memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);

@@ -16,7 +16,9 @@ SPDLOG_INLINE void initialize_logger(std::shared_ptr<logger> logger)
 {
     details::registry::instance().initialize_logger(std::move(logger));
 }
-
+SPDLOG_API const char* default_tag() {
+    return spdlog_default_tag;
+}
 SPDLOG_INLINE std::shared_ptr<logger> get(const std::string &name)
 {
     return details::registry::instance().get(name);
