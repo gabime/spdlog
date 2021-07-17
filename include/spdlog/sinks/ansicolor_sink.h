@@ -85,7 +85,7 @@ private:
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
     std::array<std::string, level::n_levels> colors_;
-    void print_ccode_(const string_view_t &color_code);
+    void print_view_(const string_view_t &sv);
     void print_range_(const memory_buf_t &formatted, size_t start, size_t end);
     static std::string to_string_(const string_view_t &sv);
 };

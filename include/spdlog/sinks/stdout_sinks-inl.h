@@ -60,7 +60,10 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
     std::lock_guard<mutex_t> lock(mutex_);
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
-    ::fflush(file_); // flush in case there is somthing in this file_ already
+    if (0 != ::fflush(file_)) // flush in case there is something in this file_ already
+    {
+        throw_spdlog_ex("stdout_sink_base: fflush() failed", errno);
+    }
     auto size = static_cast<DWORD>(formatted.size());
     DWORD bytes_written = 0;
     bool ok = ::WriteFile(handle_, formatted.data(), size, &bytes_written, nullptr) != 0;
@@ -72,8 +75,14 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
     std::lock_guard<mutex_t> lock(mutex_);
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
-    ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
-    ::fflush(file_); // flush every line to terminal
+    if (formatted.size() != ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_))
+    {
+        throw_spdlog_ex("stdout_sink_base: fwrite() failed", errno);
+    }
+    if (0 != ::fflush(file_)) // flush every line to terminal
+    {
+        throw_spdlog_ex("stdout_sink_base: fflush() failed", errno);
+    }
 #endif // WIN32    
 }
 
@@ -81,7 +90,10 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::flush()
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    fflush(file_);
+    if (0 != ::fflush(file_))
+    {
+        throw_spdlog_ex("stdout_sink_base: Failed flushing stdout", errno);
+    }
 }
 
 template<typename ConsoleMutex>
