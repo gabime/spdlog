@@ -16,7 +16,7 @@ template<typename Mutex>
 class null_sink : public base_sink<Mutex>
 {
 protected:
-    void sink_it_(const details::log_msg &) override {}
+    void sink_it_(const char* tag, const details::log_msg &) override {}
     void flush_() override {}
 };
 

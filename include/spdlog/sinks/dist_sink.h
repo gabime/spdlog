@@ -61,7 +61,7 @@ protected:
         {
             if (sink->should_log(msg.level))
             {
-                sink->log(msg);
+                sink->log(tag, msg);
             }
         }
     }

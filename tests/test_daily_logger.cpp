@@ -139,7 +139,7 @@ static void test_rotate(int days_to_run, uint16_t max_days, uint16_t expected_n_
     for (int i = 0; i < days_to_run; i++)
     {
         auto offset = std::chrono::seconds{24 * 3600 * i};
-        sink.log(create_msg(offset));
+        sink.log(spdlog::default_tag(), create_msg(offset));
     }
 
     REQUIRE(count_files("test_logs") == static_cast<size_t>(expected_n_files));

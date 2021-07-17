@@ -132,7 +132,7 @@ public:
     }
 
     template<typename T>
-    void log(const char*tag, level::level_enum lvl, const T &msg)
+    void log(const char* tag, level::level_enum lvl, const T &msg)
     {
         log(tag, source_loc{}, lvl, msg);
     }
@@ -145,7 +145,7 @@ public:
         log(tag, loc, lvl, string_view_t{msg});
     }
 
-    void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
+    void log(log_clock::time_point log_time, const char* tag, source_loc loc, level::level_enum lvl, string_view_t msg)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -155,7 +155,7 @@ public:
         }
 
         details::log_msg log_msg(log_time, loc, name_, lvl, msg);
-        log_it_("", log_msg, log_enabled, traceback_enabled);
+        log_it_(tag, log_msg, log_enabled, traceback_enabled);
     }
 
     void log(const char* tag, source_loc loc, level::level_enum lvl, string_view_t msg)
@@ -180,9 +180,9 @@ public:
     template<class T, typename std::enable_if<!std::is_convertible<const T &, spdlog::string_view_t>::value &&
                                                   !is_convertible_to_wstring_view<const T &>::value,
                           int>::type = 0>
-    void log(source_loc loc, level::level_enum lvl, const T &msg)
+    void log(const char* tag, source_loc loc, level::level_enum lvl, const T &msg)
     {
-        log(loc, lvl, "{}", msg);
+        log(tag, loc, lvl, "{}", msg);
     }
 
     template<typename T>
@@ -394,7 +394,6 @@ protected:
     // handle errors during logging.
     // default handler prints the error to stderr at max rate of 1 message/sec.
     void err_handler_(const std::string &msg);
-    const char* default_tag() { return spdlog_default_tag; }
 };
 
 void swap(logger &a, logger &b);

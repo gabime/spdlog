@@ -20,8 +20,8 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
     logger->set_pattern("%v");
     logger->set_level(spdlog::level::trace);
 
-    SPDLOG_LOGGER_TRACE(logger, "Test message 1");
-    SPDLOG_LOGGER_DEBUG(logger, "Test message 2");
+    SPDLOG_LOGGER_TRACE(logger, spdlog::default_tag(), "Test message 1");
+    SPDLOG_LOGGER_DEBUG(logger, spdlog::default_tag(), "Test message 2");
     logger->flush();
 
     using spdlog::details::os::default_eol;
@@ -47,8 +47,8 @@ TEST_CASE("pass logger pointer", "[macros]")
 {
     auto logger = spdlog::create<spdlog::sinks::null_sink_mt>("refmacro");
     auto &ref = *logger;
-    SPDLOG_LOGGER_TRACE(&ref, "Test message 1");
-    SPDLOG_LOGGER_DEBUG(&ref, "Test message 2");
+    SPDLOG_LOGGER_TRACE(&ref, spdlog::default_tag(), "Test message 1");
+    SPDLOG_LOGGER_DEBUG(&ref, spdlog::default_tag(), "Test message 2");
 }
 
 // ensure that even if right macro level is on- don't evaluate if the logger's level is not high enough

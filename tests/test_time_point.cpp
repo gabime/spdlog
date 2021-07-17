@@ -16,14 +16,14 @@ TEST_CASE("time_point1", "[time_point log_msg]")
     for (int i = 0; i < 5; i++)
     {
         spdlog::details::log_msg msg{tp, source, "test_logger", spdlog::level::info, "message"};
-        test_sink->log(msg);
+        test_sink->log(spdlog::default_tag(), msg);
     }
 
-    logger.log(tp, source, spdlog::level::info, "formatted message");
-    logger.log(tp, source, spdlog::level::info, "formatted message");
-    logger.log(tp, source, spdlog::level::info, "formatted message");
-    logger.log(tp, source, spdlog::level::info, "formatted message");
-    logger.log(source, spdlog::level::info, "formatted message"); // last line has different time_point
+    logger.log(tp, spdlog::default_tag(), source, spdlog::level::info, "formatted message");
+    logger.log(tp, spdlog::default_tag(), source, spdlog::level::info, "formatted message");
+    logger.log(tp, spdlog::default_tag(), source, spdlog::level::info, "formatted message");
+    logger.log(tp, spdlog::default_tag(), source, spdlog::level::info, "formatted message");
+    logger.log(spdlog::default_tag(), source, spdlog::level::info, "formatted message"); // last line has different time_point
 
     // now the real test... that the times are the same.
     std::vector<std::string> lines = test_sink->lines();

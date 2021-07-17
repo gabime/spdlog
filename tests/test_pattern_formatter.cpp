@@ -236,11 +236,11 @@ TEST_CASE("padding_truncate_funcname", "[pattern_formatter]")
     test_sink.set_formatter(std::move(formatter));
 
     spdlog::details::log_msg msg1{spdlog::source_loc{"ignored", 1, "func"}, "test_logger", spdlog::level::info, "message"};
-    test_sink.log(msg1);
+    test_sink.log(spdlog::default_tag(), msg1);
     REQUIRE(test_sink.lines()[0] == "message [ func]");
 
     spdlog::details::log_msg msg2{spdlog::source_loc{"ignored", 1, "function"}, "test_logger", spdlog::level::info, "message"};
-    test_sink.log(msg2);
+    test_sink.log(spdlog::default_tag(), msg2);
     REQUIRE(test_sink.lines()[1] == "message [funct]");
 }
 
@@ -253,11 +253,11 @@ TEST_CASE("padding_funcname", "[pattern_formatter]")
     test_sink.set_formatter(std::move(formatter));
 
     spdlog::details::log_msg msg1{spdlog::source_loc{"ignored", 1, "func"}, "test_logger", spdlog::level::info, "message"};
-    test_sink.log(msg1);
+    test_sink.log(spdlog::default_tag(), msg1);
     REQUIRE(test_sink.lines()[0] == "message [      func]");
 
     spdlog::details::log_msg msg2{spdlog::source_loc{"ignored", 1, "func567890123"}, "test_logger", spdlog::level::info, "message"};
-    test_sink.log(msg2);
+    test_sink.log(spdlog::default_tag(), msg2);
     REQUIRE(test_sink.lines()[1] == "message [func567890123]");
 }
 
