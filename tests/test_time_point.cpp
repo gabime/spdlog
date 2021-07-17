@@ -19,10 +19,10 @@ TEST_CASE("time_point1", "[time_point log_msg]")
         test_sink->log(spdlog::default_tag(), msg);
     }
 
-    logger.log(tp, spdlog::default_tag(), source, spdlog::level::info, "formatted message");
-    logger.log(tp, spdlog::default_tag(), source, spdlog::level::info, "formatted message");
-    logger.log(tp, spdlog::default_tag(), source, spdlog::level::info, "formatted message");
-    logger.log(tp, spdlog::default_tag(), source, spdlog::level::info, "formatted message");
+    logger.log(spdlog::default_tag(), tp, source, spdlog::level::info, "formatted message");
+    logger.log(spdlog::default_tag(), tp, source, spdlog::level::info, "formatted message");
+    logger.log(spdlog::default_tag(), tp, source, spdlog::level::info, "formatted message");
+    logger.log(spdlog::default_tag(), tp, source, spdlog::level::info, "formatted message");
     logger.log(spdlog::default_tag(), source, spdlog::level::info, "formatted message"); // last line has different time_point
 
     // now the real test... that the times are the same.
