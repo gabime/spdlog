@@ -75,16 +75,8 @@ public:
 
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
-    // FormatString is a type derived from fmt::compile_string
-    template<typename FormatString, typename std::enable_if<fmt::is_compile_string<FormatString>::value, int>::type = 0, typename... Args>
+    template<typename FormatString, typename... Args>
     void log(source_loc loc, level::level_enum lvl, const FormatString &fmt, Args &&...args)
-    {
-        log_(loc, lvl, fmt, std::forward<Args>(args)...);
-    }
-
-    // FormatString is NOT a type derived from fmt::compile_string but is a string_view_t or can be implicitly converted to one
-    template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&...args)
     {
         log_(loc, lvl, fmt, std::forward<Args>(args)...);
     }
@@ -137,9 +129,8 @@ public:
         log(source_loc{}, lvl, msg);
     }
 
-    // T can be statically converted to string_view and isn't a fmt::compile_string
-    template<class T, typename std::enable_if<
-                          std::is_convertible<const T &, spdlog::string_view_t>::value && !fmt::is_compile_string<T>::value, int>::type = 0>
+    // T can be statically converted to string_view
+    template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::string_view_t>::value, int>::type = 0>
     void log(source_loc loc, level::level_enum lvl, const T &msg)
     {
         log(loc, lvl, string_view_t{msg});
