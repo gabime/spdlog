@@ -72,7 +72,6 @@ public:
     logger(const logger &other);
     logger(logger &&other) SPDLOG_NOEXCEPT;
     logger &operator=(logger other) SPDLOG_NOEXCEPT;
-
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
     template<typename FormatString, typename... Args>
@@ -85,42 +84,6 @@ public:
     void log(level::level_enum lvl, const FormatString &fmt, Args &&...args)
     {
         log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
-    }
-
-    template<typename FormatString, typename... Args>
-    void trace(const FormatString &fmt, Args &&...args)
-    {
-        log(level::trace, fmt, std::forward<Args>(args)...);
-    }
-
-    template<typename FormatString, typename... Args>
-    void debug(const FormatString &fmt, Args &&...args)
-    {
-        log(level::debug, fmt, std::forward<Args>(args)...);
-    }
-
-    template<typename FormatString, typename... Args>
-    void info(const FormatString &fmt, Args &&...args)
-    {
-        log(level::info, fmt, std::forward<Args>(args)...);
-    }
-
-    template<typename FormatString, typename... Args>
-    void warn(const FormatString &fmt, Args &&...args)
-    {
-        log(level::warn, fmt, std::forward<Args>(args)...);
-    }
-
-    template<typename FormatString, typename... Args>
-    void error(const FormatString &fmt, Args &&...args)
-    {
-        log(level::err, fmt, std::forward<Args>(args)...);
-    }
-
-    template<typename FormatString, typename... Args>
-    void critical(const FormatString &fmt, Args &&...args)
-    {
-        log(level::critical, fmt, std::forward<Args>(args)...);
     }
 
     template<typename T>
@@ -176,42 +139,6 @@ public:
         log(loc, lvl, "{}", msg);
     }
 
-    template<typename T>
-    void trace(const T &msg)
-    {
-        log(level::trace, msg);
-    }
-
-    template<typename T>
-    void debug(const T &msg)
-    {
-        log(level::debug, msg);
-    }
-
-    template<typename T>
-    void info(const T &msg)
-    {
-        log(level::info, msg);
-    }
-
-    template<typename T>
-    void warn(const T &msg)
-    {
-        log(level::warn, msg);
-    }
-
-    template<typename T>
-    void error(const T &msg)
-    {
-        log(level::err, msg);
-    }
-
-    template<typename T>
-    void critical(const T &msg)
-    {
-        log(level::critical, msg);
-    }
-
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #    ifndef _WIN32
 #        error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
@@ -261,6 +188,78 @@ public:
     }
 #    endif // _WIN32
 #endif     // SPDLOG_WCHAR_TO_UTF8_SUPPORT
+
+    template<typename FormatString, typename... Args>
+    void trace(const FormatString &fmt, Args &&...args)
+    {
+        log(level::trace, fmt, std::forward<Args>(args)...);
+    }
+
+    template<typename FormatString, typename... Args>
+    void debug(const FormatString &fmt, Args &&...args)
+    {
+        log(level::debug, fmt, std::forward<Args>(args)...);
+    }
+
+    template<typename FormatString, typename... Args>
+    void info(const FormatString &fmt, Args &&...args)
+    {
+        log(level::info, fmt, std::forward<Args>(args)...);
+    }
+
+    template<typename FormatString, typename... Args>
+    void warn(const FormatString &fmt, Args &&...args)
+    {
+        log(level::warn, fmt, std::forward<Args>(args)...);
+    }
+
+    template<typename FormatString, typename... Args>
+    void error(const FormatString &fmt, Args &&...args)
+    {
+        log(level::err, fmt, std::forward<Args>(args)...);
+    }
+
+    template<typename FormatString, typename... Args>
+    void critical(const FormatString &fmt, Args &&...args)
+    {
+        log(level::critical, fmt, std::forward<Args>(args)...);
+    }
+
+    template<typename T>
+    void trace(const T &msg)
+    {
+        log(level::trace, msg);
+    }
+
+    template<typename T>
+    void debug(const T &msg)
+    {
+        log(level::debug, msg);
+    }
+
+    template<typename T>
+    void info(const T &msg)
+    {
+        log(level::info, msg);
+    }
+
+    template<typename T>
+    void warn(const T &msg)
+    {
+        log(level::warn, msg);
+    }
+
+    template<typename T>
+    void error(const T &msg)
+    {
+        log(level::err, msg);
+    }
+
+    template<typename T>
+    void critical(const T &msg)
+    {
+        log(level::critical, msg);
+    }
 
     // return true logging is enabled for the given level.
     bool should_log(level::level_enum msg_level) const
