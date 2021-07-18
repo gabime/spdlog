@@ -2,7 +2,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #ifndef SPDLOG_COMPILED_LIB
-#error Please define SPDLOG_COMPILED_LIB to compile this file.
+#    error Please define SPDLOG_COMPILED_LIB to compile this file.
 #endif
 
 #include <spdlog/spdlog-inl.h>
@@ -24,4 +24,3 @@
 template SPDLOG_API spdlog::logger::logger(std::string name, sinks_init_list::iterator begin, sinks_init_list::iterator end);
 template class SPDLOG_API spdlog::sinks::base_sink<std::mutex>;
 template class SPDLOG_API spdlog::sinks::base_sink<spdlog::details::null_mutex>;
-

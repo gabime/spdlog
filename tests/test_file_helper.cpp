@@ -64,7 +64,8 @@ TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]]")
     REQUIRE(helper.size() == expected_size);
 }
 
-static void test_split_ext(const spdlog::filename_t::value_type *fname, const spdlog::filename_t::value_type *expect_base, const spdlog::filename_t::value_type *expect_ext)
+static void test_split_ext(const spdlog::filename_t::value_type *fname, const spdlog::filename_t::value_type *expect_base,
+    const spdlog::filename_t::value_type *expect_ext)
 {
     spdlog::filename_t filename(fname);
     spdlog::filename_t expected_base(expect_base);

@@ -1,10 +1,10 @@
 #include "includes.h"
 
 #ifdef _WIN32
-#include <Windows.h>
+#    include <Windows.h>
 #else
-#include <sys/types.h>
-#include <dirent.h>
+#    include <sys/types.h>
+#    include <dirent.h>
 #endif
 
 void prepare_logdir()

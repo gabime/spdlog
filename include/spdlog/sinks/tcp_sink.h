@@ -7,9 +7,9 @@
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/null_mutex.h>
 #ifdef _WIN32
-#include <spdlog/details/tcp_client-windows.h>
+#    include <spdlog/details/tcp_client-windows.h>
 #else
-#include <spdlog/details/tcp_client.h>
+#    include <spdlog/details/tcp_client.h>
 #endif
 
 #include <mutex>

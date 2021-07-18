@@ -5,12 +5,11 @@
 
 #if defined(_WIN32)
 
-#include <spdlog/details/null_mutex.h>
-#include <spdlog/sinks/base_sink.h>
+#    include <spdlog/details/null_mutex.h>
+#    include <spdlog/sinks/base_sink.h>
 
-#include <mutex>
-#include <string>
-
+#    include <mutex>
+#    include <string>
 
 // Avoid including windows.h (https://stackoverflow.com/a/30741042)
 extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char *lpOutputString);

@@ -1,9 +1,9 @@
 #if _WIN32
 
-#include "includes.h"
-#include "test_sink.h"
+#    include "includes.h"
+#    include "test_sink.h"
 
-#include "spdlog/sinks/win_eventlog_sink.h"
+#    include "spdlog/sinks/win_eventlog_sink.h"
 
 static const LPCSTR TEST_SOURCE = "spdlog_test";
 
@@ -29,8 +29,8 @@ static void test_single_print(std::function<void(std::string const &)> do_log, s
     REQUIRE(event_log.handle_);
 
     DWORD read_bytes{}, size_needed{};
-    auto ok =
-        ::ReadEventLogA(event_log.handle_, EVENTLOG_SEQUENTIAL_READ | EVENTLOG_BACKWARDS_READ, 0, &read_bytes, 0, &read_bytes, &size_needed);
+    auto ok = ::ReadEventLogA(
+        event_log.handle_, EVENTLOG_SEQUENTIAL_READ | EVENTLOG_BACKWARDS_READ, 0, &read_bytes, 0, &read_bytes, &size_needed);
     REQUIRE(!ok);
     REQUIRE(::GetLastError() == ERROR_INSUFFICIENT_BUFFER);
 

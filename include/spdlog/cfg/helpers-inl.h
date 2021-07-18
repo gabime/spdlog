@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/cfg/helpers.h>
+#    include <spdlog/cfg/helpers.h>
 #endif
 
 #include <spdlog/spdlog.h>

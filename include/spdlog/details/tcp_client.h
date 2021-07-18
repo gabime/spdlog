@@ -4,7 +4,7 @@
 #pragma once
 
 #ifdef _WIN32
-#error include tcp_client-windows.h instead
+#    error include tcp_client-windows.h instead
 #endif
 
 // tcp client helper
@@ -111,7 +111,7 @@ public:
 #endif
 
 #if !defined(SO_NOSIGPIPE) && !defined(MSG_NOSIGNAL)
-#error "tcp_sink would raise SIGPIPE since niether SO_NOSIGPIPE nor MSG_NOSIGNAL are available"
+#    error "tcp_sink would raise SIGPIPE since niether SO_NOSIGPIPE nor MSG_NOSIGNAL are available"
 #endif
     }
 

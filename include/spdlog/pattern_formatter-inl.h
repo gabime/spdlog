@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/pattern_formatter.h>
+#    include <spdlog/pattern_formatter.h>
 #endif
 
 #include <spdlog/details/fmt_helper.h>
@@ -817,9 +817,9 @@ public:
     {}
 
 #ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4127) // consider using 'if constexpr' instead
-#endif // _MSC_VER
+#    pragma warning(push)
+#    pragma warning(disable : 4127) // consider using 'if constexpr' instead
+#endif                              // _MSC_VER
     static const char *basename(const char *filename)
     {
         // if the size is 2 (1 character + null terminator) we can use the more efficient strrchr
@@ -831,15 +831,15 @@ public:
         }
         else
         {
-            const std::reverse_iterator<const char*> begin(filename + std::strlen(filename));
-            const std::reverse_iterator<const char*> end(filename);
+            const std::reverse_iterator<const char *> begin(filename + std::strlen(filename));
+            const std::reverse_iterator<const char *> end(filename);
 
             const auto it = std::find_first_of(begin, end, std::begin(os::folder_seps), std::end(os::folder_seps) - 1);
             return it != end ? it.base() : filename;
         }
     }
 #ifdef _MSC_VER
-#pragma warning(pop)
+#    pragma warning(pop)
 #endif // _MSC_VER
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override

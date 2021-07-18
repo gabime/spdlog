@@ -246,7 +246,7 @@ void err_handler_example()
 
 // syslog example (linux/osx/freebsd)
 #ifndef _WIN32
-#include "spdlog/sinks/syslog_sink.h"
+#    include "spdlog/sinks/syslog_sink.h"
 void syslog_example()
 {
     std::string ident = "spdlog-example";
@@ -257,7 +257,7 @@ void syslog_example()
 
 // Android example.
 #if defined(__ANDROID__)
-#include "spdlog/sinks/android_sink.h"
+#    include "spdlog/sinks/android_sink.h"
 void android_example()
 {
     std::string tag = "spdlog-android";

@@ -10,17 +10,15 @@ endif()
 
 find_package(Threads REQUIRED)
 find_package(benchmark CONFIG)
-if (NOT benchmark_FOUND)
+if(NOT benchmark_FOUND)
     message(STATUS "Using CMake Version ${CMAKE_VERSION}")
-    if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.11.0")
-        # User can fetch googlebenchmark 			
+    if(${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.11.0")
+        # User can fetch googlebenchmark
         message(STATUS "Downloading GoogleBenchmark")
         include(FetchContent)
         set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE INTERNAL "")
         # Do not build and run googlebenchmark tests
-        FetchContent_Declare(googlebenchmark
-            GIT_REPOSITORY https://github.com/google/benchmark.git
-            GIT_TAG v1.5.2)
+        FetchContent_Declare(googlebenchmark GIT_REPOSITORY https://github.com/google/benchmark.git GIT_TAG v1.5.2)
 
         FetchContent_MakeAvailable(googlebenchmark)
     else()

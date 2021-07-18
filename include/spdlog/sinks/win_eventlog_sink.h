@@ -229,11 +229,11 @@ protected:
 
         LPCWSTR lp_wstr = buf.data();
         succeeded = ::ReportEventW(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
-                current_user_sid_.as_sid(), 1, 0, &lp_wstr, nullptr);
+            current_user_sid_.as_sid(), 1, 0, &lp_wstr, nullptr);
 #else
         LPCSTR lp_str = formatted.data();
         succeeded = ::ReportEventA(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg), event_id_,
-                current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr);
+            current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr);
 #endif
 
         if (!succeeded)
