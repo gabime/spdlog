@@ -329,7 +329,7 @@ protected:
         {
             memory_buf_t buf;
             // little bit faster than fmt::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
-            fmt::detail::vformat_to(buf, string_view_t{fmt}, fmt::make_format_args(args...), {});
+            fmt::detail::vformat_to(buf, string_view_t(fmt), fmt::make_format_args(args...), {});
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
