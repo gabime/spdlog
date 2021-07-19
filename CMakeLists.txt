@@ -37,9 +37,9 @@ if(NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
-# make sure __cplusplus is defined when using msvc
+# make sure __cplusplus is defined when using msvc and enable parallel build
 if(MSVC)
-    string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus")
+    string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus /MP")
 endif()
 
 set(CMAKE_CXX_EXTENSIONS OFF)
