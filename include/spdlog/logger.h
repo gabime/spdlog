@@ -19,6 +19,9 @@
 #include <spdlog/details/backtracer.h>
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+#    ifndef _WIN32
+#        error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
+#    endif
 #    include <spdlog/details/os.h>
 #endif
 
@@ -138,56 +141,6 @@ public:
     {
         log(loc, lvl, "{}", msg);
     }
-
-#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-#    ifndef _WIN32
-#        error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
-#    else
-
-    template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, wstring_view_t fmt, Args &&...args)
-    {
-        bool log_enabled = should_log(lvl);
-        bool traceback_enabled = tracer_.enabled();
-        if (!log_enabled && !traceback_enabled)
-        {
-            return;
-        }
-        SPDLOG_TRY
-        {
-            // format to wmemory_buffer and convert to utf8
-            fmt::wmemory_buffer wbuf;
-            fmt::format_to(std::back_inserter(wbuf), fmt, std::forward<Args>(args)...);
-            memory_buf_t buf;
-            details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
-            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            log_it_(log_msg, log_enabled, traceback_enabled);
-        }
-        SPDLOG_LOGGER_CATCH()
-    }
-
-    // T can be statically converted to wstring_view
-    template<class T, typename std::enable_if<is_convertible_to_wstring_view<const T &>::value, int>::type = 0>
-    void log(source_loc loc, level::level_enum lvl, const T &msg)
-    {
-        bool log_enabled = should_log(lvl);
-        bool traceback_enabled = tracer_.enabled();
-        if (!log_enabled && !traceback_enabled)
-        {
-            return;
-        }
-
-        SPDLOG_TRY
-        {
-            memory_buf_t buf;
-            details::os::wstr_to_utf8buf(msg, buf);
-            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            log_it_(log_msg, log_enabled, traceback_enabled);
-        }
-        SPDLOG_LOGGER_CATCH()
-    }
-#    endif // _WIN32
-#endif     // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     template<typename FormatString, typename... Args>
     void trace(const FormatString &fmt, Args &&...args)
@@ -316,7 +269,9 @@ protected:
     details::backtracer tracer_;
 
     // common implementation for after templated public api has been resolved
-    template<typename FormatString, typename... Args>
+   
+    template<typename FormatString, typename... Args, typename Char = fmt::char_t<FormatString>,
+        typename std::enable_if<!std::is_same<Char, wchar_t>::value, Char>::type * = nullptr>
     void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, Args &&...args)
     {
         bool log_enabled = should_log(lvl);
@@ -328,13 +283,57 @@ protected:
         SPDLOG_TRY
         {
             memory_buf_t buf;
-            // little bit faster than fmt::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
-            fmt::detail::vformat_to(buf, fmt::string_view(fmt), fmt::make_format_args(args...), {});
+            fmt::detail::vformat_to(buf, fmt::to_string_view(fmt), fmt::make_format_args(args...));
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH()
     }
+
+#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    template<typename... Args>
+    void log_(source_loc loc, level::level_enum lvl, const wstring_view_t &fmt, Args &&...args)
+    {
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
+        {
+            return;
+        }
+        SPDLOG_TRY
+        {
+            // format to wmemory_buffer and convert to utf8
+            fmt::wmemory_buffer wbuf;
+            fmt::format_to(std::back_inserter(wbuf), fmt, std::forward<Args>(args)...);
+            memory_buf_t buf;
+            details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            log_it_(log_msg, log_enabled, traceback_enabled);
+        }
+        SPDLOG_LOGGER_CATCH()
+    }
+
+    // T can be statically converted to wstring_view, and no formatting needed.
+    template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::wstring_view_t>::value, int>::type = 0>
+    void log_(source_loc loc, level::level_enum lvl, const T &msg)
+    {
+        bool log_enabled = should_log(lvl);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled)
+        {
+            return;
+        }
+        SPDLOG_TRY
+        {
+            memory_buf_t buf;
+            details::os::wstr_to_utf8buf(msg, buf);
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            log_it_(log_msg, log_enabled, traceback_enabled);
+        }
+        SPDLOG_LOGGER_CATCH()
+    }
+
+#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     // log the given message (if the given log level is high enough),
     // and save backtrace (if backtrace is enabled).
