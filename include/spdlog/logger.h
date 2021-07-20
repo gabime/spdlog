@@ -268,7 +268,7 @@ protected:
     err_handler custom_err_handler_{nullptr};
     details::backtracer tracer_;
 
-    // common implementation for after templated public api has been resolved   
+    // common implementation for after templated public api has been resolved
     template<typename FormatString, typename... Args, typename Char = fmt::char_t<FormatString>,
         typename std::enable_if<!std::is_same<Char, wchar_t>::value, Char>::type * = nullptr>
     void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, Args &&...args)
