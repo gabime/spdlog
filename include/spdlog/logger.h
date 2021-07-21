@@ -282,7 +282,7 @@ protected:
         SPDLOG_TRY
         {
             memory_buf_t buf;
-            fmt::detail::vformat_to(buf, fmt::to_string_view(fmt), fmt::make_format_args(args...));
+            fmt::detail::vformat_to(buf, fmt::to_string_view(fmt), fmt::make_args_checked<Args...>(fmt, args...));
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
@@ -290,8 +290,9 @@ protected:
     }
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-    template<typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, const wstring_view_t &fmt, Args &&...args)
+    template<typename FormatString, typename... Args, typename Char = fmt::char_t<FormatString>,
+        typename std::enable_if<std::is_same<Char, wchar_t>::value, Char>::type * = nullptr>
+    void log_(source_loc loc, level::level_enum lvl, const FormatString &fmt, Args &&...args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -303,7 +304,7 @@ protected:
         {
             // format to wmemory_buffer and convert to utf8
             fmt::wmemory_buffer wbuf;
-            fmt::format_to(std::back_inserter(wbuf), fmt, std::forward<Args>(args)...);
+            fmt::detail::vformat_to(wbuf, fmt::wstring_view(fmt), fmt::make_args_checked<Args...>(fmt, args...));
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
