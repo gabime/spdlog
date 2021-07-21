@@ -89,7 +89,7 @@ struct formatter<spdlog::details::dump_info<T>>
 
     // parse the format string flags
     template<typename ParseContext>
-    auto parse(ParseContext &ctx) -> decltype(ctx.begin())
+    FMT_CONSTEXPR auto parse(ParseContext &ctx) -> decltype(ctx.begin())
     {
         auto it = ctx.begin();
         while (it != ctx.end() && *it != '}')

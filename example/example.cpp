@@ -23,6 +23,7 @@ void custom_flags_example();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h" // support for loading levels from the environment variable
+#include "spdlog/fmt/ostr.h"
 
 int main(int, char *[])
 {
