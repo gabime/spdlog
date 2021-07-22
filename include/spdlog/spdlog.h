@@ -127,50 +127,50 @@ SPDLOG_API spdlog::logger *default_logger_raw();
 
 SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logger);
 
-template<typename FormatString, typename... Args>
-inline void log(source_loc source, level::level_enum lvl, const FormatString &fmt, Args &&...args)
+template<typename... Args>
+inline void log(source_loc source, level::level_enum lvl, fmt::format_string<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
 }
 
-template<typename FormatString, typename... Args>
-inline void log(level::level_enum lvl, const FormatString &fmt, Args &&...args)
+template<typename... Args>
+inline void log(level::level_enum lvl, fmt::format_string<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
-template<typename FormatString, typename... Args>
-inline void trace(const FormatString &fmt, Args &&...args)
+template<typename... Args>
+inline void trace(fmt::format_string<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
 }
 
-template<typename FormatString, typename... Args>
-inline void debug(const FormatString &fmt, Args &&...args)
+template<typename... Args>
+inline void debug(fmt::format_string<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
 }
 
-template<typename FormatString, typename... Args>
-inline void info(const FormatString &fmt, Args &&...args)
+template<typename... Args>
+inline void info(fmt::format_string<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
 
-template<typename FormatString, typename... Args>
-inline void warn(const FormatString &fmt, Args &&...args)
+template<typename... Args>
+inline void warn(fmt::format_string<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
 }
 
-template<typename FormatString, typename... Args>
-inline void error(const FormatString &fmt, Args &&...args)
+template<typename... Args>
+inline void error(fmt::format_string<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->error(fmt, std::forward<Args>(args)...);
 }
 
-template<typename FormatString, typename... Args>
-inline void critical(const FormatString &fmt, Args &&...args)
+template<typename... Args>
+inline void critical(fmt::format_string<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
 }
@@ -186,6 +186,56 @@ inline void log(level::level_enum lvl, const T &msg)
 {
     default_logger_raw()->log(lvl, msg);
 }
+
+#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+template<typename... Args>
+inline void log(source_loc source, level::level_enum lvl, fmt::wformat_string<Args...> fmt, Args &&...args)
+{
+    default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline void log(level::level_enum lvl, fmt::wformat_string<Args...> fmt, Args &&...args)
+{
+    default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline void trace(fmt::wformat_string<Args...> fmt, Args &&...args)
+{
+    default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline void debug(fmt::wformat_string<Args...> fmt, Args &&...args)
+{
+    default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline void info(fmt::wformat_string<Args...> fmt, Args &&...args)
+{
+    default_logger_raw()->info(fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline void warn(fmt::wformat_string<Args...> fmt, Args &&...args)
+{
+    default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline void error(fmt::wformat_string<Args...> fmt, Args &&...args)
+{
+    default_logger_raw()->error(fmt, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+inline void critical(fmt::wformat_string<Args...> fmt, Args &&...args)
+{
+    default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
+}
+#endif
 
 template<typename T>
 inline void trace(const T &msg)
