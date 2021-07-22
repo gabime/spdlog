@@ -22,8 +22,8 @@ void syslog_example();
 void custom_flags_example();
 
 #include "spdlog/spdlog.h"
-#include "spdlog/cfg/env.h" // support for loading levels from the environment variable
-#include "spdlog/fmt/ostr.h"
+#include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
+#include "spdlog/fmt/ostr.h" // support for user defined types
 
 int main(int, char *[])
 {
@@ -222,7 +222,6 @@ void multi_sink_example()
 }
 
 // User defined types logging by implementing operator<<
-#include "spdlog/fmt/ostr.h" // must be included
 struct my_type
 {
     int i;
