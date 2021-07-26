@@ -101,8 +101,8 @@ matrix:
       addons: *clang10
       
             
-    # Test clang-12.0: C++20, Build=Debug
-    - env: CLANG_VERSION=12 BUILD_TYPE=Debug CPP=20 ASAN=Off
+    # Test clang-12.0: C++17, Build=Debug
+    - env: CLANG_VERSION=12 BUILD_TYPE=Debug CPP=17 ASAN=Off
       os: linux
       dist: bionic
       addons: *clang12
