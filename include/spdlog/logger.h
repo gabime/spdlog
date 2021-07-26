@@ -102,6 +102,15 @@ public:
         log(loc, lvl, string_view_t{msg});
     }
 
+    // T cannot be statically converted to niether string_view, neither wstring_view and niether to format string
+    template<class T, typename std::enable_if<!std::is_convertible<const T &, spdlog::string_view_t>::value 
+        && !is_convertible_to_basic_format_string<const T&>::value,
+            int>::type = 0>
+    void log(source_loc loc, level::level_enum lvl, const T &msg)
+    {
+        log(loc, lvl, "{}", msg);        
+    }
+
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
     {
         bool log_enabled = should_log(lvl);
@@ -132,14 +141,7 @@ public:
     {
         log(source_loc{}, lvl, msg);
     }
-
-    // T cannot be statically converted to string_view or wstring_view
-    template<class T, typename std::enable_if<!is_convertible_to_basic_format_string<T>::value, int>::type = 0>
-    void log(source_loc loc, level::level_enum lvl, const T &msg)
-    {
-        log(loc, lvl, "{}", msg);
-    }
-
+    
     template<typename... Args>
     void trace(fmt::format_string<Args...> fmt, Args &&...args)
     {
