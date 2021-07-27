@@ -41,7 +41,7 @@ protected:
     memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);
     string_view_t str = string_view_t(formatted.data(), formatted.size());
-    QMetaObject::invokeMethod(qtextedit,"append", Qt::AutoConnection, Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size() - 2))));
+    QMetaObject::invokeMethod(qtextedit,"append", Qt::AutoConnection, Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
   }
 
   void flush_() override {}
@@ -73,7 +73,7 @@ protected:
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
         string_view_t str = string_view_t(formatted.data(), formatted.size());
-        QMetaObject::invokeMethod(qplaintextedit, "appendPlainText", Qt::AutoConnection, Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size() - 2))));
+        QMetaObject::invokeMethod(qplaintextedit, "appendPlainText", Qt::AutoConnection, Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
     }
 
     void flush_() override {}
