@@ -39,7 +39,7 @@ public:
 
     void append(const spdlog::string_view_t &str)
     {
-        emit append_text(QString::fromUtf8(str.data(), static_cast<int>(str.size() - 2)));
+        emit append_text( QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed() );
     }
 
 signals:
@@ -69,7 +69,7 @@ public:
 
     void append(const spdlog::string_view_t &str)
     {
-        emit append_text(QString::fromUtf8(str.data(), static_cast<int>(str.size() - 2)));
+        emit append_text( QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed() );
     }
 
 signals:
