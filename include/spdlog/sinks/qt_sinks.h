@@ -26,7 +26,7 @@ class qtextedit_sink : public base_sink<Mutex> {
 public:
   qtextedit_sink(QTextEdit *textedit = nullptr) {
     if (textedit != nullptr) {
-        qtextedit = textedit;
+        qtextedit_ = textedit;
     } else {
       throw spdlog_ex("Error opening QTextEdit");
     }
@@ -36,18 +36,16 @@ public:
 
 protected:
   void sink_it_(const details::log_msg &msg) override {
-      if(qtextedit == nullptr)
-          return;
     memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);
     string_view_t str = string_view_t(formatted.data(), formatted.size());
-    QMetaObject::invokeMethod(qtextedit,"append", Qt::AutoConnection, Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
+    QMetaObject::invokeMethod(qtextedit_,"append", Qt::AutoConnection, Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
   }
 
   void flush_() override {}
 
 private:
-    QTextEdit* qtextedit = nullptr;
+    QTextEdit* qtextedit_ = nullptr;
 };
 
 //
@@ -58,7 +56,7 @@ class qplaintextedit_sink : public base_sink<Mutex> {
 public:
     qplaintextedit_sink(QPlainTextEdit *textedit = nullptr) {
         if (textedit != nullptr) {
-            qplaintextedit = textedit;
+            qplaintextedit_ = textedit;
         } else {
             throw spdlog_ex("Error opening QPlainTextEdit");
         }
@@ -68,18 +66,16 @@ public:
 
 protected:
     void sink_it_(const details::log_msg &msg) override {
-        if(qplaintextedit == nullptr)
-            return;
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
         string_view_t str = string_view_t(formatted.data(), formatted.size());
-        QMetaObject::invokeMethod(qplaintextedit, "appendPlainText", Qt::AutoConnection, Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
+        QMetaObject::invokeMethod(qplaintextedit_, "appendPlainText", Qt::AutoConnection, Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
     }
 
     void flush_() override {}
 
 private:
-    QPlainTextEdit* qplaintextedit = nullptr;
+    QPlainTextEdit* qplaintextedit_ = nullptr;
 };
 
 #include "spdlog/details/null_mutex.h"
