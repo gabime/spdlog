@@ -173,13 +173,13 @@ enum level_enum
     n_levels
 };
 
-#define SPDLOG_LEVEL_NAME_TRACE string_view_t("trace", 5)
-#define SPDLOG_LEVEL_NAME_DEBUG string_view_t("debug", 5)
-#define SPDLOG_LEVEL_NAME_INFO string_view_t("info", 4)
-#define SPDLOG_LEVEL_NAME_WARNING string_view_t("warning", 7)
-#define SPDLOG_LEVEL_NAME_ERROR string_view_t("error", 5)
-#define SPDLOG_LEVEL_NAME_CRITICAL string_view_t("critical", 8)
-#define SPDLOG_LEVEL_NAME_OFF string_view_t("off", 3)
+#define SPDLOG_LEVEL_NAME_TRACE spdlog::string_view_t("trace", 5)
+#define SPDLOG_LEVEL_NAME_DEBUG spdlog::string_view_t("debug", 5)
+#define SPDLOG_LEVEL_NAME_INFO spdlog::string_view_t("info", 4)
+#define SPDLOG_LEVEL_NAME_WARNING spdlog::string_view_t("warning", 7)
+#define SPDLOG_LEVEL_NAME_ERROR spdlog::string_view_t("error", 5)
+#define SPDLOG_LEVEL_NAME_CRITICAL spdlog::string_view_t("critical", 8)
+#define SPDLOG_LEVEL_NAME_OFF spdlog::string_view_t("off", 3)
 
 #if !defined(SPDLOG_LEVEL_NAMES)
 #    define SPDLOG_LEVEL_NAMES                                                                                                             \
