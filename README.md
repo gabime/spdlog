@@ -144,7 +144,7 @@ void daily_example()
 #### Backtrace support
 ```c++
 // Debug messages can be stored in a ring buffer instead of being logged immediately.
-// This is useful in order to display debug logs only when really nededed (e.g. when error happens).
+// This is useful in order to display debug logs only when really needed (e.g. when error happens).
 // When needed, call dump_backtrace() to see them.
 
 spdlog::enable_backtrace(32); // Store the latest 32 messages in a buffer. Older messages will be dropped.
