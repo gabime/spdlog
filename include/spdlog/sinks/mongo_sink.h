@@ -33,7 +33,7 @@ public:
     {
         try
         {
-            client_ = std::make_unique<mongocxx::client>(mongocxx::uri{uri});
+            client_ = spdlog::details::make_unique<mongocxx::client>(mongocxx::uri{uri});
             db_name_ = db_name;
             coll_name_ = collection_name;
         }
