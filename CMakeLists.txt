@@ -307,7 +307,8 @@ if(SPDLOG_INSTALL)
     install(EXPORT spdlog DESTINATION ${export_dest_dir} NAMESPACE spdlog:: FILE ${config_targets_file})
 
     include(CMakePackageConfigHelpers)
-    configure_file("${project_config_in}" "${project_config_out}" @ONLY)
+    configure_package_config_file("${project_config_in}" "${project_config_out}"
+        INSTALL_DESTINATION ${export_dest_dir})
 
     write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
     install(FILES "${project_config_out}" "${version_config_file}" DESTINATION "${export_dest_dir}")
