@@ -17,7 +17,7 @@ namespace spdlog {
 namespace details {
 class SPDLOG_API backtracer
 {
-    mutable std::mutex mutex_;
+    std::mutex mutex_;
     std::atomic<bool> enabled_{false};
     circular_q<log_msg_buffer> messages_;
 
