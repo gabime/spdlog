@@ -130,30 +130,12 @@ struct is_convertible_to_basic_format_string
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #    ifndef _WIN32
 #        error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
-#    else
-template<typename T>
-struct is_convertible_to_wstring_view : std::is_convertible<T, wstring_view_t>
-{};
-
-template<class T>
-using is_convertible_to_wformat_string = is_convertible_to_basic_format_string<T, wchar_t>;
 #    endif // _WIN32
-#else
-template<typename>
-struct is_convertible_to_wstring_view : std::false_type
-{};
-template<class>
-struct is_convertible_to_wformat_string : std::false_type
-{};
-#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
+#endif     // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 template<class T>
-struct is_convertible_to_any_string_view
-    : std::integral_constant<bool, std::is_convertible<T, string_view_t>::value || is_convertible_to_wstring_view<T>::value>
-{};
-template<class T>
-struct is_convertible_to_any_format_string
-    : std::integral_constant<bool, is_convertible_to_basic_format_string<T, char>::value || is_convertible_to_wformat_string<T>::value>
+struct is_convertible_to_any_format_string : std::integral_constant<bool, is_convertible_to_basic_format_string<T, char>::value ||
+                                                                              is_convertible_to_basic_format_string<T, wchar_t>::value>
 {};
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
