@@ -178,7 +178,8 @@ SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg, bool
 SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
 {
     for (auto &sink : sinks_)
-    {
+    {   
+        assert(sink != nullptr);
         if (sink->should_log(msg.level))
         {
             SPDLOG_TRY
@@ -199,6 +200,7 @@ SPDLOG_INLINE void logger::flush_()
 {
     for (auto &sink : sinks_)
     {
+        assert(sink != nullptr);
         SPDLOG_TRY
         {
             sink->flush();
