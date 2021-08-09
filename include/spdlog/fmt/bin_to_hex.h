@@ -6,6 +6,7 @@
 #pragma once
 
 #include <cctype>
+#include <spdlog/common.h>
 
 //
 // Support for logging binary data as hex
