@@ -88,7 +88,7 @@ matrix:
       addons: *gcc9
 
     # Test gcc-11.0: C++20, Build=Debug
-    - env: GCC_VERSION=12 BUILD_TYPE=Debug CPP=20 ASAN=Off
+    - env: GCC_VERSION=11 BUILD_TYPE=Debug CPP=20 ASAN=Off
       os: linux
       dist: bionic
       addons: *gcc11
