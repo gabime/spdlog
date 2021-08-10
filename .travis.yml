@@ -29,6 +29,14 @@ addons: &gcc9
       - g++-9
     sources:
       - ubuntu-toolchain-r-test
+      
+# gcc 11.0
+addons: &gcc11
+  apt:
+    packages:
+      - g++-11
+    sources:
+      - ubuntu-toolchain-r-test
 
 
 # Clang 3.5
@@ -74,11 +82,17 @@ matrix:
       os: linux
       addons: *gcc7
       
-     # Test gcc-9: C++17, Build=Release
+    # Test gcc-9: C++17, Build=Release
     - env: GCC_VERSION=9 BUILD_TYPE=Release CPP=17
       os: linux
       addons: *gcc9
 
+    # Test gcc-11.0: C++20, Build=Debug
+    - env: GCC_VERSION=12 BUILD_TYPE=Debug CPP=20 ASAN=Off
+      os: linux
+      dist: bionic
+      addons: *gcc11
+      
     # Test clang-3.5: C++11, Build=Release
     - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=11
       os: linux
@@ -106,14 +120,8 @@ matrix:
       os: linux
       dist: bionic
       addons: *clang12
-      
-    # Test clang-12.0: C++20, Build=Debug
-    - env: CLANG_VERSION=12 BUILD_TYPE=Debug CPP=20 ASAN=Off
-      os: linux
-      dist: bionic
-      addons: *clang12
+          
                         
-
 before_script:
   - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
   - if [ -n "$CLANG_VERSION" ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
