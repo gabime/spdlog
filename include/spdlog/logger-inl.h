@@ -185,7 +185,7 @@ SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
             {
                 sink->log(msg);
             }
-            SPDLOG_LOGGER_CATCH()
+            SPDLOG_LOGGER_CATCH(msg.payload)
         }
     }
 
@@ -203,7 +203,7 @@ SPDLOG_INLINE void logger::flush_()
         {
             sink->flush();
         }
-        SPDLOG_LOGGER_CATCH()
+        SPDLOG_LOGGER_CATCH("")
     }
 }
 
