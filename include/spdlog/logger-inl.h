@@ -203,7 +203,7 @@ SPDLOG_INLINE void logger::flush_()
         {
             sink->flush();
         }
-        SPDLOG_LOGGER_CATCH("")
+        SPDLOG_LOGGER_CATCH(string_view_t())
     }
 }
 

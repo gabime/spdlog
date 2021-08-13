@@ -80,7 +80,7 @@ SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
         {
             sink->flush();
         }
-        SPDLOG_LOGGER_CATCH("")
+        SPDLOG_LOGGER_CATCH(string_view_t())
     }
 }
 
