@@ -80,11 +80,7 @@ SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
         {
             sink->flush();
         }
-#if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
-        SPDLOG_LOGGER_CATCH(wstring_view_t())
-#else
-        SPDLOG_LOGGER_CATCH(string_view_t())
-#endif
+        SPDLOG_LOGGER_CATCH("")
     }
 }
 

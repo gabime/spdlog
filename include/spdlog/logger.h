@@ -356,7 +356,9 @@ protected:
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
-        SPDLOG_LOGGER_CATCH(fmt)
+		// TODO: This isn't working yet.
+        SPDLOG_LOGGER_CATCH("")
+		//SPDLOG_LOGGER_CATCH(fmt)
     }
 
     // T can be statically converted to wstring_view, and no formatting needed.
@@ -376,7 +378,9 @@ protected:
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
-        SPDLOG_LOGGER_CATCH(msg)
+		// TODO: This isn't working yet.
+		SPDLOG_LOGGER_CATCH("")
+        //SPDLOG_LOGGER_CATCH(msg)
     }
 
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
