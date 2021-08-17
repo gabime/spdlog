@@ -23,7 +23,7 @@ namespace spdlog {
 namespace sinks {
 template <typename Mutex> class qt_sink : public base_sink<Mutex> {
 public:
-  qt_sink(QObject *qt_object = nullptr, const std::string &meta_method = "") {
+  qt_sink(QObject *qt_object, const std::string &meta_method) {
       qt_object_ = qt_object;
       meta_method_ = meta_method;
   }
