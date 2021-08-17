@@ -46,7 +46,7 @@
             throw;                                                                                                                         \
         }
 #else
-#    define SPDLOG_LOGGER_CATCH(additional_info)
+#    define SPDLOG_LOGGER_CATCH(location)
 #endif
 
 namespace spdlog {
