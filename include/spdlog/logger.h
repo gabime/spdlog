@@ -33,14 +33,7 @@
         {                                                                                                                                  \
             if(location.filename)                                                                                                          \
             {                                                                                                                              \
-                try                                                                                                                        \
-                {                                                                                                                          \
-                    err_handler_(fmt::format("{} [{}({})]", ex.what(), location.filename, location.line));                                \
-                }                                                                                                                          \
-                catch (const std::exception &ex)                                                                                           \
-                {                                                                                                                          \
-                    err_handler_(ex.what());                                                                                               \
-                }                                                                                                                          \
+                err_handler_(fmt::format("{} [{}({})]", ex.what(), location.filename, location.line));                                     \
             }                                                                                                                              \
             else                                                                                                                           \
             {                                                                                                                              \
