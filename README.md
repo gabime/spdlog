@@ -22,6 +22,7 @@ $ cmake .. && make -j
  * Android
 
 ## Package managers:
+* Debian: `sudo apt install libspdlog-dev`
 * Homebrew: `brew install spdlog`
 * MacPorts: `sudo port install spdlog`
 * FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
@@ -32,8 +33,6 @@ $ cmake .. && make -j
 * conan: `spdlog/[>=1.4.1]`
 * conda: `conda install -c conda-forge spdlog`
 * build2: ```depends: spdlog ^1.8.2```
-* Debian: `sudo apt install libspdlog-dev`
-
 
 
 ## Features
