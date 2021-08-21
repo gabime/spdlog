@@ -1876,12 +1876,20 @@ template <typename Char> struct fill_t {
   unsigned char size_ = 1;
 
  public:
+// GCC's effective C++ warning mis-identifies this as an assignment
+// operator, and therefore recommends returning a reference to *this.
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Weffc++"
   FMT_CONSTEXPR void operator=(basic_string_view<Char> s) {
     auto size = s.size();
-    if (size > max_size) return throw_format_error("invalid fill");
+    if (size > max_size) {
+        throw_format_error("invalid fill");
+        return;
+    }
     for (size_t i = 0; i < size; ++i) data_[i] = s[i];
     size_ = static_cast<unsigned char>(size);
   }
+#pragma GCC diagnostic pop
 
   constexpr auto size() const -> size_t { return size_; }
   constexpr auto data() const -> const Char* { return data_; }
