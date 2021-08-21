@@ -80,11 +80,11 @@ public:
     const string_view_t bold_on_red = "\033[1m\033[41m";
 
 private:
-    FILE *target_file_;
-    mutex_t &mutex_;
-    bool should_do_colors_;
+    FILE *target_file_{nullptr};
+    mutex_t &mutex_{};
+    bool should_do_colors_{false};
     std::unique_ptr<spdlog::formatter> formatter_;
-    std::array<std::string, level::n_levels> colors_;
+    std::array<std::string, level::n_levels> colors_{};
     void print_ccode_(const string_view_t &color_code);
     void print_range_(const memory_buf_t &formatted, size_t start, size_t end);
     static std::string to_string_(const string_view_t &sv);

@@ -28,7 +28,7 @@ namespace spdlog {
 class stopwatch
 {
     using clock = std::chrono::steady_clock;
-    std::chrono::time_point<clock> start_tp_;
+    std::chrono::time_point<clock> start_tp_{};
 
 public:
     stopwatch()

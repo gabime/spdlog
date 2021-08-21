@@ -58,8 +58,8 @@ protected:
     void backend_flush_();
 
 private:
-    std::weak_ptr<details::thread_pool> thread_pool_;
-    async_overflow_policy overflow_policy_;
+    std::weak_ptr<details::thread_pool> thread_pool_{};
+    async_overflow_policy overflow_policy_{};
 };
 } // namespace spdlog
 

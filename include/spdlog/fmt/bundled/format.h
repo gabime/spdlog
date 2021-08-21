@@ -623,10 +623,10 @@ template <typename T, size_t SIZE = inline_buffer_size,
           typename Allocator = std::allocator<T>>
 class basic_memory_buffer final : public detail::buffer<T> {
  private:
-  T store_[SIZE];
+  T store_[SIZE]{};
 
   // Don't inherit from Allocator avoid generating type_info for it.
-  Allocator alloc_;
+  Allocator alloc_{};
 
   // Deallocate memory allocated by the buffer.
   void deallocate() {
@@ -2275,8 +2275,8 @@ class format_int {
   // Buffer should be large enough to hold all digits (digits10 + 1),
   // a sign and a null character.
   enum { buffer_size = std::numeric_limits<unsigned long long>::digits10 + 3 };
-  mutable char buffer_[buffer_size];
-  char* str_;
+  mutable char buffer_[buffer_size]{};
+  char* str_{nullptr};
 
   template <typename UInt> auto format_unsigned(UInt value) -> char* {
     auto n = static_cast<detail::uint32_or_64_or_128_t<UInt>>(value);
@@ -2401,8 +2401,8 @@ struct formatter<Char[N], Char> : formatter<basic_string_view<Char>, Char> {
 //   };
 template <typename Char = char> class dynamic_formatter {
  private:
-  detail::dynamic_format_specs<Char> specs_;
-  const Char* format_str_;
+  detail::dynamic_format_specs<Char> specs_{};
+  const Char* format_str_{nullptr};
 
   struct null_handler : detail::error_handler {
     void on_align(align_t) {}
@@ -2461,7 +2461,7 @@ template <typename T> auto ptr(const std::shared_ptr<T>& p) -> const void* {
 
 class bytes {
  private:
-  string_view data_;
+  string_view data_{};
   friend struct formatter<bytes>;
 
  public:
@@ -2470,7 +2470,7 @@ class bytes {
 
 template <> struct formatter<bytes> {
  private:
-  detail::dynamic_format_specs<char> specs_;
+  detail::dynamic_format_specs<char> specs_{};
 
  public:
   template <typename ParseContext>

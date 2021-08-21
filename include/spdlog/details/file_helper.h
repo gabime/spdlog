@@ -49,7 +49,7 @@ private:
     const int open_tries_ = 5;
     const unsigned int open_interval_ = 10;
     std::FILE *fd_{nullptr};
-    filename_t filename_;
+    filename_t filename_{};
 };
 } // namespace details
 } // namespace spdlog

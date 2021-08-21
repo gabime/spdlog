@@ -435,8 +435,8 @@ FMT_END_DETAIL_NAMESPACE
  */
 template <typename Char> class basic_string_view {
  private:
-  const Char* data_;
-  size_t size_;
+  const Char* data_{nullptr};
+  size_t size_{0};
 
  public:
   using value_type = Char;
@@ -619,8 +619,8 @@ template <typename S> using char_t = typename detail::char_t_impl<S>::type;
 template <typename Char, typename ErrorHandler = detail::error_handler>
 class basic_format_parse_context : private ErrorHandler {
  private:
-  basic_string_view<Char> format_str_;
-  int next_arg_id_;
+  basic_string_view<Char> format_str_{};
+  int next_arg_id_{0};
 
  public:
   using char_type = Char;
@@ -748,9 +748,9 @@ FMT_CONSTEXPR auto copy_str(const Char* begin, const Char* end, Char* out)
  */
 template <typename T> class buffer {
  private:
-  T* ptr_;
-  size_t size_;
-  size_t capacity_;
+  T* ptr_{nullptr};
+  size_t size_{0};
+  size_t capacity_{0};
 
  protected:
   // Don't initialize ptr_ since it is not accessed to save a few cycles.
@@ -840,7 +840,7 @@ struct buffer_traits {
 class fixed_buffer_traits {
  private:
   size_t count_ = 0;
-  size_t limit_;
+  size_t limit_ = 0;
 
  public:
   explicit fixed_buffer_traits(size_t limit) : limit_(limit) {}
@@ -856,9 +856,9 @@ class fixed_buffer_traits {
 template <typename OutputIt, typename T, typename Traits = buffer_traits>
 class iterator_buffer final : public Traits, public buffer<T> {
  private:
-  OutputIt out_;
+  OutputIt out_ = {};
   enum { buffer_size = 256 };
-  T data_[buffer_size];
+  T data_[buffer_size] = {};
 
  protected:
   void grow(size_t) final FMT_OVERRIDE {
@@ -924,7 +924,7 @@ class iterator_buffer<std::back_insert_iterator<Container>,
 template <typename T = char> class counting_buffer final : public buffer<T> {
  private:
   enum { buffer_size = 256 };
-  T data_[buffer_size];
+  T data_[buffer_size]{};
   size_t count_ = 0;
 
  protected:
@@ -1385,8 +1385,8 @@ class appender : public std::back_insert_iterator<detail::buffer<char>> {
 // allow storage in basic_memory_buffer.
 template <typename Context> class basic_format_arg {
  private:
-  detail::value<Context> value_;
-  detail::type type_;
+  detail::value<Context> value_ = {};
+  detail::type type_ = {};
 
   template <typename ContextType, typename T>
   friend FMT_CONSTEXPR auto detail::make_arg(const T& value)
@@ -1419,7 +1419,7 @@ template <typename Context> class basic_format_arg {
     }
 
    private:
-    detail::custom_value<Context> custom_;
+    detail::custom_value<Context> custom_{};
   };
 
   constexpr basic_format_arg() : type_(detail::type::none_type) {}
@@ -1528,7 +1528,7 @@ struct is_contiguous_back_insert_iterator<appender> : std::true_type {};
 // A type-erased reference to an std::locale to avoid heavy <locale> include.
 class locale_ref {
  private:
-  const void* locale_;  // A type-erased pointer to std::locale.
+  const void* locale_{nullptr};  // A type-erased pointer to std::locale.
 
  public:
   constexpr locale_ref() : locale_(nullptr) {}
@@ -1585,9 +1585,9 @@ template <typename OutputIt, typename Char> class basic_format_context {
   using char_type = Char;
 
  private:
-  OutputIt out_;
-  basic_format_args<basic_format_context> args_;
-  detail::locale_ref loc_;
+  OutputIt out_{};
+  basic_format_args<basic_format_context> args_{};
+  detail::locale_ref loc_{};
 
  public:
   using iterator = OutputIt;
@@ -1747,7 +1747,7 @@ template <typename Context> class basic_format_args {
   // If the number of arguments is less or equal to max_packed_args then
   // argument types are passed in the descriptor. This reduces binary code size
   // per formatting function call.
-  unsigned long long desc_;
+  unsigned long long desc_{0};
   union {
     // If is_packed() returns true then argument values are stored in values_;
     // otherwise they are stored in args_. This is done to improve cache
@@ -1876,6 +1876,7 @@ template <typename Char> struct fill_t {
   unsigned char size_ = 1;
 
  public:
+
 // GCC's effective C++ warning mis-identifies this as an assignment
 // operator, and therefore recommends returning a reference to *this.
 #pragma GCC diagnostic push
@@ -1919,7 +1920,8 @@ template <typename Char> struct basic_format_specs {
         align(align::none),
         sign(sign::none),
         alt(false),
-        localized(false) {}
+        localized(false),
+        fill() {}
 };
 
 using format_specs = basic_format_specs<char>;
@@ -1958,8 +1960,8 @@ template <typename Char> struct arg_ref {
 // different sets of arguments (precompilation of format strings).
 template <typename Char>
 struct dynamic_format_specs : basic_format_specs<Char> {
-  arg_ref<Char> width_ref;
-  arg_ref<Char> precision_ref;
+  arg_ref<Char> width_ref{};
+  arg_ref<Char> precision_ref{};
 };
 
 struct auto_id {};
@@ -2461,7 +2463,7 @@ template <typename Char, typename ErrorHandler = error_handler>
 class compile_parse_context
     : public basic_format_parse_context<Char, ErrorHandler> {
  private:
-  int num_args_;
+  int num_args_{0};
   using base = basic_format_parse_context<Char, ErrorHandler>;
 
  public:
@@ -2599,7 +2601,7 @@ FMT_CONSTEXPR void check_pointer_type_spec(Char spec, ErrorHandler&& eh) {
 // the argument type.
 template <typename Handler> class specs_checker : public Handler {
  private:
-  detail::type arg_type_;
+  detail::type arg_type_{};
 
   FMT_CONSTEXPR void require_numeric_argument() {
     if (!is_arithmetic_type(arg_type_))
@@ -2686,7 +2688,7 @@ class format_string_checker {
   // Format specifier parsing function.
   using parse_func = const Char* (*)(parse_context_type&);
 
-  parse_context_type context_;
+  parse_context_type context_{};
   parse_func parse_funcs_[num_args > 0 ? num_args : 1];
 
  public:
@@ -2757,7 +2759,7 @@ struct formatter<T, Char,
                  enable_if_t<detail::type_constant<T, Char>::value !=
                              detail::type::custom_type>> {
  private:
-  detail::dynamic_format_specs<Char> specs_;
+  detail::dynamic_format_specs<Char> specs_{};
 
  public:
   // Parses format specifiers stopping either at the end of the range or at the
@@ -2834,7 +2836,7 @@ template <typename Char> struct basic_runtime { basic_string_view<Char> str; };
 
 template <typename Char, typename... Args> class basic_format_string {
  private:
-  basic_string_view<Char> str_;
+  basic_string_view<Char> str_{};
 
  public:
   template <typename S,

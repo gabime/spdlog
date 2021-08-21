@@ -16,7 +16,7 @@ class circular_q
     typename std::vector<T>::size_type head_ = 0;
     typename std::vector<T>::size_type tail_ = 0;
     size_t overrun_counter_ = 0;
-    std::vector<T> v_;
+    std::vector<T> v_{};
 
 public:
     using value_type = T;

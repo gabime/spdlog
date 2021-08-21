@@ -181,8 +181,8 @@ class fp {
                                            sizeof(Float) == sizeof(uint32_t)>;
 
  public:
-  significand_type f;
-  int e;
+  significand_type f{0};
+  int e{0};
 
   // All sizes are in bits.
   // Subtract 1 to account for an implicit most significant bit in the
@@ -367,8 +367,8 @@ class bigint {
   using bigit = uint32_t;
   using double_bigit = uint64_t;
   enum { bigits_capacity = 32 };
-  basic_memory_buffer<bigit, bigits_capacity> bigits_;
-  int exp_;
+  basic_memory_buffer<bigit, bigits_capacity> bigits_{};
+  int exp_{0};
 
   bigit operator[](int index) const { return bigits_[to_unsigned(index)]; }
   bigit& operator[](int index) { return bigits_[to_unsigned(index)]; }
@@ -2524,7 +2524,7 @@ template <> struct formatter<detail::bigint> {
   }
 };
 
-FMT_FUNC detail::utf8_to_utf16::utf8_to_utf16(string_view s) {
+FMT_FUNC detail::utf8_to_utf16::utf8_to_utf16(string_view s) : buffer_() {
   for_each_codepoint(s, [this](uint32_t cp, int error) {
     if (error != 0) FMT_THROW(std::runtime_error("invalid utf8"));
     if (cp <= 0xFFFF) {

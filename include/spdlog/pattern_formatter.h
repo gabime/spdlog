@@ -58,7 +58,7 @@ public:
     virtual void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) = 0;
 
 protected:
-    padding_info padinfo_;
+    padding_info padinfo_{};
 };
 
 } // namespace details
@@ -100,13 +100,13 @@ public:
     void set_pattern(std::string pattern);
 
 private:
-    std::string pattern_;
-    std::string eol_;
-    pattern_time_type pattern_time_type_;
-    std::tm cached_tm_;
-    std::chrono::seconds last_log_secs_;
-    std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
-    custom_flags custom_handlers_;
+    std::string pattern_{};
+    std::string eol_{};
+    pattern_time_type pattern_time_type_{};
+    std::tm cached_tm_ = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    std::chrono::seconds last_log_secs_{};
+    std::vector<std::unique_ptr<details::flag_formatter>> formatters_{};
+    custom_flags custom_handlers_{};
 
     std::tm get_time_(const details::log_msg &msg);
     template<typename Padder>

@@ -13,7 +13,7 @@ namespace details {
 
 class SPDLOG_API log_msg_buffer : public log_msg
 {
-    memory_buf_t buffer;
+    memory_buf_t buffer{};
     void update_string_views();
 
 public:

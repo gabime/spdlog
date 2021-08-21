@@ -99,9 +99,9 @@ public:
     size_t queue_size();
 
 private:
-    q_type q_;
+    q_type q_{0};
 
-    std::vector<std::thread> threads_;
+    std::vector<std::thread> threads_{};
 
     void post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy);
     void worker_loop_();

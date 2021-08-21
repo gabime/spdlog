@@ -88,7 +88,7 @@ private:
 
     const padding_info &padinfo_;
     memory_buf_t &dest_;
-    long remaining_pad_;
+    long remaining_pad_ {0};
     string_view_t spaces_{"                                                                ", 64};
 };
 
@@ -704,7 +704,7 @@ public:
     }
 
 private:
-    char ch_;
+    char ch_ = 0;
 };
 
 // aggregate user chars to display as is
@@ -723,7 +723,7 @@ public:
     }
 
 private:
-    std::string str_;
+    std::string str_{};
 };
 
 // mark the color range. expect it to be in the form of "%^colored text%$"
@@ -921,7 +921,7 @@ public:
     }
 
 private:
-    log_clock::time_point last_message_time_;
+    log_clock::time_point last_message_time_ = {};
 };
 
 // Full info formatter
@@ -1009,7 +1009,7 @@ public:
 
 private:
     std::chrono::seconds cache_timestamp_{0};
-    memory_buf_t cached_datetime_;
+    memory_buf_t cached_datetime_{};
 };
 
 } // namespace details

@@ -231,7 +231,7 @@ public:
     const char *what() const SPDLOG_NOEXCEPT override;
 
 private:
-    std::string msg_;
+    std::string msg_{};
 };
 
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);

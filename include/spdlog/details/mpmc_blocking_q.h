@@ -117,10 +117,10 @@ public:
     }
 
 private:
-    std::mutex queue_mutex_;
-    std::condition_variable push_cv_;
-    std::condition_variable pop_cv_;
-    spdlog::details::circular_q<T> q_;
+    std::mutex queue_mutex_{};
+    std::condition_variable push_cv_{};
+    std::condition_variable pop_cv_{};
+    spdlog::details::circular_q<T> q_{};
 };
 } // namespace details
 } // namespace spdlog
