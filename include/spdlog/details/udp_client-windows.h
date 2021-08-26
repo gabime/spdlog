@@ -82,6 +82,15 @@ public:
         addr_.sin_family = AF_INET;
         addr_.sin_port = htons(port);
         InetPton(AF_INET, TEXT(host.c_str()), &addr_.sin_addr.s_addr);
+
+        socket_ = socket(PF_INET, SOCK_DGRAM, 0);
+        if (socket_ == INVALID_SOCKET)
+        {
+            int last_error = ::WSAGetLastError();
+            WSACleanup();
+            throw_winsock_error_("error: Create Socket failed", last_error);
+            return false;
+        }
         return true;
     }
 
@@ -104,7 +113,7 @@ public:
 
     void send(const char *data, size_t n_bytes)
     {
-        if ((sendto(socket_, data, n_bytes, 0, (struct sockaddr *)&addr_, sizeof(struct sockaddr))) == -1)
+        if ((sendto(socket_, data, static_cast<int>(n_bytes), 0, (struct sockaddr *)&addr_, sizeof(struct sockaddr))) == -1)
         {
             throw_spdlog_ex("sendto(2) failed", errno);
             close();

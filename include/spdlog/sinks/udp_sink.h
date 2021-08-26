@@ -7,7 +7,7 @@
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/null_mutex.h>
 #ifdef _WIN32
-#    include <spdlog/details/udp_client_windows.h>
+#    include <spdlog/details/udp_client-windows.h>
 #else
 #    include <spdlog/details/udp_client.h>
 #endif

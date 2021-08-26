@@ -200,7 +200,7 @@ void trace_example()
 // stopwatch example
 #include "spdlog/stopwatch.h"
 #include <thread>
-#include "spdlog/sinks/udp_sink.h"
+
 void stopwatch_example()
 {
     spdlog::stopwatch sw;
@@ -208,11 +208,11 @@ void stopwatch_example()
     spdlog::info("Stopwatch: {} seconds", sw);
 }
 
+// udp sink example
+#include "spdlog/sinks/udp_sink.h"
 void udp_example()
 {
-    // using spdlog::details::make_unique;
-    //auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
-    spdlog::sinks::udp_sink_config cfg("127.0.0.1", 11091);
+    spdlog::sinks::udp_sink_config cfg("192.168.1.129", 11091);
     auto my_logger = spdlog::udp_logger_mt("udplog", cfg);
     my_logger->set_level(spdlog::level::debug);
     my_logger->info("hello world");
