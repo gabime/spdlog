@@ -200,7 +200,7 @@ void trace_example()
 // stopwatch example
 #include "spdlog/stopwatch.h"
 #include <thread>
-
+#include "spdlog/sinks/udp_sink.h"
 void stopwatch_example()
 {
     spdlog::stopwatch sw;
@@ -208,8 +208,6 @@ void stopwatch_example()
     spdlog::info("Stopwatch: {} seconds", sw);
 }
 
-// udp sink example
-#include "spdlog/sinks/udp_sink.h"
 void udp_example()
 {
     spdlog::sinks::udp_sink_config cfg("127.0.0.1", 11091);
@@ -231,15 +229,15 @@ void multi_sink_example()
 
     spdlog::logger logger("multi_sink", {console_sink, file_sink});
     logger.set_level(spdlog::level::debug);
-    logger.warn("this should 
+    logger.warn("this should appear in both console and file");
+    logger.info("this message should not appear in the console, only in the file");
+}
 
 // User defined types logging by implementing operator<<
 struct my_type
 {
     int i;
-    template<typename OStream>appear in both console and file");
-    logger.info("this message should not appear in the console, only in the file");
-}
+    template<typename OStream>
     friend OStream &operator<<(OStream &os, const my_type &c)
     {
         return os << "[my_type i=" << c.i << "]";
