@@ -25,7 +25,7 @@ $ cmake .. && make -j
 * Debian: `sudo apt install libspdlog-dev`
 * Homebrew: `brew install spdlog`
 * MacPorts: `sudo port install spdlog`
-* FreeBSD:  `cd /usr/ports/devel/spdlog/ && make install clean`
+* FreeBSD:  `pkg install spdlog`
 * Fedora: `dnf install spdlog`
 * Gentoo: `emerge dev-libs/spdlog`
 * Arch Linux: `pacman -S spdlog`
