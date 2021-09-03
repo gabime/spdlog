@@ -214,13 +214,7 @@ void udp_example()
     spdlog::sinks::udp_sink_config cfg("127.0.0.1", 11091);
     auto my_logger = spdlog::udp_logger_mt("udplog", cfg);
     my_logger->set_level(spdlog::level::debug);
-    for (int i = 0; i < 10; i++) {
-        my_logger->info("hello world {}", i);
-#ifdef _WIN32
-        // sendto() on winsock will drop packets if sent too quickly
-        std::this_thread::sleep_for(std::chrono::milliseconds(40));
-#endif
-    }
+    my_logger->info("hello world");
 }
 
 // A logger with multiple sinks (stdout and file) - each with a different format and log level.

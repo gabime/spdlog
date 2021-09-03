@@ -17,12 +17,8 @@
 #include <chrono>
 #include <functional>
 
-#pragma once
-
 // Simple udp client sink
-// Connects to remote address and send the formatted log.
-// Will attempt to reconnect if connection drops.
-// If more complicated behaviour is needed (i.e get responses), you can inherit it and override the sink_it_ method.
+// Sends formatted log via udp
 
 namespace spdlog {
 namespace sinks {
@@ -42,7 +38,6 @@ template<typename Mutex>
 class udp_sink : public spdlog::sinks::base_sink<Mutex>
 {
 public:
-    // connect to tcp host/port or throw if failed
     // host can be hostname or ip address
 
     explicit udp_sink(udp_sink_config sink_config)

@@ -3,6 +3,7 @@
 
 #pragma once
 
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 // tcp client helper
 #include <spdlog/common.h>
@@ -125,4 +126,5 @@ public:
 } // namespace details
 } // namespace spdlog
 
-#endif
+#endif  // _WIN32
+#endif  // WIN32_LEAN_AND_MEAN
