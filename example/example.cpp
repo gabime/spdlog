@@ -5,6 +5,7 @@
 // spdlog usage example
 
 #include <cstdio>
+#include <chrono>
 
 void load_levels_example();
 void stdout_logger_example();
@@ -19,8 +20,8 @@ void multi_sink_example();
 void user_defined_example();
 void err_handler_example();
 void syslog_example();
-void custom_flags_example();
 void udp_example();
+void custom_flags_example();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
@@ -75,8 +76,8 @@ int main(int, char *[])
         err_handler_example();
         trace_example();
         stopwatch_example();
-        custom_flags_example();
         udp_example();
+        custom_flags_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -208,13 +209,19 @@ void stopwatch_example()
     spdlog::info("Stopwatch: {} seconds", sw);
 }
 
+using namespace std::chrono_literals;
 void udp_example()
 {
     spdlog::sinks::udp_sink_config cfg("127.0.0.1", 11091);
     auto my_logger = spdlog::udp_logger_mt("udplog", cfg);
     my_logger->set_level(spdlog::level::debug);
-    my_logger->info("hello world");
-    my_logger->info("are you ok");
+    for (int i = 0; i < 10; i++) {
+        my_logger->info("hello world {}", i);
+#ifndef _WIN32
+        // sendto() on winsock will drop packets if sent too quickly
+        std::this_thread::sleep_for(40ms);
+#endif
+    }
 }
 
 // A logger with multiple sinks (stdout and file) - each with a different format and log level.
