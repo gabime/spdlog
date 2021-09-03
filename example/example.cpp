@@ -209,7 +209,6 @@ void stopwatch_example()
     spdlog::info("Stopwatch: {} seconds", sw);
 }
 
-using namespace std::chrono_literals;
 void udp_example()
 {
     spdlog::sinks::udp_sink_config cfg("127.0.0.1", 11091);
@@ -217,9 +216,9 @@ void udp_example()
     my_logger->set_level(spdlog::level::debug);
     for (int i = 0; i < 10; i++) {
         my_logger->info("hello world {}", i);
-#ifndef _WIN32
+#ifdef _WIN32
         // sendto() on winsock will drop packets if sent too quickly
-        std::this_thread::sleep_for(40ms);
+        std::this_thread::sleep_for(std::chrono::milliseconds(40));
 #endif
     }
 }
