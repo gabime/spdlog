@@ -46,10 +46,11 @@ class hourly_file_sink final : public base_sink<Mutex>
 {
 public:
     // create hourly file sink which rotates on given time
-    hourly_file_sink(filename_t base_filename, bool truncate = false, uint16_t max_files = 0)
+    hourly_file_sink(filename_t base_filename, bool truncate = false, uint16_t max_files = 0, rotate_file_callback cb = nullptr)
         : base_filename_(std::move(base_filename))
         , truncate_(truncate)
         , max_files_(max_files)
+        , rotate_cb(cb)
         , filenames_q_()
     {
         auto now = log_clock::now();
@@ -77,6 +78,9 @@ protected:
         if (should_rotate)
         {
             auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(time));
+            if (rotate_cb) {
+                rotate_cb(file_helper_.filename(), filename);
+            }
             file_helper_.open(filename, truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
@@ -163,6 +167,7 @@ private:
     }
 
     filename_t base_filename_;
+    rotate_file_callback rotate_cb;
     log_clock::time_point rotation_tp_;
     details::file_helper file_helper_;
     bool truncate_;
