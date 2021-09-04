@@ -26,6 +26,7 @@ namespace spdlog {
 namespace details {
 class udp_client
 {
+    const int TX_BUFFER_SIZE = 10240;
     SOCKET socket_ = INVALID_SOCKET;
     sockaddr_in addr_ = { 0 };
 
@@ -92,8 +93,16 @@ public:
             int last_error = ::WSAGetLastError();
             WSACleanup();
             throw_winsock_error_("error: Create Socket failed", last_error);
-            return false;
         }
+
+        int option_value = TX_BUFFER_SIZE;
+        if (setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, (char*)&option_value, sizeof(option_value)) < 0)
+        {
+            int last_error = ::WSAGetLastError();
+            close();
+            throw_winsock_error_("error: setsockopt(SO_SNDBUF) Failed!", last_error);
+        }
+
         return true;
     }
 
@@ -119,8 +128,8 @@ public:
         socklen_t tolen = sizeof(struct sockaddr);
         if (sendto(socket_, data, static_cast<int>(n_bytes), 0, (struct sockaddr *)&addr_, tolen) == -1)
         {
-            throw_spdlog_ex("sendto(2) failed", errno);
             close();
+            throw_spdlog_ex("sendto(2) failed", errno);
         }
     }
 };

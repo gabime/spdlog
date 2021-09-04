@@ -21,8 +21,10 @@
 
 namespace spdlog {
 namespace details {
+
 class udp_client
 {
+    const int TX_BUFFER_SIZE = 10240;
     int socket_ = -1;
     struct sockaddr_in sockAddr_;
 public:
@@ -33,7 +35,13 @@ public:
         if (socket_ < 0)
         {
             throw_spdlog_ex("error: Create Socket Failed!");
-            return false;
+        }
+
+        int option_value = TX_BUFFER_SIZE;
+        if (setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, (char*)&option_value, sizeof(option_value)) < 0)
+        {
+            close();
+            throw_spdlog_ex("error: setsockopt(SO_SNDBUF) Failed!");
         }
 
         sockAddr_.sin_family = AF_INET;
@@ -76,8 +84,8 @@ public:
         socklen_t tolen = sizeof(struct sockaddr);
         if (( toslen = sendto(socket_, data, n_bytes, 0, (struct sockaddr *)&sockAddr_, tolen)) == -1)
         {
-            throw_spdlog_ex("sendto(2) failed", errno);
             close();
+            throw_spdlog_ex("sendto(2) failed", errno);
         }
     }
 };

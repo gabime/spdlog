@@ -43,7 +43,7 @@ public:
     explicit udp_sink(udp_sink_config sink_config)
         : config_{std::move(sink_config)}
     {
-
+        client_.init(config_.server_host, config_.server_port);
     }
 
     ~udp_sink() override = default;
