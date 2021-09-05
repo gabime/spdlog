@@ -3,11 +3,13 @@
 
 #pragma once
 
+// Helper RAII over unix udp client socket.
+// Will throw on construction if the socket creation failed.
+
 #ifdef _WIN32
-#error include udp_client-windows.h instead
+#    error "include udp_client-windows.h instead"
 #endif
 
-// udp client helper
 #include <spdlog/common.h>
 #include <spdlog/details/os.h>
 
@@ -24,35 +26,12 @@ namespace details {
 
 class udp_client
 {
-    const int TX_BUFFER_SIZE = 10240;
+    static constexpr int TX_BUFFER_SIZE = 1024 * 10;
     int socket_ = -1;
     struct sockaddr_in sockAddr_;
-public:
 
-    bool init(const std::string &host, uint16_t port)
-    {
-        socket_ = socket(PF_INET, SOCK_DGRAM, 0);
-        if (socket_ < 0)
-        {
-            throw_spdlog_ex("error: Create Socket Failed!");
-        }
-
-        int option_value = TX_BUFFER_SIZE;
-        if (setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, (char*)&option_value, sizeof(option_value)) < 0)
-        {
-            close();
-            throw_spdlog_ex("error: setsockopt(SO_SNDBUF) Failed!");
-        }
-
-        sockAddr_.sin_family = AF_INET;
-        sockAddr_.sin_port = htons(port);
-        inet_aton(host.c_str(), &sockAddr_.sin_addr);
-
-        memset(sockAddr_.sin_zero, 0x00, sizeof(sockAddr_.sin_zero));
-        return true;
-    }
-
-    void close()
+    
+    void cleanup_()
     {
         if (socket_ != -1)
         {
@@ -61,14 +40,37 @@ public:
         }
     }
 
-    int fd() const
+public:
+    udp_client(const std::string &host, uint16_t port)
     {
-        return socket_;
+        socket_ = ::socket(PF_INET, SOCK_DGRAM, 0);
+        if (socket_ < 0)
+        {
+            throw_spdlog_ex("error: Create Socket Failed!");
+        }
+
+        int option_value = TX_BUFFER_SIZE;
+        if (::setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, reinterpret_cast<const char *>(&option_value), sizeof(option_value)) < 0)
+        {
+            cleanup_();
+            throw_spdlog_ex("error: setsockopt(SO_SNDBUF) Failed!");
+        }
+
+        sockAddr_.sin_family = AF_INET;
+        sockAddr_.sin_port = htons(port);
+        ::inet_aton(host.c_str(), &sockAddr_.sin_addr);
+
+        ::memset(sockAddr_.sin_zero, 0x00, sizeof(sockAddr_.sin_zero));
     }
 
     ~udp_client()
     {
-        close();
+        cleanup_();
+    }
+
+    int fd() const
+    {
+        return socket_;
     }
 
     // Send exactly n_bytes of the given data.
@@ -77,9 +79,8 @@ public:
     {
         ssize_t toslen = 0;
         socklen_t tolen = sizeof(struct sockaddr);
-        if (( toslen = sendto(socket_, data, n_bytes, 0, (struct sockaddr *)&sockAddr_, tolen)) == -1)
-        {
-            close();
+        if ((toslen = ::sendto(socket_, data, n_bytes, 0, (struct sockaddr *)&sockAddr_, tolen)) == -1)
+        {            
             throw_spdlog_ex("sendto(2) failed", errno);
         }
     }
