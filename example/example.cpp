@@ -201,7 +201,6 @@ void trace_example()
 // stopwatch example
 #include "spdlog/stopwatch.h"
 #include <thread>
-#include "spdlog/sinks/udp_sink.h"
 void stopwatch_example()
 {
     spdlog::stopwatch sw;
@@ -209,6 +208,7 @@ void stopwatch_example()
     spdlog::info("Stopwatch: {} seconds", sw);
 }
 
+#include "spdlog/sinks/udp_sink.h"
 void udp_example()
 {
     spdlog::sinks::udp_sink_config cfg("127.0.0.1", 11091);
