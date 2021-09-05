@@ -24,21 +24,7 @@ namespace details {
 class tcp_client
 {
     SOCKET socket_ = INVALID_SOCKET;
-
-    static bool winsock_initialized_()
-    {
-        SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-        if (s == INVALID_SOCKET)
-        {
-            return false;
-        }
-        else
-        {
-            closesocket(s);
-            return true;
-        }
-    }
-
+   
     static void init_winsock_()
     {
         WSADATA wsaData;
@@ -59,6 +45,18 @@ class tcp_client
     }
 
 public:
+    tcp_client()
+    {
+        init_winsock_();
+    }
+
+    ~tcp_client()
+    {
+        close();
+        ::WSACleanup();
+    }
+    
+
     bool is_connected() const
     {
         return socket_ != INVALID_SOCKET;
@@ -67,8 +65,7 @@ public:
     void close()
     {
         ::closesocket(socket_);
-        socket_ = INVALID_SOCKET;
-        WSACleanup();
+        socket_ = INVALID_SOCKET;        
     }
 
     SOCKET fd() const
@@ -76,20 +73,10 @@ public:
         return socket_;
     }
 
-    ~tcp_client()
-    {
-        close();
-    }
-
+    
     // try to connect or throw on failure
     void connect(const std::string &host, int port)
-    {
-        // initialize winsock if needed
-        if (!winsock_initialized_())
-        {
-            init_winsock_();
-        }
-
+    {        
         if (is_connected())
         {
             close();
