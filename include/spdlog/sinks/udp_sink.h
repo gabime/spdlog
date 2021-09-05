@@ -39,7 +39,6 @@ class udp_sink : public spdlog::sinks::base_sink<Mutex>
 {
 public:
     // host can be hostname or ip address
-
     explicit udp_sink(udp_sink_config sink_config)
         : client_{sink_config.server_host, sink_config.server_port}
     {}
