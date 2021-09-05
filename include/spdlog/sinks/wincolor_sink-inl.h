@@ -3,9 +3,6 @@
 
 #pragma once
 
-// Helper RAII over winsock udp client socket.
-// Will throw on construction if socket creation failed.
-
 #ifndef SPDLOG_HEADER_ONLY
 #    include <spdlog/sinks/wincolor_sink.h>
 #endif
