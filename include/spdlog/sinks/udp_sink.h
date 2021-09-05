@@ -53,10 +53,6 @@ protected:
     {
         spdlog::memory_buf_t formatted;
         spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
-        if (!client_.is_init())
-        {
-            client_.init(config_.server_host, config_.server_port);
-        }
         client_.send(formatted.data(), formatted.size());
     }
 

@@ -77,11 +77,6 @@ public:
             init_winsock_();
         }
 
-        if (is_init())
-        {
-            close();
-        }
-
         addr_.sin_family = PF_INET;
         addr_.sin_port = htons(port);
         addr_.sin_addr.s_addr = INADDR_ANY;
@@ -108,7 +103,10 @@ public:
 
     void close()
     {
-        ::closesocket(socket_);
+        if (socket_ != -1)
+        {
+            ::closesocket(socket_);
+        }
         socket_ = INVALID_SOCKET;
         WSACleanup();
     }

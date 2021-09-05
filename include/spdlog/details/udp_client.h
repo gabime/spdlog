@@ -52,14 +52,9 @@ public:
         return true;
     }
 
-    bool is_init() const
-    {
-        return socket_ != -1;
-    }
-
     void close()
     {
-        if (is_init())
+        if (socket_ != -1)
         {
             ::close(socket_);
             socket_ = -1;
