@@ -41,10 +41,8 @@ public:
     // host can be hostname or ip address
 
     explicit udp_sink(udp_sink_config sink_config)
-        : config_{std::move(sink_config)}
-    {
-        client_.init(config_.server_host, config_.server_port);
-    }
+        : client_{sink_config.server_host, sink_config.server_port}
+    {}
 
     ~udp_sink() override = default;
 
@@ -56,8 +54,7 @@ protected:
         client_.send(formatted.data(), formatted.size());
     }
 
-    void flush_() override {}
-    udp_sink_config config_;
+    void flush_() override {}    
     details::udp_client client_;
 };
 
