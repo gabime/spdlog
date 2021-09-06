@@ -20,14 +20,14 @@ private:
 public:
     explicit tcp_syslog_client_sink(tcp_sink_config &&sink_config, syslog_facility_t syslog_facility) 
         : spdlog::sinks::tcp_sink<Mutex>{std::move(sink_config)}
-        , syslog_levels_{
+        , syslog_levels_{{
               /* spdlog::level::trace    */ spdlog::details::syslog_consts::SL_DEBUG,
               /* spdlog::level::debug    */ spdlog::details::syslog_consts::SL_DEBUG,
               /* spdlog::level::info     */ spdlog::details::syslog_consts::SL_INFO,
               /* spdlog::level::warn     */ spdlog::details::syslog_consts::SL_WARNING,
               /* spdlog::level::err      */ spdlog::details::syslog_consts::SL_ERR,
               /* spdlog::level::critical */ spdlog::details::syslog_consts::SL_CRIT,
-              /* spdlog::level::off      */ spdlog::details::syslog_consts::SL_INFO}
+              /* spdlog::level::off      */ spdlog::details::syslog_consts::SL_INFO}}
         , syslog_facility_{syslog_facility}
         {
 
