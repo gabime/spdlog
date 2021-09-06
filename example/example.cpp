@@ -20,6 +20,7 @@ void user_defined_example();
 void err_handler_example();
 void syslog_example();
 void custom_flags_example();
+void tcp_syslog_client_example();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
@@ -291,4 +292,11 @@ void custom_flags_example()
     auto formatter = make_unique<spdlog::pattern_formatter>();
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     spdlog::set_formatter(std::move(formatter));
+}
+
+#include "spdlog/sinks/syslog_client_sinks.h"
+void tcp_syslog_client_example()
+{
+    auto syslog_logger = spdlog::tcp_syslog_client_logger_mt("syslog_client", {"127.0.0.1", 514});
+    syslog_logger->warn("This message will be sended to syslog server");
 }
