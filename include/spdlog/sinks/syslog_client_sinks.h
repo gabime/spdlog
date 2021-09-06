@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include <spdlog/details/fmt_helper.h>
 #include <spdlog/details/syslog_consts.h>
 #include <spdlog/sinks/tcp_sink.h>
 
