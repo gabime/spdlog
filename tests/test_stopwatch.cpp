@@ -25,7 +25,7 @@ TEST_CASE("stopwatch2", "[stopwatch]")
 
     spdlog::stopwatch sw;
     spdlog::logger logger("test-stopwatch", test_sink);
-    logger.set_pattern("%v");
+    logger.set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
     std::this_thread::sleep_for(wait_duration);
     logger.info("{}", sw);
     auto val = std::stod(test_sink->lines()[0]);

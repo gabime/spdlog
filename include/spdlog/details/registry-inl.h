@@ -10,7 +10,7 @@
 #include <spdlog/common.h>
 #include <spdlog/details/periodic_worker.h>
 #include <spdlog/logger.h>
-#include <spdlog/pattern_formatter.h>
+#include <spdlog/default_formatter.h>
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
 // support for the default stdout color logger

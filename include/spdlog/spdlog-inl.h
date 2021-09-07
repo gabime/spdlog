@@ -27,11 +27,6 @@ SPDLOG_INLINE void set_formatter(std::unique_ptr<spdlog::formatter> formatter)
     details::registry::instance().set_formatter(std::move(formatter));
 }
 
-SPDLOG_INLINE void set_pattern(std::string pattern, pattern_time_type time_type)
-{
-    set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
-}
-
 SPDLOG_INLINE void enable_backtrace(size_t n_messages)
 {
     details::registry::instance().enable_backtrace(n_messages);

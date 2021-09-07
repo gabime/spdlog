@@ -263,7 +263,7 @@ TEST_CASE("padding_funcname", "[pattern_formatter]")
 
 TEST_CASE("clone-default-formatter", "[pattern_formatter]")
 {
-    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>();
+    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("%v");
     auto formatter_2 = formatter_1->clone();
     std::string logger_name = "test";
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "some message");
@@ -351,7 +351,7 @@ public:
 // test clone with custom flag formatters
 TEST_CASE("clone-custom_formatter", "[pattern_formatter]")
 {
-    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>();
+    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("");
     formatter_1->add_flag<custom_test_flag>('t', "custom_output").set_pattern("[%n] [%t] %v");
     auto formatter_2 = formatter_1->clone();
     std::string logger_name = "logger-name";
@@ -423,7 +423,7 @@ TEST_CASE("full filename formatter", "[pattern_formatter]")
 
 TEST_CASE("custom flags", "[pattern_formatter]")
 {
-    auto formatter = std::make_shared<spdlog::pattern_formatter>();
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("");
     formatter->add_flag<custom_test_flag>('t', "custom1").add_flag<custom_test_flag>('u', "custom2").set_pattern("[%n] [%t] [%u] %v");
 
     memory_buf_t formatted;
@@ -436,7 +436,7 @@ TEST_CASE("custom flags", "[pattern_formatter]")
 
 TEST_CASE("custom flags-padding", "[pattern_formatter]")
 {
-    auto formatter = std::make_shared<spdlog::pattern_formatter>();
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("");
     formatter->add_flag<custom_test_flag>('t', "custom1").add_flag<custom_test_flag>('u', "custom2").set_pattern("[%n] [%t] [%5u] %v");
 
     memory_buf_t formatted;
@@ -449,7 +449,7 @@ TEST_CASE("custom flags-padding", "[pattern_formatter]")
 
 TEST_CASE("custom flags-exception", "[pattern_formatter]")
 {
-    auto formatter = std::make_shared<spdlog::pattern_formatter>();
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("");
     formatter->add_flag<custom_test_flag>('t', "throw_me").add_flag<custom_test_flag>('u', "custom2").set_pattern("[%n] [%t] [%u] %v");
 
     memory_buf_t formatted;

@@ -52,11 +52,8 @@ SPDLOG_API void initialize_logger(std::shared_ptr<logger> logger);
 SPDLOG_API std::shared_ptr<logger> get(const std::string &name);
 
 // Set global formatter. Each sink in each logger will get a clone of this object
+// example: spdlog::set_formatter(std::make_unique<spdlog::pattern_formatter>("%Y-%m-%d %H:%M:%S.%e %l : %v"));
 SPDLOG_API void set_formatter(std::unique_ptr<spdlog::formatter> formatter);
-
-// Set global format string.
-// example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
-SPDLOG_API void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
 // enable global backtrace support
 SPDLOG_API void enable_backtrace(size_t n_messages);

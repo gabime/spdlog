@@ -924,93 +924,6 @@ private:
     log_clock::time_point last_message_time_;
 };
 
-// Full info formatter
-// pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] [%s:%#] %v
-class full_formatter final : public flag_formatter
-{
-public:
-    explicit full_formatter(padding_info padinfo)
-        : flag_formatter(padinfo)
-    {}
-
-    void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) override
-    {
-        using std::chrono::duration_cast;
-        using std::chrono::milliseconds;
-        using std::chrono::seconds;
-
-        // cache the date/time part for the next second.
-        auto duration = msg.time.time_since_epoch();
-        auto secs = duration_cast<seconds>(duration);
-
-        if (cache_timestamp_ != secs || cached_datetime_.size() == 0)
-        {
-            cached_datetime_.clear();
-            cached_datetime_.push_back('[');
-            fmt_helper::append_int(tm_time.tm_year + 1900, cached_datetime_);
-            cached_datetime_.push_back('-');
-
-            fmt_helper::pad2(tm_time.tm_mon + 1, cached_datetime_);
-            cached_datetime_.push_back('-');
-
-            fmt_helper::pad2(tm_time.tm_mday, cached_datetime_);
-            cached_datetime_.push_back(' ');
-
-            fmt_helper::pad2(tm_time.tm_hour, cached_datetime_);
-            cached_datetime_.push_back(':');
-
-            fmt_helper::pad2(tm_time.tm_min, cached_datetime_);
-            cached_datetime_.push_back(':');
-
-            fmt_helper::pad2(tm_time.tm_sec, cached_datetime_);
-            cached_datetime_.push_back('.');
-
-            cache_timestamp_ = secs;
-        }
-        dest.append(cached_datetime_.begin(), cached_datetime_.end());
-
-        auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
-        fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
-        dest.push_back(']');
-        dest.push_back(' ');
-
-        // append logger name if exists
-        if (msg.logger_name.size() > 0)
-        {
-            dest.push_back('[');
-            fmt_helper::append_string_view(msg.logger_name, dest);
-            dest.push_back(']');
-            dest.push_back(' ');
-        }
-
-        dest.push_back('[');
-        // wrap the level name with color
-        msg.color_range_start = dest.size();
-        // fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
-        fmt_helper::append_string_view(level::to_string_view(msg.level), dest);
-        msg.color_range_end = dest.size();
-        dest.push_back(']');
-        dest.push_back(' ');
-
-        // add source location if present
-        if (!msg.source.empty())
-        {
-            dest.push_back('[');
-            const char *filename = details::short_filename_formatter<details::null_scoped_padder>::basename(msg.source.filename);
-            fmt_helper::append_string_view(filename, dest);
-            dest.push_back(':');
-            fmt_helper::append_int(msg.source.line, dest);
-            dest.push_back(']');
-            dest.push_back(' ');
-        }
-        // fmt_helper::append_string_view(msg.msg(), dest);
-        fmt_helper::append_string_view(msg.payload, dest);
-    }
-
-private:
-    std::chrono::seconds cache_timestamp_{0};
-    memory_buf_t cached_datetime_;
-};
 
 } // namespace details
 
@@ -1024,17 +937,6 @@ SPDLOG_INLINE pattern_formatter::pattern_formatter(
 {
     std::memset(&cached_tm_, 0, sizeof(cached_tm_));
     compile_pattern_(pattern_);
-}
-
-// use by default full formatter for if pattern is not given
-SPDLOG_INLINE pattern_formatter::pattern_formatter(pattern_time_type time_type, std::string eol)
-    : pattern_("%+")
-    , eol_(std::move(eol))
-    , pattern_time_type_(time_type)
-    , last_log_secs_(0)
-{
-    std::memset(&cached_tm_, 0, sizeof(cached_tm_));
-    formatters_.push_back(details::make_unique<details::full_formatter>(details::padding_info{}));
 }
 
 SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
@@ -1095,10 +997,6 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
     // process built-in flags
     switch (flag)
     {
-    case ('+'): // default formatter
-        formatters_.push_back(details::make_unique<details::full_formatter>(padding));
-        break;
-
     case 'n': // logger name
         formatters_.push_back(details::make_unique<details::name_formatter<Padder>>(padding));
         break;
@@ -1276,8 +1174,6 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
             formatters_.push_back((std::move(unknown_flag)));
         }
         // fix issue #1617 (prev char was '!' and should have been treated as funcname flag instead of truncating flag)
-        // spdlog::set_pattern("[%10!] %v") => "[      main] some message"
-        // spdlog::set_pattern("[%3!!] %v") => "[mai] some message"
         else
         {
             padding.truncate_ = false;
@@ -1285,7 +1181,6 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
             unknown_flag->add_ch(flag);
             formatters_.push_back((std::move(unknown_flag)));
         }
-
         break;
     }
 }

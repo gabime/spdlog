@@ -7,6 +7,7 @@
 // bench.cpp : spdlog benchmarks
 //
 #include "spdlog/spdlog.h"
+#include "spdlog/pattern_formatter.h"
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 
@@ -69,6 +70,7 @@ void verify_file(const char *filename, int expected_count)
 
 int main(int argc, char *argv[])
 {
+    using spdlog::details::make_unique; // for pre c++14
 
     int howmany = 1000000;
     int queue_size = std::min(howmany + 2, 8192);
@@ -77,7 +79,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        spdlog::set_pattern("[%^%l%$] %v");
+        spdlog::set_formatter(make_unique<spdlog::pattern_formatter>("[%^%l%$] %v"));
         if (argc == 1)
         {
             spdlog::info("Usage: {} <message_count> <threads> <q_size> <iterations>", argv[0]);

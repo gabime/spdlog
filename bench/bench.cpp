@@ -7,6 +7,7 @@
 // bench.cpp : spdlog benchmarks
 //
 #include "spdlog/spdlog.h"
+#include "spdlog/pattern_formatter.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
@@ -110,8 +111,9 @@ void bench_single_threaded(int iters)
 
 int main(int argc, char *argv[])
 {
+    using spdlog::details::make_unique; // for pre c++14
     spdlog::set_automatic_registration(false);
-    spdlog::default_logger()->set_pattern("[%^%l%$] %v");
+    spdlog::default_logger()->set_formatter(make_unique<spdlog::pattern_formatter>("[%^%l%$] %v"));
     int iters = 250000;
     size_t threads = 4;
     try

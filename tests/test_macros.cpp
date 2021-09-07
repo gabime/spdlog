@@ -17,7 +17,7 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
     spdlog::filename_t filename = SPDLOG_FILENAME_T(TEST_FILENAME);
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
-    logger->set_pattern("%v");
+    logger->set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
     logger->set_level(spdlog::level::trace);
 
     SPDLOG_LOGGER_TRACE(logger, "Test message 1");

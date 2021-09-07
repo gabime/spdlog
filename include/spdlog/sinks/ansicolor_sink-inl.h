@@ -7,7 +7,7 @@
 #    include <spdlog/sinks/ansicolor_sink.h>
 #endif
 
-#include <spdlog/pattern_formatter.h>
+#include <spdlog/default_formatter.h>
 #include <spdlog/details/os.h>
 
 namespace spdlog {
@@ -70,13 +70,6 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::flush()
 {
     std::lock_guard<mutex_t> lock(mutex_);
     fflush(target_file_);
-}
-
-template<typename ConsoleMutex>
-SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_pattern(const std::string &pattern)
-{
-    std::lock_guard<mutex_t> lock(mutex_);
-    formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
 }
 
 template<typename ConsoleMutex>

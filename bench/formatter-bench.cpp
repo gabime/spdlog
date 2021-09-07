@@ -6,6 +6,7 @@
 #include "benchmark/benchmark.h"
 
 #include "spdlog/spdlog.h"
+#include "spdlog/default_formatter.h"
 #include "spdlog/pattern_formatter.h"
 
 void bench_formatter(benchmark::State &state, std::string pattern)
@@ -15,7 +16,8 @@ void bench_formatter(benchmark::State &state, std::string pattern)
     {
         formatter = spdlog::details::make_unique<spdlog::default_formatter>();
     }
-    else {
+    else
+    {
          formatter = spdlog::details::make_unique<spdlog::pattern_formatter>(pattern);
     }
 
@@ -67,7 +69,8 @@ void bench_formatters()
 int main(int argc, char *argv[])
 {
 
-    spdlog::set_pattern("[%^%l%$] %v");
+    using spdlog::details::make_unique; // for pre c++14
+    spdlog::set_formatter(make_unique<spdlog::pattern_formatter>("[%^%l%$] %v"));
     if (argc != 2)
     {
         spdlog::error("Usage: {} <pattern> (or \"all\" to bench all)", argv[0]);

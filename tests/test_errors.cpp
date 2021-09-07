@@ -28,7 +28,7 @@ TEST_CASE("default_error_handler", "[errors]]")
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("test-error", filename, true);
-    logger->set_pattern("%v");
+    logger->set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
     logger->info(fmt::runtime("Test message {} {}"), 1);
     logger->info("Test message {}", 2);
     logger->flush();

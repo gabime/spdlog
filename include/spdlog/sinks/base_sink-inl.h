@@ -8,7 +8,7 @@
 #endif
 
 #include <spdlog/common.h>
-#include <spdlog/pattern_formatter.h>
+#include <spdlog/default_formatter.h>
 
 #include <memory>
 
@@ -37,24 +37,12 @@ void SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::flush()
 }
 
 template<typename Mutex>
-void SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::set_pattern(const std::string &pattern)
-{
-    std::lock_guard<Mutex> lock(mutex_);
-    set_pattern_(pattern);
-}
-
-template<typename Mutex>
 void SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter)
 {
     std::lock_guard<Mutex> lock(mutex_);
     set_formatter_(std::move(sink_formatter));
 }
 
-template<typename Mutex>
-void SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::set_pattern_(const std::string &pattern)
-{
-    set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern));
-}
 
 template<typename Mutex>
 void SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter)

@@ -77,7 +77,7 @@ TEST_CASE("dup_filter_test5", "[dup_filter_sink]")
 
     dup_filter_sink_mt dup_sink{std::chrono::seconds{5}};
     auto test_sink = std::make_shared<test_sink_mt>();
-    test_sink->set_pattern("%v");
+    test_sink->set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
     dup_sink.add_sink(test_sink);
 
     dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "message1"});

@@ -26,6 +26,10 @@ void custom_flags_example();
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h" // support for user defined types
+#include "spdlog/pattern_formatter.h"
+#include "spdlog/default_formatter.h"
+
+using spdlog::details::make_unique; // for pre c++14
 
 int main(int, char *[])
 {
@@ -47,9 +51,10 @@ int main(int, char *[])
     spdlog::debug("This message should be displayed..");
 
     // Customize msg format for all loggers
-    spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
+    auto formatter = make_unique<spdlog::pattern_formatter>("[multi_sink_example] [%^%l%$] %v");
+    spdlog::set_formatter(std::move(formatter));
     spdlog::info("This an info message with custom format");
-    spdlog::set_pattern("%+"); // back to default format
+    spdlog::set_formatter(make_unique<spdlog::default_formatter>()); // back to default format
     spdlog::set_level(spdlog::level::info);
 
     // Backtrace support
@@ -217,13 +222,14 @@ void udp_example()
     my_logger->info("hello world");
 }
 
+#include <spdlog/pattern_formatter.h>
 // A logger with multiple sinks (stdout and file) - each with a different format and log level.
 void multi_sink_example()
 {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     console_sink->set_level(spdlog::level::warn);
-    console_sink->set_pattern("[multi_sink_example] [%^%l%$] %v");
-
+    auto formatter = make_unique<spdlog::pattern_formatter>("[multi_sink_example] [%^%l%$] %v");
+    console_sink->set_formatter(std::move(formatter));
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multisink.txt", true);
     file_sink->set_level(spdlog::level::trace);
 
@@ -299,8 +305,7 @@ public:
 void custom_flags_example()
 {
 
-    using spdlog::details::make_unique; // for pre c++14
-    auto formatter = make_unique<spdlog::pattern_formatter>();
+    auto formatter = make_unique<spdlog::pattern_formatter>("");
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     spdlog::set_formatter(std::move(formatter));
 }

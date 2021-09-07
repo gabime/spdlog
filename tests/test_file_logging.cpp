@@ -12,7 +12,7 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
-    logger->set_pattern("%v");
+    logger->set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
 
     logger->info("Test message {}", 1);
     logger->info("Test message {}", 2);
@@ -29,7 +29,7 @@ TEST_CASE("flush_on", "[flush_on]]")
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
-    logger->set_pattern("%v");
+    logger->set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
     logger->set_level(spdlog::level::trace);
     logger->flush_on(spdlog::level::info);
     logger->trace("Should not be flushed");

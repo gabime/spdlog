@@ -7,7 +7,7 @@
 TEST_CASE("stdout_st", "[stdout]")
 {
     auto l = spdlog::stdout_logger_st("test");
-    l->set_pattern("%+");
+    l->set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
     l->set_level(spdlog::level::trace);
     l->trace("Test stdout_st");
     spdlog::drop_all();
@@ -16,7 +16,7 @@ TEST_CASE("stdout_st", "[stdout]")
 TEST_CASE("stdout_mt", "[stdout]")
 {
     auto l = spdlog::stdout_logger_mt("test");
-    l->set_pattern("%+");
+    l->set_formatter(make_unique<spdlog::default_formatter>());
     l->set_level(spdlog::level::debug);
     l->debug("Test stdout_mt");
     spdlog::drop_all();
@@ -25,7 +25,7 @@ TEST_CASE("stdout_mt", "[stdout]")
 TEST_CASE("stderr_st", "[stderr]")
 {
     auto l = spdlog::stderr_logger_st("test");
-    l->set_pattern("%+");
+    l->set_formatter(make_unique<spdlog::default_formatter>());
     l->info("Test stderr_st");
     spdlog::drop_all();
 }
@@ -33,7 +33,7 @@ TEST_CASE("stderr_st", "[stderr]")
 TEST_CASE("stderr_mt", "[stderr]")
 {
     auto l = spdlog::stderr_logger_mt("test");
-    l->set_pattern("%+");
+    l->set_formatter(make_unique<spdlog::default_formatter>());
     l->info("Test stderr_mt");
     l->warn("Test stderr_mt");
     l->error("Test stderr_mt");
@@ -45,7 +45,7 @@ TEST_CASE("stderr_mt", "[stderr]")
 TEST_CASE("stdout_color_st", "[stdout]")
 {
     auto l = spdlog::stdout_color_st("test");
-    l->set_pattern("%+");
+    l->set_formatter(make_unique<spdlog::default_formatter>());
     l->info("Test stdout_color_st");
     spdlog::drop_all();
 }
@@ -53,7 +53,7 @@ TEST_CASE("stdout_color_st", "[stdout]")
 TEST_CASE("stdout_color_mt", "[stdout]")
 {
     auto l = spdlog::stdout_color_mt("test");
-    l->set_pattern("%+");
+    l->set_formatter(make_unique<spdlog::default_formatter>());
     l->set_level(spdlog::level::trace);
     l->trace("Test stdout_color_mt");
     spdlog::drop_all();
@@ -62,7 +62,7 @@ TEST_CASE("stdout_color_mt", "[stdout]")
 TEST_CASE("stderr_color_st", "[stderr]")
 {
     auto l = spdlog::stderr_color_st("test");
-    l->set_pattern("%+");
+    l->set_formatter(make_unique<spdlog::default_formatter>());
     l->set_level(spdlog::level::debug);
     l->debug("Test stderr_color_st");
     spdlog::drop_all();
@@ -71,7 +71,7 @@ TEST_CASE("stderr_color_st", "[stderr]")
 TEST_CASE("stderr_color_mt", "[stderr]")
 {
     auto l = spdlog::stderr_color_mt("test");
-    l->set_pattern("%+");
+    l->set_formatter(make_unique<spdlog::default_formatter>());
     l->info("Test stderr_color_mt");
     l->warn("Test stderr_color_mt");
     l->error("Test stderr_color_mt");

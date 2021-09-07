@@ -9,7 +9,7 @@ TEST_CASE("time_point1", "[time_point log_msg]")
 
     spdlog::source_loc source{};
     std::chrono::system_clock::time_point tp{std::chrono::system_clock::now()};
-    test_sink->set_pattern("%T.%F"); // interested in the time_point
+    test_sink->set_formatter(make_unique<spdlog::pattern_formatter>("%T.%F"));
 
     // all the following should have the same time
     test_sink->set_delay(std::chrono::milliseconds(10));

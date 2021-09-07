@@ -11,7 +11,7 @@ std::string log_info(const T &what, spdlog::level::level_enum logger_level = spd
 
     spdlog::logger oss_logger("oss", oss_sink);
     oss_logger.set_level(logger_level);
-    oss_logger.set_pattern("%v");
+    oss_logger.set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
     oss_logger.info(what);
 
     return oss.str().substr(0, oss.str().length() - strlen(spdlog::details::os::default_eol));
@@ -97,7 +97,7 @@ TEST_CASE("clone-logger", "[clone]")
     using spdlog::sinks::test_sink_mt;
     auto test_sink = std::make_shared<test_sink_mt>();
     auto logger = std::make_shared<spdlog::logger>("orig", test_sink);
-    logger->set_pattern("%v");
+    logger->set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
     auto cloned = logger->clone("clone");
 
     REQUIRE(cloned->name() == "clone");
@@ -120,7 +120,7 @@ TEST_CASE("clone async", "[clone]")
     spdlog::init_thread_pool(4, 1);
     auto test_sink = std::make_shared<test_sink_st>();
     auto logger = std::make_shared<spdlog::async_logger>("orig", test_sink, spdlog::thread_pool());
-    logger->set_pattern("%v");
+    logger->set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
     auto cloned = logger->clone("clone");
 
     REQUIRE(cloned->name() == "clone");
@@ -236,7 +236,7 @@ TEST_CASE("default logger API", "[default logger]")
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
 
     spdlog::set_default_logger(std::make_shared<spdlog::logger>("oss", oss_sink));
-    spdlog::set_pattern("*** %v");
+    spdlog::set_formatter(make_unique<spdlog::pattern_formatter>("*** %v"));
 
     spdlog::default_logger()->set_level(spdlog::level::trace);
     spdlog::trace("hello trace");
@@ -267,5 +267,5 @@ TEST_CASE("default logger API", "[default logger]")
     spdlog::debug("should not be logged");
     REQUIRE(oss.str().empty());
     spdlog::drop_all();
-    spdlog::set_pattern("%v");
+    spdlog::set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
 }
