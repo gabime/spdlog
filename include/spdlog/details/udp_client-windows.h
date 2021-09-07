@@ -64,7 +64,11 @@ public:
         addr_.sin_family = PF_INET;
         addr_.sin_port = htons(port);
         addr_.sin_addr.s_addr = INADDR_ANY;
-        InetPton(PF_INET, TEXT(host.c_str()), &addr_.sin_addr.s_addr);
+        if (InetPton(PF_INET, TEXT(host.c_str()), &addr_.sin_addr.s_addr) != 1) {
+            int last_error = ::WSAGetLastError();
+            ::WSACleanup();
+            throw_winsock_error_("error: Invalid address!", last_error);
+        }
 
         socket_ = ::socket(PF_INET, SOCK_DGRAM, 0);
         if (socket_ == INVALID_SOCKET)
