@@ -31,7 +31,7 @@ namespace spdlog {
 namespace details {
 
 SPDLOG_INLINE registry::registry()
-    : formatter_(new pattern_formatter())
+    : formatter_(new default_formatter())
 {
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
