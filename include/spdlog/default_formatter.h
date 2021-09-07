@@ -23,7 +23,6 @@ public:
 
     void format(const details::log_msg &msg, memory_buf_t &dest) override
     {
-        // 30ns
         using std::chrono::duration_cast;
         using std::chrono::milliseconds;
         using std::chrono::seconds;
@@ -56,20 +55,11 @@ public:
 
             cache_timestamp_ = secs;
         }
-        // 32ns
-
         dest.append(cached_datetime_.begin(), cached_datetime_.end());
-        // 36ns
         auto millis = details::fmt_helper::time_fraction<milliseconds>(msg.time);
-        // 40ns
-
         details::fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
-
-        // 45ns
-
         dest.push_back(']');
         dest.push_back(' ');
-        // 49ns
 
         // append logger name if exists
         if (msg.logger_name.size() > 0)
@@ -79,8 +69,6 @@ public:
             dest.push_back(']');
             dest.push_back(' ');
         }
-        // 56ns
-
         dest.push_back('[');
         // wrap the level name with color
         msg.color_range_start = dest.size();
