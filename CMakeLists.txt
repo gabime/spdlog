@@ -16,13 +16,6 @@ message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 include(GNUInstallDirs)
 
 # ---------------------------------------------------------------------------------------
-# Set CMake policies to support later version behaviour
-# ---------------------------------------------------------------------------------------
-if(POLICY CMP0077)
-    cmake_policy(SET CMP0077 NEW) # option() honors variables already set
-endif()
-
-# ---------------------------------------------------------------------------------------
 # Set default build to release
 # ---------------------------------------------------------------------------------------
 if(NOT CMAKE_BUILD_TYPE)
