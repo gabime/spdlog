@@ -58,7 +58,11 @@ public:
 
         sockAddr_.sin_family = AF_INET;
         sockAddr_.sin_port = htons(port);
-        ::inet_aton(host.c_str(), &sockAddr_.sin_addr);
+        
+        if (::inet_aton(host.c_str(), &sockAddr_.sin_addr) == 0) {
+            cleanup_();
+            throw_spdlog_ex("error: Invalid address!");
+        }
 
         ::memset(sockAddr_.sin_zero, 0x00, sizeof(sockAddr_.sin_zero));
     }
