@@ -1,6 +1,6 @@
 # Copyright(c) 2019 spdlog authors Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10...3.21)
 
 # ---------------------------------------------------------------------------------------
 # Start spdlog project
@@ -14,13 +14,6 @@ project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
 message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
 include(GNUInstallDirs)
-
-# ---------------------------------------------------------------------------------------
-# Set CMake policies to support later version behaviour
-# ---------------------------------------------------------------------------------------
-if(POLICY CMP0077)
-    cmake_policy(SET CMP0077 NEW) # option() honors variables already set
-endif()
 
 # ---------------------------------------------------------------------------------------
 # Set default build to release
