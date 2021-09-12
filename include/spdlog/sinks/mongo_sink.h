@@ -72,6 +72,7 @@ private:
     std::string coll_name_;
     std::unique_ptr<mongocxx::client> client_ = nullptr;
 };
+template<>
 mongocxx::instance mongo_sink<std::mutex>::instance_{};
 
 #include "spdlog/details/null_mutex.h"
