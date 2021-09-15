@@ -55,6 +55,9 @@ SPDLOG_API std::shared_ptr<logger> get(const std::string &name);
 // example: spdlog::set_formatter(std::make_unique<spdlog::pattern_formatter>("%Y-%m-%d %H:%M:%S.%e %l : %v"));
 SPDLOG_API void set_formatter(std::unique_ptr<spdlog::formatter> formatter);
 
+// Set global log pattern.
+SPDLOG_API void set_pattern(std::string pattern);
+
 // enable global backtrace support
 SPDLOG_API void enable_backtrace(size_t n_messages);
 

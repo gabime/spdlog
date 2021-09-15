@@ -12,6 +12,7 @@
 #include <spdlog/details/os.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/formatter.h>
+#include <spdlog/logger.h>
 
 #include <algorithm>
 #include <array>
@@ -1286,5 +1287,15 @@ SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &patter
     {
         formatters_.push_back(std::move(user_chars));
     }
+}
+
+SPDLOG_INLINE void set_pattern(std::string pattern)
+{
+    set_formatter(details::make_unique<pattern_formatter>(std::move(pattern)));
+}
+
+SPDLOG_INLINE void logger::set_pattern(std::string pattern)
+{
+    this->set_formatter(details::make_unique<pattern_formatter>(std::move(pattern)));
 }
 } // namespace spdlog
