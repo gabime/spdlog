@@ -44,32 +44,19 @@ void bench_threaded_logging(size_t threads, int iters)
 
     auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
     bench_mt(iters, std::move(basic_mt), threads);
-    auto basic_mt_tracing = spdlog::basic_logger_mt("basic_mt/backtrace-on", "logs/basic_mt.log", true);
-    basic_mt_tracing->enable_backtrace(32);
-    bench_mt(iters, std::move(basic_mt_tracing), threads);
 
     spdlog::info("");
     auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt.log", file_size, rotating_files);
     bench_mt(iters, std::move(rotating_mt), threads);
-    auto rotating_mt_tracing = spdlog::rotating_logger_mt("rotating_mt/backtrace-on", "logs/rotating_mt.log", file_size, rotating_files);
-    rotating_mt_tracing->enable_backtrace(32);
-    bench_mt(iters, std::move(rotating_mt_tracing), threads);
 
     spdlog::info("");
     auto daily_mt = spdlog::daily_logger_mt("daily_mt", "logs/daily_mt.log");
     bench_mt(iters, std::move(daily_mt), threads);
-    auto daily_mt_tracing = spdlog::daily_logger_mt("daily_mt/backtrace-on", "logs/daily_mt.log");
-    daily_mt_tracing->enable_backtrace(32);
-    bench_mt(iters, std::move(daily_mt_tracing), threads);
 
     spdlog::info("");
     auto empty_logger = std::make_shared<spdlog::logger>("level-off");
     empty_logger->set_level(spdlog::level::off);
     bench(iters, empty_logger);
-    auto empty_logger_tracing = std::make_shared<spdlog::logger>("level-off/backtrace-on");
-    empty_logger_tracing->set_level(spdlog::level::off);
-    empty_logger_tracing->enable_backtrace(32);
-    bench(iters, empty_logger_tracing);
 }
 
 void bench_single_threaded(int iters)
@@ -87,32 +74,20 @@ void bench_single_threaded(int iters)
     spdlog::info("");
     auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
     bench(iters, std::move(rotating_st));
-    auto rotating_st_tracing = spdlog::rotating_logger_st("rotating_st/backtrace-on", "logs/rotating_st.log", file_size, rotating_files);
-    rotating_st_tracing->enable_backtrace(32);
-    bench(iters, std::move(rotating_st_tracing));
 
     spdlog::info("");
     auto daily_st = spdlog::daily_logger_st("daily_st", "logs/daily_st.log");
     bench(iters, std::move(daily_st));
-    auto daily_st_tracing = spdlog::daily_logger_st("daily_st/backtrace-on", "logs/daily_st.log");
-    daily_st_tracing->enable_backtrace(32);
-    bench(iters, std::move(daily_st_tracing));
 
     spdlog::info("");
     auto empty_logger = std::make_shared<spdlog::logger>("level-off");
     empty_logger->set_level(spdlog::level::off);
     bench(iters, empty_logger);
-
-    auto empty_logger_tracing = std::make_shared<spdlog::logger>("level-off/backtrace-on");
-    empty_logger_tracing->set_level(spdlog::level::off);
-    empty_logger_tracing->enable_backtrace(32);
-    bench(iters, empty_logger_tracing);
 }
 
 int main(int argc, char *argv[])
 {
     using spdlog::details::make_unique; // for pre c++14
-    spdlog::set_automatic_registration(false);
     spdlog::default_logger()->set_formatter(make_unique<spdlog::pattern_formatter>("[%^%l%$] %v"));
     int iters = 250000;
     size_t threads = 4;
@@ -162,7 +137,6 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
 
     spdlog::info(
         fmt::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(), delta_d, int(howmany / delta_d)));
-    spdlog::drop(log->name());
 }
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, size_t thread_count)
@@ -193,7 +167,6 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, size_t thread_co
     auto delta_d = duration_cast<duration<double>>(delta).count();
     spdlog::info(
         fmt::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(), delta_d, int(howmany / delta_d)));
-    spdlog::drop(log->name());
 }
 
 /*

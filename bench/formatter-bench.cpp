@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 {
 
     using spdlog::details::make_unique; // for pre c++14
-    spdlog::set_formatter(make_unique<spdlog::pattern_formatter>("[%^%l%$] %v"));
+    spdlog::default_logger()->set_formatter(make_unique<spdlog::pattern_formatter>("[%^%l%$] %v"));
     if (argc != 2)
     {
         spdlog::error("Usage: {} <pattern> (or \"all\" to bench all)", argv[0]);

@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        spdlog::set_formatter(make_unique<spdlog::pattern_formatter>("[%^%l%$] %v"));
+        spdlog::default_logger()->set_formatter(make_unique<spdlog::pattern_formatter>("[%^%l%$] %v"));
         if (argc == 1)
         {
             spdlog::info("Usage: {} <message_count> <threads> <q_size> <iterations>", argv[0]);
