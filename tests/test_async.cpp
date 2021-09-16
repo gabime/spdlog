@@ -81,22 +81,6 @@ TEST_CASE("flush", "[async]")
     REQUIRE(test_sink->flush_counter() == 1);
 }
 
-/*
- * TODO
-TEST_CASE("async periodic flush", "[async]")
-{
-
-    auto logger = spdlog::create_async<spdlog::sinks::test_sink_mt>("as");
-    auto test_sink = std::static_pointer_cast<spdlog::sinks::test_sink_mt>(logger->sinks()[0]);
-
-    spdlog::flush_every(std::chrono::seconds(1));
-    std::this_thread::sleep_for(std::chrono::milliseconds(1700));
-    REQUIRE(test_sink->flush_counter() == 1);
-    spdlog::flush_every(std::chrono::seconds(0));
-    spdlog::drop_all();
-}
-*/
-
 TEST_CASE("tp->wait_empty() ", "[async]")
 {
     auto test_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
