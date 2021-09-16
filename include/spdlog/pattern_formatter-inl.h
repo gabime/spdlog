@@ -1289,11 +1289,6 @@ SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &patter
     }
 }
 
-SPDLOG_INLINE void set_pattern(std::string pattern)
-{
-    set_formatter(details::make_unique<pattern_formatter>(std::move(pattern)));
-}
-
 SPDLOG_INLINE void set_pattern(logger& logger, std::string pattern)
 {
     logger.set_formatter(details::make_unique<pattern_formatter>(std::move(pattern)));

@@ -11,109 +11,33 @@
 
 namespace spdlog {
 
-SPDLOG_INLINE void initialize_logger(std::shared_ptr<logger> logger)
-{
-    details::registry::instance().initialize_logger(std::move(logger));
-}
-
-SPDLOG_INLINE std::shared_ptr<logger> get(const std::string &name)
-{
-    return details::registry::instance().get(name);
-}
-
-SPDLOG_INLINE void set_formatter(std::unique_ptr<spdlog::formatter> formatter)
-{
-    details::registry::instance().set_formatter(std::move(formatter));
-}
-
-SPDLOG_INLINE void enable_backtrace(size_t n_messages)
-{
-    details::registry::instance().enable_backtrace(n_messages);
-}
-
-SPDLOG_INLINE void disable_backtrace()
-{
-    details::registry::instance().disable_backtrace();
-}
-
-SPDLOG_INLINE void dump_backtrace()
-{
-    default_logger_raw()->dump_backtrace();
-}
-
-SPDLOG_INLINE level::level_enum get_level()
-{
-    return default_logger_raw()->level();
-}
-
-SPDLOG_INLINE bool should_log(level::level_enum log_level)
-{
-    return default_logger_raw()->should_log(log_level);
-}
-
-SPDLOG_INLINE void set_level(level::level_enum log_level)
-{
-    details::registry::instance().set_level(log_level);
-}
-
-SPDLOG_INLINE void flush_on(level::level_enum log_level)
-{
-    details::registry::instance().flush_on(log_level);
-}
-
-SPDLOG_INLINE void flush_every(std::chrono::seconds interval)
+// TODO what to do with flush_every ?
+/*SPDLOG_INLINE void flush_every(std::chrono::seconds interval)
 {
     details::registry::instance().flush_every(interval);
-}
+}*/
 
-SPDLOG_INLINE void set_error_handler(void (*handler)(const std::string &msg))
-{
-    details::registry::instance().set_error_handler(handler);
-}
-
-SPDLOG_INLINE void register_logger(std::shared_ptr<logger> logger)
-{
-    details::registry::instance().register_logger(std::move(logger));
-}
-
-SPDLOG_INLINE void apply_all(const std::function<void(std::shared_ptr<logger>)> &fun)
-{
-    details::registry::instance().apply_all(fun);
-}
-
-SPDLOG_INLINE void drop(const std::string &name)
-{
-    details::registry::instance().drop(name);
-}
-
-SPDLOG_INLINE void drop_all()
-{
-    details::registry::instance().drop_all();
-}
 
 SPDLOG_INLINE void shutdown()
 {
-    details::registry::instance().shutdown();
-}
-
-SPDLOG_INLINE void set_automatic_registration(bool automatic_registration)
-{
-    details::registry::instance().set_automatic_registration(automatic_registration);
+    // TODO call tp_ reset ?
+    //details::registry::instance().shutdown();
 }
 
 SPDLOG_INLINE std::shared_ptr<spdlog::logger> default_logger()
 {
-    return details::registry::instance().default_logger();
+    static std::shared_ptr<spdlog::logger> default_logger_ = std::make_shared<spdlog::logger>("");
+    return default_logger_;
 }
 
-SPDLOG_INLINE spdlog::logger *default_logger_raw()
+SPDLOG_INLINE logger *default_logger_raw()
 {
-    return details::registry::instance().get_default_raw();
+    return default_logger().get(); //TODO remove this
 }
 
 SPDLOG_INLINE void set_default_logger(std::shared_ptr<spdlog::logger> default_logger)
 {
-    details::registry::instance().set_default_logger(std::move(default_logger));
+    default_logger = std::move(default_logger);
 }
 
 } // namespace spdlog

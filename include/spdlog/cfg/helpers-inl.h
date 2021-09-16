@@ -9,7 +9,6 @@
 
 #include <spdlog/spdlog.h>
 #include <spdlog/details/os.h>
-#include <spdlog/details/registry.h>
 
 #include <algorithm>
 #include <string>
@@ -112,7 +111,8 @@ SPDLOG_INLINE void load_levels(const std::string &input)
         }
     }
 
-    details::registry::instance().set_levels(std::move(levels), global_level_found ? &global_level : nullptr);
+    // TODO what to do here with registry?
+    //details::registry::instance().set_levels(std::move(levels), global_level_found ? &global_level : nullptr);
 }
 
 } // namespace helpers

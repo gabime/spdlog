@@ -29,6 +29,8 @@ void custom_flags_example();
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h" // support for user defined types
 
+using spdlog::details::make_unique; // for pre c++14
+
 int main(int, char *[])
 {
     // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
@@ -43,28 +45,16 @@ int main(int, char *[])
     spdlog::info("{:>8} aligned, {:<8} aligned", "right", "left");
 
     // Runtime log levels
-    spdlog::set_level(spdlog::level::info); // Set global log level to info
+    spdlog::default_logger()->set_level(spdlog::level::info); // Set global log level to info
     spdlog::debug("This message should not be displayed!");
-    spdlog::set_level(spdlog::level::trace); // Set specific logger's log level
+    spdlog::default_logger()->set_level(spdlog::level::trace); // Set specific logger's log level
     spdlog::debug("This message should be displayed..");
 
-    // Customize msg format for all loggers
-    spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
+    // Customize msg format
+    spdlog::default_logger()->set_formatter(make_unique<spdlog::pattern_formatter>("[%H:%M:%S %z] [%^%L%$] [thread %t] %v"));
     spdlog::info("This an info message with custom format");
-    using spdlog::details::make_unique; // for pre c++14
-    spdlog::set_formatter(make_unique<spdlog::default_formatter>()); // back to default format
-    spdlog::set_level(spdlog::level::info);
-
-    // Backtrace support
-    // Loggers can store in a ring buffer all messages (including debug/trace) for later inspection.
-    // When needed, call dump_backtrace() to see what happened:
-    spdlog::enable_backtrace(10); // create ring buffer with capacity of 10  messages
-    for (int i = 0; i < 100; i++)
-    {
-        spdlog::debug("Backtrace message {}", i); // not logged..
-    }
-    // e.g. if some error happened:
-    spdlog::dump_backtrace(); // log them now!
+    spdlog::default_logger()->set_formatter(make_unique<spdlog::default_formatter>()); // back to default format
+    spdlog::default_logger()->set_level(spdlog::level::info);
 
     try
     {
@@ -81,13 +71,6 @@ int main(int, char *[])
         stopwatch_example();
         udp_example();
         custom_flags_example();
-
-        // Flush all *registered* loggers using a worker thread every 3 seconds.
-        // note: registered loggers *must* be thread safe for this to work correctly!
-        spdlog::flush_every(std::chrono::seconds(3));
-
-        // Apply some function on all registered loggers
-        spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) { l->info("End of example."); });
 
         // Release all spdlog resources, and drop all loggers in the registry.
         // This is optional (only mandatory if using windows + async log).
@@ -197,8 +180,8 @@ void trace_example()
     SPDLOG_DEBUG("Some debug message.. {} ,{}", 1, 3.23);
 
     // trace from logger object
-    auto logger = spdlog::get("file_logger");
-    SPDLOG_LOGGER_TRACE(logger, "another trace message");
+    auto some_logger = spdlog::stdout_color_mt("console");
+    SPDLOG_LOGGER_TRACE(some_logger, "another trace message");
 }
 
 // stopwatch example
@@ -223,7 +206,6 @@ void udp_example()
 // A logger with multiple sinks (stdout and file) - each with a different format and log level.
 void multi_sink_example()
 {
-    using spdlog::details::make_unique; // for pre c++14
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     console_sink->set_level(spdlog::level::warn);
     console_sink->set_formatter(make_unique<spdlog::pattern_formatter>("[multi_sink_example] [%^%l%$] %v"));
@@ -257,7 +239,7 @@ void user_defined_example()
 void err_handler_example()
 {
     // can be set globally or per logger(logger->set_error_handler(..))
-    spdlog::set_error_handler([](const std::string &msg) { printf("*** Custom log error handler: %s ***\n", msg.c_str()); });
+    spdlog::default_logger()->set_error_handler([](const std::string &msg) { printf("*** Custom log error handler: %s ***\n", msg.c_str()); });
 }
 
 // syslog example (linux/osx/freebsd)
@@ -302,9 +284,7 @@ public:
 
 void custom_flags_example()
 {
-
-    using spdlog::details::make_unique; // for pre c++14
     auto formatter = make_unique<spdlog::pattern_formatter>("");
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
-    spdlog::set_formatter(std::move(formatter));
+    spdlog::default_logger()->set_formatter(std::move(formatter));
 }

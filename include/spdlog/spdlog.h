@@ -10,7 +10,6 @@
 #pragma once
 
 #include <spdlog/common.h>
-#include <spdlog/details/registry.h>
 #include <spdlog/logger.h>
 #include <spdlog/version.h>
 #include <spdlog/details/synchronous_factory.h>
@@ -24,7 +23,7 @@ namespace spdlog {
 
 using default_factory = synchronous_factory;
 
-// Create and register a logger with a templated sink type
+// Create a logger with a templated sink type
 // The logger's level, formatter and flush level will be set according the
 // global settings.
 //
@@ -36,73 +35,8 @@ inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs 
     return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
 
-// Initialize and register a logger,
-// formatter and flush level will be set according the global settings.
-//
-// Useful for initializing manually created loggers with the global settings.
-//
-// Example:
-//   auto mylogger = std::make_shared<spdlog::logger>("mylogger", ...);
-//   spdlog::initialize_logger(mylogger);
-SPDLOG_API void initialize_logger(std::shared_ptr<logger> logger);
-
-// Return an existing logger or nullptr if a logger with such name doesn't
-// exist.
-// example: spdlog::get("my_logger")->info("hello {}", "world");
-SPDLOG_API std::shared_ptr<logger> get(const std::string &name);
-
-// Set global formatter. Each sink in each logger will get a clone of this object
-// example: spdlog::set_formatter(std::make_unique<spdlog::pattern_formatter>("%Y-%m-%d %H:%M:%S.%e %l : %v"));
-// Note: to use spdlog::set_pattern(format_string) include the "spdlog/pattern_formatter.h" file.
-SPDLOG_API void set_formatter(std::unique_ptr<spdlog::formatter> formatter);
-
-// enable global backtrace support
-SPDLOG_API void enable_backtrace(size_t n_messages);
-
-// disable global backtrace support
-SPDLOG_API void disable_backtrace();
-
-// call dump backtrace on default logger
-SPDLOG_API void dump_backtrace();
-
-// Get global logging level
-SPDLOG_API level::level_enum get_level();
-
-// Set global logging level
-SPDLOG_API void set_level(level::level_enum log_level);
-
-// Determine whether the default logger should log messages with a certain level
-SPDLOG_API bool should_log(level::level_enum lvl);
-
-// Set global flush level
-SPDLOG_API void flush_on(level::level_enum log_level);
-
-// Start/Restart a periodic flusher thread
-// Warning: Use only if all your loggers are thread safe!
-SPDLOG_API void flush_every(std::chrono::seconds interval);
-
-// Set global error handler
-SPDLOG_API void set_error_handler(void (*handler)(const std::string &msg));
-
-// Register the given logger with the given name
-SPDLOG_API void register_logger(std::shared_ptr<logger> logger);
-
-// Apply a user defined function on all registered loggers
-// Example:
-// spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->flush();});
-SPDLOG_API void apply_all(const std::function<void(std::shared_ptr<logger>)> &fun);
-
-// Drop the reference to the given logger
-SPDLOG_API void drop(const std::string &name);
-
-// Drop all references from the registry
-SPDLOG_API void drop_all();
-
-// stop any running threads started by spdlog and clean registry loggers
+// stop any running threads started by spdlog for async logging
 SPDLOG_API void shutdown();
-
-// Automatic registration of loggers when using spdlog::create() or spdlog::create_async
-SPDLOG_API void set_automatic_registration(bool automatic_registration);
 
 // API for using default logger (stdout_color_mt),
 // e.g: spdlog::info("Message {}", 1);
