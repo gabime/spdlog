@@ -35,10 +35,6 @@ inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs 
     return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
 
-// stop any running threads started by spdlog for async logging
-// TODO remove this
-SPDLOG_API void shutdown();
-
 // API for using default logger (stdout_color_mt),
 // e.g: spdlog::info("Message {}", 1);
 //

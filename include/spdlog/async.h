@@ -86,4 +86,11 @@ inline std::shared_ptr<spdlog::details::thread_pool> thread_pool()
 {
     return details::s_thread_pool;
 }
+
+// shutdown the thread pool. needed to called in windows before main() exits.
+inline void release_thread_pool()
+{
+    std::lock_guard<std::recursive_mutex> tp_lock(details::s_thread_pool_mutex);
+    details::s_thread_pool.reset();
+}
 } // namespace spdlog

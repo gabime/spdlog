@@ -71,10 +71,6 @@ int main(int, char *[])
         stopwatch_example();
         udp_example();
         custom_flags_example();
-
-        // Release all spdlog resources, and drop all loggers in the registry.
-        // This is optional (only mandatory if using windows + async log).
-        spdlog::shutdown();
     }
 
     // Exceptions will only be thrown upon failed logger or sink construction (not during logging).
@@ -141,6 +137,7 @@ void async_example()
     {
         async_file->info("Async message #{}", i);
     }
+    spdlog::release_thread_pool();
 }
 
 // Log binary data as hex.

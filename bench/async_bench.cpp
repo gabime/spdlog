@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
                 std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp), async_overflow_policy::overrun_oldest);
             bench_mt(howmany, std::move(logger), threads);
         }
-        spdlog::shutdown();
+        spdlog::release_thread_pool();
     }
     catch (std::exception &ex)
     {
