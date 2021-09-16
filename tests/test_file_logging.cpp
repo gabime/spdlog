@@ -73,9 +73,6 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
         {
             logger->info("Test message {}", i);
         }
-        // drop causes the logger destructor to be called, which is required so the
-        // next logger can rename the first output file.
-        spdlog::drop(logger->name());
     }
 
     auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, 2, true);

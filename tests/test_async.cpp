@@ -59,7 +59,6 @@ TEST_CASE("discard policy using factory ", "[async]")
     }
 
     REQUIRE(test_sink->msg_counter() < messages);
-    spdlog::drop_all();
 }
 
 TEST_CASE("flush", "[async]")
@@ -82,6 +81,8 @@ TEST_CASE("flush", "[async]")
     REQUIRE(test_sink->flush_counter() == 1);
 }
 
+/*
+ * TODO
 TEST_CASE("async periodic flush", "[async]")
 {
 
@@ -94,6 +95,7 @@ TEST_CASE("async periodic flush", "[async]")
     spdlog::flush_every(std::chrono::seconds(0));
     spdlog::drop_all();
 }
+*/
 
 TEST_CASE("tp->wait_empty() ", "[async]")
 {

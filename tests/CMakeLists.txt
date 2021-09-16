@@ -21,7 +21,6 @@ set(SPDLOG_UTESTS_SOURCES
     test_eventlog.cpp
     test_pattern_formatter.cpp
     test_async.cpp
-    test_registry.cpp
     test_macros.cpp
     utils.cpp
     main.cpp
@@ -29,9 +28,8 @@ set(SPDLOG_UTESTS_SOURCES
     test_dup_filter.cpp
     test_fmt_helper.cpp
     test_stdout_api.cpp
-    test_backtrace.cpp
     test_create_dir.cpp
-    test_cfg.cpp
+    # test_cfg.cpp TODO
     test_time_point.cpp
     test_stopwatch.cpp)
 

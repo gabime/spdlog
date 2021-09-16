@@ -32,5 +32,4 @@ TEST_CASE("time_point1", "[time_point log_msg]")
     REQUIRE(lines[4] == lines[5]);
     REQUIRE(lines[6] == lines[7]);
     REQUIRE(lines[8] != lines[9]);
-    spdlog::drop_all();
 }

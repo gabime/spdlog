@@ -8,6 +8,7 @@
 #endif
 
 #include <spdlog/common.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 namespace spdlog {
 
@@ -24,10 +25,16 @@ SPDLOG_INLINE void shutdown()
     //details::registry::instance().shutdown();
 }
 
-SPDLOG_INLINE std::shared_ptr<spdlog::logger> default_logger()
+
+SPDLOG_INLINE std::shared_ptr<spdlog::logger>& default_logger()
 {
-    static std::shared_ptr<spdlog::logger> default_logger_ = std::make_shared<spdlog::logger>("");
-    return default_logger_;
+    static auto s_default_logger = stdout_color_mt("");
+    return s_default_logger;
+}
+
+SPDLOG_INLINE void set_default_logger(std::shared_ptr<spdlog::logger> new_logger)
+{
+    default_logger() = std::move(new_logger);
 }
 
 SPDLOG_INLINE logger *default_logger_raw()
@@ -35,9 +42,5 @@ SPDLOG_INLINE logger *default_logger_raw()
     return default_logger().get(); //TODO remove this
 }
 
-SPDLOG_INLINE void set_default_logger(std::shared_ptr<spdlog::logger> default_logger)
-{
-    default_logger = std::move(default_logger);
-}
 
 } // namespace spdlog
