@@ -30,7 +30,7 @@ using default_factory = synchronous_factory;
 // Example:
 //   spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
 template<typename Sink, typename... SinkArgs>
-inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&...sink_args)
+inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... sink_args)
 {
     return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
@@ -53,51 +53,50 @@ inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs 
 SPDLOG_API std::shared_ptr<spdlog::logger> &default_logger();
 SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logger);
 
-
 template<typename... Args>
-inline void log(source_loc source, level::level_enum lvl, fmt::format_string<Args...> fmt, Args &&...args)
+inline void log(source_loc source, level::level_enum lvl, fmt::format_string<Args...> fmt, Args &&... args)
 {
     default_logger()->log(source, lvl, fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void log(level::level_enum lvl, fmt::format_string<Args...> fmt, Args &&...args)
+inline void log(level::level_enum lvl, fmt::format_string<Args...> fmt, Args &&... args)
 {
     default_logger()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void trace(fmt::format_string<Args...> fmt, Args &&...args)
+inline void trace(fmt::format_string<Args...> fmt, Args &&... args)
 {
     default_logger()->trace(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void debug(fmt::format_string<Args...> fmt, Args &&...args)
+inline void debug(fmt::format_string<Args...> fmt, Args &&... args)
 {
     default_logger()->debug(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void info(fmt::format_string<Args...> fmt, Args &&...args)
+inline void info(fmt::format_string<Args...> fmt, Args &&... args)
 {
     default_logger()->info(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void warn(fmt::format_string<Args...> fmt, Args &&...args)
+inline void warn(fmt::format_string<Args...> fmt, Args &&... args)
 {
     default_logger()->warn(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void error(fmt::format_string<Args...> fmt, Args &&...args)
+inline void error(fmt::format_string<Args...> fmt, Args &&... args)
 {
     default_logger()->error(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void critical(fmt::format_string<Args...> fmt, Args &&...args)
+inline void critical(fmt::format_string<Args...> fmt, Args &&... args)
 {
     default_logger()->critical(fmt, std::forward<Args>(args)...);
 }
@@ -116,49 +115,49 @@ inline void log(level::level_enum lvl, const T &msg)
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 template<typename... Args>
-inline void log(source_loc source, level::level_enum lvl, fmt::wformat_string<Args...> fmt, Args &&...args)
+inline void log(source_loc source, level::level_enum lvl, fmt::wformat_string<Args...> fmt, Args &&... args)
 {
     default_logger()->log(source, lvl, fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void log(level::level_enum lvl, fmt::wformat_string<Args...> fmt, Args &&...args)
+inline void log(level::level_enum lvl, fmt::wformat_string<Args...> fmt, Args &&... args)
 {
     default_logger()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void trace(fmt::wformat_string<Args...> fmt, Args &&...args)
+inline void trace(fmt::wformat_string<Args...> fmt, Args &&... args)
 {
     default_logger()->trace(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void debug(fmt::wformat_string<Args...> fmt, Args &&...args)
+inline void debug(fmt::wformat_string<Args...> fmt, Args &&... args)
 {
     default_logger()->debug(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void info(fmt::wformat_string<Args...> fmt, Args &&...args)
+inline void info(fmt::wformat_string<Args...> fmt, Args &&... args)
 {
     default_logger()->info(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void warn(fmt::wformat_string<Args...> fmt, Args &&...args)
+inline void warn(fmt::wformat_string<Args...> fmt, Args &&... args)
 {
     default_logger()->warn(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void error(fmt::wformat_string<Args...> fmt, Args &&...args)
+inline void error(fmt::wformat_string<Args...> fmt, Args &&... args)
 {
     default_logger()->error(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-inline void critical(fmt::wformat_string<Args...> fmt, Args &&...args)
+inline void critical(fmt::wformat_string<Args...> fmt, Args &&... args)
 {
     default_logger()->critical(fmt, std::forward<Args>(args)...);
 }

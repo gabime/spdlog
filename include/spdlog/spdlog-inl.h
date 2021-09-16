@@ -12,7 +12,7 @@
 
 namespace spdlog {
 
-SPDLOG_INLINE std::shared_ptr<spdlog::logger>& default_logger()
+SPDLOG_INLINE std::shared_ptr<spdlog::logger> &default_logger()
 {
     static auto s_default_logger = stdout_color_mt("");
     return s_default_logger;

@@ -53,7 +53,7 @@ protected:
         client_.send(formatted.data(), formatted.size());
     }
 
-    void flush_() override {}    
+    void flush_() override {}
     details::udp_client client_;
 };
 

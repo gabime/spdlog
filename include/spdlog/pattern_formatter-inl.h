@@ -925,7 +925,6 @@ private:
     log_clock::time_point last_message_time_;
 };
 
-
 } // namespace details
 
 SPDLOG_INLINE pattern_formatter::pattern_formatter(
@@ -1289,7 +1288,7 @@ SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &patter
     }
 }
 
-SPDLOG_INLINE void set_pattern(logger& logger, std::string pattern)
+SPDLOG_INLINE void set_pattern(logger &logger, std::string pattern)
 {
     logger.set_formatter(details::make_unique<pattern_formatter>(std::move(pattern)));
 }

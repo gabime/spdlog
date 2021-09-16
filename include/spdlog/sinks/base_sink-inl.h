@@ -43,7 +43,6 @@ void SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::set_formatter(std::unique_pt
     set_formatter_(std::move(sink_formatter));
 }
 
-
 template<typename Mutex>
 void SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter)
 {

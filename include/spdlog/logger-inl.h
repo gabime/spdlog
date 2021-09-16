@@ -28,7 +28,6 @@ SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT : name_(std::move(o
                                                                flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
                                                                custom_err_handler_(std::move(other.custom_err_handler_))
 
-
 {}
 
 SPDLOG_INLINE logger &logger::operator=(logger other) SPDLOG_NOEXCEPT
@@ -135,7 +134,6 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
     return cloned;
 }
 
-
 SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
 {
     for (auto &sink : sinks_)
@@ -167,7 +165,6 @@ SPDLOG_INLINE void logger::flush_()
         SPDLOG_LOGGER_CATCH(source_loc())
     }
 }
-
 
 SPDLOG_INLINE bool logger::should_flush_(const details::log_msg &msg)
 {

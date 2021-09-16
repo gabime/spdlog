@@ -12,13 +12,13 @@
 void bench_formatter(benchmark::State &state, std::string pattern)
 {
     std::unique_ptr<spdlog::formatter> formatter;
-    if(pattern == "%+")
+    if (pattern == "%+")
     {
         formatter = spdlog::details::make_unique<spdlog::default_formatter>();
     }
     else
     {
-         formatter = spdlog::details::make_unique<spdlog::pattern_formatter>(pattern);
+        formatter = spdlog::details::make_unique<spdlog::pattern_formatter>(pattern);
     }
 
     spdlog::memory_buf_t dest;

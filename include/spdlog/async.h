@@ -27,7 +27,7 @@ namespace details {
 static const size_t default_async_q_size = 8192;
 static std::shared_ptr<thread_pool> s_thread_pool;
 static std::recursive_mutex s_thread_pool_mutex;
-}
+} // namespace details
 
 // async logger factory - creates async loggers backed with thread pool.
 // if a global thread pool doesn't already exist, create it with default queue
@@ -36,7 +36,7 @@ template<async_overflow_policy OverflowPolicy = async_overflow_policy::block>
 struct async_factory_impl
 {
     template<typename Sink, typename... SinkArgs>
-    static std::shared_ptr<async_logger> create(std::string logger_name, SinkArgs &&...args)
+    static std::shared_ptr<async_logger> create(std::string logger_name, SinkArgs &&... args)
     {
         // create global thread pool if not already exists..
 
@@ -45,10 +45,10 @@ struct async_factory_impl
         if (!details::s_thread_pool)
         {
             details::s_thread_pool = std::make_shared<details::thread_pool>(details::default_async_q_size, 1U);
-
         }
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
-        auto new_logger = std::make_shared<async_logger>(std::move(logger_name), std::move(sink), std::move(details::s_thread_pool), OverflowPolicy);
+        auto new_logger =
+            std::make_shared<async_logger>(std::move(logger_name), std::move(sink), std::move(details::s_thread_pool), OverflowPolicy);
         return new_logger;
     }
 };
@@ -57,13 +57,13 @@ using async_factory = async_factory_impl<async_overflow_policy::block>;
 using async_factory_nonblock = async_factory_impl<async_overflow_policy::overrun_oldest>;
 
 template<typename Sink, typename... SinkArgs>
-inline std::shared_ptr<spdlog::logger> create_async(std::string logger_name, SinkArgs &&...sink_args)
+inline std::shared_ptr<spdlog::logger> create_async(std::string logger_name, SinkArgs &&... sink_args)
 {
     return async_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }
 
 template<typename Sink, typename... SinkArgs>
-inline std::shared_ptr<spdlog::logger> create_async_nb(std::string logger_name, SinkArgs &&...sink_args)
+inline std::shared_ptr<spdlog::logger> create_async_nb(std::string logger_name, SinkArgs &&... sink_args)
 {
     return async_factory_nonblock::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
 }

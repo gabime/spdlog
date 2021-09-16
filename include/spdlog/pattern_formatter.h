@@ -90,7 +90,7 @@ public:
     void format(const details::log_msg &msg, memory_buf_t &dest) override;
 
     template<typename T, typename... Args>
-    pattern_formatter &add_flag(char flag, Args &&...args)
+    pattern_formatter &add_flag(char flag, Args &&... args)
     {
         custom_handlers_[flag] = details::make_unique<T>(std::forward<Args>(args)...);
         return *this;
@@ -118,9 +118,8 @@ private:
     void compile_pattern_(const std::string &pattern);
 };
 
-
 // set pattern to logger
-SPDLOG_API void set_pattern(logger& logger, std::string pattern);
+SPDLOG_API void set_pattern(logger &logger, std::string pattern);
 
 } // namespace spdlog
 

@@ -84,7 +84,6 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::flush()
     // windows console always flushed?
 }
 
-
 template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter)
 {

@@ -119,13 +119,13 @@ void load_levels_example()
     // SPDLOG_LEVEL=info,mylogger=trace && ./example
     auto levels = spdlog::cfg::load_env_levels();
     auto it = levels.find(spdlog::default_logger()->name());
-    if(it != levels.end())
+    if (it != levels.end())
         spdlog::default_logger()->set_level(it->second);
 
     auto my_logger = spdlog::basic_logger_mt("my_logger", "logs/my-logger.txt");
     it = levels.find(my_logger->name());
-    if(it != levels.end())
-        my_logger ->set_level(it->second);
+    if (it != levels.end())
+        my_logger->set_level(it->second);
 
     // or from command line:
     // ./example SPDLOG_LEVEL=info,mylogger=trace
@@ -245,7 +245,8 @@ void user_defined_example()
 void err_handler_example()
 {
     // can be set globally or per logger(logger->set_error_handler(..))
-    spdlog::default_logger()->set_error_handler([](const std::string &msg) { printf("*** Custom log error handler: %s ***\n", msg.c_str()); });
+    spdlog::default_logger()->set_error_handler(
+        [](const std::string &msg) { printf("*** Custom log error handler: %s ***\n", msg.c_str()); });
 }
 
 // syslog example (linux/osx/freebsd)
