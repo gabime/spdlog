@@ -24,13 +24,11 @@
 
 namespace spdlog {
 namespace cfg {
-inline void load_env_levels()
+
+inline std::unordered_map<std::string, level::level_enum> load_env_levels()
 {
     auto env_val = details::os::getenv("SPDLOG_LEVEL");
-    if (!env_val.empty())
-    {
-        helpers::load_levels(env_val);
-    }
+    return helpers::load_levels(env_val);
 }
 
 } // namespace cfg

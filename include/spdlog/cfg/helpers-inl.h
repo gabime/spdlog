@@ -78,17 +78,15 @@ inline std::unordered_map<std::string, std::string> extract_key_vals_(const std:
     return rv;
 }
 
-SPDLOG_INLINE void load_levels(const std::string &input)
+SPDLOG_INLINE std::unordered_map<std::string, level::level_enum> load_levels(const std::string &input)
 {
+    std::unordered_map<std::string, level::level_enum> levels;
     if (input.empty() || input.size() > 512)
     {
-        return;
+        return levels;
     }
 
     auto key_vals = extract_key_vals_(input);
-    std::unordered_map<std::string, level::level_enum> levels;
-    level::level_enum global_level = level::info;
-    bool global_level_found = false;
 
     for (auto &name_level : key_vals)
     {
@@ -100,19 +98,9 @@ SPDLOG_INLINE void load_levels(const std::string &input)
         {
             continue;
         }
-        if (logger_name.empty()) // no logger name indicate global level
-        {
-            global_level_found = true;
-            global_level = level;
-        }
-        else
-        {
-            levels[logger_name] = level;
-        }
+        levels[logger_name] = level;
     }
-
-    // TODO what to do here with registry?
-    //details::registry::instance().set_levels(std::move(levels), global_level_found ? &global_level : nullptr);
+    return levels;
 }
 
 } // namespace helpers

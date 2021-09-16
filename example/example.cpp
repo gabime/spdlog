@@ -115,9 +115,18 @@ void daily_example()
 #include "spdlog/cfg/env.h"
 void load_levels_example()
 {
-    // Set the log level to "info" and mylogger to "trace":
+    // Set the default logger level to "info" and mylogger to "trace":
     // SPDLOG_LEVEL=info,mylogger=trace && ./example
-    spdlog::cfg::load_env_levels();
+    auto levels = spdlog::cfg::load_env_levels();
+    auto it = levels.find(spdlog::default_logger()->name());
+    if(it != levels.end())
+        spdlog::default_logger()->set_level(it->second);
+
+    auto my_logger = spdlog::basic_logger_mt("my_logger", "logs/my-logger.txt");
+    it = levels.find(my_logger->name());
+    if(it != levels.end())
+        my_logger ->set_level(it->second);
+
     // or from command line:
     // ./example SPDLOG_LEVEL=info,mylogger=trace
     // #include "spdlog/cfg/argv.h" // for loading levels from argv

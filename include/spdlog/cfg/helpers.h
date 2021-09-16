@@ -8,6 +8,9 @@
 
 namespace spdlog {
 namespace cfg {
+
+using level_map = std::unordered_map<std::string, level::level_enum>;
+
 namespace helpers {
 //
 // Init levels from given string
@@ -18,7 +21,7 @@ namespace helpers {
 // turn off all logging except for logger1: "off,logger1=debug"
 // turn off all logging except for logger1 and logger2: "off,logger1=debug,logger2=info"
 //
-SPDLOG_API void load_levels(const std::string &txt);
+SPDLOG_API level_map load_levels(const std::string &txt);
 } // namespace helpers
 
 } // namespace cfg

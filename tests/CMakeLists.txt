@@ -29,7 +29,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_fmt_helper.cpp
     test_stdout_api.cpp
     test_create_dir.cpp
-    # test_cfg.cpp TODO
+    test_cfg.cpp
     test_time_point.cpp
     test_stopwatch.cpp)
 
