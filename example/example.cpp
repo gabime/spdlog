@@ -24,6 +24,7 @@ void udp_example();
 void custom_flags_example();
 
 #include "spdlog/spdlog.h"
+#include "spdlog/default_formatter.h"
 #include "spdlog/pattern_formatter.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h" // support for user defined types
@@ -50,7 +51,8 @@ int main(int, char *[])
     // Customize msg format for all loggers
     spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
     spdlog::info("This an info message with custom format");
-    spdlog::set_pattern("%+"); // back to default format
+    using spdlog::details::make_unique; // for pre c++14
+    spdlog::set_formatter(make_unique<spdlog::default_formatter>()); // back to default format
     spdlog::set_level(spdlog::level::info);
 
     // Backtrace support

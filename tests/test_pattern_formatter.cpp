@@ -278,7 +278,7 @@ TEST_CASE("clone-default-formatter", "[pattern_formatter]")
 
 TEST_CASE("clone-default-formatter2", "[pattern_formatter]")
 {
-    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("%+");
+    auto formatter_1 = std::make_shared<spdlog::default_formatter>();
     auto formatter_2 = formatter_1->clone();
     std::string logger_name = "test";
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "some message");

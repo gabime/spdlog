@@ -1294,8 +1294,8 @@ SPDLOG_INLINE void set_pattern(std::string pattern)
     set_formatter(details::make_unique<pattern_formatter>(std::move(pattern)));
 }
 
-SPDLOG_INLINE void logger::set_pattern(std::string pattern)
+SPDLOG_INLINE void set_pattern(logger& logger, std::string pattern)
 {
-    this->set_formatter(details::make_unique<pattern_formatter>(std::move(pattern)));
+    logger.set_formatter(details::make_unique<pattern_formatter>(std::move(pattern)));
 }
 } // namespace spdlog

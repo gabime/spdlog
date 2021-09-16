@@ -84,7 +84,6 @@ TEST_CASE("stderr_color_mt", "[stderr]")
 TEST_CASE("wchar_api", "[stdout]")
 {
     auto l = spdlog::stdout_logger_st("wchar_logger");
-    l->set_pattern("%+");
     l->set_level(spdlog::level::trace);
     l->trace(L"Test wchar_api");
     l->trace(L"Test wchar_api {}", L"param");

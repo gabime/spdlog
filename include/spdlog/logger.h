@@ -290,7 +290,6 @@ public:
     // set formatting for the sinks in this logger.
     // each sink will get a separate instance of the formatter object.
     void set_formatter(std::unique_ptr<formatter> f);
-    void set_pattern(std::string pattern);
 
     // backtrace support.
     // efficiently store all debug/trace messages in a circular buffer until needed for debugging.

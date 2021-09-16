@@ -118,6 +118,11 @@ private:
     void compile_pattern_(const std::string &pattern);
 };
 
+// Set global log pattern.
+SPDLOG_API void set_pattern(std::string pattern);
+
+// set pattern to logger
+SPDLOG_API void set_pattern(logger& logger, std::string pattern);
 
 } // namespace spdlog
 
