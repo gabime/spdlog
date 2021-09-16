@@ -10,6 +10,7 @@
 #include <spdlog/sinks/sink.h>
 
 #include <cstdio>
+#include <mutex>
 
 namespace spdlog {
 
