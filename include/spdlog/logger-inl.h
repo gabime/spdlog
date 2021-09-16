@@ -10,7 +10,6 @@
 #include <spdlog/sinks/sink.h>
 
 #include <cstdio>
-#include <mutex>
 
 namespace spdlog {
 
@@ -184,25 +183,14 @@ SPDLOG_INLINE void logger::err_handler_(const std::string &msg)
     }
     else
     {
-        using std::chrono::system_clock;
-        static std::mutex mutex;
-        static std::chrono::system_clock::time_point last_report_time;
-        static size_t err_counter = 0;
-        std::lock_guard<std::mutex> lk{mutex};
-        auto now = system_clock::now();
-        err_counter++;
-        if (now - last_report_time < std::chrono::seconds(1))
-        {
-            return;
-        }
-        last_report_time = now;
-        auto tm_time = details::os::localtime(system_clock::to_time_t(now));
+        auto now = log_clock::now();
+        auto tm_time = details::os::localtime(log_clock::to_time_t(now));
         char date_buf[64];
         std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
 #if defined(USING_R) && defined(R_R_H) // if in R environment
-        REprintf("[*** LOG ERROR #%04zu ***] [%s] [%s] {%s}\n", err_counter, date_buf, name().c_str(), msg.c_str());
+        REprintf("[*** LOG ERROR ***] [%s] [%s] {%s}\n", date_buf, name().c_str(), msg.c_str());
 #else
-        std::fprintf(stderr, "[*** LOG ERROR #%04zu ***] [%s] [%s] {%s}\n", err_counter, date_buf, name().c_str(), msg.c_str());
+        std::fprintf(stderr, "[*** LOG ERROR ***] [%s] [%s] {%s}\n", date_buf, name().c_str(), msg.c_str());
 #endif
     }
 }
