@@ -324,9 +324,7 @@ protected:
     template<typename... Args>
     void log_(source_loc loc, level::level_enum lvl, wstring_view_t fmt, Args &&... args)
     {
-        bool log_enabled = should_log(lvl);
-        bool traceback_enabled = tracer_.enabled();
-        if (!log_enabled)
+        if (!should_log(lvl))
         {
             return;
         }
@@ -348,9 +346,7 @@ protected:
     template<class T, typename std::enable_if<std::is_convertible<const T &, spdlog::wstring_view_t>::value, int>::type = 0>
     void log_(source_loc loc, level::level_enum lvl, const T &msg)
     {
-        bool log_enabled = should_log(lvl);
-        bool traceback_enabled = tracer_.enabled();
-        if (!log_enabled && !traceback_enabled)
+        if (!should_log(lvl))
         {
             return;
         }
@@ -370,7 +366,6 @@ protected:
     // and save backtrace (if backtrace is enabled).
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
-    void dump_backtrace_();
     bool should_flush_(const details::log_msg &msg);
 
     // handle errors during logging.
