@@ -98,6 +98,7 @@ TEST_CASE("async_error_handler", "[errors]]")
 TEST_CASE("async_error_handler2", "[errors]]")
 {
     prepare_logdir();
+    spdlog::init_thread_pool(128, 1);
     std::string err_msg("This is async handler error message");
     {
         spdlog::details::os::create_dir(SPDLOG_FILENAME_T("test_logs"));
@@ -111,7 +112,6 @@ TEST_CASE("async_error_handler2", "[errors]]")
         });
         logger->info("Hello failure");
     }
-
-    spdlog::init_thread_pool(128, 1);
+    spdlog::details::os::sleep_for_millis(500);
     REQUIRE(file_contents("test_logs/custom_err2.txt") == err_msg);
 }
