@@ -362,8 +362,7 @@ protected:
 
 #endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
-    // log the given message (if the given log level is high enough),
-    // and save backtrace (if backtrace is enabled).
+    // log the given message (if the given log level is high enough).
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
     bool should_flush_(const details::log_msg &msg);
