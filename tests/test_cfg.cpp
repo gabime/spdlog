@@ -17,7 +17,6 @@ TEST_CASE("env", "[cfg]")
     setenv("SPDLOG_LEVEL", "warn", 1);
 #endif
     auto levels = load_env_levels();
-    auto it = levels.find(spdlog::default_logger()->name());
     REQUIRE(levels == spdlog::cfg::level_map{{"", spdlog::level::warn}});
 }
 
