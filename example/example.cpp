@@ -51,9 +51,9 @@ int main(int, char *[])
     spdlog::debug("This message should be displayed..");
 
     // Customize msg format
-    spdlog::default_logger()->set_formatter(make_unique<spdlog::pattern_formatter>("[%H:%M:%S %z] [%^%L%$] [thread %t] %v"));
+    spdlog::default_logger()->set_formatter<spdlog::pattern_formatter>("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
     spdlog::info("This an info message with custom format");
-    spdlog::default_logger()->set_formatter(make_unique<spdlog::default_formatter>()); // back to default format
+    spdlog::default_logger()->set_formatter<spdlog::default_formatter>(); // back to default format
     spdlog::default_logger()->set_level(spdlog::level::info);
 
     try
@@ -285,7 +285,7 @@ public:
 
     std::unique_ptr<custom_flag_formatter> clone() const override
     {
-        return spdlog::details::make_unique<my_formatter_flag>();
+        return make_unique<my_formatter_flag>();
     }
 };
 

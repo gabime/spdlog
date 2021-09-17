@@ -279,6 +279,13 @@ public:
     // each sink will get a separate instance of the formatter object.
     void set_formatter(std::unique_ptr<formatter> f);
 
+
+    template<typename Formatter, typename... Args>
+    void set_formatter(Args &&...args)
+    {
+        set_formatter(details::make_unique<Formatter>(std::forward<Args>(args)...));
+    }
+
     // flush functions
     void flush();
     void flush_on(level::level_enum log_level);
