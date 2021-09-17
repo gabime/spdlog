@@ -52,13 +52,14 @@ static void test_single_print(std::function<void(std::string const &)> do_log, s
 TEST_CASE("eventlog", "[eventlog]")
 {
     using namespace spdlog;
+    using spdlog::details::make_unique; // for pre c++14
 
     auto test_sink = std::make_shared<sinks::win_eventlog_sink_mt>(TEST_SOURCE);
 
     spdlog::logger test_logger("eventlog", test_sink);
     test_logger.set_level(level::trace);
 
-    test_sink->set_pattern("%v");
+    test_sink->set_formatter(make_unique<spdlog::pattern_formatter>("%v"));
 
     test_single_print([&test_logger](std::string const &msg) { test_logger.trace(msg); }, "my trace message", EVENTLOG_SUCCESS);
     test_single_print([&test_logger](std::string const &msg) { test_logger.debug(msg); }, "my debug message", EVENTLOG_SUCCESS);
