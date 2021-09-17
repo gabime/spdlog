@@ -91,7 +91,7 @@ TEST_CASE("argv10", "[cfg]")
 
 TEST_CASE("argv11", "[cfg]")
 {
-    const char *argv[] = {};
+    const char *argv[] = nullptr;
     auto levels = load_argv_levels(0, argv);
     REQUIRE(levels.empty());
 }
