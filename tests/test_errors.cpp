@@ -89,7 +89,7 @@ TEST_CASE("async_error_handler", "[errors]]")
         logger->info(fmt::runtime("Bad format msg {} {}"), "xxx");
         logger->info("Good message #2");
     }
-    spdlog::init_thread_pool(128, 1);
+    spdlog::details::os::sleep_for_millis(500);
     require_message_count(SIMPLE_ASYNC_LOG, 2);
     REQUIRE(file_contents("test_logs/custom_err.txt") == err_msg);
 }
