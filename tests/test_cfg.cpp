@@ -91,7 +91,8 @@ TEST_CASE("argv10", "[cfg]")
 
 TEST_CASE("argv11", "[cfg]")
 {
-    auto levels = load_argv_levels(0, nullptr);
+    const char *argv[] = {"ignore", "junk", "SPDLOG_LEVEL=info"};
+    auto levels = load_argv_levels(0, argv);
     REQUIRE(levels.empty());
 }
 
