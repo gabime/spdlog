@@ -34,12 +34,6 @@
 		<file src="..\include\spdlog\**" target="build\native\include\spdlog\" />
     
 		<!-- MSBuild .targets files -->
-		<file src="gabime.spdlog.targets" target="build\native" />
+		<file src="SiddiqSoft.spdlog.targets" target="build\native" />
 	</files>
 </package>
-<!--
- TO BUILD for local consumption or upload to your private nuget repo:
- nuget.exe pack .\gabime.spdlog.nuspec -Properties VERSION=1.9.2
- This will create gabime.spdlog.1.9.2.nupkg file. You can push this to your local store.
- Usage is simple, you #include "spdlog/spdlog.h" etc..
- -->
