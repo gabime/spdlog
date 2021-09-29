@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+
+	<!--
+		First meta data information about the package itself.
+		Documentation can be found at: (or via nuget.org)
+		https://docs.microsoft.com/en-us/nuget/reference/nuspec#optional-metadata-elements
+	-->
+	<metadata>
+		<!-- required: -->
+		<id>gabime.spdlog</id>
+		<version>$VERSION$</version>
+		<authors>Gabi Melman</authors>
+		<description>Fast C++ logging library</description>
+		<tags>logging spdlog cpp11 native nativepackage cpp</tags>
+		<projectUrl>https://github.com/gabime/spdlog</projectUrl>
+		<requireLicenseAcceptance>true</requireLicenseAcceptance>
+		<license type="expression">MIT</license>
+		<releaseNotes></releaseNotes>
+		<copyright>Copyright (c) 2016 Gabi Melman</copyright>
+		<!-- Dependencies -->
+		<dependencies>
+		</dependencies>
+	</metadata>
+
+	<!--
+		Specify the content for your package.
+		This is only a packing list, no build semantic is defined here!
+		Stick to conventions described by nuget.org:
+		https://docs.microsoft.com/en-us/nuget/create-packages/creating-a-package#from-a-convention-based-working-directory
+	-->
+	<files>
+		<!-- includes -->
+		<file src="..\include\spdlog\**" target="build\native\include\spdlog\" />
+    
+		<!-- MSBuild .targets files -->
+		<file src="gabime.spdlog.targets" target="build\native" />
+	</files>
+</package>
+<!--
+ TO BUILD for local consumption or upload to your private nuget repo:
+ nuget.exe pack .\gabime.spdlog.nuspec -Properties VERSION=1.9.2
+ This will create gabime.spdlog.1.9.2.nupkg file. You can push this to your local store.
+ Usage is simple, you #include "spdlog/spdlog.h" etc..
+ -->
