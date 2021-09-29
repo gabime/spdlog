@@ -16,6 +16,7 @@
 		<projectUrl>https://github.com/gabime/spdlog</projectUrl>
 		<requireLicenseAcceptance>true</requireLicenseAcceptance>
 		<license type="expression">MIT</license>
+		<readme>docs\README.md</readme>
 		<releaseNotes></releaseNotes>
 		<copyright>Copyright (c) 2016 Gabi Melman</copyright>
 		<!-- Dependencies -->
@@ -32,7 +33,7 @@
 	<files>
 		<!-- includes -->
 		<file src="..\include\spdlog\**" target="build\native\include\spdlog\" />
-    
+		<file src="..\README.md" target="docs\" />
 		<!-- MSBuild .targets files -->
 		<file src="gabime.spdlog.targets" target="build\native" />
 	</files>
