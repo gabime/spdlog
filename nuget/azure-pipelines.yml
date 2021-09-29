@@ -25,24 +25,13 @@ steps:
     versionSpec: '5.10.0'
     checkLatest: true
 
-- task: GitVersion@5
-  inputs:
-    runtime: 'core'
-#    configFilePath: 'GitVersion.yml'
-
-- script: echo %Action%%BuildVersion%
-  displayName: 'Set build version'
-  env:
-    Action: '##vso[build.updatebuildnumber]'
-    BuildVersion: $(GitVersion.NugetVersionV2)
-
 - task: NuGetCommand@2
   displayName: 'NuGet pack'
   inputs:
     command: 'pack'
     packagesToPack: 'nuget/*.nuspec'
     versioningScheme: 'off'
-    buildProperties: 'VERSION=$(build.buildNumber)'
+    buildProperties: 'VERSION=1.9.2'
 
 - task: NuGetCommand@2
   displayName: 'NuGet push'
