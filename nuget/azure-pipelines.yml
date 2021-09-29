@@ -1,0 +1,54 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - main
+    - v1.x
+  paths:
+    exclude:
+    - README.md
+
+pool:
+  name: Default
+  demands:
+  - msbuild
+  - visualstudio
+  - vstest
+
+variables:
+  buildPlatform: 'x64'
+  
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet 5.10.0'
+  inputs:
+    versionSpec: '5.10.0'
+    checkLatest: true
+
+- task: GitVersion@5
+  inputs:
+    runtime: 'core'
+#    configFilePath: 'GitVersion.yml'
+
+- script: echo %Action%%BuildVersion%
+  displayName: 'Set build version'
+  env:
+    Action: '##vso[build.updatebuildnumber]'
+    BuildVersion: $(GitVersion.NugetVersionV2)
+
+- task: NuGetCommand@2
+  displayName: 'NuGet pack'
+  inputs:
+    command: 'pack'
+    packagesToPack: 'nuget/*.nuspec'
+    versioningScheme: 'off'
+    buildProperties: 'VERSION=$(build.buildNumber)'
+
+- task: NuGetCommand@2
+  displayName: 'NuGet push'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.symbols.nupkg;build/*.nupkg;!build/*symbols.nupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'sqs-nuget'
+#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
