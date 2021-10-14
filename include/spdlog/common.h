@@ -255,6 +255,8 @@ struct source_loc
     const char *funcname{nullptr};
 };
 
+typedef void (*rotate_file_callback)(const filename_t& pre, const filename_t& next);
+
 namespace details {
 // make_unique support for pre c++14
 
