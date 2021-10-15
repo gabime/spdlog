@@ -362,7 +362,7 @@ protected:
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(msg, buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            sink_it(log_msg);
+            sink_it_(log_msg);
         }
         SPDLOG_LOGGER_CATCH(loc)
     }
