@@ -20,6 +20,9 @@ SPDLOG_INLINE log_msg::log_msg(spdlog::log_clock::time_point log_time, spdlog::s
 #ifndef SPDLOG_NO_THREAD_ID
     , thread_id(os::thread_id())
 #endif
+#ifndef SPDLOG_NO_PTHREAD_ID
+    , pthread_id(pthread_self())
+#endif
     , source(loc)
     , payload(msg)
 {}

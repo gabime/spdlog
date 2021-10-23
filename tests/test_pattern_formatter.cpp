@@ -59,6 +59,23 @@ TEST_CASE("date MM/DD/YY ", "[pattern_formatter]")
     REQUIRE(log_to_str("Some message", "%D %v", spdlog::pattern_time_type::local, "\n") == oss.str());
 }
 
+
+#ifndef SPDLOG_NO_PTHREAD_ID
+TEST_CASE("thread name formatter", "[pattern_formatter]")
+{
+    char originalName[16] = { 0 };
+    pthread_getname_np(pthread_self(), originalName, 16);
+    std::string expected = "[";
+    expected += originalName;
+    expected += "] Some message\n";
+    REQUIRE(log_to_str("Some message", "[%N] %v", spdlog::pattern_time_type::local, "\n") == expected);
+    pthread_setname_np(pthread_self(), "Testname");
+    REQUIRE(log_to_str("Some message", "[%N] %v", spdlog::pattern_time_type::local, "\n") == "[Testname] Some message\n");
+    pthread_setname_np(pthread_self(), originalName);
+}
+
+#endif
+
 TEST_CASE("color range test1", "[pattern_formatter]")
 {
     auto formatter = std::make_shared<spdlog::pattern_formatter>("%^%v%$", spdlog::pattern_time_type::local, "\n");

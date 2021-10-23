@@ -22,6 +22,10 @@ struct SPDLOG_API log_msg
     log_clock::time_point time;
     size_t thread_id{0};
 
+#ifndef SPDLOG_NO_PTHREAD_ID
+    pthread_t pthread_id{0};
+#endif
+
     // wrapping the formatted text with color (updated by pattern_formatter).
     mutable size_t color_range_start{0};
     mutable size_t color_range_end{0};

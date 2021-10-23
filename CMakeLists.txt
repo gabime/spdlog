@@ -105,6 +105,7 @@ endif()
 
 option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file descriptors" OFF)
 option(SPDLOG_NO_THREAD_ID "prevent spdlog from querying the thread id on each log call if thread id is not needed" OFF)
+option(SPDLOG_NO_PTHREAD_ID "prevent spdlog from querying the pthread id on each log call if pthread id is not needed (required for %N)" ON)
 option(SPDLOG_NO_TLS "prevent spdlog from using thread local storage" OFF)
 option(
     SPDLOG_NO_ATOMIC_LEVELS
@@ -220,6 +221,7 @@ foreach(
     SPDLOG_CLOCK_COARSE
     SPDLOG_PREVENT_CHILD_FD
     SPDLOG_NO_THREAD_ID
+    SPDLOG_NO_PTHREAD_ID
     SPDLOG_NO_TLS
     SPDLOG_NO_ATOMIC_LEVELS
     SPDLOG_DISABLE_DEFAULT_LOGGER)
