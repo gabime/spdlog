@@ -672,6 +672,8 @@ public:
         char threadNameBuffer[16] = { 0 };
 #ifndef SPDLOG_NO_PTHREAD_ID
         pthread_getname_np(msg.pthread_id, threadNameBuffer, 16);
+#else
+        (void)msg;
 #endif
         threadName_ = threadNameBuffer;
         ScopedPadder p(threadName_.size(), padinfo_, dest);
