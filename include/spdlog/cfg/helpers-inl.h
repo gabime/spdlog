@@ -88,7 +88,7 @@ SPDLOG_INLINE void load_levels(const std::string &input)
 
     auto key_vals = extract_key_vals_(input);
     std::unordered_map<std::string, level::level_enum> levels;
-    level::level_enum global_level = level::info;
+    level::level_enum global_level = level::kDefault;
     bool global_level_found = false;
 
     for (auto &name_level : key_vals)

@@ -97,7 +97,7 @@ private:
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
     log_levels log_levels_;
     std::unique_ptr<formatter> formatter_;
-    spdlog::level::level_enum global_log_level_ = level::info;
+    spdlog::level::level_enum global_log_level_ = level::kDefault;
     level::level_enum flush_level_ = level::off;
     err_handler err_handler_;
     std::shared_ptr<thread_pool> tp_;

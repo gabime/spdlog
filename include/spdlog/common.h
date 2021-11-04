@@ -152,10 +152,6 @@ using level_t = std::atomic<int>;
 #define SPDLOG_LEVEL_CRITICAL 5
 #define SPDLOG_LEVEL_OFF 6
 
-#if !defined(SPDLOG_ACTIVE_LEVEL)
-#    define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
-#endif
-
 // Log level enum
 namespace level {
 enum level_enum
@@ -177,6 +173,12 @@ enum level_enum
 #define SPDLOG_LEVEL_NAME_ERROR spdlog::string_view_t("error", 5)
 #define SPDLOG_LEVEL_NAME_CRITICAL spdlog::string_view_t("critical", 8)
 #define SPDLOG_LEVEL_NAME_OFF spdlog::string_view_t("off", 3)
+
+static constexpr level_enum kDefault = info;
+
+#if !defined(SPDLOG_ACTIVE_LEVEL)
+#    define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+#endif
 
 #if !defined(SPDLOG_LEVEL_NAMES)
 #    define SPDLOG_LEVEL_NAMES                                                                                                             \
