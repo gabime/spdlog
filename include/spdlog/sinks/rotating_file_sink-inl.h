@@ -25,10 +25,11 @@ namespace sinks {
 
 template<typename Mutex>
 SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
-    filename_t base_filename, std::size_t max_size, std::size_t max_files, bool rotate_on_open)
+    filename_t base_filename, std::size_t max_size, std::size_t max_files, bool rotate_on_open, const file_event_handlers_t& event_handlers)
     : base_filename_(std::move(base_filename))
     , max_size_(max_size)
     , max_files_(max_files)
+    , file_helper_{event_handlers}
 {
     file_helper_.open(calc_filename(base_filename_, 0));
     current_size_ = file_helper_.size(); // expensive. called only once

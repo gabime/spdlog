@@ -120,7 +120,22 @@ void basic_example()
 void rotating_example()
 {
     // Create a file rotating logger with 5mb size max and 3 rotated files.
-    auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
+    spdlog::file_event_handlers_t file_event_handlers;
+        file_event_handlers.after_open = [](spdlog::filename_t filename, std::FILE* fstream)
+    {
+        fputs("OPEN!\r\n", fstream);
+        spdlog::info("basic_example() : file_event_handlers.after_open      : {}", filename.c_str());
+    };
+    file_event_handlers.before_close = [](spdlog::filename_t filename, std::FILE* fstream)
+    {
+        fputs("CLOSE!\r\n", fstream);
+        spdlog::info("basic_example() : file_event_handlers.before_close    : {}", filename.c_str());
+    };
+    file_event_handlers.after_close = [](spdlog::filename_t filename)
+    {
+        spdlog::info("basic_example() : file_event_handlers.after_close     : {}", filename.c_str());
+    };
+    auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3, false, file_event_handlers);
 }
 
 #include "spdlog/sinks/daily_file_sink.h"
