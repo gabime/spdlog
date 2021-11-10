@@ -26,9 +26,32 @@ void custom_flags_example();
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h" // support for user defined types
+#include "spdlog/common.h"
+
+spdlog::file_event_handlers_t file_event_handlers;
+
+void init_file_event_handler() 
+{
+    file_event_handlers.after_open = [](spdlog::filename_t filename, std::FILE* fstream)
+    {
+        fputs("OPEN!\r\n", fstream);
+        spdlog::info("basic_example() : file_event_handlers.after_open      : {}", filename.c_str());
+    };
+    file_event_handlers.before_close = [](spdlog::filename_t filename, std::FILE* fstream)
+    {
+        fputs("CLOSE!\r\n", fstream);
+        spdlog::info("basic_example() : file_event_handlers.before_close    : {}", filename.c_str());
+    };
+    file_event_handlers.after_close = [](spdlog::filename_t filename)
+    {
+        spdlog::info("basic_example() : file_event_handlers.after_close     : {}", filename.c_str());
+    };
+}
 
 int main(int, char *[])
 {
+    init_file_event_handler();
+
     // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
     load_levels_example();
 
@@ -113,21 +136,21 @@ void stdout_logger_example()
 void basic_example()
 {
     // Create basic file logger (not rotated).
-    auto my_logger = spdlog::basic_logger_mt("file_logger", "logs/basic-log.txt");
+    auto my_logger = spdlog::basic_logger_mt("file_logger", "logs/basic-log.txt", false, file_event_handlers);
 }
 
 #include "spdlog/sinks/rotating_file_sink.h"
 void rotating_example()
 {
     // Create a file rotating logger with 5mb size max and 3 rotated files.
-    auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
+    auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3, false, file_event_handlers);
 }
 
 #include "spdlog/sinks/daily_file_sink.h"
 void daily_example()
 {
     // Create a daily logger - a new file is created every day on 2:30am.
-    auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
+    auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30, false, 0, file_event_handlers);
 }
 
 #include "spdlog/cfg/env.h"
@@ -147,7 +170,7 @@ void async_example()
 {
     // Default thread pool settings can be modified *before* creating the async logger:
     // spdlog::init_thread_pool(32768, 1); // queue with max 32k items 1 backing thread.
-    auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt");
+    auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt", false, file_event_handlers);
     // alternatively:
     // auto async_file = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("async_file_logger", "logs/async_log.txt");
 
@@ -224,7 +247,7 @@ void multi_sink_example()
     console_sink->set_level(spdlog::level::warn);
     console_sink->set_pattern("[multi_sink_example] [%^%l%$] %v");
 
-    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multisink.txt", true);
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multisink.txt", true, file_event_handlers);
     file_sink->set_level(spdlog::level::trace);
 
     spdlog::logger logger("multi_sink", {console_sink, file_sink});
