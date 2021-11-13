@@ -46,7 +46,7 @@
 #    define SPDLOG_FMT_RUNTIME(format_string) format_string
 #endif
 
-// visual studio upto 2013 does not support noexcept nor constexpr
+// visual studio up to 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #    define SPDLOG_NOEXCEPT _NOEXCEPT
 #    define SPDLOG_CONSTEXPR

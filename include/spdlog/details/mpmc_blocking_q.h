@@ -49,7 +49,7 @@ public:
         push_cv_.notify_one();
     }
 
-    // try to dequeue item. if no item found. wait upto timeout and try again
+    // try to dequeue item. if no item found. wait up to timeout and try again
     // Return true, if succeeded dequeue item, false otherwise
     bool dequeue_for(T &popped_item, std::chrono::milliseconds wait_duration)
     {
@@ -87,7 +87,7 @@ public:
         push_cv_.notify_one();
     }
 
-    // try to dequeue item. if no item found. wait upto timeout and try again
+    // try to dequeue item. if no item found. wait up to timeout and try again
     // Return true, if succeeded dequeue item, false otherwise
     bool dequeue_for(T &popped_item, std::chrono::milliseconds wait_duration)
     {
