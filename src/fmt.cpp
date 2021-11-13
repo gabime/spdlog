@@ -6,7 +6,7 @@
 #    error Please define SPDLOG_COMPILED_LIB to compile this file.
 #endif
 
-#if !defined(SPDLOG_FMT_EXTERNAL)
+#if !defined(SPDLOG_FMT_EXTERNAL) && !defined(SPDLOG_USE_STD_FORMAT)
 #    include <spdlog/fmt/bundled/format-inl.h>
 
 FMT_BEGIN_NAMESPACE

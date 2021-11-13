@@ -32,7 +32,7 @@ struct daily_filename_calculator
     {
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
-        return fmt::format(
+        return fmt_lib::format(
             SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday, ext);
     }
 };
@@ -49,8 +49,10 @@ struct daily_filename_format_calculator
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
     {
         // generate fmt datetime format string, e.g. {:%Y-%m-%d}.
-        filename_t fmt_filename = fmt::format(SPDLOG_FILENAME_T("{{:{}}}"), filename);
-#if defined(_MSC_VER) && defined(SPDLOG_WCHAR_FILENAMES) // for some reason msvc doesnt allow fmt::runtime(..) with wchar here
+        filename_t fmt_filename = fmt_lib::format(SPDLOG_FILENAME_T("{{:{}}}"), filename);
+#if defined(SPDLOG_USE_STD_FORMAT)
+        return std::vformat(fmt_filename, std::make_format_args(now_tm));
+#elif defined(_MSC_VER) && defined(SPDLOG_WCHAR_FILENAMES) // for some reason msvc doesnt allow fmt::runtime(..) with wchar here
         return fmt::format(fmt_filename, now_tm);
 #else
         return fmt::format(SPDLOG_FMT_RUNTIME(fmt_filename), now_tm);

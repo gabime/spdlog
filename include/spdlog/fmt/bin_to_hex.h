@@ -74,12 +74,8 @@ inline details::dump_info<It> to_hex(const It range_begin, const It range_end, s
     return details::dump_info<It>(range_begin, range_end, size_per_line);
 }
 
-} // namespace spdlog
-
-namespace fmt {
-
 template<typename T>
-struct formatter<spdlog::details::dump_info<T>>
+struct fmt_lib::formatter<spdlog::details::dump_info<T>, char>
 {
     const char delimiter = ' ';
     bool put_newlines = true;
@@ -90,7 +86,7 @@ struct formatter<spdlog::details::dump_info<T>>
 
     // parse the format string flags
     template<typename ParseContext>
-    FMT_CONSTEXPR auto parse(ParseContext &ctx) -> decltype(ctx.begin())
+    SPDLOG_CONSTEXPR auto parse(ParseContext &ctx) -> decltype(ctx.begin())
     {
         auto it = ctx.begin();
         while (it != ctx.end() && *it != '}')
@@ -210,8 +206,8 @@ struct formatter<spdlog::details::dump_info<T>>
 
         if (put_positions)
         {
-            fmt::format_to(inserter, "{:04X}: ", pos);
+            fmt_lib::format_to(inserter, "{:04X}: ", pos);
         }
     }
 };
-} // namespace fmt
+} // namespace spdlog

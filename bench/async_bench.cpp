@@ -10,7 +10,9 @@
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 
-#ifdef SPDLOG_FMT_EXTERNAL
+#if defined(SPDLOG_USE_STD_FORMAT)
+#    include <format>
+#elif defined(SPDLOG_FMT_EXTERNAL)
 #    include <fmt/format.h>
 #else
 #    include "spdlog/fmt/bundled/format.h"

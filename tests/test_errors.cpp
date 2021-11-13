@@ -34,7 +34,7 @@ TEST_CASE("default_error_handler", "[errors]]")
     logger->flush();
 
     using spdlog::details::os::default_eol;
-    REQUIRE(file_contents(SIMPLE_LOG) == fmt::format("Test message 2{}", default_eol));
+    REQUIRE(file_contents(SIMPLE_LOG) == spdlog::fmt_lib::format("Test message 2{}", default_eol));
     REQUIRE(count_lines(SIMPLE_LOG) == 1);
 }
 

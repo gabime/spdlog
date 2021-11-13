@@ -40,10 +40,10 @@ class udp_client
     static void throw_winsock_error_(const std::string &msg, int last_error)
     {
         char buf[512];
-        ::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error,
+        ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error,
             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, (sizeof(buf) / sizeof(char)), NULL);
 
-        throw_spdlog_ex(fmt::format("udp_sink - {}: {}", msg, buf));
+        throw_spdlog_ex(fmt_lib::format("udp_sink - {}: {}", msg, buf));
     }
 
     void cleanup_()

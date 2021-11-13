@@ -381,7 +381,11 @@ SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
     memory_buf_t buf;
     wstr_to_utf8buf(filename, buf);
+#ifdef SPDLOG_USE_STD_FORMAT
+    return buf;
+#else
     return fmt::to_string(buf);
+#endif
 }
 #else
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
@@ -458,8 +462,12 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
         return;
     }
 
+#ifdef SPDLOG_USE_STD_FORMAT
+    int result_size = 0;
+#else
     int result_size = static_cast<int>(target.capacity());
     if ((wstr_size + 1) * 2 > result_size)
+#endif
     {
         result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, NULL, 0, NULL, NULL);
     }
@@ -476,7 +484,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
         }
     }
 
-    throw_spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
+    throw_spdlog_ex(fmt_lib::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
 }
 
 SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
@@ -493,8 +501,12 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
         return;
     }
 
+#ifdef SPDLOG_USE_STD_FORMAT
+    int result_size = 0;
+#else
     int result_size = static_cast<int>(target.capacity());
     if (str_size + 1 > result_size)
+#endif
     {
         result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, NULL, 0);
     }
@@ -511,7 +523,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
         }
     }
 
-    throw_spdlog_ex(fmt::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
+    throw_spdlog_ex(fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
 }
 #endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 
