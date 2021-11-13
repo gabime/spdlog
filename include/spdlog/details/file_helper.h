@@ -51,7 +51,7 @@ private:
     const unsigned int open_interval_ = 10;
     std::FILE *fd_{nullptr};
     filename_t filename_;
-    file_event_handlers_t event_handlers_{nullptr, nullptr, nullptr};
+    file_event_handlers_t event_handlers_;
 };
 } // namespace details
 } // namespace spdlog

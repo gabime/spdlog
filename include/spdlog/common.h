@@ -256,11 +256,15 @@ struct source_loc
     const char *funcname{nullptr};
 };
 
-typedef struct 
+typedef struct file_event_handlers
 {
+    std::function<void(const filename_t &filename)> before_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> after_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> before_close;
     std::function<void(const filename_t &filename)> after_close;
+
+    file_event_handlers(): before_open(nullptr), after_open(nullptr), before_close(nullptr), after_close(nullptr)
+    {}
 } file_event_handlers_t;
 
 namespace details {
