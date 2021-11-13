@@ -74,8 +74,18 @@ inline details::dump_info<It> to_hex(const It range_begin, const It range_end, s
     return details::dump_info<It>(range_begin, range_end, size_per_line);
 }
 
+} // namespace spdlog
+
+namespace
+#ifdef SPDLOG_USE_STD_FORMAT
+    std
+#else
+    fmt
+#endif
+{
+
 template<typename T>
-struct fmt_lib::formatter<spdlog::details::dump_info<T>, char>
+struct formatter<spdlog::details::dump_info<T>, char>
 {
     const char delimiter = ' ';
     bool put_newlines = true;
@@ -210,4 +220,4 @@ struct fmt_lib::formatter<spdlog::details::dump_info<T>, char>
         }
     }
 };
-} // namespace spdlog
+} // namespace fmt/std
