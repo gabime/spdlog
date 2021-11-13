@@ -57,7 +57,7 @@ inline void append_int(T n, memory_buf_t &dest)
 #endif
 
 template<typename T>
-SPDLOG_CONSTEXPR unsigned int count_digits_fallback(T n)
+SPDLOG_CONSTEXPR_FUNC unsigned int count_digits_fallback(T n)
 {
     // taken from fmt.
     unsigned int count = 1;
