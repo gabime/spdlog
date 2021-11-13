@@ -55,9 +55,15 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #    define SPDLOG_NOEXCEPT _NOEXCEPT
 #    define SPDLOG_CONSTEXPR
+#    define SPDLOG_CONSTEXPR_FUNC
 #else
 #    define SPDLOG_NOEXCEPT noexcept
 #    define SPDLOG_CONSTEXPR constexpr
+#    if __cplusplus >= 201402L
+#        define SPDLOG_CONSTEXPR_FUNC constexpr
+#    else
+#        define SPDLOG_CONSTEXPR_FUNC
+#    endif
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
