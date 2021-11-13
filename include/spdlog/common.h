@@ -148,7 +148,7 @@ template<typename... Args>
 using format_string_t = fmt::format_string<Args...>;
 
 template<typename... Args>
-using wformat_string_t = fmt::wformat_string<Args...>;
+using wformat_string_t = fmt::basic_format_string<wchar_t, Args...>;
 
 template<class T>
 using remove_cvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
