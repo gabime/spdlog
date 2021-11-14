@@ -50,7 +50,7 @@ struct daily_filename_format_calculator
     {
         // generate fmt datetime format string, e.g. {:%Y-%m-%d}.
         filename_t fmt_filename = fmt::format(SPDLOG_FILENAME_T("{{:{}}}"), filename);
-#if defined(_MSC_VER) && defined(SPDLOG_WCHAR_FILENAMES) // for some reason msvc doesnt allow fmt::runtime(..) with wchar here
+#if defined(_MSC_VER) && defined(SPDLOG_WCHAR_FILENAMES) // for some reason msvc doesn't allow fmt::runtime(..) with wchar here
         return fmt::format(fmt_filename, now_tm);
 #else
         return fmt::format(SPDLOG_FMT_RUNTIME(fmt_filename), now_tm);
