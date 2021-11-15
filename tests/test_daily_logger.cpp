@@ -142,6 +142,16 @@ TEST_CASE("daily_file_sink::daily_filename_calculator", "[daily_file_sink]]")
 }
 #endif
 
+TEST_CASE("daily_file_sink::daily_filename_format_calculator", "[daily_file_sink]]")
+{
+    std::tm tm = spdlog::details::os::localtime();
+    // example-YYYY-MM-DD.log
+    auto filename =
+        spdlog::sinks::daily_filename_format_calculator::calc_filename(SPDLOG_FILENAME_T("example-%Y-%m-%d.log"), tm);
+
+    REQUIRE(filename == spdlog::fmt_lib::format(SPDLOG_FILENAME_T("example-{:04d}-{:02d}-{:02d}.log"), tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday));
+}
+
 /* Test removal of old files */
 static spdlog::details::log_msg create_msg(std::chrono::seconds offset)
 {

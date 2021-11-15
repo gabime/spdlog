@@ -75,7 +75,7 @@ struct daily_filename_format_calculator
         return buf;
 #else
     fmt::basic_memory_buffer<filename_t::value_type> tm_format;
-    tm_format.append(specs.begin(), specs.end());
+    tm_format.append(filename.c_str(), filename.c_str() + filename.size());
     // By appending an extra space we can distinguish an empty result that
     // indicates insufficient buffer size from a guaranteed non-empty result
     // https://github.com/fmtlib/fmt/issues/2238
