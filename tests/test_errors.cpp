@@ -29,7 +29,11 @@ TEST_CASE("default_error_handler", "[errors]]")
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("test-error", filename, true);
     logger->set_pattern("%v");
+#ifdef SPDLOG_USE_STD_FORMAT
+    logger->info("Test message {} {}", 1);
+#else
     logger->info(fmt::runtime("Test message {} {}"), 1);
+#endif
     logger->info("Test message {}", 2);
     logger->flush();
 
@@ -49,7 +53,11 @@ TEST_CASE("custom_error_handler", "[errors]]")
     logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
     logger->info("Good message #1");
 
+#ifdef SPDLOG_USE_STD_FORMAT
+    REQUIRE_THROWS_AS(logger->info("Bad format msg {} {}", "xxx"), custom_ex);
+#else
     REQUIRE_THROWS_AS(logger->info(fmt::runtime("Bad format msg {} {}"), "xxx"), custom_ex);
+#endif
     logger->info("Good message #2");
     require_message_count(SIMPLE_LOG, 2);
 }
@@ -88,7 +96,11 @@ TEST_CASE("async_error_handler", "[errors]]")
             ofs << err_msg;
         });
         logger->info("Good message #1");
+#ifdef SPDLOG_USE_STD_FORMAT
+        logger->info("Bad format msg {} {}", "xxx");
+#else
         logger->info(fmt::runtime("Bad format msg {} {}"), "xxx");
+#endif
         logger->info("Good message #2");
         spdlog::drop("logger"); // force logger to drain the queue and shutdown
     }
