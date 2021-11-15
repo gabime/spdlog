@@ -87,7 +87,7 @@ struct daily_filename_format_calculator
     for (;;)
     {
         size_t size = buf.capacity() - start;
-        size_t count = details::fmt_helper::strftime(&buf[start], size, &tm_format[0], &tm);
+        size_t count = details::fmt_helper::strftime(&buf[start], size, &tm_format[0], &now_tm);
         if (count != 0)
         {
             // Remove the extra space.
