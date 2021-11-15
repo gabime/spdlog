@@ -388,6 +388,7 @@ void file_events_example()
     handlers.before_close = [](spdlog::filename_t filename, std::FILE *fstream) { fputs("Before closing\n", fstream); };
     handlers.after_close = [](spdlog::filename_t filename) { spdlog::info("After closing {}", filename); };
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/events-sample.txt", true, handlers);
+    
     spdlog::logger my_logger("some_logger", file_sink);
     // or
     // auto my_logger = spdlog::basic_logger_st("some_logger", "logs/events-sample.txt", true, handlers);
