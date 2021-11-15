@@ -74,13 +74,12 @@ int main(int, char *[])
         binary_example();
         multi_sink_example();
         user_defined_example();
-        err_handler_example();        
+        err_handler_example();
         trace_example();
         stopwatch_example();
         udp_example();
         custom_flags_example();
         file_events_example();
-        
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -306,28 +305,24 @@ void custom_flags_example()
     auto formatter = make_unique<spdlog::pattern_formatter>();
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     // set the new formatter using spdlog::set_formatter(formatter) or logger->set_formatter(formatter)
-    //spdlog::set_formatter(std::move(formatter));    
+    // spdlog::set_formatter(std::move(formatter));
 }
 
-void file_events_example(){
-
-    // pass the spdlog::file_event_handlers_t to file sinks for open/close log file notifications    
+void file_events_example()
+{
+    // pass the spdlog::file_event_handlers_t to file sinks for open/close log file notifications
     spdlog::file_event_handlers_t handlers;
-    handlers.before_open = [](spdlog::filename_t filename) {
-        spdlog::info("Before opening {}", filename);
+    handlers.before_open = [](spdlog::filename_t filename) { spdlog::info("Before opening {}", filename); };
+    handlers.after_open = [](spdlog::filename_t filename, std::FILE *fstream) {
+        spdlog::info("After opening {}", filename);
+        fputs("After opening\n", fstream);
     };
-    handlers.after_open = [](spdlog::filename_t filename, std::FILE *fstream) {        
-        fputs("After opening\n", fstream);                
+    handlers.before_close = [](spdlog::filename_t filename, std::FILE *fstream) {
+        spdlog::info("Before closing {}", filename);
+        fputs("Before closing\n", fstream);
     };
-    handlers.before_close = [](spdlog::filename_t filename, std::FILE *fstream) {        
-        fputs("Before closing\n", fstream);                
-    };
-    handlers.after_close = [](spdlog::filename_t filename) {
-        spdlog::info("After closing {}", filename);
-    };        
+    handlers.after_close = [](spdlog::filename_t filename) { spdlog::info("After closing {}", filename); };
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/events-sample.txt", true, handlers);
-    spdlog::logger my_logger("some_logger", file_sink);   
-    // or 
-    // auto my_logger = spdlog::basic_logger_st("some_logger", "logs/events-sample.txt", true, handlers);
+    spdlog::logger my_logger("some_logger", file_sink);    
     my_logger.info("Some log line");
 }
