@@ -42,7 +42,7 @@ public:
 
     void reset()
     {
-        start_tp_ = clock ::now();
+        start_tp_ = clock::now();
     }
 };
 } // namespace spdlog

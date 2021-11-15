@@ -5,9 +5,9 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/file_helper.h>
+#include <spdlog/details/fmt_helper.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/fmt/fmt.h>
-#include <spdlog/fmt/chrono.h>
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/os.h>
 #include <spdlog/details/circular_q.h>
@@ -48,14 +48,57 @@ struct daily_filename_format_calculator
 {
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
     {
-        // generate fmt datetime format string, e.g. {:%Y-%m-%d}.
-        filename_t fmt_filename = fmt_lib::format(SPDLOG_FILENAME_T("{{:{}}}"), filename);
-#if defined(SPDLOG_USE_STD_FORMAT)
-        return std::vformat(fmt_filename, std::make_format_args(now_tm));
-#elif defined(_MSC_VER) && defined(SPDLOG_WCHAR_FILENAMES) // for some reason msvc doesn't allow fmt::runtime(..) with wchar here
-        return fmt::format(fmt_filename, now_tm);
+        // adapted from fmtlib
+#ifdef SPDLOG_USE_STD_FORMAT
+        filename_t tm_format;
+        tm_format.append(filename);
+        // By appending an extra space we can distinguish an empty result that
+        // indicates insufficient buffer size from a guaranteed non-empty result
+        // https://github.com/fmtlib/fmt/issues/2238
+        tm_format.push_back(' ');
+
+        const size_t MIN_SIZE = 10;
+        filename_t buf;
+        buf.resize(MIN_SIZE);
+        for (;;)
+        {
+            size_t count = details::fmt_helper::strftime(buf.data(), buf.size(), tm_format.c_str(), &now_tm);
+            if (count != 0)
+            {
+                // Remove the extra space.
+                buf.resize(count - 1);
+                break;
+            }
+            buf.resize(buf.size() * 2);
+        }
+        
+        return buf;
 #else
-        return fmt::format(SPDLOG_FMT_RUNTIME(fmt_filename), now_tm);
+    fmt::basic_memory_buffer<Char> tm_format;
+    tm_format.append(specs.begin(), specs.end());
+    // By appending an extra space we can distinguish an empty result that
+    // indicates insufficient buffer size from a guaranteed non-empty result
+    // https://github.com/fmtlib/fmt/issues/2238
+    tm_format.push_back(' ');
+    tm_format.push_back('\0');
+
+    fmt::basic_memory_buffer<Char> buf;
+    size_t start = buf.size();
+    for (;;)
+    {
+        size_t size = buf.capacity() - start;
+        size_t count = details::fmt_helper:::strftime(&buf[start], size, &tm_format[0], &tm);
+        if (count != 0)
+        {
+            // Remove the extra space.
+            buf.resize(start + count - 1);
+            break;
+        }
+        const size_t MIN_GROWTH = 10;
+        buf.reserve(buf.capacity() + (size > MIN_GROWTH ? size : MIN_GROWTH));
+    }
+
+    return fmt::to_string(buf);
 #endif
     }
 };
