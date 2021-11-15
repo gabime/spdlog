@@ -316,12 +316,10 @@ void file_events_example(){
     handlers.before_open = [](spdlog::filename_t filename) {
         spdlog::info("Before opening {}", filename);
     };
-    handlers.after_open = [](spdlog::filename_t filename, std::FILE *fstream) {
-        spdlog::info("After opening {}", filename);
+    handlers.after_open = [](spdlog::filename_t filename, std::FILE *fstream) {        
         fputs("After opening\n", fstream);                
     };
-    handlers.before_close = [](spdlog::filename_t filename, std::FILE *fstream) {
-        spdlog::info("Before closing {}", filename);
+    handlers.before_close = [](spdlog::filename_t filename, std::FILE *fstream) {        
         fputs("Before closing\n", fstream);                
     };
     handlers.after_close = [](spdlog::filename_t filename) {
