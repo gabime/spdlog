@@ -121,7 +121,11 @@ void rotating_example()
 {
     // Create a file rotating logger with 5mb size max and 3 rotated files.
     spdlog::file_event_handlers_t file_event_handlers;
-        file_event_handlers.after_open = [](spdlog::filename_t filename, std::FILE* fstream)
+    file_event_handlers.before_open = [](spdlog::filename_t filename)
+    {
+        spdlog::info("basic_example() : file_event_handlers.before_open     : {}", filename.c_str());
+    };
+    file_event_handlers.after_open = [](spdlog::filename_t filename, std::FILE* fstream)
     {
         fputs("OPEN!\r\n", fstream);
         spdlog::info("basic_example() : file_event_handlers.after_open      : {}", filename.c_str());
