@@ -74,7 +74,7 @@ struct daily_filename_format_calculator
         
         return buf;
 #else
-    fmt::basic_memory_buffer<Char> tm_format;
+    fmt::basic_memory_buffer<filename_t::value_type> tm_format;
     tm_format.append(specs.begin(), specs.end());
     // By appending an extra space we can distinguish an empty result that
     // indicates insufficient buffer size from a guaranteed non-empty result
@@ -82,7 +82,7 @@ struct daily_filename_format_calculator
     tm_format.push_back(' ');
     tm_format.push_back('\0');
 
-    fmt::basic_memory_buffer<Char> buf;
+    fmt::basic_memory_buffer<filename_t::value_type> buf;
     size_t start = buf.size();
     for (;;)
     {
