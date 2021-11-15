@@ -137,7 +137,7 @@ struct formatter<spdlog::details::dump_info<T>, char>
         SPDLOG_CONSTEXPR const char *hex_lower = "0123456789abcdef";
         const char *hex_chars = use_uppercase ? hex_upper : hex_lower;
 
-#if FMT_VERSION < 60000
+#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION < 60000
         auto inserter = ctx.begin();
 #else
         auto inserter = ctx.out();
