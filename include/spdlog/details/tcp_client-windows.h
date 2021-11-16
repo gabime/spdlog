@@ -24,7 +24,7 @@ namespace details {
 class tcp_client
 {
     SOCKET socket_ = INVALID_SOCKET;
-   
+
     static void init_winsock_()
     {
         WSADATA wsaData;
@@ -55,7 +55,6 @@ public:
         close();
         ::WSACleanup();
     }
-    
 
     bool is_connected() const
     {
@@ -65,7 +64,7 @@ public:
     void close()
     {
         ::closesocket(socket_);
-        socket_ = INVALID_SOCKET;        
+        socket_ = INVALID_SOCKET;
     }
 
     SOCKET fd() const
@@ -73,10 +72,9 @@ public:
         return socket_;
     }
 
-    
     // try to connect or throw on failure
     void connect(const std::string &host, int port)
-    {        
+    {
         if (is_connected())
         {
             close();

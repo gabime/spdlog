@@ -381,11 +381,11 @@ SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
     memory_buf_t buf;
     wstr_to_utf8buf(filename, buf);
-#ifdef SPDLOG_USE_STD_FORMAT
+#    ifdef SPDLOG_USE_STD_FORMAT
     return buf;
-#else
+#    else
     return fmt::to_string(buf);
-#endif
+#    endif
 }
 #else
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)

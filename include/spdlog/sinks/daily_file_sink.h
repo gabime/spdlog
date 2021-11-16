@@ -72,7 +72,7 @@ struct daily_filename_format_calculator
             }
             buf.resize(buf.size() * 2);
         }
-        
+
         return buf;
 #else
         // generate fmt datetime format string, e.g. {:%Y-%m-%d}.
@@ -116,7 +116,8 @@ class daily_file_sink final : public base_sink<Mutex>
 {
 public:
     // create daily file sink which rotates on given time
-    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false, uint16_t max_files = 0, const file_event_handlers& event_handlers = {})
+    daily_file_sink(filename_t base_filename, int rotation_hour, int rotation_minute, bool truncate = false, uint16_t max_files = 0,
+        const file_event_handlers &event_handlers = {})
         : base_filename_(std::move(base_filename))
         , rotation_h_(rotation_hour)
         , rotation_m_(rotation_minute)
@@ -262,30 +263,32 @@ using daily_file_format_sink_st = daily_file_sink<details::null_mutex, daily_fil
 // factory functions
 //
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> daily_logger_mt(
-    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0, const file_event_handlers& event_handlers = {})
+inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0,
+    bool truncate = false, uint16_t max_files = 0, const file_event_handlers &event_handlers = {})
 {
     return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute, truncate, max_files, event_handlers);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> daily_logger_format_mt(
-    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0, const file_event_handlers& event_handlers = {})
+inline std::shared_ptr<logger> daily_logger_format_mt(const std::string &logger_name, const filename_t &filename, int hour = 0,
+    int minute = 0, bool truncate = false, uint16_t max_files = 0, const file_event_handlers &event_handlers = {})
 {
-    return Factory::template create<sinks::daily_file_format_sink_mt>(logger_name, filename, hour, minute, truncate, max_files, event_handlers);
+    return Factory::template create<sinks::daily_file_format_sink_mt>(
+        logger_name, filename, hour, minute, truncate, max_files, event_handlers);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> daily_logger_st(
-    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0, const file_event_handlers& event_handlers = {})
+inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0,
+    bool truncate = false, uint16_t max_files = 0, const file_event_handlers &event_handlers = {})
 {
     return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute, truncate, max_files, event_handlers);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> daily_logger_format_st(
-    const std::string &logger_name, const filename_t &filename, int hour = 0, int minute = 0, bool truncate = false, uint16_t max_files = 0, const file_event_handlers& event_handlers = {})
+inline std::shared_ptr<logger> daily_logger_format_st(const std::string &logger_name, const filename_t &filename, int hour = 0,
+    int minute = 0, bool truncate = false, uint16_t max_files = 0, const file_event_handlers &event_handlers = {})
 {
-    return Factory::template create<sinks::daily_file_format_sink_st>(logger_name, filename, hour, minute, truncate, max_files, event_handlers);
+    return Factory::template create<sinks::daily_file_format_sink_st>(
+        logger_name, filename, hour, minute, truncate, max_files, event_handlers);
 }
 } // namespace spdlog

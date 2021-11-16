@@ -323,6 +323,6 @@ void file_events_example()
     };
     handlers.after_close = [](spdlog::filename_t filename) { spdlog::info("After closing {}", filename); };
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/events-sample.txt", true, handlers);
-    spdlog::logger my_logger("some_logger", file_sink);    
+    spdlog::logger my_logger("some_logger", file_sink);
     my_logger.info("Some log line");
 }

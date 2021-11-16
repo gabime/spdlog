@@ -65,4 +65,4 @@ struct formatter<spdlog::stopwatch> : formatter<double>
         return formatter<double>::format(sw.elapsed().count(), ctx);
     }
 };
-} // namespace fmt/std
+} // namespace std

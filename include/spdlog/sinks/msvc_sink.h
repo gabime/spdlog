@@ -30,11 +30,11 @@ protected:
     {
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
-#ifdef SPDLOG_USE_STD_FORMAT
+#    ifdef SPDLOG_USE_STD_FORMAT
         OutputDebugStringA(formatted.c_str());
-#else
+#    else
         OutputDebugStringA(fmt::to_string(formatted).c_str());
-#endif
+#    endif
     }
 
     void flush_() override {}

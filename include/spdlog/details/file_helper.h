@@ -17,7 +17,7 @@ class SPDLOG_API file_helper
 {
 public:
     file_helper() = default;
-    explicit file_helper(const file_event_handlers& event_handlers);
+    explicit file_helper(const file_event_handlers &event_handlers);
 
     file_helper(const file_helper &) = delete;
     file_helper &operator=(const file_helper &) = delete;

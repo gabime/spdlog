@@ -160,8 +160,8 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log)
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
 
-    spdlog::info(
-        spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(), delta_d, int(howmany / delta_d)));
+    spdlog::info(spdlog::fmt_lib::format(
+        std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(), delta_d, int(howmany / delta_d)));
     spdlog::drop(log->name());
 }
 
@@ -191,8 +191,8 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, size_t thread_co
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    spdlog::info(
-        spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(), delta_d, int(howmany / delta_d)));
+    spdlog::info(spdlog::fmt_lib::format(
+        std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(), delta_d, int(howmany / delta_d)));
     spdlog::drop(log->name());
 }
 
