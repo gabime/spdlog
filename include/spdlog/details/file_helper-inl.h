@@ -20,7 +20,7 @@
 namespace spdlog {
 namespace details {
 
-SPDLOG_INLINE file_helper::file_helper(const file_event_handlers_t& event_handlers)
+SPDLOG_INLINE file_helper::file_helper(const file_event_handlers& event_handlers)
     : event_handlers_(event_handlers)
 {}
 

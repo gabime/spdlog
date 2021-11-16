@@ -381,8 +381,8 @@ $ ./example
 // This is useful for cleanup procedures or for adding someting the start/end of the log files.
 void file_events_example()
 {
-    // pass the spdlog::file_event_handlers_t to file sinks for open/close log file notifications
-    spdlog::file_event_handlers_t handlers;
+    // pass the spdlog::file_event_handlers to file sinks for open/close log file notifications
+    spdlog::file_event_handlers handlers;
     handlers.before_open = [](spdlog::filename_t filename) { spdlog::info("Before opening {}", filename); };
     handlers.after_open = [](spdlog::filename_t filename, std::FILE *fstream) { fputs("After opening\n", fstream); };
     handlers.before_close = [](spdlog::filename_t filename, std::FILE *fstream) { fputs("Before closing\n", fstream); };
