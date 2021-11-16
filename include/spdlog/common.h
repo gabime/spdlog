@@ -127,34 +127,32 @@ using err_handler = std::function<void(const std::string &err_msg)>;
 namespace fmt_lib = std;
 
 using string_view_t = std::string_view;
-using wstring_view_t = std::wstring_view;
 using memory_buf_t = std::string;
-using wmemory_buf_t = std::wstring;
 
 template<typename... Args>
 using format_string_t = std::string_view;
-
-template<typename... Args>
-using wformat_string_t = std::wstring_view;
 
 template<class T, class Char = char>
 struct is_convertible_to_basic_format_string
     : std::integral_constant<bool,
           std::is_convertible<T, std::basic_string_view<Char>>::value>
 {};
+
+#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+using wstring_view_t = std::wstring_view;
+using memory_buf_t = std::wstring;
+
+template<typename... Args>
+using wformat_string_t = std::wstring_view;
+#    endif
 #else
 namespace fmt_lib = fmt;
 
 using string_view_t = fmt::basic_string_view<char>;
-using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
-using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
 template<typename... Args>
 using format_string_t = fmt::format_string<Args...>;
-
-template<typename... Args>
-using wformat_string_t = fmt::basic_format_string<wchar_t, fmt::type_identity_t<Args>...>;
 
 template<class T>
 using remove_cvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
@@ -166,6 +164,14 @@ struct is_convertible_to_basic_format_string
     : std::integral_constant<bool,
           std::is_convertible<T, fmt::basic_string_view<Char>>::value || std::is_same<remove_cvref_t<T>, fmt::basic_runtime<Char>>::value>
 {};
+
+#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+using wstring_view_t = fmt::basic_string_view<wchar_t>;
+using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;;
+
+template<typename... Args>
+using wformat_string_t = fmt::wformat_string<Args...>;
+#    endif
 #endif
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
