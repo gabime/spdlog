@@ -5,9 +5,9 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/file_helper.h>
-#include <spdlog/details/fmt_helper.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/fmt/fmt.h>
+#include <spdlog/fmt/chrono.h>
 #include <spdlog/sinks/base_sink.h>
 #include <spdlog/details/os.h>
 #include <spdlog/details/circular_q.h>
@@ -48,8 +48,9 @@ struct daily_filename_format_calculator
 {
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
     {
-        // adapted from fmtlib
 #ifdef SPDLOG_USE_STD_FORMAT
+        // adapted from fmtlib: https://github.com/fmtlib/fmt/blob/8.0.1/include/fmt/chrono.h#L522-L546
+
         filename_t tm_format;
         tm_format.append(filename);
         // By appending an extra space we can distinguish an empty result that
@@ -74,31 +75,13 @@ struct daily_filename_format_calculator
         
         return buf;
 #else
-    fmt::basic_memory_buffer<filename_t::value_type> tm_format;
-    tm_format.append(filename.c_str(), filename.c_str() + filename.size());
-    // By appending an extra space we can distinguish an empty result that
-    // indicates insufficient buffer size from a guaranteed non-empty result
-    // https://github.com/fmtlib/fmt/issues/2238
-    tm_format.push_back(' ');
-    tm_format.push_back('\0');
-
-    fmt::basic_memory_buffer<filename_t::value_type> buf;
-    size_t start = buf.size();
-    for (;;)
-    {
-        size_t size = buf.capacity() - start;
-        size_t count = strftime(&buf[start], size, &tm_format[0], &now_tm);
-        if (count != 0)
-        {
-            // Remove the extra space.
-            buf.resize(start + count - 1);
-            break;
-        }
-        const size_t MIN_GROWTH = 10;
-        buf.reserve(buf.capacity() + (size > MIN_GROWTH ? size : MIN_GROWTH));
-    }
-
-    return fmt::to_string(buf);
+        // generate fmt datetime format string, e.g. {:%Y-%m-%d}.
+        filename_t fmt_filename = fmt::format(SPDLOG_FILENAME_T("{{:{}}}"), filename);
+#    if defined(_MSC_VER) && defined(SPDLOG_WCHAR_FILENAMES) // for some reason msvc doesn't allow fmt::runtime(..) with wchar here
+        return fmt::format(fmt_filename, now_tm);
+#    else
+        return fmt::format(SPDLOG_FMT_RUNTIME(fmt_filename), now_tm);
+#    endif
 #endif
     }
 

@@ -59,7 +59,7 @@ inline void append_int(T n, memory_buf_t &dest)
 template<typename T>
 SPDLOG_CONSTEXPR_FUNC unsigned int count_digits_fallback(T n)
 {
-    // taken from fmt.
+    // taken from fmt: https://github.com/fmtlib/fmt/blob/8.0.1/include/fmt/format.h#L899-L912
     unsigned int count = 1;
     for (;;)
     {
