@@ -16,6 +16,10 @@
 #include <functional>
 #include <cstdio>
 
+#ifdef SPDLOG_USE_STD_FORMAT
+#include <string_view>
+#endif
+
 #ifdef SPDLOG_COMPILED_LIB
 #    undef SPDLOG_HEADER_ONLY
 #    if defined(_WIN32) && defined(SPDLOG_SHARED_LIB)
@@ -36,23 +40,30 @@
 
 #include <spdlog/fmt/fmt.h>
 
-// backward compatibility with fmt versions older than 8
-#if FMT_VERSION >= 80000
-#    define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
-#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-#        include <spdlog/fmt/xchar.h>
+#ifndef SPDLOG_USE_STD_FORMAT
+#    if FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
+#        define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
+#        if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+#            include <spdlog/fmt/xchar.h>
+#        endif
+#    else
+#        define SPDLOG_FMT_RUNTIME(format_string) format_string
 #    endif
-#else
-#    define SPDLOG_FMT_RUNTIME(format_string) format_string
 #endif
 
 // visual studio up to 2013 does not support noexcept nor constexpr
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #    define SPDLOG_NOEXCEPT _NOEXCEPT
 #    define SPDLOG_CONSTEXPR
+#    define SPDLOG_CONSTEXPR_FUNC
 #else
 #    define SPDLOG_NOEXCEPT noexcept
 #    define SPDLOG_CONSTEXPR constexpr
+#    if __cplusplus >= 201402L
+#        define SPDLOG_CONSTEXPR_FUNC constexpr
+#    else
+#        define SPDLOG_CONSTEXPR_FUNC
+#    endif
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -112,10 +123,36 @@ using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using err_handler = std::function<void(const std::string &err_msg)>;
+#ifdef SPDLOG_USE_STD_FORMAT
+namespace fmt_lib = std;
+
+using string_view_t = std::string_view;
+using memory_buf_t = std::string;
+
+template<typename... Args>
+using format_string_t = std::string_view;
+
+template<class T, class Char = char>
+struct is_convertible_to_basic_format_string
+    : std::integral_constant<bool,
+          std::is_convertible<T, std::basic_string_view<Char>>::value>
+{};
+
+#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+using wstring_view_t = std::wstring_view;
+using memory_buf_t = std::wstring;
+
+template<typename... Args>
+using wformat_string_t = std::wstring_view;
+#    endif
+#else
+namespace fmt_lib = fmt;
+
 using string_view_t = fmt::basic_string_view<char>;
-using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
-using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
+
+template<typename... Args>
+using format_string_t = fmt::format_string<Args...>;
 
 template<class T>
 using remove_cvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
@@ -127,6 +164,15 @@ struct is_convertible_to_basic_format_string
     : std::integral_constant<bool,
           std::is_convertible<T, fmt::basic_string_view<Char>>::value || std::is_same<remove_cvref_t<T>, fmt::basic_runtime<Char>>::value>
 {};
+
+#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+using wstring_view_t = fmt::basic_string_view<wchar_t>;
+using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;;
+
+template<typename... Args>
+using wformat_string_t = fmt::wformat_string<Args...>;
+#    endif
+#endif
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #    ifndef _WIN32

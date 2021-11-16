@@ -76,10 +76,16 @@ inline details::dump_info<It> to_hex(const It range_begin, const It range_end, s
 
 } // namespace spdlog
 
-namespace fmt {
+namespace
+#ifdef SPDLOG_USE_STD_FORMAT
+    std
+#else
+    fmt
+#endif
+{
 
 template<typename T>
-struct formatter<spdlog::details::dump_info<T>>
+struct formatter<spdlog::details::dump_info<T>, char>
 {
     const char delimiter = ' ';
     bool put_newlines = true;
@@ -90,7 +96,7 @@ struct formatter<spdlog::details::dump_info<T>>
 
     // parse the format string flags
     template<typename ParseContext>
-    FMT_CONSTEXPR auto parse(ParseContext &ctx) -> decltype(ctx.begin())
+    SPDLOG_CONSTEXPR_FUNC auto parse(ParseContext &ctx) -> decltype(ctx.begin())
     {
         auto it = ctx.begin();
         while (it != ctx.end() && *it != '}')
@@ -131,7 +137,7 @@ struct formatter<spdlog::details::dump_info<T>>
         SPDLOG_CONSTEXPR const char *hex_lower = "0123456789abcdef";
         const char *hex_chars = use_uppercase ? hex_upper : hex_lower;
 
-#if FMT_VERSION < 60000
+#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION < 60000
         auto inserter = ctx.begin();
 #else
         auto inserter = ctx.out();
@@ -210,8 +216,8 @@ struct formatter<spdlog::details::dump_info<T>>
 
         if (put_positions)
         {
-            fmt::format_to(inserter, "{:04X}: ", pos);
+            spdlog::fmt_lib::format_to(inserter, "{:04X}: ", pos);
         }
     }
 };
-} // namespace fmt
+} // namespace fmt/std

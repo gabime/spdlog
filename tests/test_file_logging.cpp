@@ -20,7 +20,7 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     logger->flush();
     require_message_count(SIMPLE_LOG, 2);
     using spdlog::details::os::default_eol;
-    REQUIRE(file_contents(SIMPLE_LOG) == fmt::format("Test message 1{}Test message 2{}", default_eol, default_eol));
+    REQUIRE(file_contents(SIMPLE_LOG) == spdlog::fmt_lib::format("Test message 1{}Test message 2{}", default_eol, default_eol));
 }
 
 TEST_CASE("flush_on", "[flush_on]]")
@@ -41,7 +41,7 @@ TEST_CASE("flush_on", "[flush_on]]")
     require_message_count(SIMPLE_LOG, 3);
     using spdlog::details::os::default_eol;
     REQUIRE(file_contents(SIMPLE_LOG) ==
-            fmt::format("Should not be flushed{}Test message 1{}Test message 2{}", default_eol, default_eol, default_eol));
+            spdlog::fmt_lib::format("Should not be flushed{}Test message 1{}Test message 2{}", default_eol, default_eol, default_eol));
 }
 
 TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
