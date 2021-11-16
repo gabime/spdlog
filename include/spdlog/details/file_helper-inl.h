@@ -20,7 +20,7 @@
 namespace spdlog {
 namespace details {
 
-SPDLOG_INLINE file_helper::file_helper(const file_event_handlers_t& event_handlers)
+SPDLOG_INLINE file_helper::file_helper(const file_event_handlers& event_handlers)
     : event_handlers_(event_handlers)
 {}
 
@@ -37,6 +37,10 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
     auto *mode = SPDLOG_FILENAME_T("ab");
     auto *trunc_mode = SPDLOG_FILENAME_T("wb");
 
+    if (event_handlers_.before_open)
+    {
+        event_handlers_.before_open(filename_);
+    }
     for (int tries = 0; tries < open_tries_; ++tries)
     {
         // create containing folder if not exists already.

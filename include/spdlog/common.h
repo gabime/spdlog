@@ -302,12 +302,13 @@ struct source_loc
     const char *funcname{nullptr};
 };
 
-typedef struct 
+struct file_event_handlers
 {
+    std::function<void(const filename_t &filename)> before_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> after_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> before_close;
     std::function<void(const filename_t &filename)> after_close;
-} file_event_handlers_t;
+};
 
 namespace details {
 // make_unique support for pre c++14

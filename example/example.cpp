@@ -22,6 +22,7 @@ void err_handler_example();
 void syslog_example();
 void udp_example();
 void custom_flags_example();
+void file_events_example();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
@@ -78,6 +79,7 @@ int main(int, char *[])
         stopwatch_example();
         udp_example();
         custom_flags_example();
+        file_events_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -120,22 +122,7 @@ void basic_example()
 void rotating_example()
 {
     // Create a file rotating logger with 5mb size max and 3 rotated files.
-    spdlog::file_event_handlers_t file_event_handlers;
-        file_event_handlers.after_open = [](spdlog::filename_t filename, std::FILE* fstream)
-    {
-        fputs("OPEN!\r\n", fstream);
-        spdlog::info("basic_example() : file_event_handlers.after_open      : {}", filename.c_str());
-    };
-    file_event_handlers.before_close = [](spdlog::filename_t filename, std::FILE* fstream)
-    {
-        fputs("CLOSE!\r\n", fstream);
-        spdlog::info("basic_example() : file_event_handlers.before_close    : {}", filename.c_str());
-    };
-    file_event_handlers.after_close = [](spdlog::filename_t filename)
-    {
-        spdlog::info("basic_example() : file_event_handlers.after_close     : {}", filename.c_str());
-    };
-    auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3, false, file_event_handlers);
+    auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
 }
 
 #include "spdlog/sinks/daily_file_sink.h"
@@ -317,5 +304,25 @@ void custom_flags_example()
     using spdlog::details::make_unique; // for pre c++14
     auto formatter = make_unique<spdlog::pattern_formatter>();
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
-    spdlog::set_formatter(std::move(formatter));
+    // set the new formatter using spdlog::set_formatter(formatter) or logger->set_formatter(formatter)
+    // spdlog::set_formatter(std::move(formatter));
+}
+
+void file_events_example()
+{
+    // pass the spdlog::file_event_handlers to file sinks for open/close log file notifications
+    spdlog::file_event_handlers handlers;
+    handlers.before_open = [](spdlog::filename_t filename) { spdlog::info("Before opening {}", filename); };
+    handlers.after_open = [](spdlog::filename_t filename, std::FILE *fstream) {
+        spdlog::info("After opening {}", filename);
+        fputs("After opening\n", fstream);
+    };
+    handlers.before_close = [](spdlog::filename_t filename, std::FILE *fstream) {
+        spdlog::info("Before closing {}", filename);
+        fputs("Before closing\n", fstream);
+    };
+    handlers.after_close = [](spdlog::filename_t filename) { spdlog::info("After closing {}", filename); };
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/events-sample.txt", true, handlers);
+    spdlog::logger my_logger("some_logger", file_sink);    
+    my_logger.info("Some log line");
 }
