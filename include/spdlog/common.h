@@ -17,7 +17,7 @@
 #include <cstdio>
 
 #ifdef SPDLOG_USE_STD_FORMAT
-#include <string_view>
+#    include <string_view>
 #endif
 
 #ifdef SPDLOG_COMPILED_LIB
@@ -133,19 +133,18 @@ template<typename... Args>
 using format_string_t = std::string_view;
 
 template<class T, class Char = char>
-struct is_convertible_to_basic_format_string
-    : std::integral_constant<bool,
-          std::is_convertible<T, std::basic_string_view<Char>>::value>
+struct is_convertible_to_basic_format_string : std::integral_constant<bool, std::is_convertible<T, std::basic_string_view<Char>>::value>
 {};
 
 #    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 using wstring_view_t = std::wstring_view;
-using memory_buf_t = std::wstring;
+using wmemory_buf_t = std::wstring;
 
 template<typename... Args>
 using wformat_string_t = std::wstring_view;
 #    endif
-#else
+
+#else // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
 
 using string_view_t = fmt::basic_string_view<char>;
@@ -167,7 +166,8 @@ struct is_convertible_to_basic_format_string
 
 #    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
-using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;;
+using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
+;
 
 template<typename... Args>
 using wformat_string_t = fmt::wformat_string<Args...>;
@@ -308,7 +308,12 @@ struct file_event_handlers
     std::function<void(const filename_t &filename, std::FILE *file_stream)> after_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> before_close;
     std::function<void(const filename_t &filename)> after_close;
-    file_event_handlers() : before_open{nullptr}, after_open{nullptr}, before_close{nullptr}, after_close{nullptr} {}
+    file_event_handlers()
+        : before_open{nullptr}
+        , after_open{nullptr}
+        , before_close{nullptr}
+        , after_close{nullptr}
+    {}
 };
 
 namespace details {
