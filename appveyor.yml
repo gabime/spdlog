@@ -84,6 +84,15 @@ environment:
       USE_STD_FORMAT: 'ON'
       CXX_STANDARD: 23 # std::format is only available with /std:c++latest at the moment.
       APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+    - GENERATOR: '"Visual Studio 17 2022" -A x64'
+      BUILD_TYPE: Release
+      BUILD_SHARED: 'ON'
+      WCHAR: 'ON'
+      WCHAR_FILES: 'ON'
+      BUILD_EXAMPLE: 'OFF'
+      USE_STD_FORMAT: 'ON'
+      CXX_STANDARD: 23 # std::format is only available with /std:c++latest at the moment.
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
 build_script:
   - cmd: >-
       set
