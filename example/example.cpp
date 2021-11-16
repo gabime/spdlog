@@ -115,7 +115,7 @@ void stdout_logger_example()
 void basic_example()
 {
     // Create basic file logger (not rotated).
-    auto my_logger = spdlog::basic_logger_mt("file_logger", "logs/basic-log.txt");
+    auto my_logger = spdlog::basic_logger_mt("file_logger", "logs/basic-log.txt", true);
 }
 
 #include "spdlog/sinks/rotating_file_sink.h"
