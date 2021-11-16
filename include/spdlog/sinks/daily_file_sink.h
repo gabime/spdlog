@@ -62,7 +62,7 @@ struct daily_filename_format_calculator
         buf.resize(MIN_SIZE);
         for (;;)
         {
-            size_t count = details::fmt_helper::strftime(buf.data(), buf.size(), tm_format.c_str(), &now_tm);
+            size_t count = strftime(buf.data(), buf.size(), tm_format.c_str(), &now_tm);
             if (count != 0)
             {
                 // Remove the extra space.
@@ -87,7 +87,7 @@ struct daily_filename_format_calculator
     for (;;)
     {
         size_t size = buf.capacity() - start;
-        size_t count = details::fmt_helper::strftime(&buf[start], size, &tm_format[0], &now_tm);
+        size_t count = strftime(&buf[start], size, &tm_format[0], &now_tm);
         if (count != 0)
         {
             // Remove the extra space.
@@ -101,6 +101,26 @@ struct daily_filename_format_calculator
     return fmt::to_string(buf);
 #endif
     }
+
+private:
+#if defined __GNUC__
+#    pragma GCC diagnostic push
+#    pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#endif
+
+    static size_t strftime(char *str, size_t count, const char *format, const std::tm *time)
+    {
+        return std::strftime(str, count, format, time);
+    }
+
+    static size_t strftime(wchar_t *str, size_t count, const wchar_t *format, const std::tm *time)
+    {
+        return std::wcsftime(str, count, format, time);
+    }
+
+#if defined(__GNUC__)
+#    pragma GCC diagnostic pop
+#endif
 };
 
 /*

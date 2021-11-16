@@ -164,23 +164,6 @@ inline ToDuration time_fraction(log_clock::time_point tp)
     return duration_cast<ToDuration>(duration) - duration_cast<ToDuration>(secs);
 }
 
-inline size_t strftime(char *str, size_t count, const char *format, const std::tm *time)
-{
-    // Assign to a pointer to suppress GCCs -Wformat-nonliteral
-    // First assign the nullptr to suppress -Wsuggest-attribute=format
-    std::size_t (*strftime)(char*, std::size_t, const char*, const std::tm*) = nullptr;
-    strftime = std::strftime;
-    return strftime(str, count, format, time);
-}
-
-inline size_t strftime(wchar_t *str, size_t count, const wchar_t *format, const std::tm *time)
-{
-    // See above
-    std::size_t (*wcsftime)(wchar_t*, std::size_t, const wchar_t*, const std::tm*) = nullptr;
-    wcsftime = std::wcsftime;
-    return wcsftime(str, count, format, time);
-}
-
 } // namespace fmt_helper
 } // namespace details
 } // namespace spdlog
