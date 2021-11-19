@@ -230,8 +230,8 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 #    endif
 
 #else // unix
-// OpenBSD doesn't compile with :: before the fileno(..)
-#    if defined(__OpenBSD__)
+// OpenBSD and AIX doesn't compile with :: before the fileno(..)
+#    if defined(__OpenBSD__) || defined(_AIX)
     int fd = fileno(f);
 #    else
     int fd = ::fileno(f);
@@ -336,7 +336,9 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
 #        define SYS_gettid __NR_gettid
 #    endif
     return static_cast<size_t>(::syscall(SYS_gettid));
-#elif defined(_AIX) || defined(__DragonFly__) || defined(__FreeBSD__)
+#elif defined(_AIX)
+    return static_cast<size_t>(::pthread_self());
+#elif defined(__DragonFly__) || defined(__FreeBSD__)
     return static_cast<size_t>(::pthread_getthreadid_np());
 #elif defined(__NetBSD__)
     return static_cast<size_t>(::_lwp_self());
