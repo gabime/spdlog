@@ -128,7 +128,7 @@
 // Defaults to __FUNCTION__ (should work on all compilers) if not defined.
 //
 // #ifdef __PRETTY_FUNCTION__
-// # define SPDLOG_FUNCTION __PRETTY_FUN  CTION__
+// # define SPDLOG_FUNCTION __PRETTY_FUNCTION__
 // #else
 // # define SPDLOG_FUNCTION __FUNCTION__
 // #endif
