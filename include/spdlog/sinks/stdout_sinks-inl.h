@@ -37,7 +37,7 @@ SPDLOG_INLINE stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
 #ifdef _WIN32
     // get windows handle from the FILE* object
 
-    handle_ = (HANDLE)::_get_osfhandle(::_fileno(file_));
+    handle_ = reinterpret_cast<HANDLE>(::_get_osfhandle(::_fileno(file_)));
 
     // don't throw to support cases where no console is attached,
     // and let the log method to do nothing if (handle_ == INVALID_HANDLE_VALUE).
