@@ -46,7 +46,7 @@
 #        include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
 
 #    elif defined(_AIX)
-#        include <pthread.h> // for pthread_getthreadid_np
+#        include <pthread.h> // for pthread_getthrds_np
 
 #    elif defined(__DragonFly__) || defined(__FreeBSD__)
 #        include <pthread_np.h> // for pthread_getthreadid_np
@@ -337,7 +337,12 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
 #    endif
     return static_cast<size_t>(::syscall(SYS_gettid));
 #elif defined(_AIX)
-    return static_cast<size_t>(::pthread_self());
+    struct __pthrdsinfo buf;
+    int reg_size = 0;
+    pthread_t pt = pthread_self();
+    int retval = pthread_getthrds_np(&pt, PTHRDSINFO_QUERY_TID, &buf, sizeof(buf), NULL, &reg_size);
+    int tid = (!retval) ? buf.__pi_tid : 0;
+    return static_cast<size_t>(tid);
 #elif defined(__DragonFly__) || defined(__FreeBSD__)
     return static_cast<size_t>(::pthread_getthreadid_np());
 #elif defined(__NetBSD__)
