@@ -16,7 +16,7 @@
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>
-class base_sink : public sink
+class SPDLOG_API base_sink : public sink
 {
 public:
     base_sink();
