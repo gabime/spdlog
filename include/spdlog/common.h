@@ -167,7 +167,6 @@ struct is_convertible_to_basic_format_string
 #    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
-;
 
 template<typename... Args>
 using wformat_string_t = fmt::wformat_string<Args...>;
