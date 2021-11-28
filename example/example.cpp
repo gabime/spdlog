@@ -23,6 +23,7 @@ void syslog_example();
 void udp_example();
 void custom_flags_example();
 void file_events_example();
+void replace_default_logger_example();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
@@ -80,6 +81,7 @@ int main(int, char *[])
         udp_example();
         custom_flags_example();
         file_events_example();
+        replace_default_logger_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -326,3 +328,19 @@ void file_events_example()
     spdlog::logger my_logger("some_logger", file_sink);
     my_logger.info("Some log line");
 }
+
+void replace_default_logger_example()
+{
+    // store the old logger so we don't break other examples.
+    auto old_logger = spdlog::default_logger();
+
+    auto new_logger = spdlog::basic_logger_mt("new_default_logger", "logs/new-default-log.txt", true);
+    spdlog::set_default_logger(new_logger);
+    spdlog::set_level(spdlog::level::info); 
+    spdlog::debug("This message should not be displayed!");
+    spdlog::set_level(spdlog::level::trace); 
+    spdlog::debug("This message should be displayed..");
+
+    spdlog::set_default_logger(old_logger);
+}
+
