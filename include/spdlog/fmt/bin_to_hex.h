@@ -40,11 +40,11 @@ public:
     {}
 
     // do not use begin() and end() to avoid collision with fmt/ranges
-    It getBegin() const
+    It get_begin() const
     {
         return begin_;
     }
-    It getEnd() const
+    It get_end() const
     {
         return end_;
     }
@@ -145,14 +145,14 @@ struct formatter<spdlog::details::dump_info<T>, char>
 #endif
 
         int size_per_line = static_cast<int>(the_range.size_per_line());
-        auto start_of_line = the_range.getBegin();
-        for (auto i = the_range.getBegin(); i != the_range.getEnd(); i++)
+        auto start_of_line = the_range.get_begin();
+        for (auto i = the_range.get_begin(); i != the_range.get_end(); i++)
         {
             auto ch = static_cast<unsigned char>(*i);
 
-            if (put_newlines && (i == the_range.getBegin() || i - start_of_line >= size_per_line))
+            if (put_newlines && (i == the_range.get_begin() || i - start_of_line >= size_per_line))
             {
-                if (show_ascii && i != the_range.getBegin())
+                if (show_ascii && i != the_range.get_begin())
                 {
                     *inserter++ = delimiter;
                     *inserter++ = delimiter;
@@ -163,7 +163,7 @@ struct formatter<spdlog::details::dump_info<T>, char>
                     }
                 }
 
-                put_newline(inserter, static_cast<size_t>(i - the_range.getBegin()));
+                put_newline(inserter, static_cast<size_t>(i - the_range.get_begin()));
 
                 // put first byte without delimiter in front of it
                 *inserter++ = hex_chars[(ch >> 4) & 0x0f];
@@ -182,9 +182,9 @@ struct formatter<spdlog::details::dump_info<T>, char>
         }
         if (show_ascii) // add ascii to last line
         {
-            if (the_range.getEnd() - the_range.getBegin() > size_per_line)
+            if (the_range.get_end() - the_range.get_begin() > size_per_line)
             {
-                auto blank_num = size_per_line - (the_range.getEnd() - start_of_line);
+                auto blank_num = size_per_line - (the_range.get_end() - start_of_line);
                 while (blank_num-- > 0)
                 {
                     *inserter++ = delimiter;
@@ -197,7 +197,7 @@ struct formatter<spdlog::details::dump_info<T>, char>
             }
             *inserter++ = delimiter;
             *inserter++ = delimiter;
-            for (auto j = start_of_line; j != the_range.getEnd(); j++)
+            for (auto j = start_of_line; j != the_range.get_end(); j++)
             {
                 auto pc = static_cast<unsigned char>(*j);
                 *inserter++ = std::isprint(pc) ? static_cast<char>(*j) : '.';
