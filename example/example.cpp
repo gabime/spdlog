@@ -14,6 +14,7 @@ void rotating_example();
 void daily_example();
 void async_example();
 void binary_example();
+void vector_example();
 void stopwatch_example();
 void trace_example();
 void multi_sink_example();
@@ -73,6 +74,7 @@ int main(int, char *[])
         daily_example();
         async_example();
         binary_example();
+        vector_example();
         multi_sink_example();
         user_defined_example();
         err_handler_example();
@@ -186,6 +188,15 @@ void binary_example()
     // logger->info("uppercase, no delimiters, no position info: {:Xsp}", spdlog::to_hex(buf));
     // logger->info("hexdump style: {:a}", spdlog::to_hex(buf));
     // logger->info("hexdump style, 20 chars per line {:a}", spdlog::to_hex(buf, 20));
+}
+
+// Log a vector of numbers
+
+#include "spdlog/fmt/bundled/ranges.h"
+void vector_example()
+{
+    std::vector<int> vec = {1, 2, 3};
+    spdlog::info("Vector example: {}", vec);
 }
 
 // Compile time log levels.
