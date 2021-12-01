@@ -398,10 +398,8 @@ void replace_default_logger_example()
 {
     auto new_logger = spdlog::basic_logger_mt("new_default_logger", "logs/new-default-log.txt", true);
     spdlog::set_default_logger(new_logger);
-    spdlog::set_level(spdlog::level::info); 
-    spdlog::debug("This message should not be displayed!");
     spdlog::set_level(spdlog::level::trace); 
-    spdlog::debug("This message should be displayed..");
+    spdlog::trace("This message should be displayed..");
 }
 ```
 
