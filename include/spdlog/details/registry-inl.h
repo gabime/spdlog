@@ -289,12 +289,14 @@ SPDLOG_INLINE void registry::set_levels(log_levels levels, level::level_enum *gl
 }
 
 #ifndef SPDLOG_COMPILED_LIB
-SPDLOG_INLINE registry &registry::instance()
+SPDLOG_INLINE
+#endif
+registry &registry::instance()
 {
     static registry s_instance;
     return s_instance;
 }
-#endif
+
 
 SPDLOG_INLINE void registry::throw_if_exists_(const std::string &logger_name)
 {
