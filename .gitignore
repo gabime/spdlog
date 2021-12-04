@@ -81,3 +81,4 @@ cmake-build-*/
 *.tcl
 *.user
 *.sln
+/output
