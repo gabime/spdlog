@@ -257,7 +257,7 @@ void multi_sink_example()
 // User defined types logging by implementing operator<<
 struct my_type
 {
-    int i;
+    int i = 0;
 };
 
 template<>
