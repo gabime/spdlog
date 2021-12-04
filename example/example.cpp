@@ -254,7 +254,7 @@ void multi_sink_example()
     logger.info("this message should not appear in the console, only in the file");
 }
 
-// User defined types logging by implementing operator<<
+// User defined types logging
 struct my_type
 {
     int i = 0;
@@ -262,11 +262,12 @@ struct my_type
 
 namespace fmt_lib = spdlog::fmt_lib;
 template<>
-struct fmt_lib::formatter<my_type> : fmt_lib::formatter<std::string>
+struct fmt_lib::formatter<my_type> : fmt_lib::formatter<char>
 {
     auto format(my_type my, format_context &ctx)
-    {
-        return formatter<std::string>::format(fmt_lib::format("[my_type i={}]", my.i), ctx);
+    {   
+        auto &&out = ctx.out();
+        return fmt_lib::format_to(out, "[my_type i={}]", my.i);
     }
 };
 
