@@ -260,12 +260,13 @@ struct my_type
     int i = 0;
 };
 
+namespace fmt_lib = spdlog::fmt_lib;
 template<>
-struct spdlog::fmt_lib::formatter<my_type> : spdlog::fmt_lib::formatter<std::string>
+struct fmt_lib::formatter<my_type> : fmt_lib::formatter<std::string>
 {
     auto format(my_type my, format_context &ctx)
     {
-        return formatter<std::string>::format(spdlog::fmt_lib::format("[my_type i={}]", my.i), ctx);
+        return formatter<std::string>::format(fmt_lib::format("[my_type i={}]", my.i), ctx);
     }
 };
 
