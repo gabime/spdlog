@@ -261,11 +261,11 @@ struct my_type
 };
 
 template<>
-struct std::formatter<my_type> : std::formatter<std::string>
+struct spdlog::fmt_lib::formatter<my_type> : spdlog::fmt_lib::formatter<std::string>
 {
     auto format(my_type my, format_context &ctx)
     {
-        return formatter<string>::format(std::format("[my_type i={}]", my.i), ctx);
+        return formatter<std::string>::format(spdlog::fmt_lib::format("[my_type i={}]", my.i), ctx);
     }
 };
 
