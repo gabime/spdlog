@@ -9,6 +9,22 @@ if(NOT TARGET spdlog)
 endif()
 
 # ---------------------------------------------------------------------------------------
+# Example of using shared libraries
+# ---------------------------------------------------------------------------------------
+add_library(mylibrary SHARED mylibrary.cpp mylibrary.h)
+target_link_libraries(mylibrary PRIVATE spdlog::spdlog)
+target_compile_definitions(mylibrary PUBLIC SPDLOG_COMPILED_LIB)
+
+add_executable(library_example library_example.cpp)
+target_link_libraries(library_example PRIVATE spdlog::spdlog mylibrary)
+target_compile_definitions(library_example PUBLIC SPDLOG_COMPILED_LIB)
+
+if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
+    target_compile_definitions(mylibrary PUBLIC SPDLOG_SHARED_LIB)
+    target_compile_definitions(library_example PUBLIC SPDLOG_SHARED_LIB)
+endif()
+
+# ---------------------------------------------------------------------------------------
 # Example of using pre-compiled library
 # ---------------------------------------------------------------------------------------
 add_executable(example example.cpp)
