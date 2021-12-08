@@ -73,16 +73,20 @@ inline std::shared_ptr<spdlog::logger> create_async_nb(std::string logger_name, 
 }
 
 // set global thread pool.
-inline void init_thread_pool(size_t q_size, size_t thread_count, std::function<void()> on_thread_start)
+inline void init_thread_pool(size_t q_size, size_t thread_count, std::function<void()> on_thread_start, std::function<void()> on_thread_stop)
 {
-    auto tp = std::make_shared<details::thread_pool>(q_size, thread_count, on_thread_start);
+    auto tp = std::make_shared<details::thread_pool>(q_size, thread_count, on_thread_start, on_thread_stop);
     details::registry::instance().set_tp(std::move(tp));
 }
 
-// set global thread pool.
+inline void init_thread_pool(size_t q_size, size_t thread_count, std::function<void()> on_thread_start)
+{
+    init_thread_pool(q_size, thread_count, on_thread_start, [] {});
+}
+
 inline void init_thread_pool(size_t q_size, size_t thread_count)
 {
-    init_thread_pool(q_size, thread_count, [] {});
+    init_thread_pool(q_size, thread_count, [] {}, [] {});
 }
 
 // get the global thread pool.
