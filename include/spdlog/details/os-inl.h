@@ -305,7 +305,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
                 ((local_year / 100 >> 2) - (gmt_year / 100 >> 2))
 
                 // + difference in years * 365 */
-                + (long int)(local_year - gmt_year) * 365);
+                + static_cast<long int>(local_year - gmt_year) * 365);
 
             long int hours = (24 * days) + (localtm.tm_hour - gmtm.tm_hour);
             long int mins = (60 * hours) + (localtm.tm_min - gmtm.tm_min);
