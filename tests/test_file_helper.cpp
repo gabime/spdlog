@@ -121,11 +121,14 @@ TEST_CASE("file_event_handlers", "[file_helper]")
     handlers.after_open = [&](spdlog::filename_t filename, std::FILE *fstream) {
         REQUIRE(filename == TEST_FILENAME);
         REQUIRE(fstream);
+        fputs("after_open\n", fstream);
         events.push_back(flags::after_open);
     };
     handlers.before_close = [&](spdlog::filename_t filename, std::FILE *fstream) {
         REQUIRE(filename == TEST_FILENAME);
         REQUIRE(fstream);
+        fputs("before_close\n", fstream);
+        fflush(fstream);
         events.push_back(flags::before_close);
     };
     handlers.after_close = [&](spdlog::filename_t filename) {
@@ -138,19 +141,17 @@ TEST_CASE("file_event_handlers", "[file_helper]")
 
         helper.open(TEST_FILENAME);
         REQUIRE(events == std::vector<flags>{flags::before_open, flags::after_open});
-
-        events.clear();
-        helper.reopen(true);
-        REQUIRE(events == std::vector<flags>{flags::before_close, flags::after_close, flags::before_open, flags::after_open});        
-
+                                
         events.clear();    
         helper.close();        
         REQUIRE(events == std::vector<flags>{flags::before_close, flags::after_close});
+        REQUIRE(file_contents(TEST_FILENAME) == "after_open\nbefore_close\n");
 
         helper.reopen(true);
         events.clear();    
     }
     // make sure that the file_helper destrcutor calls the close callbacks if needed    
     REQUIRE(events == std::vector<flags>{flags::before_close, flags::after_close});
+    REQUIRE(file_contents(TEST_FILENAME) == "after_open\nbefore_close\n");
 
 }
