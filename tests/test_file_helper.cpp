@@ -99,3 +99,34 @@ TEST_CASE("file_helper_split_by_extension", "[file_helper::split_by_extension()]
     test_split_ext(SPDLOG_FILENAME_T("."), SPDLOG_FILENAME_T("."), SPDLOG_FILENAME_T(""));
     test_split_ext(SPDLOG_FILENAME_T("..txt"), SPDLOG_FILENAME_T("."), SPDLOG_FILENAME_T(".txt"));
 }
+
+TEST_CASE("file_event_handlers", "[file_helper]")
+{
+    prepare_logdir();
+    std::vector<int> flags;
+    spdlog::file_event_handlers handlers;
+    handlers.before_open = [&](spdlog::filename_t filename) {
+        REQUIRE(filename == TEST_FILENAME);
+        flags.push_back(0);        
+    };
+    handlers.after_open = [&](spdlog::filename_t filename, std::FILE *fstream) { 
+        REQUIRE(filename == TEST_FILENAME);
+        REQUIRE(fstream);
+        flags.push_back(1); 
+    };
+    handlers.before_close = [&](spdlog::filename_t filename, std::FILE *fstream) { 
+        REQUIRE(filename == TEST_FILENAME);
+        REQUIRE(fstream);
+        flags.push_back(2); 
+    };
+    handlers.after_close = [&](spdlog::filename_t filename) {
+        REQUIRE(filename == TEST_FILENAME);        
+        flags.push_back(3); 
+    };
+    spdlog::details::file_helper helper{handlers};
+    REQUIRE(flags.empty());
+    helper.open(TEST_FILENAME);
+    REQUIRE(flags == std::vector<int>{0, 1});
+    helper.close();
+    REQUIRE(flags == std::vector<int>{0, 1, 2, 3});
+}
