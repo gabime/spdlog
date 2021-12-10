@@ -111,7 +111,7 @@ TEST_CASE("file_event_handlers", "[file_helper]")
     };
     prepare_logdir();
     
-    spdlog::filename_t test_filename = TEST_FILENAME;
+    spdlog::filename_t test_filename = SPDLOG_FILENAME_T(TEST_FILENAME);
     // define event handles that update vector of flags when called
     std::vector<flags> events;
     spdlog::file_event_handlers handlers;
