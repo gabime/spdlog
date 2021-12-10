@@ -51,7 +51,7 @@ TEST_CASE("discard policy using factory ", "[async]")
 
     auto logger = spdlog::create_async_nb<spdlog::sinks::test_sink_mt>("as2");
     auto test_sink = std::static_pointer_cast<spdlog::sinks::test_sink_mt>(logger->sinks()[0]);
-    test_sink->set_delay(std::chrono::milliseconds(1));
+    test_sink->set_delay(std::chrono::milliseconds(3));
 
     for (size_t i = 0; i < messages; i++)
     {
