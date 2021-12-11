@@ -73,7 +73,7 @@ addons: &clang12
 matrix:
   include:
     # Test gcc-4.8: C++11, Build=Release
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
+    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11 CXXFLAGS="-fpermissive"
       os: linux
       addons: *gcc48
       
