@@ -262,12 +262,11 @@ struct my_type
 
 namespace fmt_lib = spdlog::fmt_lib;
 template<>
-struct fmt_lib::formatter<my_type> : fmt_lib::formatter<char>
+struct fmt_lib::formatter<my_type> : fmt_lib::formatter<std::string>
 {
-    auto format(my_type my, format_context &ctx)
-    {   
-        auto &&out = ctx.out();
-        return fmt_lib::format_to(out, "[my_type i={}]", my.i);
+    auto format(my_type my, format_context &ctx) -> decltype(ctx.out())
+    {           
+        return fmt_lib::format_to(ctx.out(), "[my_type i={}]", my.i);
     }
 };
 
