@@ -6,10 +6,10 @@ sudo: required
 language: cpp
 
 # gcc 4.9
-addons: &gcc49
+addons: &gcc5
   apt:
     packages:
-      - g++-4.9
+      - g++-5
     sources:
       - ubuntu-toolchain-r-test
 
@@ -72,10 +72,10 @@ addons: &clang12
 
 matrix:
   include:
-    # Test gcc-4.9: C++11, Build=Release
-    - env: GCC_VERSION=4.9 BUILD_TYPE=Release CPP=11
+    # Test gcc-4.5: C++11, Build=Release
+    - env: GCC_VERSION=5 BUILD_TYPE=Release CPP=11
       os: linux
-      addons: *gcc49
+      addons: *gcc5
       
     # Test gcc-7: C++11, Build=Release
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
