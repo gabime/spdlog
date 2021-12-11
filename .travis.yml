@@ -5,11 +5,11 @@
 sudo: required
 language: cpp
 
-# gcc t
-addons: &gcc48
+# gcc 4.9
+addons: &gcc49
   apt:
     packages:
-      - g++-4.8
+      - g++-4.9
     sources:
       - ubuntu-toolchain-r-test
 
@@ -72,10 +72,10 @@ addons: &clang12
 
 matrix:
   include:
-    # Test gcc-4.8: C++11, Build=Release
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11 CXXFLAGS="-fpermissive"
+    # Test gcc-4.9: C++11, Build=Release
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release CPP=11
       os: linux
-      addons: *gcc48
+      addons: *gcc49
       
     # Test gcc-7: C++11, Build=Release
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
