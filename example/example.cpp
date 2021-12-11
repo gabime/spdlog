@@ -272,7 +272,7 @@ struct fmt_lib::formatter<my_type> : fmt_lib::formatter<std::string>
 
 void user_defined_example()
 {
-    spdlog::info("user defined type: {}", my_type{14});
+    spdlog::info("user defined type: {}", my_type(14));
 }
 
 // Custom error handler. Will be triggered on log failure.
