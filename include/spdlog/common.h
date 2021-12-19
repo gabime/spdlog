@@ -321,24 +321,15 @@ struct file_event_handlers
 
 namespace details {
 
-// to avoid useless casts (see https://github.com/nlohmann/json/issues/2893#issuecomment-889152324)
-template<typename T, typename U, std::enable_if_t<!std::is_same<T, U>::value, int> = 0>
-constexpr T conditional_static_cast(U value)
-{
-    return static_cast<T>(value);
-}
-
-template<typename T, typename U, std::enable_if_t<std::is_same<T, U>::value, int> = 0>
-constexpr T conditional_static_cast(U value)
-{
-    return value;
-}
-
 // make_unique support for pre c++14
 
 #if __cplusplus >= 201402L // C++14 and beyond
+using std::enable_if_t;
 using std::make_unique;
 #else
+template<bool B, class T = void>
+using enable_if_t = typename std::enable_if<B, T>::type;
+
 template<typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args &&...args)
 {
@@ -346,6 +337,20 @@ std::unique_ptr<T> make_unique(Args &&...args)
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }
 #endif
+
+// to avoid useless casts (see https://github.com/nlohmann/json/issues/2893#issuecomment-889152324)
+template<typename T, typename U, enable_if_t<!std::is_same<T, U>::value, int> = 0>
+constexpr T conditional_static_cast(U value)
+{
+    return static_cast<T>(value);
+}
+
+template<typename T, typename U, enable_if_t<std::is_same<T, U>::value, int> = 0>
+constexpr T conditional_static_cast(U value)
+{
+    return value;
+}
+
 } // namespace details
 } // namespace spdlog
 
