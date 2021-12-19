@@ -405,9 +405,9 @@ SPDLOG_INLINE int pid() SPDLOG_NOEXCEPT
 {
 
 #ifdef _WIN32
-    return static_cast<int>(::GetCurrentProcessId());
+    return conditional_static_cast<int>(::GetCurrentProcessId());
 #else
-    return static_cast<int>(::getpid());
+    return conditional_static_cast<int>(::getpid());
 #endif
 }
 
