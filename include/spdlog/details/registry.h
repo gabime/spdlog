@@ -28,7 +28,7 @@ template<class Mutex>
 class registry_t
 {
 public:
-    registry_t<Mutex>(const registry_t<Mutex> &) = delete;
+    registry_t(const registry_t<Mutex> &) = delete;
     registry_t<Mutex> &operator=(const registry_t<Mutex> &) = delete;
 
     void register_logger(std::shared_ptr<logger> logger)
@@ -229,7 +229,7 @@ public:
     }
 
 private:
-    registry_t<Mutex>() = default;
+    registry_t() = default;
 
     void throw_if_exists(const std::string &logger_name)
     {
