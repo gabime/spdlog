@@ -27,7 +27,7 @@ struct synchronous_factory
         
         try
         {
-            auto new_logger = std::make_shared<spdlog::logger>(std::move(logger_name), std::move(sink));
+            NewLogger = std::make_shared<spdlog::logger>(std::move(logger_name), std::move(sink));
         }
         catch(std::bad_alloc& exc)
         {
