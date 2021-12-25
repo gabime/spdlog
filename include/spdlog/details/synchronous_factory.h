@@ -15,10 +15,27 @@ struct synchronous_factory
     template<typename Sink, typename... SinkArgs>
     static std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... args)
     {
-        auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
-        auto new_logger = std::make_shared<spdlog::logger>(std::move(logger_name), std::move(sink));
+        std::shared_ptr<spdlog::logger> NewLogger;
+        try
+        {
+            auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
+        }
+        catch(std::bad_alloc& exc)
+        {
+            return NewLogger;
+        }
+        
+        try
+        {
+            auto new_logger = std::make_shared<spdlog::logger>(std::move(logger_name), std::move(sink));
+        }
+        catch(std::bad_alloc& exc)
+        {
+            return NewLogger;
+        }
+        
         details::registry::instance().initialize_logger(new_logger);
-        return new_logger;
+        return NewLogger;
     }
 };
 } // namespace spdlog
