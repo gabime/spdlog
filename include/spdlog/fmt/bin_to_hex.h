@@ -8,6 +8,14 @@
 #include <cctype>
 #include <spdlog/common.h>
 
+#if defined(__has_include) && __has_include(<version>)
+#include <version>
+#endif
+
+#if __cpp_lib_span >= 202002L
+#include <span>
+#endif
+
 //
 // Support for logging binary data as hex
 // format flags, any combination of the following:
@@ -67,6 +75,19 @@ inline details::dump_info<typename Container::const_iterator> to_hex(const Conta
     using Iter = typename Container::const_iterator;
     return details::dump_info<Iter>(std::begin(container), std::end(container), size_per_line);
 }
+
+#if __cpp_lib_span >= 202002L
+
+template <typename Value, size_t Extent>
+inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(const std::span<Value, Extent> &container, size_t size_per_line = 32)
+{
+    using Container = std::span<Value, Extent>;
+    static_assert(sizeof(typename Container::value_type) == 1, "sizeof(Container::value_type) != 1");
+    using Iter = typename Container::iterator;
+    return details::dump_info<Iter>(std::begin(container), std::end(container), size_per_line);
+}
+
+#endif
 
 // create dump_info from ranges
 template<typename It>
