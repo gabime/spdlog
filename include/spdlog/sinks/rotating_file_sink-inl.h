@@ -36,6 +36,7 @@ SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
     if (rotate_on_open && current_size_ > 0)
     {
         rotate_();
+        current_size_ = 0;
     }
 }
 
