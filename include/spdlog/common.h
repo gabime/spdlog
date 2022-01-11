@@ -208,7 +208,7 @@ using level_t = std::atomic<int>;
 
 // Log level enum
 namespace level {
-enum level_enum
+enum level_enum : int
 {
     trace = SPDLOG_LEVEL_TRACE,
     debug = SPDLOG_LEVEL_DEBUG,
