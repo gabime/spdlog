@@ -1021,6 +1021,7 @@ SPDLOG_INLINE pattern_formatter::pattern_formatter(
     , pattern_time_type_(time_type)
     , last_log_secs_(0)
     , custom_handlers_(std::move(custom_user_flags))
+    , needs_time_(false)
 {
     std::memset(&cached_tm_, 0, sizeof(cached_tm_));
     compile_pattern_(pattern_);
@@ -1032,6 +1033,7 @@ SPDLOG_INLINE pattern_formatter::pattern_formatter(pattern_time_type time_type, 
     , eol_(std::move(eol))
     , pattern_time_type_(time_type)
     , last_log_secs_(0)
+    , needs_time_(false)
 {
     std::memset(&cached_tm_, 0, sizeof(cached_tm_));
     formatters_.push_back(details::make_unique<details::full_formatter>(details::padding_info{}));
@@ -1049,11 +1051,13 @@ SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
 {
-    auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
-    if (secs != last_log_secs_)
-    {
-        cached_tm_ = get_time_(msg);
-        last_log_secs_ = secs;
+    if (needs_time_) {
+        const auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
+        if (secs != last_log_secs_)
+        {
+            cached_tm_ = get_time_(msg);
+            last_log_secs_ = secs;
+        }
     }
 
     for (auto &f : formatters_)
@@ -1097,6 +1101,7 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
     {
     case ('+'): // default formatter
         formatters_.push_back(details::make_unique<details::full_formatter>(padding));
+        needs_time_ = true;
         break;
 
     case 'n': // logger name
@@ -1121,101 +1126,125 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 
     case ('a'): // weekday
         formatters_.push_back(details::make_unique<details::a_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('A'): // short weekday
         formatters_.push_back(details::make_unique<details::A_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('b'):
     case ('h'): // month
         formatters_.push_back(details::make_unique<details::b_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('B'): // short month
         formatters_.push_back(details::make_unique<details::B_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('c'): // datetime
         formatters_.push_back(details::make_unique<details::c_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('C'): // year 2 digits
         formatters_.push_back(details::make_unique<details::C_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('Y'): // year 4 digits
         formatters_.push_back(details::make_unique<details::Y_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('D'):
     case ('x'): // datetime MM/DD/YY
         formatters_.push_back(details::make_unique<details::D_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('m'): // month 1-12
         formatters_.push_back(details::make_unique<details::m_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('d'): // day of month 1-31
         formatters_.push_back(details::make_unique<details::d_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('H'): // hours 24
         formatters_.push_back(details::make_unique<details::H_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('I'): // hours 12
         formatters_.push_back(details::make_unique<details::I_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('M'): // minutes
         formatters_.push_back(details::make_unique<details::M_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('S'): // seconds
         formatters_.push_back(details::make_unique<details::S_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('e'): // milliseconds
         formatters_.push_back(details::make_unique<details::e_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('f'): // microseconds
         formatters_.push_back(details::make_unique<details::f_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('F'): // nanoseconds
         formatters_.push_back(details::make_unique<details::F_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('E'): // seconds since epoch
         formatters_.push_back(details::make_unique<details::E_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('p'): // am/pm
         formatters_.push_back(details::make_unique<details::p_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('r'): // 12 hour clock 02:55:02 pm
         formatters_.push_back(details::make_unique<details::r_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('R'): // 24-hour HH:MM time
         formatters_.push_back(details::make_unique<details::R_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('T'):
     case ('X'): // ISO 8601 time format (HH:MM:SS)
         formatters_.push_back(details::make_unique<details::T_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('z'): // timezone
         formatters_.push_back(details::make_unique<details::z_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('P'): // pid
         formatters_.push_back(details::make_unique<details::pid_formatter<Padder>>(padding));
+        needs_time_ = true;
         break;
 
     case ('^'): // color range start
@@ -1252,18 +1281,22 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 
     case ('u'): // elapsed time since last log message in nanos
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::nanoseconds>>(padding));
+        needs_time_ = true;
         break;
 
     case ('i'): // elapsed time since last log message in micros
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::microseconds>>(padding));
+        needs_time_ = true;
         break;
 
     case ('o'): // elapsed time since last log message in millis
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::milliseconds>>(padding));
+        needs_time_ = true;
         break;
 
     case ('O'): // elapsed time since last log message in seconds
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::seconds>>(padding));
+        needs_time_ = true;
         break;
 
     default: // Unknown flag appears as is
