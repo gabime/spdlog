@@ -1071,6 +1071,7 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
 SPDLOG_INLINE void pattern_formatter::set_pattern(std::string pattern)
 {
     pattern_ = std::move(pattern);
+    needs_time_ = false;
     compile_pattern_(pattern_);
 }
 
