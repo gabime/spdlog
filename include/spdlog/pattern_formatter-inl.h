@@ -1033,7 +1033,7 @@ SPDLOG_INLINE pattern_formatter::pattern_formatter(pattern_time_type time_type, 
     , eol_(std::move(eol))
     , pattern_time_type_(time_type)
     , last_log_secs_(0)
-    , needs_time_(false)
+    , needs_time_(true)
 {
     std::memset(&cached_tm_, 0, sizeof(cached_tm_));
     formatters_.push_back(details::make_unique<details::full_formatter>(details::padding_info{}));
