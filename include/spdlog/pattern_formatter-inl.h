@@ -1278,22 +1278,18 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 
     case ('u'): // elapsed time since last log message in nanos
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::nanoseconds>>(padding));
-        need_localtime_ = true;
         break;
 
     case ('i'): // elapsed time since last log message in micros
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::microseconds>>(padding));
-        need_localtime_ = true;
         break;
 
     case ('o'): // elapsed time since last log message in millis
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::milliseconds>>(padding));
-        need_localtime_ = true;
         break;
 
     case ('O'): // elapsed time since last log message in seconds
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::seconds>>(padding));
-        need_localtime_ = true;
         break;
 
     default: // Unknown flag appears as is
