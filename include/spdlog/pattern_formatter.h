@@ -103,6 +103,7 @@ private:
     std::string pattern_;
     std::string eol_;
     pattern_time_type pattern_time_type_;
+    bool need_localtime_;
     std::tm cached_tm_;
     std::chrono::seconds last_log_secs_;
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
