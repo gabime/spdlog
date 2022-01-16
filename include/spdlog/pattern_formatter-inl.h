@@ -1368,7 +1368,6 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::stri
     {
         truncate = false;
     }
-
     return details::padding_info{std::min<size_t>(width, max_width), side, truncate};
 }
 
