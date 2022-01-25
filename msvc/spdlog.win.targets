@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ItemGroup>
+        <ClCompile Include="..\src\async.cpp"/>
+        <ClCompile Include="..\src\cfg.cpp"/>
+        <ClCompile Include="..\src\color_sinks.cpp"/>
+        <ClCompile Include="..\src\file_sinks.cpp"/>
+        <ClCompile Include="..\src\fmt.cpp"/>
+        <ClCompile Include="..\src\spdlog.cpp"/>
+        <ClCompile Include="..\src\stdout_sinks.cpp"/>
+    </ItemGroup>
+    <ItemDefinitionGroup>
+        <ClCompile>
+            <PreprocessorDefinitions>SPDLOG_COMPILED_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+            <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+        </ClCompile>
+    </ItemDefinitionGroup>
+</Project>

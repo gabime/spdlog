@@ -1,6 +1,7 @@
 # Auto generated files
 [Dd]ebug/
 [Rr]elease/
+[Bb]in/
 build/*
 *.slo
 *.lo
@@ -90,3 +91,9 @@ cmake-build-*/
 # macos
 *.DS_store
 *.xcodeproj/
+
+# Visual Studio
+**/.vs
+!msvc/spdlog.sln
+!msvc/spdlog.vcxproj
+!msvc/spdlog.vcxproj.filters
