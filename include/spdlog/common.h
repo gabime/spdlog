@@ -24,7 +24,6 @@
 
 #if __cpp_lib_source_location >= 201907L
 #include <source_location>
-#define SPDLOG_HAS_STD_SOURCE_LOC
 #endif
 
 #ifdef SPDLOG_USE_STD_FORMAT
@@ -307,11 +306,13 @@ struct source_loc
         , funcname{funcname_in}
     {}
 
+#if __cpp_lib_source_location >= 201907L
     SPDLOG_CONSTEXPR source_loc(std::source_location loc) SPDLOG_NOEXCEPT
         : filename{loc.file_name()}
         , line{static_cast<int>(loc.line())}
         , funcname{loc.function_name()}
     {}
+#endif
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT
     {
