@@ -16,6 +16,17 @@
 #include <functional>
 #include <cstdio>
 
+#ifdef __has_include
+#if __has_include(<version>)
+#include <version>
+#endif
+#endif
+
+#if __cpp_lib_source_location >= 201907L
+#include <source_location>
+#define SPDLOG_HAS_STD_SOURCE_LOC
+#endif
+
 #ifdef SPDLOG_USE_STD_FORMAT
 #    include <string_view>
 #endif
@@ -290,10 +301,16 @@ private:
 struct source_loc
 {
     SPDLOG_CONSTEXPR source_loc() = default;
-    SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
+    SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in) SPDLOG_NOEXCEPT
         : filename{filename_in}
         , line{line_in}
         , funcname{funcname_in}
+    {}
+
+    SPDLOG_CONSTEXPR source_loc(std::source_location loc) SPDLOG_NOEXCEPT
+        : filename{loc.file_name()}
+        , line{static_cast<int>(loc.line())}
+        , funcname{loc.function_name()}
     {}
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT
