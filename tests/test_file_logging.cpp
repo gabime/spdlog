@@ -98,3 +98,12 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
     REQUIRE(get_filesize(ROTATING_LOG) <= max_size);
     REQUIRE(get_filesize(ROTATING_LOG ".1") <= max_size);
 }
+
+// test that passing max_size=0 throws
+TEST_CASE("rotating_file_logger3", "[rotating_logger]]")
+{
+    prepare_logdir();
+    size_t max_size = 0;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+    REQUIRE_THROWS_AS(spdlog::rotating_logger_mt("logger", basename, max_size, 0), spdlog::spdlog_ex);
+}
