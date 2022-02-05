@@ -70,7 +70,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &m
     auto new_size = current_size_ + formatted.size();
 
     // rotate if the new estimated file size exceeds max size.
-    // check also that the real size > 0  to better deal with full disk (see issue #2261).
+    // rotate only if the real size > 0 to better deal with full disk (see issue #2261).
     // we only check the real size when new_size > max_size_ because it is relatively expensive.
     if (new_size > max_size_ && file_helper_.size() > 0)
     {
