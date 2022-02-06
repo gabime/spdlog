@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         if (argc > 3)
         {
             queue_size = atoi(argv[3]);
-            if (queue_size > 500000)
+            if (queue_size > 500'000)
             {
                 spdlog::error("Max queue size allowed: 500,000");
                 exit(1);
