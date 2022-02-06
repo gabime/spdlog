@@ -72,7 +72,7 @@ void verify_file(const char *filename, int expected_count)
 int main(int argc, char *argv[])
 {
 
-    int howmany = 1000000;
+    int howmany = 1'000'000;
     int queue_size = std::min(howmany + 2, 8192);
     int threads = 10;
     int iters = 3;
