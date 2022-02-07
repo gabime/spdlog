@@ -246,13 +246,13 @@ set(SPDLOG_LEVEL_NAME_ERROR "error" CACHE STRING "custom level name")
 set(SPDLOG_LEVEL_NAME_CRITICAL "critical" CACHE STRING "custom level name")
 set(SPDLOG_LEVEL_NAME_OFF "off" CACHE STRING "custom level name")
 
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_TRACE=\"${SPDLOG_LEVEL_NAME_TRACE}\")
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_DEBUG=\"${SPDLOG_LEVEL_NAME_DEBUG}\")
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_INFO=\"${SPDLOG_LEVEL_NAME_INFO}\")
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_WARNING=\"${SPDLOG_LEVEL_NAME_WARNING}\")
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_ERROR=\"${SPDLOG_LEVEL_NAME_ERROR}\")
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_CRITICAL=\"${SPDLOG_LEVEL_NAME_CRITICAL}\")
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_OFF=\"${SPDLOG_LEVEL_NAME_OFF}\")
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_TRACE=${SPDLOG_LEVEL_NAME_TRACE})
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_DEBUG=${SPDLOG_LEVEL_NAME_DEBUG})
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_INFO=${SPDLOG_LEVEL_NAME_INFO})
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_WARNING=${SPDLOG_LEVEL_NAME_WARNING})
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_ERROR=${SPDLOG_LEVEL_NAME_ERROR})
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_CRITICAL=${SPDLOG_LEVEL_NAME_CRITICAL})
+target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_OFF=${SPDLOG_LEVEL_NAME_OFF})
 
 # ---------------------------------------------------------------------------------------
 # Build binaries

@@ -153,37 +153,40 @@ enum level_enum
 };
 
 #if !defined(SPDLOG_LEVEL_NAME_TRACE)
-#define SPDLOG_LEVEL_NAME_TRACE "trace"
+#define SPDLOG_LEVEL_NAME_TRACE trace
 #endif
 
 #if !defined(SPDLOG_LEVEL_NAME_DEBUG)
-#define SPDLOG_LEVEL_NAME_DEBUG "debug"
+#define SPDLOG_LEVEL_NAME_DEBUG debug
 #endif
 
 #if !defined(SPDLOG_LEVEL_NAME_INFO)
-#define SPDLOG_LEVEL_NAME_INFO "info"
+#define SPDLOG_LEVEL_NAME_INFO info
 #endif
 
 #if !defined(SPDLOG_LEVEL_NAME_WARNING)
-#define SPDLOG_LEVEL_NAME_WARNING "warning"
+#define SPDLOG_LEVEL_NAME_WARNING warning
 #endif
 
 #if !defined(SPDLOG_LEVEL_NAME_ERROR)
-#define SPDLOG_LEVEL_NAME_ERROR "error"
+#define SPDLOG_LEVEL_NAME_ERROR error
 #endif
 
 #if !defined(SPDLOG_LEVEL_NAME_CRITICAL)
-#define SPDLOG_LEVEL_NAME_CRITICAL "critical"
+#define SPDLOG_LEVEL_NAME_CRITICAL critical
 #endif
 
 #if !defined(SPDLOG_LEVEL_NAME_OFF)
-#define SPDLOG_LEVEL_NAME_OFF "off"
+#define SPDLOG_LEVEL_NAME_OFF off
 #endif
+
+#define QUOTE(str) #str
+#define EXPAND_AND_QUOTE(str) QUOTE(str)
 
 #if !defined(SPDLOG_LEVEL_NAMES)
 #define SPDLOG_LEVEL_NAMES                                                                                                                 \
     {                                                                                                                                      \
-        SPDLOG_LEVEL_NAME_TRACE, SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO, SPDLOG_LEVEL_NAME_WARNING, SPDLOG_LEVEL_NAME_ERROR, SPDLOG_LEVEL_NAME_CRITICAL, SPDLOG_LEVEL_NAME_OFF                                                                    \
+      EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_TRACE), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_DEBUG), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_INFO), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_WARNING), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_ERROR), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_CRITICAL), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_OFF) \
     }
 #endif
 
