@@ -186,7 +186,13 @@ enum level_enum
 #if !defined(SPDLOG_LEVEL_NAMES)
 #define SPDLOG_LEVEL_NAMES                                                                                                                 \
     {                                                                                                                                      \
-      EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_TRACE), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_DEBUG), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_INFO), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_WARNING), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_ERROR), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_CRITICAL), EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_OFF) \
+      EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_TRACE),                                                                                           \
+      EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_DEBUG),                                                                                           \
+      EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_INFO),                                                                                            \
+      EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_WARNING),                                                                                         \
+      EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_ERROR),                                                                                           \
+      EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_CRITICAL),                                                                                        \
+      EXPAND_AND_QUOTE(SPDLOG_LEVEL_NAME_OFF)                                                                                              \
     }
 #endif
 
