@@ -63,7 +63,7 @@ public:
 
     void flush_every(std::chrono::seconds interval);
 
-    void set_error_handler(void (*handler)(const std::string &msg));
+    void set_error_handler(err_handler handler);
 
     void apply_all(const std::function<void(const std::shared_ptr<logger>)> &fun);
 
@@ -99,7 +99,7 @@ private:
     std::unique_ptr<formatter> formatter_;
     spdlog::level::level_enum global_log_level_ = level::info;
     level::level_enum flush_level_ = level::off;
-    void (*err_handler_)(const std::string &msg) = nullptr;
+    err_handler err_handler_;
     std::shared_ptr<thread_pool> tp_;
     std::unique_ptr<periodic_worker> periodic_flusher_;
     std::shared_ptr<logger> default_logger_;
@@ -111,5 +111,5 @@ private:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "registry-inl.h"
+#    include "registry-inl.h"
 #endif

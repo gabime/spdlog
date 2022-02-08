@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/sinks/stdout_sinks.h>
+#    include <spdlog/sinks/stdout_sinks.h>
 #endif
 
 #include <spdlog/details/console_globals.h>
@@ -14,15 +14,15 @@
 #ifdef _WIN32
 // under windows using fwrite to non-binary stream results in \r\r\n (see issue #1675)
 // so instead we use ::FileWrite
-#include <spdlog/details/windows_include.h>
+#    include <spdlog/details/windows_include.h>
 
-#ifndef _USING_V110_SDK71_ // fileapi.h doesnt exist in winxp
-#include <fileapi.h> // WriteFile (..)
-#endif
+#    ifndef _USING_V110_SDK71_ // fileapi.h doesn't exist in winxp
+#        include <fileapi.h>   // WriteFile (..)
+#    endif
 
-#include <io.h>      // _get_osfhandle(..)
-#include <stdio.h>   // _fileno(..)
-#endif               // WIN32
+#    include <io.h>    // _get_osfhandle(..)
+#    include <stdio.h> // _fileno(..)
+#endif                 // WIN32
 
 namespace spdlog {
 
@@ -36,9 +36,9 @@ SPDLOG_INLINE stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
 {
 #ifdef _WIN32
     // get windows handle from the FILE* object
-    
-    handle_ = (HANDLE)::_get_osfhandle(::_fileno(file_));    
-        
+
+    handle_ = reinterpret_cast<HANDLE>(::_get_osfhandle(::_fileno(file_)));
+
     // don't throw to support cases where no console is attached,
     // and let the log method to do nothing if (handle_ == INVALID_HANDLE_VALUE).
     // throw only if non stdout/stderr target is requested (probably regular file and not console).
@@ -54,13 +54,13 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
 {
 #ifdef _WIN32
     if (handle_ == INVALID_HANDLE_VALUE)
-    {        
+    {
         return;
     }
     std::lock_guard<mutex_t> lock(mutex_);
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
-    ::fflush(file_); // flush in case there is somthing in this file_ already
+    ::fflush(file_); // flush in case there is something in this file_ already
     auto size = static_cast<DWORD>(formatted.size());
     DWORD bytes_written = 0;
     bool ok = ::WriteFile(handle_, formatted.data(), size, &bytes_written, nullptr) != 0;
@@ -74,7 +74,7 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
     formatter_->format(msg, formatted);
     ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
     ::fflush(file_); // flush every line to terminal
-#endif // WIN32    
+#endif // WIN32
 }
 
 template<typename ConsoleMutex>

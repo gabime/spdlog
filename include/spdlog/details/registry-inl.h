@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/details/registry.h>
+#    include <spdlog/details/registry.h>
 #endif
 
 #include <spdlog/common.h>
@@ -14,11 +14,11 @@
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
 // support for the default stdout color logger
-#ifdef _WIN32
-#include <spdlog/sinks/wincolor_sink.h>
-#else
-#include <spdlog/sinks/ansicolor_sink.h>
-#endif
+#    ifdef _WIN32
+#        include <spdlog/sinks/wincolor_sink.h>
+#    else
+#        include <spdlog/sinks/ansicolor_sink.h>
+#    endif
 #endif // SPDLOG_DISABLE_DEFAULT_LOGGER
 
 #include <chrono>
@@ -36,11 +36,11 @@ SPDLOG_INLINE registry::registry()
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
     // create default logger (ansicolor_stdout_sink_mt or wincolor_stdout_sink_mt in windows).
-#ifdef _WIN32
+#    ifdef _WIN32
     auto color_sink = std::make_shared<sinks::wincolor_stdout_sink_mt>();
-#else
+#    else
     auto color_sink = std::make_shared<sinks::ansicolor_stdout_sink_mt>();
-#endif
+#    endif
 
     const char *default_logger_name = "";
     default_logger_ = std::make_shared<spdlog::logger>(default_logger_name, std::move(color_sink));
@@ -195,14 +195,14 @@ SPDLOG_INLINE void registry::flush_every(std::chrono::seconds interval)
     periodic_flusher_ = details::make_unique<periodic_worker>(clbk, interval);
 }
 
-SPDLOG_INLINE void registry::set_error_handler(void (*handler)(const std::string &msg))
+SPDLOG_INLINE void registry::set_error_handler(err_handler handler)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     for (auto &l : loggers_)
     {
         l.second->set_error_handler(handler);
     }
-    err_handler_ = handler;
+    err_handler_ = std::move(handler);
 }
 
 SPDLOG_INLINE void registry::apply_all(const std::function<void(const std::shared_ptr<logger>)> &fun)

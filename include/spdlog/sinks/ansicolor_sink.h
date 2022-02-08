@@ -114,5 +114,5 @@ using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::console_nullmute
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "ansicolor_sink-inl.h"
+#    include "ansicolor_sink-inl.h"
 #endif

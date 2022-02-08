@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/sinks/ansicolor_sink.h>
+#    include <spdlog/sinks/ansicolor_sink.h>
 #endif
 
 #include <spdlog/pattern_formatter.h>
@@ -34,7 +34,7 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color(level::level_enum color_level, string_view_t color)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    colors_[color_level] = to_string_(color);
+    colors_[static_cast<size_t>(color_level)] = to_string_(color);
 }
 
 template<typename ConsoleMutex>
@@ -52,7 +52,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
         // before color range
         print_range_(formatted, 0, msg.color_range_start);
         // in color range
-        print_ccode_(colors_[msg.level]);
+        print_ccode_(colors_[static_cast<size_t>(msg.level)]);
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
         print_ccode_(reset);
         // after color range

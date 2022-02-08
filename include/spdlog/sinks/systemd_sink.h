@@ -9,7 +9,7 @@
 
 #include <array>
 #ifndef SD_JOURNAL_SUPPRESS_LOCATION
-#define SD_JOURNAL_SUPPRESS_LOCATION
+#    define SD_JOURNAL_SUPPRESS_LOCATION
 #endif
 #include <systemd/sd-journal.h>
 

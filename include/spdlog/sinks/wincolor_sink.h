@@ -23,7 +23,7 @@ namespace sinks {
 template<typename ConsoleMutex>
 class wincolor_sink : public sink
 {
-public:   
+public:
     wincolor_sink(void *out_handle, color_mode mode);
     ~wincolor_sink() override;
 
@@ -41,7 +41,7 @@ public:
 protected:
     using mutex_t = typename ConsoleMutex::mutex_t;
     void *out_handle_;
-    mutex_t &mutex_;    
+    mutex_t &mutex_;
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
     std::array<std::uint16_t, level::n_levels> colors_;
@@ -81,5 +81,5 @@ using wincolor_stderr_sink_st = wincolor_stderr_sink<details::console_nullmutex>
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "wincolor_sink-inl.h"
+#    include "wincolor_sink-inl.h"
 #endif

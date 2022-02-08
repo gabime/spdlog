@@ -5,11 +5,11 @@
 sudo: required
 language: cpp
 
-# gcc 4.8
-addons: &gcc48
+# gcc 4.9
+addons: &gcc49
   apt:
     packages:
-      - g++-4.8
+      - g++-4.9
     sources:
       - ubuntu-toolchain-r-test
 
@@ -20,6 +20,24 @@ addons: &gcc7
       - g++-7
     sources:
       - ubuntu-toolchain-r-test
+
+
+# gcc 9.0
+addons: &gcc9
+  apt:
+    packages:
+      - g++-9
+    sources:
+      - ubuntu-toolchain-r-test
+      
+# gcc 11.0
+addons: &gcc11
+  apt:
+    packages:
+      - g++-11
+    sources:
+      - ubuntu-toolchain-r-test
+
 
 # Clang 3.5
 addons: &clang35
@@ -40,48 +58,73 @@ addons: &clang10
     sources:
       - sourceline: "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main"
         key_url: "https://apt.llvm.org/llvm-snapshot.gpg.key"
+        
+addons: &clang12
+  apt:
+    packages:
+      - clang-12
+      - lldb-12
+      - lld-12
+    sources:
+      - sourceline: "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main"
+        key_url: "https://apt.llvm.org/llvm-snapshot.gpg.key"        
 
-
+env:
+  global:
+    - BUILD_EXAMPLE='ON'
+    
 matrix:
   include:
-    # Test gcc-4.8: C++11, Build=Debug/Release
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Debug CPP=11
+    # Test gcc-4.9: C++11, Build=Release
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release CPP=11 BUILD_EXAMPLE='OFF'
       os: linux
-      addons: *gcc48
-
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
-      os: linux
-      addons: *gcc48
-
+      addons: *gcc49
+      
+    # Test gcc-7: C++11, Build=Release
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
       os: linux
       addons: *gcc7
-
-    # Test clang-3.5: C++11, Build=Debug/Release
-    - env: CLANG_VERSION=3.5 BUILD_TYPE=Debug CPP=11
+      
+    # Test gcc-9: C++17, Build=Release
+    - env: GCC_VERSION=9 BUILD_TYPE=Release CPP=17
       os: linux
-      addons: *clang35
+      addons: *gcc9
 
+    # Test gcc-11.0: C++20, Build=Debug
+    - env: GCC_VERSION=11 BUILD_TYPE=Debug CPP=20 ASAN=Off
+      os: linux
+      dist: bionic
+      addons: *gcc11
+      
+    # Test clang-3.5: C++11, Build=Release
     - env: CLANG_VERSION=3.5 BUILD_TYPE=Release CPP=11
       os: linux
       addons: *clang35
 
-      # osx
+    # Text osx
     - env: BUILD_TYPE=Release CPP=11 ASAN=Off TSAN=Off
       os: osx
 
-    # Test clang-10.0: C++11, Build=Debug/Release
-    - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=11
-      os: linux
-      dist: bionic
-      addons: *clang10
-
+    # Test clang-10.0: C++11, Build=Release
     - env: CLANG_VERSION=10 BUILD_TYPE=Release CPP=11 ASAN=On
       os: linux
       dist: bionic
       addons: *clang10
-
-
+      
+    # Test clang-10.0: C++17, Build=Debug
+    - env: CLANG_VERSION=10 BUILD_TYPE=Debug CPP=17 ASAN=Off
+      os: linux
+      dist: bionic
+      addons: *clang10
+      
+            
+    # Test clang-12.0: C++17, Build=Debug
+    - env: CLANG_VERSION=12 BUILD_TYPE=Debug CPP=17 ASAN=Off
+      os: linux
+      dist: bionic
+      addons: *clang12
+          
+                        
 before_script:
   - if [ -n "$GCC_VERSION" ]; then export CXX="g++-${GCC_VERSION}" CC="gcc-${GCC_VERSION}"; fi
   - if [ -n "$CLANG_VERSION" ]; then export CXX="clang++-${CLANG_VERSION}" CC="clang-${CLANG_VERSION}"; fi
@@ -99,8 +142,8 @@ script:
       --warn-uninitialized \
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
       -DCMAKE_CXX_STANDARD=$CPP \
-      -DSPDLOG_BUILD_EXAMPLE=ON \
-      -DSPDLOG_BUILD_EXAMPLE_HO=ON \
+      -DSPDLOG_BUILD_EXAMPLE=$BUILD_EXAMPLE \
+      -DSPDLOG_BUILD_EXAMPLE_HO=$BUILD_EXAMPLE \
       -DSPDLOG_BUILD_WARNINGS=ON \
       -DSPDLOG_BUILD_BENCH=OFF \
       -DSPDLOG_BUILD_TESTS=ON \

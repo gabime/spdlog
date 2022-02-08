@@ -9,7 +9,7 @@
 #include <cstdio>
 
 #ifdef _WIN32
-#include <spdlog/details/windows_include.h>
+#    include <spdlog/details/windows_include.h>
 #endif
 
 namespace spdlog {
@@ -41,7 +41,7 @@ protected:
     FILE *file_;
     std::unique_ptr<spdlog::formatter> formatter_;
 #ifdef _WIN32
-    HANDLE handle_;    
+    HANDLE handle_;
 #endif // WIN32
 };
 
@@ -83,5 +83,5 @@ std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "stdout_sinks-inl.h"
+#    include "stdout_sinks-inl.h"
 #endif

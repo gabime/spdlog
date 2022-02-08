@@ -77,6 +77,7 @@ TEST_CASE("dup_filter_test5", "[dup_filter_sink]")
 
     dup_filter_sink_mt dup_sink{std::chrono::seconds{5}};
     auto test_sink = std::make_shared<test_sink_mt>();
+    test_sink->set_pattern("%v");
     dup_sink.add_sink(test_sink);
 
     dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "message1"});
@@ -85,4 +86,5 @@ TEST_CASE("dup_filter_test5", "[dup_filter_sink]")
     dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "message2"});
 
     REQUIRE(test_sink->msg_counter() == 3); // skip 2 messages but log the "skipped.." message before message2
+    REQUIRE(test_sink->lines()[1] == "Skipped 2 duplicate messages..");
 }

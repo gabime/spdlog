@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/sinks/wincolor_sink.h>
+#    include <spdlog/sinks/wincolor_sink.h>
 #endif
 
 #include <spdlog/details/windows_include.h>
@@ -129,10 +129,10 @@ std::uint16_t SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_foreground_color_(s
     if (!::GetConsoleScreenBufferInfo(static_cast<HANDLE>(out_handle_), &orig_buffer_info))
     {
         // just return white if failed getting console info
-        return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; 
+        return FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
     }
-    
-    // change only the foreground bits (lowest 4 bits) 
+
+    // change only the foreground bits (lowest 4 bits)
     auto new_attribs = static_cast<WORD>(attribs) | (orig_buffer_info.wAttributes & 0xfff0);
     auto ignored = ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), static_cast<WORD>(new_attribs));
     (void)(ignored);

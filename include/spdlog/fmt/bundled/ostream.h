@@ -85,6 +85,8 @@ template <typename T, typename Char> class is_streamable {
   using result = decltype(test<T>(0));
 
  public:
+  is_streamable() = default;
+
   static const bool value = result::value;
 };
 
@@ -149,6 +151,7 @@ struct fallback_formatter<T, Char, enable_if_t<is_streamable<T, Char>::value>>
 };
 }  // namespace detail
 
+FMT_MODULE_EXPORT
 template <typename Char>
 void vprint(std::basic_ostream<Char>& os, basic_string_view<Char> format_str,
             basic_format_args<buffer_context<type_identity_t<Char>>> args) {
@@ -166,6 +169,7 @@ void vprint(std::basic_ostream<Char>& os, basic_string_view<Char> format_str,
     fmt::print(cerr, "Don't {}!", "panic");
   \endrst
  */
+FMT_MODULE_EXPORT
 template <typename S, typename... Args,
           typename Char = enable_if_t<detail::is_string<S>::value, char_t<S>>>
 void print(std::basic_ostream<Char>& os, const S& format_str, Args&&... args) {

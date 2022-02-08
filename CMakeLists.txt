@@ -1,6 +1,6 @@
 # Copyright(c) 2019 spdlog authors Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.10...3.21)
 
 # ---------------------------------------------------------------------------------------
 # Start spdlog project
@@ -14,13 +14,6 @@ project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
 message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
 include(GNUInstallDirs)
-
-# ---------------------------------------------------------------------------------------
-# Set CMake policies to support later version behaviour
-# ---------------------------------------------------------------------------------------
-if(POLICY CMP0077)
-    cmake_policy(SET CMP0077 NEW) # option() honors variables already set
-endif()
 
 # ---------------------------------------------------------------------------------------
 # Set default build to release
@@ -37,9 +30,9 @@ if(NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
-# make sure __cplusplus is defined when using msvc
+# make sure __cplusplus is defined when using msvc and enable parallel build
 if(MSVC)
-    string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus")
+    string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus /MP")
 endif()
 
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -87,6 +80,7 @@ option(SPDLOG_BUILD_WARNINGS "Enable compiler warnings" OFF)
 
 # install options
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_USE_STD_FORMAT "Use std::format instead of fmt library. No compile-time format string checking." OFF)
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_FMT_EXTERNAL_HO "Use external fmt header-only library instead of bundled" OFF)
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
@@ -95,14 +89,27 @@ if(SPDLOG_FMT_EXTERNAL AND SPDLOG_FMT_EXTERNAL_HO)
     message(FATAL_ERROR "SPDLOG_FMT_EXTERNAL and SPDLOG_FMT_EXTERNAL_HO are mutually exclusive")
 endif()
 
+if(SPDLOG_USE_STD_FORMAT AND SPDLOG_FMT_EXTERNAL_HO)
+    message(FATAL_ERROR "SPDLOG_USE_STD_FORMAT and SPDLOG_FMT_EXTERNAL_HO are mutually exclusive")
+endif()
+
+if(SPDLOG_USE_STD_FORMAT AND SPDLOG_FMT_EXTERNAL)
+    message(FATAL_ERROR "SPDLOG_USE_STD_FORMAT and SPDLOG_FMT_EXTERNAL are mutually exclusive")
+endif()
+
 # misc tweakme options
 if(WIN32)
     option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
     option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)
+else()
+    set(SPDLOG_WCHAR_SUPPORT OFF CACHE BOOL "non supported option" FORCE)
+    set(SPDLOG_WCHAR_FILENAMES OFF CACHE BOOL "non supported option" FORCE)
 endif()
+
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    option(SPDLOG_CLOCK_COARSE
-           "Use the much faster (but much less accurate) CLOCK_REALTIME_COARSE instead of the regular clock," OFF)
+    option(SPDLOG_CLOCK_COARSE "Use CLOCK_REALTIME_COARSE instead of the regular clock," OFF)
+else()
+    set(SPDLOG_CLOCK_COARSE OFF CACHE BOOL "non supported option" FORCE)
 endif()
 
 option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file descriptors" OFF)
@@ -132,7 +139,7 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # ---------------------------------------------------------------------------------------
 set(SPDLOG_SRCS src/spdlog.cpp src/stdout_sinks.cpp src/color_sinks.cpp src/file_sinks.cpp src/async.cpp src/cfg.cpp)
 
-if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
+if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
     list(APPEND SPDLOG_SRCS src/fmt.cpp)
 endif()
 
@@ -144,10 +151,10 @@ if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
     add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
     target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED_LIB)
     if(MSVC)
-        target_compile_options(spdlog PUBLIC 
-            $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<NOT:$<COMPILE_LANGUAGE:CUDA>>>:/wd4251 /wd4275>)
+        target_compile_options(spdlog PUBLIC $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<NOT:$<COMPILE_LANGUAGE:CUDA>>>:/wd4251
+                                             /wd4275>)
     endif()
-    if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
+    if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
         target_compile_definitions(spdlog PRIVATE FMT_EXPORT PUBLIC FMT_SHARED)
     endif()
 else()
@@ -205,10 +212,10 @@ endif()
 # ---------------------------------------------------------------------------------------
 # Add required libraries for Android CMake build
 # ---------------------------------------------------------------------------------------
-if (ANDROID)
+if(ANDROID)
     target_link_libraries(spdlog PUBLIC log)
     target_link_libraries(spdlog_header_only INTERFACE log)
-endif ()
+endif()
 
 # ---------------------------------------------------------------------------------------
 # Misc definitions according to tweak options
@@ -224,7 +231,8 @@ foreach(
     SPDLOG_NO_THREAD_ID
     SPDLOG_NO_TLS
     SPDLOG_NO_ATOMIC_LEVELS
-    SPDLOG_DISABLE_DEFAULT_LOGGER)
+    SPDLOG_DISABLE_DEFAULT_LOGGER
+    SPDLOG_USE_STD_FORMAT)
     if(${SPDLOG_OPTION})
         target_compile_definitions(spdlog PUBLIC ${SPDLOG_OPTION})
         target_compile_definitions(spdlog_header_only INTERFACE ${SPDLOG_OPTION})
@@ -234,25 +242,6 @@ endforeach()
 if(SPDLOG_NO_EXCEPTIONS AND NOT MSVC)
     target_compile_options(spdlog PRIVATE -fno-exceptions)
 endif()
-
-# ---------------------------------------------------------------------------------------
-# Allow override of level names
-# ---------------------------------------------------------------------------------------
-set(SPDLOG_LEVEL_NAME_TRACE "trace" CACHE STRING "custom level name")
-set(SPDLOG_LEVEL_NAME_DEBUG "debug" CACHE STRING "custom level name")
-set(SPDLOG_LEVEL_NAME_INFO "info" CACHE STRING "custom level name")
-set(SPDLOG_LEVEL_NAME_WARNING "warning" CACHE STRING "custom level name")
-set(SPDLOG_LEVEL_NAME_ERROR "error" CACHE STRING "custom level name")
-set(SPDLOG_LEVEL_NAME_CRITICAL "critical" CACHE STRING "custom level name")
-set(SPDLOG_LEVEL_NAME_OFF "off" CACHE STRING "custom level name")
-
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_TRACE=${SPDLOG_LEVEL_NAME_TRACE})
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_DEBUG=${SPDLOG_LEVEL_NAME_DEBUG})
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_INFO=${SPDLOG_LEVEL_NAME_INFO})
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_WARNING=${SPDLOG_LEVEL_NAME_WARNING})
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_ERROR=${SPDLOG_LEVEL_NAME_ERROR})
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_CRITICAL=${SPDLOG_LEVEL_NAME_CRITICAL})
-target_compile_definitions(spdlog PUBLIC SPDLOG_LEVEL_NAME_OFF=${SPDLOG_LEVEL_NAME_OFF})
 
 # ---------------------------------------------------------------------------------------
 # Build binaries
@@ -301,7 +290,7 @@ if(SPDLOG_INSTALL)
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-    if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
+    if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
         install(DIRECTORY include/${PROJECT_NAME}/fmt/bundled/
                 DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/fmt/bundled/")
     endif()
@@ -321,7 +310,8 @@ if(SPDLOG_INSTALL)
     install(EXPORT spdlog DESTINATION ${export_dest_dir} NAMESPACE spdlog:: FILE ${config_targets_file})
 
     include(CMakePackageConfigHelpers)
-    configure_file("${project_config_in}" "${project_config_out}" @ONLY)
+    configure_package_config_file("${project_config_in}" "${project_config_out}"
+        INSTALL_DESTINATION ${export_dest_dir})
 
     write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
     install(FILES "${project_config_out}" "${version_config_file}" DESTINATION "${export_dest_dir}")
@@ -331,4 +321,3 @@ if(SPDLOG_INSTALL)
     # ---------------------------------------------------------------------------------------
     include(cmake/spdlogCPack.cmake)
 endif()
-

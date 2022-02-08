@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/details/os.h>
+#    include <spdlog/details/os.h>
 #endif
 
 #include <spdlog/common.h>
@@ -23,45 +23,45 @@
 
 #ifdef _WIN32
 
-#include <io.h>      // _get_osfhandle and _isatty support
-#include <process.h> //  _get_pid support
-#include <spdlog/details/windows_include.h>
+#    include <io.h>      // _get_osfhandle and _isatty support
+#    include <process.h> //  _get_pid support
+#    include <spdlog/details/windows_include.h>
 
-#ifdef __MINGW32__
-#include <share.h>
-#endif
+#    ifdef __MINGW32__
+#        include <share.h>
+#    endif
 
-#if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)
-#include <limits>
-#endif
+#    if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)
+#        include <limits>
+#    endif
 
-#include <direct.h> // for _mkdir/_wmkdir
+#    include <direct.h> // for _mkdir/_wmkdir
 
 #else // unix
 
-#include <fcntl.h>
-#include <unistd.h>
+#    include <fcntl.h>
+#    include <unistd.h>
 
-#ifdef __linux__
-#include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
+#    ifdef __linux__
+#        include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
 
-#elif defined(_AIX)
-#include <pthread.h> // for pthread_getthreadid_np
+#    elif defined(_AIX)
+#        include <pthread.h> // for pthread_getthrds_np
 
-#elif defined(__DragonFly__) || defined(__FreeBSD__)
-#include <pthread_np.h> // for pthread_getthreadid_np
+#    elif defined(__DragonFly__) || defined(__FreeBSD__)
+#        include <pthread_np.h> // for pthread_getthreadid_np
 
-#elif defined(__NetBSD__)
-#include <lwp.h> // for _lwp_self
+#    elif defined(__NetBSD__)
+#        include <lwp.h> // for _lwp_self
 
-#elif defined(__sun)
-#include <thread.h> // for thr_self
-#endif
+#    elif defined(__sun)
+#        include <thread.h> // for thr_self
+#    endif
 
 #endif // unix
 
-#ifndef __has_feature      // Clang - feature checking macros.
-#define __has_feature(x) 0 // Compatibility with non-clang compilers.
+#ifndef __has_feature          // Clang - feature checking macros.
+#    define __has_feature(x) 0 // Compatibility with non-clang compilers.
 #endif
 
 namespace spdlog {
@@ -123,12 +123,12 @@ SPDLOG_INLINE std::tm gmtime() SPDLOG_NOEXCEPT
 SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode)
 {
 #ifdef _WIN32
-#ifdef SPDLOG_WCHAR_FILENAMES
+#    ifdef SPDLOG_WCHAR_FILENAMES
     *fp = ::_wfsopen((filename.c_str()), mode.c_str(), _SH_DENYNO);
-#else
+#    else
     *fp = ::_fsopen((filename.c_str()), mode.c_str(), _SH_DENYNO);
-#endif
-#if defined(SPDLOG_PREVENT_CHILD_FD)
+#    endif
+#    if defined(SPDLOG_PREVENT_CHILD_FD)
     if (*fp != nullptr)
     {
         auto file_handle = reinterpret_cast<HANDLE>(_get_osfhandle(::_fileno(*fp)));
@@ -138,9 +138,9 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
             *fp = nullptr;
         }
     }
-#endif
+#    endif
 #else // unix
-#if defined(SPDLOG_PREVENT_CHILD_FD)
+#    if defined(SPDLOG_PREVENT_CHILD_FD)
     const int mode_flag = mode == SPDLOG_FILENAME_T("ab") ? O_APPEND : O_TRUNC;
     const int fd = ::open((filename.c_str()), O_CREAT | O_WRONLY | O_CLOEXEC | mode_flag, mode_t(0644));
     if (fd == -1)
@@ -152,9 +152,9 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
     {
         ::close(fd);
     }
-#else
+#    else
     *fp = ::fopen((filename.c_str()), mode.c_str());
-#endif
+#    endif
 #endif
 
     return *fp == nullptr;
@@ -187,11 +187,11 @@ SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename
 SPDLOG_INLINE bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT
 {
 #ifdef _WIN32
-#ifdef SPDLOG_WCHAR_FILENAMES
+#    ifdef SPDLOG_WCHAR_FILENAMES
     auto attribs = ::GetFileAttributesW(filename.c_str());
-#else
+#    else
     auto attribs = ::GetFileAttributesA(filename.c_str());
-#endif
+#    endif
     return attribs != INVALID_FILE_ATTRIBUTES;
 #else // common linux/unix all have the stat system call
     struct stat buffer;
@@ -200,9 +200,9 @@ SPDLOG_INLINE bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT
 }
 
 #ifdef _MSC_VER
-    // avoid warning about unreachable statement at the end of filesize()
-    #pragma warning(push)
-    #pragma warning(disable: 4702)
+// avoid warning about unreachable statement at the end of filesize()
+#    pragma warning(push)
+#    pragma warning(disable : 4702)
 #endif
 
 // Return file size according to open FILE* object
@@ -214,49 +214,49 @@ SPDLOG_INLINE size_t filesize(FILE *f)
     }
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = ::_fileno(f);
-#if defined(_WIN64) // 64 bits
+#    if defined(_WIN64) // 64 bits
     __int64 ret = ::_filelengthi64(fd);
     if (ret >= 0)
     {
         return static_cast<size_t>(ret);
     }
 
-#else // windows 32 bits
+#    else // windows 32 bits
     long ret = ::_filelength(fd);
     if (ret >= 0)
     {
         return static_cast<size_t>(ret);
     }
-#endif
+#    endif
 
 #else // unix
-// OpenBSD doesn't compile with :: before the fileno(..)
-#if defined(__OpenBSD__)
+// OpenBSD and AIX doesn't compile with :: before the fileno(..)
+#    if defined(__OpenBSD__) || defined(_AIX)
     int fd = fileno(f);
-#else
+#    else
     int fd = ::fileno(f);
-#endif
+#    endif
 // 64 bits(but not in osx or cygwin, where fstat64 is deprecated)
-#if (defined(__linux__) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
+#    if (defined(__linux__) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
     struct stat64 st;
     if (::fstat64(fd, &st) == 0)
     {
         return static_cast<size_t>(st.st_size);
     }
-#else // other unix or linux 32 bits or cygwin
+#    else // other unix or linux 32 bits or cygwin
     struct stat st;
     if (::fstat(fd, &st) == 0)
     {
         return static_cast<size_t>(st.st_size);
     }
-#endif
+#    endif
 #endif
     throw_spdlog_ex("Failed getting file size from fd", errno);
     return 0; // will not be reached.
 }
 
 #ifdef _MSC_VER
-    #pragma warning(pop)
+#    pragma warning(pop)
 #endif
 
 // Return utc offset in minutes or throw spdlog_ex on failure
@@ -264,13 +264,13 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
 {
 
 #ifdef _WIN32
-#if _WIN32_WINNT < _WIN32_WINNT_WS08
+#    if _WIN32_WINNT < _WIN32_WINNT_WS08
     TIME_ZONE_INFORMATION tzinfo;
     auto rv = ::GetTimeZoneInformation(&tzinfo);
-#else
+#    else
     DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
     auto rv = ::GetDynamicTimeZoneInformation(&tzinfo);
-#endif
+#    endif
     if (rv == TIME_ZONE_ID_INVALID)
         throw_spdlog_ex("Failed getting timezone info. ", errno);
 
@@ -286,7 +286,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
     return offset;
 #else
 
-#if defined(sun) || defined(__sun) || defined(_AIX) || (!defined(_BSD_SOURCE) && !defined(_GNU_SOURCE))
+#    if defined(sun) || defined(__sun) || defined(_AIX) || (!defined(_BSD_SOURCE) && !defined(_GNU_SOURCE))
     // 'tm_gmtoff' field is BSD extension and it's missing on SunOS/Solaris
     struct helper
     {
@@ -305,7 +305,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
                 ((local_year / 100 >> 2) - (gmt_year / 100 >> 2))
 
                 // + difference in years * 365 */
-                + (long int)(local_year - gmt_year) * 365);
+                + static_cast<long int>(local_year - gmt_year) * 365);
 
             long int hours = (24 * days) + (localtm.tm_hour - gmtm.tm_hour);
             long int mins = (60 * hours) + (localtm.tm_min - gmtm.tm_min);
@@ -316,9 +316,9 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
     };
 
     auto offset_seconds = helper::calculate_gmt_offset(tm);
-#else
+#    else
     auto offset_seconds = tm.tm_gmtoff;
-#endif
+#    endif
 
     return static_cast<int>(offset_seconds / 60);
 #endif
@@ -332,11 +332,18 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
 #ifdef _WIN32
     return static_cast<size_t>(::GetCurrentThreadId());
 #elif defined(__linux__)
-#if defined(__ANDROID__) && defined(__ANDROID_API__) && (__ANDROID_API__ < 21)
-#define SYS_gettid __NR_gettid
-#endif
+#    if defined(__ANDROID__) && defined(__ANDROID_API__) && (__ANDROID_API__ < 21)
+#        define SYS_gettid __NR_gettid
+#    endif
     return static_cast<size_t>(::syscall(SYS_gettid));
-#elif defined(_AIX) || defined(__DragonFly__) || defined(__FreeBSD__)
+#elif defined(_AIX)
+    struct __pthrdsinfo buf;
+    int reg_size = 0;
+    pthread_t pt = pthread_self();
+    int retval = pthread_getthrds_np(&pt, PTHRDSINFO_QUERY_TID, &buf, sizeof(buf), NULL, &reg_size);
+    int tid = (!retval) ? buf.__pi_tid : 0;
+    return static_cast<size_t>(tid);
+#elif defined(__DragonFly__) || defined(__FreeBSD__)
     return static_cast<size_t>(::pthread_getthreadid_np());
 #elif defined(__NetBSD__)
     return static_cast<size_t>(::_lwp_self());
@@ -366,7 +373,7 @@ SPDLOG_INLINE size_t thread_id() SPDLOG_NOEXCEPT
 
 // This is avoid msvc issue in sleep_for that happens if the clock changes.
 // See https://github.com/gabime/spdlog/issues/609
-SPDLOG_INLINE void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT
+SPDLOG_INLINE void sleep_for_millis(unsigned int milliseconds) SPDLOG_NOEXCEPT
 {
 #if defined(_WIN32)
     ::Sleep(milliseconds);
@@ -381,7 +388,11 @@ SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
     memory_buf_t buf;
     wstr_to_utf8buf(filename, buf);
+#    ifdef SPDLOG_USE_STD_FORMAT
+    return buf;
+#    else
     return fmt::to_string(buf);
+#    endif
 }
 #else
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
@@ -394,9 +405,9 @@ SPDLOG_INLINE int pid() SPDLOG_NOEXCEPT
 {
 
 #ifdef _WIN32
-    return static_cast<int>(::GetCurrentProcessId());
+    return conditional_static_cast<int>(::GetCurrentProcessId());
 #else
-    return static_cast<int>(::getpid());
+    return conditional_static_cast<int>(::getpid());
 #endif
 }
 
@@ -415,8 +426,8 @@ SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT
             return true;
         }
 
-        static constexpr std::array<const char *, 15> terms = {{"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux",
-            "msys", "putty", "rxvt", "screen", "vt100", "xterm", "alacritty"}};
+        static constexpr std::array<const char *, 16> terms = {{"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux",
+            "msys", "putty", "rxvt", "screen", "vt100", "xterm", "alacritty", "vt102"}};
 
         const char *env_term_p = std::getenv("TERM");
         if (env_term_p == nullptr)
@@ -476,7 +487,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
         }
     }
 
-    throw_spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
+    throw_spdlog_ex(fmt_lib::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
 }
 
 SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
@@ -511,7 +522,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
         }
     }
 
-    throw_spdlog_ex(fmt::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
+    throw_spdlog_ex(fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
 }
 #endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 
@@ -519,11 +530,11 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
 static SPDLOG_INLINE bool mkdir_(const filename_t &path)
 {
 #ifdef _WIN32
-#ifdef SPDLOG_WCHAR_FILENAMES
+#    ifdef SPDLOG_WCHAR_FILENAMES
     return ::_wmkdir(path.c_str()) == 0;
-#else
+#    else
     return ::_mkdir(path.c_str()) == 0;
-#endif
+#    endif
 #else
     return ::mkdir(path.c_str(), mode_t(0755)) == 0;
 #endif
@@ -531,7 +542,7 @@ static SPDLOG_INLINE bool mkdir_(const filename_t &path)
 
 // create the given directory - and all directories leading to it
 // return true on success or if the directory already exists
-SPDLOG_INLINE bool create_dir(filename_t path)
+SPDLOG_INLINE bool create_dir(const filename_t &path)
 {
     if (path_exists(path))
     {
@@ -570,7 +581,7 @@ SPDLOG_INLINE bool create_dir(filename_t path)
 // "abc/" => "abc"
 // "abc" => ""
 // "abc///" => "abc//"
-SPDLOG_INLINE filename_t dir_name(filename_t path)
+SPDLOG_INLINE filename_t dir_name(const filename_t &path)
 {
     auto pos = path.find_last_of(folder_seps_filename);
     return pos != filename_t::npos ? path.substr(0, pos) : filename_t{};
@@ -580,14 +591,14 @@ std::string SPDLOG_INLINE getenv(const char *field)
 {
 
 #if defined(_MSC_VER)
-#if defined(__cplusplus_winrt)
+#    if defined(__cplusplus_winrt)
     return std::string{}; // not supported under uwp
-#else
+#    else
     size_t len = 0;
     char buf[128];
     bool ok = ::getenv_s(&len, buf, sizeof(buf), field) == 0;
     return ok ? buf : std::string{};
-#endif
+#    endif
 #else // revert to getenv
     char *buf = ::getenv(field);
     return buf ? buf : std::string{};

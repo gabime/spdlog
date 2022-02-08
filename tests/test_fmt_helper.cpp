@@ -8,28 +8,48 @@ void test_pad2(int n, const char *expected)
 {
     memory_buf_t buf;
     spdlog::details::fmt_helper::pad2(n, buf);
+
+#ifdef SPDLOG_USE_STD_FORMAT
+    REQUIRE(buf == expected);
+#else
     REQUIRE(fmt::to_string(buf) == expected);
+#endif
 }
 
 void test_pad3(uint32_t n, const char *expected)
 {
     memory_buf_t buf;
     spdlog::details::fmt_helper::pad3(n, buf);
+
+#ifdef SPDLOG_USE_STD_FORMAT
+    REQUIRE(buf == expected);
+#else
     REQUIRE(fmt::to_string(buf) == expected);
+#endif
 }
 
 void test_pad6(std::size_t n, const char *expected)
 {
     memory_buf_t buf;
     spdlog::details::fmt_helper::pad6(n, buf);
+
+#ifdef SPDLOG_USE_STD_FORMAT
+    REQUIRE(buf == expected);
+#else
     REQUIRE(fmt::to_string(buf) == expected);
+#endif
 }
 
 void test_pad9(std::size_t n, const char *expected)
 {
     memory_buf_t buf;
     spdlog::details::fmt_helper::pad9(n, buf);
+
+#ifdef SPDLOG_USE_STD_FORMAT
+    REQUIRE(buf == expected);
+#else
     REQUIRE(fmt::to_string(buf) == expected);
+#endif
 }
 
 TEST_CASE("pad2", "[fmt_helper]")

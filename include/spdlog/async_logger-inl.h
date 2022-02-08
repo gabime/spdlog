@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/async_logger.h>
+#    include <spdlog/async_logger.h>
 #endif
 
 #include <spdlog/sinks/sink.h>
@@ -62,7 +62,7 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
             {
                 sink->log(msg);
             }
-            SPDLOG_LOGGER_CATCH()
+            SPDLOG_LOGGER_CATCH(msg.source)
         }
     }
 
@@ -80,7 +80,7 @@ SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
         {
             sink->flush();
         }
-        SPDLOG_LOGGER_CATCH()
+        SPDLOG_LOGGER_CATCH(source_loc())
     }
 }
 

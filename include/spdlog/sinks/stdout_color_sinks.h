@@ -4,9 +4,9 @@
 #pragma once
 
 #ifdef _WIN32
-#include <spdlog/sinks/wincolor_sink.h>
+#    include <spdlog/sinks/wincolor_sink.h>
 #else
-#include <spdlog/sinks/ansicolor_sink.h>
+#    include <spdlog/sinks/ansicolor_sink.h>
 #endif
 
 #include <spdlog/details/synchronous_factory.h>
@@ -41,5 +41,5 @@ std::shared_ptr<logger> stderr_color_st(const std::string &logger_name, color_mo
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "stdout_color_sinks-inl.h"
+#    include "stdout_color_sinks-inl.h"
 #endif

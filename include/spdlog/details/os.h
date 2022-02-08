@@ -22,22 +22,22 @@ SPDLOG_API std::tm gmtime() SPDLOG_NOEXCEPT;
 
 // eol definition
 #if !defined(SPDLOG_EOL)
-#ifdef _WIN32
-#define SPDLOG_EOL "\r\n"
-#else
-#define SPDLOG_EOL "\n"
-#endif
+#    ifdef _WIN32
+#        define SPDLOG_EOL "\r\n"
+#    else
+#        define SPDLOG_EOL "\n"
+#    endif
 #endif
 
 SPDLOG_CONSTEXPR static const char *default_eol = SPDLOG_EOL;
 
 // folder separator
 #if !defined(SPDLOG_FOLDER_SEPS)
-#ifdef _WIN32
-#define SPDLOG_FOLDER_SEPS "\\/"
-#else
-#define SPDLOG_FOLDER_SEPS "/"
-#endif
+#    ifdef _WIN32
+#        define SPDLOG_FOLDER_SEPS "\\/"
+#    else
+#        define SPDLOG_FOLDER_SEPS "/"
+#    endif
 #endif
 
 SPDLOG_CONSTEXPR static const char folder_seps[] = SPDLOG_FOLDER_SEPS;
@@ -74,7 +74,7 @@ SPDLOG_API size_t thread_id() SPDLOG_NOEXCEPT;
 
 // This is avoid msvc issue in sleep_for that happens if the clock changes.
 // See https://github.com/gabime/spdlog/issues/609
-SPDLOG_API void sleep_for_millis(int milliseconds) SPDLOG_NOEXCEPT;
+SPDLOG_API void sleep_for_millis(unsigned int milliseconds) SPDLOG_NOEXCEPT;
 
 SPDLOG_API std::string filename_to_str(const filename_t &filename);
 
@@ -99,11 +99,11 @@ SPDLOG_API void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target);
 // "abc/" => "abc"
 // "abc" => ""
 // "abc///" => "abc//"
-SPDLOG_API filename_t dir_name(filename_t path);
+SPDLOG_API filename_t dir_name(const filename_t &path);
 
 // Create a dir from the given path.
 // Return true if succeeded or if this dir already exists.
-SPDLOG_API bool create_dir(filename_t path);
+SPDLOG_API bool create_dir(const filename_t &path);
 
 // non thread safe, cross platform getenv/getenv_s
 // return empty string if field not found
@@ -114,5 +114,5 @@ SPDLOG_API std::string getenv(const char *field);
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "os-inl.h"
+#    include "os-inl.h"
 #endif

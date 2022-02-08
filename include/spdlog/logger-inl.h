@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/logger.h>
+#    include <spdlog/logger.h>
 #endif
 
 #include <spdlog/sinks/sink.h>
@@ -185,7 +185,7 @@ SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
             {
                 sink->log(msg);
             }
-            SPDLOG_LOGGER_CATCH()
+            SPDLOG_LOGGER_CATCH(msg.source)
         }
     }
 
@@ -203,7 +203,7 @@ SPDLOG_INLINE void logger::flush_()
         {
             sink->flush();
         }
-        SPDLOG_LOGGER_CATCH()
+        SPDLOG_LOGGER_CATCH(source_loc())
     }
 }
 
