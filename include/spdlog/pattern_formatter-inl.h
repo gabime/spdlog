@@ -766,6 +766,7 @@ public:
     {
         if (msg.source.empty())
         {
+            ScopedPadder p(0, padinfo_, dest);
             return;
         }
 
@@ -800,6 +801,7 @@ public:
     {
         if (msg.source.empty())
         {
+            ScopedPadder p(0, padinfo_, dest);
             return;
         }
         size_t text_size = padinfo_.enabled() ? std::char_traits<char>::length(msg.source.filename) : 0;
@@ -846,6 +848,7 @@ public:
     {
         if (msg.source.empty())
         {
+            ScopedPadder p(0, padinfo_, dest);
             return;
         }
         auto filename = basename(msg.source.filename);
@@ -867,6 +870,7 @@ public:
     {
         if (msg.source.empty())
         {
+            ScopedPadder p(0, padinfo_, dest);
             return;
         }
 
@@ -889,6 +893,7 @@ public:
     {
         if (msg.source.empty())
         {
+            ScopedPadder p(0, padinfo_, dest);
             return;
         }
         size_t text_size = padinfo_.enabled() ? std::char_traits<char>::length(msg.source.funcname) : 0;
@@ -1051,7 +1056,7 @@ SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
 {
-    if (need_localtime_) 
+    if (need_localtime_)
     {
         const auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
         if (secs != last_log_secs_)
