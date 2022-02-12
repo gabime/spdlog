@@ -84,7 +84,7 @@ SPDLOG_INLINE void file_helper::reopen(bool truncate)
 
 SPDLOG_INLINE void file_helper::flush()
 {
-    if(std::fflush(fd_) != 0)
+    if (std::fflush(fd_) != 0)
     {
         throw_spdlog_ex("Failed flush to file " + os::filename_to_str(filename_), errno);
     }

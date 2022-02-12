@@ -68,7 +68,7 @@ class SPDLOG_API custom_flag_formatter : public details::flag_formatter
 public:
     virtual std::unique_ptr<custom_flag_formatter> clone() const = 0;
 
-    void set_padding_info(const details::padding_info& padding)
+    void set_padding_info(const details::padding_info &padding)
     {
         flag_formatter::padinfo_ = padding;
     }
@@ -80,7 +80,7 @@ public:
     using custom_flags = std::unordered_map<char, std::unique_ptr<custom_flag_formatter>>;
 
     explicit pattern_formatter(std::string pattern, pattern_time_type time_type = pattern_time_type::local,
-    std::string eol = spdlog::details::os::default_eol, custom_flags custom_user_flags = custom_flags());
+        std::string eol = spdlog::details::os::default_eol, custom_flags custom_user_flags = custom_flags());
 
     // use default pattern is not given
     explicit pattern_formatter(pattern_time_type time_type = pattern_time_type::local, std::string eol = spdlog::details::os::default_eol);

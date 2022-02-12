@@ -9,11 +9,11 @@
 #include <spdlog/common.h>
 
 #if defined(__has_include) && __has_include(<version>)
-#include <version>
+#    include <version>
 #endif
 
 #if __cpp_lib_span >= 202002L
-#include <span>
+#    include <span>
 #endif
 
 //
@@ -78,8 +78,9 @@ inline details::dump_info<typename Container::const_iterator> to_hex(const Conta
 
 #if __cpp_lib_span >= 202002L
 
-template <typename Value, size_t Extent>
-inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(const std::span<Value, Extent> &container, size_t size_per_line = 32)
+template<typename Value, size_t Extent>
+inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(
+    const std::span<Value, Extent> &container, size_t size_per_line = 32)
 {
     using Container = std::span<Value, Extent>;
     static_assert(sizeof(typename Container::value_type) == 1, "sizeof(Container::value_type) != 1");

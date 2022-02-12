@@ -13,7 +13,8 @@
 namespace spdlog {
 namespace details {
 
-SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n, std::function<void()> on_thread_start, std::function<void()> on_thread_stop)
+SPDLOG_INLINE thread_pool::thread_pool(
+    size_t q_max_items, size_t threads_n, std::function<void()> on_thread_start, std::function<void()> on_thread_stop)
     : q_(q_max_items)
 {
     if (threads_n == 0 || threads_n > 1000)
@@ -36,7 +37,8 @@ SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n, std
 {}
 
 SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n)
-    : thread_pool(q_max_items, threads_n, [] {}, [] {})
+    : thread_pool(
+          q_max_items, threads_n, [] {}, [] {})
 {}
 
 // message all threads to terminate gracefully join them

@@ -27,7 +27,7 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
     using spdlog::details::os::default_eol;
     REQUIRE(ends_with(file_contents(TEST_FILENAME), spdlog::fmt_lib::format("Test message 2{}", default_eol)));
     REQUIRE(count_lines(TEST_FILENAME) == 1);
-    
+
     auto orig_default_logger = spdlog::default_logger();
     spdlog::set_default_logger(logger);
 
@@ -52,4 +52,3 @@ TEST_CASE("pass logger pointer", "[macros]")
     SPDLOG_LOGGER_TRACE(&ref, "Test message 1");
     SPDLOG_LOGGER_DEBUG(&ref, "Test message 2");
 }
-

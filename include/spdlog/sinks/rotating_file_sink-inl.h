@@ -31,7 +31,7 @@ SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
     , max_files_(max_files)
     , file_helper_{event_handlers}
 {
-    if(max_size == 0)
+    if (max_size == 0)
     {
         throw_spdlog_ex("rotating sink constructor: max_size arg cannot be zero");
     }
@@ -79,7 +79,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &m
     if (new_size > max_size_)
     {
         file_helper_.flush();
-        if(file_helper_.size() > 0)
+        if (file_helper_.size() > 0)
         {
             rotate_();
             new_size = formatted.size();
