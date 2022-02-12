@@ -35,6 +35,11 @@ SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
     {
         throw_spdlog_ex("rotating sink constructor: max_size arg cannot be zero");
     }
+    
+    if (max_size > 200000)
+    {
+        throw_spdlog_ex("rotating sink constructor: max_size arg cannot exceed 2000000");
+    }
     file_helper_.open(calc_filename(base_filename_, 0));
     current_size_ = file_helper_.size(); // expensive. called only once
     if (rotate_on_open && current_size_ > 0)
