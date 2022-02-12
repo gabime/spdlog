@@ -233,7 +233,7 @@ class printf_arg_formatter : public arg_formatter<Char> {
 
   OutputIt write_null_pointer(bool is_string = false) {
     auto s = this->specs;
-    s.type = 0;
+    s.type = presentation_type::none;
     return write_bytes(this->out, is_string ? "(null)" : "(nil)", s);
   }
 
@@ -249,8 +249,10 @@ class printf_arg_formatter : public arg_formatter<Char> {
     // std::is_same instead.
     if (std::is_same<T, Char>::value) {
       format_specs fmt_specs = this->specs;
-      if (fmt_specs.type && fmt_specs.type != 'c')
+      if (fmt_specs.type != presentation_type::none &&
+          fmt_specs.type != presentation_type::chr) {
         return (*this)(static_cast<int>(value));
+      }
       fmt_specs.sign = sign::none;
       fmt_specs.alt = false;
       fmt_specs.fill[0] = ' ';  // Ignore '0' flag for char types.
@@ -271,13 +273,13 @@ class printf_arg_formatter : public arg_formatter<Char> {
   /** Formats a null-terminated C string. */
   OutputIt operator()(const char* value) {
     if (value) return base::operator()(value);
-    return write_null_pointer(this->specs.type != 'p');
+    return write_null_pointer(this->specs.type != presentation_type::pointer);
   }
 
   /** Formats a null-terminated wide C string. */
   OutputIt operator()(const wchar_t* value) {
     if (value) return base::operator()(value);
-    return write_null_pointer(this->specs.type != 'p');
+    return write_null_pointer(this->specs.type != presentation_type::pointer);
   }
 
   OutputIt operator()(basic_string_view<Char> value) {
@@ -490,13 +492,13 @@ void vprintf(buffer<Char>& buf, basic_string_view<Char> format,
 
     // Parse type.
     if (it == end) FMT_THROW(format_error("invalid format string"));
-    specs.type = static_cast<char>(*it++);
+    char type = static_cast<char>(*it++);
     if (arg.is_integral()) {
       // Normalize type.
-      switch (specs.type) {
+      switch (type) {
       case 'i':
       case 'u':
-        specs.type = 'd';
+        type = 'd';
         break;
       case 'c':
         visit_format_arg(
@@ -505,6 +507,9 @@ void vprintf(buffer<Char>& buf, basic_string_view<Char> format,
         break;
       }
     }
+    specs.type = parse_presentation_type(type);
+    if (specs.type == presentation_type::none)
+      parse_ctx.on_error("invalid type specifier");
 
     start = it;
 
