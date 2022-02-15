@@ -26,6 +26,8 @@ public:
         const file_event_handlers &event_handlers = {});
     static filename_t calc_filename(const filename_t &filename, std::size_t index);
     filename_t filename();
+    std::size_t get_max_size() const;
+    void set_max_size(const std::size_t max_size);
 
 protected:
     void sink_it_(const details::log_msg &msg) override;
