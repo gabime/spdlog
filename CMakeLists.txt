@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.10...3.21)
 # Start spdlog project
 # ---------------------------------------------------------------------------------------
 include(cmake/utils.cmake)
+include(cmake/AddCXXCompilerFlag.cmake)
 include(cmake/ide.cmake)
 
 spdlog_extract_version()
@@ -84,6 +85,7 @@ option(SPDLOG_USE_STD_FORMAT "Use std::format instead of fmt library. No compile
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_FMT_EXTERNAL_HO "Use external fmt header-only library instead of bundled" OFF)
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
+option(SPDLOG_USE_LIBCXX "Build and test using libc++ as the standard library." OFF) 
 
 if(SPDLOG_FMT_EXTERNAL AND SPDLOG_FMT_EXTERNAL_HO)
     message(FATAL_ERROR "SPDLOG_FMT_EXTERNAL and SPDLOG_FMT_EXTERNAL_HO are mutually exclusive")
@@ -232,7 +234,8 @@ foreach(
     SPDLOG_NO_TLS
     SPDLOG_NO_ATOMIC_LEVELS
     SPDLOG_DISABLE_DEFAULT_LOGGER
-    SPDLOG_USE_STD_FORMAT)
+    SPDLOG_USE_STD_FORMAT
+    SPDLOG_USE_LIBCXX)
     if(${SPDLOG_OPTION})
         target_compile_definitions(spdlog PUBLIC ${SPDLOG_OPTION})
         target_compile_definitions(spdlog_header_only INTERFACE ${SPDLOG_OPTION})
@@ -242,6 +245,19 @@ endforeach()
 if(SPDLOG_NO_EXCEPTIONS AND NOT MSVC)
     target_compile_options(spdlog PRIVATE -fno-exceptions)
 endif()
+
+if (SPDLOG_USE_LIBCXX)
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
+        add_cxx_compiler_flag(-stdlib=libc++)
+    elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+            "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
+        add_cxx_compiler_flag(-nostdinc++)
+        message(WARNING "libc++ header path must be manually specified using CMAKE_CXX_FLAGS")
+    else()
+        message(FATAL_ERROR "-DSPDLOG_USE_LIBCXX:BOOL=ON is not supported for compiler")
+    endif()
+endif(SPDLOG_USE_LIBCXX)
+
 
 # ---------------------------------------------------------------------------------------
 # Build binaries
