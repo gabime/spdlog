@@ -8,9 +8,17 @@
 #include <cctype>
 #include <spdlog/common.h>
 
+#if defined(__has_include) && __has_include(<version>)
+#    include <version>
+#endif
+
+#if __cpp_lib_span >= 202002L
+#    include <span>
+#endif
+
 //
 // Support for logging binary data as hex
-// format flags, any combination of the followng:
+// format flags, any combination of the following:
 // {:X} - print in uppercase.
 // {:s} - don't separate each byte with space.
 // {:p} - don't print the position on each line start.
@@ -39,11 +47,12 @@ public:
         , size_per_line_(size_per_line)
     {}
 
-    It begin() const
+    // do not use begin() and end() to avoid collision with fmt/ranges
+    It get_begin() const
     {
         return begin_;
     }
-    It end() const
+    It get_end() const
     {
         return end_;
     }
@@ -67,6 +76,20 @@ inline details::dump_info<typename Container::const_iterator> to_hex(const Conta
     return details::dump_info<Iter>(std::begin(container), std::end(container), size_per_line);
 }
 
+#if __cpp_lib_span >= 202002L
+
+template<typename Value, size_t Extent>
+inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(
+    const std::span<Value, Extent> &container, size_t size_per_line = 32)
+{
+    using Container = std::span<Value, Extent>;
+    static_assert(sizeof(typename Container::value_type) == 1, "sizeof(Container::value_type) != 1");
+    using Iter = typename Container::iterator;
+    return details::dump_info<Iter>(std::begin(container), std::end(container), size_per_line);
+}
+
+#endif
+
 // create dump_info from ranges
 template<typename It>
 inline details::dump_info<It> to_hex(const It range_begin, const It range_end, size_t size_per_line = 32)
@@ -76,10 +99,16 @@ inline details::dump_info<It> to_hex(const It range_begin, const It range_end, s
 
 } // namespace spdlog
 
-namespace fmt {
+namespace
+#ifdef SPDLOG_USE_STD_FORMAT
+    std
+#else
+    fmt
+#endif
+{
 
 template<typename T>
-struct formatter<spdlog::details::dump_info<T>>
+struct formatter<spdlog::details::dump_info<T>, char>
 {
     const char delimiter = ' ';
     bool put_newlines = true;
@@ -90,7 +119,7 @@ struct formatter<spdlog::details::dump_info<T>>
 
     // parse the format string flags
     template<typename ParseContext>
-    FMT_CONSTEXPR auto parse(ParseContext &ctx) -> decltype(ctx.begin())
+    SPDLOG_CONSTEXPR_FUNC auto parse(ParseContext &ctx) -> decltype(ctx.begin())
     {
         auto it = ctx.begin();
         while (it != ctx.end() && *it != '}')
@@ -131,21 +160,21 @@ struct formatter<spdlog::details::dump_info<T>>
         SPDLOG_CONSTEXPR const char *hex_lower = "0123456789abcdef";
         const char *hex_chars = use_uppercase ? hex_upper : hex_lower;
 
-#if FMT_VERSION < 60000
+#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION < 60000
         auto inserter = ctx.begin();
 #else
         auto inserter = ctx.out();
 #endif
 
         int size_per_line = static_cast<int>(the_range.size_per_line());
-        auto start_of_line = the_range.begin();
-        for (auto i = the_range.begin(); i != the_range.end(); i++)
+        auto start_of_line = the_range.get_begin();
+        for (auto i = the_range.get_begin(); i != the_range.get_end(); i++)
         {
             auto ch = static_cast<unsigned char>(*i);
 
-            if (put_newlines && (i == the_range.begin() || i - start_of_line >= size_per_line))
+            if (put_newlines && (i == the_range.get_begin() || i - start_of_line >= size_per_line))
             {
-                if (show_ascii && i != the_range.begin())
+                if (show_ascii && i != the_range.get_begin())
                 {
                     *inserter++ = delimiter;
                     *inserter++ = delimiter;
@@ -156,7 +185,7 @@ struct formatter<spdlog::details::dump_info<T>>
                     }
                 }
 
-                put_newline(inserter, static_cast<size_t>(i - the_range.begin()));
+                put_newline(inserter, static_cast<size_t>(i - the_range.get_begin()));
 
                 // put first byte without delimiter in front of it
                 *inserter++ = hex_chars[(ch >> 4) & 0x0f];
@@ -175,9 +204,9 @@ struct formatter<spdlog::details::dump_info<T>>
         }
         if (show_ascii) // add ascii to last line
         {
-            if (the_range.end() - the_range.begin() > size_per_line)
+            if (the_range.get_end() - the_range.get_begin() > size_per_line)
             {
-                auto blank_num = size_per_line - (the_range.end() - start_of_line);
+                auto blank_num = size_per_line - (the_range.get_end() - start_of_line);
                 while (blank_num-- > 0)
                 {
                     *inserter++ = delimiter;
@@ -190,7 +219,7 @@ struct formatter<spdlog::details::dump_info<T>>
             }
             *inserter++ = delimiter;
             *inserter++ = delimiter;
-            for (auto j = start_of_line; j != the_range.end(); j++)
+            for (auto j = start_of_line; j != the_range.get_end(); j++)
             {
                 auto pc = static_cast<unsigned char>(*j);
                 *inserter++ = std::isprint(pc) ? static_cast<char>(*j) : '.';
@@ -210,8 +239,8 @@ struct formatter<spdlog::details::dump_info<T>>
 
         if (put_positions)
         {
-            fmt::format_to(inserter, "{:04X}: ", pos);
+            spdlog::fmt_lib::format_to(inserter, "{:04X}: ", pos);
         }
     }
 };
-} // namespace fmt
+} // namespace std

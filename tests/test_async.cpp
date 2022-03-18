@@ -51,7 +51,7 @@ TEST_CASE("discard policy using factory ", "[async]")
 
     auto logger = spdlog::create_async_nb<spdlog::sinks::test_sink_mt>("as2");
     auto test_sink = std::static_pointer_cast<spdlog::sinks::test_sink_mt>(logger->sinks()[0]);
-    test_sink->set_delay(std::chrono::milliseconds(1));
+    test_sink->set_delay(std::chrono::milliseconds(3));
 
     for (size_t i = 0; i < messages; i++)
     {
@@ -166,7 +166,7 @@ TEST_CASE("to_file", "[async]")
     require_message_count(TEST_FILENAME, messages);
     auto contents = file_contents(TEST_FILENAME);
     using spdlog::details::os::default_eol;
-    REQUIRE(ends_with(contents, fmt::format("Hello message #1023{}", default_eol)));
+    REQUIRE(ends_with(contents, spdlog::fmt_lib::format("Hello message #1023{}", default_eol)));
 }
 
 TEST_CASE("to_file multi-workers", "[async]")

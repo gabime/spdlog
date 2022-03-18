@@ -40,6 +40,10 @@ FMT_FUNC void assert_fail(const char* file, int line, const char* message) {
   std::terminate();
 }
 
+FMT_FUNC void throw_format_error(const char* message) {
+  FMT_THROW(format_error(message));
+}
+
 #ifndef _MSC_VER
 #  define FMT_SNPRINTF snprintf
 #else  // _MSC_VER
@@ -145,141 +149,13 @@ template <> FMT_FUNC int count_digits<4>(detail::fallback_uintptr n) {
   return i >= 0 ? i * char_digits + count_digits<4, unsigned>(n.value[i]) : 1;
 }
 
-#if __cplusplus < 201703L
-template <typename T> constexpr const char basic_data<T>::digits[][2];
-template <typename T> constexpr const char basic_data<T>::hex_digits[];
-template <typename T> constexpr const char basic_data<T>::signs[];
-template <typename T> constexpr const unsigned basic_data<T>::prefixes[];
-template <typename T> constexpr const char basic_data<T>::left_padding_shifts[];
-template <typename T>
-constexpr const char basic_data<T>::right_padding_shifts[];
-#endif
+// log10(2) = 0x0.4d104d427de7fbcc...
+static constexpr uint64_t log10_2_significand = 0x4d104d427de7fbcc;
 
-template <typename T> struct bits {
-  static FMT_CONSTEXPR_DECL const int value =
-      static_cast<int>(sizeof(T) * std::numeric_limits<unsigned char>::digits);
-};
-
-class fp;
-template <int SHIFT = 0> fp normalize(fp value);
-
-// Lower (upper) boundary is a value half way between a floating-point value
-// and its predecessor (successor). Boundaries have the same exponent as the
-// value so only significands are stored.
-struct boundaries {
-  uint64_t lower;
-  uint64_t upper;
-};
-
-// A handmade floating-point number f * pow(2, e).
-class fp {
- private:
-  using significand_type = uint64_t;
-
-  template <typename Float>
-  using is_supported_float = bool_constant<sizeof(Float) == sizeof(uint64_t) ||
-                                           sizeof(Float) == sizeof(uint32_t)>;
-
- public:
-  significand_type f;
-  int e;
-
-  // All sizes are in bits.
-  // Subtract 1 to account for an implicit most significant bit in the
-  // normalized form.
-  static FMT_CONSTEXPR_DECL const int double_significand_size =
-      std::numeric_limits<double>::digits - 1;
-  static FMT_CONSTEXPR_DECL const uint64_t implicit_bit =
-      1ULL << double_significand_size;
-  static FMT_CONSTEXPR_DECL const int significand_size =
-      bits<significand_type>::value;
-
-  fp() : f(0), e(0) {}
-  fp(uint64_t f_val, int e_val) : f(f_val), e(e_val) {}
-
-  // Constructs fp from an IEEE754 double. It is a template to prevent compile
-  // errors on platforms where double is not IEEE754.
-  template <typename Double> explicit fp(Double d) { assign(d); }
-
-  // Assigns d to this and return true iff predecessor is closer than successor.
-  template <typename Float, FMT_ENABLE_IF(is_supported_float<Float>::value)>
-  bool assign(Float d) {
-    // Assume float is in the format [sign][exponent][significand].
-    using limits = std::numeric_limits<Float>;
-    const int float_significand_size = limits::digits - 1;
-    const int exponent_size =
-        bits<Float>::value - float_significand_size - 1;  // -1 for sign
-    const uint64_t float_implicit_bit = 1ULL << float_significand_size;
-    const uint64_t significand_mask = float_implicit_bit - 1;
-    const uint64_t exponent_mask = (~0ULL >> 1) & ~significand_mask;
-    const int exponent_bias = (1 << exponent_size) - limits::max_exponent - 1;
-    constexpr bool is_double = sizeof(Float) == sizeof(uint64_t);
-    auto u = bit_cast<conditional_t<is_double, uint64_t, uint32_t>>(d);
-    f = u & significand_mask;
-    int biased_e =
-        static_cast<int>((u & exponent_mask) >> float_significand_size);
-    // Predecessor is closer if d is a normalized power of 2 (f == 0) other than
-    // the smallest normalized number (biased_e > 1).
-    bool is_predecessor_closer = f == 0 && biased_e > 1;
-    if (biased_e != 0)
-      f += float_implicit_bit;
-    else
-      biased_e = 1;  // Subnormals use biased exponent 1 (min exponent).
-    e = biased_e - exponent_bias - float_significand_size;
-    return is_predecessor_closer;
-  }
-
-  template <typename Float, FMT_ENABLE_IF(!is_supported_float<Float>::value)>
-  bool assign(Float) {
-    *this = fp();
-    return false;
-  }
-};
-
-// Normalizes the value converted from double and multiplied by (1 << SHIFT).
-template <int SHIFT> fp normalize(fp value) {
-  // Handle subnormals.
-  const auto shifted_implicit_bit = fp::implicit_bit << SHIFT;
-  while ((value.f & shifted_implicit_bit) == 0) {
-    value.f <<= 1;
-    --value.e;
-  }
-  // Subtract 1 to account for hidden bit.
-  const auto offset =
-      fp::significand_size - fp::double_significand_size - SHIFT - 1;
-  value.f <<= offset;
-  value.e -= offset;
-  return value;
-}
-
-inline bool operator==(fp x, fp y) { return x.f == y.f && x.e == y.e; }
-
-// Computes lhs * rhs / pow(2, 64) rounded to nearest with half-up tie breaking.
-inline uint64_t multiply(uint64_t lhs, uint64_t rhs) {
-#if FMT_USE_INT128
-  auto product = static_cast<__uint128_t>(lhs) * rhs;
-  auto f = static_cast<uint64_t>(product >> 64);
-  return (static_cast<uint64_t>(product) & (1ULL << 63)) != 0 ? f + 1 : f;
-#else
-  // Multiply 32-bit parts of significands.
-  uint64_t mask = (1ULL << 32) - 1;
-  uint64_t a = lhs >> 32, b = lhs & mask;
-  uint64_t c = rhs >> 32, d = rhs & mask;
-  uint64_t ac = a * c, bc = b * c, ad = a * d, bd = b * d;
-  // Compute mid 64-bit of result and round.
-  uint64_t mid = (bd >> 32) + (ad & mask) + (bc & mask) + (1U << 31);
-  return ac + (ad >> 32) + (bc >> 32) + (mid >> 32);
-#endif
-}
-
-inline fp operator*(fp x, fp y) { return {multiply(x.f, y.f), x.e + y.e + 64}; }
-
-// Returns a cached power of 10 `c_k = c_k.f * pow(2, c_k.e)` such that its
-// (binary) exponent satisfies `min_exponent <= c_k.e <= min_exponent + 28`.
-inline fp get_cached_power(int min_exponent, int& pow10_exponent) {
+template <typename T = void> struct basic_impl_data {
   // Normalized 64-bit significands of pow(10, k), for k = -348, -340, ..., 340.
   // These are generated by support/compute-powers.py.
-  static constexpr const uint64_t pow10_significands[] = {
+  static constexpr uint64_t pow10_significands[87] = {
       0xfa8fd5a0081c0288, 0xbaaee17fa23ebf76, 0x8b16fb203055ac76,
       0xcf42894a5dce35ea, 0x9a6bb0aa55653b2d, 0xe61acf033d1a45df,
       0xab70fe17c79ac6ca, 0xff77b1fcbebcdc4f, 0xbe5691ef416bd60c,
@@ -311,9 +187,13 @@ inline fp get_cached_power(int min_exponent, int& pow10_exponent) {
       0x9e19db92b4e31ba9, 0xeb96bf6ebadf77d9, 0xaf87023b9bf0ee6b,
   };
 
+#if FMT_GCC_VERSION && FMT_GCC_VERSION < 409
+#  pragma GCC diagnostic push
+#  pragma GCC diagnostic ignored "-Wnarrowing"
+#endif
   // Binary exponents of pow(10, k), for k = -348, -340, ..., 340, corresponding
   // to significands above.
-  static constexpr const int16_t pow10_exponents[] = {
+  static constexpr int16_t pow10_exponents[87] = {
       -1220, -1193, -1166, -1140, -1113, -1087, -1060, -1034, -1007, -980, -954,
       -927,  -901,  -874,  -847,  -821,  -794,  -768,  -741,  -715,  -688, -661,
       -635,  -608,  -582,  -555,  -529,  -502,  -475,  -449,  -422,  -396, -369,
@@ -322,11 +202,137 @@ inline fp get_cached_power(int min_exponent, int& pow10_exponent) {
       242,   269,   295,   322,   348,   375,   402,   428,   455,   481,  508,
       534,   561,   588,   614,   641,   667,   694,   720,   747,   774,  800,
       827,   853,   880,   907,   933,   960,   986,   1013,  1039,  1066};
+#if FMT_GCC_VERSION && FMT_GCC_VERSION < 409
+#  pragma GCC diagnostic pop
+#endif
 
+  static constexpr uint64_t power_of_10_64[20] = {
+      1, FMT_POWERS_OF_10(1ULL), FMT_POWERS_OF_10(1000000000ULL),
+      10000000000000000000ULL};
+};
+
+// This is a struct rather than an alias to avoid shadowing warnings in gcc.
+struct impl_data : basic_impl_data<> {};
+
+#if __cplusplus < 201703L
+template <typename T>
+constexpr uint64_t basic_impl_data<T>::pow10_significands[];
+template <typename T> constexpr int16_t basic_impl_data<T>::pow10_exponents[];
+template <typename T> constexpr uint64_t basic_impl_data<T>::power_of_10_64[];
+#endif
+
+template <typename T> struct bits {
+  static FMT_CONSTEXPR_DECL const int value =
+      static_cast<int>(sizeof(T) * std::numeric_limits<unsigned char>::digits);
+};
+
+// Returns the number of significand bits in Float excluding the implicit bit.
+template <typename Float> constexpr int num_significand_bits() {
+  // Subtract 1 to account for an implicit most significant bit in the
+  // normalized form.
+  return std::numeric_limits<Float>::digits - 1;
+}
+
+// A floating-point number f * pow(2, e).
+struct fp {
+  uint64_t f;
+  int e;
+
+  static constexpr const int num_significand_bits = bits<decltype(f)>::value;
+
+  constexpr fp() : f(0), e(0) {}
+  constexpr fp(uint64_t f_val, int e_val) : f(f_val), e(e_val) {}
+
+  // Constructs fp from an IEEE754 floating-point number. It is a template to
+  // prevent compile errors on systems where n is not IEEE754.
+  template <typename Float> explicit FMT_CONSTEXPR fp(Float n) { assign(n); }
+
+  template <typename Float>
+  using is_supported = bool_constant<sizeof(Float) == sizeof(uint64_t) ||
+                                     sizeof(Float) == sizeof(uint32_t)>;
+
+  // Assigns d to this and return true iff predecessor is closer than successor.
+  template <typename Float, FMT_ENABLE_IF(is_supported<Float>::value)>
+  FMT_CONSTEXPR bool assign(Float n) {
+    // Assume float is in the format [sign][exponent][significand].
+    const int num_float_significand_bits =
+        detail::num_significand_bits<Float>();
+    const uint64_t implicit_bit = 1ULL << num_float_significand_bits;
+    const uint64_t significand_mask = implicit_bit - 1;
+    constexpr bool is_double = sizeof(Float) == sizeof(uint64_t);
+    auto u = bit_cast<conditional_t<is_double, uint64_t, uint32_t>>(n);
+    f = u & significand_mask;
+    const uint64_t exponent_mask = (~0ULL >> 1) & ~significand_mask;
+    int biased_e =
+        static_cast<int>((u & exponent_mask) >> num_float_significand_bits);
+    // The predecessor is closer if n is a normalized power of 2 (f == 0) other
+    // than the smallest normalized number (biased_e > 1).
+    bool is_predecessor_closer = f == 0 && biased_e > 1;
+    if (biased_e != 0)
+      f += implicit_bit;
+    else
+      biased_e = 1;  // Subnormals use biased exponent 1 (min exponent).
+    const int exponent_bias = std::numeric_limits<Float>::max_exponent - 1;
+    e = biased_e - exponent_bias - num_float_significand_bits;
+    return is_predecessor_closer;
+  }
+
+  template <typename Float, FMT_ENABLE_IF(!is_supported<Float>::value)>
+  bool assign(Float) {
+    FMT_ASSERT(false, "");
+    return false;
+  }
+};
+
+// Normalizes the value converted from double and multiplied by (1 << SHIFT).
+template <int SHIFT = 0> FMT_CONSTEXPR fp normalize(fp value) {
+  // Handle subnormals.
+  const uint64_t implicit_bit = 1ULL << num_significand_bits<double>();
+  const auto shifted_implicit_bit = implicit_bit << SHIFT;
+  while ((value.f & shifted_implicit_bit) == 0) {
+    value.f <<= 1;
+    --value.e;
+  }
+  // Subtract 1 to account for hidden bit.
+  const auto offset =
+      fp::num_significand_bits - num_significand_bits<double>() - SHIFT - 1;
+  value.f <<= offset;
+  value.e -= offset;
+  return value;
+}
+
+inline bool operator==(fp x, fp y) { return x.f == y.f && x.e == y.e; }
+
+// Computes lhs * rhs / pow(2, 64) rounded to nearest with half-up tie breaking.
+FMT_CONSTEXPR inline uint64_t multiply(uint64_t lhs, uint64_t rhs) {
+#if FMT_USE_INT128
+  auto product = static_cast<__uint128_t>(lhs) * rhs;
+  auto f = static_cast<uint64_t>(product >> 64);
+  return (static_cast<uint64_t>(product) & (1ULL << 63)) != 0 ? f + 1 : f;
+#else
+  // Multiply 32-bit parts of significands.
+  uint64_t mask = (1ULL << 32) - 1;
+  uint64_t a = lhs >> 32, b = lhs & mask;
+  uint64_t c = rhs >> 32, d = rhs & mask;
+  uint64_t ac = a * c, bc = b * c, ad = a * d, bd = b * d;
+  // Compute mid 64-bit of result and round.
+  uint64_t mid = (bd >> 32) + (ad & mask) + (bc & mask) + (1U << 31);
+  return ac + (ad >> 32) + (bc >> 32) + (mid >> 32);
+#endif
+}
+
+FMT_CONSTEXPR inline fp operator*(fp x, fp y) {
+  return {multiply(x.f, y.f), x.e + y.e + 64};
+}
+
+// Returns a cached power of 10 `c_k = c_k.f * pow(2, c_k.e)` such that its
+// (binary) exponent satisfies `min_exponent <= c_k.e <= min_exponent + 28`.
+FMT_CONSTEXPR inline fp get_cached_power(int min_exponent,
+                                         int& pow10_exponent) {
   const int shift = 32;
-  const auto significand = static_cast<int64_t>(data::log10_2_significand);
+  const auto significand = static_cast<int64_t>(log10_2_significand);
   int index = static_cast<int>(
-      ((min_exponent + fp::significand_size - 1) * (significand >> shift) +
+      ((min_exponent + fp::num_significand_bits - 1) * (significand >> shift) +
        ((int64_t(1) << shift) - 1))  // ceil
       >> 32                          // arithmetic shift
   );
@@ -336,7 +342,8 @@ inline fp get_cached_power(int min_exponent, int& pow10_exponent) {
   const int dec_exp_step = 8;
   index = (index - first_dec_exp - 1) / dec_exp_step + 1;
   pow10_exponent = first_dec_exp + index * dec_exp_step;
-  return {pow10_significands[index], pow10_exponents[index]};
+  return {impl_data::pow10_significands[index],
+          impl_data::pow10_exponents[index]};
 }
 
 // A simple accumulator to hold the sums of terms in bigint::square if uint128_t
@@ -345,14 +352,16 @@ struct accumulator {
   uint64_t lower;
   uint64_t upper;
 
-  accumulator() : lower(0), upper(0) {}
-  explicit operator uint32_t() const { return static_cast<uint32_t>(lower); }
+  constexpr accumulator() : lower(0), upper(0) {}
+  constexpr explicit operator uint32_t() const {
+    return static_cast<uint32_t>(lower);
+  }
 
-  void operator+=(uint64_t n) {
+  FMT_CONSTEXPR void operator+=(uint64_t n) {
     lower += n;
     if (lower < n) ++upper;
   }
-  void operator>>=(int shift) {
+  FMT_CONSTEXPR void operator>>=(int shift) {
     FMT_ASSERT(shift == 32, "");
     (void)shift;
     lower = (upper << 32) | (lower >> 32);
@@ -370,27 +379,31 @@ class bigint {
   basic_memory_buffer<bigit, bigits_capacity> bigits_;
   int exp_;
 
-  bigit operator[](int index) const { return bigits_[to_unsigned(index)]; }
-  bigit& operator[](int index) { return bigits_[to_unsigned(index)]; }
+  FMT_CONSTEXPR20 bigit operator[](int index) const {
+    return bigits_[to_unsigned(index)];
+  }
+  FMT_CONSTEXPR20 bigit& operator[](int index) {
+    return bigits_[to_unsigned(index)];
+  }
 
   static FMT_CONSTEXPR_DECL const int bigit_bits = bits<bigit>::value;
 
   friend struct formatter<bigint>;
 
-  void subtract_bigits(int index, bigit other, bigit& borrow) {
+  FMT_CONSTEXPR20 void subtract_bigits(int index, bigit other, bigit& borrow) {
     auto result = static_cast<double_bigit>((*this)[index]) - other - borrow;
     (*this)[index] = static_cast<bigit>(result);
     borrow = static_cast<bigit>(result >> (bigit_bits * 2 - 1));
   }
 
-  void remove_leading_zeros() {
+  FMT_CONSTEXPR20 void remove_leading_zeros() {
     int num_bigits = static_cast<int>(bigits_.size()) - 1;
     while (num_bigits > 0 && (*this)[num_bigits] == 0) --num_bigits;
     bigits_.resize(to_unsigned(num_bigits + 1));
   }
 
   // Computes *this -= other assuming aligned bigints and *this >= other.
-  void subtract_aligned(const bigint& other) {
+  FMT_CONSTEXPR20 void subtract_aligned(const bigint& other) {
     FMT_ASSERT(other.exp_ >= exp_, "unaligned bigints");
     FMT_ASSERT(compare(*this, other) >= 0, "");
     bigit borrow = 0;
@@ -401,7 +414,7 @@ class bigint {
     remove_leading_zeros();
   }
 
-  void multiply(uint32_t value) {
+  FMT_CONSTEXPR20 void multiply(uint32_t value) {
     const double_bigit wide_value = value;
     bigit carry = 0;
     for (size_t i = 0, n = bigits_.size(); i < n; ++i) {
@@ -412,7 +425,7 @@ class bigint {
     if (carry != 0) bigits_.push_back(carry);
   }
 
-  void multiply(uint64_t value) {
+  FMT_CONSTEXPR20 void multiply(uint64_t value) {
     const bigit mask = ~bigit(0);
     const double_bigit lower = value & mask;
     const double_bigit upper = value >> bigit_bits;
@@ -430,14 +443,16 @@ class bigint {
   }
 
  public:
-  bigint() : exp_(0) {}
+  FMT_CONSTEXPR20 bigint() : exp_(0) {}
   explicit bigint(uint64_t n) { assign(n); }
-  ~bigint() { FMT_ASSERT(bigits_.capacity() <= bigits_capacity, ""); }
+  FMT_CONSTEXPR20 ~bigint() {
+    FMT_ASSERT(bigits_.capacity() <= bigits_capacity, "");
+  }
 
   bigint(const bigint&) = delete;
   void operator=(const bigint&) = delete;
 
-  void assign(const bigint& other) {
+  FMT_CONSTEXPR20 void assign(const bigint& other) {
     auto size = other.bigits_.size();
     bigits_.resize(size);
     auto data = other.bigits_.data();
@@ -445,7 +460,7 @@ class bigint {
     exp_ = other.exp_;
   }
 
-  void assign(uint64_t n) {
+  FMT_CONSTEXPR20 void assign(uint64_t n) {
     size_t num_bigits = 0;
     do {
       bigits_[num_bigits++] = n & ~bigit(0);
@@ -455,9 +470,11 @@ class bigint {
     exp_ = 0;
   }
 
-  int num_bigits() const { return static_cast<int>(bigits_.size()) + exp_; }
+  FMT_CONSTEXPR20 int num_bigits() const {
+    return static_cast<int>(bigits_.size()) + exp_;
+  }
 
-  FMT_NOINLINE bigint& operator<<=(int shift) {
+  FMT_NOINLINE FMT_CONSTEXPR20 bigint& operator<<=(int shift) {
     FMT_ASSERT(shift >= 0, "");
     exp_ += shift / bigit_bits;
     shift %= bigit_bits;
@@ -472,13 +489,13 @@ class bigint {
     return *this;
   }
 
-  template <typename Int> bigint& operator*=(Int value) {
+  template <typename Int> FMT_CONSTEXPR20 bigint& operator*=(Int value) {
     FMT_ASSERT(value > 0, "");
     multiply(uint32_or_64_or_128_t<Int>(value));
     return *this;
   }
 
-  friend int compare(const bigint& lhs, const bigint& rhs) {
+  friend FMT_CONSTEXPR20 int compare(const bigint& lhs, const bigint& rhs) {
     int num_lhs_bigits = lhs.num_bigits(), num_rhs_bigits = rhs.num_bigits();
     if (num_lhs_bigits != num_rhs_bigits)
       return num_lhs_bigits > num_rhs_bigits ? 1 : -1;
@@ -495,8 +512,8 @@ class bigint {
   }
 
   // Returns compare(lhs1 + lhs2, rhs).
-  friend int add_compare(const bigint& lhs1, const bigint& lhs2,
-                         const bigint& rhs) {
+  friend FMT_CONSTEXPR20 int add_compare(const bigint& lhs1, const bigint& lhs2,
+                                         const bigint& rhs) {
     int max_lhs_bigits = (std::max)(lhs1.num_bigits(), lhs2.num_bigits());
     int num_rhs_bigits = rhs.num_bigits();
     if (max_lhs_bigits + 1 < num_rhs_bigits) return -1;
@@ -519,7 +536,7 @@ class bigint {
   }
 
   // Assigns pow(10, exp) to this bigint.
-  void assign_pow10(int exp) {
+  FMT_CONSTEXPR20 void assign_pow10(int exp) {
     FMT_ASSERT(exp >= 0, "");
     if (exp == 0) return assign(1);
     // Find the top bit.
@@ -538,7 +555,7 @@ class bigint {
     *this <<= exp;  // Multiply by pow(2, exp) by shifting.
   }
 
-  void square() {
+  FMT_CONSTEXPR20 void square() {
     int num_bigits = static_cast<int>(bigits_.size());
     int num_result_bigits = 2 * num_bigits;
     basic_memory_buffer<bigit, bigits_capacity> n(std::move(bigits_));
@@ -569,7 +586,7 @@ class bigint {
 
   // If this bigint has a bigger exponent than other, adds trailing zero to make
   // exponents equal. This simplifies some operations such as subtraction.
-  void align(const bigint& other) {
+  FMT_CONSTEXPR20 void align(const bigint& other) {
     int exp_difference = exp_ - other.exp_;
     if (exp_difference <= 0) return;
     int num_bigits = static_cast<int>(bigits_.size());
@@ -582,7 +599,7 @@ class bigint {
 
   // Divides this bignum by divisor, assigning the remainder to this and
   // returning the quotient.
-  int divmod_assign(const bigint& divisor) {
+  FMT_CONSTEXPR20 int divmod_assign(const bigint& divisor) {
     FMT_ASSERT(this != &divisor, "");
     if (compare(*this, divisor) < 0) return 0;
     FMT_ASSERT(divisor.bigits_[divisor.bigits_.size() - 1u] != 0, "");
@@ -602,8 +619,9 @@ enum class round_direction { unknown, up, down };
 // some number v and the error, returns whether v should be rounded up, down, or
 // whether the rounding direction can't be determined due to error.
 // error should be less than divisor / 2.
-inline round_direction get_round_direction(uint64_t divisor, uint64_t remainder,
-                                           uint64_t error) {
+FMT_CONSTEXPR inline round_direction get_round_direction(uint64_t divisor,
+                                                         uint64_t remainder,
+                                                         uint64_t error) {
   FMT_ASSERT(remainder < divisor, "");  // divisor - remainder won't overflow.
   FMT_ASSERT(error < divisor, "");      // divisor - error won't overflow.
   FMT_ASSERT(error < divisor - error, "");  // error * 2 won't overflow.
@@ -626,19 +644,52 @@ enum result {
 };
 }
 
-inline uint64_t power_of_10_64(int exp) {
-  static constexpr const uint64_t data[] = {1, FMT_POWERS_OF_10(1),
-                                            FMT_POWERS_OF_10(1000000000ULL),
-                                            10000000000000000000ULL};
-  return data[exp];
-}
+struct gen_digits_handler {
+  char* buf;
+  int size;
+  int precision;
+  int exp10;
+  bool fixed;
+
+  FMT_CONSTEXPR digits::result on_digit(char digit, uint64_t divisor,
+                                        uint64_t remainder, uint64_t error,
+                                        bool integral) {
+    FMT_ASSERT(remainder < divisor, "");
+    buf[size++] = digit;
+    if (!integral && error >= remainder) return digits::error;
+    if (size < precision) return digits::more;
+    if (!integral) {
+      // Check if error * 2 < divisor with overflow prevention.
+      // The check is not needed for the integral part because error = 1
+      // and divisor > (1 << 32) there.
+      if (error >= divisor || error >= divisor - error) return digits::error;
+    } else {
+      FMT_ASSERT(error == 1 && divisor > 2, "");
+    }
+    auto dir = get_round_direction(divisor, remainder, error);
+    if (dir != round_direction::up)
+      return dir == round_direction::down ? digits::done : digits::error;
+    ++buf[size - 1];
+    for (int i = size - 1; i > 0 && buf[i] > '9'; --i) {
+      buf[i] = '0';
+      ++buf[i - 1];
+    }
+    if (buf[0] > '9') {
+      buf[0] = '1';
+      if (fixed)
+        buf[size++] = '0';
+      else
+        ++exp10;
+    }
+    return digits::done;
+  }
+};
 
 // Generates output using the Grisu digit-gen algorithm.
 // error: the size of the region (lower, upper) outside of which numbers
 // definitely do not round to value (Delta in Grisu3).
-template <typename Handler>
-FMT_INLINE digits::result grisu_gen_digits(fp value, uint64_t error, int& exp,
-                                           Handler& handler) {
+FMT_INLINE FMT_CONSTEXPR20 digits::result grisu_gen_digits(
+    fp value, uint64_t error, int& exp, gen_digits_handler& handler) {
   const fp one(1ULL << -value.e, value.e);
   // The integral part of scaled value (p1 in Grisu) = value / one. It cannot be
   // zero because it contains a product of two 64-bit numbers with MSB set (due
@@ -649,10 +700,28 @@ FMT_INLINE digits::result grisu_gen_digits(fp value, uint64_t error, int& exp,
   // The fractional part of scaled value (p2 in Grisu) c = value % one.
   uint64_t fractional = value.f & (one.f - 1);
   exp = count_digits(integral);  // kappa in Grisu.
-  // Divide by 10 to prevent overflow.
-  auto result = handler.on_start(power_of_10_64(exp - 1) << -one.e,
-                                 value.f / 10, error * 10, exp);
-  if (result != digits::more) return result;
+  // Non-fixed formats require at least one digit and no precision adjustment.
+  if (handler.fixed) {
+    // Adjust fixed precision by exponent because it is relative to decimal
+    // point.
+    int precision_offset = exp + handler.exp10;
+    if (precision_offset > 0 &&
+        handler.precision > max_value<int>() - precision_offset) {
+      FMT_THROW(format_error("number is too big"));
+    }
+    handler.precision += precision_offset;
+    // Check if precision is satisfied just by leading zeros, e.g.
+    // format("{:.2f}", 0.001) gives "0.00" without generating any digits.
+    if (handler.precision <= 0) {
+      if (handler.precision < 0) return digits::done;
+      // Divide by 10 to prevent overflow.
+      uint64_t divisor = impl_data::power_of_10_64[exp - 1] << -one.e;
+      auto dir = get_round_direction(divisor, value.f / 10, error * 10);
+      if (dir == round_direction::unknown) return digits::error;
+      handler.buf[handler.size++] = dir == round_direction::up ? '1' : '0';
+      return digits::done;
+    }
+  }
   // Generate digits for the integral part. This can produce up to 10 digits.
   do {
     uint32_t digit = 0;
@@ -699,9 +768,9 @@ FMT_INLINE digits::result grisu_gen_digits(fp value, uint64_t error, int& exp,
     }
     --exp;
     auto remainder = (static_cast<uint64_t>(integral) << -one.e) + fractional;
-    result = handler.on_digit(static_cast<char>('0' + digit),
-                              power_of_10_64(exp) << -one.e, remainder, error,
-                              exp, true);
+    auto result = handler.on_digit(static_cast<char>('0' + digit),
+                                   impl_data::power_of_10_64[exp] << -one.e,
+                                   remainder, error, true);
     if (result != digits::more) return result;
   } while (exp > 0);
   // Generate digits for the fractional part.
@@ -711,68 +780,10 @@ FMT_INLINE digits::result grisu_gen_digits(fp value, uint64_t error, int& exp,
     char digit = static_cast<char>('0' + (fractional >> -one.e));
     fractional &= one.f - 1;
     --exp;
-    result = handler.on_digit(digit, one.f, fractional, error, exp, false);
+    auto result = handler.on_digit(digit, one.f, fractional, error, false);
     if (result != digits::more) return result;
   }
 }
-
-// The fixed precision digit handler.
-struct fixed_handler {
-  char* buf;
-  int size;
-  int precision;
-  int exp10;
-  bool fixed;
-
-  digits::result on_start(uint64_t divisor, uint64_t remainder, uint64_t error,
-                          int& exp) {
-    // Non-fixed formats require at least one digit and no precision adjustment.
-    if (!fixed) return digits::more;
-    // Adjust fixed precision by exponent because it is relative to decimal
-    // point.
-    precision += exp + exp10;
-    // Check if precision is satisfied just by leading zeros, e.g.
-    // format("{:.2f}", 0.001) gives "0.00" without generating any digits.
-    if (precision > 0) return digits::more;
-    if (precision < 0) return digits::done;
-    auto dir = get_round_direction(divisor, remainder, error);
-    if (dir == round_direction::unknown) return digits::error;
-    buf[size++] = dir == round_direction::up ? '1' : '0';
-    return digits::done;
-  }
-
-  digits::result on_digit(char digit, uint64_t divisor, uint64_t remainder,
-                          uint64_t error, int, bool integral) {
-    FMT_ASSERT(remainder < divisor, "");
-    buf[size++] = digit;
-    if (!integral && error >= remainder) return digits::error;
-    if (size < precision) return digits::more;
-    if (!integral) {
-      // Check if error * 2 < divisor with overflow prevention.
-      // The check is not needed for the integral part because error = 1
-      // and divisor > (1 << 32) there.
-      if (error >= divisor || error >= divisor - error) return digits::error;
-    } else {
-      FMT_ASSERT(error == 1 && divisor > 2, "");
-    }
-    auto dir = get_round_direction(divisor, remainder, error);
-    if (dir != round_direction::up)
-      return dir == round_direction::down ? digits::done : digits::error;
-    ++buf[size - 1];
-    for (int i = size - 1; i > 0 && buf[i] > '9'; --i) {
-      buf[i] = '0';
-      ++buf[i - 1];
-    }
-    if (buf[0] > '9') {
-      buf[0] = '1';
-      if (fixed)
-        buf[size++] = '0';
-      else
-        ++exp10;
-    }
-    return digits::done;
-  }
-};
 
 // A 128-bit integer type used internally,
 struct uint128_wrapper {
@@ -897,8 +908,7 @@ inline uint64_t umul96_lower64(uint32_t x, uint64_t y) FMT_NOEXCEPT {
 inline int floor_log10_pow2(int e) FMT_NOEXCEPT {
   FMT_ASSERT(e <= 1700 && e >= -1700, "too large exponent");
   const int shift = 22;
-  return (e * static_cast<int>(data::log10_2_significand >> (64 - shift))) >>
-         shift;
+  return (e * static_cast<int>(log10_2_significand >> (64 - shift))) >> shift;
 }
 
 // Various fast log computations.
@@ -916,8 +926,7 @@ inline int floor_log10_pow2_minus_log10_4_over_3(int e) FMT_NOEXCEPT {
   FMT_ASSERT(e <= 1700 && e >= -1700, "too large exponent");
   const uint64_t log10_4_over_3_fractional_digits = 0x1ffbfc2bbc780375;
   const int shift_amount = 22;
-  return (e * static_cast<int>(data::log10_2_significand >>
-                               (64 - shift_amount)) -
+  return (e * static_cast<int>(log10_2_significand >> (64 - shift_amount)) -
           static_cast<int>(log10_4_over_3_fractional_digits >>
                            (64 - shift_amount))) >>
          shift_amount;
@@ -1042,7 +1051,7 @@ template <> struct cache_accessor<float> {
   static uint64_t get_cached_power(int k) FMT_NOEXCEPT {
     FMT_ASSERT(k >= float_info<float>::min_k && k <= float_info<float>::max_k,
                "k is out of range");
-    constexpr const uint64_t pow10_significands[] = {
+    static constexpr const uint64_t pow10_significands[] = {
         0x81ceb32c4b43fcf5, 0xa2425ff75e14fc32, 0xcad2f7f5359a3b3f,
         0xfd87b5f28300ca0e, 0x9e74d1b791e07e49, 0xc612062576589ddb,
         0xf79687aed3eec552, 0x9abe14cd44753b53, 0xc16d9a0095928a28,
@@ -2210,24 +2219,21 @@ small_divisor_case_label:
 }
 }  // namespace dragonbox
 
-// Formats value using a variation of the Fixed-Precision Positive
-// Floating-Point Printout ((FPP)^2) algorithm by Steele & White:
+// Formats a floating-point number using a variation of the Fixed-Precision
+// Positive Floating-Point Printout ((FPP)^2) algorithm by Steele & White:
 // https://fmt.dev/papers/p372-steele.pdf.
-template <typename Double>
-void fallback_format(Double d, int num_digits, bool binary32, buffer<char>& buf,
-                     int& exp10) {
+FMT_CONSTEXPR20 inline void format_dragon(fp value, bool is_predecessor_closer,
+                                          int num_digits, buffer<char>& buf,
+                                          int& exp10) {
   bigint numerator;    // 2 * R in (FPP)^2.
   bigint denominator;  // 2 * S in (FPP)^2.
   // lower and upper are differences between value and corresponding boundaries.
   bigint lower;             // (M^- in (FPP)^2).
   bigint upper_store;       // upper's value if different from lower.
   bigint* upper = nullptr;  // (M^+ in (FPP)^2).
-  fp value;
   // Shift numerator and denominator by an extra bit or two (if lower boundary
   // is closer) to make lower and upper integers. This eliminates multiplication
   // by 2 during later computations.
-  const bool is_predecessor_closer =
-      binary32 ? value.assign(static_cast<float>(d)) : value.assign(d);
   int shift = is_predecessor_closer ? 2 : 1;
   uint64_t significand = value.f << shift;
   if (value.e >= 0) {
@@ -2297,9 +2303,9 @@ void fallback_format(Double d, int num_digits, bool binary32, buffer<char>& buf,
   // Generate the given number of digits.
   exp10 -= num_digits - 1;
   if (num_digits == 0) {
-    buf.try_resize(1);
     denominator *= 10;
-    buf[0] = add_compare(numerator, numerator, denominator) > 0 ? '1' : '0';
+    auto digit = add_compare(numerator, numerator, denominator) > 0 ? '1' : '0';
+    buf.push_back(digit);
     return;
   }
   buf.try_resize(to_unsigned(num_digits));
@@ -2330,9 +2336,12 @@ void fallback_format(Double d, int num_digits, bool binary32, buffer<char>& buf,
   buf[num_digits - 1] = static_cast<char>('0' + digit);
 }
 
-template <typename T>
-int format_float(T value, int precision, float_specs specs, buffer<char>& buf) {
-  static_assert(!std::is_same<T, float>::value, "");
+template <typename Float>
+FMT_HEADER_ONLY_CONSTEXPR20 int format_float(Float value, int precision,
+                                             float_specs specs,
+                                             buffer<char>& buf) {
+  // float is passed as double to reduce the number of instantiations.
+  static_assert(!std::is_same<Float, float>::value, "");
   FMT_ASSERT(value >= 0, "value is negative");
 
   const bool fixed = specs.format == float_format::fixed;
@@ -2342,13 +2351,13 @@ int format_float(T value, int precision, float_specs specs, buffer<char>& buf) {
       return 0;
     }
     buf.try_resize(to_unsigned(precision));
-    std::uninitialized_fill_n(buf.data(), precision, '0');
+    fill_n(buf.data(), precision, '0');
     return -precision;
   }
 
-  if (!specs.use_grisu) return snprintf_float(value, precision, specs, buf);
+  if (specs.fallback) return snprintf_float(value, precision, specs, buf);
 
-  if (precision < 0) {
+  if (!is_constant_evaluated() && precision < 0) {
     // Use Dragonbox for the shortest format.
     if (specs.binary32) {
       auto dec = dragonbox::to_decimal(static_cast<float>(value));
@@ -2360,26 +2369,37 @@ int format_float(T value, int precision, float_specs specs, buffer<char>& buf) {
     return dec.exponent;
   }
 
-  // Use Grisu + Dragon4 for the given precision:
-  // https://www.cs.tufts.edu/~nr/cs257/archive/florian-loitsch/printf.pdf.
   int exp = 0;
-  const int min_exp = -60;  // alpha in Grisu.
-  int cached_exp10 = 0;     // K in Grisu.
-  fp normalized = normalize(fp(value));
-  const auto cached_pow = get_cached_power(
-      min_exp - (normalized.e + fp::significand_size), cached_exp10);
-  normalized = normalized * cached_pow;
-  // Limit precision to the maximum possible number of significant digits in an
-  // IEEE754 double because we don't need to generate zeros.
-  const int max_double_digits = 767;
-  if (precision > max_double_digits) precision = max_double_digits;
-  fixed_handler handler{buf.data(), 0, precision, -cached_exp10, fixed};
-  if (grisu_gen_digits(normalized, 1, exp, handler) == digits::error) {
-    exp += handler.size - cached_exp10 - 1;
-    fallback_format(value, handler.precision, specs.binary32, buf, exp);
-  } else {
-    exp += handler.exp10;
-    buf.try_resize(to_unsigned(handler.size));
+  bool use_dragon = true;
+  if (is_fast_float<Float>()) {
+    // Use Grisu + Dragon4 for the given precision:
+    // https://www.cs.tufts.edu/~nr/cs257/archive/florian-loitsch/printf.pdf.
+    const int min_exp = -60;  // alpha in Grisu.
+    int cached_exp10 = 0;     // K in Grisu.
+    fp normalized = normalize(fp(value));
+    const auto cached_pow = get_cached_power(
+        min_exp - (normalized.e + fp::num_significand_bits), cached_exp10);
+    normalized = normalized * cached_pow;
+    gen_digits_handler handler{buf.data(), 0, precision, -cached_exp10, fixed};
+    if (grisu_gen_digits(normalized, 1, exp, handler) != digits::error &&
+        !is_constant_evaluated()) {
+      exp += handler.exp10;
+      buf.try_resize(to_unsigned(handler.size));
+      use_dragon = false;
+    } else {
+      exp += handler.size - cached_exp10 - 1;
+      precision = handler.precision;
+    }
+  }
+  if (use_dragon) {
+    auto f = fp();
+    bool is_predecessor_closer =
+        specs.binary32 ? f.assign(static_cast<float>(value)) : f.assign(value);
+    // Limit precision to the maximum possible number of significant digits in
+    // an IEEE754 double because we don't need to generate zeros.
+    const int max_double_digits = 767;
+    if (precision > max_double_digits) precision = max_double_digits;
+    format_dragon(f, is_predecessor_closer, precision, buf, exp);
   }
   if (!fixed && !specs.showpoint) {
     // Remove trailing zeros.
@@ -2391,7 +2411,7 @@ int format_float(T value, int precision, float_specs specs, buffer<char>& buf) {
     buf.try_resize(num_digits);
   }
   return exp;
-}  // namespace detail
+}
 
 template <typename T>
 int snprintf_float(T value, int precision, float_specs specs,
@@ -2525,8 +2545,8 @@ template <> struct formatter<detail::bigint> {
 };
 
 FMT_FUNC detail::utf8_to_utf16::utf8_to_utf16(string_view s) {
-  for_each_codepoint(s, [this](uint32_t cp, int error) {
-    if (error != 0) FMT_THROW(std::runtime_error("invalid utf8"));
+  for_each_codepoint(s, [this](uint32_t cp, string_view) {
+    if (cp == invalid_code_point) FMT_THROW(std::runtime_error("invalid utf8"));
     if (cp <= 0xFFFF) {
       buffer_.push_back(static_cast<wchar_t>(cp));
     } else {
@@ -2534,6 +2554,7 @@ FMT_FUNC detail::utf8_to_utf16::utf8_to_utf16(string_view s) {
       buffer_.push_back(static_cast<wchar_t>(0xD800 + (cp >> 10)));
       buffer_.push_back(static_cast<wchar_t>(0xDC00 + (cp & 0x3FF)));
     }
+    return true;
   });
   buffer_.push_back(0);
 }
@@ -2549,13 +2570,15 @@ FMT_FUNC void format_system_error(detail::buffer<char>& out, int error_code,
   format_error_code(out, error_code, message);
 }
 
-FMT_FUNC void detail::error_handler::on_error(const char* message) {
-  FMT_THROW(format_error(message));
-}
-
 FMT_FUNC void report_system_error(int error_code,
                                   const char* message) FMT_NOEXCEPT {
   report_error(format_system_error, error_code, message);
+}
+
+// DEPRECATED!
+// This function is defined here and not inline for ABI compatiblity.
+FMT_FUNC void detail::error_handler::on_error(const char* message) {
+  throw_format_error(message);
 }
 
 FMT_FUNC std::string vformat(string_view fmt, format_args args) {

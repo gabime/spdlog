@@ -10,7 +10,9 @@
 #include "spdlog/async.h"
 #include "spdlog/sinks/basic_file_sink.h"
 
-#ifdef SPDLOG_FMT_EXTERNAL
+#if defined(SPDLOG_USE_STD_FORMAT)
+#    include <format>
+#elif defined(SPDLOG_FMT_EXTERNAL)
 #    include <fmt/format.h>
 #else
 #    include "spdlog/fmt/bundled/format.h"
@@ -160,7 +162,7 @@ void thread_fun(std::shared_ptr<spdlog::logger> logger, int howmany)
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> logger, int thread_count)
 {
     using std::chrono::high_resolution_clock;
-    vector<thread> threads;
+    vector<std::thread> threads;
     auto start = high_resolution_clock::now();
 
     int msgs_per_thread = howmany / thread_count;

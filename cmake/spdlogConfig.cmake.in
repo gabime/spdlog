@@ -6,9 +6,10 @@
 find_package(Threads REQUIRED)
 
 set(SPDLOG_FMT_EXTERNAL @SPDLOG_FMT_EXTERNAL@)
+set(SPDLOG_FMT_EXTERNAL_HO @SPDLOG_FMT_EXTERNAL_HO@)
 set(config_targets_file @config_targets_file@)
 
-if(SPDLOG_FMT_EXTERNAL)
+if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
     include(CMakeFindDependencyMacro)
     find_dependency(fmt CONFIG)
 endif()

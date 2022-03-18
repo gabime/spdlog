@@ -14,6 +14,7 @@
 #include <spdlog/details/os.h>
 
 #include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <netdb.h>
@@ -30,7 +31,6 @@ class udp_client
     int socket_ = -1;
     struct sockaddr_in sockAddr_;
 
-    
     void cleanup_()
     {
         if (socket_ != -1)
@@ -58,8 +58,9 @@ public:
 
         sockAddr_.sin_family = AF_INET;
         sockAddr_.sin_port = htons(port);
-        
-        if (::inet_aton(host.c_str(), &sockAddr_.sin_addr) == 0) {
+
+        if (::inet_aton(host.c_str(), &sockAddr_.sin_addr) == 0)
+        {
             cleanup_();
             throw_spdlog_ex("error: Invalid address!");
         }
@@ -84,7 +85,7 @@ public:
         ssize_t toslen = 0;
         socklen_t tolen = sizeof(struct sockaddr);
         if ((toslen = ::sendto(socket_, data, n_bytes, 0, (struct sockaddr *)&sockAddr_, tolen)) == -1)
-        {            
+        {
             throw_spdlog_ex("sendto(2) failed", errno);
         }
     }

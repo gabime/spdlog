@@ -23,7 +23,7 @@ namespace spdlog {
 namespace details {
 class udp_client
 {
-    static constexpr int TX_BUFFER_SIZE = 1024*10;
+    static constexpr int TX_BUFFER_SIZE = 1024 * 10;
     SOCKET socket_ = INVALID_SOCKET;
     sockaddr_in addr_ = {0};
 
@@ -40,10 +40,10 @@ class udp_client
     static void throw_winsock_error_(const std::string &msg, int last_error)
     {
         char buf[512];
-        ::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error,
+        ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error,
             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, (sizeof(buf) / sizeof(char)), NULL);
 
-        throw_spdlog_ex(fmt::format("udp_sink - {}: {}", msg, buf));
+        throw_spdlog_ex(fmt_lib::format("udp_sink - {}: {}", msg, buf));
     }
 
     void cleanup_()
@@ -64,7 +64,8 @@ public:
         addr_.sin_family = PF_INET;
         addr_.sin_port = htons(port);
         addr_.sin_addr.s_addr = INADDR_ANY;
-        if (InetPton(PF_INET, TEXT(host.c_str()), &addr_.sin_addr.s_addr) != 1) {
+        if (InetPton(PF_INET, TEXT(host.c_str()), &addr_.sin_addr.s_addr) != 1)
+        {
             int last_error = ::WSAGetLastError();
             ::WSACleanup();
             throw_winsock_error_("error: Invalid address!", last_error);

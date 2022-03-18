@@ -24,7 +24,7 @@ namespace details {
 class tcp_client
 {
     SOCKET socket_ = INVALID_SOCKET;
-   
+
     static void init_winsock_()
     {
         WSADATA wsaData;
@@ -38,10 +38,10 @@ class tcp_client
     static void throw_winsock_error_(const std::string &msg, int last_error)
     {
         char buf[512];
-        ::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error,
+        ::FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, last_error,
             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), buf, (sizeof(buf) / sizeof(char)), NULL);
 
-        throw_spdlog_ex(fmt::format("tcp_sink - {}: {}", msg, buf));
+        throw_spdlog_ex(fmt_lib::format("tcp_sink - {}: {}", msg, buf));
     }
 
 public:
@@ -55,7 +55,6 @@ public:
         close();
         ::WSACleanup();
     }
-    
 
     bool is_connected() const
     {
@@ -65,7 +64,7 @@ public:
     void close()
     {
         ::closesocket(socket_);
-        socket_ = INVALID_SOCKET;        
+        socket_ = INVALID_SOCKET;
     }
 
     SOCKET fd() const
@@ -73,10 +72,9 @@ public:
         return socket_;
     }
 
-    
     // try to connect or throw on failure
     void connect(const std::string &host, int port)
-    {        
+    {
         if (is_connected())
         {
             close();

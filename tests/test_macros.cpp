@@ -25,9 +25,10 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
     logger->flush();
 
     using spdlog::details::os::default_eol;
-    REQUIRE(ends_with(file_contents(TEST_FILENAME), fmt::format("Test message 2{}", default_eol)));
+    REQUIRE(ends_with(file_contents(TEST_FILENAME), spdlog::fmt_lib::format("Test message 2{}", default_eol)));
     REQUIRE(count_lines(TEST_FILENAME) == 1);
 
+    auto orig_default_logger = spdlog::default_logger();
     spdlog::set_default_logger(logger);
 
     SPDLOG_TRACE("Test message 3");
@@ -35,7 +36,8 @@ TEST_CASE("debug and trace w/o format string", "[macros]]")
     logger->flush();
 
     require_message_count(TEST_FILENAME, 2);
-    REQUIRE(ends_with(file_contents(TEST_FILENAME), fmt::format("Test message 4{}", default_eol)));
+    REQUIRE(ends_with(file_contents(TEST_FILENAME), spdlog::fmt_lib::format("Test message 4{}", default_eol)));
+    spdlog::set_default_logger(std::move(orig_default_logger));
 }
 
 TEST_CASE("disable param evaluation", "[macros]")
@@ -50,13 +52,3 @@ TEST_CASE("pass logger pointer", "[macros]")
     SPDLOG_LOGGER_TRACE(&ref, "Test message 1");
     SPDLOG_LOGGER_DEBUG(&ref, "Test message 2");
 }
-
-// ensure that even if right macro level is on- don't evaluate if the logger's level is not high enough
-// TEST_CASE("disable param evaluation2", "[macros]")
-//{
-//    auto logger = std::make_shared<spdlog::logger>("test-macro");
-//    logger->set_level(spdlog::level::off);
-//    int x = 0;
-//    SPDLOG_LOGGER_DEBUG(logger, "Test message {}", ++x);
-//    REQUIRE(x == 0);
-//}

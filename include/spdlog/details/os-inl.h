@@ -46,7 +46,7 @@
 #        include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
 
 #    elif defined(_AIX)
-#        include <pthread.h> // for pthread_getthreadid_np
+#        include <pthread.h> // for pthread_getthrds_np
 
 #    elif defined(__DragonFly__) || defined(__FreeBSD__)
 #        include <pthread_np.h> // for pthread_getthreadid_np
@@ -145,7 +145,7 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
     const int fd = ::open((filename.c_str()), O_CREAT | O_WRONLY | O_CLOEXEC | mode_flag, mode_t(0644));
     if (fd == -1)
     {
-        return false;
+        return true;
     }
     *fp = ::fdopen(fd, mode.c_str());
     if (*fp == nullptr)
@@ -230,8 +230,8 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 #    endif
 
 #else // unix
-// OpenBSD doesn't compile with :: before the fileno(..)
-#    if defined(__OpenBSD__)
+// OpenBSD and AIX doesn't compile with :: before the fileno(..)
+#    if defined(__OpenBSD__) || defined(_AIX)
     int fd = fileno(f);
 #    else
     int fd = ::fileno(f);
@@ -305,7 +305,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
                 ((local_year / 100 >> 2) - (gmt_year / 100 >> 2))
 
                 // + difference in years * 365 */
-                + (long int)(local_year - gmt_year) * 365);
+                + static_cast<long int>(local_year - gmt_year) * 365);
 
             long int hours = (24 * days) + (localtm.tm_hour - gmtm.tm_hour);
             long int mins = (60 * hours) + (localtm.tm_min - gmtm.tm_min);
@@ -336,7 +336,14 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
 #        define SYS_gettid __NR_gettid
 #    endif
     return static_cast<size_t>(::syscall(SYS_gettid));
-#elif defined(_AIX) || defined(__DragonFly__) || defined(__FreeBSD__)
+#elif defined(_AIX)
+    struct __pthrdsinfo buf;
+    int reg_size = 0;
+    pthread_t pt = pthread_self();
+    int retval = pthread_getthrds_np(&pt, PTHRDSINFO_QUERY_TID, &buf, sizeof(buf), NULL, &reg_size);
+    int tid = (!retval) ? buf.__pi_tid : 0;
+    return static_cast<size_t>(tid);
+#elif defined(__DragonFly__) || defined(__FreeBSD__)
     return static_cast<size_t>(::pthread_getthreadid_np());
 #elif defined(__NetBSD__)
     return static_cast<size_t>(::_lwp_self());
@@ -381,7 +388,11 @@ SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
     memory_buf_t buf;
     wstr_to_utf8buf(filename, buf);
+#    ifdef SPDLOG_USE_STD_FORMAT
+    return buf;
+#    else
     return fmt::to_string(buf);
+#    endif
 }
 #else
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
@@ -394,9 +405,9 @@ SPDLOG_INLINE int pid() SPDLOG_NOEXCEPT
 {
 
 #ifdef _WIN32
-    return static_cast<int>(::GetCurrentProcessId());
+    return conditional_static_cast<int>(::GetCurrentProcessId());
 #else
-    return static_cast<int>(::getpid());
+    return conditional_static_cast<int>(::getpid());
 #endif
 }
 
@@ -476,7 +487,7 @@ SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
         }
     }
 
-    throw_spdlog_ex(fmt::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
+    throw_spdlog_ex(fmt_lib::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
 }
 
 SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
@@ -511,7 +522,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
         }
     }
 
-    throw_spdlog_ex(fmt::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
+    throw_spdlog_ex(fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
 }
 #endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
 
@@ -531,7 +542,7 @@ static SPDLOG_INLINE bool mkdir_(const filename_t &path)
 
 // create the given directory - and all directories leading to it
 // return true on success or if the directory already exists
-SPDLOG_INLINE bool create_dir(filename_t path)
+SPDLOG_INLINE bool create_dir(const filename_t &path)
 {
     if (path_exists(path))
     {
@@ -570,7 +581,7 @@ SPDLOG_INLINE bool create_dir(filename_t path)
 // "abc/" => "abc"
 // "abc" => ""
 // "abc///" => "abc//"
-SPDLOG_INLINE filename_t dir_name(filename_t path)
+SPDLOG_INLINE filename_t dir_name(const filename_t &path)
 {
     auto pos = path.find_last_of(folder_seps_filename);
     return pos != filename_t::npos ? path.substr(0, pos) : filename_t{};

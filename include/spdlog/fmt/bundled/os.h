@@ -21,17 +21,20 @@
 
 #include "format.h"
 
+#ifndef FMT_USE_FCNTL
 // UWP doesn't provide _pipe.
-#if FMT_HAS_INCLUDE("winapifamily.h")
-#  include <winapifamily.h>
-#endif
-#if (FMT_HAS_INCLUDE(<fcntl.h>) || defined(__APPLE__) || \
-     defined(__linux__)) &&                              \
-    (!defined(WINAPI_FAMILY) || (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP))
-#  include <fcntl.h>  // for O_RDONLY
-#  define FMT_USE_FCNTL 1
-#else
-#  define FMT_USE_FCNTL 0
+#  if FMT_HAS_INCLUDE("winapifamily.h")
+#    include <winapifamily.h>
+#  endif
+#  if (FMT_HAS_INCLUDE(<fcntl.h>) || defined(__APPLE__) || \
+       defined(__linux__)) &&                              \
+      (!defined(WINAPI_FAMILY) ||                          \
+       (WINAPI_FAMILY == WINAPI_FAMILY_DESKTOP_APP))
+#    include <fcntl.h>  // for O_RDONLY
+#    define FMT_USE_FCNTL 1
+#  else
+#    define FMT_USE_FCNTL 0
+#  endif
 #endif
 
 #ifndef FMT_POSIX
@@ -390,22 +393,25 @@ struct ostream_params {
       : ostream_params(params...) {
     this->buffer_size = bs.value;
   }
+
+// Intel has a bug that results in failure to deduce a constructor
+// for empty parameter packs.
+#  if defined(__INTEL_COMPILER) && __INTEL_COMPILER < 2000
+  ostream_params(int new_oflag) : oflag(new_oflag) {}
+  ostream_params(detail::buffer_size bs) : buffer_size(bs.value) {}
+#  endif
 };
 
 FMT_END_DETAIL_NAMESPACE
 
-constexpr detail::buffer_size buffer_size;
+// Added {} below to work around default constructor error known to
+// occur in Xcode versions 7.2.1 and 8.2.1.
+constexpr detail::buffer_size buffer_size{};
 
 /** A fast output stream which is not thread-safe. */
 class FMT_API ostream final : private detail::buffer<char> {
  private:
   file file_;
-
-  void flush() {
-    if (size() == 0) return;
-    file_.write(data(), size());
-    clear();
-  }
 
   void grow(size_t) override;
 
@@ -424,6 +430,12 @@ class FMT_API ostream final : private detail::buffer<char> {
   ~ostream() {
     flush();
     delete[] data();
+  }
+
+  void flush() {
+    if (size() == 0) return;
+    file_.write(data(), size());
+    clear();
   }
 
   template <typename... T>
@@ -500,7 +512,7 @@ class locale {
 
   // Converts string to floating-point number and advances str past the end
   // of the parsed input.
-  double strtod(const char*& str) const {
+  FMT_DEPRECATED double strtod(const char*& str) const {
     char* end = nullptr;
     double result = strtod_l(str, &end, locale_);
     str = end;

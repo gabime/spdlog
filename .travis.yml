@@ -5,11 +5,11 @@
 sudo: required
 language: cpp
 
-# gcc t
-addons: &gcc48
+# gcc 4.9
+addons: &gcc49
   apt:
     packages:
-      - g++-4.8
+      - g++-4.9
     sources:
       - ubuntu-toolchain-r-test
 
@@ -69,13 +69,16 @@ addons: &clang12
       - sourceline: "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main"
         key_url: "https://apt.llvm.org/llvm-snapshot.gpg.key"        
 
-
+env:
+  global:
+    - BUILD_EXAMPLE='ON'
+    
 matrix:
   include:
-    # Test gcc-4.8: C++11, Build=Release
-    - env: GCC_VERSION=4.8 BUILD_TYPE=Release CPP=11
+    # Test gcc-4.9: C++11, Build=Release
+    - env: GCC_VERSION=4.9 BUILD_TYPE=Release CPP=11 BUILD_EXAMPLE='OFF'
       os: linux
-      addons: *gcc48
+      addons: *gcc49
       
     # Test gcc-7: C++11, Build=Release
     - env: GCC_VERSION=7 BUILD_TYPE=Release CPP=11
@@ -139,8 +142,8 @@ script:
       --warn-uninitialized \
       -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
       -DCMAKE_CXX_STANDARD=$CPP \
-      -DSPDLOG_BUILD_EXAMPLE=ON \
-      -DSPDLOG_BUILD_EXAMPLE_HO=ON \
+      -DSPDLOG_BUILD_EXAMPLE=$BUILD_EXAMPLE \
+      -DSPDLOG_BUILD_EXAMPLE_HO=$BUILD_EXAMPLE \
       -DSPDLOG_BUILD_WARNINGS=ON \
       -DSPDLOG_BUILD_BENCH=OFF \
       -DSPDLOG_BUILD_TESTS=ON \

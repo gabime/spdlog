@@ -67,8 +67,7 @@ public:
         auto rv = ::getaddrinfo(host.c_str(), port_str.c_str(), &hints, &addrinfo_result);
         if (rv != 0)
         {
-            auto msg = fmt::format("::getaddrinfo failed: {}", gai_strerror(rv));
-            throw_spdlog_ex(msg);
+            throw_spdlog_ex(fmt_lib::format("::getaddrinfo failed: {}", gai_strerror(rv)));
         }
 
         // Try each address until we successfully connect(2).

@@ -16,7 +16,7 @@
 // so instead we use ::FileWrite
 #    include <spdlog/details/windows_include.h>
 
-#    ifndef _USING_V110_SDK71_ // fileapi.h doesnt exist in winxp
+#    ifndef _USING_V110_SDK71_ // fileapi.h doesn't exist in winxp
 #        include <fileapi.h>   // WriteFile (..)
 #    endif
 
@@ -37,7 +37,7 @@ SPDLOG_INLINE stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
 #ifdef _WIN32
     // get windows handle from the FILE* object
 
-    handle_ = (HANDLE)::_get_osfhandle(::_fileno(file_));
+    handle_ = reinterpret_cast<HANDLE>(::_get_osfhandle(::_fileno(file_)));
 
     // don't throw to support cases where no console is attached,
     // and let the log method to do nothing if (handle_ == INVALID_HANDLE_VALUE).
@@ -60,7 +60,7 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
     std::lock_guard<mutex_t> lock(mutex_);
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
-    ::fflush(file_); // flush in case there is somthing in this file_ already
+    ::fflush(file_); // flush in case there is something in this file_ already
     auto size = static_cast<DWORD>(formatted.size());
     DWORD bytes_written = 0;
     bool ok = ::WriteFile(handle_, formatted.data(), size, &bytes_written, nullptr) != 0;
