@@ -12,7 +12,13 @@
 #include "spdlog/details/log_msg.h"
 #include "spdlog/details/synchronous_factory.h"
 #include "spdlog/sinks/base_sink.h"
+
+#if defined(SPDLOG_FMT_EXTERNAL)
+#include <fmt/color.h>
+#endif
+#if !defined(SPDLOG_USE_STD_FORMAT)
 #include "spdlog/fmt/bundled/color.h"
+#endif
 
 #include <QObject>
 
@@ -24,11 +30,15 @@ class QPlainTextEdit;
 //
 namespace spdlog {
 namespace sinks {
+#if !defined(SPDLOG_USE_STD_FORMAT)
 template <typename Mutex>
 class qt_sink_color;
+#endif
 template <typename Mutex>
 class qt_sink : public base_sink<Mutex> {
+#if !defined(SPDLOG_USE_STD_FORMAT)
     friend class qt_sink_color<Mutex>;
+#endif
 public:
     qt_sink(QObject *qt_object = nullptr, const std::string &meta_method = "") {
         qt_object_ = qt_object;
@@ -53,7 +63,7 @@ private:
     std::string meta_method_;
 };
 
-
+#if !defined(SPDLOG_USE_STD_FORMAT)
 template <typename Mutex>
 class qt_sink_color : public qt_sink<Mutex> {
 public:
@@ -141,14 +151,17 @@ private:
     bool should_do_colors_;
     std::array<std::string, level::n_levels> colors_;
 };
+#endif
 
 #include "spdlog/details/null_mutex.h"
 #include <mutex>
 using qt_sink_mt = qt_sink<std::mutex>;
 using qt_sink_st = qt_sink<spdlog::details::null_mutex>;
 
+#if !defined(SPDLOG_USE_STD_FORMAT)
 using qt_sink_color_mt = qt_sink_color<std::mutex>;
 using qt_sink_color_st = qt_sink_color<spdlog::details::null_mutex>;
+#endif
 } // namespace sinks
 
 //
@@ -193,6 +206,7 @@ qt_logger_st(const std::string &logger_name, QObject* qt_object, const std::stri
 //
 // Factory functions (color)
 //
+#if !defined(SPDLOG_USE_STD_FORMAT)
 template <typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger>
 qt_logger_color_mt(const std::string &logger_name, QTextEdit* qt_object, bool color, const std::string &meta_method = "append") {
@@ -228,4 +242,5 @@ inline std::shared_ptr<logger>
 qt_logger_color_st(const std::string &logger_name, QObject* qt_object, bool color, const std::string &meta_method) {
     return Factory::template create<sinks::qt_sink_color_st>(logger_name, qt_object, color, meta_method);
 }
+#endif
 } // namespace spdlog
