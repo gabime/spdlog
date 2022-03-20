@@ -15,8 +15,7 @@
 
 #if defined(SPDLOG_FMT_EXTERNAL)
 #include <fmt/color.h>
-#endif
-#if !defined(SPDLOG_USE_STD_FORMAT)
+#elif !defined(SPDLOG_USE_STD_FORMAT)
 #include "spdlog/fmt/bundled/color.h"
 #endif
 
