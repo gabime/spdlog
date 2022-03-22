@@ -21,57 +21,38 @@
 
 #include <QObject>
 
-class QTextEdit;
-class QPlainTextEdit;
-
 //
 // qt_sink class
 //
 namespace spdlog {
 namespace sinks {
-#if !defined(SPDLOG_USE_STD_FORMAT)
-template <typename Mutex>
-class qt_sink_color;
-#endif
 template <typename Mutex>
 class qt_sink : public base_sink<Mutex> {
-#if !defined(SPDLOG_USE_STD_FORMAT)
-    friend class qt_sink_color<Mutex>;
-#endif
 public:
-    qt_sink(QObject *qt_object = nullptr, const std::string &meta_method = "") {
-        qt_object_ = qt_object;
-        meta_method_ = meta_method;
-    }
-
+    qt_sink(QObject *qt_object = nullptr, const std::string &meta_method = "") : qt_object_(qt_object), meta_method_(meta_method_) { }
     ~qt_sink() { flush_(); }
 
 protected:
     void sink_it_(const details::log_msg &msg) override {
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
-        string_view_t str = string_view_t(formatted.data(), formatted.size());
         QMetaObject::invokeMethod(qt_object_, meta_method_.c_str(), Qt::AutoConnection,
-                                  Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
+                                  Q_ARG(const QString&, QString::fromUtf8(formatted.data(), formatted.size())));
     }
 
     void flush_() override {}
 
 private:
-    QObject *qt_object_ = nullptr;
+    QObject *qt_object_;
     std::string meta_method_;
 };
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
 template <typename Mutex>
-class qt_sink_color : public qt_sink<Mutex> {
+class qt_sink_color : public base_sink<Mutex> {
 public:
-    qt_sink_color(QObject *qt_object = nullptr, bool color_ = true, const std::string &meta_method = "")
+    qt_sink_color(QObject *qt_object = nullptr, const std::string &meta_method = "") : qt_object_(qt_object), meta_method_(meta_method)
     {
-        qt_sink<Mutex>::qt_object_ = qt_object;
-        qt_sink<Mutex>::meta_method_ = meta_method;
-        should_do_colors_ = color_;
-
         set_color(level::trace, fmt::fg(fmt::color::white));
         set_color(level::debug, fmt::fg(fmt::color::cyan));
         set_color(level::info, fmt::fg(fmt::color::green));
@@ -81,31 +62,29 @@ public:
         set_color(level::off, reset_);
     }
 
+    ~qt_sink_color() { flush_(); }
+
     void set_color(level::level_enum color_level, fmt::text_style color)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-
         std::string str;
-
         auto bg = fmt::detail::make_background_color<fmt::detail::char8_type>(color.get_background());
         auto fg = fmt::detail::make_foreground_color<fmt::detail::char8_type>(color.get_foreground());
         auto em = fmt::detail::make_emphasis<fmt::detail::char8_type>(color.get_emphasis());
-
         str.append(bg.begin(), bg.end());
         str.append(fg.begin(), fg.end());
         str.append(em.begin(), em.end());
-
-        colors_[color_level] = str;
+        colors_[color_level] = std::move(str);
     }
 
     void set_color(level::level_enum color_level, string_view_t color)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-
         colors_[color_level] = to_string_(color);
     }
 
-    ~qt_sink_color() { qt_sink<Mutex>::flush_(); }
+    void flush_() override {}
+
 
     const string_view_t reset_ = "\033[m";
 
@@ -117,28 +96,26 @@ protected:
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
 
-        if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
+        if (msg.color_range_end > msg.color_range_start)
         {
             // before color range
-            std::string str;
+            memory_buf_t colored;
             auto ccode = to_ccode_(colors_[msg.level]);
             auto reset = to_ccode_(reset_);
-            str.reserve(formatted.size() + ccode.size());
-            str.append(formatted.begin(), formatted.begin() + msg.color_range_start);
+            colored.append(formatted.begin(), formatted.begin() + msg.color_range_start);
             // in color range
-            str.append(ccode.begin(), ccode.end());
-            str.append(formatted.begin() + msg.color_range_start, formatted.begin() + msg.color_range_end);
-            str.append(reset.begin(), reset.end());
+            colored.append(ccode.begin(), ccode.end());
+            colored.append(formatted.begin() + msg.color_range_start, formatted.begin() + msg.color_range_end);
+            colored.append(reset.begin(), reset.end());
             // after color range
-            str.append(formatted.begin() + msg.color_range_end, formatted.end());
-            QMetaObject::invokeMethod(qt_sink<Mutex>::qt_object_, qt_sink<Mutex>::meta_method_.c_str(), Qt::AutoConnection,
-                                      Q_ARG(QString, QString::fromStdString(str)));
+            colored.append(formatted.begin() + msg.color_range_end, formatted.end());
+            QMetaObject::invokeMethod(qt_object_, meta_method_.c_str(), Qt::AutoConnection,
+                                      Q_ARG(const QString&, QString::fromUtf8(colored.data(), colored.size())));
         }
         else // no color
         {
-            string_view_t str = string_view_t(formatted.data(), formatted.size());
-            QMetaObject::invokeMethod(qt_sink<Mutex>::qt_object_, qt_sink<Mutex>::meta_method_.c_str(), Qt::AutoConnection,
-                                      Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size()))));
+            QMetaObject::invokeMethod(qt_object_, meta_method_.c_str(), Qt::AutoConnection,
+                                      Q_ARG(const QString&, QString::fromUtf8(formatted.data(), formatted.size())));
         }
     }
 
@@ -147,7 +124,8 @@ private:
     static std::string to_string_(const string_view_t &sv) { return std::string(sv.data(), sv.size()); }
 
 private:
-    bool should_do_colors_;
+    QObject *qt_object_;
+    std::string meta_method_;
     std::array<std::string, level::n_levels> colors_;
 };
 #endif
@@ -168,30 +146,6 @@ using qt_sink_color_st = qt_sink_color<spdlog::details::null_mutex>;
 //
 template <typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger>
-qt_logger_mt(const std::string &logger_name, QTextEdit* qt_object, const std::string &meta_method = "append") {
-    return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_method);
-}
-
-template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
-qt_logger_st(const std::string &logger_name, QTextEdit* qt_object, const std::string &meta_method = "append") {
-    return Factory::template create<sinks::qt_sink_st>(logger_name, qt_object, meta_method);
-}
-
-template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
-qt_logger_mt(const std::string &logger_name, QPlainTextEdit* qt_object , const std::string &meta_method = "appendPlainText") {
-    return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_method);
-}
-
-template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
-qt_logger_st(const std::string &logger_name, QPlainTextEdit* qt_object, const std::string &meta_method = "appendPlainText") {
-    return Factory::template create<sinks::qt_sink_st>(logger_name, qt_object, meta_method);
-}
-
-template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
 qt_logger_mt(const std::string &logger_name, QObject* qt_object, const std::string &meta_method) {
     return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_method);
 }
@@ -208,38 +162,14 @@ qt_logger_st(const std::string &logger_name, QObject* qt_object, const std::stri
 #if !defined(SPDLOG_USE_STD_FORMAT)
 template <typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger>
-qt_logger_color_mt(const std::string &logger_name, QTextEdit* qt_object, bool color, const std::string &meta_method = "append") {
-    return Factory::template create<sinks::qt_sink_color_mt>(logger_name, qt_object, color, meta_method);
+qt_logger_color_mt(const std::string &logger_name, QObject* qt_object, const std::string &meta_method) {
+    return Factory::template create<sinks::qt_sink_color_mt>(logger_name, qt_object, meta_method);
 }
 
 template <typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger>
-qt_logger_color_st(const std::string &logger_name, QTextEdit* qt_object, bool color, const std::string &meta_method = "append") {
-    return Factory::template create<sinks::qt_sink_color_st>(logger_name, qt_object, color, meta_method);
-}
-
-template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
-qt_logger_color_mt(const std::string &logger_name, QPlainTextEdit* qt_object , bool color, const std::string &meta_method = "appendPlainText") {
-    return Factory::template create<sinks::qt_sink_color_mt>(logger_name, qt_object, color, meta_method);
-}
-
-template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
-qt_logger_color_st(const std::string &logger_name, QPlainTextEdit* qt_object, bool color, const std::string &meta_method = "appendPlainText") {
-    return Factory::template create<sinks::qt_sink_color_st>(logger_name, qt_object, color, meta_method);
-}
-
-template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
-qt_logger_color_mt(const std::string &logger_name, QObject* qt_object,  bool color, const std::string &meta_method) {
-    return Factory::template create<sinks::qt_sink_color_mt>(logger_name, qt_object, color, meta_method);
-}
-
-template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
-qt_logger_color_st(const std::string &logger_name, QObject* qt_object, bool color, const std::string &meta_method) {
-    return Factory::template create<sinks::qt_sink_color_st>(logger_name, qt_object, color, meta_method);
+qt_logger_color_st(const std::string &logger_name, QObject* qt_object, const std::string &meta_method) {
+    return Factory::template create<sinks::qt_sink_color_st>(logger_name, qt_object, meta_method);
 }
 #endif
 } // namespace spdlog
