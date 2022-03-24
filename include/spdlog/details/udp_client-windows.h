@@ -64,7 +64,7 @@ public:
         addr_.sin_family = PF_INET;
         addr_.sin_port = htons(port);
         addr_.sin_addr.s_addr = INADDR_ANY;
-        if (InetPton(PF_INET, TEXT(host.c_str()), &addr_.sin_addr.s_addr) != 1)
+        if (InetPtonA(PF_INET, host.c_str(), &addr_.sin_addr.s_addr) != 1)
         {
             int last_error = ::WSAGetLastError();
             ::WSACleanup();
