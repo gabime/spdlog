@@ -23,7 +23,7 @@ template<typename Mutex>
 class systemd_sink : public base_sink<Mutex>
 {
 public:
-    explicit systemd_sink(bool enable_formatting)
+    explicit systemd_sink(bool enable_formatting = false)
         : enable_formatting_{enable_formatting}
         , syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
               /* spdlog::level::debug      */ LOG_DEBUG,
