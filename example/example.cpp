@@ -11,6 +11,7 @@ void load_levels_example();
 void stdout_logger_example();
 void basic_example();
 void rotating_example();
+void rotating2_example();
 void daily_example();
 void async_example();
 void binary_example();
@@ -71,6 +72,7 @@ int main(int, char *[])
         stdout_logger_example();
         basic_example();
         rotating_example();
+        rotating2_example();
         daily_example();
         async_example();
         binary_example();
@@ -127,6 +129,13 @@ void rotating_example()
 {
     // Create a file rotating logger with 5mb size max and 3 rotated files.
     auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
+}
+
+#include "spdlog/sinks/rotating2_file_sink.h"
+void rotating2_example()
+{
+    // Create a file rotating logger with 5mb size max and 3 rotated files.
+    auto rotating2_logger = spdlog::rotating2_logger_mt("rotating2_logger", "logs/rotating2.txt", 1048576 * 5);
 }
 
 #include "spdlog/sinks/daily_file_sink.h"

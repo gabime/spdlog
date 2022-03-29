@@ -5,6 +5,7 @@
 
 #define SIMPLE_LOG "test_logs/simple_log"
 #define ROTATING_LOG "test_logs/rotating_log"
+#define ROTATING2_LOG "test_logs/rotating2_log"
 
 TEST_CASE("simple_file_logger", "[simple_logger]]")
 {
@@ -106,4 +107,68 @@ TEST_CASE("rotating_file_logger3", "[rotating_logger]]")
     size_t max_size = 0;
     spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
     REQUIRE_THROWS_AS(spdlog::rotating_logger_mt("logger", basename, max_size, 0), spdlog::spdlog_ex);
+}
+
+TEST_CASE("rotating2_file_logger1", "[rotating2_logger]]")
+{
+    prepare_logdir();
+    size_t max_size = 1024 * 10;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING2_LOG);
+    auto logger = spdlog::rotating2_logger_mt("logger", basename, max_size, 0);
+
+    for (int i = 0; i < 10; ++i)
+    {
+        logger->info("Test message {}", i);
+    }
+
+    logger->flush();
+    require_message_count(ROTATING2_LOG, 10);
+}
+
+TEST_CASE("rotating2_file_logger2", "[rotating2_logger]]")
+{
+    prepare_logdir();
+    size_t max_size = 1024 * 10;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING2_LOG);
+
+    {
+        // make an initial logger to create the first output file
+        auto logger = spdlog::rotating2_logger_mt("logger", basename, max_size, true);
+        for (int i = 0; i < 10; ++i)
+        {
+            logger->info("Test message {}", i);
+        }
+        // drop causes the logger destructor to be called, which is required so the
+        // next logger can rename the first output file.
+        spdlog::drop(logger->name());
+    }
+
+    auto logger = spdlog::rotating2_logger_mt("logger", basename, max_size, true);
+    for (int i = 0; i < 10; ++i)
+    {
+        logger->info("Test message {}", i);
+    }
+
+    logger->flush();
+
+    require_message_count(ROTATING2_LOG, 10);
+
+    for (int i = 0; i < 1000; i++)
+    {
+
+        logger->info("Test message {}", i);
+    }
+
+    logger->flush();
+    REQUIRE(get_filesize(ROTATING2_LOG) <= max_size);
+    // REQUIRE(get_filesize(ROTATING2_LOG ".1") <= max_size);
+}
+
+// test that passing max_size=0 throws
+TEST_CASE("rotating2_file_logger3", "[rotating2_logger]]")
+{
+    prepare_logdir();
+    size_t max_size = 0;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING2_LOG);
+    REQUIRE_THROWS_AS(spdlog::rotating2_logger_mt("logger", basename, max_size, 0), spdlog::spdlog_ex);
 }
