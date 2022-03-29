@@ -18,16 +18,14 @@ namespace sinks {
 
 /**
  * Sink that write to systemd journal using the `sd_journal_send()` library call.
- *
- * Locking is not needed, as `sd_journal_send()` itself is thread-safe.
  */
 template<typename Mutex>
 class systemd_sink : public base_sink<Mutex>
 {
 public:
-    //
-    systemd_sink()
-        : syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
+    explicit systemd_sink(bool enable_formatting = false)
+        : enable_formatting_{enable_formatting}
+        , syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
               /* spdlog::level::debug      */ LOG_DEBUG,
               /* spdlog::level::info       */ LOG_INFO,
               /* spdlog::level::warn       */ LOG_WARNING,
@@ -42,14 +40,26 @@ public:
     systemd_sink &operator=(const systemd_sink &) = delete;
 
 protected:
+    bool enable_formatting_ = false;
     using levels_array = std::array<int, 7>;
     levels_array syslog_levels_;
 
     void sink_it_(const details::log_msg &msg) override
     {
         int err;
+        string_view_t payload;
+        memory_buf_t formatted;
+        if (enable_formatting_)
+        {
+            base_sink<Mutex>::formatter_->format(msg, formatted);
+            payload = string_view_t(formatted.data(), formatted.size());
+        }
+        else
+        {
+            payload = msg.payload;
+        }
 
-        size_t length = msg.payload.size();
+        size_t length = payload.size();
         // limit to max int
         if (length > static_cast<size_t>(std::numeric_limits<int>::max()))
         {
@@ -60,12 +70,12 @@ protected:
         if (msg.source.empty())
         {
             // Note: function call inside '()' to avoid macro expansion
-            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d", syslog_level(msg.level),
+            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(), "PRIORITY=%d", syslog_level(msg.level),
                 "SYSLOG_IDENTIFIER=%.*s", static_cast<int>(msg.logger_name.size()), msg.logger_name.data(), nullptr);
         }
         else
         {
-            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), msg.payload.data(), "PRIORITY=%d", syslog_level(msg.level),
+            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(), "PRIORITY=%d", syslog_level(msg.level),
                 "SYSLOG_IDENTIFIER=%.*s", static_cast<int>(msg.logger_name.size()), msg.logger_name.data(), "CODE_FILE=%s",
                 msg.source.filename, "CODE_LINE=%d", msg.source.line, "CODE_FUNC=%s", msg.source.funcname, nullptr);
         }
@@ -90,14 +100,14 @@ using systemd_sink_st = systemd_sink<details::null_mutex>;
 
 // Create and register a syslog logger
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> systemd_logger_mt(const std::string &logger_name)
+inline std::shared_ptr<logger> systemd_logger_mt(const std::string &logger_name, bool enable_formatting = false)
 {
-    return Factory::template create<sinks::systemd_sink_mt>(logger_name);
+    return Factory::template create<sinks::systemd_sink_mt>(logger_name, enable_formatting);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> systemd_logger_st(const std::string &logger_name)
+inline std::shared_ptr<logger> systemd_logger_st(const std::string &logger_name, bool enable_formatting = false)
 {
-    return Factory::template create<sinks::systemd_sink_st>(logger_name);
+    return Factory::template create<sinks::systemd_sink_st>(logger_name, enable_formatting);
 }
 } // namespace spdlog
