@@ -26,6 +26,7 @@ public:
     void open(const filename_t &fname, bool truncate = false);
     void reopen(bool truncate);
     void flush();
+    void sync();
     void close();
     void write(const memory_buf_t &buf);
     size_t size() const;
