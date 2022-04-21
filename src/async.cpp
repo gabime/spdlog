@@ -9,8 +9,3 @@
 #include <spdlog/async_logger-inl.h>
 #include <spdlog/details/periodic_worker-inl.h>
 #include <spdlog/details/thread_pool-inl.h>
-
-/*
- * comment the declaration for the warning: type attributes ignored after type is already defined [-Wattributes]
- */
-//template class SPDLOG_API spdlog::details::mpmc_blocking_queue<spdlog::details::async_msg>;
