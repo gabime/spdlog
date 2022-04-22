@@ -3,9 +3,13 @@
  */
 #include "includes.h"
 
-#ifdef SPDLOG_WCHAR_FILENAMES
+#ifdef SPDLOG_USE_STD_FORMAT
 using filename_memory_buf_t = std::basic_string<spdlog::filename_t::value_type>;
+#else
+using filename_memory_buf_t = fmt::basic_memory_buffer<spdlog::filename_t::value_type, 250>;
+#endif
 
+#ifdef SPDLOG_WCHAR_FILENAMES
 std::string filename_buf_to_utf8string(const filename_memory_buf_t &w)
 {
     spdlog::memory_buf_t buf;
@@ -13,8 +17,6 @@ std::string filename_buf_to_utf8string(const filename_memory_buf_t &w)
     return spdlog::details::fmt_helper::to_string(buf);
 }
 #else
-using filename_memory_buf_t = fmt::basic_memory_buffer<spdlog::filename_t::value_type, 250>;
-
 std::string filename_buf_to_utf8string(const filename_memory_buf_t &w)
 {
     return spdlog::details::fmt_helper::to_string(w);
