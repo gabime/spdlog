@@ -5,8 +5,20 @@
 
 #ifdef SPDLOG_USE_STD_FORMAT
 using filename_memory_buf_t = std::basic_string<spdlog::filename_t::value_type>;
+
+std::string filename_buf_to_utf8string(const filename_memory_buf_t &w)
+{
+    spdlog::memory_buf_t buf;
+    spdlog::details::os::wstr_to_utf8buf(w, buf);
+    return spdlog::details::fmt_helper::to_string(buf);
+}
 #else
 using filename_memory_buf_t = fmt::basic_memory_buffer<spdlog::filename_t::value_type, 250>;
+
+std::string filename_buf_to_utf8string(const filename_memory_buf_t &w)
+{
+    return spdlog::details::fmt_helper::to_string(w);
+}
 #endif
 
 TEST_CASE("daily_logger with dateonly calculator", "[daily_logger]")
@@ -30,23 +42,7 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger]")
     }
     logger->flush();
 
-#ifdef SPDLOG_WCHAR_FILENAMES
-    spdlog::memory_buf_t buf;
-#    ifdef SPDLOG_USE_STD_FORMAT
-    spdlog::details::os::wstr_to_utf8buf(w, buf);
-    auto &filename = buf;
-#    else
-    spdlog::details::os::wstr_to_utf8buf(fmt::to_string(w), buf);
-    auto filename = fmt::to_string(buf);
-#    endif
-#else
-#    ifdef SPDLOG_USE_STD_FORMAT
-    auto &filename = w;
-#    else
-    auto filename = fmt::to_string(w);
-#    endif
-#endif
-    require_message_count(filename, 10);
+    require_message_count(filename_buf_to_utf8string(w), 10);
 }
 
 struct custom_daily_file_name_calculator
@@ -56,11 +52,8 @@ struct custom_daily_file_name_calculator
         filename_memory_buf_t w;
         spdlog::fmt_lib::format_to(std::back_inserter(w), SPDLOG_FILENAME_T("{}{:04d}{:02d}{:02d}"), basename, now_tm.tm_year + 1900,
             now_tm.tm_mon + 1, now_tm.tm_mday);
-#ifdef SPDLOG_USE_STD_FORMAT
-        return w;
-#else
-        return fmt::to_string(w);
-#endif
+
+        return spdlog::details::fmt_helper::to_string(w);
     }
 };
 
@@ -85,23 +78,7 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger]")
 
     logger->flush();
 
-#ifdef SPDLOG_WCHAR_FILENAMES
-    spdlog::memory_buf_t buf;
-#    ifdef SPDLOG_USE_STD_FORMAT
-    spdlog::details::os::wstr_to_utf8buf(w, buf);
-    auto &filename = buf;
-#    else
-    spdlog::details::os::wstr_to_utf8buf(fmt::to_string(w), buf);
-    auto filename = fmt::to_string(buf);
-#    endif
-#else
-#    ifdef SPDLOG_USE_STD_FORMAT
-    auto &filename = w;
-#    else
-    auto filename = fmt::to_string(w);
-#    endif
-#endif
-    require_message_count(filename, 10);
+    require_message_count(filename_buf_to_utf8string(w), 10);
 }
 
 /*

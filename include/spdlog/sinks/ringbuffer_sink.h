@@ -50,11 +50,7 @@ public:
         {
             memory_buf_t formatted;
             base_sink<Mutex>::formatter_->format(q_.at(i), formatted);
-#ifdef SPDLOG_USE_STD_FORMAT
-            ret.push_back(std::move(formatted));
-#else
-            ret.push_back(fmt::to_string(formatted));
-#endif
+            ret.push_back(fmt_helper::to_string(formatted));
         }
         return ret;
     }
