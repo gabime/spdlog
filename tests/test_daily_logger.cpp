@@ -13,7 +13,7 @@ using filename_memory_buf_t = fmt::basic_memory_buffer<spdlog::filename_t::value
 std::string filename_buf_to_utf8string(const filename_memory_buf_t &w)
 {
     spdlog::memory_buf_t buf;
-    spdlog::details::os::wstr_to_utf8buf(w, buf);
+    spdlog::details::os::wstr_to_utf8buf(spdlog::wstring_view_t(w.data(), w.size()), buf);
     return spdlog::details::fmt_helper::to_string(buf);
 }
 #else
