@@ -3,7 +3,7 @@
  */
 #include "includes.h"
 
-#ifdef SPDLOG_USE_STD_FORMAT
+#ifdef SPDLOG_WCHAR_FILENAMES
 using filename_memory_buf_t = std::basic_string<spdlog::filename_t::value_type>;
 
 std::string filename_buf_to_utf8string(const filename_memory_buf_t &w)
