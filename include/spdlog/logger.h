@@ -17,7 +17,6 @@
 #include <spdlog/common.h>
 #include <spdlog/details/log_msg.h>
 #include <spdlog/details/backtracer.h>
-#include <spdlog/details/fmt_helper.h>
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #    ifndef _WIN32
@@ -367,7 +366,7 @@ protected:
             memory_buf_t buf;
             fmt_lib::vformat_to(std::back_inserter(buf), fmt, fmt_lib::make_format_args(std::forward<Args>(args)...));
 
-            details::log_msg log_msg(loc, name_, lvl, details::fmt_helper::to_string_view(buf));
+            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH(loc)
