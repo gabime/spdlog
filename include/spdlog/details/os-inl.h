@@ -33,6 +33,7 @@
 
 #    if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)
 #        include <limits>
+#        include <spdlog/details/fmt_helper.h>
 #    endif
 
 #    include <direct.h> // for _mkdir/_wmkdir

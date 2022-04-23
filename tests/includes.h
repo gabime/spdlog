@@ -17,6 +17,7 @@
 
 #include "spdlog/spdlog.h"
 #include "spdlog/async.h"
+#include "spdlog/details/fmt_helper.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"

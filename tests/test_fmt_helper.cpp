@@ -1,6 +1,5 @@
 
 #include "includes.h"
-#include "spdlog/details/fmt_helper.h"
 
 using spdlog::memory_buf_t;
 using spdlog::details::fmt_helper::to_string_view;
