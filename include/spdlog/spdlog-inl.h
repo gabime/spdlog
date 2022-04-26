@@ -22,6 +22,12 @@ SPDLOG_INLINE std::shared_ptr<logger> get(const std::string &name)
     return details::registry::instance().get(name);
 }
 
+SPDLOG_INLINE std::vector<std::string> get_logger_names(void)
+{
+    return details::registry::instance().get_logger_names();
+}
+
+
 SPDLOG_INLINE void set_formatter(std::unique_ptr<spdlog::formatter> formatter)
 {
     details::registry::instance().set_formatter(std::move(formatter));

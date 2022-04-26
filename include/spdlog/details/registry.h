@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include <mutex>
 
 namespace spdlog {
@@ -34,6 +35,7 @@ public:
     void register_logger(std::shared_ptr<logger> new_logger);
     void initialize_logger(std::shared_ptr<logger> new_logger);
     std::shared_ptr<logger> get(const std::string &logger_name);
+    std::vector<std::string> get_logger_names(void);
     std::shared_ptr<logger> default_logger();
 
     // Return raw ptr to the default logger.

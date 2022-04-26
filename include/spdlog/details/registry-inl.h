@@ -92,6 +92,17 @@ SPDLOG_INLINE std::shared_ptr<logger> registry::get(const std::string &logger_na
     return found == loggers_.end() ? nullptr : found->second;
 }
 
+SPDLOG_INLINE std::vector<std::string> registry::get_logger_names(void)
+{
+    std::lock_guard<std::mutex> lock(logger_map_mutex_);
+    std::vector<std::string> logger_names;
+    for (auto &l : loggers_)
+    {
+      logger_names.push_back(l.first);
+    }
+    return logger_names;
+}
+
 SPDLOG_INLINE std::shared_ptr<logger> registry::default_logger()
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);

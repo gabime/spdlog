@@ -19,6 +19,7 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <vector>
 
 namespace spdlog {
 
@@ -50,6 +51,9 @@ SPDLOG_API void initialize_logger(std::shared_ptr<logger> logger);
 // exist.
 // example: spdlog::get("my_logger")->info("hello {}", "world");
 SPDLOG_API std::shared_ptr<logger> get(const std::string &name);
+
+// Return a list with the names of all registered loggers
+SPDLOG_API std::vector<std::string> get_logger_names(void);
 
 // Set global formatter. Each sink in each logger will get a clone of this object
 SPDLOG_API void set_formatter(std::unique_ptr<spdlog::formatter> formatter);
