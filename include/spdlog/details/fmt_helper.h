@@ -25,13 +25,13 @@ inline spdlog::string_view_t to_string_view(const memory_buf_t &buf) SPDLOG_NOEX
 
 #ifdef SPDLOG_USE_STD_FORMAT
 template<typename T>
-std::basic_string<T> to_string(const std::basic_string<T> &buf)
+std::basic_string<T> to_string(std::basic_string<T> &&buf)
 {
-    return buf;
+    return std::move(buf);
 }
 #else
 template<typename T, size_t Size>
-std::basic_string<T> to_string(const fmt::basic_memory_buffer<T, Size> &buf)
+std::basic_string<T> to_string(fmt::basic_memory_buffer<T, Size> &&buf)
 {
     return fmt::to_string(buf);
 }

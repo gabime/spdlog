@@ -5,6 +5,7 @@
 
 #include "spdlog/sinks/base_sink.h"
 #include "spdlog/details/circular_q.h"
+#include "spdlog/details/fmt_helper.h"
 #include "spdlog/details/log_msg_buffer.h"
 #include "spdlog/details/null_mutex.h"
 
@@ -50,7 +51,7 @@ public:
         {
             memory_buf_t formatted;
             base_sink<Mutex>::formatter_->format(q_.at(i), formatted);
-            ret.push_back(fmt_helper::to_string(formatted));
+            ret.push_back(details::fmt_helper::to_string(std::move(formatted)));
         }
         return ret;
     }

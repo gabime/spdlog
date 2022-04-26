@@ -389,7 +389,7 @@ SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
     memory_buf_t buf;
     wstr_to_utf8buf(filename, buf);
-    return fmt_helper::to_string(buf);
+    return fmt_helper::to_string(std::move(buf));
 }
 #else
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
