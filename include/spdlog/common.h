@@ -145,7 +145,7 @@ using wmemory_buf_t = std::wstring;
 template<typename... Args>
 using wformat_string_t = std::wstring_view;
 #    endif
-
+#    define SPDLOG_BUF_TO_STRING(x) x
 #else // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
 
@@ -173,6 +173,7 @@ using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 template<typename... Args>
 using wformat_string_t = fmt::wformat_string<Args...>;
 #    endif
+#    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
@@ -323,7 +324,7 @@ template<bool B, class T = void>
 using enable_if_t = typename std::enable_if<B, T>::type;
 
 template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args &&... args)
+std::unique_ptr<T> make_unique(Args &&...args)
 {
     static_assert(!std::is_array<T>::value, "arrays not supported");
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));

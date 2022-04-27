@@ -33,7 +33,6 @@
 
 #    if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)
 #        include <limits>
-#        include <spdlog/details/fmt_helper.h>
 #    endif
 
 #    include <direct.h> // for _mkdir/_wmkdir
@@ -389,7 +388,7 @@ SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 {
     memory_buf_t buf;
     wstr_to_utf8buf(filename, buf);
-    return fmt_helper::to_string(std::move(buf));
+    return SPDLOG_BUF_TO_STRING(buf);
 }
 #else
 SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
