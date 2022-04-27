@@ -23,20 +23,6 @@ inline spdlog::string_view_t to_string_view(const memory_buf_t &buf) SPDLOG_NOEX
     return spdlog::string_view_t{buf.data(), buf.size()};
 }
 
-#ifdef SPDLOG_USE_STD_FORMAT
-template<typename T>
-std::basic_string<T> to_string(std::basic_string<T> &&buf)
-{
-    return std::move(buf);
-}
-#else
-template<typename T, size_t Size>
-std::basic_string<T> to_string(fmt::basic_memory_buffer<T, Size> &&buf)
-{
-    return fmt::to_string(buf);
-}
-#endif
-
 inline void append_string_view(spdlog::string_view_t view, memory_buf_t &dest)
 {
     auto *buf_ptr = view.data();
