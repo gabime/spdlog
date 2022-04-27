@@ -2,6 +2,7 @@
 #include "test_sink.h"
 
 using spdlog::memory_buf_t;
+using spdlog::details::fmt_helper::to_string_view;
 
 // log to str and return it
 template<typename... Args>
@@ -273,11 +274,7 @@ TEST_CASE("clone-default-formatter", "[pattern_formatter]")
     formatter_1->format(msg, formatted_1);
     formatter_2->format(msg, formatted_2);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted_1 == formatted_2);
-#else
-    REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
-#endif
+    REQUIRE(to_string_view(formatted_1) == to_string_view(formatted_2));
 }
 
 TEST_CASE("clone-default-formatter2", "[pattern_formatter]")
@@ -292,11 +289,7 @@ TEST_CASE("clone-default-formatter2", "[pattern_formatter]")
     formatter_1->format(msg, formatted_1);
     formatter_2->format(msg, formatted_2);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted_1 == formatted_2);
-#else
-    REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
-#endif
+    REQUIRE(to_string_view(formatted_1) == to_string_view(formatted_2));
 }
 
 TEST_CASE("clone-formatter", "[pattern_formatter]")
@@ -311,11 +304,7 @@ TEST_CASE("clone-formatter", "[pattern_formatter]")
     formatter_1->format(msg, formatted_1);
     formatter_2->format(msg, formatted_2);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted_1 == formatted_2);
-#else
-    REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
-#endif
+    REQUIRE(to_string_view(formatted_1) == to_string_view(formatted_2));
 }
 
 TEST_CASE("clone-formatter-2", "[pattern_formatter]")
@@ -331,11 +320,7 @@ TEST_CASE("clone-formatter-2", "[pattern_formatter]")
     formatter_1->format(msg, formatted_1);
     formatter_2->format(msg, formatted_2);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted_1 == formatted_2);
-#else
-    REQUIRE(fmt::to_string(formatted_1) == fmt::to_string(formatted_2));
-#endif
+    REQUIRE(to_string_view(formatted_1) == to_string_view(formatted_2));
 }
 
 class custom_test_flag : public spdlog::custom_flag_formatter
@@ -382,13 +367,8 @@ TEST_CASE("clone-custom_formatter", "[pattern_formatter]")
 
     auto expected = spdlog::fmt_lib::format("[logger-name] [custom_output] some message{}", spdlog::details::os::default_eol);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted_1 == expected);
-    REQUIRE(formatted_2 == expected);
-#else
-    REQUIRE(fmt::to_string(formatted_1) == expected);
-    REQUIRE(fmt::to_string(formatted_2) == expected);
-#endif
+    REQUIRE(to_string_view(formatted_1) == expected);
+    REQUIRE(to_string_view(formatted_2) == expected);
 }
 
 //
@@ -410,11 +390,7 @@ TEST_CASE("short filename formatter-1", "[pattern_formatter]")
     spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
     formatter.format(msg, formatted);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted == "myfile.cpp");
-#else
-    REQUIRE(fmt::to_string(formatted) == "myfile.cpp");
-#endif
+    REQUIRE(to_string_view(formatted) == "myfile.cpp");
 }
 
 TEST_CASE("short filename formatter-2", "[pattern_formatter]")
@@ -426,11 +402,7 @@ TEST_CASE("short filename formatter-2", "[pattern_formatter]")
     spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
     formatter.format(msg, formatted);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted == "myfile.cpp:123");
-#else
-    REQUIRE(fmt::to_string(formatted) == "myfile.cpp:123");
-#endif
+    REQUIRE(to_string_view(formatted) == "myfile.cpp:123");
 }
 
 TEST_CASE("short filename formatter-3", "[pattern_formatter]")
@@ -442,11 +414,7 @@ TEST_CASE("short filename formatter-3", "[pattern_formatter]")
     spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
     formatter.format(msg, formatted);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted == " Hello");
-#else
-    REQUIRE(fmt::to_string(formatted) == " Hello");
-#endif
+    REQUIRE(to_string_view(formatted) == " Hello");
 }
 
 TEST_CASE("full filename formatter", "[pattern_formatter]")
@@ -458,11 +426,7 @@ TEST_CASE("full filename formatter", "[pattern_formatter]")
     spdlog::details::log_msg msg(source_loc, "logger-name", spdlog::level::info, "Hello");
     formatter.format(msg, formatted);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted == test_path);
-#else
-    REQUIRE(fmt::to_string(formatted) == test_path);
-#endif
+    REQUIRE(to_string_view(formatted) == test_path);
 }
 
 TEST_CASE("custom flags", "[pattern_formatter]")
@@ -476,11 +440,7 @@ TEST_CASE("custom flags", "[pattern_formatter]")
     formatter->format(msg, formatted);
     auto expected = spdlog::fmt_lib::format("[logger-name] [custom1] [custom2] some message{}", spdlog::details::os::default_eol);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted == expected);
-#else
-    REQUIRE(fmt::to_string(formatted) == expected);
-#endif
+    REQUIRE(to_string_view(formatted) == expected);
 }
 
 TEST_CASE("custom flags-padding", "[pattern_formatter]")
@@ -494,11 +454,7 @@ TEST_CASE("custom flags-padding", "[pattern_formatter]")
     formatter->format(msg, formatted);
     auto expected = spdlog::fmt_lib::format("[logger-name] [custom1] [     custom2] some message{}", spdlog::details::os::default_eol);
 
-#ifdef SPDLOG_USE_STD_FORMAT
-    REQUIRE(formatted == expected);
-#else
-    REQUIRE(fmt::to_string(formatted) == expected);
-#endif
+    REQUIRE(to_string_view(formatted) == expected);
 }
 
 TEST_CASE("custom flags-exception", "[pattern_formatter]")
