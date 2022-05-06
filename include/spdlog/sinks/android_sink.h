@@ -76,16 +76,16 @@ private:
     // There might be liblog versions used, that do not support __android_log_buf_write. So we only compile and link against
     // __android_log_buf_write, if user explicitely provides a non-default log buffer. Otherwise, when using the default log buffer, always
     // log via __android_log_write.
-    template<int ID = BufferID, typename... Args>
-    typename std::enable_if<ID == static_cast<int>(log_id::LOG_ID_MAIN), int>::type android_log(Args... args)
+    template<int ID = BufferID>
+    typename std::enable_if<ID == static_cast<int>(log_id::LOG_ID_MAIN), int>::type android_log(int prio, const char *tag, const char *text)
     {
-        return __android_log_write(std::forward<Args>(args)...);
+        return __android_log_write(prio, tag, text);
     }
 
-    template<int ID = BufferID, typename... Args>
-    typename std::enable_if<ID != static_cast<int>(log_id::LOG_ID_MAIN), int>::type android_log(Args... args)
+    template<int ID = BufferID>
+    typename std::enable_if<ID != static_cast<int>(log_id::LOG_ID_MAIN), int>::type android_log(int prio, const char *tag, const char *text)
     {
-        return __android_log_buf_write(ID, std::forward<Args>(args)...);
+        return __android_log_buf_write(ID, prio, tag, text);
     }
 
     static android_LogPriority convert_to_android_(spdlog::level::level_enum level)
