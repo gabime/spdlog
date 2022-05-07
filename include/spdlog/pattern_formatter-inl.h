@@ -1051,7 +1051,9 @@ SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
     {
         cloned_custom_formatters[it.first] = it.second->clone();
     }
-    return details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_, std::move(cloned_custom_formatters));
+    auto cloned = details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_, std::move(cloned_custom_formatters));
+    cloned->need_localtime(need_localtime_);
+    return cloned;
 }
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
