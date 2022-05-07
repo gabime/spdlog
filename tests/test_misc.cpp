@@ -131,7 +131,7 @@ TEST_CASE("clone async", "[clone]")
     logger->info("Some message 1");
     cloned->info("Some message 2");
 
-    spdlog::details::os::sleep_for_millis(10);
+    spdlog::details::os::sleep_for_millis(100);
 
     REQUIRE(test_sink->lines().size() == 2);
     REQUIRE(test_sink->lines()[0] == "Some message 1");
