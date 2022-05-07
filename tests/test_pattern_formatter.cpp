@@ -475,7 +475,7 @@ TEST_CASE("custom flags-exception", "[pattern_formatter]")
 
 TEST_CASE("override need_localtime", "[pattern_formatter]")
 {
-    auto formatter = std::make_shared<spdlog::pattern_formatter>();
+    auto formatter = std::make_shared<spdlog::pattern_formatter>(spdlog::pattern_time_type::local, "\n");
     formatter->add_flag<custom_test_flag>('t', "time").set_pattern("%t> %v");
 
     {
