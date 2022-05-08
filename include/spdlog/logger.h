@@ -367,7 +367,7 @@ protected:
 #ifdef SPDLOG_USE_STD_FORMAT
             fmt_lib::vformat_to(std::back_inserter(buf), fmt, fmt_lib::make_format_args(std::forward<Args>(args)...));
 #else
-            //seems that fmt::detail::vformat_to(buf, ...) is ~20ns faster than fmt::vformat_to(std::back_inserter(buf),..)
+            // seems that fmt::detail::vformat_to(buf, ...) is ~20ns faster than fmt::vformat_to(std::back_inserter(buf),..)
             fmt::detail::vformat_to(buf, fmt, fmt::make_format_args(std::forward<Args>(args)...));
 #endif
 
@@ -391,11 +391,12 @@ protected:
         {
             // format to wmemory_buffer and convert to utf8
             wmemory_buf_t wbuf;
-#ifdef SPDLOG_USE_STD_FORMAT
-            fmt_lib::vformat_to(std::back_inserter(wbuf), fmt, fmt_lib::make_format_args<fmt_lib::wformat_context>(std::forward<Args>(args)...));
-#else
+#    ifdef SPDLOG_USE_STD_FORMAT
+            fmt_lib::vformat_to(
+                std::back_inserter(wbuf), fmt, fmt_lib::make_format_args<fmt_lib::wformat_context>(std::forward<Args>(args)...));
+#    else
             fmt::detail::vformat_to(wbuf, fmt, fmt::make_format_args<fmt::wformat_context>(std::forward<Args>(args)...));
-#endif
+#    endif
 
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
