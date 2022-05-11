@@ -262,15 +262,16 @@ struct my_type
         : i(i){};
 };
 
-namespace fmt_lib = spdlog::fmt_lib;
+FMTLIB_BEGIN_NAMESPACE
 template<>
-struct fmt_lib::formatter<my_type> : fmt_lib::formatter<std::string>
+struct formatter<my_type> : formatter<std::string>
 {
     auto format(my_type my, format_context &ctx) -> decltype(ctx.out())
     {
-        return fmt_lib::format_to(ctx.out(), "[my_type i={}]", my.i);
+        return format_to(ctx.out(), "[my_type i={}]", my.i);
     }
 };
+FMTLIB_END_NAMESPACE
 
 void user_defined_example()
 {
