@@ -126,13 +126,6 @@ using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using err_handler = std::function<void(const std::string &err_msg)>;
 #ifdef SPDLOG_USE_STD_FORMAT
-#    ifndef FMTLIB_BEGIN_NAMESPACE
-#        define FMTLIB_BEGIN_NAMESPACE \
-           namespace std {
-#        define FMTLIB_END_NAMESPACE \
-           }
-#    endif
-
 namespace fmt_lib = std;
 
 using string_view_t = std::string_view;
@@ -153,16 +146,7 @@ template<typename... Args>
 using wformat_string_t = std::wstring_view;
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) x
-
 #else // use fmt lib instead of std::format
-
-#    ifndef FMTLIB_BEGIN_NAMESPACE
-#        define FMTLIB_BEGIN_NAMESPACE \
-           namespace fmt {
-#        define FMTLIB_END_NAMESPACE \
-           }
-#    endif
-
 namespace fmt_lib = fmt;
 
 using string_view_t = fmt::basic_string_view<char>;
