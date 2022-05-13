@@ -262,15 +262,23 @@ struct my_type
         : i(i){};
 };
 
-namespace fmt_lib = spdlog::fmt_lib;
+
+// Using a namespace alias like fmt_lib is not allowed when extending an existing namespace,
+// but the correct namespace can still be selected with the SPDLOG_USE_STD_FORMAT macro.
+#ifdef SPDLOG_USE_STD_FORMAT
+    namespace std {
+#else
+    namespace fmt {
+#endif
 template<>
-struct fmt_lib::formatter<my_type> : fmt_lib::formatter<std::string>
+struct formatter<my_type> : formatter<std::string>
 {
     auto format(my_type my, format_context &ctx) -> decltype(ctx.out())
     {
-        return fmt_lib::format_to(ctx.out(), "[my_type i={}]", my.i);
+        return format_to(ctx.out(), "[my_type i={}]", my.i);
     }
 };
+}
 
 void user_defined_example()
 {
