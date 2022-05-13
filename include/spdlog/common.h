@@ -307,10 +307,10 @@ struct source_loc
 struct file_event_handlers
 {
     file_event_handlers()
-        : before_open([](spdlog::filename_t) {})
-        , after_open ([](spdlog::filename_t, std::FILE*) {})
-        , before_close([](spdlog::filename_t, std::FILE*) {})
-        , after_close([](spdlog::filename_t) {})
+        : before_open(nullptr)
+        , after_open (nullptr)
+        , before_close(nullptr)
+        , after_close(nullptr)
     {}
 
     std::function<void(const filename_t &filename)> before_open;
