@@ -33,7 +33,7 @@
         {                                                                                                                                  \
             if (location.filename)                                                                                                         \
             {                                                                                                                              \
-                err_handler_(fmt_lib::format("{} [{}({})]", ex.what(), location.filename, location.line));                                 \
+                err_handler_(fmt_lib::format(SPDLOG_FMT_STRING("{} [{}({})]"), ex.what(), location.filename, location.line));              \
             }                                                                                                                              \
             else                                                                                                                           \
             {                                                                                                                              \

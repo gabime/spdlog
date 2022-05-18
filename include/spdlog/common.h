@@ -46,11 +46,13 @@
 
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
 #    define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
+#    define SPDLOG_FMT_STRING(format_string) FMT_STRING(format_string)
 #    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #        include <spdlog/fmt/xchar.h>
 #    endif
 #else
 #    define SPDLOG_FMT_RUNTIME(format_string) format_string
+#    define SPDLOG_FMT_STRING(format_string) format_string
 #endif
 
 // visual studio up to 2013 does not support noexcept nor constexpr
@@ -308,7 +310,7 @@ struct file_event_handlers
 {
     file_event_handlers()
         : before_open(nullptr)
-        , after_open (nullptr)
+        , after_open(nullptr)
         , before_close(nullptr)
         , after_close(nullptr)
     {}
