@@ -298,6 +298,11 @@ if(SPDLOG_INSTALL)
     # ---------------------------------------------------------------------------------------
     # Install pkg-config file
     # ---------------------------------------------------------------------------------------
+    if (IS_ABSOLUTE "${CMAKE_INSTALL_INCLUDEDIR}")
+        set(PKG_CONFIG_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}")
+    else()
+        set(PKG_CONFIG_INCLUDEDIR "\${prefix}/${CMAKE_INSTALL_INCLUDEDIR}")
+    endif()
     if (IS_ABSOLUTE "${CMAKE_INSTALL_LIBDIR}")
         set(PKG_CONFIG_LIBDIR "${CMAKE_INSTALL_LIBDIR}")
     else()
