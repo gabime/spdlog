@@ -13,10 +13,6 @@ struct null_mutex
 {
     void lock() const {}
     void unlock() const {}
-    bool try_lock() const
-    {
-        return true;
-    }
 };
 
 struct null_atomic_int
