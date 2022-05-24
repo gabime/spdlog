@@ -57,6 +57,7 @@ public:
         auto now = log_clock::now();
         auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
         file_helper_.open(filename, truncate_);
+        remove_init_file_ = file_helper_.size() == 0;
         rotation_tp_ = next_rotation_tp_();
 
         if (max_files_ > 0)
@@ -78,10 +79,16 @@ protected:
         bool should_rotate = time >= rotation_tp_;
         if (should_rotate)
         {
+            if (remove_init_file_)
+            {
+                file_helper_.close();
+                details::os::remove(file_helper_.filename());
+            }
             auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(time));
             file_helper_.open(filename, truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
+        remove_init_file_ = false;
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
         file_helper_.write(formatted);
@@ -170,6 +177,7 @@ private:
     bool truncate_;
     uint16_t max_files_;
     details::circular_q<filename_t> filenames_q_;
+    bool remove_init_file_;
 };
 
 using hourly_file_sink_mt = hourly_file_sink<std::mutex>;
