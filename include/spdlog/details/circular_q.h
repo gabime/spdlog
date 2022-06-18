@@ -121,6 +121,11 @@ public:
         return overrun_counter_;
     }
 
+    void reset_overrun_counter()
+    {
+        overrun_counter_ = 0;
+    }
+
 private:
     // copy from other&& and reset it to disabled state
     void copy_moveable(circular_q &&other) SPDLOG_NOEXCEPT

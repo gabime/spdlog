@@ -75,6 +75,11 @@ size_t SPDLOG_INLINE thread_pool::overrun_counter()
     return q_.overrun_counter();
 }
 
+void SPDLOG_INLINE thread_pool::reset_overrun_counter()
+{
+    q_.reset_overrun_counter();
+}
+
 size_t SPDLOG_INLINE thread_pool::queue_size()
 {
     return q_.size();
