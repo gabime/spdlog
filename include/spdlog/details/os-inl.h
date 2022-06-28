@@ -60,6 +60,32 @@
 
 #endif // unix
 
+// set_thread_name
+#if defined(_WIN32) && defined(_MSC_VER)
+#    include <windows.h> // RaiseException
+#endif
+
+#if defined(__linux__)
+#    include <sys/prctl.h> // prctl
+#endif
+
+#if defined(__APPLE__)
+#    include <pthread.h> // pthread_setname_np
+#endif
+
+#if defined(_AIX) || defined(__sun)
+#    include <pthread.h> // pthread_set_name_np, pthread_self
+#endif
+
+#if defined(__DragonFly__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#    include <pthread.h> // pthread_self
+#    include <pthread_np.h> // pthread_set_name_np
+#endif
+
+#if defined(__NetBSD__)
+#    include <pthread.h> // pthread_getname_np, pthread_self
+#endif
+
 #ifndef __has_feature          // Clang - feature checking macros.
 #    define __has_feature(x) 0 // Compatibility with non-clang compilers.
 #endif
@@ -368,6 +394,58 @@ SPDLOG_INLINE size_t thread_id() SPDLOG_NOEXCEPT
 #else // cache thread id in tls
     static thread_local const size_t tid = _thread_id();
     return tid;
+#endif
+}
+
+// Set thread name for different platforms
+SPDLOG_API void set_thread_name(const char *thread_name)
+{
+#if defined(_WIN32) && defined(_MSC_VER)
+    // http://msdn.microsoft.com/en-us/library/xcb2z8hs(VS.90).aspx
+#    pragma pack(push,8)
+    typedef struct tagTHREADNAME_INFO
+    {
+        DWORD dwType; // Must be 0x1000.
+        LPCSTR szName; // Pointer to name (in user addr space).
+        DWORD dwThreadID; // Thread ID (-1=caller thread).
+        DWORD dwFlags; // Reserved for future use, must be zero.
+    } THREADNAME_INFO;
+#    pragma pack(pop)
+    const DWORD MS_VC_EXCEPTION = 0x406D1388;
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = thread_name;
+    info.dwThreadID = -1;
+    info.dwFlags = 0;
+#    pragma warning(push)
+#    pragma warning(disable: 6320 6322)
+    __try{
+        RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER){
+    }
+#    pragma warning(pop)
+#elif defined(__linux__)
+    // https://man7.org/linux/man-pages/man2/prctl.2.html
+    ::prctl(PR_SET_NAME, thread_name);
+#elif defined(__APPLE__)
+    // https://www.manpagez.com/man/3/pthread_setname_np/
+    ::pthread_setname_np(thread_name);
+#elif defined(_AIX) || defined(__sun)
+    // https://www.ibm.com/docs/en/i/7.1?topic=ssw_ibm_i_71/apis/pthread_setname_np.htm
+    // https://docs.oracle.com/cd/E86824_01/html/E54766/pthread-setname-np-3c.html#scrolltoc
+    ::pthread_setname_np(::pthread_self(), thread_name);
+#elif defined(__DragonFly__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+    // https://www.dragonflybsd.org/cgi/web-man?command=pthread_set_name_np&section=3
+    // https://www.freebsd.org/cgi/man.cgi?query=pthread_set_name_np&sektion=3&manpath=FreeBSD+9.0-RELEASE+and+Ports
+    // https://man.openbsd.org/OpenBSD-2.7/pthread_set_name_np
+    ::pthread_set_name_np(::pthread_self(), thread_name);
+#elif defined(__NetBSD__)
+    // https://man.netbsd.org/NetBSD-6.0/pthread_getname_np.3
+    ::pthread_setname_np(::pthread_self(), "%s", const_cast<char*>(thread_name));
+#else
+    // do nothing
+#    warning "set_thread_name is not supported for this platform"
 #endif
 }
 

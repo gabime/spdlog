@@ -8,6 +8,7 @@
 #endif
 
 #include <spdlog/common.h>
+#include <spdlog/details/os.h>
 #include <cassert>
 
 namespace spdlog {
@@ -24,8 +25,10 @@ SPDLOG_INLINE thread_pool::thread_pool(
     }
     for (size_t i = 0; i < threads_n; i++)
     {
-        threads_.emplace_back([this, on_thread_start, on_thread_stop] {
+        threads_.emplace_back([this, on_thread_start, on_thread_stop, i] {
             on_thread_start();
+            std::string thread_name = "spdlog_pool_" + std::to_string(i);
+            os::set_thread_name(thread_name.c_str());
             this->thread_pool::worker_loop_();
             on_thread_stop();
         });

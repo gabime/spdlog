@@ -7,6 +7,8 @@
 #    include <spdlog/details/periodic_worker.h>
 #endif
 
+#include <spdlog/details/os.h>
+
 namespace spdlog {
 namespace details {
 
@@ -19,6 +21,7 @@ SPDLOG_INLINE periodic_worker::periodic_worker(const std::function<void()> &call
     }
 
     worker_thread_ = std::thread([this, callback_fun, interval]() {
+        os::set_thread_name("spdlog_periodic");
         for (;;)
         {
             std::unique_lock<std::mutex> lock(this->mutex_);
