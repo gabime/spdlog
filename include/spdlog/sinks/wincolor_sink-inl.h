@@ -85,10 +85,10 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::flush()
 }
 
 template<typename ConsoleMutex>
-void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_pattern(const std::string &pattern)
+void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_pattern(const std::string &pattern, pattern_time_type time_type)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
+    formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern, time_type));
 }
 
 template<typename ConsoleMutex>

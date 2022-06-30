@@ -74,9 +74,9 @@ protected:
         }
     }
 
-    void set_pattern_(const std::string &pattern) override
+    void set_pattern_(const std::string &pattern, pattern_time_type time_type = pattern_time_type::local) override
     {
-        set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern));
+        set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern, time_type));
     }
 
     void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter) override

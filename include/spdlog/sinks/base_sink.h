@@ -31,7 +31,7 @@ public:
 
     void log(const details::log_msg &msg) final;
     void flush() final;
-    void set_pattern(const std::string &pattern) final;
+    void set_pattern(const std::string &pattern, pattern_time_type time_type = pattern_time_type::local) final;
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) final;
 
 protected:
@@ -41,7 +41,7 @@ protected:
 
     virtual void sink_it_(const details::log_msg &msg) = 0;
     virtual void flush_() = 0;
-    virtual void set_pattern_(const std::string &pattern);
+    virtual void set_pattern_(const std::string &pattern, pattern_time_type time_type);
     virtual void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter);
 };
 } // namespace sinks

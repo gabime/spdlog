@@ -34,7 +34,7 @@ public:
     void set_color(level::level_enum level, std::uint16_t color);
     void log(const details::log_msg &msg) final override;
     void flush() final override;
-    void set_pattern(const std::string &pattern) override final;
+    void set_pattern(const std::string &pattern, pattern_time_type time_type = pattern_time_type::local) override final;
     void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override final;
     void set_color_mode(color_mode mode);
 

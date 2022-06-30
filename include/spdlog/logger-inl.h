@@ -100,8 +100,10 @@ SPDLOG_INLINE void logger::set_formatter(std::unique_ptr<formatter> f)
 
 SPDLOG_INLINE void logger::set_pattern(std::string pattern, pattern_time_type time_type)
 {
-    auto new_formatter = details::make_unique<pattern_formatter>(std::move(pattern), time_type);
-    set_formatter(std::move(new_formatter));
+    for (auto it = sinks_.begin(); it != sinks_.end(); ++it)
+    {
+        (*it)->set_pattern(pattern, time_type);
+    }
 }
 
 // create new backtrace sink and move to it all our child sinks
