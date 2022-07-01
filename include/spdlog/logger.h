@@ -319,6 +319,10 @@ public:
     // each sink will get a separate instance of the formatter object.
     void set_formatter(std::unique_ptr<formatter> f);
 
+    // set formatting for the sinks in this logger.
+    // equivalent to
+    //     set_formatter(make_unique<pattern_formatter>(pattern, time_type))
+    // Note: each sink will get a new instance of a formatter object, replacing the old one.
     void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
     // backtrace support.
