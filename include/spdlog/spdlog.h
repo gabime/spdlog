@@ -103,6 +103,9 @@ SPDLOG_API void drop_all();
 // stop any running threads started by spdlog and clean registry loggers
 SPDLOG_API void shutdown();
 
+// get count of lost log
+SPDLOG_API size_t overrun_counter();
+
 // Automatic registration of loggers when using spdlog::create() or spdlog::create_async
 SPDLOG_API void set_automatic_registration(bool automatic_registration);
 

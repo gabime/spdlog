@@ -15,6 +15,7 @@
 
 namespace spdlog {
 class async_logger;
+enum class async_overflow_policy;
 
 namespace details {
 

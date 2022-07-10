@@ -9,6 +9,7 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/periodic_worker.h>
+#include <spdlog/details/thread_pool.h>
 #include <spdlog/logger.h>
 #include <spdlog/pattern_formatter.h>
 
@@ -254,6 +255,15 @@ SPDLOG_INLINE void registry::shutdown()
         std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
         tp_.reset();
     }
+}
+
+SPDLOG_INLINE size_t registry::overrun_counter()
+{
+    std::lock_guard<std::recursive_mutex> lock(tp_mutex_);
+    if (!tp_) {
+        return 0;
+    }
+    return tp_->overrun_counter();
 }
 
 SPDLOG_INLINE std::recursive_mutex &registry::tp_mutex()

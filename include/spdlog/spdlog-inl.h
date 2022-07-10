@@ -102,6 +102,11 @@ SPDLOG_INLINE void shutdown()
     details::registry::instance().shutdown();
 }
 
+SPDLOG_INLINE size_t overrun_counter()
+{
+  return details::registry::instance().overrun_counter();
+}
+
 SPDLOG_INLINE void set_automatic_registration(bool automatic_registration)
 {
     details::registry::instance().set_automatic_registration(automatic_registration);
