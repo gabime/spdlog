@@ -45,7 +45,7 @@ template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color(level::level_enum level, std::uint16_t color)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    colors_[level] = color;
+    colors_[static_cast<size_t>(level)] = color;
 }
 
 template<typename ConsoleMutex>
@@ -66,7 +66,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
         // before color range
         print_range_(formatted, 0, msg.color_range_start);
         // in color range
-        auto orig_attribs = static_cast<WORD>(set_foreground_color_(colors_[msg.level]));
+        auto orig_attribs = static_cast<WORD>(set_foreground_color_(colors_[static_cast<size_t>(msg.level)]));
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
         // reset to orig colors
         ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), orig_attribs);
