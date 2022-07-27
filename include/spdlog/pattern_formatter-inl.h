@@ -1053,7 +1053,11 @@ SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
     }
     auto cloned = details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_, std::move(cloned_custom_formatters));
     cloned->need_localtime(need_localtime_);
+#if defined(__GNUC__) && __GNUC__ < 5
+    return std::move(cloned);
+#else
     return cloned;
+#endif
 }
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
