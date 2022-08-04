@@ -1,4 +1,4 @@
-// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
+// Copyright(c) 2015-present, Gabi Melman & spdlog and fmtlib contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
@@ -48,6 +48,15 @@ SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) SPDLOG
     return level::off;
 }
 } // namespace level
+
+SPDLOG_INLINE void assert_fail(const char* file, int line, const char* message) {
+  // Use unchecked std::fprintf to avoid triggering another assertion when
+  // writing to stderr fails
+  std::fprintf(stderr, "%s:%d: assertion failed: %s", file, line, message);
+  // Chosen instead of std::abort to satisfy Clang in CUDA mode during device
+  // code pass.
+  std::terminate();
+}
 
 SPDLOG_INLINE spdlog_ex::spdlog_ex(std::string msg)
     : msg_(std::move(msg))

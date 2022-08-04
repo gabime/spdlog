@@ -1,4 +1,4 @@
-// Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
+// Copyright(c) 2015-present, Gabi Melman & and fmtlib contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
@@ -44,30 +44,91 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
-#    define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
-#    define SPDLOG_FMT_STRING(format_string) FMT_STRING(format_string)
-#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-#        include <spdlog/fmt/xchar.h>
+#ifndef SPDLOG_USE_STD_FORMAT
+#    if FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
+#        define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
+#        if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+#            include <spdlog/fmt/xchar.h>
+#        endif
+#    else
+#        define SPDLOG_FMT_RUNTIME(format_string) format_string
 #    endif
-#else
-#    define SPDLOG_FMT_RUNTIME(format_string) format_string
-#    define SPDLOG_FMT_STRING(format_string) format_string
 #endif
 
-// visual studio up to 2013 does not support noexcept nor constexpr
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-#    define SPDLOG_NOEXCEPT _NOEXCEPT
-#    define SPDLOG_CONSTEXPR
-#    define SPDLOG_CONSTEXPR_FUNC
+#ifdef __has_feature
+#  define SPDLOG_HAS_FEATURE(x) __has_feature(x)
 #else
+#  define SPDLOG_HAS_FEATURE(x) 0
+#endif
+
+// clang version definition
+#if defined(__clang__) && !defined(__ibmxl__)
+#  define SPDLOG_CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
+#else
+#  define SPDLOG_CLANG_VERSION 0
+#endif
+
+// gcc version definition
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && \
+    !defined(__NVCOMPILER)
+#  define SPDLOG_GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
+#else
+#  define SPDLOG_GCC_VERSION 0
+#endif
+
+// msvc version definition
+#ifdef _MSC_VER
+#  define SPDLOG_MSC_VERSION _MSC_VER
+#  define SPDLOG_MSC_WARNING(...) __pragma(warning(__VA_ARGS__))
+#else
+#  define SPDLOG_MSC_VERSION 0
+#  define SPDLOG_MSC_WARNING(...)
+#endif
+
+// cpp version definition
+#ifdef _MSVC_LANG
+#  define SPDLOG_CPLUSPLUS _MSVC_LANG
+#else
+#  define SPDLOG_CPLUSPLUS __cplusplus
+#endif
+
+// visual studio up to 2013 and gcc < 5 does not support noexcept nor constexpr
+#if (SPDLOG_HAS_FEATURE(cxx_relaxed_constexpr) || \
+    SPDLOG_MSC_VERSION > 1900 || \
+    SPDLOG_GCC_VERSION >= 500)
+#    define SPDLOG_USE_CONSTEXPR 1
+#else
+#    define SPDLOG_USE_CONSTEXPR 0
+#endif
+
+#if SPDLOG_USE_CONSTEXPR
 #    define SPDLOG_NOEXCEPT noexcept
 #    define SPDLOG_CONSTEXPR constexpr
-#    if __cplusplus >= 201402L
+#    if SPDLOG_CPLUSPLUS >= 201402L
 #        define SPDLOG_CONSTEXPR_FUNC constexpr
 #    else
 #        define SPDLOG_CONSTEXPR_FUNC
 #    endif
+#else
+#    define SPDLOG_NOEXCEPT _NOEXCEPT
+#    define SPDLOG_CONSTEXPR
+#    define SPDLOG_CONSTEXPR_FUNC
+#endif
+
+// Check if constexpr std::char_traits<>::compare,length is supported.
+#if defined(__GLIBCXX__)
+#  if SPDLOG_CPLUSPLUS >= 201703L && defined(_GLIBCXX_RELEASE) && \
+      _GLIBCXX_RELEASE >= 7  // GCC 7+ libstdc++ has _GLIBCXX_RELEASE.
+#    define SPDLOG_CONSTEXPR_CHAR_TRAITS constexpr
+#  endif
+#elif defined(_LIBCPP_VERSION) && SPDLOG_CPLUSPLUS >= 201703L && \
+    _LIBCPP_VERSION >= 4000
+#  define FMT_CONSTEXPR_CHAR_TRAITS constexpr
+#elif SPDLOG_MSC_VERSION >= 1914 && SPDLOG_CPLUSPLUS >= 201703L
+#  define SPDLOG_CONSTEXPR_CHAR_TRAITS constexpr
+#endif
+#ifndef SPDLOG_CONSTEXPR_CHAR_TRAITS
+#  define SPDLOG_CONSTEXPR_CHAR_TRAITS
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -87,6 +148,27 @@
 
 #ifndef SPDLOG_FUNCTION
 #    define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
+#endif
+
+// Suppress "unused variable" warnings with the method described in
+// https://herbsutter.com/2009/10/18/mailbag-shutting-up-compiler-warnings/.
+// (void)var does not work on many Intel compilers.
+template <typename... T> SPDLOG_CONSTEXPR_FUNC void ignore_unused(const T&...) {}
+
+SPDLOG_API void assert_fail(const char* file, int line,
+                                      const char* message);
+
+#ifndef SPDLOG_ASSERT
+#  ifdef NDEBUG
+// SPDLOG_ASSERT is not empty to avoid -Werror=empty-body.
+#    define SPDLOG_ASSERT(condition, message) \
+      ignore_unused((condition), (message))
+#  else
+#    define SPDLOG_ASSERT(condition, message)                                    \
+      ((condition) /* void() fails with -Winvalid-constexpr on clang 4.0.1 */ \
+           ? (void)0                                                          \
+           : ::spdlog::details::assert_fail(__FILE__, __LINE__, (message)))
+#  endif
 #endif
 
 #ifdef SPDLOG_NO_EXCEPTIONS
@@ -147,7 +229,7 @@ using wmemory_buf_t = std::wstring;
 template<typename... Args>
 using wformat_string_t = std::wstring_view;
 #    endif
-#    define SPDLOG_BUF_TO_STRING(x) x
+
 #else // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
 
@@ -175,7 +257,6 @@ using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 template<typename... Args>
 using wformat_string_t = fmt::wformat_string<Args...>;
 #    endif
-#    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
@@ -308,17 +389,16 @@ struct source_loc
 
 struct file_event_handlers
 {
-    file_event_handlers()
-        : before_open(nullptr)
-        , after_open(nullptr)
-        , before_close(nullptr)
-        , after_close(nullptr)
-    {}
-
     std::function<void(const filename_t &filename)> before_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> after_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> before_close;
     std::function<void(const filename_t &filename)> after_close;
+    file_event_handlers()
+        : before_open{nullptr}
+        , after_open{nullptr}
+        , before_close{nullptr}
+        , after_close{nullptr}
+    {}
 };
 
 namespace details {
