@@ -229,7 +229,7 @@ using wmemory_buf_t = std::wstring;
 template<typename... Args>
 using wformat_string_t = std::wstring_view;
 #    endif
-
+#    define SPDLOG_BUF_TO_STRING(x) x
 #else // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
 
