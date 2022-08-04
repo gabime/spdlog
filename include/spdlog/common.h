@@ -52,6 +52,7 @@
 #        endif
 #    else
 #        define SPDLOG_FMT_RUNTIME(format_string) format_string
+#        define SPDLOG_FMT_STRING(format_string) format_string
 #    endif
 #endif
 
