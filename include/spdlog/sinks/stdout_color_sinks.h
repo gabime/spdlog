@@ -3,7 +3,7 @@
 
 #pragma once
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SPDLOG_WINDOWS_USE_ANSICOLOR)
 #    include <spdlog/sinks/wincolor_sink.h>
 #else
 #    include <spdlog/sinks/ansicolor_sink.h>
@@ -13,7 +13,7 @@
 
 namespace spdlog {
 namespace sinks {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(SPDLOG_WINDOWS_USE_ANSICOLOR)
 using stdout_color_sink_mt = wincolor_stdout_sink_mt;
 using stdout_color_sink_st = wincolor_stdout_sink_st;
 using stderr_color_sink_mt = wincolor_stderr_sink_mt;

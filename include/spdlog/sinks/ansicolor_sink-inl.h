@@ -7,6 +7,7 @@
 #    include <spdlog/sinks/ansicolor_sink.h>
 #endif
 
+#include <spdlog/details/color_helper.h>
 #include <spdlog/pattern_formatter.h>
 #include <spdlog/details/os.h>
 
@@ -21,20 +22,20 @@ SPDLOG_INLINE ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, co
 
 {
     set_color_mode(mode);
-    colors_[level::trace] = to_string_(white);
-    colors_[level::debug] = to_string_(cyan);
-    colors_[level::info] = to_string_(green);
-    colors_[level::warn] = to_string_(yellow_bold);
-    colors_[level::err] = to_string_(red_bold);
-    colors_[level::critical] = to_string_(bold_on_red);
-    colors_[level::off] = to_string_(reset);
+    colors_[level::trace] = spdlog::details::parse_style(spdlog::fg(spdlog::terminal_color::white));
+    colors_[level::debug] = spdlog::details::parse_style(spdlog::fg(spdlog::terminal_color::cyan));
+    colors_[level::info] = spdlog::details::parse_style(spdlog::fg(spdlog::terminal_color::green));
+    colors_[level::warn] = spdlog::details::parse_style(spdlog::fg(spdlog::terminal_color::yellow) | spdlog::emphasis(spdlog::emphasis::bold));
+    colors_[level::err] = spdlog::details::parse_style(spdlog::fg(spdlog::terminal_color::red) | spdlog::emphasis(spdlog::emphasis::bold));
+    colors_[level::critical] = spdlog::details::parse_style(spdlog::fg(spdlog::terminal_color::white) | spdlog::bg(spdlog::terminal_color::red) | spdlog::emphasis(spdlog::emphasis::bold));
+    colors_[level::off] = to_string(spdlog::details::reset_color());
 }
 
 template<typename ConsoleMutex>
-SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color(level::level_enum color_level, string_view_t color)
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_style(level::level_enum color_level, spdlog::style style)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    colors_[static_cast<size_t>(color_level)] = to_string_(color);
+    colors_[static_cast<size_t>(color_level)] = spdlog::details::parse_style(style);
 }
 
 template<typename ConsoleMutex>
@@ -54,7 +55,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
         // in color range
         print_ccode_(colors_[static_cast<size_t>(msg.level)]);
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
-        print_ccode_(reset);
+        print_ccode_(spdlog::details::reset_color());
         // after color range
         print_range_(formatted, msg.color_range_end, formatted.size());
     }
