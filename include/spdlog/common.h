@@ -257,6 +257,7 @@ using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 template<typename... Args>
 using wformat_string_t = fmt::wformat_string<Args...>;
 #    endif
+#    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
