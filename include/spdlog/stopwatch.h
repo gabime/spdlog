@@ -4,6 +4,7 @@
 #pragma once
 
 #include <spdlog/fmt/fmt.h>
+#include <chrono>
 
 // Stopwatch support for spdlog  (using std::chrono::steady_clock).
 // Displays elapsed seconds since construction as double.
