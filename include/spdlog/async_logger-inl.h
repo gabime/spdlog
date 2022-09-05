@@ -71,7 +71,7 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
     {
         auto lost_messages = pool_ptr->overrun_counter();
         if (lost_messages > 0) {
-            spdlog::warn("Lost {} messages.", lost_messages);
+            spdlog::debug("Lost {} messages.", lost_messages);
             pool_ptr->reset_overrun_counter();
         }
     }
