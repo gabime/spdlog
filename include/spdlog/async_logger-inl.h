@@ -7,6 +7,7 @@
 #    include <spdlog/async_logger.h>
 #endif
 
+#include <spdlog/spdlog.h>
 #include <spdlog/sinks/sink.h>
 #include <spdlog/details/thread_pool.h>
 
@@ -63,6 +64,15 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
                 sink->log(msg);
             }
             SPDLOG_LOGGER_CATCH(msg.source)
+        }
+    }
+
+    if (auto pool_ptr = thread_pool_.lock())
+    {
+        auto lost_messages = pool_ptr->overrun_counter();
+        if (lost_messages > 0) {
+            spdlog::warn("Lost {} messages.", lost_messages);
+            pool_ptr->reset_overrun_counter();
         }
     }
 
