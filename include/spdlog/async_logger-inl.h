@@ -67,18 +67,18 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
         }
     }
 
+    if (should_flush_(msg))
+    {
+        backend_flush_();
+    }
+
     if (auto pool_ptr = thread_pool_.lock())
     {
         auto lost_messages = pool_ptr->overrun_counter();
         if (lost_messages > 0) {
-            spdlog::debug("Lost {} messages.", lost_messages);
+            err_handler_(fmt::format("Lost {} messages.", lost_messages));
             pool_ptr->reset_overrun_counter();
         }
-    }
-
-    if (should_flush_(msg))
-    {
-        backend_flush_();
     }
 }
 

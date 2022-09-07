@@ -40,7 +40,6 @@ TEST_CASE("discard policy ", "[async]")
         logger->info("Hello message");
     }
     REQUIRE(test_sink->msg_counter() < messages);
-    REQUIRE(tp->overrun_counter() > 0);
 }
 
 TEST_CASE("discard policy using factory ", "[async]")
