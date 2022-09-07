@@ -61,6 +61,9 @@ option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
 # precompiled headers option
 option(SPDLOG_ENABLE_PCH "Build static or shared library using precompiled header to speed up compilation time" OFF)
 
+# build position independent code
+option(SPDLOG_BUILD_PIC "Build position independent code (-fPIC)" OFF)
+
 # example options
 option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
@@ -130,6 +133,10 @@ if(SPDLOG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
     message(STATUS "Enabled clang-tidy")
+endif()
+
+if(SPDLOG_BUILD_PIC)
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
 find_package(Threads REQUIRED)
