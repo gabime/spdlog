@@ -7,7 +7,6 @@
 #    include <spdlog/async_logger.h>
 #endif
 
-#include <spdlog/spdlog.h>
 #include <spdlog/sinks/sink.h>
 #include <spdlog/details/thread_pool.h>
 
