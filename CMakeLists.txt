@@ -213,7 +213,9 @@ if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
         target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
     endif()
 
-    set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
+    if(NOT SPDLOG_BUILD_SHARED)
+        set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
+    endif()
 endif()
 
 # ---------------------------------------------------------------------------------------
