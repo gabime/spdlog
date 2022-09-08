@@ -117,6 +117,13 @@ bool SPDLOG_INLINE thread_pool::process_next_msg_()
     switch (incoming_async_msg.msg_type)
     {
     case async_msg_type::log: {
+        auto lost_messages = overrun_counter();
+        if (lost_messages > 0)
+        {
+            incoming_async_msg.worker_ptr->backend_sink_it_(
+                details::log_msg{incoming_async_msg.worker_ptr->name(), level::debug, fmt::format("Lost {} messages", lost_messages)});
+            reset_overrun_counter();
+        }
         incoming_async_msg.worker_ptr->backend_sink_it_(incoming_async_msg);
         return true;
     }
