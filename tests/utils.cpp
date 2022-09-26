@@ -1,7 +1,7 @@
 #include "includes.h"
 
 #ifdef _WIN32
-#    include <Windows.h>
+#    include <windows.h>
 #else
 #    include <sys/types.h>
 #    include <dirent.h>
