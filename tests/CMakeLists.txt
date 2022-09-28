@@ -57,6 +57,11 @@ function(spdlog_prepare_test test_target spdlog_lib)
     endif()
     add_test(NAME ${test_target} COMMAND ${test_target})
     set_tests_properties(${test_target} PROPERTIES RUN_SERIAL ON)
+
+    # Workaround GCC 12 false positive
+    if( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND "${CMAKE_CXX_COMPILER_VERSION}" MATCHES "^12\..*")
+        target_compile_options(${test_target} PRIVATE "-Wno-maybe-uninitialized")
+    endif()
 endfunction()
 
 # The compiled library tests
