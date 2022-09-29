@@ -15,7 +15,14 @@
 #                define FMT_HEADER_ONLY
 #            endif
 #        endif
+#        if __cplusplus >= 202002L && defined(__clang__)
+#            pragma clang diagnostic push
+#            pragma clang diagnostic ignored "-Wdeprecated" // Workaround for Clang C++20; remove once fmt >= 9.x
+#        endif
 #        include <spdlog/fmt/bundled/chrono.h>
+#        if __cplusplus >= 202002L && defined(__clang__)
+#            pragma clang diagnostic pop
+#        endif
 #    else
 #        include <fmt/chrono.h>
 #    endif
