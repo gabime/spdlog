@@ -107,3 +107,137 @@ TEST_CASE("rotating_file_logger3", "[rotating_logger]]")
     spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
     REQUIRE_THROWS_AS(spdlog::rotating_logger_mt("logger", basename, max_size, 0), spdlog::spdlog_ex);
 }
+
+
+class RotationFixture
+{
+public:
+    spdlog::filename_t file0 = SPDLOG_FILENAME_T(ROTATING_LOG);
+    spdlog::filename_t file1 = SPDLOG_FILENAME_T(ROTATING_LOG ".1");
+    spdlog::filename_t file2 = SPDLOG_FILENAME_T(ROTATING_LOG ".2");
+    spdlog::filename_t file3 = SPDLOG_FILENAME_T(ROTATING_LOG ".3");
+    spdlog::filename_t file4 = SPDLOG_FILENAME_T(ROTATING_LOG ".4");
+
+    void ensure_file_exists(const spdlog::filename_t& logfile)
+    {
+        std::ofstream os(logfile);
+        os << "[1900-01-00 00:00:00.000] [off] " << logfile << std::endl;
+    }
+
+    void require_file_not_moved(const std::string& target)
+    {
+        REQUIRE(file_contents(target).find(target) != std::string::npos);
+    }
+
+    void require_file_contents(const std::string& expected, const std::string& filename)
+    {
+        REQUIRE(file_contents(filename).find(expected) != std::string::npos);
+    }
+
+    void require_rotated(const std::string& src, const std::string& target)
+    {
+        REQUIRE(file_contents(target).find(src) != std::string::npos);
+    }
+};
+
+TEST_CASE_METHOD(RotationFixture, "rotating_file_logger deletes oldest", "[rotating_logger]]")
+{
+    prepare_logdir();
+    spdlog::details::os::create_dir("test_logs");
+    std::size_t max_size = 50;
+    std::size_t max_files = 4;
+
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+
+    ensure_file_exists(file0);
+    ensure_file_exists(file1);
+    ensure_file_exists(file2);
+    ensure_file_exists(file3);
+    ensure_file_exists(file4);
+
+    auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, max_files, true);
+    logger->info("Test message");
+    logger->flush();
+
+    require_file_contents("Test message", file0);
+    require_rotated(file0, file1);
+    require_rotated(file1, file2);
+    require_rotated(file2, file3);
+    require_rotated(file3, file4);
+}
+
+TEST_CASE_METHOD(RotationFixture, "rotating_file_logger rotates to next", "[rotating_logger]]")
+{
+    prepare_logdir();
+    spdlog::details::os::create_dir("test_logs");
+    std::size_t max_size = 50;
+    std::size_t max_files = 4;
+
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+
+    ensure_file_exists(file0);
+    ensure_file_exists(file1);
+    ensure_file_exists(file2);
+
+    auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, max_files, true);
+    logger->info("Test message");
+    logger->flush();
+
+    require_file_contents("Test message", file0);
+    require_rotated(file0, file1);
+    require_rotated(file1, file2);
+    require_rotated(file2, file3);
+    REQUIRE(!spdlog::details::os::path_exists(file4));
+}
+
+TEST_CASE_METHOD(RotationFixture, "rotating_file_logger recovery", "[rotating_logger]]")
+{
+    prepare_logdir();
+    spdlog::details::os::create_dir("test_logs");
+    std::size_t max_size = 50;
+    std::size_t max_files = 4;
+
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+
+    ensure_file_exists(file0);
+    // gap for file1
+    ensure_file_exists(file2);
+    ensure_file_exists(file3);
+    ensure_file_exists(file4);
+
+    auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, max_files, true);
+    logger->info("Test message");
+    logger->flush();
+
+    require_file_contents("Test message", file0);
+    require_rotated(file0, file1);
+    require_file_not_moved(file2);
+    require_file_not_moved(file3);
+    require_file_not_moved(file4);
+}
+
+TEST_CASE_METHOD(RotationFixture, "rotating_file_logger recovery can leave gap", "[rotating_logger]]")
+{
+    prepare_logdir();
+    spdlog::details::os::create_dir("test_logs");
+    std::size_t max_size = 50;
+    std::size_t max_files = 4;
+
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+
+    ensure_file_exists(file0);
+    // gap for file1
+    ensure_file_exists(file2);
+    // gap for file3
+    ensure_file_exists(file4);
+
+    auto logger = spdlog::rotating_logger_mt("logger", basename, max_size, max_files, true);
+    logger->info("Test message");
+    logger->flush();
+
+    require_file_contents("Test message", file0);
+    require_rotated(file0, file1);
+    REQUIRE(!spdlog::details::os::path_exists(file2));
+    require_rotated(file2, file3);
+    require_file_not_moved(file4);
+}
