@@ -38,10 +38,10 @@ private:
     // log.2.txt -> log.3.txt
     // log.3.txt -> delete
     void rotate_();
+    void recover_();
 
-    // delete the target if exists, and rename the src file  to target
-    // return true on success, false otherwise.
-    bool rename_file_(const filename_t &src_filename, const filename_t &target_filename);
+    // throw exception if rename fails a second time
+    void rename_file_(const filename_t &src_filename, const filename_t &target_filename);
 
     filename_t base_filename_;
     std::size_t max_size_;

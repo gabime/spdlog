@@ -112,40 +112,86 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
     using details::os::path_exists;
 
     file_helper_.close();
+    recover_();
+    filename_t first = calc_filename(base_filename_, 0);
+    if (!path_exists(first))
+    {
+        // if recovery found a gap and moved file(s)
+        // then there is space and no rotation
+        // is required.
+        file_helper_.reopen(true);
+        return;
+    }
+
+    filename_t last = calc_filename(base_filename_, max_files_);
+    if (path_exists(last))
+    {
+        (void)details::os::remove(last);
+    }
+
     for (auto i = max_files_; i > 0; --i)
     {
         filename_t src = calc_filename(base_filename_, i - 1);
-        if (!path_exists(src))
+        filename_t target = calc_filename(base_filename_, i);
+        if (!path_exists(src) || path_exists(target))
         {
             continue;
         }
-        filename_t target = calc_filename(base_filename_, i);
 
-        if (!rename_file_(src, target))
-        {
-            // if failed try again after a small delay.
-            // this is a workaround to a windows issue, where very high rotation
-            // rates can cause the rename to fail with permission denied (because of antivirus?).
-            details::os::sleep_for_millis(100);
-            if (!rename_file_(src, target))
-            {
-                file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
-                current_size_ = 0;
-                throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
-            }
-        }
+        rename_file_(src, target);
     }
     file_helper_.reopen(true);
 }
 
-// delete the target if exists, and rename the src file  to target
-// return true on success, false otherwise.
 template<typename Mutex>
-SPDLOG_INLINE bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src_filename, const filename_t &target_filename)
+SPDLOG_INLINE void rotating_file_sink<Mutex>::recover_()
 {
-    // try to delete the target file in case it already exists.
-    (void)details::os::remove(target_filename);
-    return details::os::rename(src_filename, target_filename) == 0;
+    using details::os::filename_to_str;
+    using details::os::path_exists;
+
+    size_t oldest = 0;
+    // find the oldest file first
+    for (auto i = max_files_; i > 0; --i)
+    {
+        filename_t filename = calc_filename(base_filename_, i);
+        if (path_exists(filename))
+        {
+            oldest = i;
+            break;
+        }
+    }
+
+    // in case of gaps, move files in a single pass
+    // if gaps still exist after first pass, then
+    // those will be dealt with next time recover runs.
+    for (auto i = oldest; i > 0; --i)
+    {
+        filename_t src = calc_filename(base_filename_, i - 1);
+        filename_t target = calc_filename(base_filename_, i);
+        if (path_exists(src) && !path_exists(target))
+        {
+            rename_file_(src, target);
+        }
+    }
+}
+
+// throw exception if rename fails a second time
+template<typename Mutex>
+SPDLOG_INLINE void rotating_file_sink<Mutex>::rename_file_(const filename_t &src_filename, const filename_t &target_filename)
+{
+    if (details::os::rename(src_filename, target_filename) != 0)
+    {
+        // if failed try again after a small delay.
+        // this is a workaround to a windows issue, where very high rotation
+        // rates can cause the rename to fail with permission denied (because of antivirus?).
+        details::os::sleep_for_millis(100);
+        if (details::os::rename(src_filename, target_filename) != 0)
+        {
+            file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
+            current_size_ = 0;
+            throw_spdlog_ex("rotating_file_sink: failed renaming " + details::os::filename_to_str(src_filename) + " to " + details::os::filename_to_str(target_filename), errno);
+        }
+    }
 }
 
 } // namespace sinks
