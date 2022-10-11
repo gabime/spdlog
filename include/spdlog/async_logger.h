@@ -78,8 +78,9 @@ protected:
     void backend_sink_it_(const details::log_msg &incoming_log_msg);
     void backend_flush_();
 
-    void on_log_dispatched_();
-    void on_logged_();
+    void on_log_dispatch_();
+    void on_log_write_();
+    void on_log_dump_();
 
 private:
     std::weak_ptr<details::thread_pool> thread_pool_;

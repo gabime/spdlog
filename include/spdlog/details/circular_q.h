@@ -46,18 +46,25 @@ public:
     }
 
     // push back, overrun (oldest) item if no room left
-    void push_back(T &&item)
+    void push_back(T &&item, void(*callback)(T&& element) = nullptr)
     {
         if (max_items_ > 0)
         {
-            v_[tail_] = std::move(item);
-            tail_ = (tail_ + 1) % max_items_;
-
-            if (tail_ == head_) // overrun last item if full
+            auto next_tail = (tail_ + 1) % max_items_;
+            if (next_tail == head_)
             {
+                if (callback != nullptr)
+                {
+                    callback(std::move(v_[tail_]));
+                }
+
+                // overrun last item if full
                 head_ = (head_ + 1) % max_items_;
                 ++overrun_counter_;
             }
+
+            v_[tail_] = std::move(item);
+            tail_ = next_tail;
         }
     }
 

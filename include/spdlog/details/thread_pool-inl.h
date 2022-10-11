@@ -93,7 +93,12 @@ void SPDLOG_INLINE thread_pool::post_async_msg_(async_msg &&new_msg, async_overf
     }
     else
     {
-        q_.enqueue_nowait(std::move(new_msg));
+        auto overrun_callback = [](item_type&& item)
+        {
+            item.worker_ptr->on_log_dump_();
+        };
+
+        q_.enqueue_nowait(std::move(new_msg), overrun_callback);
     }
 }
 

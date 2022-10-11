@@ -79,7 +79,7 @@ SPDLOG_INLINE void spdlog::async_logger::sink_it_(const details::log_msg &msg)
 {
     if (auto pool_ptr = thread_pool_.lock())
     {
-        on_log_dispatched_();
+        on_log_dispatch_();
         pool_ptr->post_log(shared_from_this(), msg, overflow_policy_);
     }
     else
@@ -93,7 +93,7 @@ SPDLOG_INLINE void spdlog::async_logger::flush_()
 {
     if (auto pool_ptr = thread_pool_.lock())
     {
-        on_log_dispatched_();
+        on_log_dispatch_();
         pool_ptr->post_flush(shared_from_this(), overflow_policy_);
 
         /// this is to provide blocking functionality through logger(not async_logger) interface 
@@ -113,7 +113,7 @@ SPDLOG_INLINE void spdlog::async_logger::flush_()
 //
 SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg &msg)
 {
-    on_logged_();
+    on_log_write_();
 
     for (auto& sink : sinks_)
     {
@@ -135,7 +135,7 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
 
 SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
 {
-    on_logged_();
+    on_log_write_();
 
     for (auto& sink : sinks_)
     {
@@ -147,25 +147,30 @@ SPDLOG_INLINE void spdlog::async_logger::backend_flush_()
     }
 }
 
-SPDLOG_INLINE void spdlog::async_logger::on_log_dispatched_()
+SPDLOG_INLINE void spdlog::async_logger::on_log_dispatch_()
 {
     ++pending_log_count_;
 }
 
-SPDLOG_INLINE void spdlog::async_logger::on_logged_()
+SPDLOG_INLINE void spdlog::async_logger::on_log_write_()
 {
     if (pending_log_count_ == 0)
     {
         throw_spdlog_ex("all dispatched messages by logger "
-            + name_ + " have already been logged, but on_message_logged() was invoked");
+            + name_ + " have already been logged, but on_log_write_() was invoked");
     }
 
-    pending_log_count_--;
+    --pending_log_count_;
 
     if (pending_log_count_ == 0)
     {
         wait_condition_.notify_all();
     }
+}
+
+SPDLOG_INLINE void spdlog::async_logger::on_log_dump_()
+{
+    on_log_write_();
 }
 
 SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name)
