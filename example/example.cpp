@@ -161,6 +161,10 @@ void async_example()
     {
         async_file->info("Async message #{}", i);
     }
+    async_file->flush();
+
+    auto async_logger = static_cast<spdlog::async_logger*>(&(*async_file));
+    async_logger->wait();
 }
 
 // Log binary data as hex.
