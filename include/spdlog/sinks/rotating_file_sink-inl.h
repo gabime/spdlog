@@ -25,10 +25,11 @@ namespace sinks {
 
 template<typename Mutex>
 SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
-    filename_t base_filename, std::size_t max_size, std::size_t max_files, bool rotate_on_open, const file_event_handlers &event_handlers)
+    filename_t base_filename, std::size_t max_size, std::size_t max_files, rotate_file_mode rmode, bool rotate_on_open, const file_event_handlers &event_handlers)
     : base_filename_(std::move(base_filename))
     , max_size_(max_size)
     , max_files_(max_files)
+    , rotate_mode_(rmode)
     , file_helper_{event_handlers}
 {
     if (max_size == 0)
@@ -100,17 +101,30 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::flush_()
     file_helper_.flush();
 }
 
-// Rotate files:
+
+template<typename Mutex>
+SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
+{
+    switch (rotate_mode_) {
+    case(rotate_file_mode::asc): {
+        rotate_asc_();
+    } break;
+    default: {
+        rotate_desc_();
+    } break;
+    }
+}
+
+// Rotate files by desc:
 // log.txt -> log.1.txt
 // log.1.txt -> log.2.txt
 // log.2.txt -> log.3.txt
 // log.3.txt -> delete
 template<typename Mutex>
-SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
+SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_desc_()
 {
     using details::os::filename_to_str;
     using details::os::path_exists;
-
     file_helper_.close();
     for (auto i = max_files_; i > 0; --i)
     {
@@ -120,23 +134,49 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_()
             continue;
         }
         filename_t target = calc_filename(base_filename_, i);
-
-        if (!rename_file_(src, target))
-        {
-            // if failed try again after a small delay.
-            // this is a workaround to a windows issue, where very high rotation
-            // rates can cause the rename to fail with permission denied (because of antivirus?).
-            details::os::sleep_for_millis(100);
-            if (!rename_file_(src, target))
-            {
-                file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
-                current_size_ = 0;
-                throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " + filename_to_str(target), errno);
-            }
-        }
+        rename_file_(src, target);
     }
     file_helper_.reopen(true);
 }
+
+// Rotate files by asc:
+// log.1.txt -> delete
+// log.2.txt -> log.1.txt
+// log.3.txt -> log.2.txt
+// log.txt -> log.3.txt
+template<typename Mutex>
+SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_asc_() 
+{
+    using details::os::filename_to_str;
+    using details::os::path_exists;
+    file_helper_.close();
+    filename_t src, target, last_file = calc_filename(base_filename_, max_files_);
+    bool reach_max = path_exists(last_file);
+    size_t next_index = 0;
+    for (size_t i = 1; i < max_files_; ++i)
+    {
+        if (reach_max)
+        {
+            src = calc_filename(base_filename_, i + 1);
+            target = calc_filename(base_filename_, i);
+            rename_file_(src, target);
+            next_index = i + 1;
+        }
+        else {
+            target = calc_filename(base_filename_, i);
+            if (!path_exists(target))
+            {
+                next_index = i;
+                break;
+            }
+            next_index = max_files_;
+        }
+    }
+    target = calc_filename(base_filename_, next_index);
+    rename_file_(base_filename_, target);
+    file_helper_.reopen(true);
+}
+
 
 // delete the target if exists, and rename the src file  to target
 // return true on success, false otherwise.
@@ -145,7 +185,21 @@ SPDLOG_INLINE bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src
 {
     // try to delete the target file in case it already exists.
     (void)details::os::remove(target_filename);
-    return details::os::rename(src_filename, target_filename) == 0;
+    if (details::os::rename(src_filename, target_filename))
+    {
+        // if failed try again after a small delay.
+        // this is a workaround to a windows issue, where very high rotation
+        // rates can cause the rename to fail with permission denied (because of antivirus?).
+        details::os::sleep_for_millis(100);
+        if (details::os::rename(src_filename, target_filename))
+        {
+            file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
+            current_size_ = 0;
+            throw_spdlog_ex("rotating_file_sink: failed renaming " + details::os::filename_to_str(src_filename) + " to " + details::os::filename_to_str(target_filename), errno);
+            return false;
+        }
+    }
+    return true;
 }
 
 } // namespace sinks
