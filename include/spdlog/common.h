@@ -270,6 +270,16 @@ enum class pattern_time_type
     local, // log localtime
     utc    // log utc
 };
+        
+//
+// rotate file mode used by rotate sink
+//
+enum class rotate_file_mode
+{
+    desc,
+    asc,
+};
+
 
 //
 // Log exception
