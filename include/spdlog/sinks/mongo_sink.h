@@ -56,7 +56,8 @@ protected:
 
         if (client_ != nullptr)
         {
-            auto doc = document{} << "timestamp" << bsoncxx::types::b_date(msg.time) << "level" << level::to_string_view(msg.level).data()
+            auto doc = document{} << "timestamp" << bsoncxx::types::b_date(msg.time)
+                                  << "level" << level::to_string_view(msg.level).data() << "level_num" << msg.level
                                   << "message" << std::string(msg.payload.begin(), msg.payload.end()) << "logger_name"
                                   << std::string(msg.logger_name.begin(), msg.logger_name.end()) << "thread_id"
                                   << static_cast<int>(msg.thread_id) << finalize;
