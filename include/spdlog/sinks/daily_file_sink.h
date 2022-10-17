@@ -78,7 +78,14 @@ struct daily_filename_format_calculator
         // generate fmt datetime format string, e.g. {:%Y-%m-%d}.
         filename_t fmt_filename = fmt::format(SPDLOG_FMT_STRING(SPDLOG_FILENAME_T("{{:{}}}")), filename);
 #    if defined(_MSC_VER) && defined(SPDLOG_WCHAR_FILENAMES) // for some reason msvc doesn't allow fmt::runtime(..) with wchar here
-        return fmt::format(fmt_filename, now_tm);
+#       if FMT_VERSION >= 90101
+            // fmt 9.1.x added compile-time checks for wide strings
+            // so when compiled with MSVC and this or later version of fmt
+            // here should use 'SPDLOG_FMT_RUNTIME' to enable 'fmt::runtime(...)' for wchar to avoid compile error
+            return fmt::format(SPDLOG_FMT_RUNTIME(fmt_filename), now_tm);
+#       else
+            return fmt::format(fmt_filename, now_tm);
+#       endif
 #    else
         return fmt::format(SPDLOG_FMT_RUNTIME(fmt_filename), now_tm);
 #    endif
