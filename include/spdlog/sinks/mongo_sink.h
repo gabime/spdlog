@@ -20,6 +20,7 @@
 #include <bsoncxx/view_or_value.hpp>
 
 #include <mongocxx/client.hpp>
+#include <mongocxx/exception/logic_error.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
 
@@ -29,10 +30,23 @@ template<typename Mutex>
 class mongo_sink : public base_sink<Mutex>
 {
 public:
-    mongo_sink(const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
+    mongo_sink(const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017",
+        bool create_instance = true)
     {
         try
         {
+            if (create_instance && !instance_)
+            {
+                try
+                {
+                    instance_ = std::make_shared<mongocxx::instance>();
+                }
+                catch (const mongocxx::logic_error&)
+                {
+                    // A MongoCXX instance already exists, so this object doesn't need to own it
+                    instance_ = nullptr;
+                }
+            }
             client_ = spdlog::details::make_unique<mongocxx::client>(mongocxx::uri{uri});
             db_name_ = db_name;
             coll_name_ = collection_name;
@@ -68,13 +82,13 @@ protected:
     void flush_() override {}
 
 private:
-    static mongocxx::instance instance_;
+    static std::shared_ptr<mongocxx::instance> instance_;
     std::string db_name_;
     std::string coll_name_;
     std::unique_ptr<mongocxx::client> client_ = nullptr;
 };
 template<>
-mongocxx::instance mongo_sink<std::mutex>::instance_{};
+std::shared_ptr<mongocxx::instance> mongo_sink<std::mutex>::instance_{};
 
 #include "spdlog/details/null_mutex.h"
 #include <mutex>
