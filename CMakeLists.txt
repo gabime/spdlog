@@ -329,6 +329,10 @@ if(SPDLOG_INSTALL)
     # ---------------------------------------------------------------------------------------
     # Install CMake config files
     # ---------------------------------------------------------------------------------------
+    export(
+      TARGETS spdlog
+      NAMESPACE spdlog::
+      FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
     install(EXPORT spdlog DESTINATION ${export_dest_dir} NAMESPACE spdlog:: FILE ${config_targets_file})
 
     include(CMakePackageConfigHelpers)
