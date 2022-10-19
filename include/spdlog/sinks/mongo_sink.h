@@ -31,8 +31,7 @@ class mongo_sink : public base_sink<Mutex>
 {
 public:
     mongo_sink(const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
-    try : mongo_sink(std::make_shared<mongocxx::instance>(), db_name, collection_name, uri) {}
-    catch (...) {} // Re-throws exception
+        : mongo_sink(std::make_shared<mongocxx::instance>(), db_name, collection_name, uri) {}
 
     mongo_sink(const std::shared_ptr<mongocxx::instance> &instance, const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
         : instance_(instance)
