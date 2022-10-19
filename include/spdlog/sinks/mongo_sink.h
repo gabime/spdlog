@@ -20,7 +20,7 @@
 #include <bsoncxx/view_or_value.hpp>
 
 #include <mongocxx/client.hpp>
-#include <mongocxx/exception/logic_error.hpp>
+#include <mongocxx/exception/exception.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
 
@@ -31,10 +31,16 @@ class mongo_sink : public base_sink<Mutex>
 {
 public:
     mongo_sink(const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
-        : mongo_sink(std::make_shared<mongocxx::instance>(), db_name, collection_name, uri) {}
+    try
+        : mongo_sink(std::make_shared<mongocxx::instance>(), db_name, collection_name, uri)
+    {}
+    catch (const mongocxx::exception &e)
+    {
+        throw_spdlog_ex(fmt_lib::format("Error opening database: {}", e.what()));
+    }
 
-    mongo_sink(const std::shared_ptr<mongocxx::instance> &instance, const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
-        : instance_(instance)
+    mongo_sink(std::shared_ptr<mongocxx::instance> instance, const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
+        : instance_(std::move(instance))
         , db_name_(db_name)
         , coll_name_(collection_name)
     {
@@ -42,9 +48,9 @@ public:
         {
             client_ = spdlog::details::make_unique<mongocxx::client>(mongocxx::uri{uri});
         }
-        catch (const std::exception&)
+        catch (const std::exception &e)
         {
-            throw spdlog_ex("Error opening database");
+            throw_spdlog_ex(fmt_lib::format("Error opening database: {}", e.what()));
         }
     }
 
