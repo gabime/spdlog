@@ -30,16 +30,26 @@ class mongo_sink : public base_sink<Mutex>
 {
 public:
     mongo_sink(const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
+    try : mongo_sink(std::make_shared<mongocxx::instance>(), db_name, collection_name, uri)
+    {}
+    catch (const std::exception &e)
+    {
+        throw_spdlog_ex(fmt_lib::format("Error opening database: {}", e.what()));
+    }
+
+    mongo_sink(std::shared_ptr<mongocxx::instance> instance, const std::string &db_name, const std::string &collection_name,
+        const std::string &uri = "mongodb://localhost:27017")
+        : instance_(std::move(instance))
+        , db_name_(db_name)
+        , coll_name_(collection_name)
     {
         try
         {
             client_ = spdlog::details::make_unique<mongocxx::client>(mongocxx::uri{uri});
-            db_name_ = db_name;
-            coll_name_ = collection_name;
         }
-        catch (const std::exception)
+        catch (const std::exception &e)
         {
-            throw spdlog_ex("Error opening database");
+            throw_spdlog_ex(fmt_lib::format("Error opening database: {}", e.what()));
         }
     }
 
@@ -57,8 +67,8 @@ protected:
         if (client_ != nullptr)
         {
             auto doc = document{} << "timestamp" << bsoncxx::types::b_date(msg.time) << "level" << level::to_string_view(msg.level).data()
-                                  << "message" << std::string(msg.payload.begin(), msg.payload.end()) << "logger_name"
-                                  << std::string(msg.logger_name.begin(), msg.logger_name.end()) << "thread_id"
+                                  << "level_num" << msg.level << "message" << std::string(msg.payload.begin(), msg.payload.end())
+                                  << "logger_name" << std::string(msg.logger_name.begin(), msg.logger_name.end()) << "thread_id"
                                   << static_cast<int>(msg.thread_id) << finalize;
             client_->database(db_name_).collection(coll_name_).insert_one(doc.view());
         }
@@ -67,13 +77,11 @@ protected:
     void flush_() override {}
 
 private:
-    static mongocxx::instance instance_;
+    std::shared_ptr<mongocxx::instance> instance_;
     std::string db_name_;
     std::string coll_name_;
     std::unique_ptr<mongocxx::client> client_ = nullptr;
 };
-template<>
-mongocxx::instance mongo_sink<std::mutex>::instance_{};
 
 #include "spdlog/details/null_mutex.h"
 #include <mutex>
