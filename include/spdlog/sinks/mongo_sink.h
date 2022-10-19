@@ -20,7 +20,6 @@
 #include <bsoncxx/view_or_value.hpp>
 
 #include <mongocxx/client.hpp>
-#include <mongocxx/exception/exception.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
 
@@ -33,7 +32,7 @@ public:
     mongo_sink(const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
     try : mongo_sink(std::make_shared<mongocxx::instance>(), db_name, collection_name, uri)
     {}
-    catch (const mongocxx::exception &e)
+    catch (const std::exception &e)
     {
         throw_spdlog_ex(fmt_lib::format("Error opening database: {}", e.what()));
     }
