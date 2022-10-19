@@ -30,26 +30,18 @@ template<typename Mutex>
 class mongo_sink : public base_sink<Mutex>
 {
 public:
-    mongo_sink(const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017",
-        bool create_instance = true)
+    mongo_sink(const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
+    try : mongo_sink(std::make_shared<mongocxx::instance>(), db_name, collection_name, uri) {}
+    catch (...) {} // Re-throws exception
+
+    mongo_sink(const std::shared_ptr<mongocxx::instance> &instance, const std::string &db_name, const std::string &collection_name, const std::string &uri = "mongodb://localhost:27017")
+        : instance_(instance)
+        , db_name_(db_name)
+        , coll_name_(collection_name)
     {
         try
         {
-            if (create_instance && !instance_)
-            {
-                try
-                {
-                    instance_ = std::make_shared<mongocxx::instance>();
-                }
-                catch (const mongocxx::logic_error&)
-                {
-                    // A MongoCXX instance already exists, so this object doesn't need to own it
-                    instance_ = nullptr;
-                }
-            }
             client_ = spdlog::details::make_unique<mongocxx::client>(mongocxx::uri{uri});
-            db_name_ = db_name;
-            coll_name_ = collection_name;
         }
         catch (const std::exception&)
         {
@@ -82,13 +74,11 @@ protected:
     void flush_() override {}
 
 private:
-    static std::shared_ptr<mongocxx::instance> instance_;
+    std::shared_ptr<mongocxx::instance> instance_;
     std::string db_name_;
     std::string coll_name_;
     std::unique_ptr<mongocxx::client> client_ = nullptr;
 };
-template<>
-std::shared_ptr<mongocxx::instance> mongo_sink<std::mutex>::instance_{};
 
 #include "spdlog/details/null_mutex.h"
 #include <mutex>
