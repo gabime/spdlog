@@ -10,7 +10,6 @@
 
 #include <algorithm>  // std::max
 #include <limits>     // std::numeric_limits
-#include <ostream>
 
 #include "format.h"
 
@@ -561,7 +560,7 @@ inline auto vsprintf(
     basic_format_args<basic_printf_context_t<type_identity_t<Char>>> args)
     -> std::basic_string<Char> {
   basic_memory_buffer<Char> buffer;
-  vprintf(buffer, to_string_view(fmt), args);
+  vprintf(buffer, detail::to_string_view(fmt), args);
   return to_string(buffer);
 }
 
@@ -578,7 +577,8 @@ template <typename S, typename... T,
           typename Char = enable_if_t<detail::is_string<S>::value, char_t<S>>>
 inline auto sprintf(const S& fmt, const T&... args) -> std::basic_string<Char> {
   using context = basic_printf_context_t<Char>;
-  return vsprintf(to_string_view(fmt), fmt::make_format_args<context>(args...));
+  return vsprintf(detail::to_string_view(fmt),
+                  fmt::make_format_args<context>(args...));
 }
 
 template <typename S, typename Char = char_t<S>>
@@ -587,7 +587,7 @@ inline auto vfprintf(
     basic_format_args<basic_printf_context_t<type_identity_t<Char>>> args)
     -> int {
   basic_memory_buffer<Char> buffer;
-  vprintf(buffer, to_string_view(fmt), args);
+  vprintf(buffer, detail::to_string_view(fmt), args);
   size_t size = buffer.size();
   return std::fwrite(buffer.data(), sizeof(Char), size, f) < size
              ? -1
@@ -606,7 +606,7 @@ inline auto vfprintf(
 template <typename S, typename... T, typename Char = char_t<S>>
 inline auto fprintf(std::FILE* f, const S& fmt, const T&... args) -> int {
   using context = basic_printf_context_t<Char>;
-  return vfprintf(f, to_string_view(fmt),
+  return vfprintf(f, detail::to_string_view(fmt),
                   fmt::make_format_args<context>(args...));
 }
 
@@ -615,7 +615,7 @@ inline auto vprintf(
     const S& fmt,
     basic_format_args<basic_printf_context_t<type_identity_t<Char>>> args)
     -> int {
-  return vfprintf(stdout, to_string_view(fmt), args);
+  return vfprintf(stdout, detail::to_string_view(fmt), args);
 }
 
 /**
@@ -630,25 +630,8 @@ inline auto vprintf(
 template <typename S, typename... T, FMT_ENABLE_IF(detail::is_string<S>::value)>
 inline auto printf(const S& fmt, const T&... args) -> int {
   return vprintf(
-      to_string_view(fmt),
+      detail::to_string_view(fmt),
       fmt::make_format_args<basic_printf_context_t<char_t<S>>>(args...));
-}
-
-template <typename S, typename Char = char_t<S>>
-FMT_DEPRECATED auto vfprintf(
-    std::basic_ostream<Char>& os, const S& fmt,
-    basic_format_args<basic_printf_context_t<type_identity_t<Char>>> args)
-    -> int {
-  basic_memory_buffer<Char> buffer;
-  vprintf(buffer, to_string_view(fmt), args);
-  os.write(buffer.data(), static_cast<std::streamsize>(buffer.size()));
-  return static_cast<int>(buffer.size());
-}
-template <typename S, typename... T, typename Char = char_t<S>>
-FMT_DEPRECATED auto fprintf(std::basic_ostream<Char>& os, const S& fmt,
-                            const T&... args) -> int {
-  return vfprintf(os, to_string_view(fmt),
-                  fmt::make_format_args<basic_printf_context_t<Char>>(args...));
 }
 
 FMT_MODULE_EXPORT_END

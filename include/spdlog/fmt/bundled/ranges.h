@@ -55,7 +55,7 @@ template <typename T> class is_std_string_like {
   template <typename> static void check(...);
 
  public:
-  static FMT_CONSTEXPR_DECL const bool value =
+  static constexpr const bool value =
       is_string<T>::value ||
       std::is_convertible<T, std_string_view<char>>::value ||
       !std::is_void<decltype(check<T>(nullptr))>::value;
@@ -70,9 +70,9 @@ template <typename T> class is_map {
 
  public:
 #ifdef FMT_FORMAT_MAP_AS_LIST
-  static FMT_CONSTEXPR_DECL const bool value = false;
+  static constexpr const bool value = false;
 #else
-  static FMT_CONSTEXPR_DECL const bool value =
+  static constexpr const bool value =
       !std::is_void<decltype(check<T>(nullptr))>::value;
 #endif
 };
@@ -83,9 +83,9 @@ template <typename T> class is_set {
 
  public:
 #ifdef FMT_FORMAT_SET_AS_LIST
-  static FMT_CONSTEXPR_DECL const bool value = false;
+  static constexpr const bool value = false;
 #else
-  static FMT_CONSTEXPR_DECL const bool value =
+  static constexpr const bool value =
       !std::is_void<decltype(check<T>(nullptr))>::value && !is_map<T>::value;
 #endif
 };
@@ -94,7 +94,7 @@ template <typename... Ts> struct conditional_helper {};
 
 template <typename T, typename _ = void> struct is_range_ : std::false_type {};
 
-#if !FMT_MSC_VER || FMT_MSC_VER > 1800
+#if !FMT_MSC_VERSION || FMT_MSC_VERSION > 1800
 
 #  define FMT_DECLTYPE_RETURN(val)  \
     ->decltype(val) { return val; } \
@@ -174,12 +174,12 @@ template <typename T> class is_tuple_like_ {
   template <typename> static void check(...);
 
  public:
-  static FMT_CONSTEXPR_DECL const bool value =
+  static constexpr const bool value =
       !std::is_void<decltype(check<T>(nullptr))>::value;
 };
 
 // Check for integer_sequence
-#if defined(__cpp_lib_integer_sequence) || FMT_MSC_VER >= 1900
+#if defined(__cpp_lib_integer_sequence) || FMT_MSC_VERSION >= 1900
 template <typename T, T... N>
 using integer_sequence = std::integer_sequence<T, N...>;
 template <size_t... N> using index_sequence = std::index_sequence<N...>;
@@ -202,8 +202,33 @@ template <size_t N>
 using make_index_sequence = make_integer_sequence<size_t, N>;
 #endif
 
+template <typename T>
+using tuple_index_sequence = make_index_sequence<std::tuple_size<T>::value>;
+
+template <typename T, typename C, bool = is_tuple_like_<T>::value>
+class is_tuple_formattable_ {
+ public:
+  static constexpr const bool value = false;
+};
+template <typename T, typename C> class is_tuple_formattable_<T, C, true> {
+  template <std::size_t... I>
+  static std::true_type check2(index_sequence<I...>,
+                               integer_sequence<bool, (I == I)...>);
+  static std::false_type check2(...);
+  template <std::size_t... I>
+  static decltype(check2(
+      index_sequence<I...>{},
+      integer_sequence<
+          bool, (is_formattable<typename std::tuple_element<I, T>::type,
+                                C>::value)...>{})) check(index_sequence<I...>);
+
+ public:
+  static constexpr const bool value =
+      decltype(check(tuple_index_sequence<T>{}))::value;
+};
+
 template <class Tuple, class F, size_t... Is>
-void for_each(index_sequence<Is...>, Tuple&& tup, F&& f) FMT_NOEXCEPT {
+void for_each(index_sequence<Is...>, Tuple&& tup, F&& f) noexcept {
   using std::get;
   // using free function get<I>(T) now.
   const int _[] = {0, ((void)f(get<Is>(tup)), 0)...};
@@ -221,9 +246,36 @@ template <class Tuple, class F> void for_each(Tuple&& tup, F&& f) {
   for_each(indexes, std::forward<Tuple>(tup), std::forward<F>(f));
 }
 
+#if FMT_MSC_VERSION && FMT_MSC_VERSION < 1920
+// Older MSVC doesn't get the reference type correctly for arrays.
+template <typename R> struct range_reference_type_impl {
+  using type = decltype(*detail::range_begin(std::declval<R&>()));
+};
+
+template <typename T, std::size_t N> struct range_reference_type_impl<T[N]> {
+  using type = T&;
+};
+
+template <typename T>
+using range_reference_type = typename range_reference_type_impl<T>::type;
+#else
 template <typename Range>
-using value_type =
-    remove_cvref_t<decltype(*detail::range_begin(std::declval<Range>()))>;
+using range_reference_type =
+    decltype(*detail::range_begin(std::declval<Range&>()));
+#endif
+
+// We don't use the Range's value_type for anything, but we do need the Range's
+// reference type, with cv-ref stripped.
+template <typename Range>
+using uncvref_type = remove_cvref_t<range_reference_type<Range>>;
+
+template <typename Range>
+using uncvref_first_type =
+    remove_cvref_t<decltype(std::declval<range_reference_type<Range>>().first)>;
+
+template <typename Range>
+using uncvref_second_type = remove_cvref_t<
+    decltype(std::declval<range_reference_type<Range>>().second)>;
 
 template <typename OutputIt> OutputIt write_delimiter(OutputIt out) {
   *out++ = ',';
@@ -231,286 +283,9 @@ template <typename OutputIt> OutputIt write_delimiter(OutputIt out) {
   return out;
 }
 
-struct singleton {
-  unsigned char upper;
-  unsigned char lower_count;
-};
-
-inline auto is_printable(uint16_t x, const singleton* singletons,
-                         size_t singletons_size,
-                         const unsigned char* singleton_lowers,
-                         const unsigned char* normal, size_t normal_size)
-    -> bool {
-  auto upper = x >> 8;
-  auto lower_start = 0;
-  for (size_t i = 0; i < singletons_size; ++i) {
-    auto s = singletons[i];
-    auto lower_end = lower_start + s.lower_count;
-    if (upper < s.upper) break;
-    if (upper == s.upper) {
-      for (auto j = lower_start; j < lower_end; ++j) {
-        if (singleton_lowers[j] == (x & 0xff)) return false;
-      }
-    }
-    lower_start = lower_end;
-  }
-
-  auto xsigned = static_cast<int>(x);
-  auto current = true;
-  for (size_t i = 0; i < normal_size; ++i) {
-    auto v = static_cast<int>(normal[i]);
-    auto len = (v & 0x80) != 0 ? (v & 0x7f) << 8 | normal[++i] : v;
-    xsigned -= len;
-    if (xsigned < 0) break;
-    current = !current;
-  }
-  return current;
-}
-
-// Returns true iff the code point cp is printable.
-// This code is generated by support/printable.py.
-inline auto is_printable(uint32_t cp) -> bool {
-  static constexpr singleton singletons0[] = {
-      {0x00, 1},  {0x03, 5},  {0x05, 6},  {0x06, 3},  {0x07, 6},  {0x08, 8},
-      {0x09, 17}, {0x0a, 28}, {0x0b, 25}, {0x0c, 20}, {0x0d, 16}, {0x0e, 13},
-      {0x0f, 4},  {0x10, 3},  {0x12, 18}, {0x13, 9},  {0x16, 1},  {0x17, 5},
-      {0x18, 2},  {0x19, 3},  {0x1a, 7},  {0x1c, 2},  {0x1d, 1},  {0x1f, 22},
-      {0x20, 3},  {0x2b, 3},  {0x2c, 2},  {0x2d, 11}, {0x2e, 1},  {0x30, 3},
-      {0x31, 2},  {0x32, 1},  {0xa7, 2},  {0xa9, 2},  {0xaa, 4},  {0xab, 8},
-      {0xfa, 2},  {0xfb, 5},  {0xfd, 4},  {0xfe, 3},  {0xff, 9},
-  };
-  static constexpr unsigned char singletons0_lower[] = {
-      0xad, 0x78, 0x79, 0x8b, 0x8d, 0xa2, 0x30, 0x57, 0x58, 0x8b, 0x8c, 0x90,
-      0x1c, 0x1d, 0xdd, 0x0e, 0x0f, 0x4b, 0x4c, 0xfb, 0xfc, 0x2e, 0x2f, 0x3f,
-      0x5c, 0x5d, 0x5f, 0xb5, 0xe2, 0x84, 0x8d, 0x8e, 0x91, 0x92, 0xa9, 0xb1,
-      0xba, 0xbb, 0xc5, 0xc6, 0xc9, 0xca, 0xde, 0xe4, 0xe5, 0xff, 0x00, 0x04,
-      0x11, 0x12, 0x29, 0x31, 0x34, 0x37, 0x3a, 0x3b, 0x3d, 0x49, 0x4a, 0x5d,
-      0x84, 0x8e, 0x92, 0xa9, 0xb1, 0xb4, 0xba, 0xbb, 0xc6, 0xca, 0xce, 0xcf,
-      0xe4, 0xe5, 0x00, 0x04, 0x0d, 0x0e, 0x11, 0x12, 0x29, 0x31, 0x34, 0x3a,
-      0x3b, 0x45, 0x46, 0x49, 0x4a, 0x5e, 0x64, 0x65, 0x84, 0x91, 0x9b, 0x9d,
-      0xc9, 0xce, 0xcf, 0x0d, 0x11, 0x29, 0x45, 0x49, 0x57, 0x64, 0x65, 0x8d,
-      0x91, 0xa9, 0xb4, 0xba, 0xbb, 0xc5, 0xc9, 0xdf, 0xe4, 0xe5, 0xf0, 0x0d,
-      0x11, 0x45, 0x49, 0x64, 0x65, 0x80, 0x84, 0xb2, 0xbc, 0xbe, 0xbf, 0xd5,
-      0xd7, 0xf0, 0xf1, 0x83, 0x85, 0x8b, 0xa4, 0xa6, 0xbe, 0xbf, 0xc5, 0xc7,
-      0xce, 0xcf, 0xda, 0xdb, 0x48, 0x98, 0xbd, 0xcd, 0xc6, 0xce, 0xcf, 0x49,
-      0x4e, 0x4f, 0x57, 0x59, 0x5e, 0x5f, 0x89, 0x8e, 0x8f, 0xb1, 0xb6, 0xb7,
-      0xbf, 0xc1, 0xc6, 0xc7, 0xd7, 0x11, 0x16, 0x17, 0x5b, 0x5c, 0xf6, 0xf7,
-      0xfe, 0xff, 0x80, 0x0d, 0x6d, 0x71, 0xde, 0xdf, 0x0e, 0x0f, 0x1f, 0x6e,
-      0x6f, 0x1c, 0x1d, 0x5f, 0x7d, 0x7e, 0xae, 0xaf, 0xbb, 0xbc, 0xfa, 0x16,
-      0x17, 0x1e, 0x1f, 0x46, 0x47, 0x4e, 0x4f, 0x58, 0x5a, 0x5c, 0x5e, 0x7e,
-      0x7f, 0xb5, 0xc5, 0xd4, 0xd5, 0xdc, 0xf0, 0xf1, 0xf5, 0x72, 0x73, 0x8f,
-      0x74, 0x75, 0x96, 0x2f, 0x5f, 0x26, 0x2e, 0x2f, 0xa7, 0xaf, 0xb7, 0xbf,
-      0xc7, 0xcf, 0xd7, 0xdf, 0x9a, 0x40, 0x97, 0x98, 0x30, 0x8f, 0x1f, 0xc0,
-      0xc1, 0xce, 0xff, 0x4e, 0x4f, 0x5a, 0x5b, 0x07, 0x08, 0x0f, 0x10, 0x27,
-      0x2f, 0xee, 0xef, 0x6e, 0x6f, 0x37, 0x3d, 0x3f, 0x42, 0x45, 0x90, 0x91,
-      0xfe, 0xff, 0x53, 0x67, 0x75, 0xc8, 0xc9, 0xd0, 0xd1, 0xd8, 0xd9, 0xe7,
-      0xfe, 0xff,
-  };
-  static constexpr singleton singletons1[] = {
-      {0x00, 6},  {0x01, 1}, {0x03, 1},  {0x04, 2}, {0x08, 8},  {0x09, 2},
-      {0x0a, 5},  {0x0b, 2}, {0x0e, 4},  {0x10, 1}, {0x11, 2},  {0x12, 5},
-      {0x13, 17}, {0x14, 1}, {0x15, 2},  {0x17, 2}, {0x19, 13}, {0x1c, 5},
-      {0x1d, 8},  {0x24, 1}, {0x6a, 3},  {0x6b, 2}, {0xbc, 2},  {0xd1, 2},
-      {0xd4, 12}, {0xd5, 9}, {0xd6, 2},  {0xd7, 2}, {0xda, 1},  {0xe0, 5},
-      {0xe1, 2},  {0xe8, 2}, {0xee, 32}, {0xf0, 4}, {0xf8, 2},  {0xf9, 2},
-      {0xfa, 2},  {0xfb, 1},
-  };
-  static constexpr unsigned char singletons1_lower[] = {
-      0x0c, 0x27, 0x3b, 0x3e, 0x4e, 0x4f, 0x8f, 0x9e, 0x9e, 0x9f, 0x06, 0x07,
-      0x09, 0x36, 0x3d, 0x3e, 0x56, 0xf3, 0xd0, 0xd1, 0x04, 0x14, 0x18, 0x36,
-      0x37, 0x56, 0x57, 0x7f, 0xaa, 0xae, 0xaf, 0xbd, 0x35, 0xe0, 0x12, 0x87,
-      0x89, 0x8e, 0x9e, 0x04, 0x0d, 0x0e, 0x11, 0x12, 0x29, 0x31, 0x34, 0x3a,
-      0x45, 0x46, 0x49, 0x4a, 0x4e, 0x4f, 0x64, 0x65, 0x5c, 0xb6, 0xb7, 0x1b,
-      0x1c, 0x07, 0x08, 0x0a, 0x0b, 0x14, 0x17, 0x36, 0x39, 0x3a, 0xa8, 0xa9,
-      0xd8, 0xd9, 0x09, 0x37, 0x90, 0x91, 0xa8, 0x07, 0x0a, 0x3b, 0x3e, 0x66,
-      0x69, 0x8f, 0x92, 0x6f, 0x5f, 0xee, 0xef, 0x5a, 0x62, 0x9a, 0x9b, 0x27,
-      0x28, 0x55, 0x9d, 0xa0, 0xa1, 0xa3, 0xa4, 0xa7, 0xa8, 0xad, 0xba, 0xbc,
-      0xc4, 0x06, 0x0b, 0x0c, 0x15, 0x1d, 0x3a, 0x3f, 0x45, 0x51, 0xa6, 0xa7,
-      0xcc, 0xcd, 0xa0, 0x07, 0x19, 0x1a, 0x22, 0x25, 0x3e, 0x3f, 0xc5, 0xc6,
-      0x04, 0x20, 0x23, 0x25, 0x26, 0x28, 0x33, 0x38, 0x3a, 0x48, 0x4a, 0x4c,
-      0x50, 0x53, 0x55, 0x56, 0x58, 0x5a, 0x5c, 0x5e, 0x60, 0x63, 0x65, 0x66,
-      0x6b, 0x73, 0x78, 0x7d, 0x7f, 0x8a, 0xa4, 0xaa, 0xaf, 0xb0, 0xc0, 0xd0,
-      0xae, 0xaf, 0x79, 0xcc, 0x6e, 0x6f, 0x93,
-  };
-  static constexpr unsigned char normal0[] = {
-      0x00, 0x20, 0x5f, 0x22, 0x82, 0xdf, 0x04, 0x82, 0x44, 0x08, 0x1b, 0x04,
-      0x06, 0x11, 0x81, 0xac, 0x0e, 0x80, 0xab, 0x35, 0x28, 0x0b, 0x80, 0xe0,
-      0x03, 0x19, 0x08, 0x01, 0x04, 0x2f, 0x04, 0x34, 0x04, 0x07, 0x03, 0x01,
-      0x07, 0x06, 0x07, 0x11, 0x0a, 0x50, 0x0f, 0x12, 0x07, 0x55, 0x07, 0x03,
-      0x04, 0x1c, 0x0a, 0x09, 0x03, 0x08, 0x03, 0x07, 0x03, 0x02, 0x03, 0x03,
-      0x03, 0x0c, 0x04, 0x05, 0x03, 0x0b, 0x06, 0x01, 0x0e, 0x15, 0x05, 0x3a,
-      0x03, 0x11, 0x07, 0x06, 0x05, 0x10, 0x07, 0x57, 0x07, 0x02, 0x07, 0x15,
-      0x0d, 0x50, 0x04, 0x43, 0x03, 0x2d, 0x03, 0x01, 0x04, 0x11, 0x06, 0x0f,
-      0x0c, 0x3a, 0x04, 0x1d, 0x25, 0x5f, 0x20, 0x6d, 0x04, 0x6a, 0x25, 0x80,
-      0xc8, 0x05, 0x82, 0xb0, 0x03, 0x1a, 0x06, 0x82, 0xfd, 0x03, 0x59, 0x07,
-      0x15, 0x0b, 0x17, 0x09, 0x14, 0x0c, 0x14, 0x0c, 0x6a, 0x06, 0x0a, 0x06,
-      0x1a, 0x06, 0x59, 0x07, 0x2b, 0x05, 0x46, 0x0a, 0x2c, 0x04, 0x0c, 0x04,
-      0x01, 0x03, 0x31, 0x0b, 0x2c, 0x04, 0x1a, 0x06, 0x0b, 0x03, 0x80, 0xac,
-      0x06, 0x0a, 0x06, 0x21, 0x3f, 0x4c, 0x04, 0x2d, 0x03, 0x74, 0x08, 0x3c,
-      0x03, 0x0f, 0x03, 0x3c, 0x07, 0x38, 0x08, 0x2b, 0x05, 0x82, 0xff, 0x11,
-      0x18, 0x08, 0x2f, 0x11, 0x2d, 0x03, 0x20, 0x10, 0x21, 0x0f, 0x80, 0x8c,
-      0x04, 0x82, 0x97, 0x19, 0x0b, 0x15, 0x88, 0x94, 0x05, 0x2f, 0x05, 0x3b,
-      0x07, 0x02, 0x0e, 0x18, 0x09, 0x80, 0xb3, 0x2d, 0x74, 0x0c, 0x80, 0xd6,
-      0x1a, 0x0c, 0x05, 0x80, 0xff, 0x05, 0x80, 0xdf, 0x0c, 0xee, 0x0d, 0x03,
-      0x84, 0x8d, 0x03, 0x37, 0x09, 0x81, 0x5c, 0x14, 0x80, 0xb8, 0x08, 0x80,
-      0xcb, 0x2a, 0x38, 0x03, 0x0a, 0x06, 0x38, 0x08, 0x46, 0x08, 0x0c, 0x06,
-      0x74, 0x0b, 0x1e, 0x03, 0x5a, 0x04, 0x59, 0x09, 0x80, 0x83, 0x18, 0x1c,
-      0x0a, 0x16, 0x09, 0x4c, 0x04, 0x80, 0x8a, 0x06, 0xab, 0xa4, 0x0c, 0x17,
-      0x04, 0x31, 0xa1, 0x04, 0x81, 0xda, 0x26, 0x07, 0x0c, 0x05, 0x05, 0x80,
-      0xa5, 0x11, 0x81, 0x6d, 0x10, 0x78, 0x28, 0x2a, 0x06, 0x4c, 0x04, 0x80,
-      0x8d, 0x04, 0x80, 0xbe, 0x03, 0x1b, 0x03, 0x0f, 0x0d,
-  };
-  static constexpr unsigned char normal1[] = {
-      0x5e, 0x22, 0x7b, 0x05, 0x03, 0x04, 0x2d, 0x03, 0x66, 0x03, 0x01, 0x2f,
-      0x2e, 0x80, 0x82, 0x1d, 0x03, 0x31, 0x0f, 0x1c, 0x04, 0x24, 0x09, 0x1e,
-      0x05, 0x2b, 0x05, 0x44, 0x04, 0x0e, 0x2a, 0x80, 0xaa, 0x06, 0x24, 0x04,
-      0x24, 0x04, 0x28, 0x08, 0x34, 0x0b, 0x01, 0x80, 0x90, 0x81, 0x37, 0x09,
-      0x16, 0x0a, 0x08, 0x80, 0x98, 0x39, 0x03, 0x63, 0x08, 0x09, 0x30, 0x16,
-      0x05, 0x21, 0x03, 0x1b, 0x05, 0x01, 0x40, 0x38, 0x04, 0x4b, 0x05, 0x2f,
-      0x04, 0x0a, 0x07, 0x09, 0x07, 0x40, 0x20, 0x27, 0x04, 0x0c, 0x09, 0x36,
-      0x03, 0x3a, 0x05, 0x1a, 0x07, 0x04, 0x0c, 0x07, 0x50, 0x49, 0x37, 0x33,
-      0x0d, 0x33, 0x07, 0x2e, 0x08, 0x0a, 0x81, 0x26, 0x52, 0x4e, 0x28, 0x08,
-      0x2a, 0x56, 0x1c, 0x14, 0x17, 0x09, 0x4e, 0x04, 0x1e, 0x0f, 0x43, 0x0e,
-      0x19, 0x07, 0x0a, 0x06, 0x48, 0x08, 0x27, 0x09, 0x75, 0x0b, 0x3f, 0x41,
-      0x2a, 0x06, 0x3b, 0x05, 0x0a, 0x06, 0x51, 0x06, 0x01, 0x05, 0x10, 0x03,
-      0x05, 0x80, 0x8b, 0x62, 0x1e, 0x48, 0x08, 0x0a, 0x80, 0xa6, 0x5e, 0x22,
-      0x45, 0x0b, 0x0a, 0x06, 0x0d, 0x13, 0x39, 0x07, 0x0a, 0x36, 0x2c, 0x04,
-      0x10, 0x80, 0xc0, 0x3c, 0x64, 0x53, 0x0c, 0x48, 0x09, 0x0a, 0x46, 0x45,
-      0x1b, 0x48, 0x08, 0x53, 0x1d, 0x39, 0x81, 0x07, 0x46, 0x0a, 0x1d, 0x03,
-      0x47, 0x49, 0x37, 0x03, 0x0e, 0x08, 0x0a, 0x06, 0x39, 0x07, 0x0a, 0x81,
-      0x36, 0x19, 0x80, 0xb7, 0x01, 0x0f, 0x32, 0x0d, 0x83, 0x9b, 0x66, 0x75,
-      0x0b, 0x80, 0xc4, 0x8a, 0xbc, 0x84, 0x2f, 0x8f, 0xd1, 0x82, 0x47, 0xa1,
-      0xb9, 0x82, 0x39, 0x07, 0x2a, 0x04, 0x02, 0x60, 0x26, 0x0a, 0x46, 0x0a,
-      0x28, 0x05, 0x13, 0x82, 0xb0, 0x5b, 0x65, 0x4b, 0x04, 0x39, 0x07, 0x11,
-      0x40, 0x05, 0x0b, 0x02, 0x0e, 0x97, 0xf8, 0x08, 0x84, 0xd6, 0x2a, 0x09,
-      0xa2, 0xf7, 0x81, 0x1f, 0x31, 0x03, 0x11, 0x04, 0x08, 0x81, 0x8c, 0x89,
-      0x04, 0x6b, 0x05, 0x0d, 0x03, 0x09, 0x07, 0x10, 0x93, 0x60, 0x80, 0xf6,
-      0x0a, 0x73, 0x08, 0x6e, 0x17, 0x46, 0x80, 0x9a, 0x14, 0x0c, 0x57, 0x09,
-      0x19, 0x80, 0x87, 0x81, 0x47, 0x03, 0x85, 0x42, 0x0f, 0x15, 0x85, 0x50,
-      0x2b, 0x80, 0xd5, 0x2d, 0x03, 0x1a, 0x04, 0x02, 0x81, 0x70, 0x3a, 0x05,
-      0x01, 0x85, 0x00, 0x80, 0xd7, 0x29, 0x4c, 0x04, 0x0a, 0x04, 0x02, 0x83,
-      0x11, 0x44, 0x4c, 0x3d, 0x80, 0xc2, 0x3c, 0x06, 0x01, 0x04, 0x55, 0x05,
-      0x1b, 0x34, 0x02, 0x81, 0x0e, 0x2c, 0x04, 0x64, 0x0c, 0x56, 0x0a, 0x80,
-      0xae, 0x38, 0x1d, 0x0d, 0x2c, 0x04, 0x09, 0x07, 0x02, 0x0e, 0x06, 0x80,
-      0x9a, 0x83, 0xd8, 0x08, 0x0d, 0x03, 0x0d, 0x03, 0x74, 0x0c, 0x59, 0x07,
-      0x0c, 0x14, 0x0c, 0x04, 0x38, 0x08, 0x0a, 0x06, 0x28, 0x08, 0x22, 0x4e,
-      0x81, 0x54, 0x0c, 0x15, 0x03, 0x03, 0x05, 0x07, 0x09, 0x19, 0x07, 0x07,
-      0x09, 0x03, 0x0d, 0x07, 0x29, 0x80, 0xcb, 0x25, 0x0a, 0x84, 0x06,
-  };
-  auto lower = static_cast<uint16_t>(cp);
-  if (cp < 0x10000) {
-    return is_printable(lower, singletons0,
-                        sizeof(singletons0) / sizeof(*singletons0),
-                        singletons0_lower, normal0, sizeof(normal0));
-  }
-  if (cp < 0x20000) {
-    return is_printable(lower, singletons1,
-                        sizeof(singletons1) / sizeof(*singletons1),
-                        singletons1_lower, normal1, sizeof(normal1));
-  }
-  if (0x2a6de <= cp && cp < 0x2a700) return false;
-  if (0x2b735 <= cp && cp < 0x2b740) return false;
-  if (0x2b81e <= cp && cp < 0x2b820) return false;
-  if (0x2cea2 <= cp && cp < 0x2ceb0) return false;
-  if (0x2ebe1 <= cp && cp < 0x2f800) return false;
-  if (0x2fa1e <= cp && cp < 0x30000) return false;
-  if (0x3134b <= cp && cp < 0xe0100) return false;
-  if (0xe01f0 <= cp && cp < 0x110000) return false;
-  return cp < 0x110000;
-}
-
-inline auto needs_escape(uint32_t cp) -> bool {
-  return cp < 0x20 || cp == 0x7f || cp == '"' || cp == '\\' ||
-         !is_printable(cp);
-}
-
-template <typename Char> struct find_escape_result {
-  const Char* begin;
-  const Char* end;
-  uint32_t cp;
-};
-
-template <typename Char>
-auto find_escape(const Char* begin, const Char* end)
-    -> find_escape_result<Char> {
-  for (; begin != end; ++begin) {
-    auto cp = static_cast<typename std::make_unsigned<Char>::type>(*begin);
-    if (sizeof(Char) == 1 && cp >= 0x80) continue;
-    if (needs_escape(cp)) return {begin, begin + 1, cp};
-  }
-  return {begin, nullptr, 0};
-}
-
-inline auto find_escape(const char* begin, const char* end)
-    -> find_escape_result<char> {
-  if (!is_utf8()) return find_escape<char>(begin, end);
-  auto result = find_escape_result<char>{end, nullptr, 0};
-  for_each_codepoint(string_view(begin, to_unsigned(end - begin)),
-                     [&](uint32_t cp, string_view sv) {
-                       if (needs_escape(cp)) {
-                         result = {sv.begin(), sv.end(), cp};
-                         return false;
-                       }
-                       return true;
-                     });
-  return result;
-}
-
 template <typename Char, typename OutputIt>
 auto write_range_entry(OutputIt out, basic_string_view<Char> str) -> OutputIt {
-  *out++ = '"';
-  auto begin = str.begin(), end = str.end();
-  do {
-    auto escape = find_escape(begin, end);
-    out = copy_str<Char>(begin, escape.begin, out);
-    begin = escape.end;
-    if (!begin) break;
-    auto c = static_cast<Char>(escape.cp);
-    switch (escape.cp) {
-    case '\n':
-      *out++ = '\\';
-      c = 'n';
-      break;
-    case '\r':
-      *out++ = '\\';
-      c = 'r';
-      break;
-    case '\t':
-      *out++ = '\\';
-      c = 't';
-      break;
-    case '"':
-      FMT_FALLTHROUGH;
-    case '\\':
-      *out++ = '\\';
-      break;
-    default:
-      if (is_utf8()) {
-        if (escape.cp < 0x100) {
-          out = format_to(out, "\\x{:02x}", escape.cp);
-          continue;
-        }
-        if (escape.cp < 0x10000) {
-          out = format_to(out, "\\u{:04x}", escape.cp);
-          continue;
-        }
-        if (escape.cp < 0x110000) {
-          out = format_to(out, "\\U{:08x}", escape.cp);
-          continue;
-        }
-      }
-      for (Char escape_char : basic_string_view<Char>(
-               escape.begin, to_unsigned(escape.end - escape.begin))) {
-        out = format_to(
-            out, "\\x{:02x}",
-            static_cast<typename std::make_unsigned<Char>::type>(escape_char));
-      }
-      continue;
-    }
-    *out++ = c;
-  } while (begin != end);
-  *out++ = '"';
-  return out;
+  return write_escaped_string(out, str);
 }
 
 template <typename Char, typename OutputIt, typename T,
@@ -523,10 +298,7 @@ inline auto write_range_entry(OutputIt out, const T& str) -> OutputIt {
 template <typename Char, typename OutputIt, typename Arg,
           FMT_ENABLE_IF(std::is_same<Arg, Char>::value)>
 OutputIt write_range_entry(OutputIt out, const Arg v) {
-  *out++ = '\'';
-  *out++ = v;
-  *out++ = '\'';
-  return out;
+  return write_escaped_char(out, v);
 }
 
 template <
@@ -540,128 +312,285 @@ OutputIt write_range_entry(OutputIt out, const Arg& v) {
 }  // namespace detail
 
 template <typename T> struct is_tuple_like {
-  static FMT_CONSTEXPR_DECL const bool value =
+  static constexpr const bool value =
       detail::is_tuple_like_<T>::value && !detail::is_range_<T>::value;
 };
 
+template <typename T, typename C> struct is_tuple_formattable {
+  static constexpr const bool value =
+      detail::is_tuple_formattable_<T, C>::value;
+};
+
 template <typename TupleT, typename Char>
-struct formatter<TupleT, Char, enable_if_t<fmt::is_tuple_like<TupleT>::value>> {
+struct formatter<TupleT, Char,
+                 enable_if_t<fmt::is_tuple_like<TupleT>::value &&
+                             fmt::is_tuple_formattable<TupleT, Char>::value>> {
  private:
+  basic_string_view<Char> separator_ = detail::string_literal<Char, ',', ' '>{};
+  basic_string_view<Char> opening_bracket_ =
+      detail::string_literal<Char, '('>{};
+  basic_string_view<Char> closing_bracket_ =
+      detail::string_literal<Char, ')'>{};
+
   // C++11 generic lambda for format().
   template <typename FormatContext> struct format_each {
     template <typename T> void operator()(const T& v) {
-      if (i > 0) out = detail::write_delimiter(out);
+      if (i > 0) out = detail::copy_str<Char>(separator, out);
       out = detail::write_range_entry<Char>(out, v);
       ++i;
     }
     int i;
     typename FormatContext::iterator& out;
+    basic_string_view<Char> separator;
   };
 
  public:
+  FMT_CONSTEXPR formatter() {}
+
+  FMT_CONSTEXPR void set_separator(basic_string_view<Char> sep) {
+    separator_ = sep;
+  }
+
+  FMT_CONSTEXPR void set_brackets(basic_string_view<Char> open,
+                                  basic_string_view<Char> close) {
+    opening_bracket_ = open;
+    closing_bracket_ = close;
+  }
+
   template <typename ParseContext>
   FMT_CONSTEXPR auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
     return ctx.begin();
   }
 
   template <typename FormatContext = format_context>
-  auto format(const TupleT& values, FormatContext& ctx) -> decltype(ctx.out()) {
+  auto format(const TupleT& values, FormatContext& ctx) const
+      -> decltype(ctx.out()) {
     auto out = ctx.out();
-    *out++ = '(';
-    detail::for_each(values, format_each<FormatContext>{0, out});
-    *out++ = ')';
+    out = detail::copy_str<Char>(opening_bracket_, out);
+    detail::for_each(values, format_each<FormatContext>{0, out, separator_});
+    out = detail::copy_str<Char>(closing_bracket_, out);
     return out;
   }
 };
 
 template <typename T, typename Char> struct is_range {
-  static FMT_CONSTEXPR_DECL const bool value =
+  static constexpr const bool value =
       detail::is_range_<T>::value && !detail::is_std_string_like<T>::value &&
-      !detail::is_map<T>::value &&
       !std::is_convertible<T, std::basic_string<Char>>::value &&
-      !std::is_constructible<detail::std_string_view<Char>, T>::value;
+      !std::is_convertible<T, detail::std_string_view<Char>>::value;
 };
 
-template <typename T, typename Char>
-struct formatter<
-    T, Char,
-    enable_if_t<
-        fmt::is_range<T, Char>::value
-// Workaround a bug in MSVC 2019 and earlier.
-#if !FMT_MSC_VER
-        && (is_formattable<detail::value_type<T>, Char>::value ||
-            detail::has_fallback_formatter<detail::value_type<T>, Char>::value)
+namespace detail {
+template <typename Context> struct range_mapper {
+  using mapper = arg_mapper<Context>;
+
+  template <typename T,
+            FMT_ENABLE_IF(has_formatter<remove_cvref_t<T>, Context>::value)>
+  static auto map(T&& value) -> T&& {
+    return static_cast<T&&>(value);
+  }
+  template <typename T,
+            FMT_ENABLE_IF(!has_formatter<remove_cvref_t<T>, Context>::value)>
+  static auto map(T&& value)
+      -> decltype(mapper().map(static_cast<T&&>(value))) {
+    return mapper().map(static_cast<T&&>(value));
+  }
+};
+
+template <typename Char, typename Element>
+using range_formatter_type = conditional_t<
+    is_formattable<Element, Char>::value,
+    formatter<remove_cvref_t<decltype(range_mapper<buffer_context<Char>>{}.map(
+                  std::declval<Element>()))>,
+              Char>,
+    fallback_formatter<Element, Char>>;
+
+template <typename R>
+using maybe_const_range =
+    conditional_t<has_const_begin_end<R>::value, const R, R>;
+
+// Workaround a bug in MSVC 2015 and earlier.
+#if !FMT_MSC_VERSION || FMT_MSC_VERSION >= 1910
+template <typename R, typename Char>
+struct is_formattable_delayed
+    : disjunction<
+          is_formattable<uncvref_type<maybe_const_range<R>>, Char>,
+          has_fallback_formatter<uncvref_type<maybe_const_range<R>>, Char>> {};
 #endif
-        >> {
-  template <typename ParseContext>
-  FMT_CONSTEXPR auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
-    return ctx.begin();
+
+}  // namespace detail
+
+template <typename T, typename Char, typename Enable = void>
+struct range_formatter;
+
+template <typename T, typename Char>
+struct range_formatter<
+    T, Char,
+    enable_if_t<conjunction<
+        std::is_same<T, remove_cvref_t<T>>,
+        disjunction<is_formattable<T, Char>,
+                    detail::has_fallback_formatter<T, Char>>>::value>> {
+ private:
+  detail::range_formatter_type<Char, T> underlying_;
+  bool custom_specs_ = false;
+  basic_string_view<Char> separator_ = detail::string_literal<Char, ',', ' '>{};
+  basic_string_view<Char> opening_bracket_ =
+      detail::string_literal<Char, '['>{};
+  basic_string_view<Char> closing_bracket_ =
+      detail::string_literal<Char, ']'>{};
+
+  template <class U>
+  FMT_CONSTEXPR static auto maybe_set_debug_format(U& u, int)
+      -> decltype(u.set_debug_format()) {
+    u.set_debug_format();
   }
 
-  template <
-      typename FormatContext, typename U,
-      FMT_ENABLE_IF(
-          std::is_same<U, conditional_t<detail::has_const_begin_end<T>::value,
-                                        const T, T>>::value)>
-  auto format(U& range, FormatContext& ctx) -> decltype(ctx.out()) {
-#ifdef FMT_DEPRECATED_BRACED_RANGES
-    Char prefix = '{';
-    Char postfix = '}';
-#else
-    Char prefix = detail::is_set<T>::value ? '{' : '[';
-    Char postfix = detail::is_set<T>::value ? '}' : ']';
-#endif
+  template <class U>
+  FMT_CONSTEXPR static void maybe_set_debug_format(U&, ...) {}
+
+  FMT_CONSTEXPR void maybe_set_debug_format() {
+    maybe_set_debug_format(underlying_, 0);
+  }
+
+ public:
+  FMT_CONSTEXPR range_formatter() {}
+
+  FMT_CONSTEXPR auto underlying() -> detail::range_formatter_type<Char, T>& {
+    return underlying_;
+  }
+
+  FMT_CONSTEXPR void set_separator(basic_string_view<Char> sep) {
+    separator_ = sep;
+  }
+
+  FMT_CONSTEXPR void set_brackets(basic_string_view<Char> open,
+                                  basic_string_view<Char> close) {
+    opening_bracket_ = open;
+    closing_bracket_ = close;
+  }
+
+  template <typename ParseContext>
+  FMT_CONSTEXPR auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
+    auto it = ctx.begin();
+    auto end = ctx.end();
+    if (it == end || *it == '}') {
+      maybe_set_debug_format();
+      return it;
+    }
+
+    if (*it == 'n') {
+      set_brackets({}, {});
+      ++it;
+    }
+
+    if (*it == '}') {
+      maybe_set_debug_format();
+      return it;
+    }
+
+    if (*it != ':')
+      FMT_THROW(format_error("no other top-level range formatters supported"));
+
+    custom_specs_ = true;
+    ++it;
+    ctx.advance_to(it);
+    return underlying_.parse(ctx);
+  }
+
+  template <typename R, class FormatContext>
+  auto format(R&& range, FormatContext& ctx) const -> decltype(ctx.out()) {
+    detail::range_mapper<buffer_context<Char>> mapper;
     auto out = ctx.out();
-    *out++ = prefix;
+    out = detail::copy_str<Char>(opening_bracket_, out);
     int i = 0;
-    auto it = std::begin(range);
-    auto end = std::end(range);
+    auto it = detail::range_begin(range);
+    auto end = detail::range_end(range);
     for (; it != end; ++it) {
-      if (i > 0) out = detail::write_delimiter(out);
-      out = detail::write_range_entry<Char>(out, *it);
+      if (i > 0) out = detail::copy_str<Char>(separator_, out);
+      ;
+      ctx.advance_to(out);
+      out = underlying_.format(mapper.map(*it), ctx);
       ++i;
     }
-    *out++ = postfix;
+    out = detail::copy_str<Char>(closing_bracket_, out);
     return out;
   }
 };
 
-template <typename T, typename Char>
-struct formatter<
-    T, Char,
-    enable_if_t<
-        detail::is_map<T>::value
-// Workaround a bug in MSVC 2019 and earlier.
-#if !FMT_MSC_VER
-        && (is_formattable<detail::value_type<T>, Char>::value ||
-            detail::has_fallback_formatter<detail::value_type<T>, Char>::value)
-#endif
-        >> {
-  template <typename ParseContext>
-  FMT_CONSTEXPR auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
-    return ctx.begin();
+enum class range_format { disabled, map, set, sequence, string, debug_string };
+
+namespace detail {
+template <typename T> struct range_format_kind_ {
+  static constexpr auto value = std::is_same<range_reference_type<T>, T>::value
+                                    ? range_format::disabled
+                                : is_map<T>::value ? range_format::map
+                                : is_set<T>::value ? range_format::set
+                                                   : range_format::sequence;
+};
+
+template <range_format K, typename R, typename Char, typename Enable = void>
+struct range_default_formatter;
+
+template <range_format K>
+using range_format_constant = std::integral_constant<range_format, K>;
+
+template <range_format K, typename R, typename Char>
+struct range_default_formatter<
+    K, R, Char,
+    enable_if_t<(K == range_format::sequence || K == range_format::map ||
+                 K == range_format::set)>> {
+  using range_type = detail::maybe_const_range<R>;
+  range_formatter<detail::uncvref_type<range_type>, Char> underlying_;
+
+  FMT_CONSTEXPR range_default_formatter() { init(range_format_constant<K>()); }
+
+  FMT_CONSTEXPR void init(range_format_constant<range_format::set>) {
+    underlying_.set_brackets(detail::string_literal<Char, '{'>{},
+                             detail::string_literal<Char, '}'>{});
   }
 
-  template <
-      typename FormatContext, typename U,
-      FMT_ENABLE_IF(
-          std::is_same<U, conditional_t<detail::has_const_begin_end<T>::value,
-                                        const T, T>>::value)>
-  auto format(U& map, FormatContext& ctx) -> decltype(ctx.out()) {
-    auto out = ctx.out();
-    *out++ = '{';
-    int i = 0;
-    for (const auto& item : map) {
-      if (i > 0) out = detail::write_delimiter(out);
-      out = detail::write_range_entry<Char>(out, item.first);
-      *out++ = ':';
-      *out++ = ' ';
-      out = detail::write_range_entry<Char>(out, item.second);
-      ++i;
-    }
-    *out++ = '}';
-    return out;
+  FMT_CONSTEXPR void init(range_format_constant<range_format::map>) {
+    underlying_.set_brackets(detail::string_literal<Char, '{'>{},
+                             detail::string_literal<Char, '}'>{});
+    underlying_.underlying().set_brackets({}, {});
+    underlying_.underlying().set_separator(
+        detail::string_literal<Char, ':', ' '>{});
   }
+
+  FMT_CONSTEXPR void init(range_format_constant<range_format::sequence>) {}
+
+  template <typename ParseContext>
+  FMT_CONSTEXPR auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
+    return underlying_.parse(ctx);
+  }
+
+  template <typename FormatContext>
+  auto format(range_type& range, FormatContext& ctx) const
+      -> decltype(ctx.out()) {
+    return underlying_.format(range, ctx);
+  }
+};
+}  // namespace detail
+
+template <typename T, typename Char, typename Enable = void>
+struct range_format_kind
+    : conditional_t<
+          is_range<T, Char>::value, detail::range_format_kind_<T>,
+          std::integral_constant<range_format, range_format::disabled>> {};
+
+template <typename R, typename Char>
+struct formatter<
+    R, Char,
+    enable_if_t<conjunction<bool_constant<range_format_kind<R, Char>::value !=
+                                          range_format::disabled>
+// Workaround a bug in MSVC 2015 and earlier.
+#if !FMT_MSC_VERSION || FMT_MSC_VERSION >= 1910
+                            ,
+                            detail::is_formattable_delayed<R, Char>
+#endif
+                            >::value>>
+    : detail::range_default_formatter<range_format_kind<R, Char>::value, R,
+                                      Char> {
 };
 
 template <typename Char, typename... T> struct tuple_join_view : detail::view {
