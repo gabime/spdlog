@@ -269,20 +269,14 @@ void multi_sink_example2()
 ---
 #### User defined types
 ```c++
-#ifdef SPDLOG_USE_STD_FORMAT
-namespace std {
-#else
-namespace fmt {
-#endif
 template<>
-struct formatter<my_type> : formatter<std::string>
+struct fmt::formatter<my_type> : fmt::formatter<std::string>
 {
     auto format(my_type my, format_context &ctx) -> decltype(ctx.out())
     {
         return format_to(ctx.out(), "[my_type i={}]", my.i);
     }
 };
-}
 
 void user_defined_example()
 {
