@@ -57,20 +57,20 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        for (auto &sink : sinks_)
+        for (auto &sub_sink : sinks_)
         {
-            if (sink->should_log(msg.level))
+            if (sub_sink->should_log(msg.level))
             {
-                sink->log(msg);
+                sub_sink->log(msg);
             }
         }
     }
 
     void flush_() override
     {
-        for (auto &sink : sinks_)
+        for (auto &sub_sink : sinks_)
         {
-            sink->flush();
+            sub_sink->flush();
         }
     }
 
@@ -82,9 +82,9 @@ protected:
     void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter) override
     {
         base_sink<Mutex>::formatter_ = std::move(sink_formatter);
-        for (auto &sink : sinks_)
+        for (auto &sub_sink : sinks_)
         {
-            sink->set_formatter(base_sink<Mutex>::formatter_->clone());
+            sub_sink->set_formatter(base_sink<Mutex>::formatter_->clone());
         }
     }
     std::vector<std::shared_ptr<sink>> sinks_;
