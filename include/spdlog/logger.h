@@ -398,7 +398,7 @@ protected:
             fmt_lib::vformat_to(
                 std::back_inserter(wbuf), fmt, fmt_lib::make_format_args<fmt_lib::wformat_context>(std::forward<Args>(args)...));
 #    else
-            fmt::vformat_to(fmt::appender(wbuf), fmt, fmt::make_format_args<fmt::wformat_context>(std::forward<Args>(args)...));
+            fmt::vformat_to(std::back_inserter(wbuf), fmt, fmt::make_format_args<fmt::wformat_context>(std::forward<Args>(args)...));
 #    endif
 
             memory_buf_t buf;
