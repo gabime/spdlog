@@ -41,7 +41,7 @@ environment:
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Debug
       BUILD_SHARED: 'OFF'
-      FATAL_ERRORS: 'ON'
+      FATAL_ERRORS: 'OFF'
       WCHAR: 'ON'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -50,7 +50,7 @@ environment:
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'OFF'
-      FATAL_ERRORS: 'ON'
+      FATAL_ERRORS: 'OFF'
       WCHAR: 'OFF'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -59,7 +59,7 @@ environment:
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
-      FATAL_ERRORS: 'ON'
+      FATAL_ERRORS: 'OFF'
       WCHAR: 'OFF'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -68,7 +68,7 @@ environment:
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
-      FATAL_ERRORS: 'ON'
+      FATAL_ERRORS: 'OFF'
       WCHAR: 'ON'
       WCHAR_FILES: 'ON'
       BUILD_EXAMPLE: 'OFF'
