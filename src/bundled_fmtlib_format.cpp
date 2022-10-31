@@ -9,13 +9,13 @@
 #if !defined(SPDLOG_FMT_EXTERNAL) && !defined(SPDLOG_USE_STD_FORMAT)
 
 // suppress "integral constant overflow" warning under msvc 2017 (which doesn't appear in other msvc versions)
-#if defined(_MSC_VER) && (_MSC_VER >= 1910) && (_MSC_VER <= 1916)
+#if defined(_MSC_VER) && ((_MSC_VER >= 1910)  && (_MSC_VER <= 1916))
 #    pragma warning(push)
 #    pragma warning(disable : 4307)
 #endif
 #    include <spdlog/fmt/bundled/format-inl.h>
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && ((_MSC_VER >= 1910)  && (_MSC_VER <= 1916))
 #    pragma warning(pop)
 #endif
 
