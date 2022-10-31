@@ -22,6 +22,9 @@
 // enable the 'n' flag in for backward compatibility with fmt 6.x
 #    define FMT_DEPRECATED_N_SPECIFIER
 
+// enable the ostream formatting for backward compatibility with fmt 8.x
+#    define FMT_DEPRECATED_OSTREAM
+
 // suppress "integral constant overflow" warning under msvc 2017 (which doesn't appear in other msvc versions)
 #if defined(_MSC_VER) && ((_MSC_VER >= 1910)  && (_MSC_VER <= 1916))
 #    pragma warning(push)
