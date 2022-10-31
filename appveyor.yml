@@ -5,6 +5,7 @@ environment:
     - GENERATOR: '"Visual Studio 14 2015"'
       BUILD_TYPE: Debug
       BUILD_SHARED: 'OFF'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'OFF'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -13,6 +14,7 @@ environment:
     - GENERATOR: '"Visual Studio 14 2015"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'OFF'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'ON'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -21,6 +23,7 @@ environment:
     - GENERATOR: '"Visual Studio 14 2015 Win64"'
       BUILD_TYPE: Debug
       BUILD_SHARED: 'OFF'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'ON'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -29,6 +32,7 @@ environment:
     - GENERATOR: '"Visual Studio 14 2015 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'OFF'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'ON'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -37,6 +41,7 @@ environment:
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Debug
       BUILD_SHARED: 'OFF'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'ON'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -45,6 +50,7 @@ environment:
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'OFF'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'OFF'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -53,6 +59,7 @@ environment:
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'OFF'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
@@ -61,6 +68,7 @@ environment:
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'ON'
       WCHAR_FILES: 'ON'
       BUILD_EXAMPLE: 'OFF'
@@ -69,6 +77,7 @@ environment:
     - GENERATOR: '"Visual Studio 16 2019" -A x64'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'OFF'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'OFF'
@@ -78,6 +87,7 @@ environment:
     - GENERATOR: '"Visual Studio 17 2022" -A x64'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'OFF'
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'OFF'
@@ -87,6 +97,7 @@ environment:
     - GENERATOR: '"Visual Studio 17 2022" -A x64'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
+      FATAL_ERRORS: 'ON'
       WCHAR: 'ON'
       WCHAR_FILES: 'ON'
       BUILD_EXAMPLE: 'OFF'
@@ -103,7 +114,7 @@ build_script:
 
       set PATH=%PATH%;C:\Program Files\Git\usr\bin
 
-      cmake -G %GENERATOR% -D CMAKE_BUILD_TYPE=%BUILD_TYPE% -D BUILD_SHARED_LIBS=%BUILD_SHARED% -D SPDLOG_WCHAR_SUPPORT=%WCHAR% -D SPDLOG_WCHAR_FILENAMES=%WCHAR_FILES% -D SPDLOG_BUILD_EXAMPLE=%BUILD_EXAMPLE% -D SPDLOG_BUILD_EXAMPLE_HO=%BUILD_EXAMPLE% -D SPDLOG_BUILD_TESTS=ON -D SPDLOG_BUILD_TESTS_HO=OFF -D SPDLOG_BUILD_WARNINGS=ON -D SPDLOG_USE_STD_FORMAT=%USE_STD_FORMAT% -D CMAKE_CXX_STANDARD=%CXX_STANDARD% ..
+      cmake -G %GENERATOR% -D CMAKE_BUILD_TYPE=%BUILD_TYPE% -D BUILD_SHARED_LIBS=%BUILD_SHARED% -D SPDLOG_WCHAR_SUPPORT=%WCHAR% -D SPDLOG_WCHAR_FILENAMES=%WCHAR_FILES% -D SPDLOG_BUILD_EXAMPLE=%BUILD_EXAMPLE% -D SPDLOG_BUILD_EXAMPLE_HO=%BUILD_EXAMPLE% -D SPDLOG_BUILD_TESTS=ON -D SPDLOG_BUILD_TESTS_HO=OFF -D SPDLOG_BUILD_WARNINGS=%FATAL_ERRORS% -D SPDLOG_USE_STD_FORMAT=%USE_STD_FORMAT% -D CMAKE_CXX_STANDARD=%CXX_STANDARD% ..
 
       cmake --build . --config %BUILD_TYPE%
 
