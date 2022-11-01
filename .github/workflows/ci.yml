@@ -25,7 +25,7 @@ jobs:
       image: ${{ matrix.config.compiler == 'clang' && 'teeks99/clang-ubuntu' || matrix.config.compiler }}:${{ matrix.config.version }}
     name: "${{ matrix.config.compiler}} ${{ matrix.config.version }} (C++${{ matrix.config.cppstd }}, ${{ matrix.config.build_type }})"
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v1.x
       - name: Setup
         run: |
           apt-get update && apt-get install -y curl
@@ -62,7 +62,7 @@ jobs:
     runs-on: macOS-latest
     name: "OS X Clang (C++11, Release)"
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v1.x
       - name: Build
         run: |
           mkdir -p build && cd build
