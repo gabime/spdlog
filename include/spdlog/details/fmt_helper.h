@@ -32,10 +32,12 @@ inline spdlog::string_view_t to_string_view(spdlog::string_view_t str) SPDLOG_NO
     return str;
 }
 
+#if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 inline spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) SPDLOG_NOEXCEPT
 {
     return str;
 }
+#endif
 
 #ifndef SPDLOG_USE_STD_FORMAT
 template<typename T, typename Args...>
