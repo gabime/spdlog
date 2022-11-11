@@ -11,6 +11,10 @@
 #ifdef SPDLOG_USE_STD_FORMAT
 #    include <charconv>
 #    include <limits>
+#    include <version>
+#    if __cpp_lib_format >= 202207L
+#        include <format>
+#    endif
 #endif
 
 // Some fmt helpers to efficiently format and pad ints and strings
@@ -22,6 +26,30 @@ inline spdlog::string_view_t to_string_view(const memory_buf_t &buf) SPDLOG_NOEX
 {
     return spdlog::string_view_t{buf.data(), buf.size()};
 }
+
+inline spdlog::string_view_t to_string_view(spdlog::string_view_t str) SPDLOG_NOEXCEPT
+{
+    return str;
+}
+
+inline spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) SPDLOG_NOEXCEPT
+{
+    return str;
+}
+
+#ifndef SPDLOG_USE_STD_FORMAT
+template<typename T, typename Args...>
+inline fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt)
+{
+    return fmt;
+}
+#elif __cpp_lib_format >= 202207L
+template<typename T, typename Args...>
+SPDLOG_CONSTEXPR_FUNC std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) SPDLOG_NOEXCEPT
+{
+    return fmt.get();
+}
+#endif
 
 inline void append_string_view(spdlog::string_view_t view, memory_buf_t &dest)
 {

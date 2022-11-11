@@ -17,6 +17,7 @@
 #include <spdlog/common.h>
 #include <spdlog/details/log_msg.h>
 #include <spdlog/details/backtracer.h>
+#include <spdlog/details/fmt_helper.h>
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 #    ifndef _WIN32
@@ -87,7 +88,7 @@ public:
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)
     {
-        log_(loc, lvl, fmt, std::forward<Args>(args)...);
+        log_(loc, lvl, details::fmt_helper::to_string_view(fmt), std::forward<Args>(args)...);
     }
 
     template<typename... Args>
@@ -180,7 +181,7 @@ public:
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args)
     {
-        log_(loc, lvl, fmt, std::forward<Args>(args)...);
+        log_(loc, lvl, details::fmt_helper::to_string_view(fmt), std::forward<Args>(args)...);
     }
 
     template<typename... Args>
@@ -357,7 +358,7 @@ protected:
 
     // common implementation for after templated public api has been resolved
     template<typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)
+    void log_(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&... args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -368,7 +369,7 @@ protected:
         SPDLOG_TRY
         {
             memory_buf_t buf;
-            fmt_lib::format_to(std::back_inserter(buf), fmt, std::forward<Args>(args)...);
+            fmt_lib::vformat_to(std::back_inserter(buf), fmt, fmt_lib::make_format_args(std::forward<Args>(args)...));
 
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
@@ -378,7 +379,7 @@ protected:
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template<typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args)
+    void log_(source_loc loc, level::level_enum lvl, wstring_view_t fmt, Args &&... args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -390,7 +391,8 @@ protected:
         {
             // format to wmemory_buffer and convert to utf8
             wmemory_buf_t wbuf;
-            fmt_lib::format_to(std::back_inserter(wbuf), fmt, std::forward<Args>(args)...);
+            fmt_lib::vformat_to(
+                std::back_inserter(wbuf), fmt, fmt_lib::make_format_args<fmt_lib::wformat_context>(std::forward<Args>(args)...));
 
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
