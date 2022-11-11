@@ -17,7 +17,12 @@
 #include <cstdio>
 
 #ifdef SPDLOG_USE_STD_FORMAT
-#    include <string_view>
+#    include <version>
+#    if __cpp_lib_format >= 202207L
+#        include <format>
+#    else
+#        include <string_view>
+#    endif
 #endif
 
 #ifdef SPDLOG_COMPILED_LIB
@@ -134,7 +139,11 @@ using string_view_t = std::string_view;
 using memory_buf_t = std::string;
 
 template<typename... Args>
+#    if __cpp_lib_format >= 202207L
+using format_string_t = std::format_string<Args...>;
+#    else
 using format_string_t = std::string_view;
+#    endif
 
 template<class T, class Char = char>
 struct is_convertible_to_basic_format_string : std::integral_constant<bool, std::is_convertible<T, std::basic_string_view<Char>>::value>
@@ -145,7 +154,11 @@ using wstring_view_t = std::wstring_view;
 using wmemory_buf_t = std::wstring;
 
 template<typename... Args>
+#        if __cpp_lib_format >= 202207L
+using wformat_string_t = std::wformat_string<Args...>;
+#        else
 using wformat_string_t = std::wstring_view;
+#        endif
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) x
 #else // use fmt lib instead of std::format
