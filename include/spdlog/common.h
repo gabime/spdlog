@@ -71,7 +71,7 @@
 #    if __cplusplus >= 201402L
 #        define SPDLOG_CONSTEXPR_FUNC constexpr
 #    else
-#        define SPDLOG_CONSTEXPR_FUNC
+#        define SPDLOG_CONSTEXPR_FUNC inline
 #    endif
 #endif
 
