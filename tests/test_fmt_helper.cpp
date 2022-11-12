@@ -2,7 +2,7 @@
 #include "includes.h"
 
 using spdlog::memory_buf_t;
-using spdlog::details::fmt_helper::to_string_view;
+using spdlog::details::to_string_view;
 
 void test_pad2(int n, const char *expected)
 {
