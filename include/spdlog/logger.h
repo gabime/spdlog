@@ -369,8 +369,11 @@ protected:
         SPDLOG_TRY
         {
             memory_buf_t buf;
+#ifdef SPDLOG_USE_STD_FORMAT
             fmt_lib::vformat_to(std::back_inserter(buf), fmt, fmt_lib::make_format_args(std::forward<Args>(args)...));
-
+#else
+            fmt::vformat_to(fmt::appender(buf), fmt, fmt::make_format_args(std::forward<Args>(args)...));
+#endif
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
@@ -391,8 +394,12 @@ protected:
         {
             // format to wmemory_buffer and convert to utf8
             wmemory_buf_t wbuf;
+#    ifdef SPDLOG_USE_STD_FORMAT
             fmt_lib::vformat_to(
                 std::back_inserter(wbuf), fmt, fmt_lib::make_format_args<fmt_lib::wformat_context>(std::forward<Args>(args)...));
+#    else
+            fmt::vformat_to(fmt::appender(wbuf), fmt, fmt::make_format_args<fmt::wformat_context>(std::forward<Args>(args)...));
+#    endif
 
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
