@@ -64,7 +64,7 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #    define SPDLOG_NOEXCEPT _NOEXCEPT
 #    define SPDLOG_CONSTEXPR
-#    define SPDLOG_CONSTEXPR_FUNC
+#    define SPDLOG_CONSTEXPR_FUNC inline
 #else
 #    define SPDLOG_NOEXCEPT noexcept
 #    define SPDLOG_CONSTEXPR constexpr
