@@ -41,9 +41,9 @@ class dup_filter_sink : public dist_sink<Mutex>
 {
 public:
     template<class Rep, class Period>
-    explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration, level::level_enum level = level::info)
+    explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration, level::level_enum notification_level = level::info)
         : max_skip_duration_{max_skip_duration}
-        , log_level_{level}
+        , log_level_{notification_level}
     {}
 
 protected:
