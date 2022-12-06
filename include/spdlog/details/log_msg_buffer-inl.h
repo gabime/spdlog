@@ -12,6 +12,7 @@ namespace details {
 
 SPDLOG_INLINE log_msg_buffer::log_msg_buffer(const log_msg &orig_msg)
     : log_msg{orig_msg}
+    , attributes{orig_msg.attributes}
 {
     buffer.append(logger_name.data(), logger_name.data() + logger_name.size());
     buffer.append(payload.data(), payload.data() + payload.size());
@@ -20,13 +21,15 @@ SPDLOG_INLINE log_msg_buffer::log_msg_buffer(const log_msg &orig_msg)
 
 SPDLOG_INLINE log_msg_buffer::log_msg_buffer(const log_msg_buffer &other)
     : log_msg{other}
+    , attributes{orig_msg.attributes}
 {
     buffer.append(logger_name.data(), logger_name.data() + logger_name.size());
     buffer.append(payload.data(), payload.data() + payload.size());
     update_string_views();
 }
 
-SPDLOG_INLINE log_msg_buffer::log_msg_buffer(log_msg_buffer &&other) SPDLOG_NOEXCEPT : log_msg{other}, buffer{std::move(other.buffer)}
+SPDLOG_INLINE log_msg_buffer::log_msg_buffer(log_msg_buffer &&other) SPDLOG_NOEXCEPT 
+    : log_msg{other}, buffer{std::move(other.buffer)}, attributes{std::move(other.attributes)}
 {
     update_string_views();
 }
@@ -44,6 +47,7 @@ SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(log_msg_buffer &&other) 
 {
     log_msg::operator=(other);
     buffer = std::move(other.buffer);
+    attributes = std::move(other.attributes);
     update_string_views();
     return *this;
 }
