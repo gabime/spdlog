@@ -32,6 +32,7 @@ public:
     void disable();
     bool enabled() const;
     void push_back(const log_msg &msg);
+    bool empty() const;
 
     // pop all items in the q and apply the given fun on each of them.
     void foreach_pop(std::function<void(const details::log_msg &)> fun);
