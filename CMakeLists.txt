@@ -171,16 +171,14 @@ endif()
 
 add_library(spdlog::spdlog ALIAS spdlog)
 
-set(SPDLOG_INCLUDES_LEVEL "PUBLIC")
-set(SPDLOG_HEADER_INCLUDES_LEVEL "")
+set(SPDLOG_INCLUDES_LEVEL "")
 if(SPDLOG_SYSTEM_INCLUDES)
     set(SPDLOG_INCLUDES_LEVEL "SYSTEM")
-    set(SPDLOG_HEADER_INCLUDES_LEVEL "SYSTEM")
 endif()
 
 
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
-target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                          "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 spdlog_enable_warnings(spdlog)
@@ -199,7 +197,7 @@ endif()
 add_library(spdlog_header_only INTERFACE)
 add_library(spdlog::spdlog_header_only ALIAS spdlog_header_only)
 
-target_include_directories(spdlog_header_only ${SPDLOG_HEADER_INCLUDES_LEVEL} INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+target_include_directories(spdlog_header_only ${SPDLOG_INCLUDES_LEVEL} INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                                         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
