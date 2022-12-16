@@ -234,10 +234,7 @@ struct formatter<spdlog::details::dump_info<T>, char>
     template<typename It>
     void put_newline(It inserter, std::size_t pos)
     {
-#ifdef _WIN32
-        *inserter++ = '\r';
-#endif
-        *inserter++ = '\n';
+       *inserter++ = '\n';
 
         if (put_positions)
         {
