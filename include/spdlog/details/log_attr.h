@@ -28,7 +28,7 @@ public:
 
     template <typename T>
     attr(std::string_view k, T const &v)
-        : key
+        : key{k}
         , value{std::to_string(v)}
     {}
 };
