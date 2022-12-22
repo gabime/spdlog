@@ -27,6 +27,8 @@ void custom_flags_example();
 void file_events_example();
 void replace_default_logger_example();
 
+void attribute_example();
+
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h" // support for user defined types
@@ -86,6 +88,7 @@ int main(int, char *[])
         custom_flags_example();
         file_events_example();
         replace_default_logger_example();
+        attribute_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -94,7 +97,6 @@ int main(int, char *[])
         // Apply some function on all registered loggers
         spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) { l->info("End of example."); });
 
-        spdlog::default_logger_raw()->log(spdlog::level::warn, "EXPERIMENTAL: log with attributes", {"attribute_key", "attribute value"});
         // Release all spdlog resources, and drop all loggers in the registry.
         // This is optional (only mandatory if using windows + async log).
         spdlog::shutdown();
@@ -389,4 +391,18 @@ void replace_default_logger_example()
     spdlog::debug("This message should be displayed..");
 
     spdlog::set_default_logger(old_logger);
+}
+
+void attribute_example() {
+    // spdlog::default_logger_raw()->log(spdlog::level::warn, "EXPERIMENTAL: log with attributes", {"attribute_key", "attribute value"});
+
+    // logfmt structured logging using attributes
+
+    // auto logfmt_logger = spdlog::basic_logger_mt("logfmt_logger", "logs/mylog.txt");
+    auto logfmt_logger = spdlog::default_logger_raw();
+
+    std::string logfmt_pattern = "time=%Y-%m-%dT%H:%M:%S.%f%z, name=%n, level=%^%l%$, process=%P, thread=%t, message=\"%v\"";
+    logfmt_logger->set_pattern(logfmt_pattern);
+
+    logfmt_logger->log(spdlog::level::info, "logfmt structured logging", {"key", "value"});
 }
