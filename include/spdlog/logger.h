@@ -85,9 +85,9 @@ public:
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
     template <typename T>
-    void log(level::level_enum lvl, const T &msg, details::attr attr)
+    void log(level::level_enum lvl, const T &msg, std::initializer_list<details::attr> attrs)
     {
-        log(source_loc{}, lvl, msg, attr);
+        log(source_loc{}, lvl, msg, attrs);
     }
 
     template<typename... Args>
@@ -128,7 +128,7 @@ public:
         log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
-    void log(source_loc loc, level::level_enum lvl, string_view_t msg, details::attr attr)
+    void log(source_loc loc, level::level_enum lvl, string_view_t msg, std::initializer_list<details::attr> attrs)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -138,7 +138,8 @@ public:
         }
 
         details::log_msg log_msg(loc, name_, lvl, msg);
-        log_msg.attributes.push_back(std::move(attr));
+        // log_msg.attributes.push_back(attrs);
+        log_msg.attributes.insert(log_msg.attributes.end(), attrs.begin(), attrs.end());
         log_it_(log_msg, log_enabled, traceback_enabled);
     }
     void log(source_loc loc, level::level_enum lvl, string_view_t msg)
