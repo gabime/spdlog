@@ -404,5 +404,5 @@ void attribute_example() {
     std::string logfmt_pattern = "time=%Y-%m-%dT%H:%M:%S.%f%z, name=%n, level=%^%l%$, process=%P, thread=%t, message=\"%v\"";
     logfmt_logger->set_pattern(logfmt_pattern);
 
-    logfmt_logger->log(spdlog::level::info, "logfmt structured logging", {"key", "value"});
+    logfmt_logger->log(spdlog::level::info, "logfmt structured logging", {{"key1", "value1"}, {"key2", "value2"}});
 }
