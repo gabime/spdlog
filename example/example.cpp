@@ -94,6 +94,7 @@ int main(int, char *[])
         // Apply some function on all registered loggers
         spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) { l->info("End of example."); });
 
+        spdlog::default_logger_raw()->log(spdlog::level::warn, "EXPERIMENTAL: log with attributes", {"attribute_key", "attribute value"});
         // Release all spdlog resources, and drop all loggers in the registry.
         // This is optional (only mandatory if using windows + async log).
         spdlog::shutdown();
