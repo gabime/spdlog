@@ -3,6 +3,7 @@
 #include <string>
 #include <string_view>
 #include <concepts>
+#include "attr_composer.h"
 
 namespace spdlog {
 namespace details {
@@ -12,15 +13,15 @@ namespace details {
 
 struct attr
 {
-    std::string_view key;
-    std::string_view value;
+    std::string key;
+    std::string value;
 
 public:
     attr(std::initializer_list<std::string_view> l) {
         if (l.size() != 2) return; // throw exception if not kv pair?
 
-        key = *l.begin();
-        value = *(l.begin()+1);
+        scramble(key, *l.begin());
+        scramble(value, *(l.begin()+1));
     }
 
     attr(std::string_view k, bool v)
