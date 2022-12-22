@@ -12,8 +12,8 @@ namespace details {
 
 struct attr
 {
-    std::string key;
-    std::string value;
+    std::string_view key;
+    std::string_view value;
 
 public:
     attr(std::initializer_list<std::string_view> l) {

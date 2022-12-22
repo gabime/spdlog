@@ -1010,6 +1010,16 @@ public:
         }
         // fmt_helper::append_string_view(msg.msg(), dest);
         fmt_helper::append_string_view(msg.payload, dest);
+
+        if (msg.attributes.size() > 0) {
+            fmt_helper::append_string_view(" | ", dest);
+            for (const details::attr& a : msg.attributes) {
+                fmt_helper::append_string_view(a.key, dest);
+                fmt_helper::append_string_view("=\"", dest);
+                fmt_helper::append_string_view(a.value, dest);
+                fmt_helper::append_string_view("\", ", dest);
+            }
+        }
     }
 
 private:
