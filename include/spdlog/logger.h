@@ -84,6 +84,7 @@ public:
     logger &operator=(logger other) SPDLOG_NOEXCEPT;
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
+    template <typename T>
     void log(level::level_enum lvl, const T &msg, details::attr attr)
     {
         log(source_loc{}, lvl, msg, attr);
