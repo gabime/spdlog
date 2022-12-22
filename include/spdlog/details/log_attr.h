@@ -16,6 +16,13 @@ struct attr
     std::string value;
 
 public:
+    attr(std::initializer_list<std::string_view> l) {
+        if (l.size() != 2) return; // throw exception if not kv pair?
+
+        key = *l.begin();
+        value = *(l.begin()+1);
+    }
+
     attr(std::string_view k, bool v)
         : key{k}
         , value{v ? "true" : "false"}
