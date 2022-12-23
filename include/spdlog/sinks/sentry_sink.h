@@ -13,11 +13,11 @@ template<typename Mutex>
 class sentry_sink : public base_sink<Mutex>
 {
 public:
-    explicit sentry_sink(const std::string &dsn)
+    explicit sentry_sink(string_view_t dsn)
     {
         sentry_options_t *options = sentry_options_new();
 
-        sentry_options_set_dsn(options, dsn.c_str());
+        sentry_options_set_dsn(options, dsn.data());
         sentry_options_set_auto_session_tracking(options, false);
         sentry_options_set_symbolize_stacktraces(options, true);
         sentry_options_set_backend(options, nullptr);
@@ -46,7 +46,7 @@ protected:
 
         sentry_value_set_by_key(location, "file", sentry_value_new_string(msg.source.filename));
         sentry_value_set_by_key(location, "line", sentry_value_new_int32(msg.source.line));
-        sentry_value_set_by_key(location, "func", sentry_value_new_int32(msg.source.funcname));
+        sentry_value_set_by_key(location, "func", sentry_value_new_string(msg.source.funcname));
         sentry_value_set_by_key(crumb, "data", location);
         sentry_add_breadcrumb(crumb);
 
@@ -89,13 +89,13 @@ using sentry_sink_st = sentry_sink<spdlog::details::null_mutex>;
 } // namespace sinks
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> sentry_logger_mt(const std::string &logger_name, const std::string &dsn)
+inline std::shared_ptr<logger> sentry_logger_mt(const std::string &logger_name, string_view_t dsn)
 {
     return Factory::template create<sinks::sentry_sink_mt>(logger_name, dsn);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> sentry_logger_st(const std::string &logger_name, const std::string &dsn)
+inline std::shared_ptr<logger> sentry_logger_st(const std::string &logger_name, string_view_t dsn)
 {
     return Factory::template create<sinks::sentry_sink_st>(logger_name, dsn);
 }
