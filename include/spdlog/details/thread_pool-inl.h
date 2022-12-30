@@ -108,11 +108,7 @@ void SPDLOG_INLINE thread_pool::worker_loop_()
 bool SPDLOG_INLINE thread_pool::process_next_msg_()
 {
     async_msg incoming_async_msg;
-    bool dequeued = q_.dequeue_for(incoming_async_msg, std::chrono::seconds(10));
-    if (!dequeued)
-    {
-        return true;
-    }
+    q_.dequeue(incoming_async_msg);
 
     switch (incoming_async_msg.msg_type)
     {
