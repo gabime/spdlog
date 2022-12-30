@@ -236,8 +236,8 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 #    else
     int fd = ::fileno(f);
 #    endif
-// 64 bits(but not in osx or cygwin, where fstat64 is deprecated)
-#    if (defined(__linux__) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
+// 64 bits(but not in osx, linux/musl or cygwin, where fstat64 is deprecated)
+#    if ((defined(__linux__) && defined(__GLIBC__)) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
     struct stat64 st;
     if (::fstat64(fd, &st) == 0)
     {
