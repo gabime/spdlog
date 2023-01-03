@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <netinet/tcp.h>
+#include <netinet/in.h>
 
 #include <string>
 

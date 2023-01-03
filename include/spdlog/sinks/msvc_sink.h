@@ -26,13 +26,13 @@ class msvc_sink : public base_sink<Mutex>
 {
 public:
     msvc_sink() = default;
-    msvc_sink(bool check_ebugger_present)
-        : check_debbugger_present_{check_ebugger_present} {};
+    msvc_sink(bool check_debugger_present)
+        : check_debugger_present_{check_debugger_present} {};
 
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        if (check_debbugger_present_ && !IsDebuggerPresent())
+        if (check_debugger_present_ && !IsDebuggerPresent())
         {
             return;
         }
@@ -44,7 +44,7 @@ protected:
 
     void flush_() override {}
 
-    bool check_debbugger_present_ = true;
+    bool check_debugger_present_ = true;
 };
 
 using msvc_sink_mt = msvc_sink<std::mutex>;
