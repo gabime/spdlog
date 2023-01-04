@@ -2,7 +2,7 @@
 
 #include <string>
 #include <string_view>
-#include <concepts>
+#include <vector>
 #include "attr_composer.h"
 
 namespace spdlog {
@@ -42,4 +42,7 @@ public:
 };
 
 } // namespace details
+
+using attribute_list = std::vector<details::attr>;
+
 } // namespace spdlog
