@@ -281,6 +281,44 @@ public:
     }
 #endif
 
+    // attributes endpoint
+    template<typename T>
+    void trace(const T &msg, attribute_list attrs)
+    {
+        log(level::trace, msg, attrs);
+    }
+
+    template<typename T>
+    void debug(const T &msg, attribute_list attrs)
+    {
+        log(level::debug, msg, attrs);
+    }
+
+    template<typename T>
+    void info(const T &msg, attribute_list attrs)
+    {
+        log(level::info, msg, attrs);
+    }
+
+    template<typename T>
+    void warn(const T &msg, attribute_list attrs)
+    {
+        log(level::warn, msg, attrs);
+    }
+
+    template<typename T>
+    void error(const T &msg, attribute_list attrs)
+    {
+        log(level::err, msg, attrs);
+    }
+
+    template<typename T>
+    void critical(const T &msg, attribute_list attrs)
+    {
+        log(level::critical, msg, attrs);
+    }
+
+    // default endpoint
     template<typename T>
     void trace(const T &msg)
     {
