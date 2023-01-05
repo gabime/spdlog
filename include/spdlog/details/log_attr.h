@@ -36,6 +36,8 @@ public:
         value = std::string{v.data(), v.size()};
     }
 
+    attr(std::string k, std::string v) : key{k}, value{v} {}
+
     template <typename T>
     attr(string_view_t k, T const &v)
         : value{std::to_string(v)}

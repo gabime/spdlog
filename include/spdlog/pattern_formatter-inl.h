@@ -1085,7 +1085,7 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
         details::fmt_helper::append_string_view(a.key, dest);
         details::fmt_helper::append_string_view("=\"", dest);
         details::fmt_helper::append_string_view(a.value, dest);
-        details::fmt_helper::append_string_view("\", ", dest);
+        details::fmt_helper::append_string_view("\" ", dest);
     }
 
     // write eol
