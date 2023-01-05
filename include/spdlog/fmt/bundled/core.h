@@ -474,6 +474,8 @@ template <typename Char> class basic_string_view {
   /** Returns the string size. */
   constexpr auto size() const noexcept -> size_t { return size_; }
 
+  constexpr auto empty() const noexcept -> bool { return size_ == 0; }
+
   constexpr auto begin() const noexcept -> iterator { return data_; }
   constexpr auto end() const noexcept -> iterator { return data_ + size_; }
 
