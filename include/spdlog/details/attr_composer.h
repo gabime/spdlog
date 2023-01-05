@@ -1,11 +1,12 @@
 #pragma once
 
 #include <string>
+#include <spdlog/common.h>
 
 namespace spdlog {
 namespace details {
 
-inline void scramble(std::string& dst, std::string_view s)
+inline void scramble(std::string& dst, string_view_t s)
 {
     if (s.empty())
         return;
@@ -16,11 +17,12 @@ inline void scramble(std::string& dst, std::string_view s)
 
     dst.reserve(dst.size() + s.size());
 
-    auto replace = [&](std::string_view with) {
+    auto replace = [&](string_view_t with) {
         dst.append(start, size_t(cursor - start));
         ++cursor;
         start = cursor;
-        dst.append(with);
+        // dst.append(with);
+        dst.append(with.data(), with.size());
     };
 
     while (cursor != end) {

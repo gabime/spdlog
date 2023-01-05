@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
-#include <string_view>
 #include <vector>
 #include "attr_composer.h"
+#include <spdlog/common.h>
 
 namespace spdlog {
 namespace details {
@@ -17,28 +17,31 @@ struct attr
     std::string value;
 
 public:
-    attr(std::initializer_list<std::string_view> l) {
+    attr(std::initializer_list<string_view_t> l) {
         if (l.size() != 2) return; // throw exception if not kv pair?
 
         scramble(key, *l.begin());
         scramble(value, *(l.begin()+1));
     }
 
-    attr(std::string_view k, bool v)
-        : key{k}
-        , value{v ? "true" : "false"}
-    {}
+    attr(string_view_t k, bool v) 
+        : value{v ? "true" : "false"}
+    {
+        key = std::string{k.data(), k.size()};
+    }
 
-    attr(std::string_view k, std::string_view v)
-        : key{k}
-        , value{v}
-    {}
+    attr(string_view_t k, string_view_t v)
+    {
+        key = std::string{k.data(), k.size()};
+        value = std::string{v.data(), v.size()};
+    }
 
     template <typename T>
-    attr(std::string_view k, T const &v)
-        : key{k}
-        , value{std::to_string(v)}
-    {}
+    attr(string_view_t k, T const &v)
+        : value{std::to_string(v)}
+    {
+        key = std::string{k.data(), k.size()};
+    }
 };
 
 } // namespace details
