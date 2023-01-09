@@ -31,16 +31,16 @@ public:
     dist_sink(const dist_sink &) = delete;
     dist_sink &operator=(const dist_sink &) = delete;
 
-    void add_sink(std::shared_ptr<sink> sink)
+    void add_sink(std::shared_ptr<sink> sub_sink)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-        sinks_.push_back(sink);
+        sinks_.push_back(sub_sink);
     }
 
-    void remove_sink(std::shared_ptr<sink> sink)
+    void remove_sink(std::shared_ptr<sink> sub_sink)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-        sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sink), sinks_.end());
+        sinks_.erase(std::remove(sinks_.begin(), sinks_.end(), sub_sink), sinks_.end());
     }
 
     void set_sinks(std::vector<std::shared_ptr<sink>> sinks)
