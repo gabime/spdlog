@@ -53,14 +53,14 @@ inline void scramble(std::string& dst, string_view_t s)
         default:
             if (c <= '\x0f') {
                 char buf[] = "\\u0000";
-                buf[5] += c;
+                buf[5] += static_cast<char>(c);
                 if (c >= '\x0a')
                     buf[5] += 'a' - ':';
                 replace(buf);
             }
             else if (c <= '\x1f' || c == 0x7f) {
                 char buf[] = "\\u0010";
-                buf[5] += c - 16;
+                buf[5] += static_cast<char>(c - 16);
                 if (c >= '\x1a')
                     buf[5] += 'a' - ':';
                 replace(buf);
