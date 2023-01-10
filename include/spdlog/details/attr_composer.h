@@ -8,7 +8,7 @@ namespace details {
 
 inline void scramble(std::string& dst, string_view_t s)
 {
-    if (s.empty())
+    if (s.size() == 0)
         return;
 
     auto start = s.data();
