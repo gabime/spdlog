@@ -62,8 +62,8 @@ public:
         : padinfo_(padinfo)
     {}
     explicit flag_formatter(padding_info padinfo, attr_flags flag)
-        : padinfo_(padinfo)
-        , flag_{flag}
+        : flag_(flag)
+        , padinfo_(padinfo)
     {}
     flag_formatter() = default;
     virtual ~flag_formatter() = default;
