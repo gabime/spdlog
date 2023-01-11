@@ -929,6 +929,58 @@ private:
     log_clock::time_point last_message_time_;
 };
 
+// attribute formatting: stub
+class attr_formatter_start final : public flag_formatter
+{
+public:
+    explicit attr_formatter_start(padding_info padinfo)
+        : flag_formatter(padinfo)
+    {}
+    void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override
+    {
+        fmt_helper::append_string_view("", dest);
+    }
+};
+class attr_formatter_stop final : public flag_formatter
+{
+public:
+    explicit attr_formatter_stop(padding_info padinfo)
+        : flag_formatter(padinfo)
+    {}
+    void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override
+    {
+        fmt_helper::append_string_view("", dest);
+    }
+};
+
+class attr_formatter_key final : public flag_formatter
+{
+public:
+    explicit attr_formatter_key(padding_info padinfo)
+        : flag_formatter(padinfo)
+    {}
+    void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
+    {
+        for (const details::attr& a : msg.attributes) {
+            fmt_helper::append_string_view(a.key, dest);
+        }
+    }
+};
+
+class attr_formatter_value final : public flag_formatter
+{
+public:
+    explicit attr_formatter_value(padding_info padinfo)
+        : flag_formatter(padinfo)
+    {}
+    void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
+    {
+        for (const details::attr& a : msg.attributes) {
+            fmt_helper::append_string_view(a.value, dest);
+        }
+    }
+};
+
 // Full info formatter
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] [%s:%#] %v
 class full_formatter final : public flag_formatter
@@ -1318,6 +1370,22 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 
     case ('O'): // elapsed time since last log message in seconds
         formatters_.push_back(details::make_unique<details::elapsed_formatter<Padder, std::chrono::seconds>>(padding));
+        break;
+
+    case ('['): // start attribute formatting
+        formatters_.push_back(details::make_unique<details::attr_formatter_start>(padding));
+        break;
+
+    case ('K'): // attribute key
+        formatters_.push_back(details::make_unique<details::attr_formatter_key>(padding));
+        break;
+
+    case ('V'): // attribute value 
+        formatters_.push_back(details::make_unique<details::attr_formatter_value>(padding));
+        break;
+
+    case (']'): // stop attribute formatting
+        formatters_.push_back(details::make_unique<details::attr_formatter_stop>(padding));
         break;
 
     default: // Unknown flag appears as is
