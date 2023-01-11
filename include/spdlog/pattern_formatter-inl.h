@@ -1060,7 +1060,14 @@ public:
         fmt_helper::append_string_view(msg.payload, dest);
 
         if (msg.attributes.size() > 0) {
+            // by default uses logfmt-esque kv pairs
             fmt_helper::append_string_view(" | ", dest); // separate message from attributes
+            for (const details::attr& a : msg.attributes) {
+                details::fmt_helper::append_string_view(a.key, dest);
+                details::fmt_helper::append_string_view("=\"", dest);
+                details::fmt_helper::append_string_view(a.value, dest);
+                details::fmt_helper::append_string_view("\" ", dest);
+            }
         }
     }
 
