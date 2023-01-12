@@ -77,6 +77,7 @@ public:
         : logger(std::move(name), sinks.begin(), sinks.end())
     {}
 
+
     virtual ~logger() = default;
 
     logger(const logger &other);
@@ -84,10 +85,25 @@ public:
     logger &operator=(logger other) SPDLOG_NOEXCEPT;
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
-    template <typename T>
-    void log(level::level_enum lvl, const T &msg, attribute_list attrs)
-    {
-        log(source_loc{}, lvl, msg, attrs);
+    void push_context(attribute_list attrs) {
+        attributes.insert(attributes.end(), attrs.begin(), attrs.end());
+        attr_stack.push_back(static_cast<long>(attributes.size()));
+    }
+
+    void pop_context() {
+        if (attr_stack.size() > 1) {
+            attributes.erase(attributes.begin() + attr_stack[attr_stack.size() - 2], attributes.begin() + attr_stack[attr_stack.size() - 1]);
+            attr_stack.pop_back();
+        } else {
+            // is first element in stack, or empty. Delete the whole thing.
+            clear_context();
+        }
+    }
+
+    // removes context on loggers by clearing the attribute list
+    void clear_context() {
+        attributes.clear();
+        attr_stack.clear();
     }
 
     template<typename... Args>
@@ -125,23 +141,10 @@ public:
         }
 
         details::log_msg log_msg(log_time, loc, name_, lvl, msg);
+        log_msg.attributes.insert(log_msg.attributes.end(), attributes.begin(), attributes.end());
         log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
-    void log(source_loc loc, level::level_enum lvl, string_view_t msg, attribute_list attrs)
-    {
-        bool log_enabled = should_log(lvl);
-        bool traceback_enabled = tracer_.enabled();
-        if (!log_enabled && !traceback_enabled)
-        {
-            return;
-        }
-
-        details::log_msg log_msg(loc, name_, lvl, msg);
-        // log_msg.attributes.push_back(attrs);
-        log_msg.attributes.insert(log_msg.attributes.end(), attrs.begin(), attrs.end());
-        log_it_(log_msg, log_enabled, traceback_enabled);
-    }
     void log(source_loc loc, level::level_enum lvl, string_view_t msg)
     {
         bool log_enabled = should_log(lvl);
@@ -152,6 +155,7 @@ public:
         }
 
         details::log_msg log_msg(loc, name_, lvl, msg);
+        log_msg.attributes.insert(log_msg.attributes.end(), attributes.begin(), attributes.end());
         log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
@@ -221,6 +225,7 @@ public:
         memory_buf_t buf;
         details::os::wstr_to_utf8buf(wstring_view_t(msg.data(), msg.size()), buf);
         details::log_msg log_msg(log_time, loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+        log_msg.attributes.insert(log_msg.attributes.end(), attributes.begin(), attributes.end());
         log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
@@ -236,6 +241,7 @@ public:
         memory_buf_t buf;
         details::os::wstr_to_utf8buf(wstring_view_t(msg.data(), msg.size()), buf);
         details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+        log_msg.attributes.insert(log_msg.attributes.end(), attributes.begin(), attributes.end());
         log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
@@ -280,43 +286,6 @@ public:
         log(level::critical, fmt, std::forward<Args>(args)...);
     }
 #endif
-
-    // attributes endpoint
-    template<typename T>
-    void trace(const T &msg, attribute_list attrs)
-    {
-        log(level::trace, msg, attrs);
-    }
-
-    template<typename T>
-    void debug(const T &msg, attribute_list attrs)
-    {
-        log(level::debug, msg, attrs);
-    }
-
-    template<typename T>
-    void info(const T &msg, attribute_list attrs)
-    {
-        log(level::info, msg, attrs);
-    }
-
-    template<typename T>
-    void warn(const T &msg, attribute_list attrs)
-    {
-        log(level::warn, msg, attrs);
-    }
-
-    template<typename T>
-    void error(const T &msg, attribute_list attrs)
-    {
-        log(level::err, msg, attrs);
-    }
-
-    template<typename T>
-    void critical(const T &msg, attribute_list attrs)
-    {
-        log(level::critical, msg, attrs);
-    }
 
     // default endpoint
     template<typename T>
@@ -413,6 +382,9 @@ protected:
     err_handler custom_err_handler_{nullptr};
     details::backtracer tracer_;
 
+    attribute_list attributes;
+    std::vector<long> attr_stack; // used to push/pop nested contexts
+
     // common implementation for after templated public api has been resolved
     template<typename... Args>
     void log_(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&... args)
@@ -433,6 +405,7 @@ protected:
 #endif
 
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
+            log_msg.attributes.insert(log_msg.attributes.end(), attributes.begin(), attributes.end());
             log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH(loc)
@@ -458,7 +431,8 @@ protected:
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            log_it_(log_msg, log_enabled, traceback_enabled);
+            log_msg.attributes.insert(log_msg.attributes.end(), attributes.begin(), attributes.end());
+            log_og_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH(loc)
     }

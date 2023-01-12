@@ -1145,8 +1145,8 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
                 f->format(msg, cached_tm_, dest);
         }
     } else {
-    // ugly formatter iterator, due to needing to go back to previous iterators to repeat kv pairs
     auto it_end = formatters_.begin();
+    // ugly formatter iterator, due to needing to go back to previous iterators to repeat kv pairs
     for (auto it = formatters_.begin(); it != formatters_.end(); ++it)
     {
         if ((*it)->flag_ == details::attr_flags::start) {
