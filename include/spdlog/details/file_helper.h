@@ -30,6 +30,7 @@ public:
     void write(const memory_buf_t &buf);
     size_t size() const;
     const filename_t &filename() const;
+    int fileno() const;
 
     //
     // return file path and its extension:

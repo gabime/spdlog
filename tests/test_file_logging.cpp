@@ -2,9 +2,11 @@
  * This content is released under the MIT License as specified in https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
  */
 #include "includes.h"
+#include "spdlog/spdlog.h"
 
 #define SIMPLE_LOG "test_logs/simple_log"
 #define ROTATING_LOG "test_logs/rotating_log"
+#define MAPPED_LOG "test_logs/mapped_log"
 
 TEST_CASE("simple_file_logger", "[simple_logger]]")
 {
@@ -106,4 +108,23 @@ TEST_CASE("rotating_file_logger3", "[rotating_logger]]")
     size_t max_size = 0;
     spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
     REQUIRE_THROWS_AS(spdlog::rotating_logger_mt("logger", basename, max_size, 0), spdlog::spdlog_ex);
+}
+
+TEST_CASE("mapped_file_logger", "[mapped_logger]]")
+{
+    prepare_logdir();
+    spdlog::filename_t filename = SPDLOG_FILENAME_T(MAPPED_LOG);
+
+    auto logger = spdlog::create<spdlog::sinks::mapped_file_sink_mt>("logger", filename);
+    logger->set_pattern("%v");
+
+    logger->info("Test message {}", 1);
+    logger->info("Test message {}", 2);
+
+    logger->flush();
+    spdlog::shutdown();
+    logger.reset();
+    require_message_count(MAPPED_LOG, 2);
+    using spdlog::details::os::default_eol;
+    REQUIRE(file_contents(MAPPED_LOG) == spdlog::fmt_lib::format("Test message 1{}Test message 2{}", default_eol, default_eol));
 }
