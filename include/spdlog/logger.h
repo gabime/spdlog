@@ -432,7 +432,7 @@ protected:
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
             log_msg.attributes.insert(log_msg.attributes.end(), attributes.begin(), attributes.end());
-            log_og_msg, log_enabled, traceback_enabled);
+            log_it_(log_msg, log_enabled, traceback_enabled);
         }
         SPDLOG_LOGGER_CATCH(loc)
     }
