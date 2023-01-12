@@ -47,15 +47,29 @@ struct padding_info
     bool enabled_ = false;
 };
 
+enum class attr_flags {
+    none,
+    start,
+    stop,
+    key,
+    value
+};
+
 class SPDLOG_API flag_formatter
 {
 public:
     explicit flag_formatter(padding_info padinfo)
         : padinfo_(padinfo)
     {}
+    explicit flag_formatter(padding_info padinfo, attr_flags flag)
+        : flag_(flag)
+        , padinfo_(padinfo)
+    {}
     flag_formatter() = default;
     virtual ~flag_formatter() = default;
     virtual void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) = 0;
+
+    attr_flags flag_ = attr_flags::none;
 
 protected:
     padding_info padinfo_;
