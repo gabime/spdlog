@@ -1131,14 +1131,25 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
         }
     }
 
+    if (msg.attributes.size() == 0) {
+        // non-iterator, a bit cleaner, still need to ignore new formatting flags
+        bool ignore_formatter = false;
+        for (auto& f : formatters_) {
+            if (f->flag_ == details::attr_flags::start) {
+                ignore_formatter = true;
+            } else if (f->flag_ == details::attr_flags::stop) {
+                ignore_formatter = false;
+            }
+
+            if (!ignore_formatter)
+                f->format(msg, cached_tm_, dest);
+        }
+    } else {
+    // ugly formatter iterator, due to needing to go back to previous iterators to repeat kv pairs
     auto it_end = formatters_.begin();
     for (auto it = formatters_.begin(); it != formatters_.end(); ++it)
     {
         if ((*it)->flag_ == details::attr_flags::start) {
-            if (msg.attributes.size() == 0) {
-                while((*it)->flag_ != details::attr_flags::stop && it != formatters_.end()) ++it;
-                it_end = it;
-            }
             for (const details::attr& a : msg.attributes) {
                 for (auto it2 = it; it2 != formatters_.end(); ++it2) {
                     if ((*it2)->flag_ == details::attr_flags::stop) {
@@ -1158,6 +1169,7 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
             it = it_end;
         }
         (*it)->format(msg, cached_tm_, dest);
+    }
     }
 
     // write eol
