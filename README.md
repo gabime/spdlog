@@ -148,15 +148,14 @@ void daily_example()
 // This is useful in order to display debug logs only when really needed (e.g. when error happens).
 // When needed, call dump_backtrace() to dump them to your log.
 
-spdlog::enable_backtrace(32); // Store the latest 32 messages in a buffer. Older messages will be dropped.
+spdlog::enable_backtrace(32); // Store the latest 32 messages in a buffer. 
 // or my_logger->enable_backtrace(32)..
 for(int i = 0; i < 100; i++)
 {
   spdlog::debug("Backtrace message {}", i); // not logged yet..
 }
-// e.g. if some error happened:
+// e.g. if some has error happened:
 spdlog::dump_backtrace(); // log them now! show the last 32 messages
-
 // or my_logger->dump_backtrace(32)..
 ```
 
