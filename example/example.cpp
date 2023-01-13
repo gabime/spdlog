@@ -394,11 +394,9 @@ void replace_default_logger_example()
 }
 
 void attribute_example() {
-    auto custom_logger = spdlog::stdout_color_mt("custom_logger");
-
-    custom_logger->push_context(spdlog::attribute_list{{"attribute_key", "attribute value"}});
-    custom_logger->warn("EXPERIMENTAL: log with attributes");
-    custom_logger->clear_context();
+    spdlog::push_context(spdlog::attribute_list{{"attribute_key", "attribute value"}});
+    spdlog::warn("EXPERIMENTAL: log with attributes");
+    spdlog::clear_context();
 
     // structured logging using attributes
 
