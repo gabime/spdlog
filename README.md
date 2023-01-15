@@ -375,7 +375,7 @@ $ ./example
 #### Log file open/close event handlers
 ```c++
 // You can get callbacks from spdlog before/after log file has been opened or closed. 
-// This is useful for cleanup procedures or for adding someting the start/end of the log files.
+// This is useful for cleanup procedures or for adding something the start/end of the log files.
 void file_events_example()
 {
     // pass the spdlog::file_event_handlers to file sinks for open/close log file notifications
