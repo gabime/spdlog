@@ -109,9 +109,9 @@ SPDLOG_API bool create_dir(const filename_t &path);
 // return empty string if field not found
 SPDLOG_API std::string getenv(const char *field);
 
-// Do fsync by FILE descriptor
+// Do fsync by FILE object
 // Return true on success
-SPDLOG_API bool fsync(FILE * fd);
+SPDLOG_API bool fsync(FILE * f);
 
 } // namespace os
 } // namespace details
