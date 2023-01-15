@@ -602,14 +602,14 @@ std::string SPDLOG_INLINE getenv(const char *field)
 #endif
 }
 
-// Do fsync by FILE descriptor
+// Do fsync by FILE handlerpointer
 // Return true on success
-SPDLOG_INLINE bool fsync(FILE *fd)
+SPDLOG_INLINE bool fsync(FILE *fp)
 {
 #ifdef _WIN32
-    return FlushFileBuffers(reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(fd)))) != 0;
+    return FlushFileBuffers(reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(fp)))) != 0;
 #else
-    return ::fsync(fileno(fd)) == 0;
+    return ::fsync(fileno(fp)) == 0;
 #endif
 }
 
