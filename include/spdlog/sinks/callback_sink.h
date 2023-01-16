@@ -15,14 +15,13 @@ namespace spdlog {
 // callbacks struct
 struct custom_log_callbacks
 {
-
     custom_log_callbacks()
         : on_log(nullptr)
         , on_log_formatted(nullptr)
     {}
 
-    std::function<void(const std::string &mag_str)> on_log_formatted;
     std::function<void(const details::log_msg &msg)> on_log;
+    std::function<void(const std::string &mag_str)> on_log_formatted;
 };
 
 namespace sinks {

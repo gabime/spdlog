@@ -143,10 +143,10 @@ void callback_example()
 {
     // Define the callbacks
     spdlog::custom_log_callbacks callbacks;
-    callbacks.on_log_formatted = [](std::string str){
+    callbacks.on_log_formatted = [](std::string /*str*/){
         // do what you need to do with str
     };
-    callbacks.on_log = [](spdlog::details::log_msg msg){
+    callbacks.on_log = [](spdlog::details::log_msg /*msg*/){
         // do what you need to do with msg
     };
     
