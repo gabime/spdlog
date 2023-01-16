@@ -210,7 +210,7 @@ private:
     HANDLE hEventLog_{NULL};
     internal::sid_t current_user_sid_;
     std::string source_;
-    WORD event_id_;
+    DWORD event_id_;
 
     HANDLE event_log_handle()
     {
@@ -258,7 +258,7 @@ protected:
     void flush_() override {}
 
 public:
-    win_eventlog_sink(std::string const &source, WORD event_id = 1000 /* according to mscoree.dll */)
+    win_eventlog_sink(std::string const &source, DWORD event_id = 1000 /* according to mscoree.dll */)
         : source_(source)
         , event_id_(event_id)
     {
