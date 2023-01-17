@@ -930,15 +930,16 @@ private:
 };
 
 // attribute formatting: stub
+// not sure if stub should print legacy values or nothing
 class attr_formatter_start final : public flag_formatter
 {
 public:
     explicit attr_formatter_start(padding_info padinfo)
         : flag_formatter(padinfo, details::attr_flags::start)
     {}
-    void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override
+    void format(const details::log_msg &, const std::tm &, memory_buf_t &) override
     {
-        fmt_helper::append_string_view("", dest);
+        // fmt_helper::append_string_view("%(", dest);
     }
 };
 class attr_formatter_stop final : public flag_formatter
@@ -947,9 +948,9 @@ public:
     explicit attr_formatter_stop(padding_info padinfo)
         : flag_formatter(padinfo, details::attr_flags::stop)
     {}
-    void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override
+    void format(const details::log_msg &, const std::tm &, memory_buf_t &) override
     {
-        fmt_helper::append_string_view("", dest);
+        // fmt_helper::append_string_view("%)", dest);
     }
 };
 
@@ -959,9 +960,9 @@ public:
     explicit attr_formatter_key(padding_info padinfo)
         : flag_formatter(padinfo, details::attr_flags::key)
     {}
-    void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override
+    void format(const details::log_msg &, const std::tm &, memory_buf_t &) override
     {
-        fmt_helper::append_string_view("", dest);
+        // fmt_helper::append_string_view("%K", dest);
     }
 };
 
@@ -971,9 +972,9 @@ public:
     explicit attr_formatter_value(padding_info padinfo)
         : flag_formatter(padinfo, details::attr_flags::value)
     {}
-    void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override
+    void format(const details::log_msg &, const std::tm &, memory_buf_t &) override
     {
-        fmt_helper::append_string_view("", dest);
+        // fmt_helper::append_string_view("%V", dest);
     }
 };
 
@@ -1145,17 +1146,26 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
                 f->format(msg, cached_tm_, dest);
         }
     } else {
-    auto it_end = formatters_.begin();
-    // ugly formatter iterator, due to needing to go back to previous iterators to repeat kv pairs
-    for (auto it = formatters_.begin(); it != formatters_.end(); ++it)
-    {
-        if ((*it)->flag_ == details::attr_flags::start) {
+        // ugly formatter iterator, due to needing to go back to previous iterators to repeat kv pairs
+        for (auto it = formatters_.begin(); it != formatters_.end(); ++it) {
+            if ((*it)->flag_ != details::attr_flags::start) {
+                (*it)->format(msg, cached_tm_, dest);
+                continue;
+            }
+            ++it; // start at next symbol, don't need to check start flag
+
+            // first look for stop iterator. If not found consider it the end iterator (repeat the last values for all attributes).
+            auto stop_it = it;
+            for (; stop_it != formatters_.end(); ++stop_it) {
+                if ((*stop_it)->flag_ == details::attr_flags::stop) {
+                    break;
+                }
+            }
+
+            // now iterate through attributes, printing the nested format
             for (const details::attr& a : msg.attributes) {
-                for (auto it2 = it; it2 != formatters_.end(); ++it2) {
-                    if ((*it2)->flag_ == details::attr_flags::stop) {
-                        it_end = it2;
-                        break;
-                    } else if ((*it2)->flag_ == details::attr_flags::key) {
+                for (auto it2 = it; it2 != stop_it; ++it2) {
+                    if ((*it2)->flag_ == details::attr_flags::key) {
                         // custom formatting function overload makes this even more messy with reinterpret casts, 
                         // will just do manual key addition
                         details::fmt_helper::append_string_view(a.key, dest);
@@ -1166,10 +1176,11 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
                     }
                 }
             }
-            it = it_end;
+
+            // skip the nested attributes pattern, go back to normal pattern matching.
+            if (stop_it != formatters_.end()) it = stop_it;
+            else it = formatters_.end()-1;
         }
-        (*it)->format(msg, cached_tm_, dest);
-    }
     }
 
     // write eol
