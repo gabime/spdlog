@@ -5,15 +5,18 @@
 #include "test_sink.h"
 #include "spdlog/sinks/callback_sink.h"
 #include "spdlog/async.h"
-
+#include "spdlog/common.h"
 
 TEST_CASE("custom_callback_logger", "[custom_callback_logger]]")
 {
-    spdlog::custom_log_callbacks callbacks;
     std::vector<std::string> lines;
-    callbacks.on_log_formatted = [&](std::string str) { lines.push_back(str); };
-
-    auto callback_logger = std::make_shared<spdlog::sinks::callback_sink_mt>(callbacks);
+    spdlog::pattern_formatter formatter;
+    auto callback_logger = std::make_shared<spdlog::sinks::callback_sink_st>([&](const spdlog::details::log_msg &msg) {
+        spdlog::memory_buf_t formatted;
+        formatter.format(msg, formatted);
+        auto eol_len = strlen(spdlog::details::os::default_eol);
+        lines.emplace_back(formatted.begin(), formatted.end() - eol_len);
+    });
     std::shared_ptr<spdlog::sinks::test_sink_st> test_sink(new spdlog::sinks::test_sink_st);
 
     spdlog::logger logger("test-callback", {callback_logger, test_sink});
