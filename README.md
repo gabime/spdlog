@@ -233,6 +233,28 @@ void multi_sink_example()
 ```
 
 ---
+#### Logger with a custom callback function that receives the logs
+```c++
+
+// create logger with a lambda function callback, the callback will be called
+// each time something is logged to the logger
+void callback_example()
+{
+    auto callback_sink = std::make_shared<spdlog::sinks::callback_sink_mt>([](const spdlog::details::log_msg &msg) {
+         // for example you can be notified by sending an email to yourself
+    });
+    callback_sink->set_level(spdlog::level::err);
+
+    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    spdlog::logger logger("custom_callback_logger", {console_sink, callback_sink});
+
+    logger.info("some info log");
+    logger.debug("some debug log");
+    logger.error("critical issue"); // will notify you
+}
+```
+
+---
 #### Asynchronous logging
 ```c++
 #include "spdlog/async.h"
