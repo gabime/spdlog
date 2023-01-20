@@ -249,7 +249,6 @@ void callback_example()
     spdlog::logger logger("custom_callback_logger", {console_sink, callback_sink});
 
     logger.info("some info log");
-    logger.debug("some debug log");
     logger.error("critical issue"); // will notify you
 }
 ```
