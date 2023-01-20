@@ -233,7 +233,7 @@ void multi_sink_example()
 ```
 
 ---
-#### Logger with a custom callback function that receives the logs
+#### User defined callbacks about log events
 ```c++
 
 // create logger with a lambda function callback, the callback will be called
