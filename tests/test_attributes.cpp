@@ -7,6 +7,51 @@
 
 #define TEST_FILENAME "test_logs/attr_test.log"
 
+// helper classes for exception-safe attribute push/pop
+// these use RAII to ensure that the context is popped even if an exception is thrown
+class scoped_context {
+    std::shared_ptr<spdlog::logger> logger_;
+    std::size_t push_counter_ = 0;
+
+public:
+    scoped_context(std::shared_ptr<spdlog::logger> logger) : logger_(logger) {}
+    scoped_context(std::shared_ptr<spdlog::logger> logger, spdlog::attribute_list attrs) : scoped_context(logger) {
+        push(attrs);
+    }
+
+    void push(spdlog::attribute_list attrs) {
+        logger_->push_context(attrs);
+        ++push_counter_;
+    }
+
+    ~scoped_context() {
+        for (std::size_t i = 0; i < push_counter_; ++i) {
+            logger_->pop_context();
+        }
+    }
+};
+
+TEST_CASE("attributes test with exceptions ", "[attributes]")
+{
+    auto test_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
+    auto logger = std::make_shared<spdlog::logger>("attr_logger", test_sink);
+    logger->set_pattern("%v%( %K=%V%)");
+
+    // push and pop context are not guaranteed to be exception safe
+    // so we use the helper class
+    try {
+        auto ctx = scoped_context(logger, {{"key1", "val1"}});
+        logger->info("testing");
+        throw std::runtime_error("test exception");
+    } catch (const std::exception& e) {
+        logger->info("caught exception: {}", e.what());
+    }
+
+    REQUIRE(test_sink->msg_counter() == 2); 
+    REQUIRE(test_sink->lines()[0] == "testing key1=val1"); // has kv pair in this msg
+    REQUIRE(test_sink->lines()[1] == "caught exception: test exception"); // doesn't have kv pair in error msg
+}
+
 // see if multiple async logs to a single file is thread-safe, i.e. produces coherent structured logs
 TEST_CASE("async attributes test with threads ", "[attributes]")
 {
@@ -28,8 +73,7 @@ TEST_CASE("async attributes test with threads ", "[attributes]")
     for (auto lg : loggers) {
         threads.emplace_back([=](){
             // push and pop context are not guaranteed to be thread safe
-            // therefore, messages from the same logger object have to be in the same thread
-            // to guarantee thread safety, use a different logger object for each thread
+            // to guarantee thread safety, use a different logger object for each thread when using attributes
             for (int i = 0; i < num_msgs; ++i) {
                 lg->push_context({{"key"+std::to_string(i), "val"+std::to_string(i)}});
                 lg->info("testing {}", i);
