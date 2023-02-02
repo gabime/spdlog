@@ -31,6 +31,11 @@ void replace_default_logger_example();
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h" // support for user defined types
 
+void test()
+{
+    spdlog::info("test: {}", 42);
+}
+
 int main(int, char *[])
 {
     // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
