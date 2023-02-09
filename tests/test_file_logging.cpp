@@ -23,6 +23,28 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     REQUIRE(file_contents(SIMPLE_LOG) == spdlog::fmt_lib::format("Test message 1{}Test message 2{}", default_eol, default_eol));
 }
 
+TEST_CASE("text_file_logger", "[text_file_logger]]")
+{
+    spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
+
+    for (const bool text_mode : {false, true})
+    {
+        prepare_logdir();
+
+        auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, false, spdlog::file_event_handlers{}, text_mode);
+        sink->set_pattern("%v");
+        spdlog::logger logger("logger", sink);
+
+        logger.info("Test line {}\nTest line {}", 1, 2);
+
+        logger.flush();
+        require_message_count(SIMPLE_LOG, 2);
+        using spdlog::details::os::default_eol;
+        REQUIRE(file_contents(SIMPLE_LOG) ==
+                spdlog::fmt_lib::format("Test line 1{}Test line 2{}", text_mode ? default_eol : "\n", default_eol));
+    }
+}
+
 TEST_CASE("flush_on", "[flush_on]]")
 {
     prepare_logdir();

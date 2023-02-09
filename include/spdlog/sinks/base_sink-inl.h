@@ -53,7 +53,16 @@ void SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::set_formatter(std::unique_pt
 template<typename Mutex>
 void SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::set_pattern_(const std::string &pattern)
 {
-    set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern));
+    const auto current_pattern_formatter = dynamic_cast<spdlog::pattern_formatter *>(formatter_.get());
+
+    if (current_pattern_formatter)
+    {
+        current_pattern_formatter->set_pattern(pattern);
+    }
+    else
+    {
+        set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern));
+    }
 }
 
 template<typename Mutex>

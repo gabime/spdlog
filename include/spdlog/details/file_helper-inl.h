@@ -29,13 +29,13 @@ SPDLOG_INLINE file_helper::~file_helper()
     close();
 }
 
-SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
+SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate, bool text_mode)
 {
     close();
     filename_ = fname;
 
-    auto *mode = SPDLOG_FILENAME_T("ab");
-    auto *trunc_mode = SPDLOG_FILENAME_T("wb");
+    auto *mode = text_mode ? SPDLOG_FILENAME_T("a") : SPDLOG_FILENAME_T("ab");
+    auto *trunc_mode = text_mode ? SPDLOG_FILENAME_T("w") : SPDLOG_FILENAME_T("wb");
 
     if (event_handlers_.before_open)
     {
@@ -47,8 +47,8 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
         os::create_dir(os::dir_name(fname));
         if (truncate)
         {
-            // Truncate by opening-and-closing a tmp file in "wb" mode, always
-            // opening the actual log-we-write-to in "ab" mode, since that
+            // Truncate by opening-and-closing a tmp file in trunc mode, always
+            // opening the actual log-we-write-to in append mode, since that
             // interacts more politely with eternal processes that might
             // rotate/truncate the file underneath us.
             std::FILE *tmp;

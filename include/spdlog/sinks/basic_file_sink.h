@@ -20,7 +20,8 @@ template<typename Mutex>
 class basic_file_sink final : public base_sink<Mutex>
 {
 public:
-    explicit basic_file_sink(const filename_t &filename, bool truncate = false, const file_event_handlers &event_handlers = {});
+    explicit basic_file_sink(
+        const filename_t &filename, bool truncate = false, const file_event_handlers &event_handlers = {}, bool text_mode = false);
     const filename_t &filename() const;
 
 protected:

@@ -23,7 +23,7 @@ public:
     file_helper &operator=(const file_helper &) = delete;
     ~file_helper();
 
-    void open(const filename_t &fname, bool truncate = false);
+    void open(const filename_t &fname, bool truncate = false, bool text_mode = false);
     void reopen(bool truncate);
     void flush();
     void sync();

@@ -9,15 +9,18 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/os.h>
+#include <spdlog/pattern_formatter.h>
 
 namespace spdlog {
 namespace sinks {
 
 template<typename Mutex>
-SPDLOG_INLINE basic_file_sink<Mutex>::basic_file_sink(const filename_t &filename, bool truncate, const file_event_handlers &event_handlers)
-    : file_helper_{event_handlers}
+SPDLOG_INLINE basic_file_sink<Mutex>::basic_file_sink(
+    const filename_t &filename, bool truncate, const file_event_handlers &event_handlers, bool text_mode)
+    : base_sink<Mutex>{details::make_unique<pattern_formatter>(pattern_time_type::local, text_mode ? "\n" : details::os::default_eol)}
+    , file_helper_{event_handlers}
 {
-    file_helper_.open(filename, truncate);
+    file_helper_.open(filename, truncate, text_mode);
 }
 
 template<typename Mutex>
