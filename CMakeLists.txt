@@ -176,11 +176,10 @@ if(SPDLOG_SYSTEM_INCLUDES)
     set(SPDLOG_INCLUDES_LEVEL "SYSTEM")
 endif()
 
-
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                          "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-target_link_libraries(spdlog PUBLIC Threads::Threads)
+target_link_libraries(spdlog PUBLIC Threads::Threads $<$<BOOL:${MINGW}>: ws2_32>)
 spdlog_enable_warnings(spdlog)
 
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION ${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR})
@@ -199,7 +198,7 @@ add_library(spdlog::spdlog_header_only ALIAS spdlog_header_only)
 
 target_include_directories(spdlog_header_only ${SPDLOG_INCLUDES_LEVEL} INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                                         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
+target_link_libraries(spdlog_header_only INTERFACE Threads::Threads $<$<BOOL:${MINGW}>: ws2_32>)
 
 # ---------------------------------------------------------------------------------------
 # Use fmt package if using external fmt
