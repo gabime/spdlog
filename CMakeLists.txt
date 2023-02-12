@@ -176,7 +176,6 @@ if(SPDLOG_SYSTEM_INCLUDES)
     set(SPDLOG_INCLUDES_LEVEL "SYSTEM")
 endif()
 
-
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                          "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
