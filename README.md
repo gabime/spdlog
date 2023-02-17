@@ -2,6 +2,22 @@
 
 Very fast, header-only/compiled, C++ logging library. [![ci](https://github.com/gabime/spdlog/actions/workflows/ci.yml/badge.svg)](https://github.com/gabime/spdlog/actions/workflows/ci.yml)&nbsp; [![Build status](https://ci.appveyor.com/api/projects/status/d2jnxclg20vd0o50?svg=true&branch=v1.x)](https://ci.appveyor.com/project/gabime/spdlog) [![Release](https://img.shields.io/github/release/gabime/spdlog.svg)](https://github.com/gabime/spdlog/releases/latest)
 
+## ATTRIBUTES
+this is a custom Tessonics fork so that we can add attributes directly to any spdlog logger object.
+
+example:
+```c++
+// push/pop attributes
+logger->push_context({{"key", "value"}});
+logger->info("message");
+logger->pop_context();
+```
+
+message looks like: `message | key=value`
+
+refer to https://github.com/tessonics/structured_logging_cpp to see how to use this feature properly.
+(make sure it is exception / thread safe, emit json logs, etc.)
+
 ## Install 
 #### Header only version
 Copy the include [folder](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) to your build tree and use a C++11 compiler.
