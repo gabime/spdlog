@@ -68,14 +68,13 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
     {
         throw_spdlog_ex("stdout_sink_base: WriteFile() failed. GetLastError(): " + std::to_string(::GetLastError()));
     }
-    FlushFileBuffers(handle_); // flush every line to terminal
 #else
     std::lock_guard<mutex_t> lock(mutex_);
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
-    ::fflush(file_); // flush every line to terminal
 #endif // WIN32
+    ::fflush(file_); // flush every line to terminal
 }
 
 template<typename ConsoleMutex>
