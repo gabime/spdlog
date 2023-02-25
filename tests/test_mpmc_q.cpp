@@ -43,6 +43,26 @@ TEST_CASE("dequeue-empty-wait", "[mpmc_blocking_q]")
     REQUIRE(delta_ms <= wait_ms + tolerance_wait);
 }
 
+TEST_CASE("dequeue-full-nowait", "[mpmc_blocking_q]")
+{
+    spdlog::details::mpmc_blocking_queue<int> q(1);
+    q.enqueue(42);
+
+    int item = 0;
+    q.dequeue_for(item, milliseconds::zero());
+    REQUIRE(item == 42);
+}
+
+TEST_CASE("dequeue-full-wait", "[mpmc_blocking_q]")
+{
+    spdlog::details::mpmc_blocking_queue<int> q(1);
+    q.enqueue(42);
+
+    int item = 0;
+    q.dequeue(item);
+    REQUIRE(item == 42);
+}
+
 TEST_CASE("enqueue_nowait", "[mpmc_blocking_q]")
 {
 
@@ -95,12 +115,12 @@ TEST_CASE("full_queue", "[mpmc_blocking_q]")
     for (int i = 1; i < static_cast<int>(q_size); i++)
     {
         int item = -1;
-        q.dequeue_for(item, milliseconds(0));
+        q.dequeue(item);
         REQUIRE(item == i);
     }
 
     // last item pushed has overridden the oldest.
     int item = -1;
-    q.dequeue_for(item, milliseconds(0));
+    q.dequeue(item);
     REQUIRE(item == 123456);
 }

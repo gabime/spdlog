@@ -146,17 +146,16 @@ void daily_example()
 ```c++
 // Debug messages can be stored in a ring buffer instead of being logged immediately.
 // This is useful in order to display debug logs only when really needed (e.g. when error happens).
-// When needed, call dump_backtrace() to see them.
+// When needed, call dump_backtrace() to dump them to your log.
 
-spdlog::enable_backtrace(32); // Store the latest 32 messages in a buffer. Older messages will be dropped.
+spdlog::enable_backtrace(32); // Store the latest 32 messages in a buffer. 
 // or my_logger->enable_backtrace(32)..
 for(int i = 0; i < 100; i++)
 {
   spdlog::debug("Backtrace message {}", i); // not logged yet..
 }
-// e.g. if some error happened:
+// e.g. if some has error happened:
 spdlog::dump_backtrace(); // log them now! show the last 32 messages
-
 // or my_logger->dump_backtrace(32)..
 ```
 
@@ -230,6 +229,27 @@ void multi_sink_example()
     logger.set_level(spdlog::level::debug);
     logger.warn("this should appear in both console and file");
     logger.info("this message should not appear in the console, only in the file");
+}
+```
+
+---
+#### User defined callbacks about log events
+```c++
+
+// create logger with a lambda function callback, the callback will be called
+// each time something is logged to the logger
+void callback_example()
+{
+    auto callback_sink = std::make_shared<spdlog::sinks::callback_sink_mt>([](const spdlog::details::log_msg &msg) {
+         // for example you can be notified by sending an email to yourself
+    });
+    callback_sink->set_level(spdlog::level::err);
+
+    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+    spdlog::logger logger("custom_callback_logger", {console_sink, callback_sink});
+
+    logger.info("some info log");
+    logger.error("critical issue"); // will notify you
 }
 ```
 
@@ -376,7 +396,7 @@ $ ./example
 #### Log file open/close event handlers
 ```c++
 // You can get callbacks from spdlog before/after log file has been opened or closed. 
-// This is useful for cleanup procedures or for adding someting the start/end of the log files.
+// This is useful for cleanup procedures or for adding something the start/end of the log files.
 void file_events_example()
 {
     // pass the spdlog::file_event_handlers to file sinks for open/close log file notifications

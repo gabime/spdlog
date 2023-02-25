@@ -54,6 +54,12 @@ SPDLOG_INLINE void backtracer::push_back(const log_msg &msg)
     messages_.push_back(log_msg_buffer{msg});
 }
 
+SPDLOG_INLINE bool backtracer::empty() const
+{
+    std::lock_guard<std::mutex> lock{mutex_};
+    return messages_.empty();
+}
+
 // pop all items in the q and apply the given fun on each of them.
 SPDLOG_INLINE void backtracer::foreach_pop(std::function<void(const details::log_msg &)> fun)
 {

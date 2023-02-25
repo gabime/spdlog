@@ -12,6 +12,7 @@ void stdout_logger_example();
 void basic_example();
 void rotating_example();
 void daily_example();
+void callback_example();
 void async_example();
 void binary_example();
 void vector_example();
@@ -72,6 +73,7 @@ int main(int, char *[])
         basic_example();
         rotating_example();
         daily_example();
+        callback_example();
         async_example();
         binary_example();
         vector_example();
@@ -134,6 +136,15 @@ void daily_example()
 {
     // Create a daily logger - a new file is created every day on 2:30am.
     auto daily_logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
+}
+
+#include "spdlog/sinks/callback_sink.h"
+void callback_example()
+{
+    // Create the logger
+    auto logger = spdlog::callback_logger_mt("custom_callback_logger", [](const spdlog::details::log_msg &/*msg*/) {
+        // do what you need to do with msg
+    });
 }
 
 #include "spdlog/cfg/env.h"

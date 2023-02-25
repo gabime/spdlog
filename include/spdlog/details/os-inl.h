@@ -23,9 +23,10 @@
 
 #ifdef _WIN32
 
-#    include <io.h>      // _get_osfhandle and _isatty support
-#    include <process.h> //  _get_pid support
+#    include <io.h>      // for _get_osfhandle, _isatty, _fileno
+#    include <process.h> // for _get_pid
 #    include <spdlog/details/windows_include.h>
+#    include <fileapi.h> // for FlushFileBuffers
 
 #    ifdef __MINGW32__
 #        include <share.h>
@@ -236,8 +237,8 @@ SPDLOG_INLINE size_t filesize(FILE *f)
 #    else
     int fd = ::fileno(f);
 #    endif
-// 64 bits(but not in osx or cygwin, where fstat64 is deprecated)
-#    if (defined(__linux__) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
+// 64 bits(but not in osx, linux/musl or cygwin, where fstat64 is deprecated)
+#    if ((defined(__linux__) && defined(__GLIBC__)) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
     struct stat64 st;
     if (::fstat64(fd, &st) == 0)
     {
@@ -286,7 +287,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
     return offset;
 #else
 
-#    if defined(sun) || defined(__sun) || defined(_AIX) || (!defined(_BSD_SOURCE) && !defined(_GNU_SOURCE))
+#    if defined(sun) || defined(__sun) || defined(_AIX) || (defined(__NEWLIB__) && !defined(__TM_GMTOFF)) || (!defined(_BSD_SOURCE) && !defined(_GNU_SOURCE))
     // 'tm_gmtoff' field is BSD extension and it's missing on SunOS/Solaris
     struct helper
     {
@@ -598,6 +599,17 @@ std::string SPDLOG_INLINE getenv(const char *field)
 #else // revert to getenv
     char *buf = ::getenv(field);
     return buf ? buf : std::string{};
+#endif
+}
+
+// Do fsync by FILE handlerpointer
+// Return true on success
+SPDLOG_INLINE bool fsync(FILE *fp)
+{
+#ifdef _WIN32
+    return FlushFileBuffers(reinterpret_cast<HANDLE>(_get_osfhandle(_fileno(fp)))) != 0;
+#else
+    return ::fsync(fileno(fp)) == 0;
 #endif
 }
 
