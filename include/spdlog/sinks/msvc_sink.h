@@ -48,7 +48,7 @@ protected:
         formatted.push_back('\0'); // add a null terminator for OutputDebugString
 #if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
         wmemory_buf_t wformatted;
-        details::os::utf8_to_wstrbuf({formatted.data(), formatted.size()}, wformatted);
+        details::os::utf8_to_wstrbuf(string_view_t(formatted.data(), formatted.size()), wformatted);
         OutputDebugStringW(wformatted.data());
 #else
         OutputDebugStringA(formatted.data());
