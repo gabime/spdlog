@@ -18,7 +18,6 @@
 #include <string>
 #include <thread>
 #include <array>
-#include <cassert>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -35,6 +34,7 @@
 
 #    if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)
 #        include <limits>
+#        include <cassert>
 #    endif
 
 #    include <direct.h> // for _mkdir/_wmkdir
