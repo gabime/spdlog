@@ -287,6 +287,14 @@ SPDLOG_INLINE registry &registry::instance()
     return s_instance;
 }
 
+SPDLOG_INLINE void registry::apply_logger_env_levels(std::shared_ptr<logger> new_logger)
+{
+    std::lock_guard<std::mutex> lock(logger_map_mutex_);
+    auto it = log_levels_.find(new_logger->name());
+    auto new_level = it != log_levels_.end() ? it->second : global_log_level_;
+    new_logger->set_level(new_level);
+}
+
 SPDLOG_INLINE void registry::throw_if_exists_(const std::string &logger_name)
 {
     if (loggers_.find(logger_name) != loggers_.end())
