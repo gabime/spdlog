@@ -11,7 +11,6 @@ jobs:
     strategy:
       matrix:
         config:
-          - { compiler: gcc, version: 4.9, build_type: Release, cppstd: 11, examples: OFF, asan: OFF }
           - { compiler: gcc, version: 7, build_type: Release, cppstd: 11 }
           - { compiler: gcc, version: 9, build_type: Release, cppstd: 17 }
           - { compiler: gcc, version: 11, build_type: Debug, cppstd: 20 }
