@@ -9,6 +9,7 @@ jobs:
       run:
         shell: bash
     strategy:
+      fail-fast: false
       matrix:
         config:
           - { compiler: gcc, version: 4.9, build_type: Release, cppstd: 11, examples: OFF, asan: OFF }
