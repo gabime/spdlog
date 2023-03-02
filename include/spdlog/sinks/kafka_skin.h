@@ -30,9 +30,9 @@ struct kafka_sink_config
     std::string produce_topic;
     int32_t     flush_timeout_ms = 1000;
 
-    kafka_sink_config(const std::string & addr, const std::string & topic, int flush_timeout_ms = 1000)
-            : server_addr(addr)
-            ,produce_topic(topic)
+    kafka_sink_config(std::string addr, std::string topic, int flush_timeout_ms = 1000)
+            : server_addr{std::move(addr)}
+            ,produce_topic{std::move(topic)}
             ,flush_timeout_ms(flush_timeout_ms)
     {}
 };
@@ -79,19 +79,13 @@ public:
 
     ~kafka_skin()
     {
-        if (producer_ != nullptr)
-        {
-            producer_->flush(config_.flush_timeout_ms);
-        }
+        producer_->flush(config_.flush_timeout_ms);
     }
 
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        if (producer_ != nullptr)
-        {
-            producer_->produce(topic_.get(), 0, RdKafka::Producer::RK_MSG_COPY,  (void *)msg.payload.data(), msg.payload.size(), NULL, NULL);
-        }
+        producer_->produce(topic_.get(), 0, RdKafka::Producer::RK_MSG_COPY,  (void *)msg.payload.data(), msg.payload.size(), NULL, NULL);
     }
 
     void flush_() override
@@ -110,7 +104,7 @@ private:
 using kafka_sink_mt = kafka_skin<std::mutex>;
 using kafka_sink_st = kafka_skin<spdlog::details::null_mutex>;
 
-}
+}  // namespace sinks
 
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> kafka_logger_mt(const std::string &logger_name, spdlog::sinks::kafka_sink_config config)
@@ -136,4 +130,4 @@ inline std::shared_ptr<spdlog::logger> kafka_logger_async_st(std::string logger_
         return Factory::template create<sinks::kafka_sink_st>(logger_name, config);
 }
 
-}
+}  // namespace spdlog
