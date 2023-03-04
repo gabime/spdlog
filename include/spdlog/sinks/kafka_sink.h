@@ -38,10 +38,10 @@ struct kafka_sink_config
 };
 
 template<typename Mutex>
-class kafka_skin : public base_sink<Mutex>
+class kafka_sink : public base_sink<Mutex>
 {
 public:
-    kafka_skin(kafka_sink_config config)
+    kafka_sink(kafka_sink_config config)
             : config_{std::move(config)}
       {
         try
@@ -77,7 +77,7 @@ public:
         }
       }
 
-    ~kafka_skin()
+    ~kafka_sink()
     {
         producer_->flush(config_.flush_timeout_ms);
     }
@@ -101,8 +101,8 @@ private:
     std::unique_ptr<RdKafka::Topic> topic_ = nullptr;
 };
 
-using kafka_sink_mt = kafka_skin<std::mutex>;
-using kafka_sink_st = kafka_skin<spdlog::details::null_mutex>;
+using kafka_sink_mt = kafka_sink<std::mutex>;
+using kafka_sink_st = kafka_sink<spdlog::details::null_mutex>;
 
 }  // namespace sinks
 
