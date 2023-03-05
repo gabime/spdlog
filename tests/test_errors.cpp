@@ -21,7 +21,9 @@ protected:
        throw std::runtime_error("some error happened during flush");
    }
 };
+struct custom_ex {};
 
+if !defined(SPDLOG_USE_STD_FORMAT) // std formt doesn't fully support tuntime strings
 TEST_CASE("default_error_handler", "[errors]")
 {
    prepare_logdir();
@@ -32,16 +34,12 @@ TEST_CASE("default_error_handler", "[errors]")
    logger->info(SPDLOG_FMT_RUNTIME("Test message {} {}"), 1);
    logger->info("Test message {}", 2);
    logger->flush();
-
    using spdlog::details::os::default_eol;
    REQUIRE(file_contents(SIMPLE_LOG) == spdlog::fmt_lib::format("Test message 2{}", default_eol));
    REQUIRE(count_lines(SIMPLE_LOG) == 1);
 }
 
-struct custom_ex
-{};
 
-#if !defined(SPDLOG_USE_STD_FORMAT) // std formt doesn't fully support tuntime strings
 TEST_CASE("custom_error_handler", "[errors]")
 {
    prepare_logdir();
