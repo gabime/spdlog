@@ -23,7 +23,7 @@ protected:
 };
 struct custom_ex {};
 
-if !defined(SPDLOG_USE_STD_FORMAT) // std formt doesn't fully support tuntime strings
+#if !defined(SPDLOG_USE_STD_FORMAT) // std formt doesn't fully support tuntime strings
 TEST_CASE("default_error_handler", "[errors]")
 {
    prepare_logdir();
