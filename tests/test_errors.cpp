@@ -40,6 +40,8 @@ TEST_CASE("default_error_handler", "[errors]")
 
 struct custom_ex
 {};
+
+#if !defined(SPDLOG_USE_STD_FORMAT) // std formt doesn't fully support tuntime strings
 TEST_CASE("custom_error_handler", "[errors]")
 {
    prepare_logdir();
@@ -53,6 +55,7 @@ TEST_CASE("custom_error_handler", "[errors]")
    logger->info("Good message #2");
    require_message_count(SIMPLE_LOG, 2);
 }
+#endif
 
 TEST_CASE("default_error_handler2", "[errors]")
 {
@@ -70,6 +73,7 @@ TEST_CASE("flush_error_handler", "[errors]")
    REQUIRE_THROWS_AS(logger->flush(), custom_ex);
 }
 
+#if !defined(SPDLOG_USE_STD_FORMAT)
 TEST_CASE("async_error_handler", "[errors]")
 {
    prepare_logdir();
@@ -96,6 +100,7 @@ TEST_CASE("async_error_handler", "[errors]")
    require_message_count(SIMPLE_ASYNC_LOG, 2);
    REQUIRE(file_contents("test_logs/custom_err.txt") == err_msg);
 }
+#endif
 
 // Make sure async error handler is executed
 TEST_CASE("async_error_handler2", "[errors]")
