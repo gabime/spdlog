@@ -19,6 +19,9 @@
 #include <functional>
 #include <memory>
 #include <string>
+#if __cplusplus >= 202002L
+#include <source_location>
+#endif
 
 namespace spdlog {
 
@@ -164,11 +167,25 @@ inline void debug(format_string_t<Args...> fmt, Args &&... args)
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
 }
 
+#if __cplusplus >= 202002L
+template<typename... Args>
+struct info
+{
+    info(format_string_t<Args...> fmt, Args &&...args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::info, fmt, std::forward<Args>(args)...);
+    }
+};
+
+template <typename... Args>
+info(format_string_t<Args...> fmt, Args &&... args) -> info<Args...>;
+#else
 template<typename... Args>
 inline void info(format_string_t<Args...> fmt, Args &&... args)
 {
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
+#endif
 
 template<typename... Args>
 inline void warn(format_string_t<Args...> fmt, Args &&... args)
@@ -260,12 +277,6 @@ template<typename T>
 inline void debug(const T &msg)
 {
     default_logger_raw()->debug(msg);
-}
-
-template<typename T>
-inline void info(const T &msg)
-{
-    default_logger_raw()->info(msg);
 }
 
 template<typename T>
