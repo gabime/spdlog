@@ -175,16 +175,36 @@ struct info
     {
         default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::info, fmt, std::forward<Args>(args)...);
     }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    info(wformat_string_t<Args...> fmt, Args &&... args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::info, fmt, std::forward<Args>(args)...);
+    }
+#   endif
 };
 
 template <typename... Args>
 info(format_string_t<Args...> fmt, Args &&... args) -> info<Args...>;
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+template <typename... Args>
+info(wformat_string_t<Args...> fmt, Args &&... args) -> info<Args...>;
+#   endif
 #else
 template<typename... Args>
 inline void info(format_string_t<Args...> fmt, Args &&... args)
 {
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+template<typename... Args>
+inline void info(wformat_string_t<Args...> fmt, Args &&... args)
+{
+    default_logger_raw()->info(fmt, std::forward<Args>(args)...);
+}
+#   endif
 #endif
 
 template<typename... Args>
@@ -240,12 +260,6 @@ template<typename... Args>
 inline void debug(wformat_string_t<Args...> fmt, Args &&... args)
 {
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
-}
-
-template<typename... Args>
-inline void info(wformat_string_t<Args...> fmt, Args &&... args)
-{
-    default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
