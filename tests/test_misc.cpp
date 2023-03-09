@@ -255,11 +255,11 @@ TEST_CASE("default logger API", "[default logger]")
     REQUIRE(oss.str() == "*** Hello again 2" + std::string(spdlog::details::os::default_eol));
 
     oss.str("");
-    spdlog::error("{}", 123);
+    spdlog::error(123);
     REQUIRE(oss.str() == "*** 123" + std::string(spdlog::details::os::default_eol));
 
     oss.str("");
-    spdlog::critical("some string");
+    spdlog::critical(std::string("some string"));
     REQUIRE(oss.str() == "*** some string" + std::string(spdlog::details::os::default_eol));
 
     oss.str("");
