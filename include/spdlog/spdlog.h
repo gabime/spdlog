@@ -21,7 +21,7 @@
 #include <string>
 
 #ifdef __has_include
-#    if __has_include(<source_location>)
+#    if __has_include(<source_location>) && __cplusplus >= 202002L
 #        include <source_location>
 #        define SPDLOG_SOURCE_LOCATION
 #    endif
@@ -194,6 +194,42 @@ template<typename... Args>
 inline void critical(format_string_t<Args...> fmt, Args &&... args)
 {
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
+}
+
+template<typename T>
+inline void trace(const T &msg)
+{
+    default_logger_raw()->trace(msg);
+}
+
+template<typename T>
+inline void debug(const T &msg)
+{
+    default_logger_raw()->debug(msg);
+}
+
+template<typename T>
+inline void info(const T &msg)
+{
+    default_logger_raw()->info(msg);
+}
+
+template<typename T>
+inline void warn(const T &msg)
+{
+    default_logger_raw()->warn(msg);
+}
+
+template<typename T>
+inline void error(const T &msg)
+{
+    default_logger_raw()->error(msg);
+}
+
+template<typename T>
+inline void critical(const T &msg)
+{
+    default_logger_raw()->critical(msg);
 }
 #endif
 
@@ -395,6 +431,108 @@ error(wformat_string_t<Args...> fmt, Args &&... args) -> error<Args...>;
 template <typename... Args>
 critical(wformat_string_t<Args...> fmt, Args &&... args) -> critical<Args...>;
 #   endif
+
+template<typename T>
+struct trace<T>
+{
+    trace(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::trace, msg);
+    }
+
+    trace(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::trace, fmt, std::forward<T>(arg));
+    }
+};
+
+template<typename T>
+struct debug<T>
+{
+    debug(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::debug, msg);
+    }
+
+    debug(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::debug, fmt, std::forward<T>(arg));
+    }
+};
+
+template<typename T>
+struct info<T>
+{
+    info(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::info, msg);
+    }
+
+    info(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::info, fmt, std::forward<T>(arg));
+    }
+};
+
+template<typename T>
+struct warn<T>
+{
+    warn(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::warn, msg);
+    }
+
+    warn(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::warn, fmt, std::forward<T>(arg));
+    }
+};
+
+template<typename T>
+struct error<T>
+{
+    error(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::err, msg);
+    }
+
+    error(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::err, fmt, std::forward<T>(arg));
+    }
+};
+
+template<typename T>
+struct critical<T>
+{
+    critical(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::critical, msg);
+    }
+
+    critical(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::critical, fmt, std::forward<T>(arg));
+    }
+};
+
+template <typename T>
+trace(const T &msg) -> trace<T>;
+
+template <typename T>
+debug(const T &msg) -> debug<T>;
+
+template <typename T>
+info(const T &msg) -> info<T>;
+
+template <typename T>
+warn(const T &msg) -> warn<T>;
+
+template <typename T>
+error(const T &msg) -> error<T>;
+
+template <typename T>
+critical(const T &msg) -> critical<T>;
 #endif
 
 } // namespace spdlog
