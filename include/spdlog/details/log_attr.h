@@ -8,8 +8,8 @@
 namespace spdlog {
 namespace details {
 
-//template<typename T>
-//concept composable = std::same_as<T, bool> || std::integral<T> || std::floating_point<T> || std::convertible_to<T, std::string_view>;
+// template<typename T>
+// concept composable = std::same_as<T, bool> || std::integral<T> || std::floating_point<T> || std::convertible_to<T, std::string_view>;
 
 struct attr
 {
@@ -17,14 +17,16 @@ struct attr
     std::string value;
 
 public:
-    attr(std::initializer_list<string_view_t> l) {
-        if (l.size() != 2) return; // throw exception if not kv pair?
+    attr(std::initializer_list<string_view_t> l)
+    {
+        if (l.size() != 2)
+            return; // throw exception if not kv pair?
 
         scramble(key, *l.begin());
-        scramble(value, *(l.begin()+1));
+        scramble(value, *(l.begin() + 1));
     }
 
-    attr(string_view_t k, bool v) 
+    attr(string_view_t k, bool v)
         : value{v ? "true" : "false"}
     {
         key = std::string{k.data(), k.size()};
@@ -36,10 +38,27 @@ public:
         value = std::string{v.data(), v.size()};
     }
 
-    attr(std::string k, std::string v) : key{k}, value{v} {}
+    attr(std::string k, std::string v)
+        : key{k}
+        , value{v}
+    {}
 
-    template <typename T>
-    attr(string_view_t k, T const &v)
+    attr(string_view_t k, long v)
+        : value{std::to_string(v)}
+    {
+        key = std::string{k.data(), k.size()};
+    }
+    attr(string_view_t k, long long v)
+        : value{std::to_string(v)}
+    {
+        key = std::string{k.data(), k.size()};
+    }
+    attr(string_view_t k, unsigned long v)
+        : value{std::to_string(v)}
+    {
+        key = std::string{k.data(), k.size()};
+    }
+    attr(string_view_t k, unsigned long long v)
         : value{std::to_string(v)}
     {
         key = std::string{k.data(), k.size()};
