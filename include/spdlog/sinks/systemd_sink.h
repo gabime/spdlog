@@ -77,7 +77,7 @@ protected:
             // Note: function call inside '()' to avoid macro expansion
             err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(), "PRIORITY=%d", syslog_level(msg.level),
 #ifndef SPDLOG_NO_THREAD_ID
-                "TID=%zu", os::thread_id(),
+                "TID=%zu", details::os::thread_id(),
 #endif
                 "SYSLOG_IDENTIFIER=%.*s", static_cast<int>(syslog_identifier.size()), syslog_identifier.data(), nullptr);
         }
@@ -85,7 +85,7 @@ protected:
         {
             err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(), "PRIORITY=%d", syslog_level(msg.level),
 #ifndef SPDLOG_NO_THREAD_ID
-                "TID=%zu", os::thread_id(),
+                "TID=%zu", details::os::thread_id(),
 #endif
                 "SYSLOG_IDENTIFIER=%.*s", static_cast<int>(syslog_identifier.size()), syslog_identifier.data(), "CODE_FILE=%s",
                 msg.source.filename, "CODE_LINE=%d", msg.source.line, "CODE_FUNC=%s", msg.source.funcname, nullptr);
