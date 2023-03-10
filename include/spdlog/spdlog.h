@@ -20,13 +20,6 @@
 #include <memory>
 #include <string>
 
-#ifdef __has_include
-#    if __has_include(<source_location>) && __cplusplus >= 202002L
-#        include <source_location>
-#        define SPDLOG_SOURCE_LOCATION
-#    endif
-#endif
-
 namespace spdlog {
 
 using default_factory = synchronous_factory;
@@ -147,6 +140,7 @@ SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logge
 //   spdlog::apply_logger_env_levels(mylogger);
 SPDLOG_API void apply_logger_env_levels(std::shared_ptr<logger> logger);
 
+#ifndef SPDLOG_SOURCE_LOCATION
 template<typename... Args>
 inline void log(source_loc source, level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)
 {
@@ -159,7 +153,6 @@ inline void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&... 
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
-#ifndef SPDLOG_SOURCE_LOCATION
 template<typename... Args>
 inline void trace(format_string_t<Args...> fmt, Args &&... args)
 {
@@ -197,6 +190,18 @@ inline void critical(format_string_t<Args...> fmt, Args &&... args)
 }
 
 template<typename T>
+inline void log(source_loc source, level::level_enum lvl, const T &msg)
+{
+    default_logger_raw()->log(source, lvl, msg);
+}
+
+template<typename T>
+inline void log(level::level_enum lvl, const T &msg)
+{
+    default_logger_raw()->log(lvl, msg);
+}
+
+template<typename T>
 inline void trace(const T &msg)
 {
     default_logger_raw()->trace(msg);
@@ -231,21 +236,7 @@ inline void critical(const T &msg)
 {
     default_logger_raw()->critical(msg);
 }
-#endif
 
-template<typename T>
-inline void log(source_loc source, level::level_enum lvl, const T &msg)
-{
-    default_logger_raw()->log(source, lvl, msg);
-}
-
-template<typename T>
-inline void log(level::level_enum lvl, const T &msg)
-{
-    default_logger_raw()->log(lvl, msg);
-}
-
-#ifndef SPDLOG_SOURCE_LOCATION
 #    ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 template<typename... Args>
 inline void log(source_loc source, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args)
@@ -298,6 +289,27 @@ inline void critical(wformat_string_t<Args...> fmt, Args &&... args)
 #endif
 
 #ifdef SPDLOG_SOURCE_LOCATION
+template<typename... Args>
+struct log
+{
+    log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, fmt, std::forward<Args>(args)...);
+    }
+
+    log(source_loc source, level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)
+    {
+        default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
+    }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, fmt, std::forward<Args>(args)...);
+    }
+#   endif
+};
+
 template<typename... Args>
 struct trace
 {
@@ -395,6 +407,9 @@ struct critical
 };
 
 template <typename... Args>
+log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args) -> log<Args...>;
+
+template <typename... Args>
 trace(format_string_t<Args...> fmt, Args &&... args) -> trace<Args...>;
 
 template <typename... Args>
@@ -414,6 +429,9 @@ critical(format_string_t<Args...> fmt, Args &&... args) -> critical<Args...>;
 
 #   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 template <typename... Args>
+log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args) -> log<Args...>;
+
+template <typename... Args>
 trace(wformat_string_t<Args...> fmt, Args &&... args) -> trace<Args...>;
 
 template <typename... Args>
@@ -431,6 +449,25 @@ error(wformat_string_t<Args...> fmt, Args &&... args) -> error<Args...>;
 template <typename... Args>
 critical(wformat_string_t<Args...> fmt, Args &&... args) -> critical<Args...>;
 #   endif
+
+template<typename T>
+struct log<T>
+{
+    log(source_loc source, level::level_enum lvl, const T &msg)
+    {
+        default_logger_raw()->log(source, lvl, msg);
+    }
+
+    log(level::level_enum lvl, const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, msg);
+    }
+
+    log(level::level_enum lvl, format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, fmt, std::forward<T>(arg));
+    }
+};
 
 template<typename T>
 struct trace<T>
@@ -515,6 +552,9 @@ struct critical<T>
         default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::critical, fmt, std::forward<T>(arg));
     }
 };
+
+template <typename T>
+log(level::level_enum lvl, const T &msg) -> log<T>;
 
 template <typename T>
 trace(const T &msg) -> trace<T>;
