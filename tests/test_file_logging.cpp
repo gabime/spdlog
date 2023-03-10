@@ -6,7 +6,7 @@
 #define SIMPLE_LOG "test_logs/simple_log"
 #define ROTATING_LOG "test_logs/rotating_log"
 
-TEST_CASE("simple_file_logger", "[simple_logger]]")
+TEST_CASE("simple_file_logger", "[simple_logger]")
 {
     prepare_logdir();
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
@@ -23,7 +23,7 @@ TEST_CASE("simple_file_logger", "[simple_logger]]")
     REQUIRE(file_contents(SIMPLE_LOG) == spdlog::fmt_lib::format("Test message 1{}Test message 2{}", default_eol, default_eol));
 }
 
-TEST_CASE("flush_on", "[flush_on]]")
+TEST_CASE("flush_on", "[flush_on]")
 {
     prepare_logdir();
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
@@ -44,7 +44,7 @@ TEST_CASE("flush_on", "[flush_on]]")
             spdlog::fmt_lib::format("Should not be flushed{}Test message 1{}Test message 2{}", default_eol, default_eol, default_eol));
 }
 
-TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
+TEST_CASE("rotating_file_logger1", "[rotating_logger]")
 {
     prepare_logdir();
     size_t max_size = 1024 * 10;
@@ -60,7 +60,7 @@ TEST_CASE("rotating_file_logger1", "[rotating_logger]]")
     require_message_count(ROTATING_LOG, 10);
 }
 
-TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
+TEST_CASE("rotating_file_logger2", "[rotating_logger]")
 {
     prepare_logdir();
     size_t max_size = 1024 * 10;
@@ -100,7 +100,7 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]]")
 }
 
 // test that passing max_size=0 throws
-TEST_CASE("rotating_file_logger3", "[rotating_logger]]")
+TEST_CASE("rotating_file_logger3", "[rotating_logger]")
 {
     prepare_logdir();
     size_t max_size = 0;

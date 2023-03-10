@@ -2,42 +2,6 @@ version: 1.0.{build}
 image: Visual Studio 2017
 environment:
   matrix:
-    - GENERATOR: '"Visual Studio 14 2015"'
-      BUILD_TYPE: Debug
-      BUILD_SHARED: 'OFF'
-      FATAL_ERRORS: 'ON'
-      WCHAR: 'OFF'
-      WCHAR_FILES: 'OFF'
-      BUILD_EXAMPLE: 'ON'
-      USE_STD_FORMAT: 'OFF'
-      CXX_STANDARD: 11
-    - GENERATOR: '"Visual Studio 14 2015"'
-      BUILD_TYPE: Release
-      BUILD_SHARED: 'OFF'
-      FATAL_ERRORS: 'ON'
-      WCHAR: 'ON'
-      WCHAR_FILES: 'OFF'
-      BUILD_EXAMPLE: 'ON'
-      USE_STD_FORMAT: 'OFF'
-      CXX_STANDARD: 11
-    - GENERATOR: '"Visual Studio 14 2015 Win64"'
-      BUILD_TYPE: Debug
-      BUILD_SHARED: 'OFF'
-      FATAL_ERRORS: 'ON'
-      WCHAR: 'ON'
-      WCHAR_FILES: 'OFF'
-      BUILD_EXAMPLE: 'ON'
-      USE_STD_FORMAT: 'OFF'
-      CXX_STANDARD: 11
-    - GENERATOR: '"Visual Studio 14 2015 Win64"'
-      BUILD_TYPE: Release
-      BUILD_SHARED: 'OFF'
-      FATAL_ERRORS: 'ON'
-      WCHAR: 'ON'
-      WCHAR_FILES: 'OFF'
-      BUILD_EXAMPLE: 'ON'
-      USE_STD_FORMAT: 'OFF'
-      CXX_STANDARD: 11
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Debug
       BUILD_SHARED: 'OFF'
@@ -119,7 +83,7 @@ build_script:
       cmake --build . --config %BUILD_TYPE%
 
 before_test:
-  - set PATH=%PATH%;C:\projects\spdlog\build\%BUILD_TYPE%
+  - set PATH=%PATH%;C:\projects\spdlog\build\_deps\catch2-build\src\%BUILD_TYPE%;C:\projects\spdlog\build\%BUILD_TYPE%
   
 test_script:
   - C:\projects\spdlog\build\tests\%BUILD_TYPE%\spdlog-utests.exe
