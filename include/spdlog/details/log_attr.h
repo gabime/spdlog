@@ -31,6 +31,7 @@ struct Value
 {
     std::string _value;
 
+    // string types
     Value(string_view_t v) {
         scramble(_value, v);
     }
@@ -40,15 +41,49 @@ struct Value
     Value(const char* v) {
         scramble(_value, v);
     }
+    
+    // integer types
+    // probably better to do this with templates, but constraints are needed
+    // concepts would be nice here, but spdlog is c++11
+    // https://stackoverflow.com/questions/41552514/is-overloading-on-all-of-the-fundamental-integer-types-is-sufficient-to-capture
+    
+    // int8_t
+    Value(signed char v) {
+        _value = std::to_string(v);
+    }
+    // uint8_t
+    Value(unsigned char v) {
+        _value = std::to_string(v);
+    }
+    // int16_t
+    Value(short v) {
+        _value = std::to_string(v);
+    }
+    // uint16_t
+    Value(unsigned short v) {
+        _value = std::to_string(v);
+    }
+    // int32_t
+    Value(int v) {
+        _value = std::to_string(v);
+    }
+    // uint32_t
+    Value(unsigned int v) {
+        _value = std::to_string(v);
+    }
+    // int64_t
     Value(long v) {
         _value = std::to_string(v);
     }
-    Value(long long v) {
-        _value = std::to_string(v);
-    }
+    // uint64_t
     Value(unsigned long v) {
         _value = std::to_string(v);
     }
+    // some compilers use long long for int64_t
+    Value(long long v) {
+        _value = std::to_string(v);
+    }
+    // some compilers use unsigned long long for uint64_t
     Value(unsigned long long v) {
         _value = std::to_string(v);
     }
