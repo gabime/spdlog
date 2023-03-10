@@ -51,46 +51,44 @@ struct Value
     // integer types
     // probably better to do this with templates, but constraints are needed
     // concepts would be nice here, but spdlog is c++11
+    // SFINAE is also an option, but it's a bit more complicated
     // https://stackoverflow.com/questions/41552514/is-overloading-on-all-of-the-fundamental-integer-types-is-sufficient-to-capture
+    // basing the types off of MSVC, GCC, and Clang (https://en.cppreference.com/w/cpp/language/types)
     
-    // int8_t
+    // chars are already strings (single character)
     Value(signed char v) {
-        _value = std::to_string(v);
+        _value = v; 
     }
-    // uint8_t
     Value(unsigned char v) {
-        _value = std::to_string(v);
+        _value = v;
     }
-    // int16_t
-    Value(short v) {
-        _value = std::to_string(v);
-    }
-    // uint16_t
-    Value(unsigned short v) {
-        _value = std::to_string(v);
-    }
-    // int32_t
+    
+    // these are overloads, which match the overloads in to_string for msvc, gcc, and clang
     Value(int v) {
         _value = std::to_string(v);
     }
-    // uint32_t
     Value(unsigned int v) {
         _value = std::to_string(v);
     }
-    // int64_t
     Value(long v) {
         _value = std::to_string(v);
     }
-    // uint64_t
     Value(unsigned long v) {
         _value = std::to_string(v);
     }
-    // some compilers use long long for int64_t
     Value(long long v) {
         _value = std::to_string(v);
     }
-    // some compilers use unsigned long long for uint64_t
     Value(unsigned long long v) {
+        _value = std::to_string(v);
+    }
+    Value(float v) {
+        _value = std::to_string(v);
+    }
+    Value(double v) {
+        _value = std::to_string(v);
+    }
+    Value(long double v) {
         _value = std::to_string(v);
     }
     Value(bool v) {
