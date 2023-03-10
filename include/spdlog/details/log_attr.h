@@ -43,12 +43,12 @@ public:
         , value{v}
     {}
 
-    template <typename T>
-        requires std::integral<T> || std::floating_point<T>
-    attr(string_view_t k, T v) : value{std::to_string(v)} {
+    template<typename T, std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>, bool> = true>
+    attr(string_view_t k, T v)
+        : value{std::to_string(v)}
+    {
         key = std::string{k.data(), k.size()};
     }
-
 };
 
 } // namespace details
