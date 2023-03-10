@@ -17,38 +17,94 @@ struct attr
     std::string value;
 
 public:
-    attr(std::initializer_list<string_view_t> l)
+    // string overloads
+    attr(string_view_t k, string_view_t v)
     {
-        if (l.size() != 2)
-            return; // throw exception if not kv pair?
-
-        scramble(key, *l.begin());
-        scramble(value, *(l.begin() + 1));
+        scramble(key, k);
+        scramble(value, v);
     }
 
+    // does not convert to string_view when using initializer list constructors...
+    // so we have an overload for raw c-strings
+    attr(const char* k, const char* v)
+        : attr{string_view_t{k}, string_view_t{v}}
+    {}
+
+    attr(std::string const& k, std::string const& v)
+        : attr{string_view_t{k}, string_view_t{v}}
+    {}
+    
+    attr(std::string&& k, std::string&& v)
+        : attr{string_view_t{k}, string_view_t{v}}
+    {}
+
+    // integer overloads
+    attr(string_view_t k, long v)
+        : value{std::to_string(v)}
+    {
+        scramble(key, k);
+    }
+    attr(string_view_t k, long long v)
+        : value{std::to_string(v)}
+    {
+        scramble(key, k);
+    }
+    attr(string_view_t k, unsigned long v)
+        : value{std::to_string(v)}
+    {
+        scramble(key, k);
+    }
+    attr(string_view_t k, unsigned long long v)
+        : value{std::to_string(v)}
+    {
+        scramble(key, k);
+    }
+    
     attr(string_view_t k, bool v)
         : value{v ? "true" : "false"}
     {
-        key = std::string{k.data(), k.size()};
+        scramble(key, k);
     }
-
-    attr(string_view_t k, string_view_t v)
-    {
-        key = std::string{k.data(), k.size()};
-        value = std::string{v.data(), v.size()};
-    }
-
-    attr(std::string k, std::string v)
-        : key{k}
-        , value{v}
+    
+    attr(std::string const& k, long v)
+        : attr{string_view_t{k}, v}
     {}
 
-    template<typename T, std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>, bool> = true>
-    attr(string_view_t k, T v)
-        : value{std::to_string(v)}
-    {
-        key = std::string{k.data(), k.size()};
-    }
+    attr(std::string const& k, long long v)
+        : attr{string_view_t{k}, v}
+    {}
+
+    attr(std::string const& k, unsigned long v)
+        : attr{string_view_t{k}, v}
+    {}
+
+    attr(std::string const& k, unsigned long long v)
+        : attr{string_view_t{k}, v}
+    {}
+
+    attr(std::string const& k, bool v)
+        : attr{string_view_t{k}, v}
+    {}
+
+    attr(std::string&& k, long v)
+        : attr{string_view_t{k}, v}
+    {}
+
+    attr(std::string&& k, long long v)
+        : attr{string_view_t{k}, v}
+    {}
+
+    attr(std::string&& k, unsigned long v)
+        : attr{string_view_t{k}, v}
+    {}
+
+    attr(std::string&& k, unsigned long long v)
+        : attr{string_view_t{k}, v}
+    {}
+
+    attr(std::string&& k, bool v)
+        : attr{string_view_t{k}, v}
+    {}
 };
 
 } // namespace details
