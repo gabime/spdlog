@@ -22,6 +22,9 @@ struct Key
     Key(std::string&& k) {
         scramble(_key, k);
     }
+    Key(std::string const& k) {
+        scramble(_key, k);
+    }
     Key(const char* k) {
         scramble(_key, k);
     }
@@ -36,6 +39,9 @@ struct Value
         scramble(_value, v);
     }
     Value(std::string&& v) {
+        scramble(_value, v);
+    }
+    Value(std::string const& v) {
         scramble(_value, v);
     }
     Value(const char* v) {
