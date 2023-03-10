@@ -49,26 +49,6 @@ public:
         key = std::string{k.data(), k.size()};
     }
 
-    attr(string_view_t k, long v)
-        : value{std::to_string(v)}
-    {
-        key = std::string{k.data(), k.size()};
-    }
-    attr(string_view_t k, long long v)
-        : value{std::to_string(v)}
-    {
-        key = std::string{k.data(), k.size()};
-    }
-    attr(string_view_t k, unsigned long v)
-        : value{std::to_string(v)}
-    {
-        key = std::string{k.data(), k.size()};
-    }
-    attr(string_view_t k, unsigned long long v)
-        : value{std::to_string(v)}
-    {
-        key = std::string{k.data(), k.size()};
-    }
 };
 
 } // namespace details
