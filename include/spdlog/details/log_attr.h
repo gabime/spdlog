@@ -8,93 +8,14 @@
 namespace spdlog {
 namespace details {
 
-// template<typename T>
-// concept composable = std::same_as<T, bool> || std::integral<T> || std::floating_point<T> || std::convertible_to<T, std::string_view>;
+template<typename T>
+struct is_string
+    : public std::integral_constant<bool, std::is_convertible<T, std::string>::value || std::is_convertible<T, std::string_view>::value>
+{};
 
-
-struct Key 
-{
-    std::string _key;
-
-    Key(string_view_t k) {
-        scramble(_key, k);
-    }
-    Key(std::string&& k) {
-        scramble(_key, k);
-    }
-    Key(std::string const& k) {
-        scramble(_key, k);
-    }
-    Key(const char* k) {
-        scramble(_key, k);
-    }
-};
-
-struct Value
-{
-    std::string _value;
-
-    // string types
-    Value(string_view_t v) {
-        scramble(_value, v);
-    }
-    Value(std::string&& v) {
-        scramble(_value, v);
-    }
-    Value(std::string const& v) {
-        scramble(_value, v);
-    }
-    Value(const char* v) {
-        scramble(_value, v);
-    }
-    
-    // integer types
-    // probably better to do this with templates, but constraints are needed
-    // concepts would be nice here, but spdlog is c++11
-    // SFINAE is also an option, but it's a bit more complicated
-    // https://stackoverflow.com/questions/41552514/is-overloading-on-all-of-the-fundamental-integer-types-is-sufficient-to-capture
-    // basing the types off of MSVC, GCC, and Clang (https://en.cppreference.com/w/cpp/language/types)
-    
-    // chars are already strings (single character)
-    Value(signed char v) {
-        _value = v; 
-    }
-    Value(unsigned char v) {
-        _value = v;
-    }
-    
-    // these are overloads, which match the overloads in to_string for msvc, gcc, and clang
-    Value(int v) {
-        _value = std::to_string(v);
-    }
-    Value(unsigned int v) {
-        _value = std::to_string(v);
-    }
-    Value(long v) {
-        _value = std::to_string(v);
-    }
-    Value(unsigned long v) {
-        _value = std::to_string(v);
-    }
-    Value(long long v) {
-        _value = std::to_string(v);
-    }
-    Value(unsigned long long v) {
-        _value = std::to_string(v);
-    }
-    Value(float v) {
-        _value = std::to_string(v);
-    }
-    Value(double v) {
-        _value = std::to_string(v);
-    }
-    Value(long double v) {
-        _value = std::to_string(v);
-    }
-    Value(bool v) {
-        _value = v ? "true" : "false";
-    }
-};
+template<typename T>
+struct is_number : public std::integral_constant<bool, std::is_integral<T>::value || std::is_floating_point<T>::value>
+{};
 
 struct attr
 {
@@ -102,8 +23,25 @@ struct attr
     std::string value;
 
 public:
-    attr(Key&& k, Value&& v) : key(std::move(k._key)), value(std::move(v._value)) {}
-    attr(Key const& k, Value const& v) : key(k._key), value(v._value) {}
+    template<typename key_t, typename value_t, typename std::enable_if<is_string<key_t>::value, key_t>::type * = nullptr,
+        typename std::enable_if<is_string<value_t>::value, value_t>::type * = nullptr>
+    attr(key_t const &k, value_t const &v)
+        : key(std::string(k))
+        , value(std::string(v))
+    {}
+
+    template<typename key_t, typename value_t, typename std::enable_if<is_string<key_t>::value, key_t>::type * = nullptr,
+        typename std::enable_if<is_number<value_t>::value, value_t>::type * = nullptr>
+    attr(key_t const &k, value_t const &v)
+        : key(std::string(k))
+        , value(std::to_string(v))
+    {}
+
+    template<typename key_t, typename std::enable_if<is_string<key_t>::value, key_t>::type * = nullptr>
+    attr(key_t const &k, bool const v)
+        : key(std::string(k))
+        , value(v ? "true" : "false")
+    {}
 };
 
 } // namespace details
