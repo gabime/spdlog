@@ -414,7 +414,7 @@ void attribute_example() {
 
     s_logger->push_context(spdlog::attribute_list{{"key\n1", "value\n1"}});
     s_logger->info("structured logging: test 1");
-    s_logger->push_context(spdlog::attribute_list{{"key\n2", "value\n2"}});
+    s_logger->push_context(spdlog::attribute_list{{"key\n2", 1}});
     s_logger->info("structured logging: test 2");
     s_logger->pop_context();
     s_logger->info("structured logging: test 3");
