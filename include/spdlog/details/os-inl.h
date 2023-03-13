@@ -34,6 +34,7 @@
 
 #    if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)
 #        include <limits>
+#        include <cassert>
 #    endif
 
 #    include <direct.h> // for _mkdir/_wmkdir
@@ -501,20 +502,16 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
         return;
     }
 
-    int result_size = static_cast<int>(target.capacity());
-    if (str_size + 1 > result_size)
-    {
-        result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, NULL, 0);
-    }
+    // find the size to allocate for the result buffer
+    int result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, NULL, 0);
 
     if (result_size > 0)
     {
         target.resize(result_size);
         result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, target.data(), result_size);
-
-        if (result_size > 0)
+        if (result_size  > 0)
         {
-            target.resize(result_size);
+            assert(result_size == target.size());
             return;
         }
     }
