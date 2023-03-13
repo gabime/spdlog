@@ -11,7 +11,7 @@ namespace details {
 
 template<typename T>
 struct is_string
-    : public std::integral_constant<bool, std::is_convertible<T, std::string>::value || std::is_convertible<T, std::string_view>::value>
+    : public std::integral_constant<bool, std::is_convertible<T, std::string>::value || std::is_convertible<T, string_view_t>::value>
 {};
 
 template<typename T>
@@ -36,12 +36,6 @@ public:
     attr(key_t const &k, value_t const &v)
         : key(std::string(k))
         , value(std::to_string(v))
-    {}
-
-    template<typename key_t, typename std::enable_if<is_string<key_t>::value, key_t>::type * = nullptr>
-    attr(key_t const &k, bool const v)
-        : key(std::string(k))
-        , value(v ? "true" : "false")
     {}
 };
 
