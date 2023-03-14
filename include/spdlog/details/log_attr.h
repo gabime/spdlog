@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <string_view>
+// #include <string_view>
 #include <vector>
 #include "attr_composer.h"
 #include <spdlog/common.h>
@@ -15,7 +15,12 @@ struct is_string
 {};
 
 template<typename T>
-struct is_number : public std::integral_constant<bool, std::is_integral<T>::value || std::is_floating_point<T>::value>
+struct is_number : public std::integral_constant<bool, 
+    std::is_same<T, int>::value || std::is_same<T, unsigned int>::value 
+    || std::is_same<T, long>::value || std::is_same<T, unsigned long>::value 
+    || std::is_same<T, long long>::value || std::is_same<T, unsigned long long>::value
+    // || std::is_floating_point<T>::value
+>
 {};
 
 struct attr

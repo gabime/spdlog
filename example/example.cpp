@@ -395,8 +395,35 @@ void replace_default_logger_example()
 
 void attribute_example() {
     spdlog::push_context(spdlog::attribute_list{{"attribute_key", "attribute value"}});
-    spdlog::warn("EXPERIMENTAL: log with attributes");
+    spdlog::info("EXPERIMENTAL: log with attributes");
     spdlog::clear_context();
+    
+    const int& x1 = 1;
+    unsigned int x2 = 2;
+    long x3 = 3;
+    unsigned long x4 = 4;
+    long long x5 = 5;
+    unsigned long long x6 = 6;
+    spdlog::push_context({{"int_key", x1 }});
+    spdlog::push_context({{"uint_key", x2 }});
+    spdlog::push_context({{"uint_ref_key", static_cast<unsigned int&>(x2) }});
+    spdlog::push_context({{"long", x3 }});
+    spdlog::push_context({{"ulong", x4 }});
+    spdlog::push_context({{"llong", x5 }});
+    spdlog::push_context({{"ullong", x6 }});
+    
+    // chars shouldnt work?
+    // spdlog::push_context({{"char", 'a' }});
+    
+    // floats shouldnt work
+    // spdlog::push_context({{"float", 1.0f }});
+    // spdlog::push_context({{"double", 1.0 }});
+    
+    // bools also shouldnt work
+    // spdlog::push_context({{"bool", true }});
+    spdlog::warn("Oops I forgot to clear the context. What will happen?");
+    
+    
 
     // structured logging using attributes
 
@@ -411,7 +438,7 @@ void attribute_example() {
     std::string logfmt_pattern = "time=%Y-%m-%dT%H:%M:%S.%f%z name=\"%n\" level=%^%l%$ process=%P thread=%t message=\"%v\"%( %K=\"%V\"%)";
     s_logger->set_pattern(std::move(logfmt_pattern));
     #endif
-
+    
     s_logger->push_context(spdlog::attribute_list{{"key\n1", "value\n1"}});
     s_logger->info("structured logging: test 1");
     s_logger->push_context(spdlog::attribute_list{{"key\n2", 1}});
