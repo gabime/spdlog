@@ -19,6 +19,10 @@ struct is_number : public std::integral_constant<bool,
     std::is_same<T, int>::value || std::is_same<T, unsigned int>::value 
     || std::is_same<T, long>::value || std::is_same<T, unsigned long>::value 
     || std::is_same<T, long long>::value || std::is_same<T, unsigned long long>::value
+
+    // shorts/chars get converted to int by to_string implicitly. Should we ignore chars but enforce shorts?
+    || std::is_convertible<T, int>::value || std::is_convertible<T, unsigned int>::value 
+
     // || std::is_floating_point<T>::value
 >
 {};

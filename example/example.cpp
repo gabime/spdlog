@@ -398,19 +398,23 @@ void attribute_example() {
     spdlog::info("EXPERIMENTAL: log with attributes");
     spdlog::clear_context();
     
-    const int& x1 = 1;
-    unsigned int x2 = 2;
-    long x3 = 3;
-    unsigned long x4 = 4;
-    long long x5 = 5;
-    unsigned long long x6 = 6;
-    spdlog::push_context({{"int_key", x1 }});
-    spdlog::push_context({{"uint_key", x2 }});
-    spdlog::push_context({{"uint_ref_key", static_cast<unsigned int&>(x2) }});
-    spdlog::push_context({{"long", x3 }});
-    spdlog::push_context({{"ulong", x4 }});
-    spdlog::push_context({{"llong", x5 }});
-    spdlog::push_context({{"ullong", x6 }});
+    short s = 0;
+    unsigned short us = 1;
+    const int& i = 2;
+    unsigned int ui = 3;
+    long l = 4;
+    unsigned long ul = 5;
+    long long ll = 6;
+    unsigned long long ull = 7;
+    spdlog::push_context({{"short_key", s }});
+    spdlog::push_context({{"ushort_key", us }});
+    spdlog::push_context({{"int_key", i }});
+    spdlog::push_context({{"uint_key", ui }});
+    spdlog::push_context({{"uint_ref_key", static_cast<unsigned int&>(ui) }});
+    spdlog::push_context({{"long", l }});
+    spdlog::push_context({{"ulong", ul }});
+    spdlog::push_context({{"llong", ll }});
+    spdlog::push_context({{"ullong", ull }});
     
     // chars shouldnt work?
     // spdlog::push_context({{"char", 'a' }});
