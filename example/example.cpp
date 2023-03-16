@@ -416,9 +416,6 @@ void attribute_example() {
     spdlog::push_context({{"llong", ll }});
     spdlog::push_context({{"ullong", ull }});
     
-    // chars shouldnt work?
-    // spdlog::push_context({{"char", 'a' }});
-    
     // floats shouldnt work
     // spdlog::push_context({{"float", 1.0f }});
     // spdlog::push_context({{"double", 1.0 }});
