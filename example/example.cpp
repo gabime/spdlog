@@ -398,9 +398,9 @@ void attribute_example() {
     spdlog::info("EXPERIMENTAL: log with attributes");
     spdlog::clear_context();
     
-    short s = 0;
-    unsigned short us = 1;
-    const int& i = 2;
+    char s = 0;
+    int8_t us = 1;
+    const int16_t& i = 2;
     unsigned int ui = 3;
     long l = 4;
     unsigned long ul = 5;
