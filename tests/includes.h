@@ -12,12 +12,9 @@
 #include "utils.h"
 #include <chrono>
 #include <cstdio>
-#include <exception>
-#include <fstream>
-#include <iostream>
-#include <ostream>
+#include<bits/stdc++.h>//Include All Other libraries
 #include <sstream>
-#include <string>
+
 #include <iomanip>
 #include <stdlib.h>
 
