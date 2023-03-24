@@ -142,6 +142,14 @@ inline void pop_context() {
 inline void clear_context() {
     default_logger_raw()->clear_context();
 }
+// Initialize logger level based on environment configs.
+//
+// Useful for applying SPDLOG_LEVEL to manually created loggers.
+//
+// Example:
+//   auto mylogger = std::make_shared<spdlog::logger>("mylogger", ...);
+//   spdlog::apply_logger_env_levels(mylogger);
+SPDLOG_API void apply_logger_env_levels(std::shared_ptr<logger> logger);
 
 template<typename... Args>
 inline void log(source_loc source, level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)

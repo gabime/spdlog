@@ -117,4 +117,9 @@ SPDLOG_INLINE void set_default_logger(std::shared_ptr<spdlog::logger> default_lo
     details::registry::instance().set_default_logger(std::move(default_logger));
 }
 
+SPDLOG_INLINE void apply_logger_env_levels(std::shared_ptr<logger> logger)
+{
+    details::registry::instance().apply_logger_env_levels(std::move(logger));
+}
+
 } // namespace spdlog
