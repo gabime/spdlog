@@ -132,10 +132,15 @@ using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using err_handler = std::function<void(const std::string &err_msg)>;
+#ifdef SPDLOG_USE_STD_STRING_VIEW
+using string_view_t = std::string_view;
+#else
+using string_view_t = fmt::basic_string_view<char>;
+#endif 
+
 #ifdef SPDLOG_USE_STD_FORMAT
 namespace fmt_lib = std;
 
-using string_view_t = std::string_view;
 using memory_buf_t = std::string;
 
 template<typename... Args>
@@ -164,7 +169,6 @@ using wformat_string_t = std::wstring_view;
 #else // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
 
-using string_view_t = fmt::basic_string_view<char>;
 using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 
 template<typename... Args>
@@ -360,7 +364,7 @@ SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(spdlog::wstring_view
 }
 #endif
 
-#ifndef SPDLOG_USE_STD_FORMAT
+#if !defined(SPDLOG_USE_STD_STRING_VIEW) && !defined(SPDLOG_USE_STD_FORMAT)
 template<typename T, typename... Args>
 inline fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt)
 {
@@ -371,6 +375,13 @@ template<typename T, typename... Args>
 SPDLOG_CONSTEXPR_FUNC std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) SPDLOG_NOEXCEPT
 {
     return fmt.get();
+}
+#elif defined(SPDLOG_USE_STD_STRING_VIEW) && !defined(SPDLOG_USE_STD_FORMAT)
+template<typename T, typename... Args>
+SPDLOG_CONSTEXPR_FUNC std::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt) SPDLOG_NOEXCEPT
+{
+    auto tmp = fmt::basic_string_view<T>{fmt};
+    return std::string_view{tmp.data(), tmp.size()};
 }
 #endif
 
