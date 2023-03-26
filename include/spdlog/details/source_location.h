@@ -51,8 +51,9 @@ public:
   constexpr int column() const noexcept { return columnOffset; }
 
 private:
-  constexpr source_location(const char *fileName, const char *functionName,
+  constexpr source_location(const char *fileName,
                             const int lineNumber,
+                            const char *functionName,
                             const int columnOffset) noexcept
       : fileName(fileName), functionName(functionName), lineNumber(lineNumber),
         columnOffset(columnOffset) {}
