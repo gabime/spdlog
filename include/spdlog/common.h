@@ -142,11 +142,11 @@ struct format_string_wrapper
         : fmt_{fmt}
         , loc_{loc}
     {}
-    SPDLOG_CONSTEXPR T fmt()
+    SPDLOG_CONSTEXPR const T fmt()
     {
         return fmt_;
     }
-    SPDLOG_CONSTEXPR source_loc loc()
+    SPDLOG_CONSTEXPR const source_loc loc()
     {
         return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
     }
