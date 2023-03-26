@@ -55,7 +55,7 @@ private:
                             const int lineNumber,
                             const char *functionName,
                             const int columnOffset) noexcept
-      : fileName(fileName), functionName(functionName), lineNumber(lineNumber),
+      : fileName(fileName), lineNumber(lineNumber), functionName(functionName),
         columnOffset(columnOffset) {}
 
   const char *fileName;
