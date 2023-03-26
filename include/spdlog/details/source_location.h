@@ -36,7 +36,7 @@ public:
           const int columnOffset = 0) noexcept
 #endif
   {
-    return source_location(fileName, functionName, lineNumber, columnOffset);
+    return source_location(fileName, lineNumber, functionName, columnOffset);
   }
 
   source_location(const source_location &) = default;
