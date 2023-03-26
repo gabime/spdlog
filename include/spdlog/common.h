@@ -138,15 +138,15 @@ struct source_loc
 template<typename T>
 struct format_string_wrapper
 {
-    format_string_wrapper(const char *fmt, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEXPR format_string_wrapper(const char *fmt, details::source_location loc = details::source_location::current())
         : fmt_{fmt}
         , loc_{loc}
     {}
-    T fmt()
+    SPDLOG_CONSTEXPR T fmt()
     {
         return fmt_;
     }
-    source_loc loc()
+    SPDLOG_CONSTEXPR source_loc loc()
     {
         return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
     }
