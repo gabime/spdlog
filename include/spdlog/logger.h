@@ -182,7 +182,7 @@ public:
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args)
     {
-        log_(loc, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
+        log_(loc, lvl, details::to_string_view(fmt.fmt()), std::forward<Args>(args)...);
     }
 
     template<typename... Args>
