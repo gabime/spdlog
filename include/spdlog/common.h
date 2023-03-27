@@ -224,9 +224,9 @@ using wmemory_buf_t = std::wstring;
 
 template<typename... Args>
 #        if __cpp_lib_format >= 202207L
-using wformat_string_t = format_string_wrapper<std::wformat_string<Args...>, wchar>;
+using wformat_string_t = format_string_wrapper<std::wformat_string<Args...>, wchar_t>;
 #        else
-using wformat_string_t = format_string_wrapper<std::wstring_view, wchar>;
+using wformat_string_t = format_string_wrapper<std::wstring_view, wchar_t>;
 #        endif
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) x
@@ -255,7 +255,7 @@ using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
 template<typename... Args>
-using wformat_string_t = format_string_wrapper<fmt::wformat_string<Args...>, wchar>;
+using wformat_string_t = format_string_wrapper<fmt::wformat_string<Args...>, wchar_t>;
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
