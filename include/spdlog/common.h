@@ -148,61 +148,23 @@ struct source_loc
     const char *funcname{nullptr};
 };
 
-template<typename T>
+template<typename T, typename Char>
 struct format_string_wrapper
 {
-    template <typename S>
-    SPDLOG_CONSTEVAL format_string_wrapper(S fmtstr, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEVAL format_string_wrapper(const Char* fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
-#if SPDLOG_CPLUSPLUS > 201703L
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
-    format_string_wrapper(fmt::basic_runtime<char> fmtstr, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEXPR format_string_wrapper(fmt::basic_runtime<Char> fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
 #else
-    explicit format_string_wrapper(const char* fmtstr, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEXPR format_string_wrapper(const Char* fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
-#endif
-#endif
-    T fmt()
-    {
-        return fmt_;
-    }
-    source_loc loc()
-    {
-        return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
-    }
-
-private:
-    T fmt_;
-    spdlog::details::source_location loc_;
-};
-
-template<typename T>
-struct wformat_string_wrapper
-{
-    template <typename S>
-    SPDLOG_CONSTEVAL wformat_string_wrapper(S fmtstr, details::source_location loc = details::source_location::current())
-        : fmt_{fmtstr}
-        , loc_{loc}
-    {}
-#if SPDLOG_CPLUSPLUS > 201703L
-#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
-    wformat_string_wrapper(fmt::basic_runtime<wchar_t> fmtstr, details::source_location loc = details::source_location::current())
-        : fmt_{fmtstr}
-        , loc_{loc}
-    {}
-#else
-    explicit wformat_string_wrapper(const wchar_t* fmtstr, details::source_location loc = details::source_location::current())
-        : fmt_{fmtstr}
-        , loc_{loc}
-    {}
-#endif
 #endif
     T fmt()
     {
@@ -245,9 +207,9 @@ using memory_buf_t = std::string;
 
 template<typename... Args>
 #    if __cpp_lib_format >= 202207L
-using format_string_t = format_string_wrapper<std::format_string<Args...>>;
+using format_string_t = format_string_wrapper<std::format_string<Args...>, char>;
 #    else
-using format_string_t = format_string_wrapper<std::string_view>;
+using format_string_t = format_string_wrapper<std::string_view, char>;
 #    endif
 
 
@@ -261,9 +223,9 @@ using wmemory_buf_t = std::wstring;
 
 template<typename... Args>
 #        if __cpp_lib_format >= 202207L
-using wformat_string_t = wformat_string_wrapper<std::wformat_string<Args...>>;
+using wformat_string_t = format_string_wrapper<std::wformat_string<Args...>, wchar_t>;
 #        else
-using wformat_string_t = wformat_string_wrapper<std::wstring_view>;
+using wformat_string_t = format_string_wrapper<std::wstring_view, wchar_t>;
 #        endif
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) x
@@ -274,7 +236,7 @@ using string_view_t = fmt::basic_string_view<char>;
 using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 
 template<typename... Args>
-using format_string_t = format_string_wrapper<fmt::format_string<Args...>>;
+using format_string_t = format_string_wrapper<fmt::format_string<Args...>, char>;
 
 template<class T>
 using remove_cvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
@@ -292,7 +254,7 @@ using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
 template<typename... Args>
-using wformat_string_t = wformat_string_wrapper<fmt::wformat_string<Args...>>;
+using wformat_string_t = format_string_wrapper<fmt::wformat_string<Args...>, wchar_t>;
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
