@@ -116,7 +116,7 @@
 #ifdef _MSC_VER
 #define SPDLOG_CPLUSPLUS _MSVC_LANG
 #else
-#define SPDLOG_CPLUSPLUS _cplusplus
+#define SPDLOG_CPLUSPLUS __cplusplus
 #endif
 
 #if SPDLOG_CPLUSPLUS > 201703L
