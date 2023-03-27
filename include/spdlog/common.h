@@ -162,11 +162,12 @@ struct format_string_wrapper
         : fmt_{fmtstr}
         , loc_{loc}
     {}
-#endif
+#else
     explicit format_string_wrapper(const Char* fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
+#endif
     T fmt()
     {
         return fmt_;
