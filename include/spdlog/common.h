@@ -187,18 +187,18 @@ template<typename T>
 struct wformat_string_wrapper
 {
     template <typename S>
-    SPDLOG_CONSTEVAL format_string_wrapper(S fmtstr, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEVAL wformat_string_wrapper(S fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
 #if SPDLOG_CPLUSPLUS > 201703L
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
-    format_string_wrapper(fmt::basic_runtime<wchar_t> fmtstr, details::source_location loc = details::source_location::current())
+    wformat_string_wrapper(fmt::basic_runtime<wchar_t> fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
 #else
-    explicit format_string_wrapper(const wchar_t* fmtstr, details::source_location loc = details::source_location::current())
+    explicit wformat_string_wrapper(const wchar_t* fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
