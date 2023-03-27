@@ -156,7 +156,8 @@ struct format_string_wrapper
         : fmt_{fmtstr}
         , loc_{loc}
     {}
-#if SPDLOG_CPLUSPLUS > 201703L && !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
+#if SPDLOG_CPLUSPLUS > 201703L
+#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
     format_string_wrapper(fmt::basic_runtime<Char> fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
@@ -166,6 +167,7 @@ struct format_string_wrapper
         : fmt_{fmtstr}
         , loc_{loc}
     {}
+#endif
 #endif
     T fmt()
     {
