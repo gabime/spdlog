@@ -18,7 +18,6 @@
 #include <cstdio>
 
 
-
 #ifdef SPDLOG_USE_STD_FORMAT
 #    include <version>
 #    if __cpp_lib_format >= 202207L
