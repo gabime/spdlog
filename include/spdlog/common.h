@@ -113,6 +113,20 @@
         catch (const std::exception &) {}
 #endif
 
+#ifdef _MSC_VER
+#define SPDLOG_CPLUSPLUS _MSVC_LANG
+#else
+#define SPDLOG_CPLUSPLUS _cplusplus
+#endif
+
+#if SPDLOG_CPLUSPLUS > 201703L
+#define SPDLOG_CONSTEVAL consteval
+#elif SPDLOG_CPLUSPLUS < 201402L
+#define SPDLOG_CONSTEVAL constexpr
+#else
+#define SPDLOG_CONSTEVAL 
+#endif
+
 namespace spdlog {
 
 class formatter;
@@ -139,7 +153,7 @@ template<typename T>
 struct format_string_wrapper
 {
     template <typename S>
-    SPDLOG_CONSTEXPR format_string_wrapper(S fmt, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEVAL format_string_wrapper(S fmt, details::source_location loc = details::source_location::current())
         : fmt_{fmt}
         , loc_{loc}
     {}
