@@ -157,6 +157,10 @@ struct format_string_wrapper
         : fmt_{fmt}
         , loc_{loc}
     {}
+    format_string_wrapper(fmt::basic_runtime<char> fmtstr, details::source_location loc = details::source_location::current())
+        : fmt_{fmtstr}
+        , loc_{loc}
+    {}
     SPDLOG_CONSTEXPR T fmt() const
     {
         return fmt_;
