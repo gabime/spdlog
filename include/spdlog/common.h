@@ -255,7 +255,7 @@ using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
 template<typename... Args>
-using wformat_string_t = format_string_wrapper<fmt::wformat_string<Args...>, wchar_t>;
+using wformat_string_t = format_string_wrapper<fmt::wformat_string<Args...>>;
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
