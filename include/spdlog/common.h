@@ -149,23 +149,29 @@ struct source_loc
     const char *funcname{nullptr};
 };
 
-template<typename T>
+template<typename T, typename Char = char>
 struct format_string_wrapper
 {
     template <typename S>
-    SPDLOG_CONSTEVAL format_string_wrapper(S fmt, details::source_location loc = details::source_location::current())
-        : fmt_{fmt}
-        , loc_{loc}
-    {}
-    format_string_wrapper(fmt::basic_runtime<char> fmtstr, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEVAL format_string_wrapper(S fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
-    SPDLOG_CONSTEXPR T fmt() const
+#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
+    format_string_wrapper(fmt::basic_runtime<Char> fmtstr, details::source_location loc = details::source_location::current())
+        : fmt_{fmtstr}
+        , loc_{loc}
+    {}
+#endif
+    explicit format_string_wrapper(const Char* fmtstr, details::source_location loc = details::source_location::current())
+        : fmt_{fmtstr}
+        , loc_{loc}
+    {}
+    T fmt()
     {
         return fmt_;
     }
-    SPDLOG_CONSTEXPR source_loc loc() const
+    source_loc loc()
     {
         return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
     }
@@ -218,9 +224,9 @@ using wmemory_buf_t = std::wstring;
 
 template<typename... Args>
 #        if __cpp_lib_format >= 202207L
-using wformat_string_t = format_string_wrapper<std::wformat_string<Args...>>;
+using wformat_string_t = format_string_wrapper<std::wformat_string<Args...>, wchar>;
 #        else
-using wformat_string_t = format_string_wrapper<std::wstring_view>;
+using wformat_string_t = format_string_wrapper<std::wstring_view, wchar>;
 #        endif
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) x
@@ -249,7 +255,7 @@ using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
 template<typename... Args>
-using wformat_string_t = fmt::wformat_string<Args...>;
+using wformat_string_t = format_string_wrapper<fmt::wformat_string<Args...>, wchar>;
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
