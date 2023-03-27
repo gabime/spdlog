@@ -264,39 +264,39 @@ public:
 #endif
 
     template<typename T>
-    void trace(const T &msg, source_loc loc = source_loc{})
+    void trace(const T &msg, details::source_location loc = details::source_location::current())
     {
-        log(loc, level::trace, msg);
+        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::trace, msg);
     }
 
     template<typename T>
-    void debug(const T &msg, source_loc loc = source_loc{})
+    void debug(const T &msg, details::source_location loc = details::source_location::current())
     {
-        log(loc, level::debug, msg);
+        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::debug, msg);
     }
 
     template<typename T>
-    void info(const T &msg, source_loc loc = source_loc{})
+    void info(const T &msg, details::source_location loc = details::source_location::current())
     {
-        log(loc, level::info, msg);
+        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::info, msg);
     }
 
     template<typename T>
-    void warn(const T &msg, source_loc loc = source_loc{})
+    void warn(const T &msg, details::source_location loc = details::source_location::current())
     {
-        log(loc, level::warn, msg);
+        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::warn, msg);
     }
 
     template<typename T>
-    void error(const T &msg, source_loc loc = source_loc{})
+    void error(const T &msg, details::source_location loc = details::source_location::current())
     {
-        log(loc, level::err, msg);
+        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::err, msg);
     }
 
     template<typename T>
-    void critical(const T &msg, source_loc loc = source_loc{})
+    void critical(const T &msg, details::source_location loc = details::source_location::current())
     {
-        log(loc, level::critical, msg);
+        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::critical, msg);
     }
 
     // return true logging is enabled for the given level.
