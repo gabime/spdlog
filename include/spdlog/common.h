@@ -162,6 +162,7 @@ struct format_string_wrapper
     {}
 #else
     template <typename S>
+    requires std::is_convertible_v<S, T>
     SPDLOG_CONSTEXPR format_string_wrapper(S fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
