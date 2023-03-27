@@ -148,7 +148,7 @@ struct source_loc
     const char *funcname{nullptr};
 };
 
-template<typename T, typename Char = char>
+template<typename T>
 struct format_string_wrapper
 {
     template <typename S>
@@ -158,12 +158,47 @@ struct format_string_wrapper
     {}
 #if SPDLOG_CPLUSPLUS > 201703L
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
-    format_string_wrapper(fmt::basic_runtime<Char> fmtstr, details::source_location loc = details::source_location::current())
+    format_string_wrapper(fmt::basic_runtime<char> fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
 #else
-    explicit format_string_wrapper(const Char* fmtstr, details::source_location loc = details::source_location::current())
+    explicit format_string_wrapper(const char* fmtstr, details::source_location loc = details::source_location::current())
+        : fmt_{fmtstr}
+        , loc_{loc}
+    {}
+#endif
+#endif
+    T fmt()
+    {
+        return fmt_;
+    }
+    source_loc loc()
+    {
+        return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
+    }
+
+private:
+    T fmt_;
+    spdlog::details::source_location loc_;
+};
+
+template<typename T>
+struct wformat_string_wrapper
+{
+    template <typename S>
+    SPDLOG_CONSTEVAL format_string_wrapper(S fmtstr, details::source_location loc = details::source_location::current())
+        : fmt_{fmtstr}
+        , loc_{loc}
+    {}
+#if SPDLOG_CPLUSPLUS > 201703L
+#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
+    format_string_wrapper(fmt::basic_runtime<wchar_t> fmtstr, details::source_location loc = details::source_location::current())
+        : fmt_{fmtstr}
+        , loc_{loc}
+    {}
+#else
+    explicit format_string_wrapper(const wchar_t* fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
@@ -226,9 +261,9 @@ using wmemory_buf_t = std::wstring;
 
 template<typename... Args>
 #        if __cpp_lib_format >= 202207L
-using wformat_string_t = format_string_wrapper<std::wformat_string<Args...>, wchar_t>;
+using wformat_string_t = wformat_string_wrapper<std::wformat_string<Args...>>;
 #        else
-using wformat_string_t = format_string_wrapper<std::wstring_view, wchar_t>;
+using wformat_string_t = wformat_string_wrapper<std::wstring_view>;
 #        endif
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) x
@@ -257,7 +292,7 @@ using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
 template<typename... Args>
-using wformat_string_t = format_string_wrapper<fmt::wformat_string<Args...>>;
+using wformat_string_t = wformat_string_wrapper<fmt::wformat_string<Args...>>;
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
