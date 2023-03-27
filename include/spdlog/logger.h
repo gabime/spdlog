@@ -28,7 +28,6 @@
 
 #include <vector>
 
-
 #ifndef SPDLOG_NO_EXCEPTIONS
 #    define SPDLOG_LOGGER_CATCH(location)                                                                                                  \
         catch (const std::exception &ex)                                                                                                   \
