@@ -76,5 +76,5 @@ private:
   const unsigned columnOffset;
 };
 } // namespace details
-#endif
 } // namespace spdlog
+#endif
