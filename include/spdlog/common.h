@@ -133,7 +133,7 @@ class formatter;
 struct source_loc
 {
     SPDLOG_CONSTEXPR source_loc() = default;
-    SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
+    SPDLOG_CONSTEXPR source_loc(const char *filename_in, unsigned line_in, const char *funcname_in)
         : filename{filename_in}
         , line{line_in}
         , funcname{funcname_in}
@@ -144,7 +144,7 @@ struct source_loc
         return line == 0;
     }
     const char *filename{nullptr};
-    int line{0};
+    unsigned line{0};
     const char *funcname{nullptr};
 };
 
