@@ -173,12 +173,18 @@ using format_string_t = fmt::format_string<Args...>;
 template<class T>
 using remove_cvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
 
+#if FMT_VERSION >= 90101
+# define FMT_STRING_RUNTIME fmt::runtime_format_string<Char>
+#else
+# define FMT_STRING_RUNTIME fmt::basic_runtime<Char>
+#endif
+
 // clang doesn't like SFINAE disabled constructor in std::is_convertible<> so have to repeat the condition from basic_format_string here,
 // in addition, fmt::basic_runtime<Char> is only convertible to basic_format_string<Char> but not basic_string_view<Char>
 template<class T, class Char = char>
 struct is_convertible_to_basic_format_string
     : std::integral_constant<bool,
-          std::is_convertible<T, fmt::basic_string_view<Char>>::value || std::is_same<remove_cvref_t<T>, fmt::basic_runtime<Char>>::value>
+          std::is_convertible<T, fmt::basic_string_view<Char>>::value || std::is_same<remove_cvref_t<T>, FMT_STRING_RUNTIME>::value>
 {};
 
 #    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
