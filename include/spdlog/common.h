@@ -121,9 +121,9 @@
 #if SPDLOG_CPLUSPLUS > 201703L
 #define SPDLOG_CONSTEVAL consteval
 #elif SPDLOG_CPLUSPLUS < 201402L
-#define SPDLOG_CONSTEVAL constexpr
-#else
 #define SPDLOG_CONSTEVAL 
+#else
+#define SPDLOG_CONSTEVAL constexpr
 #endif
 
 namespace spdlog {
