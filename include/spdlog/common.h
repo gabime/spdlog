@@ -123,12 +123,14 @@
 namespace spdlog {
 
 class formatter;
-        
+
+#if !defined(SPDLOG_USE_STD_FORMAT)
 template <typename Char>
-#if FMT_VERSION >= 90101
+#    if FMT_VERSION >= 90101
 using fmt_runtime_string = fmt::runtime_format_string<Char>;
-#else
+#    else
 using fmt_runtime_string = fmt::basic_runtime<Char>;
+#    endif
 #endif
 
 struct source_loc
