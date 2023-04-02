@@ -112,18 +112,12 @@
         catch (const std::exception &) {}
 #endif
 
-#ifdef _MSC_VER
-#define SPDLOG_CPLUSPLUS _MSVC_LANG
-#else
-#define SPDLOG_CPLUSPLUS __cplusplus
-#endif
-
 #if SPDLOG_CPLUSPLUS > 201703L
-#define SPDLOG_CONSTEVAL consteval
+#    define SPDLOG_CONSTEVAL consteval
 #elif SPDLOG_CPLUSPLUS < 201402L
-#define SPDLOG_CONSTEVAL 
+#    define SPDLOG_CONSTEVAL 
 #else
-#define SPDLOG_CONSTEVAL constexpr
+#    define SPDLOG_CONSTEVAL constexpr
 #endif
 
 namespace spdlog {
@@ -164,11 +158,6 @@ struct format_string_wrapper
     {}
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
     SPDLOG_CONSTEXPR format_string_wrapper(fmt_runtime_string<Char> fmtstr, details::source_location loc = details::source_location::current())
-        : fmt_{fmtstr}
-        , loc_{loc}
-    {}
-#elif !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION < 80000
-    SPDLOG_CONSTEXPR format_string_wrapper(const Char* fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
