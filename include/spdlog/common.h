@@ -129,6 +129,13 @@
 namespace spdlog {
 
 class formatter;
+        
+template <typename Char>
+#if FMT_VERSION >= 90101
+using fmt_runtime_string = fmt::runtime_format_string<Char>;
+#else
+using fmt_runtime_string = fmt::basic_runtime<Char>;
+#endif
 
 struct source_loc
 {
@@ -156,7 +163,12 @@ struct format_string_wrapper
         , loc_{loc}
     {}
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
-    SPDLOG_CONSTEXPR format_string_wrapper(fmt::basic_runtime<Char> fmtstr, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEXPR format_string_wrapper(fmt_runtime_string<Char> fmtstr, details::source_location loc = details::source_location::current())
+        : fmt_{fmtstr}
+        , loc_{loc}
+    {}
+#elif !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION < 80000
+    SPDLOG_CONSTEXPR format_string_wrapper(const Char* fmtstr, details::source_location loc = details::source_location::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
@@ -242,13 +254,6 @@ using format_string_t = format_string_wrapper<fmt::format_string<Args...>, char>
 
 template<class T>
 using remove_cvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
-
-template <typename Char>
-#if FMT_VERSION >= 90101
-using fmt_runtime_string = fmt::runtime_format_string<Char>;
-#else
-using fmt_runtime_string = fmt::basic_runtime<Char>;
-#endif
 
 // clang doesn't like SFINAE disabled constructor in std::is_convertible<> so have to repeat the condition from basic_format_string here,
 // in addition, fmt::basic_runtime<Char> is only convertible to basic_format_string<Char> but not basic_string_view<Char>
