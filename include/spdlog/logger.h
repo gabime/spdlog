@@ -94,7 +94,7 @@ public:
     template<typename... Args>
     void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)
     {
-        log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
+        log(fmt.loc(), lvl, fmt, std::forward<Args>(args)...);
     }
 
     template<typename T>
@@ -144,37 +144,37 @@ public:
     template<typename... Args>
     void trace(format_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::trace, fmt, std::forward<Args>(args)...);
+        log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void debug(format_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::debug, fmt, std::forward<Args>(args)...);
+        log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void info(format_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::info, fmt, std::forward<Args>(args)...);
+        log(level::info, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void warn(format_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::warn, fmt, std::forward<Args>(args)...);
+        log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void error(format_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::err, fmt, std::forward<Args>(args)...);
+        log(level::err, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void critical(format_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::critical, fmt, std::forward<Args>(args)...);
+        log(level::critical, fmt, std::forward<Args>(args)...);
     }
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
@@ -187,7 +187,7 @@ public:
     template<typename... Args>
     void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args)
     {
-        log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
+        log(fmt.loc(), lvl, fmt, std::forward<Args>(args)...);
     }
 
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, wstring_view_t msg)
@@ -228,37 +228,37 @@ public:
     template<typename... Args>
     void trace(wformat_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::trace, fmt, std::forward<Args>(args)...);
+        log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void debug(wformat_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::debug, fmt, std::forward<Args>(args)...);
+        log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void info(wformat_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::info, fmt, std::forward<Args>(args)...);
+        log(level::info, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void warn(wformat_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::warn, fmt, std::forward<Args>(args)...);
+        log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void error(wformat_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::err, fmt, std::forward<Args>(args)...);
+        log(level::err, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void critical(wformat_string_t<Args...> fmt, Args &&... args)
     {
-        log(fmt.loc(), level::critical, fmt, std::forward<Args>(args)...);
+        log(level::critical, fmt, std::forward<Args>(args)...);
     }
 #endif
 
