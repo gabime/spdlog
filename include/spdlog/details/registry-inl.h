@@ -219,8 +219,9 @@ SPDLOG_INLINE void registry::flush_all()
 SPDLOG_INLINE void registry::drop(const std::string &logger_name)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
+    auto is_default_logger = default_logger_ && default_logger_->name() == logger_name;
     loggers_.erase(logger_name);
-    if (default_logger_ && default_logger_->name() == logger_name)
+    if (is_default_logger)
     {
         default_logger_.reset();
     }
