@@ -35,8 +35,8 @@ struct minute_filename_calculator
     {
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
-        return fmt_lib::format(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}-{:02d}_{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1,
-            now_tm.tm_mday, now_tm.tm_hour,now_tm.tm_min,ext);//colock details define in os-inl.h
+        return fmt_lib::format(SPDLOG_FMT_STRING(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}-{:02d}_{:02d}{}")), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1,
+            now_tm.tm_mday, now_tm.tm_hour,now_tm.tm_min,ext);
     }
 };
 
@@ -49,15 +49,23 @@ template<typename Mutex, typename FileNameCalc = minute_filename_calculator>
 class minute_file_sink final : public base_sink<Mutex>
 {
 public:
-    // create hourly file sink which rotates on given time
+   // create every minute file sink which rotates on given time
     minute_file_sink(
-        filename_t base_filename, bool truncate = false, uint16_t max_files = 0, const file_event_handlers &event_handlers = {})
+        filename_t base_filename, bool truncate = false, uint16_t max_files = 0,
+        int rotation_minute = 0, const file_event_handlers &event_handlers = {})
         : base_filename_(std::move(base_filename))
         , file_helper_{event_handlers}
         , truncate_(truncate)
         , max_files_(max_files)
+        ,rotation_m_(rotation_minute)
         , filenames_q_()
     {
+        
+        if (rotation_minute < 0 || rotation_minute > 59)
+        {
+            throw_spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
+        }
+        
         auto now = log_clock::now();
         auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
         file_helper_.open(filename, truncate_);
@@ -125,7 +133,7 @@ private:
                 break;
             }
             filenames.emplace_back(filename);
-            now -= std::chrono::minutes(1);
+            now -= std::chrono::minutes(rotation_m_);
         }
         for (auto iter = filenames.rbegin(); iter != filenames.rend(); ++iter)
         {
@@ -143,14 +151,14 @@ private:
     {
         auto now = log_clock::now();
         tm date = now_tm(now);
-        date.tm_min = 0;
+      
         date.tm_sec = 0;
         auto rotation_time = log_clock::from_time_t(std::mktime(&date));
         if (rotation_time > now)
         {
             return rotation_time;
         }
-        return {rotation_time + std::chrono::minutes(1)};
+        return {rotation_time + std::chrono::minutes(rotation_m_)};
     }
 
     // Delete the file N rotations ago.
@@ -180,6 +188,7 @@ private:
     details::file_helper file_helper_;
     bool truncate_;
     uint16_t max_files_;
+    int rotation_m_;
     details::circular_q<filename_t> filenames_q_;
     bool remove_init_file_;
 };
@@ -194,15 +203,15 @@ using minute_file_sink_st = minute_file_sink<details::null_mutex>;
 //
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> minute_logger_mt(const std::string &logger_name, const filename_t &filename, bool truncate = false,
-    uint16_t max_files = 0, const file_event_handlers &event_handlers = {})
+    uint16_t max_files = 0, int minute = 0, const file_event_handlers &event_handlers = {})
 {
-    return Factory::template create<sinks::minute_file_sink_mt>(logger_name, filename, truncate, max_files, event_handlers);
+    return Factory::template create<sinks::minute_file_sink_mt>(logger_name, filename, truncate, max_files, minute ,event_handlers);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> minute_logger_st(const std::string &logger_name, const filename_t &filename, bool truncate = false,
-    uint16_t max_files = 0, const file_event_handlers &event_handlers = {})
+    uint16_t max_files = 0,int minute = 0, const file_event_handlers &event_handlers = {})
 {
-    return Factory::template create<sinks::minute_file_sink_st>(logger_name, filename, truncate, max_files, event_handlers);
+    return Factory::template create<sinks::minute_file_sink_st>(logger_name, filename, truncate, max_files, minute, event_handlers);
 }
 } // namespace spdlog
