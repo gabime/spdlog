@@ -196,7 +196,7 @@ struct formatter<spdlog::details::dump_info<T>, char>
                 continue;
             }
 
-            if (put_delimiters)
+            if (put_delimiters && i != the_range.get_begin())
             {
                 *inserter++ = delimiter;
             }

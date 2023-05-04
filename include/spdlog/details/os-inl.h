@@ -34,6 +34,7 @@
 
 #    if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)
 #        include <limits>
+#        include <cassert>
 #    endif
 
 #    include <direct.h> // for _mkdir/_wmkdir
@@ -60,6 +61,10 @@
 #    endif
 
 #endif // unix
+
+#if defined __APPLE__
+#    include <AvailabilityMacros.h>
+#endif
 
 #ifndef __has_feature          // Clang - feature checking macros.
 #    define __has_feature(x) 0 // Compatibility with non-clang compilers.
@@ -354,7 +359,19 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
     return static_cast<size_t>(::thr_self());
 #elif __APPLE__
     uint64_t tid;
-    pthread_threadid_np(nullptr, &tid);
+    // There is no pthread_threadid_np prior to 10.6, and it is not supported on any PPC,
+    // including 10.6.8 Rosetta. __POWERPC__ is Apple-specific define encompassing ppc and ppc64.
+#    if (MAC_OS_X_VERSION_MAX_ALLOWED < 1060) || defined(__POWERPC__)
+        tid = pthread_mach_thread_np(pthread_self());
+#    elif MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+        if (&pthread_threadid_np) {
+            pthread_threadid_np(nullptr, &tid);
+        } else {
+            tid = pthread_mach_thread_np(pthread_self());
+        }
+#    else
+        pthread_threadid_np(nullptr, &tid);
+#    endif
     return static_cast<size_t>(tid);
 #else // Default to standard C++11 (other Unix)
     return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
@@ -501,20 +518,16 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
         return;
     }
 
-    int result_size = static_cast<int>(target.capacity());
-    if (str_size + 1 > result_size)
-    {
-        result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, NULL, 0);
-    }
+    // find the size to allocate for the result buffer
+    int result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, NULL, 0);
 
     if (result_size > 0)
     {
         target.resize(result_size);
         result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, target.data(), result_size);
-
-        if (result_size > 0)
+        if (result_size  > 0)
         {
-            target.resize(result_size);
+            assert(result_size == target.size());
             return;
         }
     }

@@ -60,7 +60,6 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
     std::lock_guard<mutex_t> lock(mutex_);
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
-    ::fflush(file_); // flush in case there is something in this file_ already
     auto size = static_cast<DWORD>(formatted.size());
     DWORD bytes_written = 0;
     bool ok = ::WriteFile(handle_, formatted.data(), size, &bytes_written, nullptr) != 0;
@@ -73,8 +72,8 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
-    ::fflush(file_); // flush every line to terminal
 #endif // WIN32
+    ::fflush(file_); // flush every line to terminal
 }
 
 template<typename ConsoleMutex>

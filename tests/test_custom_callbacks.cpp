@@ -7,7 +7,7 @@
 #include "spdlog/async.h"
 #include "spdlog/common.h"
 
-TEST_CASE("custom_callback_logger", "[custom_callback_logger]]")
+TEST_CASE("custom_callback_logger", "[custom_callback_logger]")
 {
     std::vector<std::string> lines;
     spdlog::pattern_formatter formatter;

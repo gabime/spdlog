@@ -87,19 +87,19 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger]")
  * File name calculations
  */
 
-TEST_CASE("rotating_file_sink::calc_filename1", "[rotating_file_sink]]")
+TEST_CASE("rotating_file_sink::calc_filename1", "[rotating_file_sink]")
 {
     auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename(SPDLOG_FILENAME_T("rotated.txt"), 3);
     REQUIRE(filename == SPDLOG_FILENAME_T("rotated.3.txt"));
 }
 
-TEST_CASE("rotating_file_sink::calc_filename2", "[rotating_file_sink]]")
+TEST_CASE("rotating_file_sink::calc_filename2", "[rotating_file_sink]")
 {
     auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename(SPDLOG_FILENAME_T("rotated"), 3);
     REQUIRE(filename == SPDLOG_FILENAME_T("rotated.3"));
 }
 
-TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
+TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]")
 {
     auto filename = spdlog::sinks::rotating_file_sink_st::calc_filename(SPDLOG_FILENAME_T("rotated.txt"), 0);
     REQUIRE(filename == SPDLOG_FILENAME_T("rotated.txt"));
@@ -110,7 +110,7 @@ TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]]")
 
 #    include <regex>
 
-TEST_CASE("daily_file_sink::daily_filename_calculator", "[daily_file_sink]]")
+TEST_CASE("daily_file_sink::daily_filename_calculator", "[daily_file_sink]")
 {
     // daily_YYYY-MM-DD_hh-mm.txt
     auto filename =
@@ -123,7 +123,7 @@ TEST_CASE("daily_file_sink::daily_filename_calculator", "[daily_file_sink]]")
 }
 #endif
 
-TEST_CASE("daily_file_sink::daily_filename_format_calculator", "[daily_file_sink]]")
+TEST_CASE("daily_file_sink::daily_filename_format_calculator", "[daily_file_sink]")
 {
     std::tm tm = spdlog::details::os::localtime();
     // example-YYYY-MM-DD.log

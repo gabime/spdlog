@@ -10,7 +10,7 @@
 
 #define TEST_FILENAME "test_logs/simple_log"
 
-TEST_CASE("debug and trace w/o format string", "[macros]]")
+TEST_CASE("debug and trace w/o format string", "[macros]")
 {
 
     prepare_logdir();

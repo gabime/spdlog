@@ -25,7 +25,10 @@ endif()
 # ---------------------------------------------------------------------------------------
 # Compiler config
 # ---------------------------------------------------------------------------------------
-if(NOT CMAKE_CXX_STANDARD)
+if(SPDLOG_USE_STD_FORMAT)
+    set(CMAKE_CXX_STANDARD 20)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+elseif(NOT CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 11)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
@@ -176,7 +179,6 @@ if(SPDLOG_SYSTEM_INCLUDES)
     set(SPDLOG_INCLUDES_LEVEL "SYSTEM")
 endif()
 
-
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                          "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
@@ -255,11 +257,6 @@ endforeach()
 
 if(SPDLOG_NO_EXCEPTIONS AND NOT MSVC)
     target_compile_options(spdlog PRIVATE -fno-exceptions)
-endif()
-
-if(SPDLOG_USE_STD_FORMAT)
-    set(CMAKE_CXX_STANDARD 20)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
 # ---------------------------------------------------------------------------------------

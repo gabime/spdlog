@@ -15,7 +15,7 @@ static void write_with_helper(file_helper &helper, size_t howmany)
     helper.flush();
 }
 
-TEST_CASE("file_helper_filename", "[file_helper::filename()]]")
+TEST_CASE("file_helper_filename", "[file_helper::filename()]")
 {
     prepare_logdir();
 
@@ -25,7 +25,7 @@ TEST_CASE("file_helper_filename", "[file_helper::filename()]]")
     REQUIRE(helper.filename() == target_filename);
 }
 
-TEST_CASE("file_helper_size", "[file_helper::size()]]")
+TEST_CASE("file_helper_size", "[file_helper::size()]")
 {
     prepare_logdir();
     spdlog::filename_t target_filename = SPDLOG_FILENAME_T(TEST_FILENAME);
@@ -39,7 +39,7 @@ TEST_CASE("file_helper_size", "[file_helper::size()]]")
     REQUIRE(get_filesize(TEST_FILENAME) == expected_size);
 }
 
-TEST_CASE("file_helper_reopen", "[file_helper::reopen()]]")
+TEST_CASE("file_helper_reopen", "[file_helper::reopen()]")
 {
     prepare_logdir();
     spdlog::filename_t target_filename = SPDLOG_FILENAME_T(TEST_FILENAME);
@@ -51,7 +51,7 @@ TEST_CASE("file_helper_reopen", "[file_helper::reopen()]]")
     REQUIRE(helper.size() == 0);
 }
 
-TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]]")
+TEST_CASE("file_helper_reopen2", "[file_helper::reopen(false)]")
 {
     prepare_logdir();
     spdlog::filename_t target_filename = SPDLOG_FILENAME_T(TEST_FILENAME);
@@ -78,7 +78,7 @@ static void test_split_ext(const spdlog::filename_t::value_type *fname, const sp
     REQUIRE(ext == expected_ext);
 }
 
-TEST_CASE("file_helper_split_by_extension", "[file_helper::split_by_extension()]]")
+TEST_CASE("file_helper_split_by_extension", "[file_helper::split_by_extension()]")
 {
     test_split_ext(SPDLOG_FILENAME_T("mylog.txt"), SPDLOG_FILENAME_T("mylog"), SPDLOG_FILENAME_T(".txt"));
     test_split_ext(SPDLOG_FILENAME_T(".mylog.txt"), SPDLOG_FILENAME_T(".mylog"), SPDLOG_FILENAME_T(".txt"));

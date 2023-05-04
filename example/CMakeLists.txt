@@ -12,7 +12,7 @@ endif()
 # Example of using pre-compiled library
 # ---------------------------------------------------------------------------------------
 add_executable(example example.cpp)
-target_link_libraries(example PRIVATE spdlog::spdlog)
+target_link_libraries(example PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
 # ---------------------------------------------------------------------------------------
 # Example of using header-only library
