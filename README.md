@@ -214,7 +214,7 @@ void binary_example()
 #### Logger with multi sinks - each with a different format and log level
 ```c++
 
-// create loggers with 2 targets with different log levels and formats.
+// create a logger with 2 targets, with different log levels and formats.
 // The console will show only warnings or errors, while the file will log all.
 void multi_sink_example()
 {
