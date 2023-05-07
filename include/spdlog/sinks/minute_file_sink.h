@@ -3,7 +3,7 @@
 //File: minute_file_sink to support every 1 min file rotation.
 //Author Manoj Mallawaarachchie manoj_ws@yahoo.com / manoj@vizuamatix.com
 //example driver code:
-//auto logger = spdlog::minute_logger_mt("minutes_basic_logger", "logs/min-log.txt",false,60);
+//auto logger = spdlog::minute_interval_logger_mt("minute_interval_logger", "logs/min-log.txt",false,60);
 
 #pragma once
 
@@ -203,14 +203,14 @@ using minute_interval_file_sink_st = minute_interval_file_sink<details::null_mut
 //
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> minute_interval_logger_mt(const std::string &logger_name, const filename_t &filename, bool truncate = false,
-    uint16_t max_files = 0, int minute = 0, const file_event_handlers &event_handlers = {})
+    uint16_t max_files = 0, int minute = 1, const file_event_handlers &event_handlers = {})
 {
     return Factory::template create<sinks::minute_interval_file_sink_mt>(logger_name, filename, truncate, max_files, minute ,event_handlers);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> minute_interval_logger_st(const std::string &logger_name, const filename_t &filename, bool truncate = false,
-    uint16_t max_files = 0,int minute = 0, const file_event_handlers &event_handlers = {})
+    uint16_t max_files = 0,int minute = 1, const file_event_handlers &event_handlers = {})
 {
     return Factory::template create<sinks::minute_interval_file_sink_st>(logger_name, filename, truncate, max_files, minute, event_handlers);
 }
