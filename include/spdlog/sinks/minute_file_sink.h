@@ -61,7 +61,10 @@ public:
         , filenames_q_()
     {
         
-        
+          if (rotation_minute < 0)
+        {
+            throw_spdlog_ex("minute_interval_file_sink: Invalid rotation time in ctor");
+        }
         
         auto now = log_clock::now();
         auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
