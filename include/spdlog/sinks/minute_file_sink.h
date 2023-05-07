@@ -61,7 +61,7 @@ public:
         , filenames_q_()
     {
         
-          if (rotation_minute < 0)
+          if (rotation_minute <= 0)
         {
             throw_spdlog_ex("minute_interval_file_sink: Invalid rotation time in ctor");
         }
