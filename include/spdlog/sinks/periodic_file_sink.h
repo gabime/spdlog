@@ -2,7 +2,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 //File: minute_file_sink to support every 1 min file rotation.
 //example driver code:
-//auto logger = spdlog::periodic_interval_logger_mt("minute_interval_logger", "logs/min-log.txt",false,60);
+// auto duration{std::chrono::minutes{1}};
+//auto logger = spdlog::periodic_logger_mt("periodic_logger", "logs/min-log.txt",false,60,duration);
 
 #pragma once
 
@@ -45,24 +46,24 @@ struct periodic_filename_calculator
  * If max_files > 0, retain only the last max_files and delete previous.
  */
 template<typename Mutex, typename FileNameCalc = periodic_filename_calculator>
-class periodic_interval_file_sink final : public base_sink<Mutex>
+class periodic_file_sink final : public base_sink<Mutex>
 {
 public:
    // create every periodic file sink which rotates on given time
-    periodic_interval_file_sink(
+    periodic_file_sink(
         filename_t base_filename, bool truncate = false, uint16_t max_files = 0,
-        int rotation_period = 0, const file_event_handlers &event_handlers = {})
+        std::chrono::duration<int> rotation_period = 0, const file_event_handlers &event_handlers = {})
         : base_filename_(std::move(base_filename))
         , file_helper_{event_handlers}
         , truncate_(truncate)
         , max_files_(max_files)
-        ,rotation_m_(rotation_period)
+        ,rotation_p_(rotation_period)
         , filenames_q_()
     {
         
-          if (rotation_period <= 0)
+          if (rotation_period <= std::chrono::minutes(0))
         {
-            throw_spdlog_ex("periodic_interval_file_sink: Invalid rotation time in ctor");
+            throw_spdlog_ex("periodic_file_sink: Invalid rotation time in ctor");
         }
         
         auto now = log_clock::now();
@@ -132,7 +133,7 @@ private:
                 break;
             }
             filenames.emplace_back(filename);
-            now -= std::chrono::minutes(rotation_m_);
+            now -= rotation_p_;
         }
         for (auto iter = filenames.rbegin(); iter != filenames.rend(); ++iter)
         {
@@ -157,7 +158,7 @@ private:
         {
             return rotation_time;
         }
-        return {rotation_time + std::chrono::minutes(rotation_m_)};
+        return {rotation_time + rotation_p_};
     }
 
     // Delete the file N rotations ago.
@@ -187,13 +188,13 @@ private:
     details::file_helper file_helper_;
     bool truncate_;
     uint16_t max_files_;
-    int rotation_m_;
+    std::chrono::duration<int> rotation_p_;
     details::circular_q<filename_t> filenames_q_;
     bool remove_init_file_;
 };
 
-using periodic_interval_file_sink_mt = periodic_interval_file_sink<std::mutex>;
-using periodic_interval_file_sink_st = periodic_interval_file_sink<details::null_mutex>;
+using periodic_file_sink_mt = periodic_file_sink<std::mutex>;
+using periodic_file_sink_st = periodic_file_sink<details::null_mutex>;
 
 } // namespace sinks
 
@@ -201,16 +202,16 @@ using periodic_interval_file_sink_st = periodic_interval_file_sink<details::null
 // factory functions
 //
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> periodic_interval_logger_mt(const std::string &logger_name, const filename_t &filename, bool truncate = false,
-    uint16_t max_files = 0, int period = 1, const file_event_handlers &event_handlers = {})
+inline std::shared_ptr<logger> periodic_logger_mt(const std::string &logger_name, const filename_t &filename, bool truncate = false,
+    uint16_t max_files = 0, std::chrono::duration<int> period = 1, const file_event_handlers &event_handlers = {})
 {
-    return Factory::template create<sinks::periodic_interval_file_sink_mt>(logger_name, filename, truncate, max_files, period ,event_handlers);
+    return Factory::template create<sinks::periodic_file_sink_mt>(logger_name, filename, truncate, max_files, period ,event_handlers);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> periodic_interval_logger_st(const std::string &logger_name, const filename_t &filename, bool truncate = false,
-    uint16_t max_files = 0,int period = 1, const file_event_handlers &event_handlers = {})
+inline std::shared_ptr<logger> periodic_logger_st(const std::string &logger_name, const filename_t &filename, bool truncate = false,
+    uint16_t max_files = 0,std::chrono::duration<int> period = 1, const file_event_handlers &event_handlers = {})
 {
-    return Factory::template create<sinks::periodic_interval_file_sink_st>(logger_name, filename, truncate, max_files, period, event_handlers);
+    return Factory::template create<sinks::periodic_file_sink_st>(logger_name, filename, truncate, max_files, period, event_handlers);
 }
 } // namespace spdlog
