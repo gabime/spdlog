@@ -18,6 +18,7 @@
 #include <ctime>
 #include <mutex>
 #include <string>
+#include <vector>
 
 namespace spdlog {
 namespace sinks {
@@ -48,7 +49,6 @@ struct daily_filename_format_calculator
 {
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
     {
-#ifdef SPDLOG_USE_STD_FORMAT
         // adapted from fmtlib: https://github.com/fmtlib/fmt/blob/8.0.1/include/fmt/chrono.h#L522-L546
 
         filename_t tm_format;
@@ -59,7 +59,7 @@ struct daily_filename_format_calculator
         tm_format.push_back(' ');
 
         const size_t MIN_SIZE = 10;
-        filename_t buf;
+        std::vector<char> buf;
         buf.resize(MIN_SIZE);
         for (;;)
         {
@@ -73,19 +73,7 @@ struct daily_filename_format_calculator
             buf.resize(buf.size() * 2);
         }
 
-        return buf;
-#else
-        // generate fmt datetime format string, e.g. {:%Y-%m-%d}.
-        filename_t fmt_filename = fmt::format(SPDLOG_FMT_STRING(SPDLOG_FILENAME_T("{{:{}}}")), filename);
-
-        // MSVC doesn't allow fmt::runtime(..) with wchar, with fmtlib versions < 9.1.x
-#    if defined(_MSC_VER) && defined(SPDLOG_WCHAR_FILENAMES) && FMT_VERSION < 90101
-        return fmt::format(fmt_filename, now_tm);
-#    else
-        return fmt::format(SPDLOG_FMT_RUNTIME(fmt_filename), now_tm);
-#    endif
-
-#endif
+        return std::string(buf.cbegin(), buf.cend());
     }
 
 private:
