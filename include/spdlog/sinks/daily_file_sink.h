@@ -46,12 +46,12 @@ struct daily_filename_calculator
  */
 struct daily_filename_format_calculator
 {
-    static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
+    static filename_t calc_filename(const filename_t &filepath, const tm &now_tm)
     {
         // adapted from fmtlib: https://github.com/fmtlib/fmt/blob/8.0.1/include/fmt/chrono.h#L522-L546
 
         filename_t tm_format;
-        tm_format.append(filename);
+        tm_format.append(filepath);
         // By appending an extra space we can distinguish an empty result that
         // indicates insufficient buffer size from a guaranteed non-empty result
         // https://github.com/fmtlib/fmt/issues/2238
@@ -69,7 +69,12 @@ struct daily_filename_format_calculator
                 buf.resize(count - 1);
                 break;
             }
-            buf.resize(buf.size() * 2);
+            buf.resize(buf.size() + 255);
+
+	    if (buf.size() > 4096)
+            {
+                throw spdlog_ex("daily_file_sink: calc_filename() - strftime error or file name too big");
+	    }
         }
 
 	return buf;
