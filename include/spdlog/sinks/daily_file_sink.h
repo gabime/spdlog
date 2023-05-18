@@ -18,7 +18,6 @@
 #include <ctime>
 #include <mutex>
 #include <string>
-#include <vector>
 
 namespace spdlog {
 namespace sinks {
@@ -58,12 +57,12 @@ struct daily_filename_format_calculator
         // https://github.com/fmtlib/fmt/issues/2238
         tm_format.push_back(' ');
 
-        const size_t MIN_SIZE = 10;
-        std::vector<char> buf;
+        const size_t MIN_SIZE = 64;
+        filename_t buf;
         buf.resize(MIN_SIZE);
         for (;;)
         {
-            size_t count = strftime(buf.data(), buf.size(), tm_format.c_str(), &now_tm);
+            size_t count = strftime(&buf[0], buf.size(), tm_format.c_str(), &now_tm);
             if (count != 0)
             {
                 // Remove the extra space.
@@ -73,7 +72,7 @@ struct daily_filename_format_calculator
             buf.resize(buf.size() * 2);
         }
 
-        return std::string(buf.cbegin(), buf.cend());
+	return buf;
     }
 
 private:
