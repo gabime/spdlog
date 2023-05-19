@@ -59,26 +59,6 @@ struct daily_filename_format_calculator
       stream << std::put_time(&now_tm, file_path.c_str()); 
       return stream.str();
     }
-
-private:
-#if defined __GNUC__
-#    pragma GCC diagnostic push
-#    pragma GCC diagnostic ignored "-Wformat-nonliteral"
-#endif
-
-    static size_t strftime(char *str, size_t count, const char *format, const std::tm *time)
-    {
-        return std::strftime(str, count, format, time);
-    }
-
-    static size_t strftime(wchar_t *str, size_t count, const wchar_t *format, const std::tm *time)
-    {
-        return std::wcsftime(str, count, format, time);
-    }
-
-#if defined(__GNUC__)
-#    pragma GCC diagnostic pop
-#endif
 };
 
 /*
