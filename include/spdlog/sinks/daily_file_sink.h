@@ -13,7 +13,6 @@
 #include <spdlog/details/circular_q.h>
 #include <spdlog/details/synchronous_factory.h>
 
-#include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <chrono>
