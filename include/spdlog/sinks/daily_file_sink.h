@@ -13,6 +13,9 @@
 #include <spdlog/details/circular_q.h>
 #include <spdlog/details/synchronous_factory.h>
 
+#include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <chrono>
 #include <cstdio>
 #include <ctime>
@@ -46,38 +49,15 @@ struct daily_filename_calculator
  */
 struct daily_filename_format_calculator
 {
-    static filename_t calc_filename(const filename_t &filepath, const tm &now_tm)
+    static filename_t calc_filename(const filename_t &file_path, const tm &now_tm)
     {
-        // adapted from fmtlib: https://github.com/fmtlib/fmt/blob/8.0.1/include/fmt/chrono.h#L522-L546
-
-        filename_t tm_format;
-        tm_format.append(filepath);
-        // By appending an extra space we can distinguish an empty result that
-        // indicates insufficient buffer size from a guaranteed non-empty result
-        // https://github.com/fmtlib/fmt/issues/2238
-        tm_format.push_back(' ');
-
-        const size_t MIN_SIZE = 64;
-        filename_t buf;
-        buf.resize(MIN_SIZE);
-        for (;;)
-        {
-            size_t count = strftime(&buf[0], buf.size(), tm_format.c_str(), &now_tm);
-            if (count != 0)
-            {
-                // Remove the extra space.
-                buf.resize(count - 1);
-                break;
-            }
-            buf.resize(buf.size() + 255);
-
-	    if (buf.size() > 4096)
-            {
-                throw spdlog_ex("daily_file_sink: calc_filename() - strftime error or file name too big");
-	    }
-        }
-
-	return buf;
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
+      std::wstringstream stream;  
+#else
+      std::stringstream stream;
+#endif
+      stream << std::put_time(&now_tm, file_path.c_str()); 
+      return stream.str();
     }
 
 private:
