@@ -38,6 +38,15 @@ void bench_logger(benchmark::State &state, std::shared_ptr<spdlog::logger> logge
         logger->info("Hello logger: msg number {}...............", ++i);
     }
 }
+void bench_global_logger(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
+{
+    spdlog::set_default_logger(std::move(logger));
+    int i = 0;
+    for (auto _ : state)
+    {
+        spdlog::info("Hello logger: msg number {}...............", ++i);
+    }
+}
 
 void bench_disabled_macro(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
 {
@@ -47,6 +56,17 @@ void bench_disabled_macro(benchmark::State &state, std::shared_ptr<spdlog::logge
     for (auto _ : state)
     {
         SPDLOG_LOGGER_DEBUG(logger, "Hello logger: msg number {}...............", i++);
+    }
+}
+
+void bench_disabled_macro_global_logger(benchmark::State &state, std::shared_ptr<spdlog::logger> logger)
+{
+    spdlog::set_default_logger(std::move(logger));
+    int i = 0;
+    benchmark::DoNotOptimize(i);      // prevent unused warnings
+    benchmark::DoNotOptimize(logger); // prevent unused warnings
+    for (auto _ : state)
+    {
         SPDLOG_DEBUG("Hello logger: msg number {}...............", i++);
     }
 }
@@ -79,7 +99,9 @@ int main(int argc, char *argv[])
     auto disabled_logger = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_mt>());
     disabled_logger->set_level(spdlog::level::off);
     benchmark::RegisterBenchmark("disabled-at-compile-time", bench_disabled_macro, disabled_logger);
+    benchmark::RegisterBenchmark("disabled-at-compile-time (global logger)", bench_disabled_macro_global_logger, disabled_logger);
     benchmark::RegisterBenchmark("disabled-at-runtime", bench_logger, disabled_logger);
+    benchmark::RegisterBenchmark("disabled-at-runtime (global logger)", bench_global_logger, disabled_logger);
     // with backtrace of 64
     auto tracing_disabled_logger = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_mt>());
     tracing_disabled_logger->enable_backtrace(64);
@@ -88,10 +110,14 @@ int main(int argc, char *argv[])
     auto null_logger_st = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_st>());
     benchmark::RegisterBenchmark("null_sink_st (500_bytes c_str)", bench_c_string, std::move(null_logger_st));
     benchmark::RegisterBenchmark("null_sink_st", bench_logger, null_logger_st);
+    benchmark::RegisterBenchmark("null_sink_st (global logger)", bench_global_logger, null_logger_st);
     // with backtrace of 64
     auto tracing_null_logger_st = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_st>());
     tracing_null_logger_st->enable_backtrace(64);
     benchmark::RegisterBenchmark("null_sink_st/backtrace", bench_logger, tracing_null_logger_st);
+
+
+
 
 #ifdef __linux
     bench_dev_null();
