@@ -112,8 +112,8 @@
         catch (const std::exception &) {}
 #endif
 
-#if SPDLOG_CPLUSPLUS >= 202002L
-#   if  __cpp_consteval >= 202211L
+#if SPDLOG_CPLUSPLUS > 201703L
+#   if  __cpp_consteval >= 201811L
 #       define SPDLOG_CONSTEVAL consteval
 #   else
 #       define SPDLOG_CONSTEVAL constexpr
