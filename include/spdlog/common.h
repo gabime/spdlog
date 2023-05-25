@@ -113,11 +113,7 @@
 #endif
 
 #if SPDLOG_CPLUSPLUS > 201703L
-#   if  __cpp_consteval >= 201811L
-#       define SPDLOG_CONSTEVAL consteval
-#   else
-#       define SPDLOG_CONSTEVAL constexpr
-#   endif
+#   define SPDLOG_CONSTEVAL consteval
 #elif SPDLOG_CPLUSPLUS < 201402L
 #    define SPDLOG_CONSTEVAL 
 #else
@@ -167,7 +163,7 @@ struct format_string_wrapper
         : fmt_{fmtstr}
         , loc_{loc}
     {}
-#elif defined(SPDLOG_USE_STD_FORMAT) && SPDLOG_CPLUSPLUS >= 202002L && __cpp_concepts >= 202002L
+#elif defined(SPDLOG_USE_STD_FORMAT) && SPDLOG_CPLUSPLUS >= 202002L
     template <typename S>
     requires std::is_convertible_v<S, T>
     SPDLOG_CONSTEXPR format_string_wrapper(S fmtstr, details::source_location loc = details::source_location::current())
