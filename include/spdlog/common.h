@@ -113,8 +113,10 @@
 #endif
 
 #if SPDLOG_CPLUSPLUS >= 202002L
-#if  __cpp_consteval >= 202211L
-#    define SPDLOG_CONSTEVAL consteval
+#   if  __cpp_consteval >= 202211L
+#       define SPDLOG_CONSTEVAL consteval
+#   else
+#       define SPDLOG_CONSTEVAL constexpr
 #   endif
 #elif SPDLOG_CPLUSPLUS < 201402L
 #    define SPDLOG_CONSTEVAL 
