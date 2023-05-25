@@ -13,9 +13,10 @@
 #include <spdlog/details/circular_q.h>
 #include <spdlog/details/synchronous_factory.h>
 
+#include <sstream>
+#include <iomanip>
 #include <chrono>
 #include <cstdio>
-#include <ctime>
 #include <mutex>
 #include <string>
 
@@ -46,67 +47,16 @@ struct daily_filename_calculator
  */
 struct daily_filename_format_calculator
 {
-    static filename_t calc_filename(const filename_t &filename, const tm &now_tm)
+    static filename_t calc_filename(const filename_t &file_path, const tm &now_tm)
     {
-#ifdef SPDLOG_USE_STD_FORMAT
-        // adapted from fmtlib: https://github.com/fmtlib/fmt/blob/8.0.1/include/fmt/chrono.h#L522-L546
-
-        filename_t tm_format;
-        tm_format.append(filename);
-        // By appending an extra space we can distinguish an empty result that
-        // indicates insufficient buffer size from a guaranteed non-empty result
-        // https://github.com/fmtlib/fmt/issues/2238
-        tm_format.push_back(' ');
-
-        const size_t MIN_SIZE = 10;
-        filename_t buf;
-        buf.resize(MIN_SIZE);
-        for (;;)
-        {
-            size_t count = strftime(buf.data(), buf.size(), tm_format.c_str(), &now_tm);
-            if (count != 0)
-            {
-                // Remove the extra space.
-                buf.resize(count - 1);
-                break;
-            }
-            buf.resize(buf.size() * 2);
-        }
-
-        return buf;
+#if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
+      std::wstringstream stream;  
 #else
-        // generate fmt datetime format string, e.g. {:%Y-%m-%d}.
-        filename_t fmt_filename = fmt::format(SPDLOG_FMT_STRING(SPDLOG_FILENAME_T("{{:{}}}")), filename);
-
-        // MSVC doesn't allow fmt::runtime(..) with wchar, with fmtlib versions < 9.1.x
-#    if defined(_MSC_VER) && defined(SPDLOG_WCHAR_FILENAMES) && FMT_VERSION < 90101
-        return fmt::format(fmt_filename, now_tm);
-#    else
-        return fmt::format(SPDLOG_FMT_RUNTIME(fmt_filename), now_tm);
-#    endif
-
+      std::stringstream stream;
 #endif
+      stream << std::put_time(&now_tm, file_path.c_str()); 
+      return stream.str();
     }
-
-private:
-#if defined __GNUC__
-#    pragma GCC diagnostic push
-#    pragma GCC diagnostic ignored "-Wformat-nonliteral"
-#endif
-
-    static size_t strftime(char *str, size_t count, const char *format, const std::tm *time)
-    {
-        return std::strftime(str, count, format, time);
-    }
-
-    static size_t strftime(wchar_t *str, size_t count, const wchar_t *format, const std::tm *time)
-    {
-        return std::wcsftime(str, count, format, time);
-    }
-
-#if defined(__GNUC__)
-#    pragma GCC diagnostic pop
-#endif
 };
 
 /*

@@ -3,7 +3,7 @@
 Very fast, header-only/compiled, C++ logging library. [![ci](https://github.com/gabime/spdlog/actions/workflows/ci.yml/badge.svg)](https://github.com/gabime/spdlog/actions/workflows/ci.yml)&nbsp; [![Build status](https://ci.appveyor.com/api/projects/status/d2jnxclg20vd0o50?svg=true&branch=v1.x)](https://ci.appveyor.com/project/gabime/spdlog) [![Release](https://img.shields.io/github/release/gabime/spdlog.svg)](https://github.com/gabime/spdlog/releases/latest)
 
 ## Install 
-#### Header only version
+#### Header-only version
 Copy the include [folder](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) to your build tree and use a C++11 compiler.
 
 #### Compiled version (recommended - much faster compile times)
@@ -39,7 +39,7 @@ $ cmake .. && make -j
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).
 * Headers only or compiled
-* Feature rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
+* Feature-rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * Asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
@@ -51,9 +51,9 @@ $ cmake .. && make -j
     * Windows event log.
     * Windows debugger (```OutputDebugString(..)```).
     * Easily [extendable](https://github.com/gabime/spdlog/wiki/4.-Sinks#implementing-your-own-sink) with custom log targets.
-* Log filtering - log levels can be modified in runtime as well as in compile time.
-* Support for loading log levels from argv or from environment var.
-* [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display later on demand.
+* Log filtering - log levels can be modified at runtime as well as compile time.
+* Support for loading log levels from argv or environment var.
+* [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display them later on demand.
  
 ## Usage samples
 
@@ -92,7 +92,7 @@ int main()
 #include "spdlog/sinks/stdout_color_sinks.h"
 void stdout_example()
 {
-    // create color multi threaded logger
+    // create a color multi-threaded logger
     auto console = spdlog::stdout_color_mt("console");    
     auto err_logger = spdlog::stderr_color_mt("stderr");    
     spdlog::get("console")->info("loggers can be retrieved from a global registry using the spdlog::get(logger_name)");
@@ -121,7 +121,7 @@ void basic_logfile_example()
 #include "spdlog/sinks/rotating_file_sink.h"
 void rotating_example()
 {
-    // Create a file rotating logger with 5mb size max and 3 rotated files
+    // Create a file rotating logger with 5 MB size max and 3 rotated files
     auto max_size = 1048576 * 5;
     auto max_files = 3;
     auto logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", max_size, max_files);
@@ -135,7 +135,7 @@ void rotating_example()
 #include "spdlog/sinks/daily_file_sink.h"
 void daily_example()
 {
-    // Create a daily logger - a new file is created every day on 2:30am
+    // Create a daily logger - a new file is created every day at 2:30 am
     auto logger = spdlog::daily_logger_mt("daily_logger", "logs/daily.txt", 2, 30);
 }
 
@@ -145,7 +145,7 @@ void daily_example()
 #### Backtrace support
 ```c++
 // Debug messages can be stored in a ring buffer instead of being logged immediately.
-// This is useful in order to display debug logs only when really needed (e.g. when error happens).
+// This is useful to display debug logs only when needed (e.g. when an error happens).
 // When needed, call dump_backtrace() to dump them to your log.
 
 spdlog::enable_backtrace(32); // Store the latest 32 messages in a buffer. 
@@ -154,7 +154,7 @@ for(int i = 0; i < 100; i++)
 {
   spdlog::debug("Backtrace message {}", i); // not logged yet..
 }
-// e.g. if some has error happened:
+// e.g. if some error happened:
 spdlog::dump_backtrace(); // log them now! show the last 32 messages
 // or my_logger->dump_backtrace(32)..
 ```
@@ -163,7 +163,7 @@ spdlog::dump_backtrace(); // log them now! show the last 32 messages
 #### Periodic flush
 ```c++
 // periodically flush all *registered* loggers every 3 seconds:
-// warning: only use if all your loggers are thread safe ("_mt" loggers)
+// warning: only use if all your loggers are thread-safe ("_mt" loggers)
 spdlog::flush_every(std::chrono::seconds(3));
 
 ```
@@ -191,7 +191,7 @@ void stopwatch_example()
 // {:X} - print in uppercase.
 // {:s} - don't separate each byte with space.
 // {:p} - don't print the position on each line start.
-// {:n} - don't split the output to lines.
+// {:n} - don't split the output into lines.
 // {:a} - show ASCII if :n is not set.
 
 #include "spdlog/fmt/bin_to_hex.h"
@@ -211,11 +211,11 @@ void binary_example()
 ```
 
 ---
-#### Logger with multi sinks - each with different format and log level
+#### Logger with multi sinks - each with a different format and log level
 ```c++
 
-// create logger with 2 targets with different log levels and formats.
-// the console will show only warnings or errors, while the file will log all.
+// create a logger with 2 targets, with different log levels and formats.
+// The console will show only warnings or errors, while the file will log all.
 void multi_sink_example()
 {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -233,10 +233,10 @@ void multi_sink_example()
 ```
 
 ---
-#### User defined callbacks about log events
+#### User-defined callbacks about log events
 ```c++
 
-// create logger with a lambda function callback, the callback will be called
+// create a logger with a lambda function callback, the callback will be called
 // each time something is logged to the logger
 void callback_example()
 {
@@ -287,7 +287,7 @@ void multi_sink_example2()
 ```
  
 ---
-#### User defined types
+#### User-defined types
 ```c++
 template<>
 struct fmt::formatter<my_type> : fmt::formatter<std::string>
@@ -306,7 +306,7 @@ void user_defined_example()
 ```
 
 ---
-#### User defined flags in the log pattern
+#### User-defined flags in the log pattern
 ```c++ 
 // Log patterns can contain custom flags.
 // the following example will add new flag '%*' - which will be bound to a <my_formatter_flag> instance.
@@ -371,14 +371,14 @@ void android_example()
 ```
 
 ---
-#### Load log levels from env variable or from argv
+#### Load log levels from the env variable or argv
 
 ```c++
 #include "spdlog/cfg/env.h"
 int main (int argc, char *argv[])
 {
     spdlog::cfg::load_env_levels();
-    // or from command line:
+    // or from the command line:
     // ./example SPDLOG_LEVEL=info,mylogger=trace
     // #include "spdlog/cfg/argv.h" // for loading levels from argv
     // spdlog::cfg::load_argv_levels(argc, argv);
@@ -395,8 +395,8 @@ $ ./example
 ---
 #### Log file open/close event handlers
 ```c++
-// You can get callbacks from spdlog before/after log file has been opened or closed. 
-// This is useful for cleanup procedures or for adding something the start/end of the log files.
+// You can get callbacks from spdlog before/after a log file has been opened or closed. 
+// This is useful for cleanup procedures or for adding something to the start/end of the log file.
 void file_events_example()
 {
     // pass the spdlog::file_event_handlers to file sinks for open/close log file notifications
