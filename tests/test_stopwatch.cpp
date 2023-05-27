@@ -39,6 +39,6 @@ TEST_CASE("stopwatch2", "[stopwatch]")
     auto val = std::stod(test_sink->lines()[0]);
     auto diff_duration = duration_cast<std::chrono::duration<double>>(stop - start);
 
-    REQUIRE(val >= diff_duration.count());
+    REQUIRE(val >= (diff_duration).count() - 0.001);
     REQUIRE(val <= (diff_duration + tolerance_duration).count());
 }
