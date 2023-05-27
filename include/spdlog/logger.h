@@ -371,7 +371,7 @@ protected:
 #ifdef SPDLOG_USE_STD_FORMAT
             fmt_lib::vformat_to(std::back_inserter(buf), fmt, fmt_lib::make_format_args(std::forward<Args>(args)...));
 #else
-            fmt::vformat_to(fmt::appender(buf), fmt, fmt::make_format_args(std::forward<Args>(args)...));
+            fmt::vformat_to(fmt::appender(buf), fmt, fmt::make_format_args(args...));
 #endif
 
             details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
