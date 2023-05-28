@@ -98,9 +98,9 @@ public:
     }
 
     template<typename T>
-    void log(level::level_enum lvl, const T &msg)
+    void log(level::level_enum lvl, const value_wrapper<T> &msg)
     {
-        log(source_loc{}, lvl, msg);
+        log(msg.loc(), lvl, msg.value());
     }
 
     // T cannot be statically converted to format string (including string_view/wstring_view)
@@ -136,9 +136,9 @@ public:
         log_it_(log_msg, log_enabled, traceback_enabled);
     }
 
-    void log(level::level_enum lvl, string_view_t msg)
+    void log(level::level_enum lvl, value_wrapper<string_view_t> msg)
     {
-        log(source_loc{}, lvl, msg);
+        log(msg.loc(), lvl, msg.value());
     }
 
     template<typename... Args>
@@ -263,39 +263,39 @@ public:
 #endif
 
     template<typename T>
-    void trace(const T &msg, details::source_location loc = details::source_location::current())
+    void trace(const value_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::trace, msg);
+        log(msg.loc(), level::trace, msg.value());
     }
 
     template<typename T>
-    void debug(const T &msg, details::source_location loc = details::source_location::current())
+    void debug(const value_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::debug, msg);
+        log(msg.value(), level::debug, msg.value());
     }
 
     template<typename T>
-    void info(const T &msg, details::source_location loc = details::source_location::current())
+    void info(const value_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::info, msg);
+        log(msg.loc(), level::info, msg.value());
     }
 
     template<typename T>
-    void warn(const T &msg, details::source_location loc = details::source_location::current())
+    void warn(const value_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::warn, msg);
+        log(msg.loc(), level::warn, msg.value());
     }
 
     template<typename T>
-    void error(const T &msg, details::source_location loc = details::source_location::current())
+    void error(const value_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::err, msg);
+        log(msg.loc(), level::err, msg.value());
     }
 
     template<typename T>
-    void critical(const T &msg, details::source_location loc = details::source_location::current())
+    void critical(const value_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::critical, msg);
+        log(msg.loc(), level::critical, msg.value());
     }
 
     // return true logging is enabled for the given level.
