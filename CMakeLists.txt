@@ -255,10 +255,19 @@ foreach(
     endif()
 endforeach()
 
-if(SPDLOG_NO_EXCEPTIONS AND NOT MSVC)
-    target_compile_options(spdlog PRIVATE -fno-exceptions)
+# ---------------------------------------------------------------------------------------
+# If exceptions are disabled, disable them in the bundled fmt as well
+# ---------------------------------------------------------------------------------------
+if(SPDLOG_NO_EXCEPTIONS)
+    if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
+        target_compile_definitions(spdlog PUBLIC FMT_EXCEPTIONS=0)
+    endif()
+    if(NOT MSVC)
+        target_compile_options(spdlog PRIVATE -fno-exceptions)
+    else()
+        target_compile_options(spdlog PRIVATE /EHsc)
+    endif()
 endif()
-
 # ---------------------------------------------------------------------------------------
 # Build binaries
 # ---------------------------------------------------------------------------------------
