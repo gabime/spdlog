@@ -185,31 +185,6 @@ private:
     spdlog::details::source_location loc_;
 };
 
-template<typename T>
-struct value_wrapper
-{
-    SPDLOG_CONSTEVAL value_wrapper(const T& value, details::source_location loc = details::source_location::current())
-        : value_{value}
-        , loc_{loc}
-    {}
-    T value()
-    {
-        return value_;
-    }
-    source_loc loc()
-    {
-        return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
-    }
-    operator T()
-    {
-        return value();
-    }
-
-private:
-    T value_;
-    spdlog::details::source_location loc_;
-};
-
 namespace sinks {
 class sink;
 }
