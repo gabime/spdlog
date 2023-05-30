@@ -369,7 +369,7 @@ protected:
         {
             memory_buf_t buf;
 #ifdef SPDLOG_USE_STD_FORMAT
-            fmt_lib::vformat_to(std::back_inserter(buf), fmt, fmt_lib::make_format_args(std::forward<Args>(args)...));
+            fmt_lib::vformat_to(std::back_inserter(buf), fmt, fmt_lib::make_format_args(args...));
 #else
             fmt::vformat_to(fmt::appender(buf), fmt, fmt::make_format_args(args...));
 #endif
@@ -395,7 +395,7 @@ protected:
             // format to wmemory_buffer and convert to utf8
             wmemory_buf_t wbuf;
             fmt_lib::vformat_to(
-                std::back_inserter(wbuf), fmt, fmt_lib::make_format_args<fmt_lib::wformat_context>(std::forward<Args>(args)...));
+                std::back_inserter(wbuf), fmt, fmt_lib::make_format_args<fmt_lib::wformat_context>(args...));
 
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);
