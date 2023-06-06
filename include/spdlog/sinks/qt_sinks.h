@@ -59,7 +59,6 @@ private:
 
 #include "spdlog/details/null_mutex.h"
 #include <mutex>
-
 using qt_sink_mt = qt_sink<std::mutex>;
 using qt_sink_st = qt_sink<spdlog::details::null_mutex>;
 } // namespace sinks
@@ -76,7 +75,9 @@ inline std::shared_ptr<logger> qt_logger_mt(const std::string &logger_name, QTex
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name, QTextEdit *qt_object, const std::string &meta_method = "append")
 {
-    return Factory::template create<sinks::qt_sink_st>(logger_name, qt_object, meta_
+    return Factory::template create<sinks::qt_sink_st>(logger_name, qt_object, meta_method);
+}
+
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_mt(
     const std::string &logger_name, QPlainTextEdit *qt_object, const std::string &meta_method = "appendPlainText")
@@ -94,7 +95,9 @@ inline std::shared_ptr<logger> qt_logger_st(
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_mt(const std::string &logger_name, QObject *qt_object, const std::string &meta_method)
 {
-    return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_
+    return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_method);
+}
+
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name, QObject *qt_object, const std::string &meta_method)
 {
