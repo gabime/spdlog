@@ -34,8 +34,7 @@ public:
     {
         // store the meta method object for later usage
         qt_object_ = qt_object;
-        const QMetaObject *metaobject = qt_object_->metaObject();
-        qt_object_->dumpObjectInfo();
+        auto *metaobject = qt_object_->metaObject();
         int methodIndex = metaobject->indexOfMethod(meta_method_name.c_str());
         if (methodIndex == -1) {
             throw_spdlog_ex("qt_sink: qt_object does not have meta_method " + meta_method_name);
