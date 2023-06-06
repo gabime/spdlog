@@ -59,11 +59,8 @@ private:
 
 #include "spdlog/details/null_mutex.h"
 #include <mutex>
-// Warning: qt_sink won't be notified if the target QObject is destroyed.
-// If the object's lifetime can be shorter than the logger's one, you should provide some permanent object and then use a standard signal/slot.
-using qt_sink_mt = qt_sink<std::mutex>;
-// Warning: qt_sink won't be notified if the target QObject is destroyed.
-// If the object's lifetime can be shorter than the logger's one, you should provide some permanent object and then use a standard signal/slot.
+
+using qt_sink_mt = qt_sink<std::mutex>
 using qt_sink_st = qt_sink<spdlog::details::null_mutex>;
 } // namespace sinks
 
