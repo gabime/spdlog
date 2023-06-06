@@ -60,7 +60,7 @@ private:
 #include "spdlog/details/null_mutex.h"
 #include <mutex>
 
-using qt_sink_mt = qt_sink<std::mutex>
+using qt_sink_mt = qt_sink<std::mutex>;
 using qt_sink_st = qt_sink<spdlog::details::null_mutex>;
 } // namespace sinks
 
