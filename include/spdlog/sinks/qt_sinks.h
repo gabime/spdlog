@@ -4,9 +4,10 @@
 #pragma once
 
 //
-// Custom sink for QPlainTextEdit or QTextEdit and its childs(QTextBrowser...
-// etc) Building and using requires Qt library.
+// Custom sink for QPlainTextEdit or QTextEdit and its childs(QTextBrowser...etc)
+// Building and using requires Qt library.
 //
+
 // Warning: the qt_sink won't be notified if the target widget is destroyed.
 // If the widget's lifetime can be shorter than the logger's one, you should provide some permanent QObject,
 // and then use a standard signal/slot.
@@ -30,6 +31,8 @@ template<typename Mutex>
 class qt_sink : public base_sink<Mutex>
 {
 public:
+    // qt object is the object that receives the log messages (e.g QPlainTextEdit or QTextEdit)
+    // meta_method_name is the name of the slot to be called on the qt_object for every log message (e.g "append(QString)").
     qt_sink(QObject *qt_object, const std::string &meta_method_name)
     {
         // store the meta method object for later usage
