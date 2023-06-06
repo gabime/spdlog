@@ -7,6 +7,10 @@
 // Custom sink for QPlainTextEdit or QTextEdit and its childs(QTextBrowser...
 // etc) Building and using requires Qt library.
 //
+// Warning: the qt_sink won't be notified if the target widget is destroyed.
+// If the widget's lifetime can be shorter than the logger's one, you should provide some permanent QObject,
+// and then use a standard signal/slot.
+//
 
 #include "spdlog/common.h"
 #include "spdlog/details/log_msg.h"
@@ -66,24 +70,16 @@ using qt_sink_st = qt_sink<spdlog::details::null_mutex>;
 //
 // Factory functions
 //
-// Warning: the qt_sink won't be notified if the target widget is destroyed.
-// If the widget's lifetime can be shorter than the logger's one, you should provide some permanent QObject and then use a standard signal/slot.
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_mt(const std::string &logger_name, QTextEdit *qt_object, const std::string &meta_method = "append")
 {
     return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_method);
 }
 
-// Warning: the qt_sink won't be notified if the target widget is destroyed.
-// If the widget's lifetime can be shorter than the logger's one, you should provide some permanent QObject and then use a standard signal/slot.
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name, QTextEdit *qt_object, const std::string &meta_method = "append")
 {
-    return Factory::template create<sinks::qt_sink_st>(logger_name, qt_object, meta_method);
-}
-
-// Warning: the qt_sink won't be notified if the target QObject is destroyed.
-// If the object's lifetime can be shorter than the logger's one, you should provide some permanent QObject and then use a standard signal/slot.
+    return Factory::template create<sinks::qt_sink_st>(logger_name, qt_object, meta_
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_mt(
     const std::string &logger_name, QPlainTextEdit *qt_object, const std::string &meta_method = "appendPlainText")
@@ -91,8 +87,6 @@ inline std::shared_ptr<logger> qt_logger_mt(
     return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_method);
 }
 
-// Warning: the qt_sink won't be notified if the target widget is destroyed.
-// If the widget's lifetime can be shorter than the logger's one, you should provide some permanent QObject and then use a standard signal/slot.
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_st(
     const std::string &logger_name, QPlainTextEdit *qt_object, const std::string &meta_method = "appendPlainText")
@@ -100,16 +94,10 @@ inline std::shared_ptr<logger> qt_logger_st(
     return Factory::template create<sinks::qt_sink_st>(logger_name, qt_object, meta_method);
 }
 
-// Warning: the qt_sink won't be notified if the target QObject is destroyed.
-// If the objet's lifetime can be shorter than the logger's one, you should provide some permanent QObject and then use a standard signal/slot.
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_mt(const std::string &logger_name, QObject *qt_object, const std::string &meta_method)
 {
-    return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_method);
-}
-
-// Warning: the qt_sink won't be notified if the target QObject is destroyed.
-// If the objet's lifetime can be shorter than the logger's one, you should provide some permanent QObject and then use a standard signal/slot.
+    return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name, QObject *qt_object, const std::string &meta_method)
 {
