@@ -421,6 +421,21 @@ void replace_default_logger_example()
 ```
 
 ---
+#### Log to Qt with nice colors
+```c++
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/qt_sinks.h"
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+{
+    setMinimumSize(640, 480);
+    auto log_widget = new QTextEdit(this);
+    setCentralWidget(log_widget);
+    auto logger = spdlog::qt_color_logger_mt("qt_logger", log_widget);
+    logger->info("Some info message");
+}
+```
+
+---
 ## Benchmarks
 
 Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/bench.cpp) done in Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
