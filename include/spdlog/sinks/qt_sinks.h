@@ -84,7 +84,8 @@ public:
             {
                 throw_spdlog_ex("qt_color_text_sink: text_edit is null");
             }
-            // set default colors
+            default_color_ = qt_text_edit_->currentCharFormat();
+            // set colors
             QTextCharFormat format;
             // trace
             format.setForeground(Qt::gray);
@@ -112,15 +113,30 @@ public:
             flush_();
         }
 
-        void set_level_format(level::level_enum color_level, QTextCharFormat format)
+        void set_default_color(QTextCharFormat format)
         {
+            //std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+            default_color_ = format;
+        }
+
+        void set_level_color(level::level_enum color_level, QTextCharFormat format)
+        {
+            //std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
             colors_.at(static_cast<size_t>(color_level)) = format;
         }
 
-        QTextCharFormat& get_level_format(level::level_enum color_level)
+        QTextCharFormat& get_level_color(level::level_enum color_level)
         {
+            std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
             return colors_.at(static_cast<size_t>(color_level));
         }
+
+        QTextCharFormat& get_default_color()
+        {
+            std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+            return default_color_;
+        }
+
 protected:
         void sink_it_(const details::log_msg &msg) override
         {
@@ -136,15 +152,16 @@ protected:
                 cursor.movePosition(QTextCursor::End);
 
                 // insert the text before the color range
+                cursor.setCharFormat(default_color_);
                 cursor.insertText(payload.left(msg.color_range_start));
 
                 // insert the colorized text
-                auto format = get_level_format(msg.level);
-                cursor.setCharFormat(format);
+                auto color = colors_.at(static_cast<size_t>(msg.level));
+                cursor.setCharFormat(color);
                 cursor.insertText(payload.mid(msg.color_range_start, msg.color_range_end - msg.color_range_start));
 
                 // insert the text after the color range with default format
-                cursor.setCharFormat(QTextCharFormat());
+                cursor.setCharFormat(default_color_);
                 cursor.insertText(payload.mid(msg.color_range_end));
             }
             else // no color range
@@ -155,7 +172,9 @@ protected:
 
         void flush_() override {}
         QTextEdit *qt_text_edit_;
+    QTextCharFormat default_color_;
         std::array<QTextCharFormat, level::n_levels> colors_;
+
     };
 
 #include "spdlog/details/null_mutex.h"
