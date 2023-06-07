@@ -29,9 +29,6 @@
 #include <QPlainTextEdit>
 #include <QColor>
 
-//
-// qt_sink class
-//
 namespace spdlog {
 namespace sinks {
 template<typename Mutex>
