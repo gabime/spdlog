@@ -6,7 +6,7 @@ using spdlog::details::to_string_view;
 
 // log to str and return it
 template<typename... Args>
-static std::string log_to_str(const std::string &msg, const Args &... args)
+static std::string log_to_str(const std::string &msg, const Args &...args)
 {
     std::ostringstream oss;
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);

@@ -50,12 +50,12 @@ struct daily_filename_format_calculator
     static filename_t calc_filename(const filename_t &file_path, const tm &now_tm)
     {
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
-      std::wstringstream stream;  
+        std::wstringstream stream;
 #else
-      std::stringstream stream;
+        std::stringstream stream;
 #endif
-      stream << std::put_time(&now_tm, file_path.c_str()); 
-      return stream.str();
+        stream << std::put_time(&now_tm, file_path.c_str());
+        return stream.str();
     }
 };
 
