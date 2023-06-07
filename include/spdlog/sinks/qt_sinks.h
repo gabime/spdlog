@@ -118,13 +118,13 @@ public:
 
     void set_default_color(QTextCharFormat format)
     {
-        // std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         default_color_ = format;
     }
 
     void set_level_color(level::level_enum color_level, QTextCharFormat format)
     {
-        // std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         colors_.at(static_cast<size_t>(color_level)) = format;
     }
 
