@@ -50,6 +50,7 @@ $ cmake .. && make -j
     * syslog.
     * Windows event log.
     * Windows debugger (```OutputDebugString(..)```).
+    * Log to Qt widgets ([example](#log-to-qt-with-nice-colors)).
     * Easily [extendable](https://github.com/gabime/spdlog/wiki/4.-Sinks#implementing-your-own-sink) with custom log targets.
 * Log filtering - log levels can be modified at runtime as well as compile time.
 * Support for loading log levels from argv or environment var.
