@@ -4,11 +4,15 @@
 #pragma once
 
 //
-// Custom sink for QPlainTextEdit or QTextEdit and its childs(QTextBrowser...etc)
+// Custom sink for QPlainTextEdit or QTextEdit and its children(QTextBrowser...etc)
 // Building and using requires Qt library.
-//
+// Recommended: Use the `qt_color_sink` to get nice coloring per level
+// For example
+//    auto edit = new QTextEdit();
+//    setCentralWidget(edit);
+//    auto logger = spdlog::qt_color_logger_mt("my_logger", my_edit_widget);
 
-// Warning: the qt_sink won't be notified if the target widget is destroyed.
+// Warning: those sinks won't be notified if the target widget is destroyed.
 // If the widget's lifetime can be shorter than the logger's one, you should provide some permanent QObject,
 // and then use a standard signal/slot.
 //
@@ -72,7 +76,9 @@ private:
 };
 
 
-// color sink to QTextEdit. Color location is determined by the sink log pattern
+// QT color sink to QTextEdit.
+// Color location is determined by the sink log pattern like in the rest of spdlog sinks.
+// Colors can be modified if needed using sink->set_color(level, qtTextCharFormat).
 // Note: Only ascii (latin1) is supported by this sink.
 template<typename Mutex>
 class qt_color_sink : public base_sink<Mutex>
