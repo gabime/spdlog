@@ -13,7 +13,7 @@
 //    auto logger = spdlog::qt_color_logger_mt("my_logger", my_edit_widget);
 //
 // Warning: those sinks won't be notified if the target widget is destroyed. 
-// Make sure the sink get destryoed, or not used after the widget is gone.
+// Use a permanent QObject or make sure the sink is not used after the widget is gone.
 //
 
 #include "spdlog/common.h"
