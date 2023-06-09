@@ -86,8 +86,8 @@ public:
         {
             throw_spdlog_ex("qt_color_text_sink: text_edit is null");
         }
+         // set color for each log level
         default_color_ = qt_text_edit_->currentCharFormat();
-        // set colors
         QTextCharFormat format;
         // trace
         format.setForeground(Qt::gray);
