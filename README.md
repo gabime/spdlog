@@ -2,7 +2,7 @@
 
 Very fast, header-only/compiled, C++ logging library. [![ci](https://github.com/gabime/spdlog/actions/workflows/ci.yml/badge.svg)](https://github.com/gabime/spdlog/actions/workflows/ci.yml)&nbsp; [![Build status](https://ci.appveyor.com/api/projects/status/d2jnxclg20vd0o50?svg=true&branch=v1.x)](https://ci.appveyor.com/project/gabime/spdlog) [![Release](https://img.shields.io/github/release/gabime/spdlog.svg)](https://github.com/gabime/spdlog/releases/latest)
 
-## Install 
+## Install
 #### Header-only version
 Copy the include [folder](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) to your build tree and use a C++11 compiler.
 
@@ -12,14 +12,14 @@ $ git clone https://github.com/gabime/spdlog.git
 $ cd spdlog && mkdir build && cd build
 $ cmake .. && make -j
 ```
-      
-   see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v1.x/example/CMakeLists.txt) on how to use.
+
+see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v1.x/example/CMakeLists.txt) on how to use.
 
 ## Platforms
- * Linux, FreeBSD, OpenBSD, Solaris, AIX
- * Windows (msvc 2013+, cygwin)
- * macOS (clang 3.5+)
- * Android
+* Linux, FreeBSD, OpenBSD, Solaris, AIX
+* Windows (msvc 2013+, cygwin)
+* macOS (clang 3.5+)
+* Android
 
 ## Package managers:
 * Debian: `sudo apt install libspdlog-dev`
@@ -44,18 +44,18 @@ $ cmake .. && make -j
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.
 * Various log targets:
-    * Rotating log files.
-    * Daily log files.
-    * Console logging (colors supported).
-    * syslog.
-    * Windows event log.
-    * Windows debugger (```OutputDebugString(..)```).
-    * Log to Qt widgets
-    * Easily [extendable](https://github.com/gabime/spdlog/wiki/4.-Sinks#implementing-your-own-sink) with custom log targets.
+  * Rotating log files.
+  * Daily log files.
+  * Console logging (colors supported).
+  * syslog.
+  * Windows event log.
+  * Windows debugger (```OutputDebugString(..)```).
+  * Log to Qt widgets ([example](#log-to-qt-with-nice-colors)).
+  * Easily [extendable](https://github.com/gabime/spdlog/wiki/4.-Sinks#implementing-your-own-sink) with custom log targets.
 * Log filtering - log levels can be modified at runtime as well as compile time.
 * Support for loading log levels from argv or environment var.
 * [Backtrace](#backtrace-support) support - store debug messages in a ring buffer and display them later on demand.
- 
+
 ## Usage samples
 
 #### Basic usage
@@ -271,7 +271,7 @@ void async_example()
 ```
 
 ---
-#### Asynchronous logger with multi sinks  
+#### Asynchronous logger with multi sinks
 ```c++
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/rotating_file_sink.h"
@@ -349,7 +349,7 @@ void err_handler_example()
 ```
 
 ---
-#### syslog 
+#### syslog
 ```c++
 #include "spdlog/sinks/syslog_sink.h"
 void syslog_example()
@@ -360,7 +360,7 @@ void syslog_example()
 }
 ```
 ---
-#### Android example 
+#### Android example
 ```c++
 #include "spdlog/sinks/android_sink.h"
 void android_example()
@@ -422,8 +422,21 @@ void replace_default_logger_example()
 ```
 
 ---
+#### Log to Qt with nice colors
+```c++
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/qt_sinks.h"
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
+{
+    setMinimumSize(640, 480);
+    auto log_widget = new QTextEdit(this);
+    setCentralWidget(log_widget);
+    auto logger = spdlog::qt_color_logger_mt("qt_logger", log_widget);
+    logger->info("Some info message");
+}
+```
 
-    
+---
 ## Benchmarks
 
 Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/bench.cpp) done in Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
