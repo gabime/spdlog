@@ -157,26 +157,24 @@ private:
             memory_buf_t formatted;
             base_sink<Mutex>::formatter_->format(msg, formatted);
 
-            string_view_t str = string_view_t(formatted.data(), formatted.size());
+            const string_view_t str = string_view_t(formatted.data(), formatted.size());
             // apply the color to the color range in the formatted message.
             auto payload = QString::fromLatin1(str.data(), static_cast<int>(str.size()));
 
-            // if color needed, apply it as
-            //if (msg.color_range_end > msg.color_range_start)
-            {
-                invoke_params params {
-                        max_lines_, // max lines
-                        qt_text_edit_, // text edit to append to
-                        std::move(payload), // text to append
-                        default_color_, // default color
-                        colors_.at(msg.level), // color to apply
-                        msg.color_range_start, // color range start
-                        msg.color_range_end}; // color range end
-                QMetaObject::invokeMethod(
-                        qt_text_edit_,
-                        [params]() {invoke_method_(params);},
-                        Qt::AutoConnection);
-            }
+            invoke_params params {
+                    max_lines_, // max lines
+                    qt_text_edit_, // text edit to append to
+                    std::move(payload), // text to append
+                    default_color_, // default color
+                    colors_.at(msg.level), // color to apply
+                    msg.color_range_start, // color range start
+                    msg.color_range_end}; // color range end
+
+            QMetaObject::invokeMethod(
+                    qt_text_edit_,
+                    [params]() {invoke_method_(params);},
+                    Qt::AutoConnection);
+
         }
 
         void flush_() override {}
