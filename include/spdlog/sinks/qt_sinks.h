@@ -17,11 +17,9 @@
 #include "spdlog/details/synchronous_factory.h"
 #include "spdlog/sinks/base_sink.h"
 #include <array>
-#include <iostream>
 
 #include <QTextEdit>
 #include <QPlainTextEdit>
-#include <QApplication>
 
 //
 // qt_sink class
@@ -48,14 +46,9 @@ protected:
     {
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
-        auto start = std::chrono::system_clock::now();
         string_view_t str = string_view_t(formatted.data(), formatted.size());
         QMetaObject::invokeMethod(qt_object_, meta_method_.c_str(), Qt::AutoConnection,
             Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
-        auto elapsed = std::chrono::system_clock::now() - start;
-
-        std::cout << "qt_sink::sink_it_ took "
-                  << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() << " micros\n";
     }
 
     void flush_() override {}
@@ -68,19 +61,20 @@ private:
 // QT color sink to QTextEdit.
 // Color location is determined by the sink log pattern like in the rest of spdlog sinks.
 // Colors can be modified if needed using sink->set_color(level, qtTextCharFormat).
+// max_lines is the maximum number of lines that the sink will hold before removing the oldest lines.
 // Note: Only ascii (latin1) is supported by this sink.
     template<typename Mutex>
     class qt_color_sink : public base_sink<Mutex>
     {
     public:
         qt_color_sink(QTextEdit *qt_text_edit, int max_lines)
-                : qt_text_edit_(qt_text_edit)
+                : qt_text_edit_(qt_text_edit), max_lines_(max_lines)
         {
             if (!qt_text_edit_)
             {
                 throw_spdlog_ex("qt_color_text_sink: text_edit is null");
             }
-            max_lines_ = max_lines;
+
             default_color_ = qt_text_edit_->currentCharFormat();
             // set colors
             QTextCharFormat format;
@@ -163,13 +157,12 @@ private:
             memory_buf_t formatted;
             base_sink<Mutex>::formatter_->format(msg, formatted);
 
-            auto start = std::chrono::system_clock::now();
             string_view_t str = string_view_t(formatted.data(), formatted.size());
             // apply the color to the color range in the formatted message.
             auto payload = QString::fromLatin1(str.data(), static_cast<int>(str.size()));
 
             // if color needed, apply it as
-            if (msg.color_range_end > msg.color_range_start)
+            //if (msg.color_range_end > msg.color_range_start)
             {
                 invoke_params params {
                         max_lines_, // max lines
@@ -184,21 +177,14 @@ private:
                         [params]() {invoke_method_(params);},
                         Qt::AutoConnection);
             }
-            else // no color range, just append the text
-            {
-                auto *qt_text_edit = qt_text_edit_;
-                QMetaObject::invokeMethod(
-                        qt_text_edit_,
-                        [qt_text_edit, payload]() {qt_text_edit->append(payload.trimmed());},
-                        Qt::AutoConnection);
-            }
-            auto elapsed = std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now() - start);
-            std::cout << "qt_color_sink::sink_it_ took " << elapsed.count() << " micros" << std::endl;
         }
 
         void flush_() override {}
 
-        // make this static so even if the sink get destroyed we can still can use it
+        // Add colored text to the text edit widget. This method is invoked in the GUI thread.
+        // It is a static method to ensure that it is handled correctly even if the sink is destroyed prematurely
+        // before it is invoked.
+
         static void invoke_method_(invoke_params params)
         {
             auto *document = params.q_text_edit->document();
@@ -212,15 +198,20 @@ private:
                 cursor.deleteChar(); // delete the newline after the block
             }
 
-
             cursor.movePosition(QTextCursor::End);
+            cursor.setCharFormat(params.default_color);
+
+            // if color range not specified or not not valid, just append the text with default color
+            if(params.color_range_end <= params.color_range_start)
+            {
+                cursor.insertText(params.payload);
+                return;
+            }
 
             // insert the text before the color range
-            cursor.setCharFormat(params.default_color);
             cursor.insertText(params.payload.left(params.color_range_start));
 
             // insert the colorized text
-
             cursor.setCharFormat(params.level_color);
             cursor.insertText(params.payload.mid(params.color_range_start, params.color_range_end - params.color_range_start));
 
