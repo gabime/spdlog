@@ -252,39 +252,39 @@ inline void critical(wformat_string_t<Args...> fmt, Args &&...args)
 #endif
 
 template<typename T>
-inline void trace(message_wrapper<T> msg)
+inline void trace(const T &msg, source_loc loc = source_loc::current())
 {
-    default_logger_raw()->trace(msg);
+    default_logger_raw()->trace(msg, loc);
 }
 
 template<typename T>
-inline void debug(message_wrapper<T> msg)
+inline void debug(const T &msg, source_loc loc = source_loc::current())
 {
-    default_logger_raw()->debug(msg);
+    default_logger_raw()->debug(msg, loc);
 }
 
 template<typename T>
-inline void info(message_wrapper<T> msg)
+inline void info(const T &msg, source_loc loc = source_loc::current())
 {
-    default_logger_raw()->info(msg);
+    default_logger_raw()->info(msg, loc);
 }
 
 template<typename T>
-inline void warn(message_wrapper<T> msg)
+inline void warn(const T &msg, source_loc loc = source_loc::current())
 {
-    default_logger_raw()->warn(msg);
+    default_logger_raw()->warn(msg, loc);
 }
 
 template<typename T>
-inline void error(message_wrapper<T> msg)
+inline void error(const T &msg, source_loc loc = source_loc::current())
 {
-    default_logger_raw()->error(msg);
+    default_logger_raw()->error(msg, loc);
 }
 
 template<typename T>
-inline void critical(message_wrapper<T> msg)
+inline void critical(const T &msg, source_loc loc = source_loc::current())
 {
-    default_logger_raw()->critical(msg);
+    default_logger_raw()->critical(msg, loc);
 }
 
 } // namespace spdlog

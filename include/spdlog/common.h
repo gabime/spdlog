@@ -142,6 +142,15 @@ struct source_loc
         , line{line_in}
         , funcname{funcname_in}
     {}
+    SPDLOG_CONSTEXPR source_loc(details::source_location location)
+        : filename{location.file_name()}
+        , line{location.line()}
+        , funcname{location.function_name()}
+    {}
+    SPDLOG_CONSTEXPR source_loc static current(details::source_location cur = details::source_location::current())
+    {
+        return source_loc{cur.file_name(), cur.line(), cur.function_name()};
+    }
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT
     {
@@ -155,19 +164,19 @@ struct source_loc
 template<typename T, typename Char>
 struct format_string_wrapper
 {
-    SPDLOG_CONSTEVAL format_string_wrapper(const Char* fmtstr, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEVAL format_string_wrapper(const Char* fmtstr, source_loc loc = source_loc{details::source_location::current()})
         : fmt_{fmtstr}
         , loc_{loc}
     {}
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
-    SPDLOG_CONSTEXPR format_string_wrapper(fmt_runtime_string<Char> fmtstr, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEXPR format_string_wrapper(fmt_runtime_string<Char> fmtstr, source_loc loc = source_loc{details::source_location::current()})
         : fmt_{fmtstr}
         , loc_{loc}
     {}
 #elif defined(SPDLOG_USE_STD_FORMAT) && SPDLOG_CPLUSPLUS >= 202002L
     template <typename S>
     requires std::is_convertible_v<S, T>
-    SPDLOG_CONSTEXPR format_string_wrapper(S fmtstr, details::source_location loc = details::source_location::current())
+    SPDLOG_CONSTEXPR format_string_wrapper(S fmtstr, source_loc loc = source_loc{details::source_location::current()})
         : fmt_{fmtstr}
         , loc_{loc}
     {}
@@ -178,40 +187,12 @@ struct format_string_wrapper
     }
     source_loc location()
     {
-        return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
+        return loc_;
     }
 
 private:
     T fmt_;
-    spdlog::details::source_location loc_;
-};
-
-template<typename T>
-struct message_wrapper
-{
-    message_wrapper(T msg, details::source_location loc = details::source_location::current())
-        : msg_{msg}
-        , loc_{loc}
-    {}
-
-    T message()
-    {
-        return msg_;
-    }
-
-    source_loc location()
-    {
-        return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
-    }
-
-    operator T()
-    {
-        return msg_;
-    }
-
-private:
-    T msg_;
-    spdlog::details::source_location loc_;
+    source_loc loc_;
 };
 
 namespace sinks {

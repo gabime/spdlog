@@ -98,7 +98,7 @@ public:
     }
 
     template<typename T>
-    void log(level::level_enum lvl, message_wrapper<T> msg)
+    void log(level::level_enum lvl, const T &msg, source_loc loc = source_loc::current())
     {
         log(msg.location(), lvl, msg.message());
     }
@@ -263,39 +263,39 @@ public:
 #endif
 
     template<typename T>
-    void trace(message_wrapper<T> msg)
+    void trace(const T &msg, source_loc loc = source_loc::current())
     {
-        log(msg.location(), level::trace, msg.message());
+        log(loc, level::trace, msg);
     }
 
     template<typename T>
-    void debug(message_wrapper<T> msg)
+    void debug(const T &msg, source_loc loc = source_loc::current())
     {
-        log(msg.location(), level::debug, msg.message());
+        log(loc, level::debug, msg);
     }
 
     template<typename T>
-    void info(message_wrapper<T> msg)
+    void info(const T &msg, source_loc loc = source_loc::current())
     {
-        log(msg.location(), level::info, msg.message());
+        log(loc, level::info, msg);
     }
 
     template<typename T>
-    void warn(message_wrapper<T> msg)
+    void warn(const T &msg, source_loc loc = source_loc::current())
     {
-        log(msg.location(), level::warn, msg);
+        log(loc, level::warn, msg);
     }
 
     template<typename T>
-    void error(message_wrapper<T> msg)
+    void error(const T &msg, source_loc loc = source_loc::current())
     {
-        log(msg.location(), level::err, msg.message());
+        log(loc, level::err, msg);
     }
 
     template<typename T>
-    void critical(message_wrapper<T> msg)
+    void critical(const T &msg, source_loc loc = source_loc::current())
     {
-        log(msg.location(), level::critical, msg.message());
+        log(loc, level::critical, msg);
     }
 
     // return true logging is enabled for the given level.
