@@ -153,37 +153,37 @@ inline void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...a
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void trace(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void debug(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void info(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void warn(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void error(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->error(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void critical(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
@@ -214,37 +214,37 @@ inline void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void trace(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void debug(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void info(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void warn(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void error(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->error(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+template<typename... Args>
 inline void critical(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);

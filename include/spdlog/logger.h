@@ -141,37 +141,37 @@ public:
         log(source_loc{}, lvl, msg);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void trace(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void debug(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void info(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::info, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void warn(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void error(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::err, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void critical(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::critical, fmt, std::forward<Args>(args)...);
@@ -225,37 +225,37 @@ public:
         log(source_loc{}, lvl, msg);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void trace(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void debug(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void info(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::info, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void warn(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void error(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::err, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
+    template<typename... Args>
     void critical(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::critical, fmt, std::forward<Args>(args)...);
