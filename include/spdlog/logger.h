@@ -98,9 +98,9 @@ public:
     }
 
     template<typename T>
-    void log(level::level_enum lvl, const T &msg, source_loc loc = source_loc::current())
+    void log(level::level_enum lvl, const T &msg)
     {
-        log(msg.location(), lvl, msg.message());
+        log(source_loc{}, lvl, msg);
     }
 
     // T cannot be statically converted to format string (including string_view/wstring_view)
