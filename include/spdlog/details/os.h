@@ -111,7 +111,7 @@ SPDLOG_API std::string getenv(const char *field);
 
 // Do fsync by FILE objectpointer.
 // Return true on success.
-SPDLOG_API bool fsync(FILE * fp);
+SPDLOG_API bool fsync(FILE *fp);
 
 } // namespace os
 } // namespace details

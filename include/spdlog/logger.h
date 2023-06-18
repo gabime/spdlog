@@ -86,13 +86,13 @@ public:
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
 
     template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)
+    void log(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
     {
         log_(loc, lvl, details::to_string_view(fmt.fmt()), std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)
+    void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
     {
         log(fmt.loc(), lvl, fmt, std::forward<Args>(args)...);
     }
@@ -142,50 +142,50 @@ public:
     }
 
     template<typename... Args>
-    void trace(format_string_t<Args...> fmt, Args &&... args)
+    void trace(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void debug(format_string_t<Args...> fmt, Args &&... args)
+    void debug(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void info(format_string_t<Args...> fmt, Args &&... args)
+    void info(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::info, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void warn(format_string_t<Args...> fmt, Args &&... args)
+    void warn(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void error(format_string_t<Args...> fmt, Args &&... args)
+    void error(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::err, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void critical(format_string_t<Args...> fmt, Args &&... args)
+    void critical(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::critical, fmt, std::forward<Args>(args)...);
     }
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template<typename... Args>
-    void log(source_loc loc, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args)
+    void log(source_loc loc, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args)
     {
         log_(loc, lvl, details::to_string_view(fmt.fmt()), std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args)
+    void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(fmt.loc(), lvl, fmt, std::forward<Args>(args)...);
     }
@@ -226,37 +226,37 @@ public:
     }
 
     template<typename... Args>
-    void trace(wformat_string_t<Args...> fmt, Args &&... args)
+    void trace(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void debug(wformat_string_t<Args...> fmt, Args &&... args)
+    void debug(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void info(wformat_string_t<Args...> fmt, Args &&... args)
+    void info(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::info, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void warn(wformat_string_t<Args...> fmt, Args &&... args)
+    void warn(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void error(wformat_string_t<Args...> fmt, Args &&... args)
+    void error(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::err, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
-    void critical(wformat_string_t<Args...> fmt, Args &&... args)
+    void critical(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::critical, fmt, std::forward<Args>(args)...);
     }
@@ -358,7 +358,7 @@ protected:
 
     // common implementation for after templated public api has been resolved
     template<typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&... args)
+    void log_(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&...args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -370,7 +370,7 @@ protected:
         {
             memory_buf_t buf;
 #ifdef SPDLOG_USE_STD_FORMAT
-            fmt_lib::vformat_to(std::back_inserter(buf), fmt, fmt_lib::make_format_args(std::forward<Args>(args)...));
+            fmt_lib::vformat_to(std::back_inserter(buf), fmt, fmt_lib::make_format_args(args...));
 #else
             fmt::vformat_to(fmt::appender(buf), fmt, fmt::make_format_args(args...));
 #endif
@@ -383,7 +383,7 @@ protected:
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template<typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, wstring_view_t fmt, Args &&... args)
+    void log_(source_loc loc, level::level_enum lvl, wstring_view_t fmt, Args &&...args)
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
@@ -395,8 +395,7 @@ protected:
         {
             // format to wmemory_buffer and convert to utf8
             wmemory_buf_t wbuf;
-            fmt_lib::vformat_to(
-                std::back_inserter(wbuf), fmt, fmt_lib::make_format_args<fmt_lib::wformat_context>(std::forward<Args>(args)...));
+            fmt_lib::vformat_to(std::back_inserter(wbuf), fmt, fmt_lib::make_format_args<fmt_lib::wformat_context>(args...));
 
             memory_buf_t buf;
             details::os::wstr_to_utf8buf(wstring_view_t(wbuf.data(), wbuf.size()), buf);

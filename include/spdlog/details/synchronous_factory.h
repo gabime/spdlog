@@ -13,7 +13,7 @@ class logger;
 struct synchronous_factory
 {
     template<typename Sink, typename... SinkArgs>
-    static std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&... args)
+    static std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&...args)
     {
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);
         auto new_logger = std::make_shared<spdlog::logger>(std::move(logger_name), std::move(sink));

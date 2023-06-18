@@ -292,7 +292,8 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
     return offset;
 #else
 
-#    if defined(sun) || defined(__sun) || defined(_AIX) || (defined(__NEWLIB__) && !defined(__TM_GMTOFF)) || (!defined(_BSD_SOURCE) && !defined(_GNU_SOURCE))
+#    if defined(sun) || defined(__sun) || defined(_AIX) || (defined(__NEWLIB__) && !defined(__TM_GMTOFF)) ||                               \
+        (!defined(_BSD_SOURCE) && !defined(_GNU_SOURCE))
     // 'tm_gmtoff' field is BSD extension and it's missing on SunOS/Solaris
     struct helper
     {
@@ -362,15 +363,18 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
     // There is no pthread_threadid_np prior to 10.6, and it is not supported on any PPC,
     // including 10.6.8 Rosetta. __POWERPC__ is Apple-specific define encompassing ppc and ppc64.
 #    if (MAC_OS_X_VERSION_MAX_ALLOWED < 1060) || defined(__POWERPC__)
-        tid = pthread_mach_thread_np(pthread_self());
+    tid = pthread_mach_thread_np(pthread_self());
 #    elif MAC_OS_X_VERSION_MIN_REQUIRED < 1060
-        if (&pthread_threadid_np) {
-            pthread_threadid_np(nullptr, &tid);
-        } else {
-            tid = pthread_mach_thread_np(pthread_self());
-        }
-#    else
+    if (&pthread_threadid_np)
+    {
         pthread_threadid_np(nullptr, &tid);
+    }
+    else
+    {
+        tid = pthread_mach_thread_np(pthread_self());
+    }
+#    else
+    pthread_threadid_np(nullptr, &tid);
 #    endif
     return static_cast<size_t>(tid);
 #else // Default to standard C++11 (other Unix)
@@ -525,7 +529,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
     {
         target.resize(result_size);
         result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, target.data(), result_size);
-        if (result_size  > 0)
+        if (result_size > 0)
         {
             assert(result_size == target.size());
             return;

@@ -21,20 +21,20 @@ SPDLOG_INLINE ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, co
 
 {
     set_color_mode(mode);
-    colors_[level::trace] = to_string_(white);
-    colors_[level::debug] = to_string_(cyan);
-    colors_[level::info] = to_string_(green);
-    colors_[level::warn] = to_string_(yellow_bold);
-    colors_[level::err] = to_string_(red_bold);
-    colors_[level::critical] = to_string_(bold_on_red);
-    colors_[level::off] = to_string_(reset);
+    colors_.at(level::trace) = to_string_(white);
+    colors_.at(level::debug) = to_string_(cyan);
+    colors_.at(level::info) = to_string_(green);
+    colors_.at(level::warn) = to_string_(yellow_bold);
+    colors_.at(level::err) = to_string_(red_bold);
+    colors_.at(level::critical) = to_string_(bold_on_red);
+    colors_.at(level::off) = to_string_(reset);
 }
 
 template<typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color(level::level_enum color_level, string_view_t color)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    colors_[static_cast<size_t>(color_level)] = to_string_(color);
+    colors_.at(static_cast<size_t>(color_level)) = to_string_(color);
 }
 
 template<typename ConsoleMutex>
@@ -52,7 +52,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
         // before color range
         print_range_(formatted, 0, msg.color_range_start);
         // in color range
-        print_ccode_(colors_[static_cast<size_t>(msg.level)]);
+        print_ccode_(colors_.at(static_cast<size_t>(msg.level)));
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
         print_ccode_(reset);
         // after color range

@@ -14,16 +14,12 @@ if(PkgConfig_FOUND)
 endif()
 
 find_package(Catch2 3 QUIET)
-if (Catch2_FOUND)
+if(Catch2_FOUND)
     message(STATUS "Packaged version of Catch will be used.")
 else()
     message(STATUS "Bundled version of Catch will be downloaded and used.")
     include(FetchContent)
-    FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG v3.3.2
-    )
+    FetchContent_Declare(Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git GIT_TAG v3.3.2)
     FetchContent_MakeAvailable(Catch2)
 endif()
 

@@ -92,7 +92,7 @@ SPDLOG_INLINE void file_helper::flush()
 
 SPDLOG_INLINE void file_helper::sync()
 {
-    if(!os::fsync(fd_))
+    if (!os::fsync(fd_))
     {
         throw_spdlog_ex("Failed to fsync file " + os::filename_to_str(filename_), errno);
     }

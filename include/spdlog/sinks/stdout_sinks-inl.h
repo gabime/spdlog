@@ -72,7 +72,7 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
-#endif // WIN32
+#endif               // WIN32
     ::fflush(file_); // flush every line to terminal
 }
 
