@@ -153,37 +153,37 @@ inline void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...a
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void trace(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void debug(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void info(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void warn(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void error(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->error(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void critical(format_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
@@ -214,37 +214,37 @@ inline void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void trace(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void debug(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void info(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void warn(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void error(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->error(fmt, std::forward<Args>(args)...);
 }
 
-template<typename... Args>
+template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
 inline void critical(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
@@ -252,39 +252,39 @@ inline void critical(wformat_string_t<Args...> fmt, Args &&...args)
 #endif
 
 template<typename T>
-inline void trace(const T &msg, details::source_location loc = details::source_location::current())
+inline void trace(const message_wrapper<T> &msg)
 {
-    default_logger_raw()->trace(msg, loc);
+    default_logger_raw()->trace(msg);
 }
 
 template<typename T>
-inline void debug(const T &msg, details::source_location loc = details::source_location::current())
+inline void debug(const message_wrapper<T> &msg)
 {
-    default_logger_raw()->debug(msg, loc);
+    default_logger_raw()->debug(msg);
 }
 
 template<typename T>
-inline void info(const T &msg, details::source_location loc = details::source_location::current())
+inline void info(const message_wrapper<T> &msg)
 {
-    default_logger_raw()->info(msg, loc);
+    default_logger_raw()->info(msg);
 }
 
 template<typename T>
-inline void warn(const T &msg, details::source_location loc = details::source_location::current())
+inline void warn(const message_wrapper<T> &msg)
 {
-    default_logger_raw()->warn(msg, loc);
+    default_logger_raw()->warn(msg);
 }
 
 template<typename T>
-inline void error(const T &msg, details::source_location loc = details::source_location::current())
+inline void error(const message_wrapper<T> &msg)
 {
-    default_logger_raw()->error(msg, loc);
+    default_logger_raw()->error(msg);
 }
 
 template<typename T>
-inline void critical(const T &msg, details::source_location loc = details::source_location::current())
+inline void critical(const message_wrapper<T> &msg)
 {
-    default_logger_raw()->critical(msg, loc);
+    default_logger_raw()->critical(msg);
 }
 
 } // namespace spdlog

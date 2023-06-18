@@ -88,19 +88,19 @@ public:
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
     {
-        log_(loc, lvl, details::to_string_view(fmt.fmt()), std::forward<Args>(args)...);
+        log_(loc, lvl, details::to_string_view(fmt.format_string()), std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
     {
-        log(fmt.loc(), lvl, fmt, std::forward<Args>(args)...);
+        log(fmt.location(), lvl, fmt, std::forward<Args>(args)...);
     }
 
     template<typename T>
-    void log(level::level_enum lvl, const T &msg)
+    void log(level::level_enum lvl, const message_wrapper<T> &msg)
     {
-        log(source_loc{}, lvl, msg);
+        log(msg.location(), lvl, msg.message());
     }
 
     // T cannot be statically converted to format string (including string_view/wstring_view)
@@ -141,37 +141,37 @@ public:
         log(source_loc{}, lvl, msg);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void trace(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void debug(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void info(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::info, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void warn(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void error(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::err, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void critical(format_string_t<Args...> fmt, Args &&...args)
     {
         log(level::critical, fmt, std::forward<Args>(args)...);
@@ -181,13 +181,13 @@ public:
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args)
     {
-        log_(loc, lvl, details::to_string_view(fmt.fmt()), std::forward<Args>(args)...);
+        log_(loc, lvl, details::to_string_view(fmt.format_string()), std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args)
     {
-        log(fmt.loc(), lvl, fmt, std::forward<Args>(args)...);
+        log(fmt.location(), lvl, fmt, std::forward<Args>(args)...);
     }
 
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, wstring_view_t msg)
@@ -225,37 +225,37 @@ public:
         log(source_loc{}, lvl, msg);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void trace(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void debug(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void info(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::info, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void warn(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void error(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::err, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename... Args>
+    template<typename... Args, typename std::enable_if<sizeof...(Args) >= 1, int>::type = 0>
     void critical(wformat_string_t<Args...> fmt, Args &&...args)
     {
         log(level::critical, fmt, std::forward<Args>(args)...);
@@ -263,39 +263,39 @@ public:
 #endif
 
     template<typename T>
-    void trace(const T &msg, details::source_location loc = details::source_location::current())
+    void trace(const message_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::trace, msg);
+        log(msg.location(), level::trace, msg.message());
     }
 
     template<typename T>
-    void debug(const T &msg, details::source_location loc = details::source_location::current())
+    void debug(const message_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::debug, msg);
+        log(msg.location(), level::debug, msg.message());
     }
 
     template<typename T>
-    void info(const T &msg, details::source_location loc = details::source_location::current())
+    void info(const message_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::info, msg);
+        log(msg.location(), level::info, msg.message());
     }
 
     template<typename T>
-    void warn(const T &msg, details::source_location loc = details::source_location::current())
+    void warn(const message_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::warn, msg);
+        log(msg.location(), level::warn, msg);
     }
 
     template<typename T>
-    void error(const T &msg, details::source_location loc = details::source_location::current())
+    void error(const message_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::err, msg);
+        log(msg.location(), level::err, msg.message());
     }
 
     template<typename T>
-    void critical(const T &msg, details::source_location loc = details::source_location::current())
+    void critical(const message_wrapper<T> &msg)
     {
-        log(source_loc{loc.file_name(), loc.line(), loc.function_name()}, level::critical, msg);
+        log(msg.location(), level::critical, msg.message());
     }
 
     // return true logging is enabled for the given level.

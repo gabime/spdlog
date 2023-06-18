@@ -172,17 +172,45 @@ struct format_string_wrapper
         , loc_{loc}
     {}
 #endif
-    T fmt()
+    T format_string()
     {
         return fmt_;
     }
-    source_loc loc()
+    source_loc location()
     {
         return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
     }
 
 private:
     T fmt_;
+    spdlog::details::source_location loc_;
+};
+
+template<typename T>
+struct message_wrapper
+{
+    message_wrapper(const T &msg, details::source_location loc = details::source_location::current())
+        : msg_{msg}
+        , loc_{loc}
+    {}
+
+    T message()
+    {
+        return msg_;
+    }
+
+    source_loc location()
+    {
+        return source_loc{loc_.file_name(), loc_.line(), loc_.function_name()};
+    }
+
+    operator T()
+    {
+        return msg_;
+    }
+
+private:
+    T msg_;
     spdlog::details::source_location loc_;
 };
 
