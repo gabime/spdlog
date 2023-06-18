@@ -252,37 +252,37 @@ inline void critical(wformat_string_t<Args...> fmt, Args &&...args)
 #endif
 
 template<typename T>
-inline void trace(const message_wrapper<T> &msg)
+inline void trace(message_wrapper<T> msg)
 {
     default_logger_raw()->trace(msg);
 }
 
 template<typename T>
-inline void debug(const message_wrapper<T> &msg)
+inline void debug(message_wrapper<T> msg)
 {
     default_logger_raw()->debug(msg);
 }
 
 template<typename T>
-inline void info(const message_wrapper<T> &msg)
+inline void info(message_wrapper<T> msg)
 {
     default_logger_raw()->info(msg);
 }
 
 template<typename T>
-inline void warn(const message_wrapper<T> &msg)
+inline void warn(message_wrapper<T> msg)
 {
     default_logger_raw()->warn(msg);
 }
 
 template<typename T>
-inline void error(const message_wrapper<T> &msg)
+inline void error(message_wrapper<T> msg)
 {
     default_logger_raw()->error(msg);
 }
 
 template<typename T>
-inline void critical(const message_wrapper<T> &msg)
+inline void critical(message_wrapper<T> msg)
 {
     default_logger_raw()->critical(msg);
 }

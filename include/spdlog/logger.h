@@ -98,7 +98,7 @@ public:
     }
 
     template<typename T>
-    void log(level::level_enum lvl, const message_wrapper<T> &msg)
+    void log(level::level_enum lvl, message_wrapper<T> msg)
     {
         log(msg.location(), lvl, msg.message());
     }
@@ -263,37 +263,37 @@ public:
 #endif
 
     template<typename T>
-    void trace(const message_wrapper<T> &msg)
+    void trace(message_wrapper<T> msg)
     {
         log(msg.location(), level::trace, msg.message());
     }
 
     template<typename T>
-    void debug(const message_wrapper<T> &msg)
+    void debug(message_wrapper<T> msg)
     {
         log(msg.location(), level::debug, msg.message());
     }
 
     template<typename T>
-    void info(const message_wrapper<T> &msg)
+    void info(message_wrapper<T> msg)
     {
         log(msg.location(), level::info, msg.message());
     }
 
     template<typename T>
-    void warn(const message_wrapper<T> &msg)
+    void warn(message_wrapper<T> msg)
     {
         log(msg.location(), level::warn, msg);
     }
 
     template<typename T>
-    void error(const message_wrapper<T> &msg)
+    void error(message_wrapper<T> msg)
     {
         log(msg.location(), level::err, msg.message());
     }
 
     template<typename T>
-    void critical(const message_wrapper<T> &msg)
+    void critical(message_wrapper<T> msg)
     {
         log(msg.location(), level::critical, msg.message());
     }
