@@ -189,8 +189,9 @@ private:
 template<typename T>
 struct message_wrapper
 {
-    message_wrapper(const T &msg, details::source_location loc = details::source_location::current())
-        : msg_{msg}
+    template<typename U = T>
+    message_wrapper(U&& msg, details::source_location loc = details::source_location::current())
+        : msg_{std::forward<U>(msg)}
         , loc_{loc}
     {}
 
