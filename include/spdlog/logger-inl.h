@@ -116,7 +116,7 @@ SPDLOG_INLINE void logger::disable_backtrace()
     tracer_.disable();
 }
 
-SPDLOG_INLINE void logger::dump_backtrace(bool with_message)
+SPDLOG_INLINE void logger::dump_backtrace(bool with_message=true)
 {
     dump_backtrace_(with_message);
 }
@@ -207,7 +207,7 @@ SPDLOG_INLINE void logger::flush_()
     }
 }
 
-SPDLOG_INLINE void logger::dump_backtrace_(bool with_message)
+SPDLOG_INLINE void logger::dump_backtrace_(bool with_message=true)
 {
     using details::log_msg;
     if (tracer_.enabled() && !tracer_.empty())
