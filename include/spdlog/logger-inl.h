@@ -207,14 +207,18 @@ SPDLOG_INLINE void logger::flush_()
     }
 }
 
-SPDLOG_INLINE void logger::dump_backtrace_()
+SPDLOG_INLINE void logger::dump_backtrace_(bool with_message)
 {
     using details::log_msg;
     if (tracer_.enabled() && !tracer_.empty())
     {
-        sink_it_(log_msg{name(), level::info, "****************** Backtrace Start ******************"});
+        if (with_message){
+            sink_it_(log_msg{name(), level::info, "****************** Backtrace Start ******************"});
+        }
         tracer_.foreach_pop([this](const log_msg &msg) { this->sink_it_(msg); });
-        sink_it_(log_msg{name(), level::info, "****************** Backtrace End ********************"});
+        if (with_message){
+            sink_it_(log_msg{name(), level::info, "****************** Backtrace End ********************"});
+        }
     }
 }
 

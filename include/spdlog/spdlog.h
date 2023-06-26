@@ -65,7 +65,7 @@ SPDLOG_API void enable_backtrace(size_t n_messages);
 SPDLOG_API void disable_backtrace();
 
 // call dump backtrace on default logger
-SPDLOG_API void dump_backtrace();
+SPDLOG_API void dump_backtrace(bool with_message=true);
 
 // Get global logging level
 SPDLOG_API level::level_enum get_level();
