@@ -31,6 +31,33 @@ TEST_CASE("bactrace1", "[bactrace]")
     REQUIRE(test_sink->lines()[7] == "****************** Backtrace End ********************");
 }
 
+TEST_CASE("bactrace2", "[bactrace]")
+{
+
+    using spdlog::sinks::test_sink_st;
+    auto test_sink = std::make_shared<test_sink_st>();
+    size_t backtrace_size = 5;
+
+    spdlog::logger logger("test-backtrace", test_sink);
+    logger.set_pattern("%v");
+    logger.enable_backtrace(backtrace_size);
+
+    logger.info("info message");
+    for (int i = 0; i < 100; i++)
+        logger.debug("debug message {}", i);
+
+    REQUIRE(test_sink->lines().size() == 1);
+    REQUIRE(test_sink->lines()[0] == "info message");
+
+    logger.dump_backtrace(false);
+    REQUIRE(test_sink->lines().size() == backtrace_size + 1);
+    REQUIRE(test_sink->lines()[1] == "debug message 95");
+    REQUIRE(test_sink->lines()[2] == "debug message 96");
+    REQUIRE(test_sink->lines()[3] == "debug message 97");
+    REQUIRE(test_sink->lines()[4] == "debug message 98");
+    REQUIRE(test_sink->lines()[5] == "debug message 99");
+}
+
 TEST_CASE("bactrace-empty", "[bactrace]")
 {
     using spdlog::sinks::test_sink_st;

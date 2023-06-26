@@ -329,7 +329,7 @@ public:
     // efficiently store all debug/trace messages in a circular buffer until needed for debugging.
     void enable_backtrace(size_t n_messages);
     void disable_backtrace();
-    void dump_backtrace();
+    void dump_backtrace(bool with_message=true);
 
     // flush functions
     void flush();
@@ -410,7 +410,7 @@ protected:
     void log_it_(const details::log_msg &log_msg, bool log_enabled, bool traceback_enabled);
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
-    void dump_backtrace_();
+    void dump_backtrace_(bool with_message=true);
     bool should_flush_(const details::log_msg &msg);
 
     // handle errors during logging.

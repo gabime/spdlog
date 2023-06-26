@@ -116,9 +116,9 @@ SPDLOG_INLINE void logger::disable_backtrace()
     tracer_.disable();
 }
 
-SPDLOG_INLINE void logger::dump_backtrace()
+SPDLOG_INLINE void logger::dump_backtrace(bool with_message)
 {
-    dump_backtrace_();
+    dump_backtrace_(with_message);
 }
 
 // flush functions
