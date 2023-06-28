@@ -167,8 +167,8 @@ private:
                     std::move(payload), // text to append
                     default_color_, // default color
                     colors_.at(msg.level), // color to apply
-                    msg.color_range_start, // color range start
-                    msg.color_range_end}; // color range end
+                    static_cast<int>(msg.color_range_start), // color range start
+                    static_cast<int>(msg.color_range_end)}; // color range end
 
             QMetaObject::invokeMethod(
                     qt_text_edit_,
