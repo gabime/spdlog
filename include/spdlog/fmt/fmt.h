@@ -16,13 +16,6 @@
 #    if !defined(SPDLOG_COMPILED_LIB) && !defined(FMT_HEADER_ONLY)
 #        define FMT_HEADER_ONLY
 #    endif
-#    ifndef FMT_USE_WINDOWS_H
-#        define FMT_USE_WINDOWS_H 0
-#    endif
-// enable the 'n' flag in for backward compatibility with fmt 6.x
-#    define FMT_DEPRECATED_N_SPECIFIER
-// enable ostream formatting for backward compatibility with fmt 8.x
-#    define FMT_DEPRECATED_OSTREAM
 
 #    include <spdlog/fmt/bundled/core.h>
 #    include <spdlog/fmt/bundled/format.h>

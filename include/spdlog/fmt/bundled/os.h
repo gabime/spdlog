@@ -71,7 +71,7 @@
 #define FMT_RETRY(result, expression) FMT_RETRY_VAL(result, expression, -1)
 
 FMT_BEGIN_NAMESPACE
-FMT_MODULE_EXPORT_BEGIN
+FMT_BEGIN_EXPORT
 
 /**
   \rst
@@ -120,48 +120,10 @@ template <typename Char> class basic_cstring_view {
 using cstring_view = basic_cstring_view<char>;
 using wcstring_view = basic_cstring_view<wchar_t>;
 
-template <typename Char> struct formatter<std::error_code, Char> {
-  template <typename ParseContext>
-  FMT_CONSTEXPR auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
-    return ctx.begin();
-  }
-
-  template <typename FormatContext>
-  FMT_CONSTEXPR auto format(const std::error_code& ec, FormatContext& ctx) const
-      -> decltype(ctx.out()) {
-    auto out = ctx.out();
-    out = detail::write_bytes(out, ec.category().name(),
-                              basic_format_specs<Char>());
-    out = detail::write<Char>(out, Char(':'));
-    out = detail::write<Char>(out, ec.value());
-    return out;
-  }
-};
-
 #ifdef _WIN32
 FMT_API const std::error_category& system_category() noexcept;
 
 FMT_BEGIN_DETAIL_NAMESPACE
-// A converter from UTF-16 to UTF-8.
-// It is only provided for Windows since other systems support UTF-8 natively.
-class utf16_to_utf8 {
- private:
-  memory_buffer buffer_;
-
- public:
-  utf16_to_utf8() {}
-  FMT_API explicit utf16_to_utf8(basic_string_view<wchar_t> s);
-  operator string_view() const { return string_view(&buffer_[0], size()); }
-  size_t size() const { return buffer_.size() - 1; }
-  const char* c_str() const { return &buffer_[0]; }
-  std::string str() const { return std::string(&buffer_[0], size()); }
-
-  // Performs conversion returning a system error code instead of
-  // throwing exception on conversion error. This method may still throw
-  // in case of memory allocation error.
-  FMT_API int convert(basic_string_view<wchar_t> s);
-};
-
 FMT_API void format_windows_error(buffer<char>& out, int error_code,
                                   const char* message) noexcept;
 FMT_END_DETAIL_NAMESPACE
@@ -355,6 +317,12 @@ class FMT_API file {
   // Creates a buffered_file object associated with this file and detaches
   // this file object from the file.
   buffered_file fdopen(const char* mode);
+
+#  if defined(_WIN32) && !defined(__MINGW32__)
+  // Opens a file and constructs a file object representing this file by
+  // wcstring_view filename. Windows only.
+  static file open_windows_file(wcstring_view path, int oflag);
+#  endif
 };
 
 // Returns the memory page size.
@@ -397,6 +365,28 @@ struct ostream_params {
 #  endif
 };
 
+class file_buffer final : public buffer<char> {
+  file file_;
+
+  FMT_API void grow(size_t) override;
+
+ public:
+  FMT_API file_buffer(cstring_view path, const ostream_params& params);
+  FMT_API file_buffer(file_buffer&& other);
+  FMT_API ~file_buffer();
+
+  void flush() {
+    if (size() == 0) return;
+    file_.write(data(), size() * sizeof(data()[0]));
+    clear();
+  }
+
+  void close() {
+    flush();
+    file_.close();
+  }
+};
+
 FMT_END_DETAIL_NAMESPACE
 
 // Added {} below to work around default constructor error known to
@@ -404,49 +394,32 @@ FMT_END_DETAIL_NAMESPACE
 constexpr detail::buffer_size buffer_size{};
 
 /** A fast output stream which is not thread-safe. */
-class FMT_API ostream final : private detail::buffer<char> {
+class FMT_API ostream {
  private:
-  file file_;
-
-  void grow(size_t) override;
+  FMT_MSC_WARNING(suppress : 4251)
+  detail::file_buffer buffer_;
 
   ostream(cstring_view path, const detail::ostream_params& params)
-      : file_(path, params.oflag) {
-    set(new char[params.buffer_size], params.buffer_size);
-  }
+      : buffer_(path, params) {}
 
  public:
-  ostream(ostream&& other)
-      : detail::buffer<char>(other.data(), other.size(), other.capacity()),
-        file_(std::move(other.file_)) {
-    other.clear();
-    other.set(nullptr, 0);
-  }
-  ~ostream() {
-    flush();
-    delete[] data();
-  }
+  ostream(ostream&& other) : buffer_(std::move(other.buffer_)) {}
 
-  void flush() {
-    if (size() == 0) return;
-    file_.write(data(), size());
-    clear();
-  }
+  ~ostream();
+
+  void flush() { buffer_.flush(); }
 
   template <typename... T>
   friend ostream output_file(cstring_view path, T... params);
 
-  void close() {
-    flush();
-    file_.close();
-  }
+  void close() { buffer_.close(); }
 
   /**
     Formats ``args`` according to specifications in ``fmt`` and writes the
     output to the file.
    */
   template <typename... T> void print(format_string<T...> fmt, T&&... args) {
-    vformat_to(detail::buffer_appender<char>(*this), fmt,
+    vformat_to(detail::buffer_appender<char>(buffer_), fmt,
                fmt::make_format_args(args...));
   }
 };
@@ -472,7 +445,7 @@ inline ostream output_file(cstring_view path, T... params) {
 }
 #endif  // FMT_USE_FCNTL
 
-FMT_MODULE_EXPORT_END
+FMT_END_EXPORT
 FMT_END_NAMESPACE
 
 #endif  // FMT_OS_H_
