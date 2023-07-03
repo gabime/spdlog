@@ -30,10 +30,13 @@ template<typename Mutex>
 class qt_sink : public base_sink<Mutex>
 {
 public:
-    qt_sink(QObject *qt_object, const std::string &meta_method)
+    qt_sink(QObject *qt_object, std::string meta_method): qt_object_(qt_object), meta_method_(std::move(meta_method))
     {
-        qt_object_ = qt_object;
-        meta_method_ = meta_method;
+        if (!qt_object_)
+        {
+            throw_spdlog_ex("qt_sink: qt_object is null");
+        }
+
     }
 
     ~qt_sink()
@@ -46,7 +49,7 @@ protected:
     {
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
-        string_view_t str = string_view_t(formatted.data(), formatted.size());
+        const string_view_t str = string_view_t(formatted.data(), formatted.size());
         QMetaObject::invokeMethod(qt_object_, meta_method_.c_str(), Qt::AutoConnection,
             Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
     }
@@ -150,10 +153,9 @@ private:
             int color_range_start;
             int color_range_end;
         };
+
         void sink_it_(const details::log_msg &msg) override
         {
-
-            using this_type = qt_color_sink<Mutex>;
             memory_buf_t formatted;
             base_sink<Mutex>::formatter_->format(msg, formatted);
 
@@ -226,6 +228,7 @@ private:
 
 #include "spdlog/details/null_mutex.h"
 #include <mutex>
+
 using qt_sink_mt = qt_sink<std::mutex>;
 using qt_sink_st = qt_sink<details::null_mutex>;
 using qt_color_sink_mt = qt_color_sink<std::mutex>;

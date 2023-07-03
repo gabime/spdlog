@@ -12,7 +12,7 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/os.h>
-
+#include <cstring>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>

@@ -22,27 +22,25 @@ FMT_BEGIN_NAMESPACE
 
 namespace detail {
 
-template <typename RangeT, typename OutputIterator>
-OutputIterator copy(const RangeT& range, OutputIterator out) {
+template <typename Range, typename OutputIt>
+auto copy(const Range& range, OutputIt out) -> OutputIt {
   for (auto it = range.begin(), end = range.end(); it != end; ++it)
     *out++ = *it;
   return out;
 }
 
-template <typename OutputIterator>
-OutputIterator copy(const char* str, OutputIterator out) {
+template <typename OutputIt>
+auto copy(const char* str, OutputIt out) -> OutputIt {
   while (*str) *out++ = *str++;
   return out;
 }
 
-template <typename OutputIterator>
-OutputIterator copy(char ch, OutputIterator out) {
+template <typename OutputIt> auto copy(char ch, OutputIt out) -> OutputIt {
   *out++ = ch;
   return out;
 }
 
-template <typename OutputIterator>
-OutputIterator copy(wchar_t ch, OutputIterator out) {
+template <typename OutputIt> auto copy(wchar_t ch, OutputIt out) -> OutputIt {
   *out++ = ch;
   return out;
 }
@@ -69,7 +67,7 @@ template <typename T> class is_map {
   template <typename> static void check(...);
 
  public:
-#ifdef FMT_FORMAT_MAP_AS_LIST
+#ifdef FMT_FORMAT_MAP_AS_LIST  // DEPRECATED!
   static constexpr const bool value = false;
 #else
   static constexpr const bool value =
@@ -82,7 +80,7 @@ template <typename T> class is_set {
   template <typename> static void check(...);
 
  public:
-#ifdef FMT_FORMAT_SET_AS_LIST
+#ifdef FMT_FORMAT_SET_AS_LIST  // DEPRECATED!
   static constexpr const bool value = false;
 #else
   static constexpr const bool value =
@@ -157,8 +155,9 @@ template <typename T>
 struct has_mutable_begin_end<
     T, void_t<decltype(detail::range_begin(std::declval<T>())),
               decltype(detail::range_end(std::declval<T>())),
-              enable_if_t<std::is_copy_constructible<T>::value>>>
-    : std::true_type {};
+              // the extra int here is because older versions of MSVC don't
+              // SFINAE properly unless there are distinct types
+              int>> : std::true_type {};
 
 template <typename T>
 struct is_range_<T, void>
@@ -211,40 +210,60 @@ class is_tuple_formattable_ {
   static constexpr const bool value = false;
 };
 template <typename T, typename C> class is_tuple_formattable_<T, C, true> {
-  template <std::size_t... I>
-  static std::true_type check2(index_sequence<I...>,
-                               integer_sequence<bool, (I == I)...>);
+  template <std::size_t... Is>
+  static std::true_type check2(index_sequence<Is...>,
+                               integer_sequence<bool, (Is == Is)...>);
   static std::false_type check2(...);
-  template <std::size_t... I>
+  template <std::size_t... Is>
   static decltype(check2(
-      index_sequence<I...>{},
+      index_sequence<Is...>{},
       integer_sequence<
-          bool, (is_formattable<typename std::tuple_element<I, T>::type,
-                                C>::value)...>{})) check(index_sequence<I...>);
+          bool, (is_formattable<typename std::tuple_element<Is, T>::type,
+                                C>::value)...>{})) check(index_sequence<Is...>);
 
  public:
   static constexpr const bool value =
       decltype(check(tuple_index_sequence<T>{}))::value;
 };
 
-template <class Tuple, class F, size_t... Is>
-void for_each(index_sequence<Is...>, Tuple&& tup, F&& f) noexcept {
+template <typename Tuple, typename F, size_t... Is>
+FMT_CONSTEXPR void for_each(index_sequence<Is...>, Tuple&& t, F&& f) {
   using std::get;
-  // using free function get<I>(T) now.
-  const int _[] = {0, ((void)f(get<Is>(tup)), 0)...};
-  (void)_;  // blocks warnings
+  // Using a free function get<Is>(Tuple) now.
+  const int unused[] = {0, ((void)f(get<Is>(t)), 0)...};
+  ignore_unused(unused);
 }
 
-template <class T>
-FMT_CONSTEXPR make_index_sequence<std::tuple_size<T>::value> get_indexes(
-    T const&) {
-  return {};
+template <typename Tuple, typename F>
+FMT_CONSTEXPR void for_each(Tuple&& t, F&& f) {
+  for_each(tuple_index_sequence<remove_cvref_t<Tuple>>(),
+           std::forward<Tuple>(t), std::forward<F>(f));
 }
 
-template <class Tuple, class F> void for_each(Tuple&& tup, F&& f) {
-  const auto indexes = get_indexes(tup);
-  for_each(indexes, std::forward<Tuple>(tup), std::forward<F>(f));
+template <typename Tuple1, typename Tuple2, typename F, size_t... Is>
+void for_each2(index_sequence<Is...>, Tuple1&& t1, Tuple2&& t2, F&& f) {
+  using std::get;
+  const int unused[] = {0, ((void)f(get<Is>(t1), get<Is>(t2)), 0)...};
+  ignore_unused(unused);
 }
+
+template <typename Tuple1, typename Tuple2, typename F>
+void for_each2(Tuple1&& t1, Tuple2&& t2, F&& f) {
+  for_each2(tuple_index_sequence<remove_cvref_t<Tuple1>>(),
+            std::forward<Tuple1>(t1), std::forward<Tuple2>(t2),
+            std::forward<F>(f));
+}
+
+namespace tuple {
+// Workaround a bug in MSVC 2019 (v140).
+template <typename Char, typename... T>
+using result_t = std::tuple<formatter<remove_cvref_t<T>, Char>...>;
+
+using std::get;
+template <typename Tuple, typename Char, std::size_t... Is>
+auto get_formatters(index_sequence<Is...>)
+    -> result_t<Char, decltype(get<Is>(std::declval<Tuple>()))...>;
+}  // namespace tuple
 
 #if FMT_MSC_VERSION && FMT_MSC_VERSION < 1920
 // Older MSVC doesn't get the reference type correctly for arrays.
@@ -269,45 +288,37 @@ using range_reference_type =
 template <typename Range>
 using uncvref_type = remove_cvref_t<range_reference_type<Range>>;
 
-template <typename Range>
-using uncvref_first_type =
-    remove_cvref_t<decltype(std::declval<range_reference_type<Range>>().first)>;
-
-template <typename Range>
-using uncvref_second_type = remove_cvref_t<
-    decltype(std::declval<range_reference_type<Range>>().second)>;
-
-template <typename OutputIt> OutputIt write_delimiter(OutputIt out) {
-  *out++ = ',';
-  *out++ = ' ';
-  return out;
+template <typename Formatter>
+FMT_CONSTEXPR auto maybe_set_debug_format(Formatter& f, bool set)
+    -> decltype(f.set_debug_format(set)) {
+  f.set_debug_format(set);
 }
+template <typename Formatter>
+FMT_CONSTEXPR void maybe_set_debug_format(Formatter&, ...) {}
 
-template <typename Char, typename OutputIt>
-auto write_range_entry(OutputIt out, basic_string_view<Char> str) -> OutputIt {
-  return write_escaped_string(out, str);
-}
+// These are not generic lambdas for compatibility with C++11.
+template <typename ParseContext> struct parse_empty_specs {
+  template <typename Formatter> FMT_CONSTEXPR void operator()(Formatter& f) {
+    f.parse(ctx);
+    detail::maybe_set_debug_format(f, true);
+  }
+  ParseContext& ctx;
+};
+template <typename FormatContext> struct format_tuple_element {
+  using char_type = typename FormatContext::char_type;
 
-template <typename Char, typename OutputIt, typename T,
-          FMT_ENABLE_IF(std::is_convertible<T, std_string_view<char>>::value)>
-inline auto write_range_entry(OutputIt out, const T& str) -> OutputIt {
-  auto sv = std_string_view<Char>(str);
-  return write_range_entry<Char>(out, basic_string_view<Char>(sv));
-}
+  template <typename T>
+  void operator()(const formatter<T, char_type>& f, const T& v) {
+    if (i > 0)
+      ctx.advance_to(detail::copy_str<char_type>(separator, ctx.out()));
+    ctx.advance_to(f.format(v, ctx));
+    ++i;
+  }
 
-template <typename Char, typename OutputIt, typename Arg,
-          FMT_ENABLE_IF(std::is_same<Arg, Char>::value)>
-OutputIt write_range_entry(OutputIt out, const Arg v) {
-  return write_escaped_char(out, v);
-}
-
-template <
-    typename Char, typename OutputIt, typename Arg,
-    FMT_ENABLE_IF(!is_std_string_like<typename std::decay<Arg>::type>::value &&
-                  !std::is_same<Arg, Char>::value)>
-OutputIt write_range_entry(OutputIt out, const Arg& v) {
-  return write<Char>(out, v);
-}
+  int i;
+  FormatContext& ctx;
+  basic_string_view<char_type> separator;
+};
 
 }  // namespace detail
 
@@ -321,28 +332,19 @@ template <typename T, typename C> struct is_tuple_formattable {
       detail::is_tuple_formattable_<T, C>::value;
 };
 
-template <typename TupleT, typename Char>
-struct formatter<TupleT, Char,
-                 enable_if_t<fmt::is_tuple_like<TupleT>::value &&
-                             fmt::is_tuple_formattable<TupleT, Char>::value>> {
+template <typename Tuple, typename Char>
+struct formatter<Tuple, Char,
+                 enable_if_t<fmt::is_tuple_like<Tuple>::value &&
+                             fmt::is_tuple_formattable<Tuple, Char>::value>> {
  private:
+  decltype(detail::tuple::get_formatters<Tuple, Char>(
+      detail::tuple_index_sequence<Tuple>())) formatters_;
+
   basic_string_view<Char> separator_ = detail::string_literal<Char, ',', ' '>{};
   basic_string_view<Char> opening_bracket_ =
       detail::string_literal<Char, '('>{};
   basic_string_view<Char> closing_bracket_ =
       detail::string_literal<Char, ')'>{};
-
-  // C++11 generic lambda for format().
-  template <typename FormatContext> struct format_each {
-    template <typename T> void operator()(const T& v) {
-      if (i > 0) out = detail::copy_str<Char>(separator, out);
-      out = detail::write_range_entry<Char>(out, v);
-      ++i;
-    }
-    int i;
-    typename FormatContext::iterator& out;
-    basic_string_view<Char> separator;
-  };
 
  public:
   FMT_CONSTEXPR formatter() {}
@@ -359,17 +361,21 @@ struct formatter<TupleT, Char,
 
   template <typename ParseContext>
   FMT_CONSTEXPR auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
-    return ctx.begin();
+    auto it = ctx.begin();
+    if (it != ctx.end() && *it != '}')
+      FMT_THROW(format_error("invalid format specifier"));
+    detail::for_each(formatters_, detail::parse_empty_specs<ParseContext>{ctx});
+    return it;
   }
 
-  template <typename FormatContext = format_context>
-  auto format(const TupleT& values, FormatContext& ctx) const
+  template <typename FormatContext>
+  auto format(const Tuple& value, FormatContext& ctx) const
       -> decltype(ctx.out()) {
-    auto out = ctx.out();
-    out = detail::copy_str<Char>(opening_bracket_, out);
-    detail::for_each(values, format_each<FormatContext>{0, out, separator_});
-    out = detail::copy_str<Char>(closing_bracket_, out);
-    return out;
+    ctx.advance_to(detail::copy_str<Char>(opening_bracket_, ctx.out()));
+    detail::for_each2(
+        formatters_, value,
+        detail::format_tuple_element<FormatContext>{0, ctx, separator_});
+    return detail::copy_str<Char>(closing_bracket_, ctx.out());
   }
 };
 
@@ -398,12 +404,10 @@ template <typename Context> struct range_mapper {
 };
 
 template <typename Char, typename Element>
-using range_formatter_type = conditional_t<
-    is_formattable<Element, Char>::value,
+using range_formatter_type =
     formatter<remove_cvref_t<decltype(range_mapper<buffer_context<Char>>{}.map(
                   std::declval<Element>()))>,
-              Char>,
-    fallback_formatter<Element, Char>>;
+              Char>;
 
 template <typename R>
 using maybe_const_range =
@@ -413,11 +417,8 @@ using maybe_const_range =
 #if !FMT_MSC_VERSION || FMT_MSC_VERSION >= 1910
 template <typename R, typename Char>
 struct is_formattable_delayed
-    : disjunction<
-          is_formattable<uncvref_type<maybe_const_range<R>>, Char>,
-          has_fallback_formatter<uncvref_type<maybe_const_range<R>>, Char>> {};
+    : is_formattable<uncvref_type<maybe_const_range<R>>, Char> {};
 #endif
-
 }  // namespace detail
 
 template <typename T, typename Char, typename Enable = void>
@@ -426,31 +427,15 @@ struct range_formatter;
 template <typename T, typename Char>
 struct range_formatter<
     T, Char,
-    enable_if_t<conjunction<
-        std::is_same<T, remove_cvref_t<T>>,
-        disjunction<is_formattable<T, Char>,
-                    detail::has_fallback_formatter<T, Char>>>::value>> {
+    enable_if_t<conjunction<std::is_same<T, remove_cvref_t<T>>,
+                            is_formattable<T, Char>>::value>> {
  private:
   detail::range_formatter_type<Char, T> underlying_;
-  bool custom_specs_ = false;
   basic_string_view<Char> separator_ = detail::string_literal<Char, ',', ' '>{};
   basic_string_view<Char> opening_bracket_ =
       detail::string_literal<Char, '['>{};
   basic_string_view<Char> closing_bracket_ =
       detail::string_literal<Char, ']'>{};
-
-  template <class U>
-  FMT_CONSTEXPR static auto maybe_set_debug_format(U& u, int)
-      -> decltype(u.set_debug_format()) {
-    u.set_debug_format();
-  }
-
-  template <class U>
-  FMT_CONSTEXPR static void maybe_set_debug_format(U&, ...) {}
-
-  FMT_CONSTEXPR void maybe_set_debug_format() {
-    maybe_set_debug_format(underlying_, 0);
-  }
 
  public:
   FMT_CONSTEXPR range_formatter() {}
@@ -473,31 +458,24 @@ struct range_formatter<
   FMT_CONSTEXPR auto parse(ParseContext& ctx) -> decltype(ctx.begin()) {
     auto it = ctx.begin();
     auto end = ctx.end();
-    if (it == end || *it == '}') {
-      maybe_set_debug_format();
-      return it;
-    }
 
-    if (*it == 'n') {
+    if (it != end && *it == 'n') {
       set_brackets({}, {});
       ++it;
     }
 
-    if (*it == '}') {
-      maybe_set_debug_format();
-      return it;
+    if (it != end && *it != '}') {
+      if (*it != ':') FMT_THROW(format_error("invalid format specifier"));
+      ++it;
+    } else {
+      detail::maybe_set_debug_format(underlying_, true);
     }
 
-    if (*it != ':')
-      FMT_THROW(format_error("no other top-level range formatters supported"));
-
-    custom_specs_ = true;
-    ++it;
     ctx.advance_to(it);
     return underlying_.parse(ctx);
   }
 
-  template <typename R, class FormatContext>
+  template <typename R, typename FormatContext>
   auto format(R&& range, FormatContext& ctx) const -> decltype(ctx.out()) {
     detail::range_mapper<buffer_context<Char>> mapper;
     auto out = ctx.out();
@@ -507,7 +485,6 @@ struct range_formatter<
     auto end = detail::range_end(range);
     for (; it != end; ++it) {
       if (i > 0) out = detail::copy_str<Char>(separator_, out);
-      ;
       ctx.advance_to(out);
       out = underlying_.format(mapper.map(*it), ctx);
       ++i;
@@ -520,13 +497,14 @@ struct range_formatter<
 enum class range_format { disabled, map, set, sequence, string, debug_string };
 
 namespace detail {
-template <typename T> struct range_format_kind_ {
-  static constexpr auto value = std::is_same<range_reference_type<T>, T>::value
-                                    ? range_format::disabled
-                                : is_map<T>::value ? range_format::map
-                                : is_set<T>::value ? range_format::set
-                                                   : range_format::sequence;
-};
+template <typename T>
+struct range_format_kind_
+    : std::integral_constant<range_format,
+                             std::is_same<uncvref_type<T>, T>::value
+                                 ? range_format::disabled
+                             : is_map<T>::value ? range_format::map
+                             : is_set<T>::value ? range_format::set
+                                                : range_format::sequence> {};
 
 template <range_format K, typename R, typename Char, typename Enable = void>
 struct range_default_formatter;
@@ -601,9 +579,6 @@ template <typename Char, typename... T> struct tuple_join_view : detail::view {
       : tuple(t), sep{s} {}
 };
 
-template <typename Char, typename... T>
-using tuple_arg_join = tuple_join_view<Char, T...>;
-
 // Define FMT_TUPLE_JOIN_SPECIFIERS to enable experimental format specifiers
 // support in tuple_join. It is disabled by default because of issues with
 // the dynamic width and precision.
@@ -673,7 +648,42 @@ struct formatter<tuple_join_view<Char, T...>, Char> {
   }
 };
 
-FMT_MODULE_EXPORT_BEGIN
+namespace detail {
+// Check if T has an interface like a container adaptor (e.g. std::stack,
+// std::queue, std::priority_queue).
+template <typename T> class is_container_adaptor_like {
+  template <typename U> static auto check(U* p) -> typename U::container_type;
+  template <typename> static void check(...);
+
+ public:
+  static constexpr const bool value =
+      !std::is_void<decltype(check<T>(nullptr))>::value;
+};
+
+template <typename Container> struct all {
+  const Container& c;
+  auto begin() const -> typename Container::const_iterator { return c.begin(); }
+  auto end() const -> typename Container::const_iterator { return c.end(); }
+};
+}  // namespace detail
+
+template <typename T, typename Char>
+struct formatter<T, Char,
+                 enable_if_t<detail::is_container_adaptor_like<T>::value>>
+    : formatter<detail::all<typename T::container_type>, Char> {
+  using all = detail::all<typename T::container_type>;
+  template <typename FormatContext>
+  auto format(const T& t, FormatContext& ctx) const -> decltype(ctx.out()) {
+    struct getter : T {
+      static auto get(const T& t) -> all {
+        return {t.*(&getter::c)};  // Access c through the derived class.
+      }
+    };
+    return formatter<all>::format(getter::get(t), ctx);
+  }
+};
+
+FMT_BEGIN_EXPORT
 
 /**
   \rst
@@ -716,7 +726,7 @@ auto join(std::initializer_list<T> list, string_view sep)
   return join(std::begin(list), std::end(list), sep);
 }
 
-FMT_MODULE_EXPORT_END
+FMT_END_EXPORT
 FMT_END_NAMESPACE
 
 #endif  // FMT_RANGES_H_
