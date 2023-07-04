@@ -156,7 +156,7 @@ struct formatter<spdlog::details::dump_info<T>, char>
 
     // format the given bytes range as hex
     template<typename FormatContext, typename Container>
-    auto format(const spdlog::details::dump_info<Container> &the_range, FormatContext &ctx) -> decltype(ctx.out())
+    auto format(const spdlog::details::dump_info<Container> &the_range, FormatContext &ctx) const -> decltype(ctx.out())
     {
         SPDLOG_CONSTEXPR const char *hex_upper = "0123456789ABCDEF";
         SPDLOG_CONSTEXPR const char *hex_lower = "0123456789abcdef";
