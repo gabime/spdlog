@@ -232,7 +232,7 @@ struct formatter<spdlog::details::dump_info<T>, char>
 
     // put newline(and position header)
     template<typename It>
-    void put_newline(It inserter, std::size_t pos)
+    void put_newline(It inserter, std::size_t pos) const
     {
 #ifdef _WIN32
         *inserter++ = '\r';
