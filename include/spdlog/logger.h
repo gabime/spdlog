@@ -51,6 +51,10 @@
 
 namespace spdlog {
 
+namespace details {
+    class registry;
+}
+
 class SPDLOG_API logger
 {
 public:
@@ -126,7 +130,7 @@ public:
     {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
-        if (!log_enabled && !traceback_enabled)
+        if (!propagate_ && !log_enabled && !traceback_enabled)
         {
             return;
         }
@@ -315,6 +319,14 @@ public:
 
     const std::string &name() const;
 
+    // Indicates the value of the propagate property
+    bool propagate() const;
+    // Sets the propagate property. Only if propagate is true, log messages are propagated through the hierarchy
+    void set_propagate(bool);
+
+    // Gets the hierarchical parent of this logger.
+    std::shared_ptr<spdlog::logger> parent() const;
+
     // set formatting for the sinks in this logger.
     // each sink will get a separate instance of the formatter object.
     void set_formatter(std::unique_ptr<formatter> f);
@@ -354,6 +366,9 @@ protected:
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
     details::backtracer tracer_;
+    bool propagate_{true};
+
+    std::shared_ptr<spdlog::logger> parent_;
 
     // common implementation for after templated public api has been resolved
     template<typename... Args>
@@ -416,6 +431,13 @@ protected:
     // handle errors during logging.
     // default handler prints the error to stderr at max rate of 1 message/sec.
     void err_handler_(const std::string &msg);
+
+    void set_parent(std::shared_ptr<spdlog::logger> parent_logger) {
+        parent_ = parent_logger;
+    }
+
+    // friend class declaration for registry, since it needs to set parent of logger
+    friend class spdlog::details::registry;
 };
 
 void swap(logger &a, logger &b);

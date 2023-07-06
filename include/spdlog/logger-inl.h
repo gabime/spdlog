@@ -23,6 +23,8 @@ SPDLOG_INLINE logger::logger(const logger &other)
     , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
     , custom_err_handler_(other.custom_err_handler_)
     , tracer_(other.tracer_)
+    , propagate_(other.propagate_)
+    , parent_(other.parent_)
 {}
 
 SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT : name_(std::move(other.name_)),
@@ -30,7 +32,9 @@ SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT : name_(std::move(o
                                                                level_(other.level_.load(std::memory_order_relaxed)),
                                                                flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
                                                                custom_err_handler_(std::move(other.custom_err_handler_)),
-                                                               tracer_(std::move(other.tracer_))
+                                                               tracer_(std::move(other.tracer_)),
+                                                               propagate_(other.propagate_),
+                                                               parent_(std::move(other.parent_))
 
 {}
 
@@ -43,7 +47,11 @@ SPDLOG_INLINE logger &logger::operator=(logger other) SPDLOG_NOEXCEPT
 SPDLOG_INLINE void logger::swap(spdlog::logger &other) SPDLOG_NOEXCEPT
 {
     name_.swap(other.name_);
+    bool other_propagate = other.propagate_;
+    other.propagate_ = propagate_;
+    propagate_ = other_propagate;
     sinks_.swap(other.sinks_);
+    parent_.swap(other.parent_);
 
     // swap level_
     auto other_level = other.level_.load();
@@ -69,6 +77,12 @@ SPDLOG_INLINE void logger::set_level(level::level_enum log_level)
     level_.store(log_level);
 }
 
+
+SPDLOG_INLINE void logger::set_propagate(bool propagate)
+{
+    propagate_ = propagate;
+}
+
 SPDLOG_INLINE level::level_enum logger::level() const
 {
     return static_cast<level::level_enum>(level_.load(std::memory_order_relaxed));
@@ -77,6 +91,16 @@ SPDLOG_INLINE level::level_enum logger::level() const
 SPDLOG_INLINE const std::string &logger::name() const
 {
     return name_;
+}
+
+SPDLOG_INLINE bool logger::propagate() const
+{
+    return propagate_;
+}
+
+SPDLOG_INLINE std::shared_ptr<spdlog::logger> logger::parent() const
+{
+    return parent_;
 }
 
 // set formatting for the sinks in this logger.
@@ -169,6 +193,17 @@ SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg, bool
     {
         sink_it_(log_msg);
     }
+
+    auto tmp_lgr = this;
+
+    while (tmp_lgr->propagate_ && tmp_lgr->parent_ != nullptr) {
+        tmp_lgr = tmp_lgr->parent_.get();
+        if (tmp_lgr->should_log(log_msg.level))
+        {
+            tmp_lgr->sink_it_(log_msg);
+        }
+    }
+
     if (traceback_enabled)
     {
         tracer_.push_back(log_msg);
@@ -204,6 +239,9 @@ SPDLOG_INLINE void logger::flush_()
             sink->flush();
         }
         SPDLOG_LOGGER_CATCH(source_loc())
+    }
+    if (parent_) {
+        parent_->flush_();
     }
 }
 

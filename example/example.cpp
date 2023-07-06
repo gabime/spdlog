@@ -26,6 +26,7 @@ void udp_example();
 void custom_flags_example();
 void file_events_example();
 void replace_default_logger_example();
+void hierarchical_logger_example();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
@@ -86,6 +87,7 @@ int main(int, char *[])
         custom_flags_example();
         file_events_example();
         replace_default_logger_example();
+        hierarchical_logger_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -388,4 +390,41 @@ void replace_default_logger_example()
     spdlog::debug("This message should be displayed..");
 
     spdlog::set_default_logger(old_logger);
+}
+
+
+void hierarchical_logger_example()
+{
+
+    spdlog::default_logger()->set_formatter(spdlog::details::make_unique<spdlog::pattern_formatter>("root [%n] [%^%l%$] %v"));
+
+    auto lvl1 = spdlog::stdout_color_mt("propagate_lvl1");
+
+    lvl1->set_formatter(spdlog::details::make_unique<spdlog::pattern_formatter>("lvl1 [%n] [%^%l%$] %v"));
+    lvl1->set_level(spdlog::level::debug);
+    auto lvl2 = std::make_shared<spdlog::logger>("propagate_lvl1.lvl2");
+    spdlog::register_logger(lvl2);
+    // skip level 3
+    auto lvl4 = std::make_shared<spdlog::logger>("propagate_lvl1.lvl2.lvl3.lvl4");
+    spdlog::register_logger(lvl4);
+
+
+    lvl4->debug("I am a debug message at Level 4 but will be printed by Level 1 logger");
+    lvl2->debug("I am a debug message at Level 2 but will be printed by Level 1 logger");
+
+
+    auto multi_lvl1 = spdlog::stdout_color_mt("multi_lvl1");
+    multi_lvl1->set_level(spdlog::level::debug);
+    multi_lvl1->set_formatter(spdlog::details::make_unique<spdlog::pattern_formatter>("lvl1 [%n] [%^%l%$] %v"));
+    auto multi_lvl2 = spdlog::stdout_color_mt("multi_lvl1.lvl2");
+    multi_lvl2->set_level(spdlog::level::info);
+    multi_lvl2->set_formatter(spdlog::details::make_unique<spdlog::pattern_formatter>("lvl2 [%n] [%^%l%$] %v"));
+    // skip level 3
+    auto multi_lvl4 = std::make_shared<spdlog::logger>("multi_lvl1.lvl2.lvl3.lvl4");
+    spdlog::register_logger(multi_lvl4);
+
+
+
+    multi_lvl4->debug("I am a debug message at Level 4 but will be printed by Level 1 logger");
+    multi_lvl4->info("I am an info message at Level 4 but will be printed by Level 2, Level 1 and root logger");
 }

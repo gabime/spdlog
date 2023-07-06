@@ -34,7 +34,9 @@ TEST_CASE("apply_all", "[registry]")
 
     int counter = 0;
     spdlog::apply_all([&counter](std::shared_ptr<spdlog::logger>) { counter++; });
-    REQUIRE(counter == 2);
+    // 3 because the root logger with empty name will be automatically created
+    REQUIRE(counter == 3);
+    spdlog::drop("");
 
     counter = 0;
     spdlog::drop(tested_logger_name2);

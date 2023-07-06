@@ -219,6 +219,18 @@ SPDLOG_INLINE void registry::flush_all()
 SPDLOG_INLINE void registry::drop(const std::string &logger_name)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
+
+    // Iterate over all loggers and make sure to update the root logger reference
+    auto drop_logger = loggers_.find(logger_name);
+    if (drop_logger != loggers_.end()) {
+        for (auto& logger : loggers_) {
+            if (logger.second->parent_ == drop_logger->second) {
+                // take the next parent
+                logger.second->parent_ = drop_logger->second->parent_;
+            }
+        }
+    }
+
     auto is_default_logger = default_logger_ && default_logger_->name() == logger_name;
     loggers_.erase(logger_name);
     if (is_default_logger)
@@ -309,6 +321,26 @@ SPDLOG_INLINE void registry::register_logger_(std::shared_ptr<logger> new_logger
     auto logger_name = new_logger->name();
     throw_if_exists_(logger_name);
     loggers_[logger_name] = std::move(new_logger);
+
+    if (logger_name.empty())
+    {
+        // this is already the root logger, nothing to be done here
+        return;
+    }
+
+    // get parent name or use root logger if no '.' in name
+    const auto& dot_pos = logger_name.rfind('.');
+
+    const auto& parent_name = dot_pos == ::std::string::npos ? "" : logger_name.substr(0,dot_pos);
+
+
+    if (loggers_.count(parent_name) == 0) {
+        auto parent_logger = ::std::make_shared<::spdlog::logger>(parent_name);
+        register_logger_(parent_logger);
+    }
+
+    loggers_[logger_name]->set_parent(loggers_[parent_name]);
+
 }
 
 } // namespace details
