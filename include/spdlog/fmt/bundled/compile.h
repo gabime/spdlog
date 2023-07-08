@@ -331,14 +331,14 @@ template <typename T, typename Char> struct parse_specs_result {
   int next_arg_id;
 };
 
-enum { manual_indexing_id = -1 };
+constexpr int manual_indexing_id = -1;
 
 template <typename T, typename Char>
 constexpr parse_specs_result<T, Char> parse_specs(basic_string_view<Char> str,
                                                   size_t pos, int next_arg_id) {
   str.remove_prefix(pos);
-  auto ctx =
-      compile_parse_context<Char>(str, max_value<int>(), nullptr, next_arg_id);
+  auto ctx = compile_parse_context<Char>(str, max_value<int>(), nullptr, {},
+                                         next_arg_id);
   auto f = formatter<T, Char>();
   auto end = f.parse(ctx);
   return {f, pos + fmt::detail::to_unsigned(end - str.data()),
@@ -348,17 +348,21 @@ constexpr parse_specs_result<T, Char> parse_specs(basic_string_view<Char> str,
 template <typename Char> struct arg_id_handler {
   arg_ref<Char> arg_id;
 
-  constexpr int on_auto() {
+  constexpr int operator()() {
     FMT_ASSERT(false, "handler cannot be used with automatic indexing");
     return 0;
   }
-  constexpr int on_index(int id) {
+  constexpr int operator()(int id) {
     arg_id = arg_ref<Char>(id);
     return 0;
   }
-  constexpr int on_name(basic_string_view<Char> id) {
+  constexpr int operator()(basic_string_view<Char> id) {
     arg_id = arg_ref<Char>(id);
     return 0;
+  }
+
+  constexpr void on_error(const char* message) {
+    FMT_THROW(format_error(message));
   }
 };
 
@@ -497,7 +501,7 @@ constexpr auto compile(S format_str) {
 #endif  // defined(__cpp_if_constexpr) && defined(__cpp_return_type_deduction)
 }  // namespace detail
 
-FMT_BEGIN_EXPORT
+FMT_MODULE_EXPORT_BEGIN
 
 #if defined(__cpp_if_constexpr) && defined(__cpp_return_type_deduction)
 
@@ -601,7 +605,7 @@ template <detail_exported::fixed_string Str> constexpr auto operator""_cf() {
 }  // namespace literals
 #endif
 
-FMT_END_EXPORT
+FMT_MODULE_EXPORT_END
 FMT_END_NAMESPACE
 
 #endif  // FMT_COMPILE_H_
