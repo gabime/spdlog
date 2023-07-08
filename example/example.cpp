@@ -31,6 +31,7 @@ void replace_default_logger_example();
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h" // support for user defined types
 
+
 int main(int, char *[])
 {
     // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
@@ -183,6 +184,7 @@ void async_example()
 // {:p} - don't print the position on each line start.
 // {:n} - don't split the output to lines.
 
+#if !defined SPDLOG_USE_STD_FORMAT || defined(_MSC_VER)
 #include "spdlog/fmt/bin_to_hex.h"
 void binary_example()
 {
@@ -200,6 +202,11 @@ void binary_example()
     // logger->info("hexdump style: {:a}", spdlog::to_hex(buf));
     // logger->info("hexdump style, 20 chars per line {:a}", spdlog::to_hex(buf, 20));
 }
+#else
+void binary_example() {
+    // not supported with std::format yet
+}
+#endif
 
 // Log a vector of numbers
 #ifndef SPDLOG_USE_STD_FORMAT
@@ -287,7 +294,7 @@ struct fmt::formatter<my_type> : fmt::formatter<std::string>
 template<>
 struct std::formatter<my_type> : std::formatter<std::string>
 {
-    auto format(my_type my, format_context &ctx) -> decltype(ctx.out())
+    auto format(my_type my, format_context &ctx) const -> decltype(ctx.out())
     {
         return format_to(ctx.out(), "[my_type i={}]", my.i);
     }

@@ -75,6 +75,8 @@ spdlogConfigVersion.cmake
 
 # idea
 .idea/
+.cache/
+.vscode/
 cmake-build-*/
 *.db
 *.ipch

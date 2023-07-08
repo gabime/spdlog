@@ -56,6 +56,10 @@ protected:
 
         // See system/core/liblog/logger_write.c for explanation of return value
         int ret = android_log(priority, tag_.c_str(), msg_output);
+        if (ret == -EPERM)
+        {
+            return; // !__android_log_is_loggable
+        }
         int retry_count = 0;
         while ((ret == -11 /*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_RETRIES))
         {

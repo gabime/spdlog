@@ -54,6 +54,10 @@ if(systemd_FOUND)
     list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)
 endif()
 
+if(NOT SPDLOG_USE_STD_FORMAT)
+    list(APPEND SPDLOG_UTESTS_SOURCES test_bin_to_hex.cpp)
+endif()
+
 enable_testing()
 
 function(spdlog_prepare_test test_target spdlog_lib)
