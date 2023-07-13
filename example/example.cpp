@@ -52,7 +52,7 @@ int main(int, char *[])
     spdlog::debug("This message should be displayed..");
 
     // Customize msg format for all loggers
-    spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
+    spdlog::set_pattern("[%^%H:%M:%S %z%$] [%^%L%$] [thread %t] %^%v%$");
     spdlog::info("This an info message with custom format");
     spdlog::set_pattern("%+"); // back to default format
     spdlog::set_level(spdlog::level::info);
