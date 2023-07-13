@@ -58,18 +58,28 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
 
     std::lock_guard<mutex_t> lock(mutex_);
     msg.color_range_start = 0;
-    msg.color_range_end = 0;
+    msg.color_range_end   = 0;
+    msg.color_ranges_start.clear();
+    msg.color_ranges_end.clear();
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
-    if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
+    if (should_do_colors_ && msg.color_ranges_start.size() == msg.color_ranges_end.size())
     {
-        // before color range
-        print_range_(formatted, 0, msg.color_range_start);
-        // in color range
-        auto orig_attribs = static_cast<WORD>(set_foreground_color_(colors_[static_cast<size_t>(msg.level)]));
-        print_range_(formatted, msg.color_range_start, msg.color_range_end);
-        // reset to orig colors
-        ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), orig_attribs);
+        size_t before_color_range = 0;
+        for(int i = 0; i < msg.color_ranges_start.size(); i++) {
+            msg.color_range_start = msg.color_ranges_start[i];
+            msg.color_range_end   = msg.color_ranges_end[i];
+
+            // before color range
+            print_range_(formatted, before_color_range, msg.color_range_start);
+            // in color range
+            auto orig_attribs = static_cast<WORD>(set_foreground_color_(colors_[static_cast<size_t>(msg.level)]));
+            print_range_(formatted, msg.color_range_start, msg.color_range_end);
+            // reset to orig colors
+            ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), orig_attribs);
+            // get new location outside color ranges
+            before_color_range = msg.color_range_end;
+        }
         print_range_(formatted, msg.color_range_end, formatted.size());
     }
     else // print without colors if color range is invalid (or color is disabled)
