@@ -71,7 +71,7 @@ template<typename Mutex>
 class qt_color_sink : public base_sink<Mutex>
 {
 public:
-    qt_color_sink(QTextEdit *qt_text_edit, int max_lines)
+    qt_color_sink(QTextEdit *qt_text_edit, int max_lines, bool dark_colors=false)
         : qt_text_edit_(qt_text_edit)
         , max_lines_(max_lines)
     {
@@ -84,16 +84,16 @@ public:
         // set colors
         QTextCharFormat format;
         // trace
-        format.setForeground(Qt::gray);
+        format.setForeground(dark_colors ? Qt::darkGray : Qt::gray);
         colors_.at(level::trace) = format;
         // debug
-        format.setForeground(Qt::cyan);
+        format.setForeground(dark_colors ? Qt::darkCyan : Qt::cyan);
         colors_.at(level::debug) = format;
         // info
-        format.setForeground(Qt::green);
+        format.setForeground(dark_colors ? Qt::darkGreen : Qt::green);
         colors_.at(level::info) = format;
         // warn
-        format.setForeground(Qt::yellow);
+        format.setForeground(dark_colors ? Qt::darkYellow : Qt::yellow);
         colors_.at(level::warn) = format;
         // err
         format.setForeground(Qt::red);
