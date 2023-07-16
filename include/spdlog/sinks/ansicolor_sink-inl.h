@@ -45,29 +45,17 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
     std::lock_guard<mutex_t> lock(mutex_);
     msg.color_range_start = 0;
     msg.color_range_end   = 0;
-    msg.color_ranges_start.clear();
-    msg.color_ranges_end.clear();
 
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
-    if (should_do_colors_ && msg.color_ranges_start.size() == msg.color_ranges_end.size())
+    if (should_do_colors_ && msg.color_range_end > msg.color_range_start)
     {
-        size_t before_color_range = 0;
-        for(int i = 0; i < msg.color_ranges_start.size(); i++) {
-            msg.color_range_start = msg.color_ranges_start[i];
-            msg.color_range_end   = msg.color_ranges_end[i];
-
-            // before color range
-            print_range_(formatted, before_color_range, msg.color_range_start);
-
-            // in color range
-            print_ccode_(colors_.at(static_cast<size_t>(msg.level)));
-            print_range_(formatted, msg.color_range_start, msg.color_range_end);
-            print_ccode_(reset);
-
-            // get new location outside color ranges
-            before_color_range = msg.color_range_end;
-        }
+        // before color range
+        print_range_(formatted, 0, msg.color_range_start);
+        // in color range
+        print_ccode_(colors_.at(static_cast<size_t>(msg.level)));
+        print_range_(formatted, msg.color_range_start, msg.color_range_end);
+        print_ccode_(reset);
         // after all color ranges
         print_range_(formatted, msg.color_range_end, formatted.size());
     }
