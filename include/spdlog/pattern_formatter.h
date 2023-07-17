@@ -144,8 +144,6 @@ private:
     custom_flags custom_handlers_;
 
     std::tm get_time_(const details::log_msg &msg);
-    template<typename Padder>
-    void handle_flag_(char flag, details::padding_info padding, details::styling_info styling);
 
     // Extract given pad spec (e.g. %8X)
     // Advance the given it pass the end of the padding spec found (if any)
@@ -153,11 +151,16 @@ private:
     static details::padding_info handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end);
 
 #if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+    template<typename Padder>
+    void handle_flag_(char flag, details::padding_info padding, details::styling_info styling);
+
     // Extract given style spec (e.g. %{style}^X, %{style;style}^X, etc...)
     // Advance the given it pass the end of the style spec found (if any)
     // Return style.
     static details::styling_info handle_stylespec_(std::string::const_iterator &it, std::string::const_iterator end);
 #endif
+    template<typename Padder>
+    void handle_flag_(char flag, details::padding_info padding);
     void compile_pattern_(const std::string &pattern);
 };
 } // namespace spdlog

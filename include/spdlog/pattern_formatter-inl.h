@@ -781,7 +781,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
-        msg.color_range_stop = dest.size();
+        msg.color_range_end = dest.size();
     }
 };
 #endif
