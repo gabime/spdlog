@@ -70,8 +70,13 @@ TEST_CASE("color range test1", "[pattern_formatter]")
     std::string logger_name = "test";
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, spdlog::string_view_t(buf.data(), buf.size()));
     formatter->format(msg, formatted);
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+    REQUIRE(msg.styling_ranges.at(0).position == 0);
+    REQUIRE(msg.styling_ranges.at(1).position == 5);
+#else
     REQUIRE(msg.color_range_start == 0);
     REQUIRE(msg.color_range_end == 5);
+#endif
     REQUIRE(log_to_str("hello", "%^%v%$", spdlog::pattern_time_type::local, "\n") == "hello\n");
 }
 
@@ -82,8 +87,13 @@ TEST_CASE("color range test2", "[pattern_formatter]")
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "");
     memory_buf_t formatted;
     formatter->format(msg, formatted);
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+    REQUIRE(msg.styling_ranges.at(0).position == 0);
+    REQUIRE(msg.styling_ranges.at(1).position == 0);
+#else
     REQUIRE(msg.color_range_start == 0);
     REQUIRE(msg.color_range_end == 0);
+#endif
     REQUIRE(log_to_str("", "%^%$", spdlog::pattern_time_type::local, "\n") == "\n");
 }
 
@@ -94,8 +104,13 @@ TEST_CASE("color range test3", "[pattern_formatter]")
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
     memory_buf_t formatted;
     formatter->format(msg, formatted);
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+    REQUIRE(msg.styling_ranges.at(0).position == 0);
+    REQUIRE(msg.styling_ranges.at(1).position == 3);
+#else
     REQUIRE(msg.color_range_start == 0);
     REQUIRE(msg.color_range_end == 3);
+#endif
 }
 
 TEST_CASE("color range test4", "[pattern_formatter]")
@@ -106,8 +121,13 @@ TEST_CASE("color range test4", "[pattern_formatter]")
 
     memory_buf_t formatted;
     formatter->format(msg, formatted);
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+    REQUIRE(msg.styling_ranges.at(0).position == 2);
+    REQUIRE(msg.styling_ranges.at(1).position == 5);
+#else
     REQUIRE(msg.color_range_start == 2);
     REQUIRE(msg.color_range_end == 5);
+#endif
     REQUIRE(log_to_str("ignored", "XX%^YYY%$", spdlog::pattern_time_type::local, "\n") == "XXYYY\n");
 }
 
@@ -118,8 +138,14 @@ TEST_CASE("color range test5", "[pattern_formatter]")
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
     memory_buf_t formatted;
     formatter->format(msg, formatted);
-    REQUIRE(msg.color_range_start[0] == 2);
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+    REQUIRE(msg.styling_ranges.at(0).position == 2);
+    REQUIRE(msg.styling_ranges.at(0).is_start == true);
+    REQUIRE(msg.styling_ranges.size() == 1);
+#else
+    REQUIRE(msg.color_range_start == 2);
     REQUIRE(msg.color_range_end == 0);
+#endif
 }
 
 TEST_CASE("color range test6", "[pattern_formatter]")
@@ -129,9 +155,139 @@ TEST_CASE("color range test6", "[pattern_formatter]")
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
     memory_buf_t formatted;
     formatter->format(msg, formatted);
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+    REQUIRE(msg.styling_ranges.at(0).position == 2);
+    REQUIRE(msg.styling_ranges.at(0).is_start == false);
+    REQUIRE(msg.styling_ranges.size() == 1);
+#else
     REQUIRE(msg.color_range_start == 0);
-    REQUIRE(msg.color_range_end[0] == 2);
+    REQUIRE(msg.color_range_end == 2);
+#endif
 }
+
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+
+TEST_CASE("color range test7", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%^*%$%^*%$");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+
+    REQUIRE(msg.styling_ranges.size() == 4);
+    REQUIRE(msg.styling_ranges.at(0).position == 0);
+    REQUIRE(msg.styling_ranges.at(0).is_start == true);
+    REQUIRE(msg.styling_ranges.at(0).styles.at(0) == spdlog::details::style_type(0));
+    REQUIRE(msg.styling_ranges.at(1).position == 1);
+    REQUIRE(msg.styling_ranges.at(1).is_start == false);
+    REQUIRE(msg.styling_ranges.at(1).styles.at(0) == spdlog::details::style_type(0));
+
+    REQUIRE(msg.styling_ranges.at(2).position == 1);
+    REQUIRE(msg.styling_ranges.at(2).is_start == true);
+    REQUIRE(msg.styling_ranges.at(2).styles.at(0) == spdlog::details::style_type(0));
+    REQUIRE(msg.styling_ranges.at(3).position == 2);
+    REQUIRE(msg.styling_ranges.at(3).is_start == false);
+    REQUIRE(msg.styling_ranges.at(3).styles.at(0) == spdlog::details::style_type(0));
+}
+
+TEST_CASE("color range test8", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%{bold}^*%$");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+
+    REQUIRE(msg.styling_ranges.size() == 2);
+    REQUIRE(msg.styling_ranges.at(0).position == 0);
+    REQUIRE(msg.styling_ranges.at(0).is_start == true);
+    REQUIRE(msg.styling_ranges.at(0).styles.at(0) == spdlog::details::style_type(2));
+    REQUIRE(msg.styling_ranges.at(1).position == 1);
+    REQUIRE(msg.styling_ranges.at(1).is_start == false);
+    REQUIRE(msg.styling_ranges.at(1).styles.at(0) == spdlog::details::style_type(0));
+}
+
+TEST_CASE("color range test9", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%{bold;fg_red}^*%$");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+
+    REQUIRE(msg.styling_ranges.size() == 2);
+    REQUIRE(msg.styling_ranges.at(0).position == 0);
+    REQUIRE(msg.styling_ranges.at(0).is_start == true);
+    REQUIRE(msg.styling_ranges.at(0).styles.at(0) == spdlog::details::style_type(2));
+    REQUIRE(msg.styling_ranges.at(0).styles.at(1) == spdlog::details::style_type(8));
+    REQUIRE(msg.styling_ranges.at(1).position == 1);
+    REQUIRE(msg.styling_ranges.at(1).is_start == false);
+    REQUIRE(msg.styling_ranges.at(1).styles.at(0) == spdlog::details::style_type(0));
+}
+
+TEST_CASE("color range test10", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%{bold;fg_red;bg_black}^*%$");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+
+    REQUIRE(msg.styling_ranges.size() == 2);
+    REQUIRE(msg.styling_ranges.at(0).position == 0);
+    REQUIRE(msg.styling_ranges.at(0).is_start == true);
+    REQUIRE(msg.styling_ranges.at(0).styles.at(0) == spdlog::details::style_type(2));
+    REQUIRE(msg.styling_ranges.at(0).styles.at(1) == spdlog::details::style_type(8));
+    REQUIRE(msg.styling_ranges.at(0).styles.at(2) == spdlog::details::style_type(16));
+    REQUIRE(msg.styling_ranges.at(1).position == 1);
+    REQUIRE(msg.styling_ranges.at(1).is_start == false);
+    REQUIRE(msg.styling_ranges.at(1).styles.at(0) == spdlog::details::style_type(0));
+}
+
+TEST_CASE("color range test11", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("%{bold;fg_red;fake}^*");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+
+    REQUIRE(msg.styling_ranges.size() == 1);
+    REQUIRE(msg.styling_ranges.at(0).position == 0);
+    REQUIRE(msg.styling_ranges.at(0).is_start == true);
+    REQUIRE(msg.styling_ranges.at(0).styles.at(0) == spdlog::details::style_type(2));
+    REQUIRE(msg.styling_ranges.at(0).styles.at(1) == spdlog::details::style_type(8));
+    REQUIRE(msg.styling_ranges.at(0).styles.at(2) == spdlog::details::style_type(0));
+}
+
+TEST_CASE("color range test12", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("*%$");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+
+    REQUIRE(msg.styling_ranges.size() == 1);
+    REQUIRE(msg.styling_ranges.at(0).position == 1);
+    REQUIRE(msg.styling_ranges.at(0).is_start == false);
+}
+
+TEST_CASE("color range test13", "[pattern_formatter]")
+{
+    auto formatter = std::make_shared<spdlog::pattern_formatter>("*%{bold}$");
+    std::string logger_name = "test";
+    spdlog::details::log_msg msg(logger_name, spdlog::level::info, "ignored");
+    memory_buf_t formatted;
+    formatter->format(msg, formatted);
+
+    REQUIRE(msg.styling_ranges.size() == 1);
+    REQUIRE(msg.styling_ranges.at(0).position == 1);
+    REQUIRE(msg.styling_ranges.at(0).is_start == false);
+    REQUIRE(msg.styling_ranges.at(0).styles.at(0) == spdlog::details::style_type(0));
+}
+#endif
 
 //
 // Test padding
