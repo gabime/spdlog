@@ -115,8 +115,10 @@ endif()
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     option(SPDLOG_CLOCK_COARSE "Use CLOCK_REALTIME_COARSE instead of the regular clock," OFF)
+    option(SPDLOG_EXTENDED_STLYING "Use the extended styling system and syntax" OFF)
 else()
     set(SPDLOG_CLOCK_COARSE OFF CACHE BOOL "non supported option" FORCE)
+    set(SPDLOG_EXTENDED_STLYING "non supported option" FORCE)
 endif()
 
 option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file descriptors" OFF)
@@ -245,6 +247,7 @@ foreach(
     SPDLOG_WCHAR_FILENAMES
     SPDLOG_NO_EXCEPTIONS
     SPDLOG_CLOCK_COARSE
+    SPDLOG_EXTENDED_STLYING
     SPDLOG_PREVENT_CHILD_FD
     SPDLOG_NO_THREAD_ID
     SPDLOG_NO_TLS
