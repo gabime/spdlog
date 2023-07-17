@@ -727,7 +727,7 @@ private:
 };
 
 #if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
-// mark the color range. expect it to be in the form of "%^colored text%$"
+// mark the style range. expect it to be in the form of "%^colored text%$" or "%{style_spec}^styled text%$"
 class color_start_formatter final : public flag_formatter
 {
 public:
