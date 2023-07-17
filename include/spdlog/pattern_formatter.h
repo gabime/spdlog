@@ -47,6 +47,37 @@ struct padding_info
     bool enabled_ = false;
 };
 
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+
+class SPDLOG_API flag_formatter
+{
+public:
+    explicit flag_formatter(padding_info padinfo)
+        : padinfo_(padinfo)
+    {}
+    explicit flag_formatter(padding_info padinfo, styling_info style_info)
+        : padinfo_(padinfo)
+        , styleinfo_(style_info)
+    {}
+    flag_formatter() = default;
+    virtual ~flag_formatter() = default;
+    virtual void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) = 0;
+
+protected:
+    padding_info padinfo_;
+    styling_info styleinfo_;
+};
+
+static const details::style_strings style_type_table
+{
+    "null_style",
+    "reset", "bold", "dark", "underline", "blink", "reverse",
+    "fg_black", "fg_red", "fg_green", "fg_yellow", "fg_blue", "fg_magenta", "fg_cyan", "fg_white", "fg_default",
+    "bg_black", "bg_red", "bg_green", "bg_yellow", "bg_blue", "bg_magenta", "bg_cyan", "bg_white", "bg_default"
+};
+
+#else
+
 class SPDLOG_API flag_formatter
 {
 public:
@@ -60,6 +91,8 @@ public:
 protected:
     padding_info padinfo_;
 };
+
+#endif
 
 } // namespace details
 
@@ -112,13 +145,19 @@ private:
 
     std::tm get_time_(const details::log_msg &msg);
     template<typename Padder>
-    void handle_flag_(char flag, details::padding_info padding);
+    void handle_flag_(char flag, details::padding_info padding, details::styling_info styling);
 
     // Extract given pad spec (e.g. %8X)
     // Advance the given it pass the end of the padding spec found (if any)
     // Return padding.
     static details::padding_info handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end);
 
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+    // Extract given style spec (e.g. %{style}^X, %{style;style}^X, etc...)
+    // Advance the given it pass the end of the style spec found (if any)
+    // Return style.
+    static details::styling_info handle_stylespec_(std::string::const_iterator &it, std::string::const_iterator end);
+#endif
     void compile_pattern_(const std::string &pattern);
 };
 } // namespace spdlog
