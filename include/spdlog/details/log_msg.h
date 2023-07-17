@@ -6,15 +6,16 @@
 #include <spdlog/common.h>
 #include <string>
 
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+#   include <vector>
+#   include <array>
+#endif
+
 
 namespace spdlog {
 namespace details {
 
 #if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
-
-#include <vector>
-#include <array>
-
 enum class style_type
 {
     // reservation for data structures
