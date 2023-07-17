@@ -26,6 +26,7 @@ void udp_example();
 void custom_flags_example();
 void file_events_example();
 void replace_default_logger_example();
+void extended_stlying();
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
@@ -87,6 +88,7 @@ int main(int, char *[])
         custom_flags_example();
         file_events_example();
         replace_default_logger_example();
+        extended_stlying();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -395,4 +397,60 @@ void replace_default_logger_example()
     spdlog::debug("This message should be displayed..");
 
     spdlog::set_default_logger(old_logger);
+}
+
+void extended_stlying()
+{
+#if !defined(_WIN32) && defined(SPDLOG_EXTENDED_STLYING)
+    // with extended styling you may use the mutliple color
+    // area formatter "%^" in more than one spot in your pattern.
+    // in addition there are syntax extensions to the color formatter
+    // they are defined by squirley braces { } after the '%' but before
+    // the '^'. (example: "%{bold}^")
+    //
+    // mutliple stylings can apply to a single area by delimiting the key
+    // words with a ';'. (example: "%{bold;fg_blue}^")
+    //
+    // styling key words come in three flavors font style, font foreground
+    // color, and font background color
+    //
+    // font styles:
+    // reset bold dark underline blink reverse
+    //
+    // font foreground colors:
+    // fg_black fg_red fg_green fg_yellow fg_blue fg_magenta fg_cyan fg_white fg_default
+    //
+    // font background colors:
+    // bg_black bg_red bg_green bg_yellow bg_blue bg_magenta bg_cyan bg_white bg_default
+
+
+    spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
+    spdlog::info("regular log message");
+
+    spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %^%v%$");
+    spdlog::info("multiple color areas");
+
+    spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [%{fg_yellow}^thread %t%$] %^%v%$");
+    spdlog::info("multiple color areas with more than one color");
+
+    spdlog::set_pattern("[%{bold;fg_red}^%H:%M:%S %z%$] [%^%L%$] [%{fg_yellow}^thread %t%$] %{bold;fg_cyan}^%v%$");
+    spdlog::info("bold colors?");
+
+    spdlog::set_pattern(
+        "[%{bold;fg_red}^%H:%M:%S %z%$] "
+        "[%^%L%$] [%{fg_yellow}^thread %t%$] "
+        "even %{bold;blink;fg_magenta;bg_black}^%v%$ colors?"
+    );
+    spdlog::info("blinking");
+
+    spdlog::set_pattern("[%{fg_yellow;bold}^%H:%M:%S %z%$] [%^%L%$] [%^thread %t%$] %^%v%$");
+    spdlog::set_level(spdlog::level::trace);
+    spdlog::trace("I work on other levels?");
+    spdlog::debug("I work on other levels?");
+    spdlog::info("I work on other levels?");
+    spdlog::warn("I work on other levels?");
+    spdlog::error("I work on other levels?");
+    spdlog::critical("I work on other levels?");
+    spdlog::set_pattern("%+"); // back to default format
+#endif
 }
