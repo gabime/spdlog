@@ -263,39 +263,39 @@ public:
 #endif
 
     template<typename T>
-    void trace(const T &msg, source_loc loc = source_loc::current())
+    void trace(const T &msg)
     {
-        log(loc, level::trace, msg);
+        log(level::trace, msg);
     }
 
     template<typename T>
-    void debug(const T &msg, source_loc loc = source_loc::current())
+    void debug(const T &msg)
     {
-        log(loc, level::debug, msg);
+        log(level::debug, msg);
     }
 
     template<typename T>
-    void info(const T &msg, source_loc loc = source_loc::current())
+    void info(const T &msg)
     {
-        log(loc, level::info, msg);
+        log(level::info, msg);
     }
 
     template<typename T>
-    void warn(const T &msg, source_loc loc = source_loc::current())
+    void warn(const T &msg)
     {
-        log(loc, level::warn, msg);
+        log(level::warn, msg);
     }
 
     template<typename T>
-    void error(const T &msg, source_loc loc = source_loc::current())
+    void error(const T &msg)
     {
-        log(loc, level::err, msg);
+        log(level::err, msg);
     }
 
     template<typename T>
-    void critical(const T &msg, source_loc loc = source_loc::current())
+    void critical(const T &msg)
     {
-        log(loc, level::critical, msg);
+        log(level::critical, msg);
     }
 
     // return true logging is enabled for the given level.
