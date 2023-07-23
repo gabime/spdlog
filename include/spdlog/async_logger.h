@@ -51,14 +51,6 @@ public:
 
     std::shared_ptr<logger> clone(std::string new_name) override;
 
-    /**
-     * @brief block until all messages in thread_pool_ are processed
-     * @param intervalMs check whether should return or not on every 'intervalMs' milliseconds
-     * @param timeoutMs timeout in milliseconds. -1 means to wait indefinitely
-     * @return true: all messages in thread_pool_ are processed, false: otherwise
-    */
-    bool sync(int intervalMs=100, int timeoutMs=-1);
-
 protected:
     void sink_it_(const details::log_msg &msg) override;
     void flush_() override;

@@ -90,35 +90,3 @@ SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::s
     cloned->name_ = std::move(new_name);
     return cloned;
 }
-
-SPDLOG_INLINE bool spdlog::async_logger::sync(int intervalMs, int timeoutMs)
-{
-    using namespace std::chrono;
-
-    auto tp=thread_pool_.lock();
-    assert(tp);
-
-    if (tp->queue_size()==0)
-        return true;
-      
-    auto start=steady_clock::now();
-    bool synced=false;
-    bool indef=(timeoutMs<=0);
-    do
-    {
-        if (!indef && intervalMs>timeoutMs)
-            intervalMs=timeoutMs;  
-
-        std::this_thread::sleep_for(milliseconds(intervalMs));
-        synced=(tp->queue_size()==0);
-
-        if (!indef)
-        {
-            auto now=steady_clock::now();
-            auto passedMs=duration_cast<milliseconds>(now-start);
-            start=now;
-            timeoutMs-=passedMs.count();
-        }
-    } while ((!indef && timeoutMs>0 || indef) && !synced);
-    return synced;
-}
