@@ -54,7 +54,7 @@ jobs:
 
   build_osx:
     runs-on: macOS-latest
-    name: "OS X Clang (C++11, Release)"
+    name: "OS X Clang (C++20, Release)"
     steps:
       - uses: actions/checkout@main
       - name: Build
@@ -62,7 +62,7 @@ jobs:
           mkdir -p build && cd build
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_CXX_STANDARD=11 \
+            -DCMAKE_CXX_STANDARD=20 \
             -DSPDLOG_BUILD_EXAMPLE=ON \
             -DSPDLOG_BUILD_EXAMPLE_HO=ON \
             -DSPDLOG_BUILD_WARNINGS=ON \
