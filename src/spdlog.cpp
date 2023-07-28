@@ -7,7 +7,6 @@
 
 #include <spdlog/spdlog-inl.h>
 #include <spdlog/common-inl.h>
-#include <spdlog/details/backtracer-inl.h>
 #include <spdlog/details/registry-inl.h>
 #include <spdlog/details/os-inl.h>
 #include <spdlog/pattern_formatter-inl.h>

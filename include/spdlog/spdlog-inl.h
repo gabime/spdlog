@@ -32,21 +32,6 @@ SPDLOG_INLINE void set_pattern(std::string pattern, pattern_time_type time_type)
     set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
 }
 
-SPDLOG_INLINE void enable_backtrace(size_t n_messages)
-{
-    details::registry::instance().enable_backtrace(n_messages);
-}
-
-SPDLOG_INLINE void disable_backtrace()
-{
-    details::registry::instance().disable_backtrace();
-}
-
-SPDLOG_INLINE void dump_backtrace()
-{
-    default_logger_raw()->dump_backtrace();
-}
-
 SPDLOG_INLINE level::level_enum get_level()
 {
     return default_logger_raw()->level();

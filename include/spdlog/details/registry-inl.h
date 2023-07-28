@@ -74,11 +74,6 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
 
     new_logger->flush_on(flush_level_);
 
-    if (backtrace_n_messages_ > 0)
-    {
-        new_logger->enable_backtrace(backtrace_n_messages_);
-    }
-
     if (automatic_registration_)
     {
         register_logger_(std::move(new_logger));
@@ -144,27 +139,6 @@ SPDLOG_INLINE void registry::set_formatter(std::unique_ptr<formatter> formatter)
     for (auto &l : loggers_)
     {
         l.second->set_formatter(formatter_->clone());
-    }
-}
-
-SPDLOG_INLINE void registry::enable_backtrace(size_t n_messages)
-{
-    std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    backtrace_n_messages_ = n_messages;
-
-    for (auto &l : loggers_)
-    {
-        l.second->enable_backtrace(n_messages);
-    }
-}
-
-SPDLOG_INLINE void registry::disable_backtrace()
-{
-    std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    backtrace_n_messages_ = 0;
-    for (auto &l : loggers_)
-    {
-        l.second->disable_backtrace();
     }
 }
 

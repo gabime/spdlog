@@ -16,7 +16,6 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/log_msg.h>
-#include <spdlog/details/backtracer.h>
 
 #include <vector>
 
@@ -105,27 +104,24 @@ public:
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
     {
         bool log_enabled = should_log(lvl);
-        bool traceback_enabled = tracer_.enabled();
-        if (!log_enabled && !traceback_enabled)
+        if (!log_enabled)
         {
             return;
         }
 
         details::log_msg log_msg(log_time, loc, name_, lvl, msg);
-        log_it_(log_msg, log_enabled, traceback_enabled);
+        sink_it_(log_msg);
     }
 
     void log(source_loc loc, level::level_enum lvl, string_view_t msg)
     {
         bool log_enabled = should_log(lvl);
-        bool traceback_enabled = tracer_.enabled();
-        if (!log_enabled && !traceback_enabled)
+        if (!log_enabled)
         {
             return;
         }
 
-        details::log_msg log_msg(loc, name_, lvl, msg);
-        log_it_(log_msg, log_enabled, traceback_enabled);
+        sink_it_(details::log_msg(loc, name_, lvl, msg));
     }
 
     void log(level::level_enum lvl, string_view_t msg)
@@ -211,16 +207,13 @@ public:
         return msg_level >= level_.load(std::memory_order_relaxed);
     }
 
-    // return true if backtrace logging is enabled.
-    bool should_backtrace() const
-    {
-        return tracer_.enabled();
-    }
-
+    // set the level of logging
     void set_level(level::level_enum log_level);
 
+    // return the active log level
     level::level_enum level() const;
 
+    // return the name of the logger
     const std::string &name() const;
 
     // set formatting for the sinks in this logger.
@@ -232,12 +225,6 @@ public:
     //     set_formatter(make_unique<pattern_formatter>(pattern, time_type))
     // Note: each sink will get a new instance of a formatter object, replacing the old one.
     void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
-
-    // backtrace support.
-    // efficiently store all debug/trace messages in a circular buffer until needed for debugging.
-    void enable_backtrace(size_t n_messages);
-    void disable_backtrace();
-    void dump_backtrace();
 
     // flush functions
     void flush();
@@ -261,15 +248,13 @@ protected:
     spdlog::level_t level_{level::info};
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
-    details::backtracer tracer_;
 
     // common implementation for after templated public api has been resolved
     template<typename... Args>
     void log_(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&...args)
     {
         bool log_enabled = should_log(lvl);
-        bool traceback_enabled = tracer_.enabled();
-        if (!log_enabled && !traceback_enabled)
+        if (!log_enabled)
         {
             return;
         }
@@ -281,20 +266,14 @@ protected:
 #else
             fmt::vformat_to(fmt::appender(buf), fmt, fmt::make_format_args(args...));
 #endif
-
-            details::log_msg log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()));
-            log_it_(log_msg, log_enabled, traceback_enabled);
+            sink_it_(details::log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size())));
         }
         SPDLOG_LOGGER_CATCH(loc)
     }
 
-
-    // log the given message (if the given log level is high enough),
-    // and save backtrace (if backtrace is enabled).
-    void log_it_(const details::log_msg &log_msg, bool log_enabled, bool traceback_enabled);
+    // log the given message (if the given log level is high enough)
     virtual void sink_it_(const details::log_msg &msg);
     virtual void flush_();
-    void dump_backtrace_();
     bool should_flush_(const details::log_msg &msg);
 
     // handle errors during logging.
