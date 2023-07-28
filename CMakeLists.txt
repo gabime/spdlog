@@ -101,10 +101,8 @@ endif()
 
 # misc tweakme options
 if(WIN32)
-    option(SPDLOG_WCHAR_SUPPORT "Support wchar api" OFF)
     option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)
 else()
-    set(SPDLOG_WCHAR_SUPPORT OFF CACHE BOOL "non supported option" FORCE)
     set(SPDLOG_WCHAR_FILENAMES OFF CACHE BOOL "non supported option" FORCE)
 endif()
 

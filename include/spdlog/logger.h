@@ -19,6 +19,7 @@
 #include <spdlog/sinks/sink.h>
 
 #include <vector>
+#include <cassert>
 
 #ifndef SPDLOG_NO_EXCEPTIONS
 #    define SPDLOG_LOGGER_CATCH(location)                                                                                                  \
@@ -266,6 +267,7 @@ protected:
     // log the given message (if the given log level is high enough)
     virtual void sink_it_(const details::log_msg &msg)
     {
+        assert (should_log(msg.level));
         for (auto &sink : sinks_)
         {
             if (sink->should_log(msg.level))
