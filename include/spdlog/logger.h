@@ -79,7 +79,7 @@ public:
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
     {
-        log_(loc, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
+        log_with_format_(loc, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
     }
 
     template<typename... Args>
@@ -242,12 +242,11 @@ protected:
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
 
-    // common implementation for after templated public api has been resolved
+    // common implementation for after templated public api has been resolved to format string and args
     template<typename... Args>
-    void log_(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&...args)
+    void log_with_format_(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&...args)
     {
-        bool log_enabled = should_log(lvl);
-        if (!log_enabled)
+        if (!should_log(lvl))
         {
             return;
         }
