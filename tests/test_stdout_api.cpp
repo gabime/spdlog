@@ -78,4 +78,3 @@ TEST_CASE("stderr_color_mt", "[stderr]")
     l->critical("Test stderr_color_mt");
     spdlog::drop_all();
 }
-

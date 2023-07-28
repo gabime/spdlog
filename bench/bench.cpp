@@ -46,7 +46,6 @@ void bench_threaded_logging(size_t threads, int iters)
     auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
     bench_mt(iters, std::move(basic_mt), threads);
 
-
     spdlog::info("");
     auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt.log", file_size, rotating_files);
     bench_mt(iters, std::move(rotating_mt), threads);

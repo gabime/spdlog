@@ -58,7 +58,6 @@ SPDLOG_API void set_formatter(std::unique_ptr<spdlog::formatter> formatter);
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 SPDLOG_API void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
 
-
 // Get global logging level
 SPDLOG_API level::level_enum get_level();
 
