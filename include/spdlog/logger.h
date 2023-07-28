@@ -48,8 +48,7 @@ class SPDLOG_API logger
 public:
     // Empty logger
     explicit logger(std::string name)
-        : name_(std::move(name))
-        , sinks_()
+        : name_(std::move(name))     
     {}
 
     // Logger with range on sinks
@@ -227,7 +226,7 @@ public:
     // sinks
     [[nodiscard]] const std::vector<sink_ptr> &sinks() const;
 
-    std::vector<sink_ptr> &sinks();
+    [[nodiscard]] std::vector<sink_ptr> &sinks();
 
     // error handler
     void set_error_handler(err_handler);
