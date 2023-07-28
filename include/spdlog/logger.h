@@ -204,10 +204,10 @@ public:
     void set_level(level::level_enum log_level);
 
     // return the active log level
-    level::level_enum level() const;
+    [[nodiscard]] level::level_enum level() const;
 
     // return the name of the logger
-    const std::string &name() const;
+    [[nodiscard]] const std::string &name() const;
 
     // set formatting for the sinks in this logger.
     // each sink will get a separate instance of the formatter object.
@@ -222,10 +222,10 @@ public:
     // flush functions
     void flush();
     void flush_on(level::level_enum log_level);
-    level::level_enum flush_level() const;
+    [[nodiscard]] level::level_enum flush_level() const;
 
     // sinks
-    const std::vector<sink_ptr> &sinks() const;
+    [[nodiscard]] const std::vector<sink_ptr> &sinks() const;
 
     std::vector<sink_ptr> &sinks();
 
