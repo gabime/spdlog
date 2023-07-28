@@ -103,25 +103,18 @@ public:
 
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
     {
-        bool log_enabled = should_log(lvl);
-        if (!log_enabled)
+        if(should_log(lvl))
         {
-            return;
+            sink_it_(details::log_msg(log_time, loc, name_, lvl, msg));
         }
-
-        details::log_msg log_msg(log_time, loc, name_, lvl, msg);
-        sink_it_(log_msg);
     }
 
     void log(source_loc loc, level::level_enum lvl, string_view_t msg)
     {
-        bool log_enabled = should_log(lvl);
-        if (!log_enabled)
+        if(should_log(lvl))
         {
-            return;
+            sink_it_(details::log_msg(loc, name_, lvl, msg));
         }
-
-        sink_it_(details::log_msg(loc, name_, lvl, msg));
     }
 
     void log(level::level_enum lvl, string_view_t msg)
@@ -202,6 +195,7 @@ public:
     }
 
     // return true logging is enabled for the given level.
+    [[nodiscard]]
     bool should_log(level::level_enum msg_level) const
     {
         return msg_level >= level_.load(std::memory_order_relaxed);
