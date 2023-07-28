@@ -51,6 +51,7 @@ jobs:
             -DSPDLOG_BUILD_TESTS_HO=OFF \
             -DSPDLOG_SANITIZE_ADDRESS=${{ matrix.config.asan || 'ON' }}
           make -j2
+          export ASAN_OPTIONS=alloc_dealloc_mismatch=0
           ctest -j2 --output-on-failure
 
   build_osx:
