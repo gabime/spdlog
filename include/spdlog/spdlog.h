@@ -200,56 +200,6 @@ inline void log(level::level_enum lvl, const T &msg)
     default_logger_raw()->log(lvl, msg);
 }
 
-#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-template<typename... Args>
-inline void log(source_loc source, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args)
-{
-    default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
-}
-
-template<typename... Args>
-inline void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args)
-{
-    default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
-}
-
-template<typename... Args>
-inline void trace(wformat_string_t<Args...> fmt, Args &&...args)
-{
-    default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
-}
-
-template<typename... Args>
-inline void debug(wformat_string_t<Args...> fmt, Args &&...args)
-{
-    default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
-}
-
-template<typename... Args>
-inline void info(wformat_string_t<Args...> fmt, Args &&...args)
-{
-    default_logger_raw()->info(fmt, std::forward<Args>(args)...);
-}
-
-template<typename... Args>
-inline void warn(wformat_string_t<Args...> fmt, Args &&...args)
-{
-    default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
-}
-
-template<typename... Args>
-inline void error(wformat_string_t<Args...> fmt, Args &&...args)
-{
-    default_logger_raw()->error(fmt, std::forward<Args>(args)...);
-}
-
-template<typename... Args>
-inline void critical(wformat_string_t<Args...> fmt, Args &&...args)
-{
-    default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
-}
-#endif
-
 template<typename T>
 inline void trace(const T &msg)
 {

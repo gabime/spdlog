@@ -230,10 +230,8 @@ endif()
 # ---------------------------------------------------------------------------------------
 # Misc definitions according to tweak options
 # ---------------------------------------------------------------------------------------
-set(SPDLOG_WCHAR_TO_UTF8_SUPPORT ${SPDLOG_WCHAR_SUPPORT})
 foreach(
     SPDLOG_OPTION
-    SPDLOG_WCHAR_TO_UTF8_SUPPORT
     SPDLOG_WCHAR_FILENAMES
     SPDLOG_NO_EXCEPTIONS
     SPDLOG_CLOCK_COARSE

@@ -32,7 +32,7 @@
 #        include <share.h>
 #    endif
 
-#    if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)
+#    if defined(SPDLOG_WCHAR_FILENAMES)
 #        include <limits>
 #        include <cassert>
 #    endif
@@ -472,7 +472,7 @@ SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
 #endif
 }
 
-#if (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
+#if defined(SPDLOG_WCHAR_FILENAMES) && defined(_WIN32)
 SPDLOG_INLINE void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target)
 {
     if (wstr.size() > static_cast<size_t>((std::numeric_limits<int>::max)()) / 2 - 1)
@@ -538,7 +538,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target)
 
     throw_spdlog_ex(fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
 }
-#endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) && defined(_WIN32)
+#endif // defined(SPDLOG_WCHAR_FILENAMES) && defined(_WIN32)
 
 // return true on success
 static SPDLOG_INLINE bool mkdir_(const filename_t &path)

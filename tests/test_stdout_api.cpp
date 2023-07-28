@@ -79,20 +79,3 @@ TEST_CASE("stderr_color_mt", "[stderr]")
     spdlog::drop_all();
 }
 
-#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-
-TEST_CASE("wchar_api", "[stdout]")
-{
-    auto l = spdlog::stdout_logger_st("wchar_logger");
-    l->set_pattern("%+");
-    l->set_level(spdlog::level::trace);
-    l->trace(L"Test wchar_api");
-    l->trace(L"Test wchar_api {}", L"param");
-    l->trace(L"Test wchar_api {}", 1);
-    l->trace(L"Test wchar_api {}", std::wstring{L"wstring param"});
-    l->trace(std::wstring{L"Test wchar_api wstring"});
-    SPDLOG_LOGGER_DEBUG(l, L"Test SPDLOG_LOGGER_DEBUG {}", L"param");
-    spdlog::drop_all();
-}
-
-#endif

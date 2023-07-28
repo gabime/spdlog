@@ -236,18 +236,9 @@ protected:
         base_sink<Mutex>::formatter_->format(msg, formatted);
         formatted.push_back('\0');
 
-#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-        wmemory_buf_t buf;
-        details::os::utf8_to_wstrbuf(string_view_t(formatted.data(), formatted.size()), buf);
-
-        LPCWSTR lp_wstr = buf.data();
-        succeeded = static_cast<bool>(::ReportEventW(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg),
-            event_id_, current_user_sid_.as_sid(), 1, 0, &lp_wstr, nullptr));
-#else
         LPCSTR lp_str = formatted.data();
         succeeded = static_cast<bool>(::ReportEventA(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg),
             event_id_, current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr));
-#endif
 
         if (!succeeded)
         {

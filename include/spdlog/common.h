@@ -52,9 +52,6 @@
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
 #    define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
 #    define SPDLOG_FMT_STRING(format_string) FMT_STRING(format_string)
-#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-#        include <spdlog/fmt/xchar.h>
-#    endif
 #else
 #    define SPDLOG_FMT_RUNTIME(format_string) format_string
 #    define SPDLOG_FMT_STRING(format_string) format_string
@@ -149,18 +146,6 @@ using format_string_t = std::string_view;
 template<class T, class Char = char>
 struct is_convertible_to_basic_format_string : std::integral_constant<bool, std::is_convertible<T, std::basic_string_view<Char>>::value>
 {};
-
-#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-using wstring_view_t = std::wstring_view;
-using wmemory_buf_t = std::wstring;
-
-template<typename... Args>
-#        if __cpp_lib_format >= 202207L
-using wformat_string_t = std::wformat_string<Args...>;
-#        else
-using wformat_string_t = std::wstring_view;
-#        endif
-#    endif
 #    define SPDLOG_BUF_TO_STRING(x) x
 #else // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
@@ -189,7 +174,7 @@ struct is_convertible_to_basic_format_string
           std::is_convertible<T, fmt::basic_string_view<Char>>::value || std::is_same<remove_cvref_t<T>, fmt_runtime_string<Char>>::value>
 {};
 
-#    if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+#    if defined(SPDLOG_WCHAR_FILENAMES)
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
@@ -198,12 +183,6 @@ using wformat_string_t = fmt::wformat_string<Args...>;
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
-
-#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
-#    ifndef _WIN32
-#        error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
-#    endif // _WIN32
-#endif     // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 template<class T>
 struct is_convertible_to_any_format_string : std::integral_constant<bool, is_convertible_to_basic_format_string<T, char>::value ||
@@ -356,7 +335,7 @@ SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(spdlog::string_view_t
     return str;
 }
 
-#if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+#if defined(SPDLOG_WCHAR_FILENAMES)
 SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf) SPDLOG_NOEXCEPT
 {
     return spdlog::wstring_view_t{buf.data(), buf.size()};
