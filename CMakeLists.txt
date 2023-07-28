@@ -26,6 +26,7 @@ endif()
 # Compiler config
 # ---------------------------------------------------------------------------------------
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # make sure __cplusplus is defined when using msvc and enable parallel build
 if(MSVC)
@@ -115,7 +116,6 @@ endif()
 
 option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file descriptors" OFF)
 option(SPDLOG_NO_THREAD_ID "prevent spdlog from querying the thread id on each log call if thread id is not needed" OFF)
-option(SPDLOG_NO_TLS "prevent spdlog from using thread local storage" OFF)
 option(
     SPDLOG_NO_ATOMIC_LEVELS
     "prevent spdlog from using of std::atomic log levels (use only if your code never modifies log levels concurrently"
@@ -237,7 +237,6 @@ foreach(
     SPDLOG_CLOCK_COARSE
     SPDLOG_PREVENT_CHILD_FD
     SPDLOG_NO_THREAD_ID
-    SPDLOG_NO_TLS
     SPDLOG_NO_ATOMIC_LEVELS
     SPDLOG_DISABLE_DEFAULT_LOGGER
     SPDLOG_USE_STD_FORMAT)

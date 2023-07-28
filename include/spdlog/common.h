@@ -58,13 +58,6 @@
 #endif
 
 
-// disable thread local on msvc 2013
-#ifndef SPDLOG_NO_TLS
-#    if (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt)
-#        define SPDLOG_NO_TLS 1
-#    endif
-#endif
-
 #ifndef SPDLOG_FUNCTION
 #    define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
 #endif
@@ -138,11 +131,7 @@ template<class T>
 using remove_cvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
 
 template<typename Char>
-#    if FMT_VERSION >= 90101
 using fmt_runtime_string = fmt::runtime_format_string<Char>;
-#    else
-using fmt_runtime_string = fmt::basic_runtime<Char>;
-#    endif
 
 // clang doesn't like SFINAE disabled constructor in std::is_convertible<> so have to repeat the condition from basic_format_string here,
 // in addition, fmt::basic_runtime<Char> is only convertible to basic_format_string<Char> but not basic_string_view<Char>

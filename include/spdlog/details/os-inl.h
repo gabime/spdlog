@@ -385,12 +385,9 @@ SPDLOG_INLINE size_t _thread_id() noexcept
 // Return current thread id as size_t (from thread local storage)
 SPDLOG_INLINE size_t thread_id() noexcept
 {
-#if defined(SPDLOG_NO_TLS)
-    return _thread_id();
-#else // cache thread id in tls
+    // cache thread id in tls
     static thread_local const size_t tid = _thread_id();
     return tid;
-#endif
 }
 
 // This is avoid msvc issue in sleep_for that happens if the clock changes.
