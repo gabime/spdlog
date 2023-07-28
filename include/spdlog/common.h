@@ -57,28 +57,6 @@
 #    define SPDLOG_FMT_STRING(format_string) format_string
 #endif
 
-// visual studio up to 2013 does not support noexcept nor constexpr
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-#    define SPDLOG_NOEXCEPT _NOEXCEPT
-#    define SPDLOG_CONSTEXPR
-#    define SPDLOG_CONSTEXPR_FUNC inline
-#else
-#    define SPDLOG_NOEXCEPT noexcept
-#    define SPDLOG_CONSTEXPR constexpr
-#    if __cplusplus >= 201402L
-#        define SPDLOG_CONSTEXPR_FUNC constexpr
-#    else
-#        define SPDLOG_CONSTEXPR_FUNC inline
-#    endif
-#endif
-
-#if defined(__GNUC__) || defined(__clang__)
-#    define SPDLOG_DEPRECATED __attribute__((deprecated))
-#elif defined(_MSC_VER)
-#    define SPDLOG_DEPRECATED __declspec(deprecated)
-#else
-#    define SPDLOG_DEPRECATED
-#endif
 
 // disable thread local on msvc 2013
 #ifndef SPDLOG_NO_TLS
@@ -245,9 +223,9 @@ enum level_enum : int
         }
 #endif
 
-SPDLOG_API const string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
+SPDLOG_API const string_view_t &to_string_view(spdlog::level::level_enum l) noexcept;
+SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) noexcept;
+SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) noexcept;
 
 } // namespace level
 
@@ -279,7 +257,7 @@ class SPDLOG_API spdlog_ex : public std::exception
 public:
     explicit spdlog_ex(std::string msg);
     spdlog_ex(const std::string &msg, int last_errno);
-    const char *what() const SPDLOG_NOEXCEPT override;
+    const char *what() const noexcept override;
 
 private:
     std::string msg_;
@@ -290,14 +268,14 @@ private:
 
 struct source_loc
 {
-    SPDLOG_CONSTEXPR source_loc() = default;
-    SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
+    constexpr source_loc() = default;
+    constexpr source_loc(const char *filename_in, int line_in, const char *funcname_in)
         : filename{filename_in}
         , line{line_in}
         , funcname{funcname_in}
     {}
 
-    SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT
+    constexpr bool empty() const noexcept
     {
         return line == 0;
     }
@@ -325,23 +303,23 @@ namespace details {
 
 // to_string_view
 
-SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(const memory_buf_t &buf) SPDLOG_NOEXCEPT
+constexpr spdlog::string_view_t to_string_view(const memory_buf_t &buf) noexcept
 {
     return spdlog::string_view_t{buf.data(), buf.size()};
 }
 
-SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(spdlog::string_view_t str) SPDLOG_NOEXCEPT
+constexpr spdlog::string_view_t to_string_view(spdlog::string_view_t str) noexcept
 {
     return str;
 }
 
 #if defined(SPDLOG_WCHAR_FILENAMES)
-SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf) SPDLOG_NOEXCEPT
+constexpr spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf) noexcept
 {
     return spdlog::wstring_view_t{buf.data(), buf.size()};
 }
 
-SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) SPDLOG_NOEXCEPT
+constexpr spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) noexcept
 {
     return str;
 }
@@ -355,7 +333,7 @@ inline fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args
 }
 #elif __cpp_lib_format >= 202207L
 template<typename T, typename... Args>
-SPDLOG_CONSTEXPR_FUNC std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) SPDLOG_NOEXCEPT
+constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept
 {
     return fmt.get();
 }

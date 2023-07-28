@@ -72,9 +72,9 @@ public:
     virtual ~logger() = default;
 
     logger(const logger &other);
-    logger(logger &&other) SPDLOG_NOEXCEPT;
-    logger &operator=(logger other) SPDLOG_NOEXCEPT;
-    void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
+    logger(logger &&other) noexcept;
+    logger &operator=(logger other) noexcept;
+    void swap(spdlog::logger &other) noexcept;
 
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)

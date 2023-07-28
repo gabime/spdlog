@@ -121,7 +121,7 @@ struct formatter<spdlog::details::dump_info<T>, char>
 
     // parse the format string flags
     template<typename ParseContext>
-    SPDLOG_CONSTEXPR_FUNC auto parse(ParseContext &ctx) -> decltype(ctx.begin())
+    constexpr auto parse(ParseContext &ctx) -> decltype(ctx.begin())
     {
         auto it = ctx.begin();
         while (it != ctx.end() && *it != '}')
@@ -158,8 +158,8 @@ struct formatter<spdlog::details::dump_info<T>, char>
     template<typename FormatContext, typename Container>
     auto format(const spdlog::details::dump_info<Container> &the_range, FormatContext &ctx) const -> decltype(ctx.out())
     {
-        SPDLOG_CONSTEXPR const char *hex_upper = "0123456789ABCDEF";
-        SPDLOG_CONSTEXPR const char *hex_lower = "0123456789abcdef";
+        constexpr const char *hex_upper = "0123456789ABCDEF";
+        constexpr const char *hex_lower = "0123456789abcdef";
         const char *hex_chars = use_uppercase ? hex_upper : hex_lower;
 
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION < 60000

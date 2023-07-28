@@ -74,7 +74,7 @@ namespace spdlog {
 namespace details {
 namespace os {
 
-SPDLOG_INLINE spdlog::log_clock::time_point now() SPDLOG_NOEXCEPT
+SPDLOG_INLINE spdlog::log_clock::time_point now() noexcept
 {
 
 #if defined __linux__ && defined SPDLOG_CLOCK_COARSE
@@ -87,7 +87,7 @@ SPDLOG_INLINE spdlog::log_clock::time_point now() SPDLOG_NOEXCEPT
     return log_clock::now();
 #endif
 }
-SPDLOG_INLINE std::tm localtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT
+SPDLOG_INLINE std::tm localtime(const std::time_t &time_tt) noexcept
 {
 
 #ifdef _WIN32
@@ -100,13 +100,13 @@ SPDLOG_INLINE std::tm localtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT
     return tm;
 }
 
-SPDLOG_INLINE std::tm localtime() SPDLOG_NOEXCEPT
+SPDLOG_INLINE std::tm localtime() noexcept
 {
     std::time_t now_t = ::time(nullptr);
     return localtime(now_t);
 }
 
-SPDLOG_INLINE std::tm gmtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT
+SPDLOG_INLINE std::tm gmtime(const std::time_t &time_tt) noexcept
 {
 
 #ifdef _WIN32
@@ -119,7 +119,7 @@ SPDLOG_INLINE std::tm gmtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT
     return tm;
 }
 
-SPDLOG_INLINE std::tm gmtime() SPDLOG_NOEXCEPT
+SPDLOG_INLINE std::tm gmtime() noexcept
 {
     std::time_t now_t = ::time(nullptr);
     return gmtime(now_t);
@@ -166,7 +166,7 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
     return *fp == nullptr;
 }
 
-SPDLOG_INLINE int remove(const filename_t &filename) SPDLOG_NOEXCEPT
+SPDLOG_INLINE int remove(const filename_t &filename) noexcept
 {
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
     return ::_wremove(filename.c_str());
@@ -175,12 +175,12 @@ SPDLOG_INLINE int remove(const filename_t &filename) SPDLOG_NOEXCEPT
 #endif
 }
 
-SPDLOG_INLINE int remove_if_exists(const filename_t &filename) SPDLOG_NOEXCEPT
+SPDLOG_INLINE int remove_if_exists(const filename_t &filename) noexcept
 {
     return path_exists(filename) ? remove(filename) : 0;
 }
 
-SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename2) SPDLOG_NOEXCEPT
+SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename2) noexcept
 {
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
     return ::_wrename(filename1.c_str(), filename2.c_str());
@@ -190,7 +190,7 @@ SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename
 }
 
 // Return true if path exists (file or directory)
-SPDLOG_INLINE bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT
+SPDLOG_INLINE bool path_exists(const filename_t &filename) noexcept
 {
 #ifdef _WIN32
 #    ifdef SPDLOG_WCHAR_FILENAMES
@@ -334,7 +334,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm)
 // Return current thread id as size_t
 // It exists because the std::this_thread::get_id() is much slower(especially
 // under VS 2013)
-SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
+SPDLOG_INLINE size_t _thread_id() noexcept
 {
 #ifdef _WIN32
     return static_cast<size_t>(::GetCurrentThreadId());
@@ -383,7 +383,7 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT
 }
 
 // Return current thread id as size_t (from thread local storage)
-SPDLOG_INLINE size_t thread_id() SPDLOG_NOEXCEPT
+SPDLOG_INLINE size_t thread_id() noexcept
 {
 #if defined(SPDLOG_NO_TLS)
     return _thread_id();
@@ -395,7 +395,7 @@ SPDLOG_INLINE size_t thread_id() SPDLOG_NOEXCEPT
 
 // This is avoid msvc issue in sleep_for that happens if the clock changes.
 // See https://github.com/gabime/spdlog/issues/609
-SPDLOG_INLINE void sleep_for_millis(unsigned int milliseconds) SPDLOG_NOEXCEPT
+SPDLOG_INLINE void sleep_for_millis(unsigned int milliseconds) noexcept
 {
 #if defined(_WIN32)
     ::Sleep(milliseconds);
@@ -419,7 +419,7 @@ SPDLOG_INLINE std::string filename_to_str(const filename_t &filename)
 }
 #endif
 
-SPDLOG_INLINE int pid() SPDLOG_NOEXCEPT
+SPDLOG_INLINE int pid() noexcept
 {
 
 #ifdef _WIN32
@@ -431,7 +431,7 @@ SPDLOG_INLINE int pid() SPDLOG_NOEXCEPT
 
 // Determine if the terminal supports colors
 // Based on: https://github.com/agauniyal/rang/
-SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT
+SPDLOG_INLINE bool is_color_terminal() noexcept
 {
 #ifdef _WIN32
     return true;
@@ -462,7 +462,7 @@ SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT
 
 // Determine if the terminal attached
 // Source: https://github.com/agauniyal/rang/
-SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT
+SPDLOG_INLINE bool in_terminal(FILE *file) noexcept
 {
 
 #ifdef _WIN32

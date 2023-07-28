@@ -51,12 +51,12 @@ struct local_alloc_t
 {
     HLOCAL hlocal_;
 
-    SPDLOG_CONSTEXPR local_alloc_t() SPDLOG_NOEXCEPT : hlocal_(nullptr) {}
+    constexpr local_alloc_t() noexcept : hlocal_(nullptr) {}
 
     local_alloc_t(local_alloc_t const &) = delete;
     local_alloc_t &operator=(local_alloc_t const &) = delete;
 
-    ~local_alloc_t() SPDLOG_NOEXCEPT
+    ~local_alloc_t() noexcept
     {
         if (hlocal_)
         {
