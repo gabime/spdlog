@@ -141,26 +141,6 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
     return cloned;
 }
 
-SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg)
-{
-    for (auto &sink : sinks_)
-    {
-        if (sink->should_log(msg.level))
-        {
-            SPDLOG_TRY
-            {
-                sink->log(msg);
-            }
-            SPDLOG_LOGGER_CATCH(msg.source)
-        }
-    }
-
-    if (should_flush_(msg))
-    {
-        flush_();
-    }
-}
-
 SPDLOG_INLINE void logger::flush_()
 {
     for (auto &sink : sinks_)

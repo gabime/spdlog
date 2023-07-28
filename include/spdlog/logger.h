@@ -16,6 +16,7 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/log_msg.h>
+#include <spdlog/sinks/sink.h>
 
 #include <vector>
 
@@ -48,7 +49,7 @@ class SPDLOG_API logger
 public:
     // Empty logger
     explicit logger(std::string name)
-        : name_(std::move(name))     
+        : name_(std::move(name))
     {}
 
     // Logger with range on sinks
@@ -263,7 +264,25 @@ protected:
     }
 
     // log the given message (if the given log level is high enough)
-    virtual void sink_it_(const details::log_msg &msg);
+    virtual void sink_it_(const details::log_msg &msg)
+    {
+        for (auto &sink : sinks_)
+        {
+            if (sink->should_log(msg.level))
+            {
+                SPDLOG_TRY
+                {
+                    sink->log(msg);
+                }
+                SPDLOG_LOGGER_CATCH(msg.source)
+            }
+        }
+
+        if (should_flush_(msg))
+        {
+            flush_();
+        }
+    }
     virtual void flush_();
     bool should_flush_(const details::log_msg &msg);
 
