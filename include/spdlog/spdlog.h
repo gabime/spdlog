@@ -131,6 +131,17 @@ SPDLOG_API spdlog::logger *default_logger_raw();
 
 SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logger);
 
+inline void push_context(attribute_list attrs) {
+    default_logger_raw()->push_context(std::move(attrs));
+}
+
+inline void pop_context() {
+    default_logger_raw()->pop_context();
+}
+
+inline void clear_context() {
+    default_logger_raw()->clear_context();
+}
 // Initialize logger level based on environment configs.
 //
 // Useful for applying SPDLOG_LEVEL to manually created loggers.

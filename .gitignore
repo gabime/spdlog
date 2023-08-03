@@ -89,6 +89,9 @@ cmake-build-*/
 *.user
 *.sln
 
+# vscode
+.vscode
+
 # macos
 *.DS_store
 *.xcodeproj/

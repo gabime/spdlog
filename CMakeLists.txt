@@ -25,7 +25,7 @@ endif()
 # ---------------------------------------------------------------------------------------
 # Compiler config
 # ---------------------------------------------------------------------------------------
-if(SPDLOG_USE_STD_FORMAT)
+if(SPDLOG_USE_STD_FORMAT OR SPDLOG_USE_STD_STRING_VIEW)
     set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 elseif(NOT CMAKE_CXX_STANDARD)
@@ -88,6 +88,7 @@ option(SPDLOG_BUILD_WARNINGS "Enable compiler warnings" OFF)
 option(SPDLOG_SYSTEM_INCLUDES "Include as system headers (skip for clang-tidy)." OFF)
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_USE_STD_FORMAT "Use std::format instead of fmt library." OFF)
+option(SPDLOG_USE_STD_STRING_VIEW "Use std::string_view instead of the fmt implementation of string_view." OFF)
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_FMT_EXTERNAL_HO "Use external fmt header-only library instead of bundled" OFF)
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
@@ -102,6 +103,11 @@ endif()
 
 if(SPDLOG_USE_STD_FORMAT AND SPDLOG_FMT_EXTERNAL)
     message(FATAL_ERROR "SPDLOG_USE_STD_FORMAT and SPDLOG_FMT_EXTERNAL are mutually exclusive")
+endif()
+
+if(SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_USE_STD_STRING_VIEW)
+    # message(FATAL_ERROR "SPDLOG_USE_STD_FORMAT requires SPDLOG_USE_STD_STRING_VIEW")
+    set(SPDLOG_USE_STD_STRING_VIEW ON CACHE BOOL "" FORCE) # automatically set SPDLOG_USE_STD_STRING_VIEW instead of error
 endif()
 
 # misc tweakme options
@@ -250,6 +256,7 @@ foreach(
     SPDLOG_NO_TLS
     SPDLOG_NO_ATOMIC_LEVELS
     SPDLOG_DISABLE_DEFAULT_LOGGER
+    SPDLOG_USE_STD_STRING_VIEW
     SPDLOG_USE_STD_FORMAT)
     if(${SPDLOG_OPTION})
         target_compile_definitions(spdlog PUBLIC ${SPDLOG_OPTION})

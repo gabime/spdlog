@@ -27,6 +27,8 @@ void custom_flags_example();
 void file_events_example();
 void replace_default_logger_example();
 
+void attribute_example();
+
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h" // support for user defined types
@@ -87,6 +89,7 @@ int main(int, char *[])
         custom_flags_example();
         file_events_example();
         replace_default_logger_example();
+        attribute_example();
 
         // Flush all *registered* loggers using a worker thread every 3 seconds.
         // note: registered loggers *must* be thread safe for this to work correctly!
@@ -395,4 +398,34 @@ void replace_default_logger_example()
     spdlog::debug("This message should be displayed..");
 
     spdlog::set_default_logger(old_logger);
+}
+
+void attribute_example() {
+    spdlog::push_context(spdlog::attribute_list{{"attribute_key", "attribute value"}});
+    spdlog::warn("EXPERIMENTAL: log with attributes");
+    spdlog::clear_context();
+
+    // structured logging using attributes
+
+    // auto s_logger = spdlog::basic_logger_mt("structured logger", "logs/mylog.txt");
+    auto s_logger = spdlog::stdout_color_mt("structured logger");
+
+    #if 0
+    std::string json_pattern = "{\"time\":\"%Y-%m-%dT%H:%M:%S.%e%z\",\"name\":\"%n\",\"level\":\"%l\",\"message\":\"%v\"%(,\"%K\":\"%V\"%)}";
+    s_logger->set_pattern(std::move(json_pattern));
+    #endif
+    #if 1
+    std::string logfmt_pattern = "time=%Y-%m-%dT%H:%M:%S.%f%z name=\"%n\" level=%^%l%$ process=%P thread=%t message=\"%v\"%( %K=\"%V\"%)";
+    s_logger->set_pattern(std::move(logfmt_pattern));
+    #endif
+
+    s_logger->push_context(spdlog::attribute_list{{"key\n1", "value\n1"}});
+    s_logger->info("structured logging: test 1");
+    s_logger->push_context(spdlog::attribute_list{{"key\n2", "value\n2"}});
+    s_logger->info("structured logging: test 2");
+    s_logger->pop_context();
+    s_logger->info("structured logging: test 3");
+    s_logger->pop_context();
+    s_logger->info("structured logging: test 4");
+    s_logger->clear_context();
 }
