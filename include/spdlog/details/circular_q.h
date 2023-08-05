@@ -82,7 +82,7 @@ public:
         }
         else
         {
-            return max_items_ - 1 - (head_ - tail_);
+            return max_items_ - (head_ - tail_);
         }
     }
 
