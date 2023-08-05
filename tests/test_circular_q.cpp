@@ -4,7 +4,7 @@
 using q_type = spdlog::details::circular_q<size_t>;
 TEST_CASE("test_size", "[circular_q]")
 {
-    size_t q_size = 4;
+    const size_t q_size = 4;
     q_type q(q_size);
     REQUIRE(q.size() == 0);
     REQUIRE(q.empty() == true);
@@ -45,4 +45,11 @@ TEST_CASE("test_rolling", "[circular_q]")
 
     q.push_back(6);
     REQUIRE(q.front() == 6);
+}
+
+TEST_CASE("test_empty", "[circular_q]")
+{
+    q_type q(0);
+    q.push_back(1);
+    REQUIRE(q.empty());
 }
