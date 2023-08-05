@@ -1,14 +1,14 @@
 #include "includes.h"
 #include "spdlog/details/circular_q.h"
 
-using q_type = spdlog::details::circular_q<int>;
+using q_type = spdlog::details::circular_q<size_t>;
 TEST_CASE("test_size", "[circular_q]")
 {
     size_t q_size = 4;
     q_type q(q_size);
     REQUIRE(q.size() == 0);
     REQUIRE(q.empty() == true);
-    for (int i = 0; i < q_size; i++)
+    for (size_t i = 0; i < q_size; i++)
     {
         q.push_back(std::move(i));
     }
@@ -24,7 +24,7 @@ TEST_CASE("test_rolling", "[circular_q]")
 
     for (size_t i = 0; i < q_size + 2; i++)
     {
-        q.push_back(i);
+        q.push_back(std::move(i));
     }
 
     REQUIRE(q.size() == q_size);
