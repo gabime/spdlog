@@ -64,15 +64,21 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #    define SPDLOG_NOEXCEPT _NOEXCEPT
 #    define SPDLOG_CONSTEXPR
-#    define SPDLOG_CONSTEXPR_FUNC inline
 #else
 #    define SPDLOG_NOEXCEPT noexcept
 #    define SPDLOG_CONSTEXPR constexpr
-#    if __cplusplus >= 201402L
-#        define SPDLOG_CONSTEXPR_FUNC constexpr
-#    else
-#        define SPDLOG_CONSTEXPR_FUNC inline
-#    endif
+#endif
+
+#ifndef __has_feature
+#    define __has_feature(x) 0
+#endif
+
+#if (__has_feature(cxx_relaxed_constexpr) || (defined(_MSC_VER) && (_MSC_VER >= 1912)) ||                                                  \
+     (defined(__GNUC__) && __GNUC__ >= 6 && defined(__cplusplus) && __cplusplus >= 201402L)) &&                                            \
+    !defined(__ICL) && !defined(__INTEL_COMPILER) && !defined(__NVCC__)
+#    define SPDLOG_CONSTEXPR_FUNC constexpr
+#else
+#    define SPDLOG_CONSTEXPR_FUNC inline
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
