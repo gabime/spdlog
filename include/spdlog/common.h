@@ -16,6 +16,44 @@
 #include <functional>
 #include <cstdio>
 
+#ifdef __has_feature
+#    define SPDLOG_HAS_FEATURE(x) __has_feature(x)
+#else
+#    define SPDLOG_HAS_FEATURE(x) 0
+#endif
+
+#ifdef __ICL
+#    define SPDLOG_ICC_VERSION __ICL
+#elif defined(__INTEL_COMPILER)
+#    define SPDLOG_ICC_VERSION __INTEL_COMPILER
+#else
+#    define SPDLOG_ICC_VERSION 0
+#endif
+
+#ifdef _MSC_VER
+#    define SPDLOG_MSC_VERSION _MSC_VER
+#else
+#    define SPDLOG_MSC_VERSION 0
+#endif
+
+#if defined(__clang__) && !defined(__ibmxl__)
+#    define SPDLOG_CLANG_VERSION (__clang_major__ * 100 + __clang_minor__)
+#else
+#    define SPDLOG_CLANG_VERSION 0
+#endif
+
+#ifdef _MSVC_LANG
+#    define SPDLOG_CPLUSPLUS _MSVC_LANG
+#else
+#    define SPDLOG_CPLUSPLUS __cplusplus
+#endif
+
+#if defined(__GNUC__) && !defined(__clang__) && !defined(__INTEL_COMPILER) && !defined(__NVCOMPILER)
+#    define SPDLOG_GCC_VERSION (__GNUC__ * 100 + __GNUC_MINOR__)
+#else
+#    define SPDLOG_GCC_VERSION 0
+#endif
+
 #ifdef SPDLOG_USE_STD_FORMAT
 #    include <version>
 #    if __cpp_lib_format >= 202207L
@@ -64,15 +102,17 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #    define SPDLOG_NOEXCEPT _NOEXCEPT
 #    define SPDLOG_CONSTEXPR
-#    define SPDLOG_CONSTEXPR_FUNC inline
 #else
 #    define SPDLOG_NOEXCEPT noexcept
 #    define SPDLOG_CONSTEXPR constexpr
-#    if __cplusplus >= 201402L
-#        define SPDLOG_CONSTEXPR_FUNC constexpr
-#    else
-#        define SPDLOG_CONSTEXPR_FUNC inline
-#    endif
+#endif
+
+#if (SPDLOG_HAS_FEATURE(cxx_relaxed_constexpr) || SPDLOG_MSC_VERSION >= 1912 ||                                                            \
+     (SPDLOG_GCC_VERSION >= 600 && SPDLOG_CPLUSPLUS >= 201402L)) &&                                                                        \
+    !SPDLOG_ICC_VERSION && !defined(__NVCC__)
+#    define SPDLOG_CONSTEXPR_FUNC constexpr
+#else
+#    define SPDLOG_CONSTEXPR_FUNC inline
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
