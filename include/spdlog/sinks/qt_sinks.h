@@ -162,7 +162,7 @@ protected:
 
         const string_view_t str = string_view_t(formatted.data(), formatted.size());
         // apply the color to the color range in the formatted message.
-        auto payload = QString::fromLatin1(str.data(), static_cast<int>(str.size()));
+        auto payload = QString::fromUtf8(str.data(), static_cast<int>(str.size()));
 
         invoke_params params{max_lines_,             // max lines
             qt_text_edit_,                           // text edit to append to
