@@ -163,6 +163,12 @@ protected:
         const string_view_t str = string_view_t(formatted.data(), formatted.size());
         // apply the color to the color range in the formatted message.
         auto payload = QString::fromUtf8(str.data(), static_cast<int>(str.size()));
+        // convert color ranges from byte index to character index.
+        if (msg.color_range_start < msg.color_range_end) {
+            QByteArray bytes(str.data(), str.size());
+            msg.color_range_start = QString::fromUtf8(bytes.left(msg.color_range_start)).size();
+            msg.color_range_end = QString::fromUtf8(bytes.left(msg.color_range_end)).size();
+        }
 
         invoke_params params{max_lines_,             // max lines
             qt_text_edit_,                           // text edit to append to
