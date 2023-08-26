@@ -113,7 +113,7 @@
         {}
 #endif
 
-#if SPDLOG_CPLUSPLUS > 201703L
+#if SPDLOG_CPLUSPLUS > 201811L
 #   define SPDLOG_CONSTEVAL consteval
 #elif SPDLOG_CPLUSPLUS < 201402L
 #    define SPDLOG_CONSTEVAL 
@@ -164,19 +164,19 @@ struct source_loc
 template<typename T, typename Char>
 struct format_string_wrapper
 {
-    SPDLOG_CONSTEVAL format_string_wrapper(const Char* fmtstr, source_loc loc = source_loc{details::source_location::current()})
+    SPDLOG_CONSTEVAL format_string_wrapper(const Char* fmtstr, source_loc loc = source_loc::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000
-    SPDLOG_CONSTEXPR format_string_wrapper(fmt_runtime_string<Char> fmtstr, source_loc loc = source_loc{details::source_location::current()})
+    SPDLOG_CONSTEXPR format_string_wrapper(fmt_runtime_string<Char> fmtstr, source_loc loc = source_loc::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
 #elif defined(SPDLOG_USE_STD_FORMAT) && SPDLOG_CPLUSPLUS >= 202002L
     template <typename S>
     requires std::is_convertible_v<S, T>
-    SPDLOG_CONSTEXPR format_string_wrapper(S fmtstr, source_loc loc = source_loc{details::source_location::current()})
+    SPDLOG_CONSTEXPR format_string_wrapper(S fmtstr, source_loc loc = source_loc::current())
         : fmt_{fmtstr}
         , loc_{loc}
     {}
