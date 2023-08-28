@@ -164,10 +164,13 @@ protected:
         // apply the color to the color range in the formatted message.
         auto payload = QString::fromUtf8(str.data(), static_cast<int>(str.size()));
         // convert color ranges from byte index to character index.
+        int color_range_start, color_range_end;
+        color_range_start = static_cast<int>(msg.color_range_start);
+        color_range_end = static_cast<int>(msg.color_range_end);
         if (msg.color_range_start < msg.color_range_end) {
             QByteArray bytes(str.data(), str.size());
-            msg.color_range_start = QString::fromUtf8(bytes.left(msg.color_range_start)).size();
-            msg.color_range_end = QString::fromUtf8(bytes.left(msg.color_range_end)).size();
+            color_range_start = QString::fromUtf8(bytes.left(msg.color_range_start)).size();
+            color_range_end = QString::fromUtf8(bytes.left(msg.color_range_end)).size();
         }
 
         invoke_params params{max_lines_,             // max lines
@@ -175,8 +178,8 @@ protected:
             std::move(payload),                      // text to append
             default_color_,                          // default color
             colors_.at(msg.level),                   // color to apply
-            static_cast<int>(msg.color_range_start), // color range start
-            static_cast<int>(msg.color_range_end)};  // color range end
+            color_range_start,                       // color range start
+            color_range_end};                        // color range end
 
         QMetaObject::invokeMethod(
             qt_text_edit_, [params]() { invoke_method_(params); }, Qt::AutoConnection);
