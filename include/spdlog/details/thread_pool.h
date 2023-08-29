@@ -10,6 +10,7 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -34,29 +35,48 @@ struct async_msg : log_msg_buffer {
     // should only be moved in or out of the queue..
     async_msg(const async_msg &) = delete;
 
-// support for vs2013 move
-#if defined(_MSC_VER) && _MSC_VER <= 1800
     async_msg(async_msg &&other)
         : log_msg_buffer(std::move(other)),
           msg_type(other.msg_type),
-          worker_ptr(std::move(other.worker_ptr)) {}
+          worker_ptr(std::move(other.worker_ptr)) {
+#ifdef SPDLOG_ASYNC_OWNING_SOURCELOC_STRINGS
+        source.filename = filename_string.c_str();
+        source.funcname = function_string.c_str();
+#endif
+    }
 
     async_msg &operator=(async_msg &&other) {
         *static_cast<log_msg_buffer *>(this) = std::move(other);
         msg_type = other.msg_type;
         worker_ptr = std::move(other.worker_ptr);
+#ifdef SPDLOG_ASYNC_OWNING_SOURCELOC_STRINGS
+        source.filename = filename_string.c_str();
+        source.funcname = function_string.c_str();
+#endif
         return *this;
     }
-#else  // (_MSC_VER) && _MSC_VER <= 1800
-    async_msg(async_msg &&) = default;
-    async_msg &operator=(async_msg &&) = default;
-#endif
 
     // construct from log_msg with given type
     async_msg(async_logger_ptr &&worker, async_msg_type the_type, const details::log_msg &m)
         : log_msg_buffer{m},
           msg_type{the_type},
-          worker_ptr{std::move(worker)} {}
+          worker_ptr{std::move(worker)} {
+#ifdef SPDLOG_ASYNC_OWNING_SOURCELOC_STRINGS
+        // take ownership of filename/funcname
+        if (m.source.filename) {
+            filename_string = std::string{m.source.filename};
+            source.filename = filename_string.c_str();
+        } else {
+            source.filename = nullptr;
+        }
+        if (m.source.funcname) {
+            function_string = std::string{m.source.funcname};
+            source.funcname = function_string.c_str();
+        } else {
+            source.funcname = nullptr;
+        }
+#endif
+    }
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
         : log_msg_buffer{},
@@ -65,6 +85,12 @@ struct async_msg : log_msg_buffer {
 
     explicit async_msg(async_msg_type the_type)
         : async_msg{nullptr, the_type} {}
+
+#ifdef SPDLOG_ASYNC_OWNING_SOURCELOC_STRINGS
+    // source.filename/funcname always need to point to the member strings
+    std::string filename_string;
+    std::string function_string;
+#endif
 };
 
 class SPDLOG_API thread_pool {

@@ -18,6 +18,9 @@ jobs:
           - { compiler: gcc, version: 12, build_type: Release, cppstd: 20 }
           - { compiler: clang, version: 12, build_type: Debug, cppstd: 17, asan: OFF }
           - { compiler: clang, version: 15, build_type: Release, cppstd: 20, asan: OFF }
+        async_owning_sourceloc_strings:
+          - ON
+          - OFF
     container:
       image: ${{ matrix.config.compiler == 'clang' && 'teeks99/clang-ubuntu' || matrix.config.compiler }}:${{ matrix.config.version }}
     name: "${{ matrix.config.compiler}} ${{ matrix.config.version }} (C++${{ matrix.config.cppstd }}, ${{ matrix.config.build_type }})"
@@ -51,6 +54,7 @@ jobs:
             -DSPDLOG_BUILD_BENCH=OFF \
             -DSPDLOG_BUILD_TESTS=ON \
             -DSPDLOG_BUILD_TESTS_HO=OFF \
+            -DSPDLOG_ASYNC_OWNING_SOURCELOC_STRINGS=${{ matrix.async_owning_sourceloc_strings }} \
             -DSPDLOG_SANITIZE_ADDRESS=${{ matrix.config.asan || 'ON' }}
           make -j2
           ctest -j2 --output-on-failure
