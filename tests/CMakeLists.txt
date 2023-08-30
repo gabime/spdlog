@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.11)
 project(spdlog_utests CXX)
 
 if(NOT TARGET spdlog)
