@@ -129,9 +129,7 @@ option(
 option(SPDLOG_DISABLE_DEFAULT_LOGGER "Disable default logger creation" OFF)
 
 # clang-tidy
-if(${CMAKE_VERSION} VERSION_GREATER "3.5")
-    option(SPDLOG_TIDY "run clang-tidy" OFF)
-endif()
+option(SPDLOG_TIDY "run clang-tidy" OFF)
 
 if(SPDLOG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
