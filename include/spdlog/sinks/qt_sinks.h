@@ -168,9 +168,8 @@ protected:
         color_range_start = static_cast<int>(msg.color_range_start);
         color_range_end = static_cast<int>(msg.color_range_end);
         if (msg.color_range_start < msg.color_range_end) {
-            QByteArray bytes(str.data(), str.size());
-            color_range_start = QString::fromUtf8(bytes.left(msg.color_range_start)).size();
-            color_range_end = QString::fromUtf8(bytes.left(msg.color_range_end)).size();
+            color_range_start = QString::fromUtf8(str.data(), msg.color_range_start).size();
+            color_range_end = QString::fromUtf8(str.data(), msg.color_range_end).size();
         }
 
         invoke_params params{max_lines_,             // max lines
