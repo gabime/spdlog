@@ -16,7 +16,12 @@
 namespace spdlog {
 namespace sinks {
 /*
- * Ring buffer sink
+ * Ring buffer sink. Holds fixed amount of log messages in memory. When the buffer is full, new messages override the old ones.
+ * Useful for storing debug data in memory in case of error.
+ * Example:
+ * auto rb_sink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(128);
+ * spdlog::logger logger("rb_logger", rb_sink);
+ *  rb->drain([](const std::string_view msg) { process(msg);});
  */
 template<typename Mutex>
 class ringbuffer_sink final : public base_sink<Mutex>
