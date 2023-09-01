@@ -61,20 +61,22 @@ public:
         }
     }
 
-    // Return reference to the front item.
+    // Return const reference to the front item.
     // If there are no elements in the container, the behavior is undefined.
-    const T &front() const
+    [[nodiscard]] const T &front() const
     {
         return v_[head_];
     }
 
-    T &front()
+    // Return reference to the front item.
+    // If there are no elements in the container, the behavior is undefined.
+    [[nodiscard]] T &front()
     {
         return v_[head_];
     }
 
     // Return number of elements actually stored
-    size_t size() const
+    [[nodiscard]] size_t size() const
     {
         if (tail_ >= head_)
         {
