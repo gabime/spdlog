@@ -45,7 +45,7 @@ public:
     {
         try
         {
-            client_ = spdlog::details::make_unique<mongocxx::client>(mongocxx::uri{uri});
+            client_ = spdlog::std::make_unique<mongocxx::client>(mongocxx::uri{uri});
         }
         catch (const std::exception &e)
         {

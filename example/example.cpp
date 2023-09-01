@@ -338,15 +338,13 @@ public:
 
     std::unique_ptr<custom_flag_formatter> clone() const override
     {
-        return spdlog::details::make_unique<my_formatter_flag>();
+        return std::make_unique<my_formatter_flag>();
     }
 };
 
 void custom_flags_example()
 {
-
-    using spdlog::details::make_unique; // for pre c++14
-    auto formatter = make_unique<spdlog::pattern_formatter>();
+    auto formatter = std::make_unique<spdlog::pattern_formatter>();
     formatter->add_flag<my_formatter_flag>('*').set_pattern("[%n] [%*] [%^%l%$] %v");
     // set the new formatter using spdlog::set_formatter(formatter) or logger->set_formatter(formatter)
     // spdlog::set_formatter(std::move(formatter));

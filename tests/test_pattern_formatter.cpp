@@ -354,7 +354,7 @@ public:
 
     std::unique_ptr<custom_flag_formatter> clone() const override
     {
-        return spdlog::details::make_unique<custom_test_flag>(some_txt);
+        return std::make_unique<custom_test_flag>(some_txt);
     }
 };
 // test clone with custom flag formatters

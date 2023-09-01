@@ -19,7 +19,7 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color_mode mode)
     : out_handle_(out_handle)
     , mutex_(ConsoleMutex::mutex())
-    , formatter_(details::make_unique<spdlog::pattern_formatter>())
+    , formatter_(std::make_unique<spdlog::pattern_formatter>())
 {
 
     set_color_mode_impl(mode);

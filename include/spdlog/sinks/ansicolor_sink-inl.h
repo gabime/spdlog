@@ -17,7 +17,7 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, color_mode mode)
     : target_file_(target_file)
     , mutex_(ConsoleMutex::mutex())
-    , formatter_(details::make_unique<spdlog::pattern_formatter>())
+    , formatter_(std::make_unique<spdlog::pattern_formatter>())
 
 {
     set_color_mode(mode);
