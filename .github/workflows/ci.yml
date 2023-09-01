@@ -13,7 +13,9 @@ jobs:
       matrix:
         config:
           - { compiler: gcc, version: 11, build_type: Debug, cppstd: 20 }
-          - { compiler: gcc, version: 12, build_type: Release, cppstd: 20 }
+          - { compiler: gcc, version: 13, build_type: Release, cppstd: 20 }
+          - { compiler: gcc, version: 13, build_type: Release, cppstd: 20, std_format: OFF }
+          - { compiler: gcc, version: 13, build_type: Release, cppstd: 20, std_format: ON }
           - { compiler: clang, version: 15, build_type: Debug, cppstd: 20, asan: ON }
           - { compiler: clang, version: 15, build_type: Release, cppstd: 20, asan: OFF }
     container:
@@ -49,7 +51,8 @@ jobs:
             -DSPDLOG_BUILD_BENCH=OFF \
             -DSPDLOG_BUILD_TESTS=ON \
             -DSPDLOG_BUILD_TESTS_HO=OFF \
-            -DSPDLOG_SANITIZE_ADDRESS=${{ matrix.config.asan || 'ON' }}
+            -DSPDLOG_SANITIZE_ADDRESS=${{ matrix.config.asan || 'OFF' }} \
+            -DSPDLOG_USE_STD_FORMAT=${{ matrix.config.std_format || 'OFF' }} \
           make -j2
           export ASAN_OPTIONS=alloc_dealloc_mismatch=0
           ctest -j2 --output-on-failure
