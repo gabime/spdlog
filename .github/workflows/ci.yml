@@ -20,7 +20,7 @@ jobs:
           - { compiler: clang, version: 15, build_type: Release, cppstd: 20, asan: OFF }
     container:
       image: ${{ matrix.config.compiler == 'clang' && 'teeks99/clang-ubuntu' || matrix.config.compiler }}:${{ matrix.config.version }}
-    name: "${{ matrix.config.compiler}} ${{ matrix.config.version }} (C++${{ matrix.config.cppstd }}, ${{ matrix.config.build_type }} ${{ DSPDLOG_USE_STD_FORMAT matrix.config.std_format || 'OFF' }})"
+    name: "${{ matrix.config.compiler}} ${{ matrix.config.version }} (C++${{ matrix.config.cppstd }}, ${{ matrix.config.build_type }} DSPDLOG_USE_STD_FORMAT=${{ matrix.config.std_format || 'OFF' }})"
     steps:
       - uses: actions/checkout@main
       - name: Setup
