@@ -11,6 +11,7 @@
 #include <mutex>
 #include <string>
 #include <vector>
+#include <functional>
 
 namespace spdlog {
 namespace sinks {
@@ -25,34 +26,27 @@ public:
         : q_{n_items}
     {}
 
-    std::vector<details::log_msg_buffer> last_raw(size_t lim = 0)
+    void drain_raw(std::function<void(const details::log_msg_buffer&)> callback)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-        auto items_available = q_.size();
-        auto n_items = lim > 0 ? (std::min)(lim, items_available) : items_available;
-        std::vector<details::log_msg_buffer> ret;
-        ret.reserve(n_items);
-        for (size_t i = (items_available - n_items); i < items_available; i++)
+        while (!q_.empty())
         {
-            ret.push_back(q_.at(i));
+            callback(q_.front());
+            q_.pop_front();
         }
-        return ret;
     }
 
-    std::vector<std::string> last_formatted(size_t lim = 0)
+    void drain(std::function<void(std::string_view)> callback)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
-        auto items_available = q_.size();
-        auto n_items = lim > 0 ? (std::min)(lim, items_available) : items_available;
-        std::vector<std::string> ret;
-        ret.reserve(n_items);
-        for (size_t i = (items_available - n_items); i < items_available; i++)
+        memory_buf_t formatted;
+        while (!q_.empty())
         {
-            memory_buf_t formatted;
-            base_sink<Mutex>::formatter_->format(q_.at(i), formatted);
-            ret.push_back(SPDLOG_BUF_TO_STRING(formatted));
+            formatted.clear();
+            base_sink<Mutex>::formatter_->format(q_.front(), formatted);
+            callback(std::string_view (formatted.data(), formatted.size()));
+            q_.pop_front();
         }
-        return ret;
     }
 
 protected:
@@ -70,5 +64,4 @@ using ringbuffer_sink_mt = ringbuffer_sink<std::mutex>;
 using ringbuffer_sink_st = ringbuffer_sink<details::null_mutex>;
 
 } // namespace sinks
-
 } // namespace spdlog
