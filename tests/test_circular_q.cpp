@@ -53,6 +53,7 @@ TEST_CASE("test_empty", "[circular_q]")
 {
     q_type q1(0);
     REQUIRE(q1.empty());
+    REQUIRE(q1.full()); // q with capacity 0 is considered full
     q1.push_back(1);
     REQUIRE(q1.empty());
 
@@ -118,6 +119,26 @@ TEST_CASE("test_overrun_counter", "[circular_q]")
         q.push_back(100);
     }
     REQUIRE(q.overrun_counter() == 8);
+
+    q.reset_overrun_counter();
+    REQUIRE(q.overrun_counter() == 0);
+}
+
+TEST_CASE("test_move", "[circular_q]")
+{
+    q_type q1(2);
+    q1.push_back(100);
+    q1.push_back(200);
+    q1.push_back(300);
+
+    q_type q2 = std::move(q1);
+    REQUIRE(q2.size() == 2);
+    REQUIRE(q2[0] == 200);
+    REQUIRE(q2[1] == 300);
+    REQUIRE(q2.overrun_counter() == 1);
+
+    REQUIRE(q1.empty());
+    REQUIRE(q1.overrun_counter() == 0);
 }
 
 
