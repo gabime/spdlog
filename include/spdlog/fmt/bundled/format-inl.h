@@ -1128,16 +1128,12 @@ bool is_left_endpoint_integer_shorter_interval(int exponent) noexcept {
 }
 
 // Remove trailing zeros from n and return the number of zeros removed (float)
-FMT_INLINE int remove_trailing_zeros(uint32_t& n) noexcept {
+FMT_INLINE int remove_trailing_zeros(uint32_t& n, int s = 0) noexcept {
   FMT_ASSERT(n != 0, "");
   // Modular inverse of 5 (mod 2^32): (mod_inv_5 * 5) mod 2^32 = 1.
-  // See https://github.com/fmtlib/fmt/issues/3163 for more details.
-  const uint32_t mod_inv_5 = 0xcccccccd;
-  // Casts are needed to workaround a bug in MSVC 19.22 and older.
-  const uint32_t mod_inv_25 =
-      static_cast<uint32_t>(uint64_t(mod_inv_5) * mod_inv_5);
+  constexpr uint32_t mod_inv_5 = 0xcccccccd;
+  constexpr uint32_t mod_inv_25 = 0xc28f5c29; // = mod_inv_5 * mod_inv_5
 
-  int s = 0;
   while (true) {
     auto q = rotr(n * mod_inv_25, 2);
     if (q > max_value<uint32_t>() / 100) break;
@@ -1162,32 +1158,17 @@ FMT_INLINE int remove_trailing_zeros(uint64_t& n) noexcept {
 
   // Is n is divisible by 10^8?
   if ((nm.high() & ((1ull << (90 - 64)) - 1)) == 0 && nm.low() < magic_number) {
-    // If yes, work with the quotient.
+    // If yes, work with the quotient...
     auto n32 = static_cast<uint32_t>(nm.high() >> (90 - 64));
-
-    const uint32_t mod_inv_5 = 0xcccccccd;
-    const uint32_t mod_inv_25 = mod_inv_5 * mod_inv_5;
-
-    int s = 8;
-    while (true) {
-      auto q = rotr(n32 * mod_inv_25, 2);
-      if (q > max_value<uint32_t>() / 100) break;
-      n32 = q;
-      s += 2;
-    }
-    auto q = rotr(n32 * mod_inv_5, 1);
-    if (q <= max_value<uint32_t>() / 10) {
-      n32 = q;
-      s |= 1;
-    }
-
+    // ... and use the 32 bit variant of the function
+    int s = remove_trailing_zeros(n32, 8);
     n = n32;
     return s;
   }
 
   // If n is not divisible by 10^8, work with n itself.
-  const uint64_t mod_inv_5 = 0xcccccccccccccccd;
-  const uint64_t mod_inv_25 = mod_inv_5 * mod_inv_5;
+  constexpr uint64_t mod_inv_5 = 0xcccccccccccccccd;
+  constexpr uint64_t mod_inv_25 = 0x8f5c28f5c28f5c29; // = mod_inv_5 * mod_inv_5
 
   int s = 0;
   while (true) {
@@ -1458,7 +1439,7 @@ FMT_FUNC bool write_console(std::FILE* f, string_view text) {
   auto u16 = utf8_to_utf16(text);
   auto written = dword();
   return WriteConsoleW(reinterpret_cast<void*>(_get_osfhandle(fd)), u16.c_str(),
-                       static_cast<uint32_t>(u16.size()), &written, nullptr);
+                       static_cast<uint32_t>(u16.size()), &written, nullptr) != 0;
 }
 
 // Print assuming legacy (non-Unicode) encoding.

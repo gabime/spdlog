@@ -668,8 +668,11 @@ template <typename Container> struct all {
 }  // namespace detail
 
 template <typename T, typename Char>
-struct formatter<T, Char,
-                 enable_if_t<detail::is_container_adaptor_like<T>::value>>
+struct formatter<
+    T, Char,
+    enable_if_t<conjunction<detail::is_container_adaptor_like<T>,
+                            bool_constant<range_format_kind<T, Char>::value ==
+                                          range_format::disabled>>::value>>
     : formatter<detail::all<typename T::container_type>, Char> {
   using all = detail::all<typename T::container_type>;
   template <typename FormatContext>

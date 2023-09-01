@@ -123,10 +123,10 @@ using wcstring_view = basic_cstring_view<wchar_t>;
 #ifdef _WIN32
 FMT_API const std::error_category& system_category() noexcept;
 
-FMT_BEGIN_DETAIL_NAMESPACE
+namespace detail {
 FMT_API void format_windows_error(buffer<char>& out, int error_code,
                                   const char* message) noexcept;
-FMT_END_DETAIL_NAMESPACE
+}
 
 FMT_API std::system_error vwindows_error(int error_code, string_view format_str,
                                          format_args args);
@@ -328,7 +328,7 @@ class FMT_API file {
 // Returns the memory page size.
 long getpagesize();
 
-FMT_BEGIN_DETAIL_NAMESPACE
+namespace detail {
 
 struct buffer_size {
   buffer_size() = default;
@@ -387,7 +387,7 @@ class file_buffer final : public buffer<char> {
   }
 };
 
-FMT_END_DETAIL_NAMESPACE
+}  // namespace detail
 
 // Added {} below to work around default constructor error known to
 // occur in Xcode versions 7.2.1 and 8.2.1.

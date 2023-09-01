@@ -19,84 +19,6 @@ FMT_CONSTEXPR inline counting_iterator copy_str(InputIt begin, InputIt end,
   return it + (end - begin);
 }
 
-template <typename OutputIt> class truncating_iterator_base {
- protected:
-  OutputIt out_;
-  size_t limit_;
-  size_t count_ = 0;
-
-  truncating_iterator_base() : out_(), limit_(0) {}
-
-  truncating_iterator_base(OutputIt out, size_t limit)
-      : out_(out), limit_(limit) {}
-
- public:
-  using iterator_category = std::output_iterator_tag;
-  using value_type = typename std::iterator_traits<OutputIt>::value_type;
-  using difference_type = std::ptrdiff_t;
-  using pointer = void;
-  using reference = void;
-  FMT_UNCHECKED_ITERATOR(truncating_iterator_base);
-
-  OutputIt base() const { return out_; }
-  size_t count() const { return count_; }
-};
-
-// An output iterator that truncates the output and counts the number of objects
-// written to it.
-template <typename OutputIt,
-          typename Enable = typename std::is_void<
-              typename std::iterator_traits<OutputIt>::value_type>::type>
-class truncating_iterator;
-
-template <typename OutputIt>
-class truncating_iterator<OutputIt, std::false_type>
-    : public truncating_iterator_base<OutputIt> {
-  mutable typename truncating_iterator_base<OutputIt>::value_type blackhole_;
-
- public:
-  using value_type = typename truncating_iterator_base<OutputIt>::value_type;
-
-  truncating_iterator() = default;
-
-  truncating_iterator(OutputIt out, size_t limit)
-      : truncating_iterator_base<OutputIt>(out, limit) {}
-
-  truncating_iterator& operator++() {
-    if (this->count_++ < this->limit_) ++this->out_;
-    return *this;
-  }
-
-  truncating_iterator operator++(int) {
-    auto it = *this;
-    ++*this;
-    return it;
-  }
-
-  value_type& operator*() const {
-    return this->count_ < this->limit_ ? *this->out_ : blackhole_;
-  }
-};
-
-template <typename OutputIt>
-class truncating_iterator<OutputIt, std::true_type>
-    : public truncating_iterator_base<OutputIt> {
- public:
-  truncating_iterator() = default;
-
-  truncating_iterator(OutputIt out, size_t limit)
-      : truncating_iterator_base<OutputIt>(out, limit) {}
-
-  template <typename T> truncating_iterator& operator=(T val) {
-    if (this->count_++ < this->limit_) *this->out_++ = val;
-    return *this;
-  }
-
-  truncating_iterator& operator++() { return *this; }
-  truncating_iterator& operator++(int) { return *this; }
-  truncating_iterator& operator*() { return *this; }
-};
-
 // A compile-time string which is compiled into fast formatting code.
 class compiled_string {};
 
@@ -196,7 +118,8 @@ template <typename Char> struct code_unit {
 
   template <typename OutputIt, typename... Args>
   constexpr OutputIt format(OutputIt out, const Args&...) const {
-    return write<Char>(out, value);
+    *out++ = value;
+    return out;
   }
 };
 
@@ -220,7 +143,12 @@ template <typename Char, typename T, int N> struct field {
 
   template <typename OutputIt, typename... Args>
   constexpr OutputIt format(OutputIt out, const Args&... args) const {
-    return write<Char>(out, get_arg_checked<T, N>(args...));
+    const T& arg = get_arg_checked<T, N>(args...);
+    if constexpr (std::is_convertible_v<T, basic_string_view<Char>>) {
+      auto s = basic_string_view<Char>(arg);
+      return copy_str<Char>(s.begin(), s.end(), out);
+    }
+    return write<Char>(out, arg);
   }
 };
 
@@ -448,20 +376,18 @@ constexpr auto compile_format_string(S format_str) {
       } else if constexpr (arg_id_result.arg_id.kind == arg_id_kind::name) {
         constexpr auto arg_index =
             get_arg_index_by_name(arg_id_result.arg_id.val.name, Args{});
-        if constexpr (arg_index != invalid_arg_index) {
+        if constexpr (arg_index >= 0) {
           constexpr auto next_id =
               ID != manual_indexing_id ? ID + 1 : manual_indexing_id;
           return parse_replacement_field_then_tail<
               decltype(get_type<arg_index, Args>::value), Args, arg_id_end_pos,
               arg_index, next_id>(format_str);
-        } else {
-          if constexpr (c == '}') {
-            return parse_tail<Args, arg_id_end_pos + 1, ID>(
-                runtime_named_field<char_type>{arg_id_result.arg_id.val.name},
-                format_str);
-          } else if constexpr (c == ':') {
-            return unknown_format();  // no type info for specs parsing
-          }
+        } else if constexpr (c == '}') {
+          return parse_tail<Args, arg_id_end_pos + 1, ID>(
+              runtime_named_field<char_type>{arg_id_result.arg_id.val.name},
+              format_str);
+        } else if constexpr (c == ':') {
+          return unknown_format();  // no type info for specs parsing
         }
       }
     }
@@ -564,9 +490,10 @@ template <typename OutputIt, typename S, typename... Args,
           FMT_ENABLE_IF(detail::is_compiled_string<S>::value)>
 format_to_n_result<OutputIt> format_to_n(OutputIt out, size_t n,
                                          const S& format_str, Args&&... args) {
-  auto it = fmt::format_to(detail::truncating_iterator<OutputIt>(out, n),
-                           format_str, std::forward<Args>(args)...);
-  return {it.base(), it.count()};
+  using traits = detail::fixed_buffer_traits;
+  auto buf = detail::iterator_buffer<OutputIt, char, traits>(out, n);
+  format_to(std::back_inserter(buf), format_str, std::forward<Args>(args)...);
+  return {buf.out(), buf.count()};
 }
 
 template <typename S, typename... Args,

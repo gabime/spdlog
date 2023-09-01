@@ -1,4 +1,4 @@
-// Formatting library for C++ - dynamic format arguments
+// Formatting library for C++ - dynamic argument lists
 //
 // Copyright (c) 2012 - present, Victor Zverovich
 // All rights reserved.

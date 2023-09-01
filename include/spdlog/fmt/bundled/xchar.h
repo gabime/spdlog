@@ -62,9 +62,9 @@ template <> struct is_char<detail::char8_type> : std::true_type {};
 template <> struct is_char<char16_t> : std::true_type {};
 template <> struct is_char<char32_t> : std::true_type {};
 
-template <typename... Args>
-constexpr format_arg_store<wformat_context, Args...> make_wformat_args(
-    const Args&... args) {
+template <typename... T>
+constexpr format_arg_store<wformat_context, T...> make_wformat_args(
+    const T&... args) {
   return {args...};
 }
 
@@ -99,9 +99,9 @@ template <typename Char, FMT_ENABLE_IF(!std::is_same<Char, char>::value)>
 auto vformat(basic_string_view<Char> format_str,
              basic_format_args<buffer_context<type_identity_t<Char>>> args)
     -> std::basic_string<Char> {
-  basic_memory_buffer<Char> buffer;
-  detail::vformat_to(buffer, format_str, args);
-  return to_string(buffer);
+  auto buf = basic_memory_buffer<Char>();
+  detail::vformat_to(buf, format_str, args);
+  return to_string(buf);
 }
 
 template <typename... T>
@@ -111,10 +111,10 @@ auto format(wformat_string<T...> fmt, T&&... args) -> std::wstring {
 
 // Pass char_t as a default template parameter instead of using
 // std::basic_string<char_t<S>> to reduce the symbol size.
-template <typename S, typename... Args, typename Char = char_t<S>,
+template <typename S, typename... T, typename Char = char_t<S>,
           FMT_ENABLE_IF(!std::is_same<Char, char>::value &&
                         !std::is_same<Char, wchar_t>::value)>
-auto format(const S& format_str, Args&&... args) -> std::basic_string<Char> {
+auto format(const S& format_str, T&&... args) -> std::basic_string<Char> {
   return vformat(detail::to_string_view(format_str),
                  fmt::make_format_args<buffer_context<Char>>(args...));
 }
@@ -129,11 +129,10 @@ inline auto vformat(
   return detail::vformat(loc, detail::to_string_view(format_str), args);
 }
 
-template <typename Locale, typename S, typename... Args,
-          typename Char = char_t<S>,
+template <typename Locale, typename S, typename... T, typename Char = char_t<S>,
           FMT_ENABLE_IF(detail::is_locale<Locale>::value&&
                             detail::is_exotic_char<Char>::value)>
-inline auto format(const Locale& loc, const S& format_str, Args&&... args)
+inline auto format(const Locale& loc, const S& format_str, T&&... args)
     -> std::basic_string<Char> {
   return detail::vformat(loc, detail::to_string_view(format_str),
                          fmt::make_format_args<buffer_context<Char>>(args...));
@@ -150,11 +149,11 @@ auto vformat_to(OutputIt out, const S& format_str,
   return detail::get_iterator(buf, out);
 }
 
-template <typename OutputIt, typename S, typename... Args,
+template <typename OutputIt, typename S, typename... T,
           typename Char = char_t<S>,
           FMT_ENABLE_IF(detail::is_output_iterator<OutputIt, Char>::value&&
                             detail::is_exotic_char<Char>::value)>
-inline auto format_to(OutputIt out, const S& fmt, Args&&... args) -> OutputIt {
+inline auto format_to(OutputIt out, const S& fmt, T&&... args) -> OutputIt {
   return vformat_to(out, detail::to_string_view(fmt),
                     fmt::make_format_args<buffer_context<Char>>(args...));
 }
@@ -174,12 +173,12 @@ inline auto vformat_to(
 }
 
 template <
-    typename OutputIt, typename Locale, typename S, typename... Args,
+    typename OutputIt, typename Locale, typename S, typename... T,
     typename Char = char_t<S>,
     bool enable = detail::is_output_iterator<OutputIt, Char>::value&&
         detail::is_locale<Locale>::value&& detail::is_exotic_char<Char>::value>
 inline auto format_to(OutputIt out, const Locale& loc, const S& format_str,
-                      Args&&... args) ->
+                      T&&... args) ->
     typename std::enable_if<enable, OutputIt>::type {
   return vformat_to(out, loc, detail::to_string_view(format_str),
                     fmt::make_format_args<buffer_context<Char>>(args...));
@@ -192,36 +191,36 @@ inline auto vformat_to_n(
     OutputIt out, size_t n, basic_string_view<Char> format_str,
     basic_format_args<buffer_context<type_identity_t<Char>>> args)
     -> format_to_n_result<OutputIt> {
-  detail::iterator_buffer<OutputIt, Char, detail::fixed_buffer_traits> buf(out,
-                                                                           n);
+  using traits = detail::fixed_buffer_traits;
+  auto buf = detail::iterator_buffer<OutputIt, Char, traits>(out, n);
   detail::vformat_to(buf, format_str, args);
   return {buf.out(), buf.count()};
 }
 
-template <typename OutputIt, typename S, typename... Args,
+template <typename OutputIt, typename S, typename... T,
           typename Char = char_t<S>,
           FMT_ENABLE_IF(detail::is_output_iterator<OutputIt, Char>::value&&
                             detail::is_exotic_char<Char>::value)>
-inline auto format_to_n(OutputIt out, size_t n, const S& fmt,
-                        const Args&... args) -> format_to_n_result<OutputIt> {
+inline auto format_to_n(OutputIt out, size_t n, const S& fmt, T&&... args)
+    -> format_to_n_result<OutputIt> {
   return vformat_to_n(out, n, detail::to_string_view(fmt),
                       fmt::make_format_args<buffer_context<Char>>(args...));
 }
 
-template <typename S, typename... Args, typename Char = char_t<S>,
+template <typename S, typename... T, typename Char = char_t<S>,
           FMT_ENABLE_IF(detail::is_exotic_char<Char>::value)>
-inline auto formatted_size(const S& fmt, Args&&... args) -> size_t {
-  detail::counting_buffer<Char> buf;
+inline auto formatted_size(const S& fmt, T&&... args) -> size_t {
+  auto buf = detail::counting_buffer<Char>();
   detail::vformat_to(buf, detail::to_string_view(fmt),
                      fmt::make_format_args<buffer_context<Char>>(args...));
   return buf.count();
 }
 
 inline void vprint(std::FILE* f, wstring_view fmt, wformat_args args) {
-  wmemory_buffer buffer;
-  detail::vformat_to(buffer, fmt, args);
-  buffer.push_back(L'\0');
-  if (std::fputws(buffer.data(), f) == -1)
+  auto buf = wmemory_buffer();
+  detail::vformat_to(buf, fmt, args);
+  buf.push_back(L'\0');
+  if (std::fputws(buf.data(), f) == -1)
     FMT_THROW(system_error(errno, FMT_STRING("cannot write to file")));
 }
 

@@ -203,7 +203,7 @@ struct rgb {
   uint8_t b;
 };
 
-FMT_BEGIN_DETAIL_NAMESPACE
+namespace detail {
 
 // color is a struct of either a rgb color or a terminal color.
 struct color_type {
@@ -225,8 +225,7 @@ struct color_type {
     uint32_t rgb_color;
   } value;
 };
-
-FMT_END_DETAIL_NAMESPACE
+}  // namespace detail
 
 /** A text style consisting of foreground and background colors and emphasis. */
 class text_style {
@@ -323,7 +322,7 @@ FMT_CONSTEXPR inline text_style operator|(emphasis lhs, emphasis rhs) noexcept {
   return text_style(lhs) | rhs;
 }
 
-FMT_BEGIN_DETAIL_NAMESPACE
+namespace detail {
 
 template <typename Char> struct ansi_color_escape {
   FMT_CONSTEXPR ansi_color_escape(detail::color_type text_color,
@@ -457,7 +456,7 @@ void vformat_to(buffer<Char>& buf, const text_style& ts,
   if (has_style) detail::reset_color<Char>(buf);
 }
 
-FMT_END_DETAIL_NAMESPACE
+}  // namespace detail
 
 inline void vprint(std::FILE* f, const text_style& ts, string_view fmt,
                    format_args args) {
