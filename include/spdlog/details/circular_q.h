@@ -90,17 +90,26 @@ public:
 
     // Return const reference to item by index.
     // If index is out of range 0…size()-1, the behavior is undefined.
-    const T &at(size_t i) const
+    const T &operator[](size_t idx) const
     {
-        assert(i < size());
-        return v_[(head_ + i) % max_items_];
+        assert(idx < size());
+        assert(max_items_ > 0);
+        return v_[(head_ + idx) % max_items_];
     }
 
-    // Pop item from front.
-    // If there are no elements in the container, the behavior is undefined.
+    // Return reference to item by index.
+    T &operator[](size_t idx)
+    {
+        return const_cast<T &>(static_cast<const circular_q &>(*this)[idx]);
+    }
+
+    // Pop item from front if exists.
     void pop_front()
     {
-        head_ = (head_ + 1) % max_items_;
+        if(!empty())
+        {
+            head_ = (head_ + 1) % max_items_;
+        }
     }
 
     [[nodiscard]] bool empty() const
@@ -115,7 +124,7 @@ public:
         {
             return ((tail_ + 1) % max_items_) == head_;
         }
-        return false;
+        return true;
     }
 
     [[nodiscard]] size_t overrun_counter() const
@@ -145,7 +154,7 @@ public:
 
         reference operator*() const
         {
-            return cq_->v_[(cq_->head_ + index_) % cq_->max_items_];
+            return cq_->operator[](index_);
         }
 
         pointer operator->()
@@ -153,15 +162,17 @@ public:
             return &operator*();
         }
 
+        // Prefix increment
         iterator &operator++()
         {
-            if (cq_ != nullptr)
+            if(cq_ != nullptr)
             {
-                index_ = (index_ + 1) % cq_->max_items_;
+                index_ = (index_ + 1);
             }
             return *this;
         }
 
+        // Postfix increment
         iterator operator++(int)
         {
             iterator retval = *this;
