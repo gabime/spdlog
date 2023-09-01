@@ -116,7 +116,7 @@ public:
         {
             return ((tail_ + 1) % max_items_) == head_;
         }
-        return false;
+        return true;
     }
 
     [[nodiscard]] size_t overrun_counter() const
