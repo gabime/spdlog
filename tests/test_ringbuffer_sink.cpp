@@ -58,7 +58,7 @@ TEST_CASE("test_empty", "[ringbuffer_sink]")
     auto sink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(sink_size);
     spdlog::logger l("logger", sink);
 
-    sink->drain([&](std::string_view msg) {
+    sink->drain([&](std::string_view) {
         REQUIRE_FALSE(true); // should not be called since the sink is empty
     });
 }
@@ -74,7 +74,7 @@ TEST_CASE("test_empty_size", "[ringbuffer_sink]")
         l.info("{}", i);
     }
 
-    sink->drain([&](std::string_view msg) {
+    sink->drain([&](std::string_view) {
         REQUIRE_FALSE(true); // should not be called since the sink size is 0
     });
 }
