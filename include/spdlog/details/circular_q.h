@@ -6,8 +6,6 @@
 
 #include <vector>
 #include <cassert>
-#include <iterator>
-#include <cstddef>
 
 namespace spdlog {
 namespace details {
@@ -76,7 +74,7 @@ public:
     }
 
     // Return number of elements actually stored
-    [[nodiscard]] size_t size() const
+    size_t size() const
     {
         if (tail_ >= head_)
         {
@@ -97,13 +95,7 @@ public:
         return v_[(head_ + idx) % max_items_];
     }
 
-    // Return reference to item by index.
-    T &operator[](size_t idx)
-    {
-        return const_cast<T &>(static_cast<const circular_q &>(*this)[idx]);
-    }
-
-    // Pop item from front if exists.
+    // Pop item from front if not empty.
     void pop_front()
     {
         if(!empty())
@@ -124,7 +116,7 @@ public:
         {
             return ((tail_ + 1) % max_items_) == head_;
         }
-        return true;
+        return false;
     }
 
     [[nodiscard]] size_t overrun_counter() const
@@ -135,73 +127,6 @@ public:
     void reset_overrun_counter()
     {
         overrun_counter_ = 0;
-    }
-
-    // Iterator support
-    class iterator
-    {
-    public:
-        using iterator_category = std::forward_iterator_tag;
-        using value_type = T;
-        using difference_type = std::ptrdiff_t;
-        using pointer = T *;
-        using reference = T &;
-
-        explicit iterator(circular_q *circular_q = nullptr, size_t index = 0)
-            : cq_(circular_q)
-            , index_(index)
-        {}
-
-        reference operator*() const
-        {
-            return cq_->operator[](index_);
-        }
-
-        pointer operator->()
-        {
-            return &operator*();
-        }
-
-        // Prefix increment
-        iterator &operator++()
-        {
-            if(cq_ != nullptr)
-            {
-                index_ = (index_ + 1);
-            }
-            return *this;
-        }
-
-        // Postfix increment
-        iterator operator++(int)
-        {
-            iterator retval = *this;
-            ++(*this);
-            return retval;
-        }
-
-        bool operator==(iterator other) const
-        {
-            return cq_ == other.cq_ && index_ == other.index_;
-        }
-
-        bool operator!=(iterator other) const
-        {
-            return index_ != other.index_ || cq_ != other.cq_;
-        }
-
-    private:
-        circular_q *cq_;
-        size_t index_;
-    };
-
-    iterator begin()
-    {
-        return iterator(this, 0);
-    }
-    iterator end()
-    {
-        return iterator(this, size());
     }
 
 private:
