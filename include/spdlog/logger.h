@@ -80,7 +80,11 @@ public:
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
     {
-        log_with_format_(loc, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
+        if (should_log(lvl))
+        {
+            log_with_format_(loc, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
+        }
+
     }
 
     template<typename... Args>
@@ -247,10 +251,7 @@ protected:
     template<typename... Args>
     void log_with_format_(source_loc loc, level::level_enum lvl, string_view_t fmt, Args &&...args)
     {
-        if (!should_log(lvl))
-        {
-            return;
-        }
+        assert(should_log(lvl));
         SPDLOG_TRY
         {
             memory_buf_t buf;
