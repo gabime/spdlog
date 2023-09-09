@@ -43,6 +43,23 @@ TEST_CASE("discard policy ", "[async]")
     REQUIRE(tp->overrun_counter() > 0);
 }
 
+TEST_CASE("discard policy discard_new ", "[async]")
+{
+    auto test_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
+    test_sink->set_delay(std::chrono::milliseconds(1));
+    size_t queue_size = 4;
+    size_t messages = 1024;
+
+    auto tp = std::make_shared<spdlog::details::thread_pool>(queue_size, 1);
+    auto logger = std::make_shared<spdlog::async_logger>("as", test_sink, tp, spdlog::async_overflow_policy::discard_new);
+    for (size_t i = 0; i < messages; i++)
+    {
+        logger->info("Hello message");
+    }
+    REQUIRE(test_sink->msg_counter() < messages);
+    REQUIRE(tp->discard_counter() > 0);
+}
+
 TEST_CASE("discard policy using factory ", "[async]")
 {
     size_t queue_size = 4;

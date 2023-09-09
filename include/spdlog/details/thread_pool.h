@@ -98,6 +98,8 @@ public:
     void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy);
     size_t overrun_counter();
     void reset_overrun_counter();
+    size_t discard_counter();
+    void reset_discard_counter();
     size_t queue_size();
 
 private:

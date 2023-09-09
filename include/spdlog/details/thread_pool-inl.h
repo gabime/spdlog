@@ -80,6 +80,16 @@ void SPDLOG_INLINE thread_pool::reset_overrun_counter()
     q_.reset_overrun_counter();
 }
 
+size_t SPDLOG_INLINE thread_pool::discard_counter()
+{
+    return q_.discard_counter();
+}
+
+void SPDLOG_INLINE thread_pool::reset_discard_counter()
+{
+    q_.reset_discard_counter();
+}
+
 size_t SPDLOG_INLINE thread_pool::queue_size()
 {
     return q_.size();
@@ -91,9 +101,14 @@ void SPDLOG_INLINE thread_pool::post_async_msg_(async_msg &&new_msg, async_overf
     {
         q_.enqueue(std::move(new_msg));
     }
-    else
+    else if (overflow_policy == async_overflow_policy::overrun_oldest)
     {
         q_.enqueue_nowait(std::move(new_msg));
+    }
+    else
+    {
+        assert(overflow_policy == async_overflow_policy::discard_new);
+        q_.enqueue_if_have_room(std::move(new_msg));
     }
 }
 
