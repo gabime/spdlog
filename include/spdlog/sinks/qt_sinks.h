@@ -71,7 +71,7 @@ template<typename Mutex>
 class qt_color_sink : public base_sink<Mutex>
 {
 public:
-    qt_color_sink(QTextEdit *qt_text_edit, int max_lines, bool dark_colors=false, bool is_utf8=false)
+    qt_color_sink(QTextEdit *qt_text_edit, int max_lines, bool dark_colors = false, bool is_utf8 = false)
         : qt_text_edit_(qt_text_edit)
         , max_lines_(max_lines)
         , is_utf8_(is_utf8)
@@ -167,24 +167,28 @@ protected:
         int color_range_start, color_range_end;
         color_range_start = static_cast<int>(msg.color_range_start);
         color_range_end = static_cast<int>(msg.color_range_end);
-        if (is_utf8_) {
+        if (is_utf8_)
+        {
             payload = QString::fromUtf8(str.data(), static_cast<int>(str.size()));
             // convert color ranges from byte index to character index.
-            if (msg.color_range_start < msg.color_range_end) {
+            if (msg.color_range_start < msg.color_range_end)
+            {
                 color_range_start = QString::fromUtf8(str.data(), msg.color_range_start).size();
                 color_range_end = QString::fromUtf8(str.data(), msg.color_range_end).size();
             }
-        } else {
+        }
+        else
+        {
             payload = QString::fromLatin1(str.data(), static_cast<int>(str.size()));
         }
 
-        invoke_params params{max_lines_,             // max lines
-            qt_text_edit_,                           // text edit to append to
-            std::move(payload),                      // text to append
-            default_color_,                          // default color
-            colors_.at(msg.level),                   // color to apply
-            color_range_start,                       // color range start
-            color_range_end};                        // color range end
+        invoke_params params{max_lines_, // max lines
+            qt_text_edit_,               // text edit to append to
+            std::move(payload),          // text to append
+            default_color_,              // default color
+            colors_.at(msg.level),       // color to apply
+            color_range_start,           // color range start
+            color_range_end};            // color range end
 
         QMetaObject::invokeMethod(
             qt_text_edit_, [params]() { invoke_method_(params); }, Qt::AutoConnection);
@@ -293,13 +297,15 @@ inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name, QObj
 
 // log to QTextEdit with colorize output
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> qt_color_logger_mt(const std::string &logger_name, QTextEdit *qt_text_edit, int max_lines, bool is_utf8 = false)
+inline std::shared_ptr<logger> qt_color_logger_mt(
+    const std::string &logger_name, QTextEdit *qt_text_edit, int max_lines, bool is_utf8 = false)
 {
     return Factory::template create<sinks::qt_color_sink_mt>(logger_name, qt_text_edit, max_lines, false, is_utf8);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> qt_color_logger_st(const std::string &logger_name, QTextEdit *qt_text_edit, int max_lines, bool is_utf8 = false)
+inline std::shared_ptr<logger> qt_color_logger_st(
+    const std::string &logger_name, QTextEdit *qt_text_edit, int max_lines, bool is_utf8 = false)
 {
     return Factory::template create<sinks::qt_color_sink_st>(logger_name, qt_text_edit, max_lines, false, is_utf8);
 }

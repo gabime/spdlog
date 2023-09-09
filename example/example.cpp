@@ -31,7 +31,6 @@ void replace_default_logger_example();
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h" // support for user defined types
 
-
 int main(int, char *[])
 {
     // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
@@ -185,7 +184,7 @@ void async_example()
 // {:n} - don't split the output to lines.
 
 #if !defined SPDLOG_USE_STD_FORMAT || defined(_MSC_VER)
-#include "spdlog/fmt/bin_to_hex.h"
+#    include "spdlog/fmt/bin_to_hex.h"
 void binary_example()
 {
     std::vector<char> buf(80);
@@ -203,7 +202,8 @@ void binary_example()
     // logger->info("hexdump style, 20 chars per line {:a}", spdlog::to_hex(buf, 20));
 }
 #else
-void binary_example() {
+void binary_example()
+{
     // not supported with std::format yet
 }
 #endif
