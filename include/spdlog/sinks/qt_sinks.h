@@ -295,13 +295,13 @@ inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name, QObj
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_color_logger_mt(const std::string &logger_name, QTextEdit *qt_text_edit, int max_lines, bool is_utf8 = false)
 {
-    return Factory::template create<sinks::qt_color_sink_mt>(logger_name, qt_text_edit, max_lines, is_utf8);
+    return Factory::template create<sinks::qt_color_sink_mt>(logger_name, qt_text_edit, max_lines, false, is_utf8);
 }
 
 template<typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> qt_color_logger_st(const std::string &logger_name, QTextEdit *qt_text_edit, int max_lines, bool is_utf8 = false)
 {
-    return Factory::template create<sinks::qt_color_sink_st>(logger_name, qt_text_edit, max_lines, is_utf8);
+    return Factory::template create<sinks::qt_color_sink_st>(logger_name, qt_text_edit, max_lines, false, is_utf8);
 }
 
 } // namespace spdlog
