@@ -164,9 +164,8 @@ protected:
         const string_view_t str = string_view_t(formatted.data(), formatted.size());
         // apply the color to the color range in the formatted message.
         QString payload;
-        int color_range_start, color_range_end;
-        color_range_start = static_cast<int>(msg.color_range_start);
-        color_range_end = static_cast<int>(msg.color_range_end);
+        int color_range_start = static_cast<int>(msg.color_range_start);
+        int color_range_end = static_cast<int>(msg.color_range_end);
         if (is_utf8_)
         {
             payload = QString::fromUtf8(str.data(), static_cast<int>(str.size()));
