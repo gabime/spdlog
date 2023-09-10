@@ -27,6 +27,13 @@
 
 #include <vector>
 
+#ifdef __has_include
+#    if __has_include(<source_location>) && __cplusplus >= 202002L
+#        include <source_location>
+#        define SPDLOG_SOURCE_LOCATION
+#    endif
+#endif
+
 #ifndef SPDLOG_NO_EXCEPTIONS
 #    define SPDLOG_LOGGER_CATCH(location)                                                                                                  \
         catch (const std::exception &ex)                                                                                                   \
@@ -90,6 +97,14 @@ public:
         log_(loc, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
     }
 
+#ifdef SPDLOG_SOURCE_LOCATION
+    template<typename... Args>
+    void log(std::source_location loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)
+    {
+        log_(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
+    }
+#endif
+
     template<typename... Args>
     void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
     {
@@ -108,6 +123,14 @@ public:
     {
         log(loc, lvl, "{}", msg);
     }
+
+#ifdef SPDLOG_SOURCE_LOCATION
+    template<typename T>
+    void log(std::source_location loc, level::level_enum lvl, const T &msg)
+    {
+        log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, msg);
+    }
+#endif
 
     void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
     {
@@ -182,6 +205,14 @@ public:
     {
         log_(loc, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
     }
+
+#   ifdef SPDLOG_SOURCE_LOCATION
+    template<typename... Args>
+    void log(std::source_location loc, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args)
+    {
+        log_(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
+    }
+#   endif
 
     template<typename... Args>
     void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args)

@@ -140,6 +140,7 @@ SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logge
 //   spdlog::apply_logger_env_levels(mylogger);
 SPDLOG_API void apply_logger_env_levels(std::shared_ptr<logger> logger);
 
+#ifndef SPDLOG_SOURCE_LOCATION
 template<typename... Args>
 inline void log(source_loc source, level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
 {
@@ -200,7 +201,43 @@ inline void log(level::level_enum lvl, const T &msg)
     default_logger_raw()->log(lvl, msg);
 }
 
-#ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+template<typename T>
+inline void trace(const T &msg)
+{
+    default_logger_raw()->trace(msg);
+}
+
+template<typename T>
+inline void debug(const T &msg)
+{
+    default_logger_raw()->debug(msg);
+}
+
+template<typename T>
+inline void info(const T &msg)
+{
+    default_logger_raw()->info(msg);
+}
+
+template<typename T>
+inline void warn(const T &msg)
+{
+    default_logger_raw()->warn(msg);
+}
+
+template<typename T>
+inline void error(const T &msg)
+{
+    default_logger_raw()->error(msg);
+}
+
+template<typename T>
+inline void critical(const T &msg)
+{
+    default_logger_raw()->critical(msg);
+}
+
+#    ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 template<typename... Args>
 inline void log(source_loc source, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args)
 {
@@ -248,43 +285,295 @@ inline void critical(wformat_string_t<Args...> fmt, Args &&...args)
 {
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
 }
+#    endif
 #endif
 
-template<typename T>
-inline void trace(const T &msg)
+#ifdef SPDLOG_SOURCE_LOCATION
+template<typename... Args>
+struct log
 {
-    default_logger_raw()->trace(msg);
-}
+    log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, fmt, std::forward<Args>(args)...);
+    }
+
+    log(source_loc source, level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args)
+    {
+        default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
+    }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, fmt, std::forward<Args>(args)...);
+    }
+#   endif
+};
+
+template<typename... Args>
+struct trace
+{
+    trace(format_string_t<Args...> fmt, Args &&...args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::trace, fmt, std::forward<Args>(args)...);
+    }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    trace(wformat_string_t<Args...> fmt, Args &&... args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::trace, fmt, std::forward<Args>(args)...);
+    }
+#   endif
+};
+
+template<typename... Args>
+struct debug
+{
+    debug(format_string_t<Args...> fmt, Args &&...args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::debug, fmt, std::forward<Args>(args)...);
+    }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    debug(wformat_string_t<Args...> fmt, Args &&... args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::debug, fmt, std::forward<Args>(args)...);
+    }
+#   endif
+};
+
+template<typename... Args>
+struct info
+{
+    info(format_string_t<Args...> fmt, Args &&...args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::info, fmt, std::forward<Args>(args)...);
+    }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    info(wformat_string_t<Args...> fmt, Args &&... args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::info, fmt, std::forward<Args>(args)...);
+    }
+#   endif
+};
+
+template<typename... Args>
+struct warn
+{
+    warn(format_string_t<Args...> fmt, Args &&...args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::warn, fmt, std::forward<Args>(args)...);
+    }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    warn(wformat_string_t<Args...> fmt, Args &&... args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::warn, fmt, std::forward<Args>(args)...);
+    }
+#   endif
+};
+
+template<typename... Args>
+struct error
+{
+    error(format_string_t<Args...> fmt, Args &&...args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::err, fmt, std::forward<Args>(args)...);
+    }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    error(wformat_string_t<Args...> fmt, Args &&... args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::err, fmt, std::forward<Args>(args)...);
+    }
+#   endif
+};
+
+template<typename... Args>
+struct critical
+{
+    critical(format_string_t<Args...> fmt, Args &&...args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::critical, fmt, std::forward<Args>(args)...);
+    }
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    critical(wformat_string_t<Args...> fmt, Args &&... args, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::critical, fmt, std::forward<Args>(args)...);
+    }
+#   endif
+};
+
+template <typename... Args>
+log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&... args) -> log<Args...>;
+
+template <typename... Args>
+trace(format_string_t<Args...> fmt, Args &&... args) -> trace<Args...>;
+
+template <typename... Args>
+debug(format_string_t<Args...> fmt, Args &&... args) -> debug<Args...>;
+
+template <typename... Args>
+info(format_string_t<Args...> fmt, Args &&... args) -> info<Args...>;
+
+template <typename... Args>
+warn(format_string_t<Args...> fmt, Args &&... args) -> warn<Args...>;
+
+template <typename... Args>
+error(format_string_t<Args...> fmt, Args &&... args) -> error<Args...>;
+
+template <typename... Args>
+critical(format_string_t<Args...> fmt, Args &&... args) -> critical<Args...>;
+
+#   ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
+template <typename... Args>
+log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&... args) -> log<Args...>;
+
+template <typename... Args>
+trace(wformat_string_t<Args...> fmt, Args &&... args) -> trace<Args...>;
+
+template <typename... Args>
+debug(wformat_string_t<Args...> fmt, Args &&... args) -> debug<Args...>;
+
+template <typename... Args>
+info(wformat_string_t<Args...> fmt, Args &&... args) -> info<Args...>;
+
+template <typename... Args>
+warn(wformat_string_t<Args...> fmt, Args &&... args) -> warn<Args...>;
+
+template <typename... Args>
+error(wformat_string_t<Args...> fmt, Args &&... args) -> error<Args...>;
+
+template <typename... Args>
+critical(wformat_string_t<Args...> fmt, Args &&... args) -> critical<Args...>;
+#   endif
 
 template<typename T>
-inline void debug(const T &msg)
+struct log<T>
 {
-    default_logger_raw()->debug(msg);
-}
+    log(source_loc source, level::level_enum lvl, const T &msg)
+    {
+        default_logger_raw()->log(source, lvl, msg);
+    }
+
+    log(level::level_enum lvl, const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, msg);
+    }
+
+    log(level::level_enum lvl, format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, lvl, fmt, std::forward<T>(arg));
+    }
+};
 
 template<typename T>
-inline void info(const T &msg)
+struct trace<T>
 {
-    default_logger_raw()->info(msg);
-}
+    trace(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::trace, msg);
+    }
+
+    trace(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::trace, fmt, std::forward<T>(arg));
+    }
+};
 
 template<typename T>
-inline void warn(const T &msg)
+struct debug<T>
 {
-    default_logger_raw()->warn(msg);
-}
+    debug(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::debug, msg);
+    }
+
+    debug(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::debug, fmt, std::forward<T>(arg));
+    }
+};
 
 template<typename T>
-inline void error(const T &msg)
+struct info<T>
 {
-    default_logger_raw()->error(msg);
-}
+    info(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::info, msg);
+    }
+
+    info(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::info, fmt, std::forward<T>(arg));
+    }
+};
 
 template<typename T>
-inline void critical(const T &msg)
+struct warn<T>
 {
-    default_logger_raw()->critical(msg);
-}
+    warn(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::warn, msg);
+    }
+
+    warn(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::warn, fmt, std::forward<T>(arg));
+    }
+};
+
+template<typename T>
+struct error<T>
+{
+    error(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::err, msg);
+    }
+
+    error(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::err, fmt, std::forward<T>(arg));
+    }
+};
+
+template<typename T>
+struct critical<T>
+{
+    critical(const T &msg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::critical, msg);
+    }
+
+    critical(format_string_t<T> fmt, T&& arg, const std::source_location &loc = std::source_location::current())
+    {
+        default_logger_raw()->log(spdlog::source_loc{loc.file_name(), static_cast<int>(loc.line()), loc.function_name()}, level::critical, fmt, std::forward<T>(arg));
+    }
+};
+
+template <typename T>
+log(level::level_enum lvl, const T &msg) -> log<T>;
+
+template <typename T>
+trace(const T &msg) -> trace<T>;
+
+template <typename T>
+debug(const T &msg) -> debug<T>;
+
+template <typename T>
+info(const T &msg) -> info<T>;
+
+template <typename T>
+warn(const T &msg) -> warn<T>;
+
+template <typename T>
+error(const T &msg) -> error<T>;
+
+template <typename T>
+critical(const T &msg) -> critical<T>;
+#endif
 
 } // namespace spdlog
 

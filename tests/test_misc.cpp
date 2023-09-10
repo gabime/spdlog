@@ -168,6 +168,18 @@ TEST_CASE("default logger API", "[default logger]")
     REQUIRE(oss.str() == "*** 123" + std::string(spdlog::details::os::default_eol));
 
     oss.str("");
+    spdlog::log(spdlog::level::err, 123);
+    REQUIRE(oss.str() == "*** 123" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
+    spdlog::log(spdlog::level::err, "{}", 123);
+    REQUIRE(oss.str() == "*** 123" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
+    spdlog::log(spdlog::level::err, "{}{}{}", 1, 2, 3);
+    REQUIRE(oss.str() == "*** 123" + std::string(spdlog::details::os::default_eol));
+
+    oss.str("");
     spdlog::critical(std::string("some string"));
     REQUIRE(oss.str() == "*** some string" + std::string(spdlog::details::os::default_eol));
 
