@@ -95,6 +95,32 @@ size_t SPDLOG_INLINE thread_pool::queue_size()
     return q_.size();
 }
 
+SPDLOG_INLINE bool thread_pool::sync(int intervalMs, int timeoutMs)
+{
+    using namespace std::chrono;
+
+    auto start=steady_clock::now();
+    bool synced=false;
+    bool indef=(timeoutMs<=0);
+    do
+    {
+        if (!indef && intervalMs>timeoutMs)
+            intervalMs=timeoutMs;  
+
+        std::this_thread::sleep_for(milliseconds(intervalMs));
+        synced=(q_.size()==0);
+
+        if (!indef)
+        {
+            auto now=steady_clock::now();
+            auto passedMs=duration_cast<milliseconds>(now-start);
+            start=now;
+            timeoutMs-=static_cast<int>(passedMs.count());
+        }
+    } while (((!indef && timeoutMs>0) || indef) && !synced);
+    return synced;
+}
+
 void SPDLOG_INLINE thread_pool::post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy)
 {
     if (overflow_policy == async_overflow_policy::block)

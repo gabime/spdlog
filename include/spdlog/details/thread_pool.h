@@ -102,6 +102,9 @@ public:
     void reset_discard_counter();
     size_t queue_size();
 
+    // block until all messages in thread pool are processed or the timer goes off.
+    bool sync(int intervalMs=100, int timeoutMs=-1);
+
 private:
     q_type q_;
 
