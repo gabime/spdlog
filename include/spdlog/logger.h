@@ -266,7 +266,7 @@ public:
     }
 #endif
 
-    // return true logging is enabled for the given level.
+    // return true if logging is enabled for the given level.
     [[nodiscard]] bool should_log(level::level_enum msg_level) const
     {
         return msg_level >= level_.load(std::memory_order_relaxed);
@@ -361,7 +361,6 @@ protected:
     void err_handler_(const std::string &msg);
 };
 
-void swap(logger &a, logger &b);
 
 } // namespace spdlog
 
