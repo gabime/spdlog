@@ -26,7 +26,7 @@ TEST_CASE("test_rolling", "[circular_q]")
 
     for (size_t i = 0; i < q_size + 2; i++)
     {
-        q.push_back(size_t{i}); // arg to push_back must be r value
+        q.push_back(std::move(i)); // arg to push_back must be r value
     }
 
     REQUIRE(q.size() == q_size);
