@@ -27,6 +27,7 @@ void custom_flags_example();
 void file_events_example();
 void replace_default_logger_example();
 
+#define SPDLOG_EMIT_SOURCE_LOCATION // define if you want to log the source file/line/function name.
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 

@@ -15,7 +15,7 @@
 namespace spdlog {
 
 // public methods
-SPDLOG_INLINE logger::logger(const logger &other)
+SPDLOG_INLINE logger::logger(const logger &other) noexcept
     : name_(other.name_)
     , sinks_(other.sinks_)
     , level_(other.level_.load(std::memory_order_relaxed))

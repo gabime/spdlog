@@ -72,7 +72,7 @@ public:
 
     virtual ~logger() = default;
 
-    logger(const logger &other);
+    logger(const logger &other) noexcept;
     logger(logger &&other) noexcept;
     logger &operator=(logger other) noexcept;
     void swap(spdlog::logger &other) noexcept;
@@ -134,6 +134,7 @@ public:
     }
 
 #ifdef SPDLOG_EMIT_SOURCE_LOCATION
+
     template<typename... Args>
     void trace(loc_with_fmt fmt, Args &&...args)
     {

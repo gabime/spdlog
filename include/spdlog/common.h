@@ -135,9 +135,6 @@ using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 template<typename... Args>
 using format_string_t = fmt::format_string<Args...>;
 
-template<typename Char>
-using fmt_runtime_string = fmt::runtime_format_string<Char>;
-
 #    if defined(SPDLOG_WCHAR_FILENAMES)
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
@@ -287,12 +284,14 @@ struct source_loc
     const char *funcname{nullptr};
 };
 
+// to capture caller's current source location and format string at compile time.
 struct loc_with_fmt
 {
     source_loc loc;
     string_view_t fmt_string;
     template<typename S, typename = is_convertible_to_sv<S>>
-    constexpr loc_with_fmt(S fmt_str, source_loc loc = source_loc::current()) noexcept: loc(loc), fmt_string(fmt_str) {}
+    constexpr loc_with_fmt(S fmt_str, source_loc loc = source_loc::current()) noexcept:
+        loc(loc), fmt_string(fmt_str) {}
 };
 
 struct file_event_handlers
