@@ -18,14 +18,13 @@
 #include <cstdint>
 #include <version>
 
-# if __cpp_lib_source_location >= 201907
-#   include <source_location>
-#   define SPDLOG_STD_SOURCE_LOCATION
-# elif __has_include(<experimental/source_location>)
-#   include <experimental/source_location>
-#   define SPDLOG_EXPERIMENTAL_SOURCE_LOCATION
-# endif
-
+#if __cpp_lib_source_location >= 201907
+#    include <source_location>
+#    define SPDLOG_STD_SOURCE_LOCATION
+#elif __has_include(<experimental/source_location>)
+#    include <experimental/source_location>
+#    define SPDLOG_EXPERIMENTAL_SOURCE_LOCATION
+#endif
 
 #ifdef SPDLOG_USE_STD_FORMAT
 #    if __cpp_lib_format >= 202207L
@@ -66,7 +65,6 @@
 #    define SPDLOG_FMT_RUNTIME(format_string) format_string
 #    define SPDLOG_FMT_STRING(format_string) format_string
 #endif
-
 
 #ifndef SPDLOG_FUNCTION
 #    define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
@@ -124,7 +122,6 @@ using format_string_t = std::format_string<Args...>;
 using format_string_t = std::string_view;
 #    endif
 
-
 #    define SPDLOG_BUF_TO_STRING(x) x
 #else // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
@@ -164,7 +161,7 @@ using level_t = std::atomic<int>;
 #endif
 
 // Is convertable to string_view_t ?
-template <typename T>
+template<typename T>
 using is_convertible_to_sv = std::enable_if_t<std::is_convertible_v<T, string_view_t>>;
 
 // Log level enum
@@ -248,7 +245,6 @@ private:
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(std::string msg);
 
-
 struct source_loc
 {
     constexpr source_loc() = default;
@@ -264,14 +260,15 @@ struct source_loc
         return source_loc{source_location.file_name(), source_location.line(), source_location.function_name()};
     }
 #elif defined(SPDLOG_EXPERIMENTAL_SOURCE_LOCATION)
-    static constexpr source_loc current(const std::experimental::source_location source_location = std::experimental::source_location::current())
+    static constexpr source_loc current(
+        const std::experimental::source_location source_location = std::experimental::source_location::current())
     {
         return source_loc{source_location.file_name(), source_location.line(), source_location.function_name()};
     }
 #else // no source location support
     static constexpr source_loc current()
     {
-            return source_loc{};
+        return source_loc{};
     }
 #endif
 
@@ -290,8 +287,10 @@ struct loc_with_fmt
     source_loc loc;
     string_view_t fmt_string;
     template<typename S, typename = is_convertible_to_sv<S>>
-    constexpr loc_with_fmt(S fmt_str, source_loc loc = source_loc::current()) noexcept:
-        loc(loc), fmt_string(fmt_str) {}
+    constexpr loc_with_fmt(S fmt_str, source_loc loc = source_loc::current()) noexcept
+        : loc(loc)
+        , fmt_string(fmt_str)
+    {}
 };
 
 struct file_event_handlers
@@ -348,7 +347,6 @@ constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, A
     return fmt.get();
 }
 #endif
-
 
 } // namespace details
 } // namespace spdlog

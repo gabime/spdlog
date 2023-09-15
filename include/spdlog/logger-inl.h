@@ -23,11 +23,12 @@ SPDLOG_INLINE logger::logger(const logger &other) noexcept
     , custom_err_handler_(other.custom_err_handler_)
 {}
 
-SPDLOG_INLINE logger::logger(logger &&other) noexcept : name_(std::move(other.name_)),
-                                                               sinks_(std::move(other.sinks_)),
-                                                               level_(other.level_.load(std::memory_order_relaxed)),
-                                                               flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
-                                                               custom_err_handler_(std::move(other.custom_err_handler_))
+SPDLOG_INLINE logger::logger(logger &&other) noexcept
+    : name_(std::move(other.name_))
+    , sinks_(std::move(other.sinks_))
+    , level_(other.level_.load(std::memory_order_relaxed))
+    , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
+    , custom_err_handler_(std::move(other.custom_err_handler_))
 
 {}
 

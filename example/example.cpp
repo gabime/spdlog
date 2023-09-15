@@ -27,9 +27,9 @@ void custom_flags_example();
 void file_events_example();
 void replace_default_logger_example();
 
-#define SPDLOG_EMIT_SOURCE_LOCATION // define if you want to log the source file/line/function name.
+//#define SPDLOG_EMIT_SOURCE_LOCATION // define if you want to log the source file/line/function name.
 #include "spdlog/spdlog.h"
-#include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
+#include "spdlog/cfg/env.h" // support for loading levels from the environment variable
 
 int main(int, char *[])
 {
@@ -37,7 +37,6 @@ int main(int, char *[])
     load_levels_example();
 
     spdlog::info("Welcome to spdlog version {}.{}.{}  !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
-
     spdlog::warn("Easy padding in numbers like {:08d}", 12);
     spdlog::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
     spdlog::info("Support for floats {:03.2f}", 1.23456);

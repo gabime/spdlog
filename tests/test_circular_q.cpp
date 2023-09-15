@@ -80,7 +80,6 @@ TEST_CASE("test_full", "[circular_q]")
     REQUIRE(q2.full());
 }
 
-
 TEST_CASE("test_operator[]", "[circular_q]")
 {
     q_type q(2);
@@ -90,13 +89,12 @@ TEST_CASE("test_operator[]", "[circular_q]")
     REQUIRE(q[1] == 200);
 }
 
-
 TEST_CASE("test_operator=", "[circular_q]")
 {
     q_type q1(2);
     q1.push_back(100);
     q1.push_back(200);
-    q_type  q2 = q1;
+    q_type q2 = q1;
     REQUIRE(q2.size() == 2);
     REQUIRE(q2[0] == 100);
     REQUIRE(q2[1] == 200);
@@ -114,7 +112,7 @@ TEST_CASE("test_overrun_counter", "[circular_q]")
 {
     q_type q(2);
     REQUIRE(q.overrun_counter() == 0);
-    for(size_t i=0; i<10; i++)
+    for (size_t i = 0; i < 10; i++)
     {
         q.push_back(100);
     }
@@ -140,7 +138,3 @@ TEST_CASE("test_move", "[circular_q]")
     REQUIRE(q1.empty());
     REQUIRE(q1.overrun_counter() == 0);
 }
-
-
-
-

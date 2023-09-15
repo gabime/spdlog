@@ -25,7 +25,6 @@ TEST_CASE("basic_logging ", "[basic_logging]")
     // std::string
     REQUIRE(log_info(std::string("Hello")) == "Hello");
     REQUIRE(log_info(std::string()).empty());
-
 }
 
 TEST_CASE("log_levels", "[log_levels]")

@@ -51,7 +51,9 @@ struct local_alloc_t
 {
     HLOCAL hlocal_;
 
-    constexpr local_alloc_t() noexcept : hlocal_(nullptr) {}
+    constexpr local_alloc_t() noexcept
+        : hlocal_(nullptr)
+    {}
 
     local_alloc_t(local_alloc_t const &) = delete;
     local_alloc_t &operator=(local_alloc_t const &) = delete;

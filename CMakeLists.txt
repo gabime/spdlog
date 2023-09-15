@@ -29,7 +29,7 @@ endif()
 if(NOT DEFINED CMAKE_CXX_STANDARD)
     set(CMAKE_CXX_STANDARD 17)
 elseif(CMAKE_CXX_STANDARD LESS 17)
-        message(FATAL_ERROR "Minimum supported CMAKE_CXX_STANDARD is 17, but CMAKE_CXX_STANDARD is set to a lower value.")
+    message(FATAL_ERROR "Minimum supported CMAKE_CXX_STANDARD is 17, but CMAKE_CXX_STANDARD is set to a lower value.")
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

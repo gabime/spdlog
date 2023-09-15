@@ -31,7 +31,7 @@ public:
         : q_{n_items}
     {}
 
-    void drain_raw(std::function<void(const details::log_msg_buffer&)> callback)
+    void drain_raw(std::function<void(const details::log_msg_buffer &)> callback)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         while (!q_.empty())
@@ -49,7 +49,7 @@ public:
         {
             formatted.clear();
             base_sink<Mutex>::formatter_->format(q_.front(), formatted);
-            callback(std::string_view (formatted.data(), formatted.size()));
+            callback(std::string_view(formatted.data(), formatted.size()));
             q_.pop_front();
         }
     }

@@ -100,7 +100,7 @@ public:
     // Pop item from front if not empty.
     void pop_front()
     {
-        if(!empty())
+        if (!empty())
         {
             head_ = (head_ + 1) % max_items_;
         }

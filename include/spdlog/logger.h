@@ -93,9 +93,7 @@ public:
         log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename S,
-        typename = is_convertible_to_sv<S>,
-        typename... Args>
+    template<typename S, typename = is_convertible_to_sv<S>, typename... Args>
     void log(source_loc loc, level::level_enum lvl, S fmt, Args &&...args)
     {
         if (should_log(lvl))
@@ -105,8 +103,7 @@ public:
     }
 
     // log with no format string, just string message
-    template<typename S,
-        typename = is_convertible_to_sv<S>>
+    template<typename S, typename = is_convertible_to_sv<S>>
     void log(source_loc loc, level::level_enum lvl, S msg)
     {
         if (should_log(lvl))
@@ -282,7 +279,6 @@ public:
     }
 #endif
 
-
     // return true logging is enabled for the given level.
     [[nodiscard]] bool should_log(level::level_enum msg_level) const
     {
@@ -352,7 +348,7 @@ protected:
     // log the given message (if the given log level is high enough)
     virtual void sink_it_(const details::log_msg &msg)
     {
-        assert (should_log(msg.level));
+        assert(should_log(msg.level));
         for (auto &sink : sinks_)
         {
             if (sink->should_log(msg.level))
