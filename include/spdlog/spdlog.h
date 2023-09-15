@@ -143,6 +143,18 @@ inline void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...a
     default_logger_raw()->log(lvl, fmt, std::forward<Args>(args)...);
 }
 
+template<typename S, typename = is_convertible_to_sv<S>, typename... Args>
+void log(source_loc loc, level::level_enum lvl, S fmt, Args &&...args)
+{
+    default_logger_raw()->log(loc, lvl, fmt, std::forward<Args>(args)...);
+}
+
+template<typename S, typename = is_convertible_to_sv<S>, typename... Args>
+void log(level::level_enum lvl, S fmt, Args &&...args)
+{
+    default_logger_raw()->log(lvl, fmt, std::forward<Args>(args)...);
+}
+
 #ifdef SPDLOG_EMIT_SOURCE_LOCATION
 template<typename... Args>
 void trace(loc_with_fmt fmt, Args &&...args)
