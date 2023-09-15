@@ -193,38 +193,32 @@ void critical(loc_with_fmt fmt, Args &&...args)
 }
 
 // log functions with no format string, just string
-template<typename S, typename = is_convertible_to_sv<S>>
-void trace(const S msg, source_loc loc = source_loc::current())
+void trace(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::trace, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void debug(const S msg, source_loc loc = source_loc::current())
+void debug(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::debug, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void info(const S msg, source_loc loc = source_loc::current())
+void info(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::info, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void warn(const S msg, source_loc loc = source_loc::current())
+void warn(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::warn, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void error(const S msg, source_loc loc = source_loc::current())
+void error(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::err, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void critical(const S msg, source_loc loc = source_loc::current())
+void critical(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::critical, msg);
 }
