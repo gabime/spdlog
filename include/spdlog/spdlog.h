@@ -266,38 +266,32 @@ void critical(format_string_t<Args...> fmt, Args &&...args)
 }
 
 // log functions with no format string, just string
-template<typename S, typename = is_convertible_to_sv<S>>
-void trace(const S msg)
+inline void trace(string_view_t msg)
 {
     log(level::trace, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void debug(const S msg)
+inline void debug(string_view_t msg)
 {
     log(level::debug, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void info(const S msg)
+inline void info(string_view_t msg)
 {
     log(level::info, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void warn(const S msg)
+inline void warn(string_view_t msg)
 {
     log(level::warn, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void error(const S msg)
+inline void error(string_view_t msg)
 {
     log(level::err, msg);
 }
 
-template<typename S, typename = is_convertible_to_sv<S>>
-void critical(const S msg)
+inline void critical(string_view_t msg)
 {
     log(level::critical, msg);
 }
