@@ -114,10 +114,13 @@ public:
             sink_it_(details::log_msg(loc, name_, lvl, msg));
         }
     }
-    template<typename S>
+    template<typename S, typename = is_convertible_to_sv<S>>
     void log(level::level_enum lvl, S msg)
     {
-        log(source_loc{}, lvl, msg);
+        if (should_log(lvl))
+        {
+            sink_it_(details::log_msg(source_loc{}, name_, lvl, msg));
+        }
     }
 
     // support for custom time
@@ -167,7 +170,7 @@ public:
         log(fmt.loc, level::critical, fmt.fmt_string, std::forward<Args>(args)...);
     }
 
-    // log functions with no format string, just argument
+    // log functions with no format string, just string
     template<typename S, typename = is_convertible_to_sv<S>>
     void trace(const S &msg, source_loc loc = source_loc::current())
     {
@@ -240,7 +243,7 @@ public:
         log(level::critical, fmt, std::forward<Args>(args)...);
     }
 
-    // log functions with no format string, just argument
+    // log functions with no format string, just string
     template<typename S, typename = is_convertible_to_sv<S>>
     void trace(const S &msg)
     {
