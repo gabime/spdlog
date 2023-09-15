@@ -144,117 +144,117 @@ inline void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...a
 }
 
 template<typename S, typename = is_convertible_to_sv<S>, typename... Args>
-void log(source_loc loc, level::level_enum lvl, S fmt, Args &&...args)
+inline void log(source_loc loc, level::level_enum lvl, S fmt, Args &&...args)
 {
     default_logger_raw()->log(loc, lvl, fmt, std::forward<Args>(args)...);
 }
 
 template<typename S, typename = is_convertible_to_sv<S>, typename... Args>
-void log(level::level_enum lvl, S fmt, Args &&...args)
+inline void log(level::level_enum lvl, S fmt, Args &&...args)
 {
     default_logger_raw()->log(lvl, fmt, std::forward<Args>(args)...);
 }
 
 #ifdef SPDLOG_USE_SOURCE_LOCATION
 template<typename... Args>
-void trace(loc_with_fmt fmt, Args &&...args)
+inline void trace(loc_with_fmt fmt, Args &&...args)
 {
     log(fmt.loc, level::trace, fmt.fmt_string, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void debug(loc_with_fmt fmt, Args &&...args)
+inline void debug(loc_with_fmt fmt, Args &&...args)
 {
     log(fmt.loc, level::debug, fmt.fmt_string, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void info(loc_with_fmt fmt, Args &&...args)
+inline void info(loc_with_fmt fmt, Args &&...args)
 {
     log(fmt.loc, level::info, fmt.fmt_string, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void warn(loc_with_fmt fmt, Args &&...args)
+inline void warn(loc_with_fmt fmt, Args &&...args)
 {
     log(fmt.loc, level::warn, fmt.fmt_string, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void error(loc_with_fmt fmt, Args &&...args)
+inline void error(loc_with_fmt fmt, Args &&...args)
 {
     log(fmt.loc, level::err, fmt.fmt_string, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void critical(loc_with_fmt fmt, Args &&...args)
+inline void critical(loc_with_fmt fmt, Args &&...args)
 {
     log(fmt.loc, level::critical, fmt.fmt_string, std::forward<Args>(args)...);
 }
 
 // log functions with no format string, just string
-void trace(string_view_t msg, source_loc loc = source_loc::current())
+inline void trace(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::trace, msg);
 }
 
-void debug(string_view_t msg, source_loc loc = source_loc::current())
+inline void debug(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::debug, msg);
 }
 
-void info(string_view_t msg, source_loc loc = source_loc::current())
+inline void info(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::info, msg);
 }
 
-void warn(string_view_t msg, source_loc loc = source_loc::current())
+inline void warn(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::warn, msg);
 }
 
-void error(string_view_t msg, source_loc loc = source_loc::current())
+inline void error(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::err, msg);
 }
 
-void critical(string_view_t msg, source_loc loc = source_loc::current())
+inline void critical(string_view_t msg, source_loc loc = source_loc::current())
 {
     log(loc, level::critical, msg);
 }
 #else
 template<typename... Args>
-void trace(format_string_t<Args...> fmt, Args &&...args)
+inline void trace(format_string_t<Args...> fmt, Args &&...args)
 {
     log(level::trace, fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void debug(format_string_t<Args...> fmt, Args &&...args)
+inline void debug(format_string_t<Args...> fmt, Args &&...args)
 {
     log(level::debug, fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void info(format_string_t<Args...> fmt, Args &&...args)
+inline void info(format_string_t<Args...> fmt, Args &&...args)
 {
     log(level::info, fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void warn(format_string_t<Args...> fmt, Args &&...args)
+inline void warn(format_string_t<Args...> fmt, Args &&...args)
 {
     log(level::warn, fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void error(format_string_t<Args...> fmt, Args &&...args)
+inline void error(format_string_t<Args...> fmt, Args &&...args)
 {
     log(level::err, fmt, std::forward<Args>(args)...);
 }
 
 template<typename... Args>
-void critical(format_string_t<Args...> fmt, Args &&...args)
+inline void critical(format_string_t<Args...> fmt, Args &&...args)
 {
     log(level::critical, fmt, std::forward<Args>(args)...);
 }
