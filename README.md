@@ -13,7 +13,7 @@ $ cd spdlog && mkdir build && cd build
 $ cmake .. && make -j
 ```
 
-see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v1.x/example/CMakeLists.txt) on how to use.
+see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v2.x/example/CMakeLists.txt) on how to use.
 
 ## Platforms
 * Linux, FreeBSD, OpenBSD, Solaris, AIX
@@ -440,7 +440,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 ---
 ## Benchmarks
 
-Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v1.x/bench/bench.cpp) done in Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
+Below are some [benchmarks](https://github.com/gabime/spdlog/blob/v2.x/bench/bench.cpp) done in Ubuntu 64 bit, Intel i7-4770 CPU @ 3.40GHz
 
 #### Synchronous mode
 ```
