@@ -9,7 +9,7 @@ environment:
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
       USE_STD_FORMAT: 'OFF'
-      CXX_STANDARD: 11
+      CXX_STANDARD: 17
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'OFF'
@@ -17,7 +17,7 @@ environment:
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
       USE_STD_FORMAT: 'OFF'
-      CXX_STANDARD: 11
+      CXX_STANDARD: 17
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
@@ -25,7 +25,7 @@ environment:
       WCHAR_FILES: 'OFF'
       BUILD_EXAMPLE: 'ON'
       USE_STD_FORMAT: 'OFF'
-      CXX_STANDARD: 11
+      CXX_STANDARD: 17
     - GENERATOR: '"Visual Studio 15 2017 Win64"'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
@@ -33,7 +33,7 @@ environment:
       WCHAR_FILES: 'ON'
       BUILD_EXAMPLE: 'OFF'
       USE_STD_FORMAT: 'OFF'
-      CXX_STANDARD: 11
+      CXX_STANDARD: 17
     - GENERATOR: '"Visual Studio 16 2019" -A x64'
       BUILD_TYPE: Release
       BUILD_SHARED: 'ON'
