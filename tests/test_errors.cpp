@@ -71,7 +71,7 @@ TEST_CASE("flush_error_handler", "[errors]")
     REQUIRE_THROWS_AS(logger->flush(), custom_ex);
 }
 
-#if !defined(SPDLOG_USE_STD_FORMAT)
+
 TEST_CASE("async_error_handler", "[errors]")
 {
     prepare_logdir();
@@ -98,7 +98,7 @@ TEST_CASE("async_error_handler", "[errors]")
     require_message_count(SIMPLE_ASYNC_LOG, 2);
     REQUIRE(file_contents("test_logs/custom_err.txt") == err_msg);
 }
-#endif
+
 
 // Make sure async error handler is executed
 TEST_CASE("async_error_handler2", "[errors]")
