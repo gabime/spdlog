@@ -4,7 +4,7 @@ Very fast, header-only/compiled, C++ logging library. [![ci](https://github.com/
 
 ## Install
 #### Header-only version
-Copy the include [folder](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) to your build tree and use a C++11 compiler.
+Copy the include [folder](https://github.com/gabime/spdlog/tree/v1.x/include/spdlog) to your build tree and use a C++17 compiler.
 
 #### Compiled version (recommended - much faster compile times)
 ```console
@@ -17,8 +17,8 @@ see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v1.x/example/
 
 ## Platforms
 * Linux, FreeBSD, OpenBSD, Solaris, AIX
-* Windows (msvc 2013+, cygwin)
-* macOS (clang 3.5+)
+* Windows (msvc, cygwin)
+* macOS 
 * Android
 
 ## Package managers:
