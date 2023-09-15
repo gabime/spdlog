@@ -16,7 +16,10 @@
 #include <functional>
 #include <cstdio>
 #include <cstdint>
+
+#if __has_include(<version>)
 #include <version>
+#endif
 
 #if __cpp_lib_source_location >= 201907
 #    include <source_location>
