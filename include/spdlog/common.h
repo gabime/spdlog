@@ -15,9 +15,19 @@
 #include <type_traits>
 #include <functional>
 #include <cstdio>
+#include <cstdint>
+#include <version>
+
+# if __cpp_lib_source_location >= 201907
+#   include <source_location>
+#   define SPDLOG_STD_SOURCE_LOCATION
+# elif __has_include(<experimental/source_location>)
+#   include <experimental/source_location>
+#   define SPDLOG_EXPERIMENTAL_SOURCE_LOCATION
+# endif
+
 
 #ifdef SPDLOG_USE_STD_FORMAT
-#    include <version>
 #    if __cpp_lib_format >= 202207L
 #        include <format>
 #    else
@@ -114,9 +124,7 @@ using format_string_t = std::format_string<Args...>;
 using format_string_t = std::string_view;
 #    endif
 
-template<class T, class Char = char>
-struct is_convertible_to_basic_format_string : std::integral_constant<bool, std::is_convertible<T, std::basic_string_view<Char>>::value>
-{};
+
 #    define SPDLOG_BUF_TO_STRING(x) x
 #else // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
@@ -127,19 +135,8 @@ using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 template<typename... Args>
 using format_string_t = fmt::format_string<Args...>;
 
-template<class T>
-using remove_cvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
-
 template<typename Char>
 using fmt_runtime_string = fmt::runtime_format_string<Char>;
-
-// clang doesn't like SFINAE disabled constructor in std::is_convertible<> so have to repeat the condition from basic_format_string here,
-// in addition, fmt::basic_runtime<Char> is only convertible to basic_format_string<Char> but not basic_string_view<Char>
-template<class T, class Char = char>
-struct is_convertible_to_basic_format_string
-    : std::integral_constant<bool,
-          std::is_convertible<T, fmt::basic_string_view<Char>>::value || std::is_same<remove_cvref_t<T>, fmt_runtime_string<Char>>::value>
-{};
 
 #    if defined(SPDLOG_WCHAR_FILENAMES)
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
@@ -150,11 +147,6 @@ using wformat_string_t = fmt::wformat_string<Args...>;
 #    endif
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
-
-template<class T>
-struct is_convertible_to_any_format_string : std::integral_constant<bool, is_convertible_to_basic_format_string<T, char>::value ||
-                                                                              is_convertible_to_basic_format_string<T, wchar_t>::value>
-{};
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
@@ -173,6 +165,10 @@ using level_t = std::atomic<int>;
 #if !defined(SPDLOG_ACTIVE_LEVEL)
 #    define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #endif
+
+// Is convertable to string_view_t ?
+template <typename T>
+using is_convertible_to_sv = std::enable_if_t<std::is_convertible_v<T, string_view_t>>;
 
 // Log level enum
 namespace level {
@@ -255,22 +251,48 @@ private:
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(std::string msg);
 
+
 struct source_loc
 {
     constexpr source_loc() = default;
-    constexpr source_loc(const char *filename_in, int line_in, const char *funcname_in)
+    constexpr source_loc(const char *filename_in, std::uint_least32_t line_in, const char *funcname_in)
         : filename{filename_in}
         , line{line_in}
         , funcname{funcname_in}
     {}
 
-    constexpr bool empty() const noexcept
+#ifdef SPDLOG_STD_SOURCE_LOCATION
+    static constexpr source_loc current(const std::source_location source_location = std::source_location::current())
+    {
+        return source_loc{source_location.file_name(), source_location.line(), source_location.function_name()};
+    }
+#elif defined(SPDLOG_EXPERIMENTAL_SOURCE_LOCATION)
+    static constexpr source_loc current(const std::experimental::source_location source_location = std::experimental::source_location::current())
+    {
+        return source_loc{source_location.file_name(), source_location.line(), source_location.function_name()};
+    }
+#else // no source location support
+    static constexpr source_loc current()
+    {
+            return source_loc{};
+    }
+#endif
+
+    [[nodiscard]] constexpr bool empty() const noexcept
     {
         return line == 0;
     }
     const char *filename{nullptr};
-    int line{0};
+    std::uint_least32_t line{0};
     const char *funcname{nullptr};
+};
+
+struct loc_with_fmt
+{
+    source_loc loc;
+    string_view_t fmt_string;
+    template<typename S, typename = is_convertible_to_sv<S>>
+    constexpr loc_with_fmt(S fmt_str, source_loc loc = source_loc::current()) noexcept: loc(loc), fmt_string(fmt_str) {}
 };
 
 struct file_event_handlers
@@ -328,21 +350,6 @@ constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, A
 }
 #endif
 
-// make_unique support for pre c++14
-
-
-// to avoid useless casts (see https://github.com/nlohmann/json/issues/2893#issuecomment-889152324)
-template<typename T, typename U, std::enable_if_t<!std::is_same<T, U>::value, int> = 0>
-constexpr T conditional_static_cast(U value)
-{
-    return static_cast<T>(value);
-}
-
-template<typename T, typename U, std::enable_if_t<std::is_same<T, U>::value, int> = 0>
-constexpr T conditional_static_cast(U value)
-{
-    return value;
-}
 
 } // namespace details
 } // namespace spdlog

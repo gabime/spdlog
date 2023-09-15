@@ -77,14 +77,14 @@ public:
     logger &operator=(logger other) noexcept;
     void swap(spdlog::logger &other) noexcept;
 
+    // log functions
     template<typename... Args>
     void log(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
     {
         if (should_log(lvl))
         {
-            log_with_format_(loc, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
+            log_with_format_(loc, lvl, fmt, std::forward<Args>(args)...);
         }
-
     }
 
     template<typename... Args>
@@ -93,20 +93,36 @@ public:
         log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename T>
-    void log(level::level_enum lvl, const T &msg)
+    template<typename S,
+        typename = is_convertible_to_sv<S>,
+        typename... Args>
+    void log(source_loc loc, level::level_enum lvl, S fmt, Args &&...args)
+    {
+        if (should_log(lvl))
+        {
+            log_with_format_(loc, lvl, fmt, std::forward<Args>(args)...);
+        }
+    }
+
+    // log with no format string, just string message
+    template<typename S,
+        typename = is_convertible_to_sv<S>>
+    void log(source_loc loc, level::level_enum lvl, S msg)
+    {
+        if (should_log(lvl))
+        {
+            sink_it_(details::log_msg(loc, name_, lvl, msg));
+        }
+    }
+    template<typename S>
+    void log(level::level_enum lvl, S msg)
     {
         log(source_loc{}, lvl, msg);
     }
 
-    // T cannot be statically converted to format string (including string_view/wstring_view)
-    template<class T, typename std::enable_if<!is_convertible_to_any_format_string<const T &>::value, int>::type = 0>
-    void log(source_loc loc, level::level_enum lvl, const T &msg)
-    {
-        log(loc, lvl, "{}", msg);
-    }
-
-    void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
+    // support for custom time
+    template<typename S>
+    void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, S msg)
     {
         if (should_log(lvl))
         {
@@ -114,19 +130,80 @@ public:
         }
     }
 
-    void log(source_loc loc, level::level_enum lvl, string_view_t msg)
+#ifdef SPDLOG_EMIT_SOURCE_LOCATION
+    template<typename... Args>
+    void trace(loc_with_fmt fmt, Args &&...args)
     {
-        if (should_log(lvl))
-        {
-            sink_it_(details::log_msg(loc, name_, lvl, msg));
-        }
+        log(fmt.loc, level::trace, fmt.fmt_string, std::forward<Args>(args)...);
     }
 
-    void log(level::level_enum lvl, string_view_t msg)
+    template<typename... Args>
+    void debug(loc_with_fmt fmt, Args &&...args)
     {
-        log(source_loc{}, lvl, msg);
+        log(fmt.loc, level::debug, fmt.fmt_string, std::forward<Args>(args)...);
     }
 
+    template<typename... Args>
+    void info(loc_with_fmt fmt, Args &&...args)
+    {
+        log(fmt.loc, level::info, fmt.fmt_string, std::forward<Args>(args)...);
+    }
+
+    template<typename... Args>
+    void warn(loc_with_fmt fmt, Args &&...args)
+    {
+        log(fmt.loc, level::warn, fmt.fmt_string, std::forward<Args>(args)...);
+    }
+
+    template<typename... Args>
+    void error(loc_with_fmt fmt, Args &&...args)
+    {
+        log(fmt.loc, level::err, fmt.fmt_string, std::forward<Args>(args)...);
+    }
+
+    template<typename... Args>
+    void critical(loc_with_fmt fmt, Args &&...args)
+    {
+        log(fmt.loc, level::critical, fmt.fmt_string, std::forward<Args>(args)...);
+    }
+
+    // log functions with no format string, just argument
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void trace(const S &msg, source_loc loc = source_loc::current())
+    {
+        log(loc, level::trace, msg);
+    }
+
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void debug(const S &msg, source_loc loc = source_loc::current())
+    {
+        log(loc, level::debug, msg);
+    }
+
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void info(const S &msg, source_loc loc = source_loc::current())
+    {
+        log(loc, level::info, msg);
+    }
+
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void warn(const S &msg, source_loc loc = source_loc::current())
+    {
+        log(loc, level::warn, msg);
+    }
+
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void error(const S &msg, source_loc loc = source_loc::current())
+    {
+        log(loc, level::err, msg);
+    }
+
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void critical(const S &msg, source_loc loc = source_loc::current())
+    {
+        log(loc, level::critical, msg);
+    }
+#else
     template<typename... Args>
     void trace(format_string_t<Args...> fmt, Args &&...args)
     {
@@ -163,41 +240,44 @@ public:
         log(level::critical, fmt, std::forward<Args>(args)...);
     }
 
-    template<typename T>
-    void trace(const T &msg)
+    // log functions with no format string, just argument
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void trace(const S &msg)
     {
         log(level::trace, msg);
     }
 
-    template<typename T>
-    void debug(const T &msg)
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void debug(const S &msg)
     {
         log(level::debug, msg);
     }
 
-    template<typename T>
-    void info(const T &msg)
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void info(const S &msg)
     {
         log(level::info, msg);
     }
 
-    template<typename T>
-    void warn(const T &msg)
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void warn(const S &msg)
     {
         log(level::warn, msg);
     }
 
-    template<typename T>
-    void error(const T &msg)
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void error(const S &msg)
     {
         log(level::err, msg);
     }
 
-    template<typename T>
-    void critical(const T &msg)
+    template<typename S, typename = is_convertible_to_sv<S>>
+    void critical(const S &msg)
     {
         log(level::critical, msg);
     }
+#endif
+
 
     // return true logging is enabled for the given level.
     [[nodiscard]] bool should_log(level::level_enum msg_level) const
