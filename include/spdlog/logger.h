@@ -70,12 +70,10 @@ public:
         : logger(std::move(name), sinks.begin(), sinks.end())
     {}
 
-    virtual ~logger() = default;
-
     logger(const logger &other) noexcept;
     logger(logger &&other) noexcept;
-    logger &operator=(logger other) noexcept;
-    void swap(spdlog::logger &other) noexcept;
+
+    virtual ~logger() = default;
 
     // log functions
     template<typename... Args>
@@ -129,8 +127,7 @@ public:
         }
     }
 
-#ifdef SPDLOG_EMIT_SOURCE_LOCATION
-
+#ifdef SPDLOG_USE_SOURCE_LOCATION
     template<typename... Args>
     void trace(loc_with_fmt fmt, Args &&...args)
     {

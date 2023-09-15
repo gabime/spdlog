@@ -29,37 +29,7 @@ SPDLOG_INLINE logger::logger(logger &&other) noexcept
     , level_(other.level_.load(std::memory_order_relaxed))
     , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
     , custom_err_handler_(std::move(other.custom_err_handler_))
-
 {}
-
-SPDLOG_INLINE logger &logger::operator=(logger other) noexcept
-{
-    this->swap(other);
-    return *this;
-}
-
-SPDLOG_INLINE void logger::swap(spdlog::logger &other) noexcept
-{
-    name_.swap(other.name_);
-    sinks_.swap(other.sinks_);
-
-    // swap level_
-    auto other_level = other.level_.load();
-    auto my_level = level_.exchange(other_level);
-    other.level_.store(my_level);
-
-    // swap flush level_
-    other_level = other.flush_level_.load();
-    my_level = flush_level_.exchange(other_level);
-    other.flush_level_.store(my_level);
-
-    custom_err_handler_.swap(other.custom_err_handler_);
-}
-
-SPDLOG_INLINE void swap(logger &a, logger &b)
-{
-    a.swap(b);
-}
 
 SPDLOG_INLINE void logger::set_level(level::level_enum log_level)
 {
