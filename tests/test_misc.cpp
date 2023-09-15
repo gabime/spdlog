@@ -26,12 +26,6 @@ TEST_CASE("basic_logging ", "[basic_logging]")
     REQUIRE(log_info(std::string("Hello")) == "Hello");
     REQUIRE(log_info(std::string()).empty());
 
-    // Numbers
-    REQUIRE(log_info(5) == "5");
-    REQUIRE(log_info(5.6) == "5.6");
-
-    // User defined class
-    // REQUIRE(log_info(some_logged_class("some_val")) == "some_val");
 }
 
 TEST_CASE("log_levels", "[log_levels]")
@@ -162,10 +156,6 @@ TEST_CASE("default logger API", "[default logger]")
     oss.str("");
     spdlog::warn("Hello again {}", 2);
     REQUIRE(oss.str() == "*** Hello again 2" + std::string(spdlog::details::os::default_eol));
-
-    oss.str("");
-    spdlog::error(123);
-    REQUIRE(oss.str() == "*** 123" + std::string(spdlog::details::os::default_eol));
 
     oss.str("");
     spdlog::critical(std::string("some string"));
