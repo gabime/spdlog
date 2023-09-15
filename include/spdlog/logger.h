@@ -118,8 +118,7 @@ public:
     }
 
     // support for custom time
-    template<typename S>
-    void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, S msg)
+    void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg)
     {
         if (should_log(lvl))
         {
