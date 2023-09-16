@@ -1,4 +1,4 @@
-#define SPDLOG_USE_SOURCE_LOCATION
+#define SPDLOG_EMIT_SOURCE_LOCATION
 #include "includes.h"
 #include "test_sink.h"
 

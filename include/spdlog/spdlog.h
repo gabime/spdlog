@@ -155,7 +155,7 @@ inline void log(level::level_enum lvl, S fmt, Args &&...args)
     default_logger_raw()->log(lvl, fmt, std::forward<Args>(args)...);
 }
 
-#ifdef SPDLOG_USE_SOURCE_LOCATION
+#ifdef SPDLOG_EMIT_SOURCE_LOCATION
 template<typename... Args>
 inline void trace(loc_with_fmt fmt, Args &&...args)
 {
