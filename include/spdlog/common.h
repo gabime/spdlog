@@ -293,6 +293,13 @@ struct loc_with_fmt
         : loc(loc)
         , fmt_string(fmt_str)
     {}
+
+#ifndef SPDLOG_USE_STD_FORMAT
+    constexpr loc_with_fmt(fmt::runtime_format_string<char> fmt_str, source_loc loc = source_loc::current()) noexcept
+        : loc(loc)
+        , fmt_string(fmt_str.str)
+    {}
+#endif
 };
 
 struct file_event_handlers
