@@ -129,7 +129,7 @@ public:
         }
     }
 
-#ifdef SPDLOG_USE_SOURCE_LOCATION
+#ifdef SPDLOG_EMIT_SOURCE_LOCATION
     template<typename... Args>
     void trace(loc_with_fmt fmt, Args &&...args)
     {
