@@ -117,6 +117,8 @@ namespace fmt_lib = std;
 
 using string_view_t = std::string_view;
 using memory_buf_t = std::string;
+using wstring_view_t = fmt::basic_string_view<wchar_t>;
+using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
 template<typename... Args>
 #    if __cpp_lib_format >= 202207L
@@ -131,17 +133,10 @@ namespace fmt_lib = fmt;
 
 using string_view_t = fmt::basic_string_view<char>;
 using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
-
 template<typename... Args>
 using format_string_t = fmt::format_string<Args...>;
-
-#    if defined(SPDLOG_WCHAR_FILENAMES)
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
-
-template<typename... Args>
-using wformat_string_t = fmt::wformat_string<Args...>;
-#    endif
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif
 
