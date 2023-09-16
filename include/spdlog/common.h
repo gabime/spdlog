@@ -339,18 +339,26 @@ constexpr spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) noex
 }
 #endif
 
+// convert format_string<...> to string_view depending on std::format or {fmt} versions
 #ifndef SPDLOG_USE_STD_FORMAT
 template<typename T, typename... Args>
-inline fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt)
+constexpr inline fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt) noexcept
 {
     return fmt;
 }
-#elif __cpp_lib_format >= 202207L
+#elif __cpp_lib_format >= 202207L // std::format and __cpp_lib_format >= 202207L
 template<typename T, typename... Args>
 constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept
 {
     return fmt.get();
 }
+#else // std::format and __cpp_lib_format < 202207L
+template<typename T, typename... Args>
+constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept
+{
+    return fmt;
+}
+
 #endif
 
 } // namespace details

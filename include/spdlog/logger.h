@@ -81,7 +81,7 @@ public:
     {
         if (should_log(lvl))
         {
-            log_with_format_(loc, lvl, fmt.get(), std::forward<Args>(args)...);
+            log_with_format_(loc, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
         }
     }
 
@@ -90,7 +90,7 @@ public:
     {
         if (should_log(lvl))
         {
-            log_with_format_(source_loc{}, lvl, fmt.get(), std::forward<Args>(args)...);
+            log_with_format_(source_loc{}, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
         }
     }
 
