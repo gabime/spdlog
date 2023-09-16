@@ -173,18 +173,15 @@ public:
         log(loc, level::trace, msg);
     }
 
-
     void debug(string_view_t msg, source_loc loc = source_loc::current())
     {
         log(loc, level::debug, msg);
     }
 
-
     void info(string_view_t msg, source_loc loc = source_loc::current())
     {
         log(loc, level::info, msg);
     }
-
 
     void warn(string_view_t msg, source_loc loc = source_loc::current())
     {
@@ -363,7 +360,6 @@ protected:
     // default handler prints the error to stderr at max rate of 1 message/sec.
     void err_handler_(const std::string &msg);
 };
-
 
 } // namespace spdlog
 

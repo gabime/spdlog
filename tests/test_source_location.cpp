@@ -18,4 +18,3 @@ TEST_CASE("test_source_location", "[source_location]")
 }
 
 #endif
-

@@ -18,7 +18,7 @@
 #include <cstdint>
 
 #if __has_include(<version>)
-#include <version>
+#    include <version>
 #endif
 
 #if __cpp_lib_source_location >= 201907
@@ -115,9 +115,9 @@ using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
 using err_handler = std::function<void(const std::string &err_msg)>;
+
 #ifdef SPDLOG_USE_STD_FORMAT
 namespace fmt_lib = std;
-
 using string_view_t = std::string_view;
 using memory_buf_t = std::string;
 using wstring_view_t = std::wstring_view;
@@ -141,7 +141,7 @@ using format_string_t = fmt::format_string<Args...>;
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
-#endif
+#endif // SPDLOG_USE_STD_FORMAT
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
 using level_t = details::null_atomic_int;
@@ -342,26 +342,27 @@ constexpr spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) noex
 }
 #endif
 
-// convert format_string<...> to string_view depending on std::format or {fmt} versions
-#ifndef SPDLOG_USE_STD_FORMAT
-template<typename T, typename... Args>
-constexpr inline fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt) noexcept
-{
-    return fmt;
-}
-#elif __cpp_lib_format >= 202207L // std::format and __cpp_lib_format >= 202207L
+// convert format_string<...> to string_view depending on format lib versions
+#if defined(SPDLOG_USE_STD_FORMAT)
+#    if __cpp_lib_format >= 202207L // std::format and __cpp_lib_format >= 202207L
 template<typename T, typename... Args>
 constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept
 {
     return fmt.get();
 }
-#else // std::format and __cpp_lib_format < 202207L
+#    else // std::format and __cpp_lib_format < 202207L
 template<typename T, typename... Args>
 constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept
 {
     return fmt;
 }
-
+#    endif
+#else // {fmt} version
+template<typename T, typename... Args>
+constexpr inline fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt) noexcept
+{
+    return fmt;
+}
 #endif
 
 } // namespace details

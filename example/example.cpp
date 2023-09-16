@@ -29,7 +29,7 @@ void replace_default_logger_example();
 
 // Uncomment to enable source location support.
 // This will add filename/line/column info to the log (and in to the resulting binary so take care).
-// #define SPDLOG_EMIT_SOURCE_LOCATION 
+// #define SPDLOG_EMIT_SOURCE_LOCATION
 
 #include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h" // support for loading levels from the environment variable
