@@ -104,6 +104,10 @@ if(SPDLOG_USE_STD_FORMAT AND SPDLOG_FMT_EXTERNAL)
     message(FATAL_ERROR "SPDLOG_USE_STD_FORMAT and SPDLOG_FMT_EXTERNAL are mutually exclusive")
 endif()
 
+if(SPDLOG_USE_STD_FORMAT AND CMAKE_CXX_STANDARD LESS 20)
+    message(FATAL_ERROR "SPDLOG_USE_STD_FORMAT must be used with CMAKE_CXX_STANDARD >= 20")
+endif()
+
 # misc tweakme options
 if(WIN32)
     option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)
