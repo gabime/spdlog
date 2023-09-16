@@ -282,7 +282,8 @@ struct source_loc
     const char *funcname{nullptr};
 };
 
-// to capture caller's current source location and format string at compile time.
+// trick to capture format string and caller's source location with variadic template.
+// see logger::info() etc. to understand how it's used.
 struct loc_with_fmt
 {
     source_loc loc;
@@ -292,13 +293,6 @@ struct loc_with_fmt
         : loc(loc)
         , fmt_string(fmt_str)
     {}
-
-#ifndef SPDLOG_USE_STD_FORMAT
-    constexpr loc_with_fmt(fmt::runtime_format_string<char> fmt_str, source_loc loc = source_loc::current()) noexcept
-        : loc(loc)
-        , fmt_string(fmt_str.str)
-    {}
-#endif
 };
 
 struct file_event_handlers
