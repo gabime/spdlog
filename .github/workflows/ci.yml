@@ -78,6 +78,6 @@ jobs:
             -DSPDLOG_BUILD_TESTS=ON \
             -DSPDLOG_BUILD_TESTS_HO=OFF \
             -DSPDLOG_SANITIZE_ADDRESS=OFF
-          make -j2
+          make -j
           ctest -j2 --output-on-failure
 
