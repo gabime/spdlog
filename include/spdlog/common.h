@@ -117,8 +117,8 @@ namespace fmt_lib = std;
 
 using string_view_t = std::string_view;
 using memory_buf_t = std::string;
-using wstring_view_t = fmt::basic_string_view<wchar_t>;
-using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
+using wstring_view_t = std::wstring_view;
+using wmemory_buf_t = std::wstring;
 
 template<typename... Args>
 #    if __cpp_lib_format >= 202207L
