@@ -81,14 +81,17 @@ public:
     {
         if (should_log(lvl))
         {
-            log_with_format_(loc, lvl, fmt, std::forward<Args>(args)...);
+            log_with_format_(loc, lvl, fmt.get(), std::forward<Args>(args)...);
         }
     }
 
     template<typename... Args>
     void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args)
     {
-        log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
+        if (should_log(lvl))
+        {
+            log_with_format_(source_loc{}, lvl, fmt.get(), std::forward<Args>(args)...);
+        }
     }
 
     template<typename S, typename = is_convertible_to_sv<S>, typename... Args>
