@@ -360,7 +360,7 @@ constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, A
 #    endif
 #else // {fmt} version
 template<typename T, typename... Args>
-constexpr inline fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt) noexcept
+constexpr fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt) noexcept
 {
     return fmt;
 }
