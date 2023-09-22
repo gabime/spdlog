@@ -24,10 +24,10 @@
 
 #if __cpp_lib_source_location >= 201907
 #    include <source_location>
-#    define SPDLOG_STD_SOURCE_LOCATION
+#    define SPDLOG_HAVE_STD_SOURCE_LOCATION
 #elif __has_include(<experimental/source_location>)
 #    include <experimental/source_location>
-#    define SPDLOG_EXPERIMENTAL_SOURCE_LOCATION
+#    define SPDLOG_HAVE_EXPERIMENTAL_SOURCE_LOCATION
 #endif
 
 #ifdef SPDLOG_USE_STD_FORMAT
@@ -254,12 +254,12 @@ struct source_loc
         , funcname{funcname_in}
     {}
 
-#ifdef SPDLOG_STD_SOURCE_LOCATION
+#ifdef SPDLOG_HAVE_STD_SOURCE_LOCATION
     static constexpr source_loc current(const std::source_location source_location = std::source_location::current())
     {
         return source_loc{source_location.file_name(), source_location.line(), source_location.function_name()};
     }
-#elif defined(SPDLOG_EXPERIMENTAL_SOURCE_LOCATION)
+#elif defined(SPDLOG_HAVE_EXPERIMENTAL_SOURCE_LOCATION)
     static constexpr source_loc current(
         const std::experimental::source_location source_location = std::experimental::source_location::current())
     {

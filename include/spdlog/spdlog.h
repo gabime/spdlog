@@ -155,7 +155,7 @@ inline void log(log_level lvl, S fmt, Args &&...args)
     default_logger_raw()->log(lvl, fmt, std::forward<Args>(args)...);
 }
 
-#ifdef SPDLOG_EMIT_SOURCE_LOCATION
+#ifdef SPDLOG_SOURCE_LOCATION
 template<typename... Args>
 inline void trace(loc_with_fmt fmt, Args &&...args)
 {
@@ -306,7 +306,7 @@ inline void critical(string_view_t msg)
 // SPDLOG_LEVEL_OFF
 //
 
-#ifndef SPDLOG_NO_SOURCE_LOC
+#ifdef SPDLOG_SOURCE_LOCATION
 #    define SPDLOG_LOGGER_CALL(logger, level, ...)                                                                                         \
         (logger)->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__)
 #else

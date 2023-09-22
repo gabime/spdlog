@@ -1,8 +1,8 @@
-#define SPDLOG_EMIT_SOURCE_LOCATION
+#define SPDLOG_SOURCE_LOCATION
 #include "includes.h"
 #include "test_sink.h"
 
-#if defined(SPDLOG_STD_SOURCE_LOCATION) || defined(SPDLOG_EXPERIMENTAL_SOURCE_LOCATION)
+#if defined(SPDLOG_HAVE_STD_SOURCE_LOCATION) || defined(SPDLOG_HAVE_EXPERIMENTAL_SOURCE_LOCATION)
 
 using spdlog::details::os::default_eol;
 
