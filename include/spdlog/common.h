@@ -177,32 +177,27 @@ enum level_enum : int
     n_levels
 };
 
-#define SPDLOG_LEVEL_NAME_TRACE spdlog::string_view_t("trace", 5)
-#define SPDLOG_LEVEL_NAME_DEBUG spdlog::string_view_t("debug", 5)
-#define SPDLOG_LEVEL_NAME_INFO spdlog::string_view_t("info", 4)
-#define SPDLOG_LEVEL_NAME_WARNING spdlog::string_view_t("warning", 7)
-#define SPDLOG_LEVEL_NAME_ERROR spdlog::string_view_t("error", 5)
-#define SPDLOG_LEVEL_NAME_CRITICAL spdlog::string_view_t("critical", 8)
-#define SPDLOG_LEVEL_NAME_OFF spdlog::string_view_t("off", 3)
-
 #if !defined(SPDLOG_LEVEL_NAMES)
-#    define SPDLOG_LEVEL_NAMES                                                                                                             \
-        {                                                                                                                                  \
-            SPDLOG_LEVEL_NAME_TRACE, SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO, SPDLOG_LEVEL_NAME_WARNING, SPDLOG_LEVEL_NAME_ERROR,  \
-                SPDLOG_LEVEL_NAME_CRITICAL, SPDLOG_LEVEL_NAME_OFF                                                                          \
-        }
+#define SPDLOG_LEVEL_NAMES { "trace", "debug", "info", "warning", "error", "critical", "off"}
 #endif
 
 #if !defined(SPDLOG_SHORT_LEVEL_NAMES)
-
-#    define SPDLOG_SHORT_LEVEL_NAMES                                                                                                       \
-        {                                                                                                                                  \
-            "T", "D", "I", "W", "E", "C", "O"                                                                                              \
-        }
+#define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
 #endif
 
-SPDLOG_API const string_view_t &to_string_view(spdlog::level::level_enum l) noexcept;
-SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) noexcept;
+constexpr string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
+constexpr const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
+
+constexpr string_view_t to_string_view(spdlog::level::level_enum lvl) noexcept
+{
+    return level_string_views[lvl];
+}
+
+constexpr const char *to_short_c_str(spdlog::level::level_enum lvl) noexcept
+{
+    return short_level_names[lvl];
+}
+
 SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) noexcept;
 
 } // namespace level
