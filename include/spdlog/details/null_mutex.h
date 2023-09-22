@@ -22,21 +22,23 @@ struct null_atomic
 {
     T value;
 
-    explicit null_atomic(T new_value)
+    null_atomic() = default;
+
+    explicit constexpr null_atomic(T new_value)
         : value(new_value)
     {}
 
-    [[nodiscard]] T load(std::memory_order = std::memory_order_relaxed) const noexcept
+    [[nodiscard]] T load(std::memory_order = std::memory_order_seq_cst) const
     {
         return value;
     }
 
-    void store(T new_value, std::memory_order = std::memory_order_relaxed) noexcept
+    void store(T new_value, std::memory_order = std::memory_order_seq_cst)
     {
         value = new_value;
     }
 
-    T exchange(T new_value, std::memory_order = std::memory_order_relaxed) noexcept
+    T exchange(T new_value, std::memory_order = std::memory_order_seq_cst)
     {
         std::swap(new_value, value);
         return new_value; // return value before the call
