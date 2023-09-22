@@ -34,7 +34,7 @@ template<typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color(log_level color_level, string_view_t color)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    colors_.at(static_cast<size_t>(color_level)) = to_string_(color);
+    colors_.at(to_size_t(color_level)) = to_string_(color);
 }
 
 template<typename ConsoleMutex>
