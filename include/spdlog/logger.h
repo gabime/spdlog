@@ -310,8 +310,8 @@ public:
 protected:
     std::string name_;
     std::vector<sink_ptr> sinks_;
-    spdlog::level_t level_{log_level::info};
-    spdlog::level_t flush_level_{log_level::off};
+    spdlog::atomic_level_t level_{log_level::info};
+    spdlog::atomic_level_t flush_level_{log_level::off};
     err_handler custom_err_handler_{nullptr};
 
     // common implementation for after templated public api has been resolved to format string and args

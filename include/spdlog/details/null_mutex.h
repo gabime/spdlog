@@ -9,7 +9,6 @@
 // null, no cost dummy "mutex" and dummy "atomic" log level
 
 namespace spdlog {
-enum class log_level; // forward declaration
 
 namespace details {
 struct null_mutex
@@ -18,25 +17,26 @@ struct null_mutex
     void unlock() const {}
 };
 
-struct null_atomic_log_level
+template<typename T>
+struct null_atomic
 {
-    spdlog::log_level value;
+    T value;
 
-    explicit null_atomic_log_level(spdlog::log_level new_value)
+    explicit null_atomic(T new_value)
         : value(new_value)
     {}
 
-    [[nodiscard]] log_level load(std::memory_order = std::memory_order_relaxed) const
+    [[nodiscard]] T load(std::memory_order = std::memory_order_relaxed) const
     {
         return value;
     }
 
-    void store(log_level new_value, std::memory_order = std::memory_order_relaxed)
+    void store(T new_value, std::memory_order = std::memory_order_relaxed)
     {
         value = new_value;
     }
 
-    log_level exchange(log_level new_value, std::memory_order = std::memory_order_relaxed)
+    T exchange(T new_value, std::memory_order = std::memory_order_relaxed)
     {
         std::swap(new_value, value);
         return new_value; // return value before the call

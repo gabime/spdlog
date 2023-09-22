@@ -173,9 +173,9 @@ enum class log_level
 };
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
-    using level_t = details::null_atomic_log_level;
+    using atomic_level_t = details::null_atomic<log_level>;
 #else
-    using level_t = std::atomic<log_level>;
+    using atomic_level_t = std::atomic<log_level>;
 #endif
 
 #if !defined(SPDLOG_LEVEL_NAMES)
