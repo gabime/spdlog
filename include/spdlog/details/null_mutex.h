@@ -6,7 +6,7 @@
 #include <atomic>
 #include <utility>
 
-// null, no cost dummy "mutex" and dummy "atomic" int
+// null, no cost dummy "mutex" and dummy "atomic" log level
 
 namespace spdlog {
 enum class log_level; // forward declaration
@@ -21,7 +21,6 @@ struct null_mutex
 struct null_atomic_log_level
 {
     spdlog::log_level value;
-    null_atomic_log_level() = default;
 
     explicit null_atomic_log_level(spdlog::log_level new_value)
         : value(new_value)
