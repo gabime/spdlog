@@ -236,7 +236,7 @@ class SPDLOG_API spdlog_ex : public std::exception
 public:
     explicit spdlog_ex(std::string msg);
     spdlog_ex(const std::string &msg, int last_errno);
-    const char *what() const noexcept override;
+    [[nodiscard]] const char *what() const noexcept override;
 
 private:
     std::string msg_;
