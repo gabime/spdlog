@@ -24,14 +24,14 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color
 
     set_color_mode_impl(mode);
     // set level colors
-    colors_[log_level::trace] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
-    colors_[log_level::debug] = FOREGROUND_GREEN | FOREGROUND_BLUE;                      // cyan
-    colors_[log_level::info] = FOREGROUND_GREEN;                                         // green
-    colors_[spdlog::log_level::warn] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // intense yellow
-    colors_[log_level::err] = FOREGROUND_RED | FOREGROUND_INTENSITY;                     // intense red
-    colors_[log_level::critical] =
+    colors_.at(to_size_t(log_level::trace)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
+    colors_.at(to_size_t(log_level::debug)) = FOREGROUND_GREEN | FOREGROUND_BLUE;                     // cyan
+    colors_.at(to_size_t(log_level::info)) = FOREGROUND_GREEN;                                         // green
+    colors_.at(to_size_t(spdlog::log_level::warn)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // intense yellow
+    colors_.at(to_size_t(log_level::err)) = FOREGROUND_RED | FOREGROUND_INTENSITY;                     // intense red
+    colors_.at(to_size_t(log_level::critical)) =
         BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // intense white on red background
-    colors_[log_level::off] = 0;
+    colors_.at(to_size_t(log_level::off)) = 0;
 }
 
 template<typename ConsoleMutex>

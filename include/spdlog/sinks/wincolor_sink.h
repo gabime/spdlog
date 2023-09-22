@@ -44,7 +44,7 @@ protected:
     mutex_t &mutex_;
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
-    std::array<std::uint16_t, log_level::n_levels> colors_;
+    std::array<std::uint16_t, levels_count> colors_;
 
     // set foreground color and return the orig console attributes (for resetting later)
     std::uint16_t set_foreground_color_(std::uint16_t attribs);

@@ -93,3 +93,6 @@ cmake-build-*/
 # macos
 *.DS_store
 *.xcodeproj/
+/.vs
+/out/build
+/CMakeSettings.json
