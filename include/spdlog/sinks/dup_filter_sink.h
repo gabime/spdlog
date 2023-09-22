@@ -20,7 +20,7 @@
 //     #include <spdlog/sinks/dup_filter_sink.h>
 //
 //     int main() {
-//         auto dup_filter = std::make_shared<dup_filter_sink_st>(std::chrono::seconds(5), level::info);
+//         auto dup_filter = std::make_shared<dup_filter_sink_st>(std::chrono::seconds(5), log_level::info);
 //         dup_filter->add_sink(std::make_shared<stdout_color_sink_mt>());
 //         spdlog::logger l("logger", dup_filter);
 //         l.info("Hello");
@@ -41,7 +41,7 @@ class dup_filter_sink : public dist_sink<Mutex>
 {
 public:
     template<class Rep, class Period>
-    explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration, level::level_enum notification_level = level::info)
+    explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration, log_level notification_level = log_level::info)
         : max_skip_duration_{max_skip_duration}
         , log_level_{notification_level}
     {}
@@ -51,7 +51,7 @@ protected:
     log_clock::time_point last_msg_time_;
     std::string last_msg_payload_;
     size_t skip_counter_ = 0;
-    level::level_enum log_level_;
+    log_level log_level_;
 
     void sink_it_(const details::log_msg &msg) override
     {

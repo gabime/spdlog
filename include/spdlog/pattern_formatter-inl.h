@@ -129,7 +129,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
-        const string_view_t &level_name = level::to_string_view(msg.level);
+        const string_view_t &level_name = to_string_view(msg.level);
         ScopedPadder p(level_name.size(), padinfo_, dest);
         fmt_helper::append_string_view(level_name, dest);
     }
@@ -146,7 +146,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
-        string_view_t level_name{level::to_short_c_str(msg.level)};
+        string_view_t level_name{to_short_c_str(msg.level)};
         ScopedPadder p(level_name.size(), padinfo_, dest);
         fmt_helper::append_string_view(level_name, dest);
     }
@@ -991,8 +991,8 @@ public:
         dest.push_back('[');
         // wrap the level name with color
         msg.color_range_start = dest.size();
-        // fmt_helper::append_string_view(level::to_c_str(msg.level), dest);
-        fmt_helper::append_string_view(level::to_string_view(msg.level), dest);
+        // fmt_helper::append_string_view(log_level::to_c_str(msg.level), dest);
+        fmt_helper::append_string_view(to_string_view(msg.level), dest);
         msg.color_range_end = dest.size();
         dest.push_back(']');
         dest.push_back(' ');

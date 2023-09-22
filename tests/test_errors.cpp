@@ -45,7 +45,7 @@ TEST_CASE("custom_error_handler", "[errors]")
     prepare_logdir();
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename, true);
-    logger->flush_on(spdlog::level::info);
+    logger->flush_on(spdlog::log_level::info);
     logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
     logger->info("Good message #1");
 

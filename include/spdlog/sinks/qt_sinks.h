@@ -86,23 +86,23 @@ public:
         QTextCharFormat format;
         // trace
         format.setForeground(dark_colors ? Qt::darkGray : Qt::gray);
-        colors_.at(level::trace) = format;
+        colors_.at(log_level::trace) = format;
         // debug
         format.setForeground(dark_colors ? Qt::darkCyan : Qt::cyan);
-        colors_.at(level::debug) = format;
+        colors_.at(log_level::debug) = format;
         // info
         format.setForeground(dark_colors ? Qt::darkGreen : Qt::green);
-        colors_.at(level::info) = format;
+        colors_.at(log_level::info) = format;
         // warn
         format.setForeground(dark_colors ? Qt::darkYellow : Qt::yellow);
-        colors_.at(level::warn) = format;
+        colors_.at(spdlog::log_level::warn) = format;
         // err
         format.setForeground(Qt::red);
-        colors_.at(level::err) = format;
+        colors_.at(log_level::err) = format;
         // critical
         format.setForeground(Qt::white);
         format.setBackground(Qt::red);
-        colors_.at(level::critical) = format;
+        colors_.at(log_level::critical) = format;
     }
 
     ~qt_color_sink()
@@ -116,13 +116,13 @@ public:
         default_color_ = format;
     }
 
-    void set_level_color(level::level_enum color_level, QTextCharFormat format)
+    void set_level_color(log_level color_level, QTextCharFormat format)
     {
         // std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         colors_.at(static_cast<size_t>(color_level)) = format;
     }
 
-    QTextCharFormat &get_level_color(level::level_enum color_level)
+    QTextCharFormat &get_level_color(log_level color_level)
     {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         return colors_.at(static_cast<size_t>(color_level));
@@ -238,7 +238,7 @@ protected:
     int max_lines_;
     bool is_utf8_;
     QTextCharFormat default_color_;
-    std::array<QTextCharFormat, level::n_levels> colors_;
+    std::array<QTextCharFormat, log_level::n_levels> colors_;
 };
 
 #include "spdlog/details/null_mutex.h"

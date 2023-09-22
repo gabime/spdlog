@@ -174,19 +174,19 @@ struct eventlog
     {
         switch (msg.level)
         {
-        case level::trace:
-        case level::debug:
+        case log_level::trace:
+        case log_level::debug:
             return EVENTLOG_SUCCESS;
 
-        case level::info:
+        case log_level::info:
             return EVENTLOG_INFORMATION_TYPE;
 
-        case level::warn:
+        case spdlog::log_level::warn:
             return EVENTLOG_WARNING_TYPE;
 
-        case level::err:
-        case level::critical:
-        case level::off:
+        case log_level::err:
+        case log_level::critical:
+        case log_level::off:
             return EVENTLOG_ERROR_TYPE;
 
         default:

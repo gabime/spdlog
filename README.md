@@ -73,7 +73,7 @@ int main()
     spdlog::info("Positional args are {1} {0}..", "too", "supported");
     spdlog::info("{:<30}", "left aligned");
     
-    spdlog::set_level(spdlog::level::debug); // Set global log level to debug
+    spdlog::set_level(spdlog::log_level::debug); // Set global log level to debug
     spdlog::debug("This message should be displayed..");    
     
     // change log pattern
@@ -220,14 +220,14 @@ void binary_example()
 void multi_sink_example()
 {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    console_sink->set_level(spdlog::level::warn);
+    console_sink->set_level(spdlog::log_level::warn);
     console_sink->set_pattern("[multi_sink_example] [%^%l%$] %v");
 
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multisink.txt", true);
-    file_sink->set_level(spdlog::level::trace);
+    file_sink->set_level(spdlog::log_level::trace);
 
     spdlog::logger logger("multi_sink", {console_sink, file_sink});
-    logger.set_level(spdlog::level::debug);
+    logger.set_level(spdlog::log_level::debug);
     logger.warn("this should appear in both console and file");
     logger.info("this message should not appear in the console, only in the file");
 }
@@ -244,7 +244,7 @@ void callback_example()
     auto callback_sink = std::make_shared<spdlog::sinks::callback_sink_mt>([](const spdlog::details::log_msg &msg) {
          // for example you can be notified by sending an email to yourself
     });
-    callback_sink->set_level(spdlog::level::err);
+    callback_sink->set_level(spdlog::log_level::err);
 
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     spdlog::logger logger("custom_callback_logger", {console_sink, callback_sink});

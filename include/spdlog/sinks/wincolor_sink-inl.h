@@ -24,14 +24,14 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color
 
     set_color_mode_impl(mode);
     // set level colors
-    colors_[level::trace] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
-    colors_[level::debug] = FOREGROUND_GREEN | FOREGROUND_BLUE;                      // cyan
-    colors_[level::info] = FOREGROUND_GREEN;                                         // green
-    colors_[level::warn] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // intense yellow
-    colors_[level::err] = FOREGROUND_RED | FOREGROUND_INTENSITY;                     // intense red
-    colors_[level::critical] =
+    colors_[log_level::trace] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
+    colors_[log_level::debug] = FOREGROUND_GREEN | FOREGROUND_BLUE;                      // cyan
+    colors_[log_level::info] = FOREGROUND_GREEN;                                         // green
+    colors_[spdlog::log_level::warn] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // intense yellow
+    colors_[log_level::err] = FOREGROUND_RED | FOREGROUND_INTENSITY;                     // intense red
+    colors_[log_level::critical] =
         BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // intense white on red background
-    colors_[level::off] = 0;
+    colors_[log_level::off] = 0;
 }
 
 template<typename ConsoleMutex>
@@ -42,7 +42,7 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::~wincolor_sink()
 
 // change the color for the given level
 template<typename ConsoleMutex>
-void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color(level::level_enum level, std::uint16_t color)
+void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color(log_level level, std::uint16_t color)
 {
     std::lock_guard<mutex_t> lock(mutex_);
     colors_[static_cast<size_t>(level)] = color;

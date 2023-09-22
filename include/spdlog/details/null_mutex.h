@@ -5,9 +5,12 @@
 
 #include <atomic>
 #include <utility>
+
 // null, no cost dummy "mutex" and dummy "atomic" int
 
 namespace spdlog {
+enum class log_level; // forward declaration
+
 namespace details {
 struct null_mutex
 {
@@ -15,26 +18,26 @@ struct null_mutex
     void unlock() const {}
 };
 
-struct null_atomic_int
+struct null_atomic_log_level
 {
-    int value;
-    null_atomic_int() = default;
+    spdlog::log_level value;
+    null_atomic_log_level() = default;
 
-    explicit null_atomic_int(int new_value)
+    explicit null_atomic_log_level(spdlog::log_level new_value)
         : value(new_value)
     {}
 
-    int load(std::memory_order = std::memory_order_relaxed) const
+    [[nodiscard]] log_level load(std::memory_order = std::memory_order_relaxed) const
     {
         return value;
     }
 
-    void store(int new_value, std::memory_order = std::memory_order_relaxed)
+    void store(log_level new_value, std::memory_order = std::memory_order_relaxed)
     {
         value = new_value;
     }
 
-    int exchange(int new_value, std::memory_order = std::memory_order_relaxed)
+    log_level exchange(log_level new_value, std::memory_order = std::memory_order_relaxed)
     {
         std::swap(new_value, value);
         return new_value; // return value before the call

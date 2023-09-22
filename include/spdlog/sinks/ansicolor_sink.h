@@ -35,7 +35,7 @@ public:
     ansicolor_sink &operator=(const ansicolor_sink &other) = delete;
     ansicolor_sink &operator=(ansicolor_sink &&other) = delete;
 
-    void set_color(level::level_enum color_level, string_view_t color);
+    void set_color(log_level color_level, string_view_t color);
     void set_color_mode(color_mode mode);
     bool should_color();
 
@@ -84,7 +84,7 @@ private:
     mutex_t &mutex_;
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
-    std::array<std::string, level::n_levels> colors_;
+    std::array<std::string, levels_count> colors_;
     void print_ccode_(const string_view_t &color_code);
     void print_range_(const memory_buf_t &formatted, size_t start, size_t end);
     static std::string to_string_(const string_view_t &sv);

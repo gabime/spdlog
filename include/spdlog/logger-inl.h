@@ -31,14 +31,14 @@ SPDLOG_INLINE logger::logger(logger &&other) noexcept
     , custom_err_handler_(std::move(other.custom_err_handler_))
 {}
 
-SPDLOG_INLINE void logger::set_level(level::level_enum log_level)
+SPDLOG_INLINE void logger::set_level(log_level log_level)
 {
     level_.store(log_level);
 }
 
-SPDLOG_INLINE level::level_enum logger::level() const
+SPDLOG_INLINE log_level logger::level() const
 {
-    return static_cast<level::level_enum>(level_.load(std::memory_order_relaxed));
+    return static_cast<log_level>(level_.load(std::memory_order_relaxed));
 }
 
 SPDLOG_INLINE const std::string &logger::name() const
@@ -77,14 +77,14 @@ SPDLOG_INLINE void logger::flush()
     flush_();
 }
 
-SPDLOG_INLINE void logger::flush_on(level::level_enum log_level)
+SPDLOG_INLINE void logger::flush_on(log_level log_level)
 {
     flush_level_.store(log_level);
 }
 
-SPDLOG_INLINE level::level_enum logger::flush_level() const
+SPDLOG_INLINE log_level logger::flush_level() const
 {
-    return static_cast<level::level_enum>(flush_level_.load(std::memory_order_relaxed));
+    return static_cast<log_level>(flush_level_.load(std::memory_order_relaxed));
 }
 
 // sinks
@@ -127,7 +127,7 @@ SPDLOG_INLINE void logger::flush_()
 SPDLOG_INLINE bool logger::should_flush_(const details::log_msg &msg)
 {
     auto flush_level = flush_level_.load(std::memory_order_relaxed);
-    return (msg.level >= flush_level) && (msg.level != level::off);
+    return (msg.level >= flush_level) && (msg.level != log_level::off);
 }
 
 SPDLOG_INLINE void logger::err_handler_(const std::string &msg)

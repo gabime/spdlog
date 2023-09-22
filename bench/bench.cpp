@@ -56,7 +56,7 @@ void bench_threaded_logging(size_t threads, int iters)
 
     spdlog::info("");
     auto empty_logger = std::make_shared<spdlog::logger>("level-off");
-    empty_logger->set_level(spdlog::level::off);
+    empty_logger->set_level(spdlog::log_level::off);
     bench(iters, empty_logger);
 }
 
@@ -79,7 +79,7 @@ void bench_single_threaded(int iters)
 
     spdlog::info("");
     auto empty_logger = std::make_shared<spdlog::logger>("level-off");
-    empty_logger->set_level(spdlog::level::off);
+    empty_logger->set_level(spdlog::log_level::off);
     bench(iters, empty_logger);
 }
 
@@ -208,7 +208,7 @@ void bench_c_string(int howmany, std::shared_ptr<spdlog::logger> log)
     auto start = high_resolution_clock::now();
     for (auto i = 0; i < howmany; ++i)
     {
-        spdlog::log(spdlog::level::info, msg);
+        spdlog::log(spdlog::log_level::info, msg);
     }
 
     auto delta = high_resolution_clock::now() - start;

@@ -142,11 +142,6 @@ using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif // SPDLOG_USE_STD_FORMAT
 
-#if defined(SPDLOG_NO_ATOMIC_LEVELS)
-using level_t = details::null_atomic_int;
-#else
-using level_t = std::atomic<int>;
-#endif
 
 #define SPDLOG_LEVEL_TRACE 0
 #define SPDLOG_LEVEL_DEBUG 1
@@ -165,8 +160,7 @@ template<typename T>
 using is_convertible_to_sv = std::enable_if_t<std::is_convertible_v<T, string_view_t>>;
 
 // Log level enum
-namespace level {
-enum level_enum : int
+enum class log_level
 {
     trace = SPDLOG_LEVEL_TRACE,
     debug = SPDLOG_LEVEL_DEBUG,
@@ -178,6 +172,12 @@ enum level_enum : int
     n_levels
 };
 
+#if not defined(SPDLOG_NO_ATOMIC_LEVELS)
+    using level_t = details::null_atomic_log_level;
+#else
+    using level_t = std::atomic<log_level>;
+#endif
+
 #if !defined(SPDLOG_LEVEL_NAMES)
 #define SPDLOG_LEVEL_NAMES { "trace", "debug", "info", "warning", "error", "critical", "off"}
 #endif
@@ -186,22 +186,27 @@ enum level_enum : int
 #define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
 #endif
 
-constexpr std::array<string_view_t, level_enum::n_levels> level_string_views SPDLOG_LEVEL_NAMES;
-constexpr std::array<const char *, level_enum::n_levels>short_level_names SPDLOG_SHORT_LEVEL_NAMES;
-
-constexpr string_view_t to_string_view(spdlog::level::level_enum lvl) noexcept
+constexpr size_t to_size_t(log_level level) noexcept
 {
-    return level_string_views.at(lvl);
+    return static_cast<size_t>(level);
+}
+constexpr auto levels_count = to_size_t(log_level::n_levels);
+constexpr std::array<string_view_t, levels_count> level_string_views SPDLOG_LEVEL_NAMES;
+constexpr std::array<const char *, levels_count> short_level_names SPDLOG_SHORT_LEVEL_NAMES;
+
+constexpr string_view_t to_string_view(spdlog::log_level lvl) noexcept
+{
+    return level_string_views.at(to_size_t(lvl));
 }
 
-constexpr const char *to_short_c_str(spdlog::level::level_enum lvl) noexcept
+constexpr const char *to_short_c_str(spdlog::log_level lvl) noexcept
 {
-    return short_level_names.at(lvl);
+    return short_level_names.at(to_size_t(lvl));
 }
 
-SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) noexcept;
+SPDLOG_API spdlog::log_level level_from_str(const std::string &name) noexcept;
 
-} // namespace level
+
 
 //
 // Color mode used by sinks with color support.

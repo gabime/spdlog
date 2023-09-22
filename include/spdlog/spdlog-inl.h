@@ -32,22 +32,22 @@ SPDLOG_INLINE void set_pattern(std::string pattern, pattern_time_type time_type)
     set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
 }
 
-SPDLOG_INLINE level::level_enum get_level()
+SPDLOG_INLINE log_level get_level()
 {
     return default_logger_raw()->level();
 }
 
-SPDLOG_INLINE bool should_log(level::level_enum log_level)
+SPDLOG_INLINE bool should_log(log_level log_level)
 {
     return default_logger_raw()->should_log(log_level);
 }
 
-SPDLOG_INLINE void set_level(level::level_enum log_level)
+SPDLOG_INLINE void set_level(log_level log_level)
 {
     details::registry::instance().set_level(log_level);
 }
 
-SPDLOG_INLINE void flush_on(level::level_enum log_level)
+SPDLOG_INLINE void flush_on(log_level log_level)
 {
     details::registry::instance().flush_on(log_level);
 }

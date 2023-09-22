@@ -16,7 +16,7 @@ void bench_formatter(benchmark::State &state, std::string pattern)
     const char *text = "Hello. This is some message with length of 80                                   ";
 
     spdlog::source_loc source_loc{"a/b/c/d/myfile.cpp", 123, "some_func()"};
-    spdlog::details::log_msg msg(source_loc, logger_name, spdlog::level::info, text);
+    spdlog::details::log_msg msg(source_loc, logger_name, spdlog::log_level::info, text);
 
     for (auto _ : state)
     {

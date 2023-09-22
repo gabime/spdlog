@@ -142,7 +142,7 @@ SPDLOG_INLINE void registry::set_formatter(std::unique_ptr<formatter> formatter)
     }
 }
 
-SPDLOG_INLINE void registry::set_level(level::level_enum log_level)
+SPDLOG_INLINE void registry::set_level(log_level log_level)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     for (auto &l : loggers_)
@@ -152,7 +152,7 @@ SPDLOG_INLINE void registry::set_level(level::level_enum log_level)
     global_log_level_ = log_level;
 }
 
-SPDLOG_INLINE void registry::flush_on(level::level_enum log_level)
+SPDLOG_INLINE void registry::flush_on(log_level log_level)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     for (auto &l : loggers_)
@@ -235,7 +235,7 @@ SPDLOG_INLINE void registry::set_automatic_registration(bool automatic_registrat
     automatic_registration_ = automatic_registration;
 }
 
-SPDLOG_INLINE void registry::set_levels(log_levels levels, level::level_enum *global_level)
+SPDLOG_INLINE void registry::set_levels(log_levels levels, log_level *global_level)
 {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     log_levels_ = std::move(levels);

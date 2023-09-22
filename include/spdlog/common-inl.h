@@ -11,32 +11,24 @@
 #include <iterator>
 
 namespace spdlog {
-namespace level {
 
-//#if __cplusplus >= 201703L
-//constexpr
-//#endif
-//    static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
-
-
-SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) noexcept
+SPDLOG_INLINE spdlog::log_level level_from_str(const std::string &name) noexcept
 {
-    auto it = std::find(std::begin(level_string_views), std::end(level_string_views), name);
+    const auto *it = std::find(std::begin(level_string_views), std::end(level_string_views), name);
     if (it != std::end(level_string_views))
-        return static_cast<level::level_enum>(std::distance(std::begin(level_string_views), it));
+        return static_cast<log_level>(std::distance(std::begin(level_string_views), it));
 
     // check also for "warn" and "err" before giving up..
     if (name == "warn")
     {
-        return level::warn;
+        return spdlog::log_level::warn;
     }
     if (name == "err")
     {
-        return level::err;
+        return log_level::err;
     }
-    return level::off;
+    return log_level::off;
 }
-} // namespace level
 
 SPDLOG_INLINE spdlog_ex::spdlog_ex(std::string msg)
     : msg_(std::move(msg))
