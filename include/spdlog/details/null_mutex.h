@@ -26,17 +26,17 @@ struct null_atomic
         : value(new_value)
     {}
 
-    [[nodiscard]] T load(std::memory_order = std::memory_order_relaxed) const
+    [[nodiscard]] T load(std::memory_order = std::memory_order_relaxed) const noexcept
     {
         return value;
     }
 
-    void store(T new_value, std::memory_order = std::memory_order_relaxed)
+    void store(T new_value, std::memory_order = std::memory_order_relaxed) noexcept
     {
         value = new_value;
     }
 
-    T exchange(T new_value, std::memory_order = std::memory_order_relaxed)
+    T exchange(T new_value, std::memory_order = std::memory_order_relaxed) noexcept
     {
         std::swap(new_value, value);
         return new_value; // return value before the call
