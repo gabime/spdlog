@@ -16,6 +16,7 @@
 #include <functional>
 #include <cstdio>
 #include <cstdint>
+#include <array>
 
 #if __has_include(<version>)
 #    include <version>
@@ -185,17 +186,17 @@ enum level_enum : int
 #define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
 #endif
 
-constexpr string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
-constexpr const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
+constexpr std::array<string_view_t, level_enum::n_levels> level_string_views SPDLOG_LEVEL_NAMES;
+constexpr std::array<const char *, level_enum::n_levels>short_level_names SPDLOG_SHORT_LEVEL_NAMES;
 
 constexpr string_view_t to_string_view(spdlog::level::level_enum lvl) noexcept
 {
-    return level_string_views[lvl];
+    return level_string_views.at(lvl);
 }
 
 constexpr const char *to_short_c_str(spdlog::level::level_enum lvl) noexcept
 {
-    return short_level_names[lvl];
+    return short_level_names.at(lvl);
 }
 
 SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) noexcept;
