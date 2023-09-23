@@ -87,8 +87,8 @@ SPDLOG_INLINE void load_levels(const std::string &input)
     }
 
     auto key_vals = extract_key_vals_(input);
-    std::unordered_map<std::string, log_level> levels;
-    log_level global_level = log_level::info;
+    std::unordered_map<std::string, level> levels;
+    level global_level = level::info;
     bool global_level_found = false;
 
     for (auto &name_level : key_vals)
@@ -97,7 +97,7 @@ SPDLOG_INLINE void load_levels(const std::string &input)
         auto level_name = to_lower_(name_level.second);
         auto level = level_from_str(level_name);
         // ignore unrecognized level names
-        if (level == log_level::off && level_name != "off")
+        if (level == level::off && level_name != "off")
         {
             continue;
         }

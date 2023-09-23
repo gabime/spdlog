@@ -32,24 +32,24 @@ SPDLOG_INLINE void set_pattern(std::string pattern, pattern_time_type time_type)
     set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
 }
 
-SPDLOG_INLINE log_level get_level()
+SPDLOG_INLINE level get_level()
 {
-    return default_logger_raw()->level();
+    return default_logger_raw()->log_level();
 }
 
-SPDLOG_INLINE bool should_log(log_level log_level)
+SPDLOG_INLINE bool should_log(level level)
 {
-    return default_logger_raw()->should_log(log_level);
+    return default_logger_raw()->should_log(level);
 }
 
-SPDLOG_INLINE void set_level(log_level log_level)
+SPDLOG_INLINE void set_level(level level)
 {
-    details::registry::instance().set_level(log_level);
+    details::registry::instance().set_level(level);
 }
 
-SPDLOG_INLINE void flush_on(log_level log_level)
+SPDLOG_INLINE void flush_on(level level)
 {
-    details::registry::instance().flush_on(log_level);
+    details::registry::instance().flush_on(level);
 }
 
 SPDLOG_INLINE void set_error_handler(void (*handler)(const std::string &msg))

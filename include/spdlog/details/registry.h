@@ -27,7 +27,7 @@ class thread_pool;
 class SPDLOG_API registry
 {
 public:
-    using log_levels = std::unordered_map<std::string, log_level>;
+    using log_levels = std::unordered_map<std::string, level>;
     registry(const registry &) = delete;
     registry &operator=(const registry &) = delete;
 
@@ -53,9 +53,9 @@ public:
     // Set global formatter. Each sink in each logger will get a clone of this object
     void set_formatter(std::unique_ptr<formatter> formatter);
 
-    void set_level(log_level log_level);
+    void set_level(level level);
 
-    void flush_on(log_level log_level);
+    void flush_on(level level);
 
     template<typename Rep, typename Period>
     void flush_every(std::chrono::duration<Rep, Period> interval)
@@ -83,7 +83,7 @@ public:
     void set_automatic_registration(bool automatic_registration);
 
     // set levels for all existing/future loggers. global_level can be null if should not set.
-    void set_levels(log_levels levels, log_level *global_level);
+    void set_levels(log_levels levels, level *global_level);
 
     static registry &instance();
 
@@ -101,8 +101,8 @@ private:
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
     log_levels log_levels_;
     std::unique_ptr<formatter> formatter_;
-    spdlog::log_level global_log_level_ = log_level::info;
-    log_level flush_level_ = log_level::off;
+    spdlog::level global_log_level_ = level::info;
+    level flush_level_ = level::off;
     err_handler err_handler_;
     std::shared_ptr<thread_pool> tp_;
     std::unique_ptr<periodic_worker> periodic_flusher_;

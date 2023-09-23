@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
     // disabled loggers
     auto disabled_logger = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_mt>());
-    disabled_logger->set_level(spdlog::log_level::off);
+    disabled_logger->set_level(spdlog::level::off);
     benchmark::RegisterBenchmark("disabled-at-compile-time", bench_disabled_macro, disabled_logger);
     benchmark::RegisterBenchmark("disabled-at-compile-time (global logger)", bench_disabled_macro_global_logger, disabled_logger);
     benchmark::RegisterBenchmark("disabled-at-runtime", bench_logger, disabled_logger);

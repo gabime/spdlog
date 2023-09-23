@@ -99,8 +99,8 @@ TEST_CASE("set_default_logger(nullptr)", "[registry]")
 TEST_CASE("disable automatic registration", "[registry]")
 {
     // set some global parameters
-    spdlog::log_level log_level = spdlog::log_level::warn;
-    spdlog::set_level(log_level);
+    spdlog::level level = spdlog::level::warn;
+    spdlog::set_level(level);
     // but disable automatic registration
     spdlog::set_automatic_registration(false);
     auto logger1 = spdlog::create<spdlog::sinks::daily_file_sink_st>(tested_logger_name, SPDLOG_FILENAME_T("filename"), 11, 59);
@@ -109,8 +109,8 @@ TEST_CASE("disable automatic registration", "[registry]")
     REQUIRE_FALSE(spdlog::get(tested_logger_name));
     REQUIRE_FALSE(spdlog::get(tested_logger_name2));
     // but make sure they are still initialized according to global defaults
-    REQUIRE(logger1->level() == log_level);
-    REQUIRE(logger2->level() == log_level);
-    spdlog::set_level(spdlog::log_level::info);
+    REQUIRE(logger1->log_level() == level);
+    REQUIRE(logger2->log_level() == level);
+    spdlog::set_level(spdlog::level::info);
     spdlog::set_automatic_registration(true);
 }

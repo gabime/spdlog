@@ -160,7 +160,7 @@ template<typename T>
 using is_convertible_to_sv = std::enable_if_t<std::is_convertible_v<T, string_view_t>>;
 
 // Log level enum
-enum class log_level
+enum class level
 {
     trace = SPDLOG_LEVEL_TRACE,
     debug = SPDLOG_LEVEL_DEBUG,
@@ -173,9 +173,9 @@ enum class log_level
 };
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
-    using atomic_level_t = details::null_atomic<log_level>;
+    using atomic_level_t = details::null_atomic<level>;
 #else
-    using atomic_level_t = std::atomic<log_level>;
+    using atomic_level_t = std::atomic<level>;
 #endif
 
 #if !defined(SPDLOG_LEVEL_NAMES)
@@ -186,25 +186,25 @@ enum class log_level
 #define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
 #endif
 
-constexpr size_t to_size_t(log_level level) noexcept
+constexpr size_t to_size_t(level lvl) noexcept
 {
-    return static_cast<size_t>(level);
+    return static_cast<size_t>(lvl);
 }
-constexpr auto levels_count = to_size_t(log_level::n_levels);
+constexpr auto levels_count = to_size_t(level::n_levels);
 constexpr std::array<string_view_t, levels_count> level_string_views SPDLOG_LEVEL_NAMES;
 constexpr std::array<const char *, levels_count> short_level_names SPDLOG_SHORT_LEVEL_NAMES;
 
-constexpr string_view_t to_string_view(spdlog::log_level lvl) noexcept
+constexpr string_view_t to_string_view(spdlog::level lvl) noexcept
 {
     return level_string_views.at(to_size_t(lvl));
 }
 
-constexpr const char *to_short_c_str(spdlog::log_level lvl) noexcept
+constexpr const char *to_short_c_str(spdlog::level lvl) noexcept
 {
     return short_level_names.at(to_size_t(lvl));
 }
 
-SPDLOG_API spdlog::log_level level_from_str(const std::string &name) noexcept;
+SPDLOG_API spdlog::level level_from_str(const std::string &name) noexcept;
 
 
 

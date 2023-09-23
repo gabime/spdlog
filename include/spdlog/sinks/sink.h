@@ -18,13 +18,13 @@ public:
     virtual void set_pattern(const std::string &pattern) = 0;
     virtual void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) = 0;
 
-    void set_level(log_level log_level);
-    log_level level() const;
-    bool should_log(log_level msg_level) const;
+    void set_level(level level);
+    level log_level() const;
+    bool should_log(level msg_level) const;
 
 protected:
     // sink log level - default is all
-    atomic_level_t level_{log_level::trace};
+    atomic_level_t level_{level::trace};
 };
 
 } // namespace sinks

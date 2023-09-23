@@ -24,14 +24,14 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color
 
     set_color_mode_impl(mode);
     // set level colors
-    colors_.at(to_size_t(log_level::trace)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
-    colors_.at(to_size_t(log_level::debug)) = FOREGROUND_GREEN | FOREGROUND_BLUE;                     // cyan
-    colors_.at(to_size_t(log_level::info)) = FOREGROUND_GREEN;                                         // green
-    colors_.at(to_size_t(spdlog::log_level::warn)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // intense yellow
-    colors_.at(to_size_t(log_level::err)) = FOREGROUND_RED | FOREGROUND_INTENSITY;                     // intense red
-    colors_.at(to_size_t(log_level::critical)) =
+    colors_.at(to_size_t(level::trace)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
+    colors_.at(to_size_t(level::debug)) = FOREGROUND_GREEN | FOREGROUND_BLUE;                     // cyan
+    colors_.at(to_size_t(level::info)) = FOREGROUND_GREEN;                                         // green
+    colors_.at(to_size_t(spdlog::level::warn)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // intense yellow
+    colors_.at(to_size_t(level::err)) = FOREGROUND_RED | FOREGROUND_INTENSITY;                     // intense red
+    colors_.at(to_size_t(level::critical)) =
         BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // intense white on red background
-    colors_.at(to_size_t(log_level::off)) = 0;
+    colors_.at(to_size_t(level::off)) = 0;
 }
 
 template<typename ConsoleMutex>
@@ -42,7 +42,7 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::~wincolor_sink()
 
 // change the color for the given level
 template<typename ConsoleMutex>
-void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color(log_level level, std::uint16_t color)
+void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color(level level, std::uint16_t color)
 {
     std::lock_guard<mutex_t> lock(mutex_);
     colors_[static_cast<size_t>(level)] = color;
@@ -66,7 +66,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
         // before color range
         print_range_(formatted, 0, msg.color_range_start);
         // in color range
-        auto orig_attribs = static_cast<WORD>(set_foreground_color_(colors_[static_cast<size_t>(msg.level)]));
+        auto orig_attribs = static_cast<WORD>(set_foreground_color_(colors_[static_cast<size_t>(msg.log_level)]));
         print_range_(formatted, msg.color_range_start, msg.color_range_end);
         // reset to orig colors
         ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), orig_attribs);

@@ -30,8 +30,8 @@ TEST_CASE("flush_on", "[flush_on]")
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename);
     logger->set_pattern("%v");
-    logger->set_level(spdlog::log_level::trace);
-    logger->flush_on(spdlog::log_level::info);
+    logger->set_level(spdlog::level::trace);
+    logger->flush_on(spdlog::level::info);
     logger->trace("Should not be flushed");
     REQUIRE(count_lines(SIMPLE_LOG) == 0);
 

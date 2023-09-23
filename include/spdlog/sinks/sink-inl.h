@@ -9,17 +9,16 @@
 
 #include <spdlog/common.h>
 
-SPDLOG_INLINE bool spdlog::sinks::sink::should_log(spdlog::log_level msg_level) const
+SPDLOG_INLINE bool spdlog::sinks::sink::should_log(spdlog::level msg_level) const
 {
     return msg_level >= level_.load(std::memory_order_relaxed);
 }
 
-SPDLOG_INLINE void spdlog::sinks::sink::set_level(log_level log_level)
+SPDLOG_INLINE void spdlog::sinks::sink::set_level(level level)
 {
-    level_.store(log_level, std::memory_order_relaxed);
+    level_.store(level, std::memory_order_relaxed);
 }
 
-SPDLOG_INLINE spdlog::log_level spdlog::sinks::sink::level() const
-{
-    return static_cast<spdlog::log_level>(level_.load(std::memory_order_relaxed));
+SPDLOG_INLINE spdlog::level spdlog::sinks::sink::log_level() const {
+    return static_cast<spdlog::level>(level_.load(std::memory_order_relaxed));
 }

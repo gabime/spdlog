@@ -77,7 +77,7 @@ public:
 
     // log functions
     template<typename... Args>
-    void log(source_loc loc, log_level lvl, format_string_t<Args...> fmt, Args &&...args)
+    void log(source_loc loc, level lvl, format_string_t<Args...> fmt, Args &&...args)
     {
         if (should_log(lvl))
         {
@@ -86,7 +86,7 @@ public:
     }
 
     template<typename... Args>
-    void log(log_level lvl, format_string_t<Args...> fmt, Args &&...args)
+    void log(level lvl, format_string_t<Args...> fmt, Args &&...args)
     {
         if (should_log(lvl))
         {
@@ -95,7 +95,7 @@ public:
     }
 
     template<typename S, typename = is_convertible_to_sv<S>, typename... Args>
-    void log(source_loc loc, log_level lvl, S fmt, Args &&...args)
+    void log(source_loc loc, level lvl, S fmt, Args &&...args)
     {
         if (should_log(lvl))
         {
@@ -104,7 +104,7 @@ public:
     }
 
     // log with no format string, just string message
-    void log(source_loc loc, log_level lvl, string_view_t msg)
+    void log(source_loc loc, level lvl, string_view_t msg)
     {
         if (should_log(lvl))
         {
@@ -112,7 +112,7 @@ public:
         }
     }
 
-    void log(log_level lvl, string_view_t msg)
+    void log(level lvl, string_view_t msg)
     {
         if (should_log(lvl))
         {
@@ -121,7 +121,7 @@ public:
     }
 
     // support for custom time
-    void log(log_clock::time_point log_time, source_loc loc, log_level lvl, string_view_t msg)
+    void log(log_clock::time_point log_time, source_loc loc, level lvl, string_view_t msg)
     {
         if (should_log(lvl))
         {
@@ -133,150 +133,150 @@ public:
     template<typename... Args>
     void trace(loc_with_fmt fmt, Args &&...args)
     {
-        log(fmt.loc, log_level::trace, fmt.fmt_string, std::forward<Args>(args)...);
+        log(fmt.loc, level::trace, fmt.fmt_string, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void debug(loc_with_fmt fmt, Args &&...args)
     {
-        log(fmt.loc, log_level::debug, fmt.fmt_string, std::forward<Args>(args)...);
+        log(fmt.loc, level::debug, fmt.fmt_string, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void info(loc_with_fmt fmt, Args &&...args)
     {
-        log(fmt.loc, log_level::info, fmt.fmt_string, std::forward<Args>(args)...);
+        log(fmt.loc, level::info, fmt.fmt_string, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void warn(loc_with_fmt fmt, Args &&...args)
     {
-        log(fmt.loc, log_level::warn, fmt.fmt_string, std::forward<Args>(args)...);
+        log(fmt.loc, level::warn, fmt.fmt_string, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void error(loc_with_fmt fmt, Args &&...args)
     {
-        log(fmt.loc, log_level::err, fmt.fmt_string, std::forward<Args>(args)...);
+        log(fmt.loc, level::err, fmt.fmt_string, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void critical(loc_with_fmt fmt, Args &&...args)
     {
-        log(fmt.loc, log_level::critical, fmt.fmt_string, std::forward<Args>(args)...);
+        log(fmt.loc, level::critical, fmt.fmt_string, std::forward<Args>(args)...);
     }
 
     // log functions with no format string, just string
 
     void trace(string_view_t msg, source_loc loc = source_loc::current())
     {
-        log(loc, log_level::trace, msg);
+        log(loc, level::trace, msg);
     }
 
     void debug(string_view_t msg, source_loc loc = source_loc::current())
     {
-        log(loc, log_level::debug, msg);
+        log(loc, level::debug, msg);
     }
 
     void info(string_view_t msg, source_loc loc = source_loc::current())
     {
-        log(loc, log_level::info, msg);
+        log(loc, level::info, msg);
     }
 
     void warn(string_view_t msg, source_loc loc = source_loc::current())
     {
-        log(loc, log_level::warn, msg);
+        log(loc, level::warn, msg);
     }
 
     void error(string_view_t msg, source_loc loc = source_loc::current())
     {
-        log(loc, log_level::err, msg);
+        log(loc, level::err, msg);
     }
 
     void critical(string_view_t msg, source_loc loc = source_loc::current())
     {
-        log(loc, log_level::critical, msg);
+        log(loc, level::critical, msg);
     }
 #else
     template<typename... Args>
     void trace(format_string_t<Args...> fmt, Args &&...args)
     {
-        log(log_level::trace, fmt, std::forward<Args>(args)...);
+        log(level::trace, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void debug(format_string_t<Args...> fmt, Args &&...args)
     {
-        log(log_level::debug, fmt, std::forward<Args>(args)...);
+        log(level::debug, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void info(format_string_t<Args...> fmt, Args &&...args)
     {
-        log(log_level::info, fmt, std::forward<Args>(args)...);
+        log(level::info, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void warn(format_string_t<Args...> fmt, Args &&...args)
     {
-        log(log_level::warn, fmt, std::forward<Args>(args)...);
+        log(level::warn, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void error(format_string_t<Args...> fmt, Args &&...args)
     {
-        log(log_level::err, fmt, std::forward<Args>(args)...);
+        log(level::err, fmt, std::forward<Args>(args)...);
     }
 
     template<typename... Args>
     void critical(format_string_t<Args...> fmt, Args &&...args)
     {
-        log(log_level::critical, fmt, std::forward<Args>(args)...);
+        log(level::critical, fmt, std::forward<Args>(args)...);
     }
 
     // log functions with no format string, just string
     void trace(string_view_t msg)
     {
-        log(log_level::trace, msg);
+        log(level::trace, msg);
     }
 
     void debug(string_view_t msg)
     {
-        log(log_level::debug, msg);
+        log(level::debug, msg);
     }
 
     void info(string_view_t msg)
     {
-        log(log_level::info, msg);
+        log(level::info, msg);
     }
 
     inline void warn(string_view_t msg)
     {
-        log(log_level::warn, msg);
+        log(level::warn, msg);
     }
 
     void error(string_view_t msg)
     {
-        log(log_level::err, msg);
+        log(level::err, msg);
     }
 
     void critical(string_view_t msg)
     {
-        log(log_level::critical, msg);
+        log(level::critical, msg);
     }
 #endif
 
     // return true if logging is enabled for the given level.
-    [[nodiscard]] bool should_log(log_level msg_level) const
+    [[nodiscard]] bool should_log(level msg_level) const
     {
         return msg_level >= level_.load(std::memory_order_relaxed);
     }
 
     // set the level of logging
-    void set_level(log_level log_level);
+    void set_level(level level);
 
     // return the active log level
-    [[nodiscard]] log_level level() const;
+    [[nodiscard]] level log_level() const;
 
     // return the name of the logger
     [[nodiscard]] const std::string &name() const;
@@ -293,8 +293,8 @@ public:
 
     // flush functions
     void flush();
-    void flush_on(log_level log_level);
-    [[nodiscard]] log_level flush_level() const;
+    void flush_on(level level);
+    [[nodiscard]] level flush_level() const;
 
     // sinks
     [[nodiscard]] const std::vector<sink_ptr> &sinks() const;
@@ -310,13 +310,13 @@ public:
 protected:
     std::string name_;
     std::vector<sink_ptr> sinks_;
-    spdlog::atomic_level_t level_{log_level::info};
-    spdlog::atomic_level_t flush_level_{log_level::off};
+    spdlog::atomic_level_t level_{level::info};
+    spdlog::atomic_level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
 
     // common implementation for after templated public api has been resolved to format string and args
     template<typename... Args>
-    void log_with_format_(source_loc loc, log_level lvl, string_view_t fmt, Args &&...args)
+    void log_with_format_(source_loc loc, level lvl, string_view_t fmt, Args &&...args)
     {
         assert(should_log(lvl));
         SPDLOG_TRY
@@ -336,10 +336,10 @@ protected:
     // log the given message (if the given log level is high enough)
     virtual void sink_it_(const details::log_msg &msg)
     {
-        assert(should_log(msg.level));
+        assert(should_log(msg.log_level));
         for (auto &sink : sinks_)
         {
-            if (sink->should_log(msg.level))
+            if (sink->should_log(msg.log_level))
             {
                 SPDLOG_TRY
                 {

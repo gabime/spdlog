@@ -15,15 +15,15 @@ TEST_CASE("time_point1", "[time_point log_msg]")
     test_sink->set_delay(std::chrono::milliseconds(10));
     for (int i = 0; i < 5; i++)
     {
-        spdlog::details::log_msg msg{tp, source, "test_logger", spdlog::log_level::info, "message"};
+        spdlog::details::log_msg msg{tp, source, "test_logger", spdlog::level::info, "message"};
         test_sink->log(msg);
     }
 
-    logger.log(tp, source, spdlog::log_level::info, "formatted message");
-    logger.log(tp, source, spdlog::log_level::info, "formatted message");
-    logger.log(tp, source, spdlog::log_level::info, "formatted message");
-    logger.log(tp, source, spdlog::log_level::info, "formatted message");
-    logger.log(source, spdlog::log_level::info, "formatted message"); // last line has different time_point
+    logger.log(tp, source, spdlog::level::info, "formatted message");
+    logger.log(tp, source, spdlog::level::info, "formatted message");
+    logger.log(tp, source, spdlog::level::info, "formatted message");
+    logger.log(tp, source, spdlog::level::info, "formatted message");
+    logger.log(source, spdlog::level::info, "formatted message"); // last line has different time_point
 
     // now the real test... that the times are the same.
     std::vector<std::string> lines = test_sink->lines();

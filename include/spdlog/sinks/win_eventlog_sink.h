@@ -172,21 +172,21 @@ struct eventlog
 {
     static WORD get_event_type(details::log_msg const &msg)
     {
-        switch (msg.level)
+        switch (msg.log_level)
         {
-        case log_level::trace:
-        case log_level::debug:
+        case level::trace:
+        case level::debug:
             return EVENTLOG_SUCCESS;
 
-        case log_level::info:
+        case level::info:
             return EVENTLOG_INFORMATION_TYPE;
 
-        case spdlog::log_level::warn:
+        case spdlog::level::warn:
             return EVENTLOG_WARNING_TYPE;
 
-        case log_level::err:
-        case log_level::critical:
-        case log_level::off:
+        case level::err:
+        case level::critical:
+        case level::off:
             return EVENTLOG_ERROR_TYPE;
 
         default:
@@ -196,7 +196,7 @@ struct eventlog
 
     static WORD get_event_category(details::log_msg const &msg)
     {
-        return (WORD)msg.level;
+        return (WORD)msg.log_level;
     }
 };
 

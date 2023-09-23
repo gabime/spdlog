@@ -137,7 +137,7 @@ TEST_CASE("daily_file_sink::daily_filename_format_calculator", "[daily_file_sink
 static spdlog::details::log_msg create_msg(std::chrono::seconds offset)
 {
     using spdlog::log_clock;
-    spdlog::details::log_msg msg{"test", spdlog::log_level::info, "Hello Message"};
+    spdlog::details::log_msg msg{"test", spdlog::level::info, "Hello Message"};
     msg.time = log_clock::now() + offset;
     return msg;
 }

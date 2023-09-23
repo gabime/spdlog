@@ -12,22 +12,22 @@
 
 namespace spdlog {
 
-SPDLOG_INLINE spdlog::log_level level_from_str(const std::string &name) noexcept
+SPDLOG_INLINE spdlog::level level_from_str(const std::string &name) noexcept
 {
     auto it = std::find(std::begin(level_string_views), std::end(level_string_views), name);
     if (it != std::end(level_string_views))
-        return static_cast<log_level>(std::distance(std::begin(level_string_views), it));
+        return static_cast<level>(std::distance(std::begin(level_string_views), it));
 
     // check also for "warn" and "err" before giving up..
     if (name == "warn")
     {
-        return spdlog::log_level::warn;
+        return spdlog::level::warn;
     }
     if (name == "err")
     {
-        return log_level::err;
+        return level::err;
     }
-    return log_level::off;
+    return level::off;
 }
 
 SPDLOG_INLINE spdlog_ex::spdlog_ex(std::string msg)

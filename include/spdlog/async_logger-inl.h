@@ -64,7 +64,7 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
 {
     for (auto &sink : sinks_)
     {
-        if (sink->should_log(msg.level))
+        if (sink->should_log(msg.log_level))
         {
             SPDLOG_TRY
             {

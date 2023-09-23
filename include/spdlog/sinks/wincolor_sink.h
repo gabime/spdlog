@@ -31,7 +31,7 @@ public:
     wincolor_sink &operator=(const wincolor_sink &other) = delete;
 
     // change the color for the given level
-    void set_color(log_level level, std::uint16_t color);
+    void set_color(level level, std::uint16_t color);
     void log(const details::log_msg &msg) final override;
     void flush() final override;
     void set_pattern(const std::string &pattern) override final;

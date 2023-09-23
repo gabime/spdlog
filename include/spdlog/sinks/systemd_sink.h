@@ -27,13 +27,13 @@ public:
     systemd_sink(std::string ident = "", bool enable_formatting = false)
         : ident_{std::move(ident)}
         , enable_formatting_{enable_formatting}
-        , syslog_levels_{{/* spdlog::log_level::trace      */ LOG_DEBUG,
-              /* spdlog::log_level::debug      */ LOG_DEBUG,
-              /* spdlog::log_level::info       */ LOG_INFO,
-              /* spdlog::log_level::warn       */ LOG_WARNING,
-              /* spdlog::log_level::err        */ LOG_ERR,
-              /* spdlog::log_level::critical   */ LOG_CRIT,
-              /* spdlog::log_level::off        */ LOG_INFO}}
+        , syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
+              /* spdlog::level::debug      */ LOG_DEBUG,
+              /* spdlog::level::info       */ LOG_INFO,
+              /* spdlog::level::warn       */ LOG_WARNING,
+              /* spdlog::level::err        */ LOG_ERR,
+              /* spdlog::level::critical   */ LOG_CRIT,
+              /* spdlog::level::off        */ LOG_INFO}}
     {}
 
     ~systemd_sink() override {}
@@ -75,7 +75,7 @@ protected:
         if (msg.source.empty())
         {
             // Note: function call inside '()' to avoid macro expansion
-            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(), "PRIORITY=%d", syslog_level(msg.level),
+            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(), "PRIORITY=%d", syslog_level(msg.log_level),
 #ifndef SPDLOG_NO_THREAD_ID
                 "TID=%zu", details::os::thread_id(),
 #endif
@@ -83,7 +83,7 @@ protected:
         }
         else
         {
-            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(), "PRIORITY=%d", syslog_level(msg.level),
+            err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(), "PRIORITY=%d", syslog_level(msg.log_level),
 #ifndef SPDLOG_NO_THREAD_ID
                 "TID=%zu", details::os::thread_id(),
 #endif
@@ -97,7 +97,7 @@ protected:
         }
     }
 
-    int syslog_level(log_level l)
+    int syslog_level(level l)
     {
         return syslog_levels_.at(static_cast<levels_array::size_type>(l));
     }

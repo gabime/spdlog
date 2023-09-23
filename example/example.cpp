@@ -47,16 +47,16 @@ int main(int, char *[])
     spdlog::info("{:>8} aligned, {:<8} aligned", "right", "left");
 
     // Runtime log levels
-    spdlog::set_level(spdlog::log_level::info); // Set global log level to info
+    spdlog::set_level(spdlog::level::info); // Set global log level to info
     spdlog::debug("This message should not be displayed!");
-    spdlog::set_level(spdlog::log_level::trace); // Set specific logger's log level
+    spdlog::set_level(spdlog::level::trace); // Set specific logger's log level
     spdlog::debug("This message should be displayed..");
 
     // Customize msg format for all loggers
     spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
     spdlog::info("This an info message with custom format");
     spdlog::set_pattern("%+"); // back to default format
-    spdlog::set_level(spdlog::log_level::info);
+    spdlog::set_level(spdlog::level::info);
 
     try
     {
@@ -243,7 +243,7 @@ void udp_example()
 {
     spdlog::sinks::udp_sink_config cfg("127.0.0.1", 11091);
     auto my_logger = spdlog::udp_logger_mt("udplog", cfg);
-    my_logger->set_level(spdlog::log_level::debug);
+    my_logger->set_level(spdlog::level::debug);
     my_logger->info("hello world");
 }
 
@@ -251,14 +251,14 @@ void udp_example()
 void multi_sink_example()
 {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    console_sink->set_level(spdlog::log_level::warn);
+    console_sink->set_level(spdlog::level::warn);
     console_sink->set_pattern("[multi_sink_example] [%^%l%$] %v");
 
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multisink.txt", true);
-    file_sink->set_level(spdlog::log_level::trace);
+    file_sink->set_level(spdlog::level::trace);
 
     spdlog::logger logger("multi_sink", {console_sink, file_sink});
-    logger.set_level(spdlog::log_level::debug);
+    logger.set_level(spdlog::level::debug);
     logger.warn("this should appear in both console and file");
     logger.info("this message should not appear in the console, only in the file");
 }
@@ -378,9 +378,9 @@ void replace_default_logger_example()
 
     auto new_logger = spdlog::basic_logger_mt("new_default_logger", "logs/new-default-log.txt", true);
     spdlog::set_default_logger(new_logger);
-    spdlog::set_level(spdlog::log_level::info);
+    spdlog::set_level(spdlog::level::info);
     spdlog::debug("This message should not be displayed!");
-    spdlog::set_level(spdlog::log_level::trace);
+    spdlog::set_level(spdlog::level::trace);
     spdlog::debug("This message should be displayed..");
 
     spdlog::set_default_logger(old_logger);

@@ -35,7 +35,7 @@ public:
     ansicolor_sink &operator=(const ansicolor_sink &other) = delete;
     ansicolor_sink &operator=(ansicolor_sink &&other) = delete;
 
-    void set_color(log_level color_level, string_view_t color);
+    void set_color(level color_level, string_view_t color);
     void set_color_mode(color_mode mode);
     bool should_color();
 

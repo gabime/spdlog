@@ -56,7 +56,7 @@ TEST_CASE("eventlog", "[eventlog]")
     auto test_sink = std::make_shared<sinks::win_eventlog_sink_mt>(TEST_SOURCE);
 
     spdlog::logger test_logger("eventlog", test_sink);
-    test_logger.set_level(log_level::trace);
+    test_logger.set_level(level::trace);
 
     test_sink->set_pattern("%v");
 

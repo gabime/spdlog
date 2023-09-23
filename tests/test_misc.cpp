@@ -2,7 +2,7 @@
 #include "test_sink.h"
 
 template<class T>
-std::string log_info(const T &what, spdlog::log_level logger_level = spdlog::log_level::info)
+std::string log_info(const T &what, spdlog::level logger_level = spdlog::level::info)
 {
 
     std::ostringstream oss;
@@ -29,46 +29,46 @@ TEST_CASE("basic_logging ", "[basic_logging]")
 
 TEST_CASE("log_levels", "[log_levels]")
 {
-    REQUIRE(log_info("Hello", spdlog::log_level::err).empty());
-    REQUIRE(log_info("Hello", spdlog::log_level::critical).empty());
-    REQUIRE(log_info("Hello", spdlog::log_level::info) == "Hello");
-    REQUIRE(log_info("Hello", spdlog::log_level::debug) == "Hello");
-    REQUIRE(log_info("Hello", spdlog::log_level::trace) == "Hello");
+    REQUIRE(log_info("Hello", spdlog::level::err).empty());
+    REQUIRE(log_info("Hello", spdlog::level::critical).empty());
+    REQUIRE(log_info("Hello", spdlog::level::info) == "Hello");
+    REQUIRE(log_info("Hello", spdlog::level::debug) == "Hello");
+    REQUIRE(log_info("Hello", spdlog::level::trace) == "Hello");
 }
 
 TEST_CASE("level_to_string_view", "[convert_to_string_view]")
 {
-    REQUIRE(spdlog::to_string_view(spdlog::log_level::trace) == "trace");
-    REQUIRE(spdlog::to_string_view(spdlog::log_level::debug) == "debug");
-    REQUIRE(spdlog::to_string_view(spdlog::log_level::info) == "info");
-    REQUIRE(spdlog::to_string_view(spdlog::log_level::warn) == "warning");
-    REQUIRE(spdlog::to_string_view(spdlog::log_level::err) == "error");
-    REQUIRE(spdlog::to_string_view(spdlog::log_level::critical) == "critical");
-    REQUIRE(spdlog::to_string_view(spdlog::log_level::off) == "off");
+    REQUIRE(spdlog::to_string_view(spdlog::level::trace) == "trace");
+    REQUIRE(spdlog::to_string_view(spdlog::level::debug) == "debug");
+    REQUIRE(spdlog::to_string_view(spdlog::level::info) == "info");
+    REQUIRE(spdlog::to_string_view(spdlog::level::warn) == "warning");
+    REQUIRE(spdlog::to_string_view(spdlog::level::err) == "error");
+    REQUIRE(spdlog::to_string_view(spdlog::level::critical) == "critical");
+    REQUIRE(spdlog::to_string_view(spdlog::level::off) == "off");
 }
 
 TEST_CASE("to_short_c_str", "[convert_to_short_c_str]")
 {
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::log_level::trace)) == "T");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::log_level::debug)) == "D");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::log_level::info)) == "I");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::log_level::warn)) == "W");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::log_level::err)) == "E");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::log_level::critical)) == "C");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::log_level::off)) == "O");
+    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::trace)) == "T");
+    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::debug)) == "D");
+    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::info)) == "I");
+    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::warn)) == "W");
+    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::err)) == "E");
+    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::critical)) == "C");
+    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::off)) == "O");
 }
 
 TEST_CASE("to_level_enum", "[convert_to_level_enum]")
 {
-    REQUIRE(spdlog::level_from_str("trace") == spdlog::log_level::trace);
-    REQUIRE(spdlog::level_from_str("debug") == spdlog::log_level::debug);
-    REQUIRE(spdlog::level_from_str("info") == spdlog::log_level::info);
-    REQUIRE(spdlog::level_from_str("warning") == spdlog::log_level::warn);
-    REQUIRE(spdlog::level_from_str("warn") == spdlog::log_level::warn);
-    REQUIRE(spdlog::level_from_str("error") == spdlog::log_level::err);
-    REQUIRE(spdlog::level_from_str("critical") == spdlog::log_level::critical);
-    REQUIRE(spdlog::level_from_str("off") == spdlog::log_level::off);
-    REQUIRE(spdlog::level_from_str("null") == spdlog::log_level::off);
+    REQUIRE(spdlog::level_from_str("trace") == spdlog::level::trace);
+    REQUIRE(spdlog::level_from_str("debug") == spdlog::level::debug);
+    REQUIRE(spdlog::level_from_str("info") == spdlog::level::info);
+    REQUIRE(spdlog::level_from_str("warning") == spdlog::level::warn);
+    REQUIRE(spdlog::level_from_str("warn") == spdlog::level::warn);
+    REQUIRE(spdlog::level_from_str("error") == spdlog::level::err);
+    REQUIRE(spdlog::level_from_str("critical") == spdlog::level::critical);
+    REQUIRE(spdlog::level_from_str("off") == spdlog::level::off);
+    REQUIRE(spdlog::level_from_str("null") == spdlog::level::off);
 }
 
 TEST_CASE("periodic flush", "[periodic_flush]")
@@ -94,7 +94,7 @@ TEST_CASE("clone-logger", "[clone]")
 
     REQUIRE(cloned->name() == "clone");
     REQUIRE(logger->sinks() == cloned->sinks());
-    REQUIRE(logger->level() == cloned->level());
+    REQUIRE(logger->log_level() == cloned->log_level());
     REQUIRE(logger->flush_level() == cloned->flush_level());
     logger->info("Some message 1");
     cloned->info("Some message 2");
@@ -117,7 +117,7 @@ TEST_CASE("clone async", "[clone]")
 
     REQUIRE(cloned->name() == "clone");
     REQUIRE(logger->sinks() == cloned->sinks());
-    REQUIRE(logger->level() == cloned->level());
+    REQUIRE(logger->log_level() == cloned->log_level());
     REQUIRE(logger->flush_level() == cloned->flush_level());
 
     logger->info("Some message 1");
@@ -140,7 +140,7 @@ TEST_CASE("default logger API", "[default logger]")
     spdlog::set_default_logger(std::make_shared<spdlog::logger>("oss", oss_sink));
     spdlog::set_pattern("*** %v");
 
-    spdlog::default_logger()->set_level(spdlog::log_level::trace);
+    spdlog::default_logger()->set_level(spdlog::level::trace);
     spdlog::trace("hello trace");
     REQUIRE(oss.str() == "*** hello trace" + std::string(spdlog::details::os::default_eol));
 
@@ -161,7 +161,7 @@ TEST_CASE("default logger API", "[default logger]")
     REQUIRE(oss.str() == "*** some string" + std::string(spdlog::details::os::default_eol));
 
     oss.str("");
-    spdlog::set_level(spdlog::log_level::info);
+    spdlog::set_level(spdlog::level::info);
     spdlog::debug("should not be logged");
     REQUIRE(oss.str().empty());
     spdlog::drop_all();

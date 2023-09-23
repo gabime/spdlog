@@ -59,7 +59,7 @@ protected:
     {
         for (auto &sub_sink : sinks_)
         {
-            if (sub_sink->should_log(msg.level))
+            if (sub_sink->should_log(msg.log_level))
             {
                 sub_sink->log(msg);
             }

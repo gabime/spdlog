@@ -41,7 +41,7 @@ public:
 protected:
     void sink_it_(const details::log_msg &msg) override
     {
-        const android_LogPriority priority = convert_to_android_(msg.level);
+        const android_LogPriority priority = convert_to_android_(msg.log_level);
         memory_buf_t formatted;
         if (use_raw_msg_)
         {
@@ -92,21 +92,21 @@ private:
         return __android_log_buf_write(ID, prio, tag, text);
     }
 
-    static android_LogPriority convert_to_android_(spdlog::log_level level)
+    static android_LogPriority convert_to_android_(spdlog::level level)
     {
         switch (level)
         {
-        case spdlog::log_level::trace:
+        case spdlog::level::trace:
             return ANDROID_LOG_VERBOSE;
-        case spdlog::log_level::debug:
+        case spdlog::level::debug:
             return ANDROID_LOG_DEBUG;
-        case spdlog::log_level::info:
+        case spdlog::level::info:
             return ANDROID_LOG_INFO;
-        case spdlog::log_level::warn:
+        case spdlog::level::warn:
             return ANDROID_LOG_WARN;
-        case spdlog::log_level::err:
+        case spdlog::level::err:
             return ANDROID_LOG_ERROR;
-        case spdlog::log_level::critical:
+        case spdlog::level::critical:
             return ANDROID_LOG_FATAL;
         default:
             return ANDROID_LOG_DEFAULT;

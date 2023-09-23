@@ -8,7 +8,7 @@ TEST_CASE("stdout_st", "[stdout]")
 {
     auto l = spdlog::stdout_logger_st("test");
     l->set_pattern("%+");
-    l->set_level(spdlog::log_level::trace);
+    l->set_level(spdlog::level::trace);
     l->trace("Test stdout_st");
     spdlog::drop_all();
 }
@@ -17,7 +17,7 @@ TEST_CASE("stdout_mt", "[stdout]")
 {
     auto l = spdlog::stdout_logger_mt("test");
     l->set_pattern("%+");
-    l->set_level(spdlog::log_level::debug);
+    l->set_level(spdlog::level::debug);
     l->debug("Test stdout_mt");
     spdlog::drop_all();
 }
@@ -54,7 +54,7 @@ TEST_CASE("stdout_color_mt", "[stdout]")
 {
     auto l = spdlog::stdout_color_mt("test");
     l->set_pattern("%+");
-    l->set_level(spdlog::log_level::trace);
+    l->set_level(spdlog::level::trace);
     l->trace("Test stdout_color_mt");
     spdlog::drop_all();
 }
@@ -63,7 +63,7 @@ TEST_CASE("stderr_color_st", "[stderr]")
 {
     auto l = spdlog::stderr_color_st("test");
     l->set_pattern("%+");
-    l->set_level(spdlog::log_level::debug);
+    l->set_level(spdlog::level::debug);
     l->debug("Test stderr_color_st");
     spdlog::drop_all();
 }
