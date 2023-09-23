@@ -186,22 +186,22 @@ enum class level
 #define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
 #endif
 
-constexpr size_t to_size_t(level lvl) noexcept
+constexpr size_t level_to_number(level lvl) noexcept
 {
     return static_cast<size_t>(lvl);
 }
-constexpr auto levels_count = to_size_t(level::n_levels);
+constexpr auto levels_count = level_to_number(level::n_levels);
 constexpr std::array<string_view_t, levels_count> level_string_views SPDLOG_LEVEL_NAMES;
 constexpr std::array<const char *, levels_count> short_level_names SPDLOG_SHORT_LEVEL_NAMES;
 
 constexpr string_view_t to_string_view(spdlog::level lvl) noexcept
 {
-    return level_string_views.at(to_size_t(lvl));
+    return level_string_views.at(level_to_number(lvl));
 }
 
 constexpr const char *to_short_c_str(spdlog::level lvl) noexcept
 {
-    return short_level_names.at(to_size_t(lvl));
+    return short_level_names.at(level_to_number(lvl));
 }
 
 SPDLOG_API spdlog::level level_from_str(const std::string &name) noexcept;
