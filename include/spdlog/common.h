@@ -186,7 +186,7 @@ enum class level
 #define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
 #endif
 
-constexpr size_t level_to_number(level lvl) noexcept
+[[nodiscard]] constexpr size_t level_to_number(level lvl) noexcept
 {
     return static_cast<size_t>(lvl);
 }
