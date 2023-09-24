@@ -69,11 +69,9 @@ option(SPDLOG_BUILD_PIC "Build position independent code (-fPIC)" OFF)
 
 # example options
 option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
-option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
 
 # testing options
 option(SPDLOG_BUILD_TESTS "Build tests" OFF)
-option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" OFF)
 
 # bench options
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
@@ -194,17 +192,6 @@ if(COMMAND target_precompile_headers AND SPDLOG_ENABLE_PCH)
 endif()
 
 # ---------------------------------------------------------------------------------------
-# Header only version
-# ---------------------------------------------------------------------------------------
-add_library(spdlog_header_only INTERFACE)
-add_library(spdlog::spdlog_header_only ALIAS spdlog_header_only)
-
-target_include_directories(
-    spdlog_header_only ${SPDLOG_INCLUDES_LEVEL} INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-                                                          "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
-
-# ---------------------------------------------------------------------------------------
 # Use fmt package if using external fmt
 # ---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
@@ -212,15 +199,12 @@ if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
         find_package(fmt CONFIG REQUIRED)
     endif()
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
-    target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
 
     # use external fmt-header-nly
     if(SPDLOG_FMT_EXTERNAL_HO)
         target_link_libraries(spdlog PUBLIC fmt::fmt-header-only)
-        target_link_libraries(spdlog_header_only INTERFACE fmt::fmt-header-only)
     else() # use external compile fmt
         target_link_libraries(spdlog PUBLIC fmt::fmt)
-        target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
     endif()
 
     set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
@@ -231,7 +215,6 @@ endif()
 # ---------------------------------------------------------------------------------------
 if(ANDROID)
     target_link_libraries(spdlog PUBLIC log)
-    target_link_libraries(spdlog_header_only INTERFACE log)
 endif()
 
 # ---------------------------------------------------------------------------------------
@@ -249,7 +232,6 @@ foreach(
     SPDLOG_USE_STD_FORMAT)
     if(${SPDLOG_OPTION})
         target_compile_definitions(spdlog PUBLIC ${SPDLOG_OPTION})
-        target_compile_definitions(spdlog_header_only INTERFACE ${SPDLOG_OPTION})
     endif()
 endforeach()
 
@@ -307,7 +289,7 @@ if(SPDLOG_INSTALL)
     # ---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
     install(
-        TARGETS spdlog spdlog_header_only
+        TARGETS spdlog
         EXPORT spdlog
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -340,8 +322,6 @@ if(SPDLOG_INSTALL)
     # ---------------------------------------------------------------------------------------
     # Install CMake config files
     # ---------------------------------------------------------------------------------------
-    export(TARGETS spdlog spdlog_header_only NAMESPACE spdlog::
-           FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
     install(EXPORT spdlog DESTINATION ${export_dest_dir} NAMESPACE spdlog:: FILE ${config_targets_file})
 
     include(CMakePackageConfigHelpers)

@@ -3,9 +3,7 @@
 
 #pragma once
 
-#ifndef SPDLOG_HEADER_ONLY
 #    include <spdlog/details/periodic_worker.h>
-#endif
 
 namespace spdlog {
 namespace details {

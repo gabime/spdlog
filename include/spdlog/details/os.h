@@ -117,6 +117,3 @@ SPDLOG_API bool fsync(FILE *fp);
 } // namespace details
 } // namespace spdlog
 
-#ifdef SPDLOG_HEADER_ONLY
-#    include "os-inl.h"
-#endif

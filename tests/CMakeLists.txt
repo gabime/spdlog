@@ -84,7 +84,3 @@ if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests spdlog::spdlog)
 endif()
 
-# The header-only library version tests
-if(SPDLOG_BUILD_TESTS_HO OR SPDLOG_BUILD_ALL)
-    spdlog_prepare_test(spdlog-utests-ho spdlog::spdlog_header_only)
-endif()

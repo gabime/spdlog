@@ -3,9 +3,7 @@
 
 #pragma once
 
-#ifndef SPDLOG_HEADER_ONLY
-#    include <spdlog/pattern_formatter.h>
-#endif
+#include <spdlog/pattern_formatter.h>
 
 #include <spdlog/details/fmt_helper.h>
 #include <spdlog/details/log_msg.h>

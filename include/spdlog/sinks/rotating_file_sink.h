@@ -75,7 +75,3 @@ inline std::shared_ptr<logger> rotating_logger_st(const std::string &logger_name
         logger_name, filename, max_file_size, max_files, rotate_on_open, event_handlers);
 }
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#    include "rotating_file_sink-inl.h"
-#endif

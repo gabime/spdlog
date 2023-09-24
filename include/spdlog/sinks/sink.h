@@ -30,6 +30,3 @@ protected:
 } // namespace sinks
 } // namespace spdlog
 
-#ifdef SPDLOG_HEADER_ONLY
-#    include "sink-inl.h"
-#endif

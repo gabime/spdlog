@@ -3,9 +3,7 @@
 
 #pragma once
 
-#ifndef SPDLOG_HEADER_ONLY
 #    include <spdlog/details/os.h>
-#endif
 
 #include <spdlog/common.h>
 

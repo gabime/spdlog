@@ -3,9 +3,7 @@
 
 #pragma once
 
-#ifndef SPDLOG_HEADER_ONLY
-#    include <spdlog/details/thread_pool.h>
-#endif
+#include <spdlog/details/thread_pool.h>
 
 #include <spdlog/common.h>
 #include <cassert>

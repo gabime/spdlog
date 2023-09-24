@@ -3,9 +3,7 @@
 
 #pragma once
 
-#ifndef SPDLOG_HEADER_ONLY
-#    include <spdlog/sinks/stdout_sinks.h>
-#endif
+#include <spdlog/sinks/stdout_sinks.h>
 
 #include <spdlog/details/console_globals.h>
 #include <spdlog/pattern_formatter.h>

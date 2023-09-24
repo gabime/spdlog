@@ -361,8 +361,4 @@ inline void critical(string_view_t msg)
 #    define SPDLOG_CRITICAL(...) (void)0
 #endif
 
-#ifdef SPDLOG_HEADER_ONLY
-#    include "spdlog-inl.h"
-#endif
-
 #endif // SPDLOG_H

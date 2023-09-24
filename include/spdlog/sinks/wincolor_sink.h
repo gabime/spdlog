@@ -79,7 +79,3 @@ using wincolor_stderr_sink_mt = wincolor_stderr_sink<details::console_mutex>;
 using wincolor_stderr_sink_st = wincolor_stderr_sink<details::console_nullmutex>;
 } // namespace sinks
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#    include "wincolor_sink-inl.h"
-#endif

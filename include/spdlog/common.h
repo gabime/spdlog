@@ -53,30 +53,6 @@
 #    define SPDLOG_API
 #endif
 
-//
-//
-//#ifdef SPDLOG_COMPILED_LIB
-//#    undef SPDLOG_HEADER_ONLY
-//#    if defined(SPDLOG_SHARED_LIB)
-//#        if defined(_WIN32)
-//#            ifdef spdlog_EXPORTS
-//#                define SPDLOG_API __declspec(dllexport)
-//#            else // !spdlog_EXPORTS
-//#                define SPDLOG_API __declspec(dllimport)
-//#            endif
-//#        else // !defined(_WIN32)
-//#            define SPDLOG_API __attribute__((visibility("default")))
-//#        endif
-//#    else // !defined(SPDLOG_SHARED_LIB)
-//#        define SPDLOG_API
-//#    endif
-//#    define
-//#else // !defined(SPDLOG_COMPILED_LIB)
-//#    define SPDLOG_API
-//#    define SPDLOG_HEADER_ONLY
-//#    define  inline
-//#endif // #ifdef SPDLOG_COMPILED_LIB
-
 #include <spdlog/fmt/fmt.h>
 
 #if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
@@ -384,7 +360,3 @@ template<typename T, typename... Args>
 
 } // namespace details
 } // namespace spdlog
-
-#ifdef SPDLOG_HEADER_ONLY
-#    include "common-inl.h"
-#endif

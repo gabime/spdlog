@@ -123,6 +123,3 @@ private:
 };
 } // namespace spdlog
 
-#ifdef SPDLOG_HEADER_ONLY
-#    include "pattern_formatter-inl.h"
-#endif
