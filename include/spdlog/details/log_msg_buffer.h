@@ -11,8 +11,7 @@ namespace details {
 // Extend log_msg with internal buffer to store its payload.
 // This is needed since log_msg holds string_views that points to stack data.
 
-class SPDLOG_API log_msg_buffer : public log_msg
-{
+class SPDLOG_API log_msg_buffer : public log_msg {
     memory_buf_t buffer;
     void update_string_views();
 
@@ -29,5 +28,5 @@ public:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#    include "log_msg_buffer-inl.h"
+    #include "log_msg_buffer-inl.h"
 #endif

@@ -4,17 +4,15 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#    include <spdlog/details/periodic_worker.h>
+    #include <spdlog/details/periodic_worker.h>
 #endif
 
 namespace spdlog {
 namespace details {
 
 // stop the worker thread and join it
-SPDLOG_INLINE periodic_worker::~periodic_worker()
-{
-    if (worker_thread_.joinable())
-    {
+SPDLOG_INLINE periodic_worker::~periodic_worker() {
+    if (worker_thread_.joinable()) {
         {
             std::lock_guard<std::mutex> lock(mutex_);
             active_ = false;

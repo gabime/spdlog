@@ -9,8 +9,7 @@
 namespace spdlog {
 
 namespace sinks {
-class SPDLOG_API sink
-{
+class SPDLOG_API sink {
 public:
     virtual ~sink() = default;
     virtual void log(const details::log_msg &msg) = 0;
@@ -31,5 +30,5 @@ protected:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#    include "sink-inl.h"
+    #include "sink-inl.h"
 #endif
