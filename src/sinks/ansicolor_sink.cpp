@@ -1,12 +1,12 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
 
-#    include <spdlog/sinks/ansicolor_sink.h>
+#include <spdlog/sinks/ansicolor_sink.h>
 
 #include <spdlog/pattern_formatter.h>
 #include <spdlog/details/os.h>
+
 
 namespace spdlog {
 namespace sinks {
@@ -141,3 +141,10 @@ template<typename ConsoleMutex>
 
 } // namespace sinks
 } // namespace spdlog
+
+// template instantiations
+template SPDLOG_API class spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_mutex>;
+template SPDLOG_API class spdlog::sinks::ansicolor_stdout_sink<spdlog::details::console_nullmutex>;
+
+template SPDLOG_API class spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_mutex>;
+template SPDLOG_API class spdlog::sinks::ansicolor_stderr_sink<spdlog::details::console_nullmutex>;

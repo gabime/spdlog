@@ -2,7 +2,6 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
-
 #include <spdlog/tweakme.h>
 #include <spdlog/details/null_mutex.h>
 

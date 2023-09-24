@@ -1,14 +1,14 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
 
-#    include <spdlog/sinks/base_sink.h>
 
+#include <spdlog/sinks/base_sink.h>
 #include <spdlog/common.h>
 #include <spdlog/pattern_formatter.h>
 
 #include <memory>
+#include <mutex>
 
 template<typename Mutex>
  spdlog::sinks::base_sink<Mutex>::base_sink()
@@ -59,3 +59,8 @@ void  spdlog::sinks::base_sink<Mutex>::set_formatter_(std::unique_ptr<spdlog::fo
 {
     formatter_ = std::move(sink_formatter);
 }
+
+// template instantiations
+
+template class SPDLOG_API spdlog::sinks::base_sink<std::mutex>;
+template class SPDLOG_API spdlog::sinks::base_sink<spdlog::details::null_mutex>;

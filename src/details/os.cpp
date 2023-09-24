@@ -1,10 +1,7 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
-
-#    include <spdlog/details/os.h>
-
+#include <spdlog/details/os.h>
 #include <spdlog/common.h>
 
 #include <algorithm>
@@ -17,7 +14,6 @@
 #include <thread>
 #include <array>
 #include <sys/stat.h>
-#include <sys/types.h>
 
 #ifdef _WIN32
 

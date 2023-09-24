@@ -1,10 +1,7 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
-
 #include <spdlog/pattern_formatter.h>
-
 #include <spdlog/details/fmt_helper.h>
 #include <spdlog/details/log_msg.h>
 #include <spdlog/details/os.h>
@@ -17,13 +14,9 @@
 #include <ctime>
 #include <cctype>
 #include <cstring>
-#include <iterator>
-#include <memory>
-#include <mutex>
 #include <string>
 #include <thread>
 #include <utility>
-#include <vector>
 
 namespace spdlog {
 namespace details {
@@ -31,7 +24,6 @@ namespace details {
 ///////////////////////////////////////////////////////////////////////
 // name & level pattern appender
 ///////////////////////////////////////////////////////////////////////
-
 class scoped_padder
 {
 public:

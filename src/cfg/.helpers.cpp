@@ -1,12 +1,9 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
 
-#    include <spdlog/cfg/helpers.h>
-
+#include <spdlog/cfg/helpers.h>
 #include <spdlog/spdlog.h>
-#include <spdlog/details/os.h>
 #include <spdlog/details/registry.h>
 
 #include <algorithm>

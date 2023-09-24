@@ -1,5 +1,6 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
+#ifdef _WIN32
 
 #pragma once
 
@@ -171,3 +172,5 @@ template<typename ConsoleMutex>
 {}
 } // namespace sinks
 } // namespace spdlog
+
+#endif // _WIN32

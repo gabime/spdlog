@@ -1,19 +1,13 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
-
-
 #include <spdlog/details/file_helper.h>
-
 #include <spdlog/details/os.h>
 #include <spdlog/common.h>
 
 #include <cerrno>
-#include <chrono>
 #include <cstdio>
 #include <string>
-#include <thread>
 #include <tuple>
 
 namespace spdlog {

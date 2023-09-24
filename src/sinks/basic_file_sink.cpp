@@ -1,9 +1,6 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#pragma once
-
-
 #include <spdlog/sinks/basic_file_sink.h>
 
 #include <spdlog/common.h>
@@ -41,3 +38,7 @@ template<typename Mutex>
 
 } // namespace sinks
 } // namespace spdlog
+
+// template instantiations
+template class SPDLOG_API spdlog::sinks::basic_file_sink<std::mutex>;
+template class SPDLOG_API spdlog::sinks::basic_file_sink<spdlog::details::null_mutex>;

@@ -14,6 +14,9 @@
 #include <functional>
 #include <mutex>
 #include <thread>
+
+#include <spdlog/common.h>
+
 namespace spdlog {
 namespace details {
 
@@ -52,5 +55,6 @@ private:
     std::mutex mutex_;
     std::condition_variable cv_;
 };
+
 } // namespace details
 } // namespace spdlog

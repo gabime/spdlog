@@ -10,6 +10,7 @@
 #endif
 
 #include <spdlog/details/synchronous_factory.h>
+#include <spdlog/async.h>
 
 namespace spdlog {
 namespace sinks {
@@ -25,6 +26,8 @@ using stderr_color_sink_mt = ansicolor_stderr_sink_mt;
 using stderr_color_sink_st = ansicolor_stderr_sink_st;
 #endif
 } // namespace sinks
+
+// template instantations
 
 template<typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name, color_mode mode = color_mode::automatic);
