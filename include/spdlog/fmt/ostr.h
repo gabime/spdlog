@@ -9,9 +9,9 @@
 //
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
-#    if !defined(SPDLOG_FMT_EXTERNAL)
-#        include <spdlog/fmt/bundled/ostream.h>
-#    else
-#        include <fmt/ostream.h>
-#    endif
+    #if !defined(SPDLOG_FMT_EXTERNAL)
+        #include <spdlog/fmt/bundled/ostream.h>
+    #else
+        #include <fmt/ostream.h>
+    #endif
 #endif

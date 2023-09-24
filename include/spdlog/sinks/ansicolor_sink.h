@@ -3,13 +3,13 @@
 
 #pragma once
 
+#include <array>
+#include <memory>
+#include <mutex>
 #include <spdlog/details/console_globals.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/sink.h>
-#include <memory>
-#include <mutex>
 #include <string>
-#include <array>
 
 namespace spdlog {
 namespace sinks {
@@ -21,9 +21,8 @@ namespace sinks {
  * If no color terminal detected, omit the escape codes.
  */
 
-template<typename ConsoleMutex>
-class ansicolor_sink : public sink
-{
+template <typename ConsoleMutex>
+class ansicolor_sink : public sink {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
     ansicolor_sink(FILE *target_file, color_mode mode);
@@ -90,16 +89,14 @@ private:
     static std::string to_string_(const string_view_t &sv);
 };
 
-template<typename ConsoleMutex>
-class ansicolor_stdout_sink : public ansicolor_sink<ConsoleMutex>
-{
+template <typename ConsoleMutex>
+class ansicolor_stdout_sink : public ansicolor_sink<ConsoleMutex> {
 public:
     explicit ansicolor_stdout_sink(color_mode mode = color_mode::automatic);
 };
 
-template<typename ConsoleMutex>
-class ansicolor_stderr_sink : public ansicolor_sink<ConsoleMutex>
-{
+template <typename ConsoleMutex>
+class ansicolor_stderr_sink : public ansicolor_sink<ConsoleMutex> {
 public:
     explicit ansicolor_stderr_sink(color_mode mode = color_mode::automatic);
 };

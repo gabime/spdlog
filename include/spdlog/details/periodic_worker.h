@@ -20,24 +20,19 @@
 namespace spdlog {
 namespace details {
 
-class SPDLOG_API periodic_worker
-{
+class SPDLOG_API periodic_worker {
 public:
-    template<typename Rep, typename Period>
-    periodic_worker(const std::function<void()> &callback_fun, std::chrono::duration<Rep, Period> interval)
-    {
+    template <typename Rep, typename Period>
+    periodic_worker(const std::function<void()> &callback_fun, std::chrono::duration<Rep, Period> interval) {
         active_ = (interval > std::chrono::duration<Rep, Period>::zero());
-        if (!active_)
-        {
+        if (!active_) {
             return;
         }
 
         worker_thread_ = std::thread([this, callback_fun, interval]() {
-            for (;;)
-            {
+            for (;;) {
                 std::unique_lock<std::mutex> lock(this->mutex_);
-                if (this->cv_.wait_for(lock, interval, [this] { return !this->active_; }))
-                {
+                if (this->cv_.wait_for(lock, interval, [this] { return !this->active_; })) {
                     return; // active_ == false, so exit this thread
                 }
                 callback_fun();

@@ -14,9 +14,9 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <unordered_map>
-#include <mutex>
 
 namespace spdlog {
 class logger;
@@ -24,8 +24,7 @@ class logger;
 namespace details {
 class thread_pool;
 
-class SPDLOG_API registry
-{
+class SPDLOG_API registry {
 public:
     using log_levels = std::unordered_map<std::string, level>;
     registry(const registry &) = delete;
@@ -57,9 +56,8 @@ public:
 
     void flush_on(level level);
 
-    template<typename Rep, typename Period>
-    void flush_every(std::chrono::duration<Rep, Period> interval)
-    {
+    template <typename Rep, typename Period>
+    void flush_every(std::chrono::duration<Rep, Period> interval) {
         std::lock_guard<std::mutex> lock(flusher_mutex_);
         auto clbk = [this]() { this->flush_all(); };
         periodic_flusher_ = std::make_unique<periodic_worker>(clbk, interval);

@@ -4,17 +4,17 @@
 
 #if !defined(SPDLOG_FMT_EXTERNAL) && !defined(SPDLOG_USE_STD_FORMAT)
 
-#    include <spdlog/fmt/bundled/format-inl.h>
+    #include <spdlog/fmt/bundled/format-inl.h>
 FMT_BEGIN_NAMESPACE
 namespace detail {
 
 template FMT_API auto dragonbox::to_decimal(float x) noexcept -> dragonbox::decimal_fp<float>;
 template FMT_API auto dragonbox::to_decimal(double x) noexcept -> dragonbox::decimal_fp<double>;
 
-#    ifndef FMT_STATIC_THOUSANDS_SEPARATOR
+    #ifndef FMT_STATIC_THOUSANDS_SEPARATOR
 template FMT_API locale_ref::locale_ref(const std::locale &loc);
 template FMT_API auto locale_ref::get<std::locale>() const -> std::locale;
-#    endif
+    #endif
 
 // Explicit instantiations for char.
 

@@ -5,14 +5,14 @@
 
 #pragma once
 //
-// include bundled or external copy of fmtlib's std support (for formatting e.g. std::filesystem::path, std::thread::id, std::monostate,
-// std::variant, ...)
+// include bundled or external copy of fmtlib's std support (for formatting e.g. std::filesystem::path, std::thread::id,
+// std::monostate, std::variant, ...)
 //
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
-#    if !defined(SPDLOG_FMT_EXTERNAL)
-#        include <spdlog/fmt/bundled/std.h>
-#    else
-#        include <fmt/std.h>
-#    endif
+    #if !defined(SPDLOG_FMT_EXTERNAL)
+        #include <spdlog/fmt/bundled/std.h>
+    #else
+        #include <fmt/std.h>
+    #endif
 #endif

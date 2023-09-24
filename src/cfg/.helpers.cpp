@@ -2,29 +2,27 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include <spdlog/cfg/helpers.h>
-#include <spdlog/spdlog.h>
 #include <spdlog/details/registry.h>
+#include <spdlog/spdlog.h>
 
 #include <algorithm>
+#include <sstream>
 #include <string>
 #include <utility>
-#include <sstream>
 
 namespace spdlog {
 namespace cfg {
 namespace helpers {
 
 // inplace convert to lowercase
-inline std::string &to_lower_(std::string &str)
-{
-    std::transform(
-        str.begin(), str.end(), str.begin(), [](char ch) { return static_cast<char>((ch >= 'A' && ch <= 'Z') ? ch + ('a' - 'A') : ch); });
+inline std::string &to_lower_(std::string &str) {
+    std::transform(str.begin(), str.end(), str.begin(),
+                   [](char ch) { return static_cast<char>((ch >= 'A' && ch <= 'Z') ? ch + ('a' - 'A') : ch); });
     return str;
 }
 
 // inplace trim spaces
-inline std::string &trim_(std::string &str)
-{
+inline std::string &trim_(std::string &str) {
     const char *spaces = " \n\r\t";
     str.erase(str.find_last_not_of(spaces) + 1);
     str.erase(0, str.find_first_not_of(spaces));
@@ -38,16 +36,12 @@ inline std::string &trim_(std::string &str)
 // "key=" => ("key", "")
 // "val" => ("", "val")
 
-inline std::pair<std::string, std::string> extract_kv_(char sep, const std::string &str)
-{
+inline std::pair<std::string, std::string> extract_kv_(char sep, const std::string &str) {
     auto n = str.find(sep);
     std::string k, v;
-    if (n == std::string::npos)
-    {
+    if (n == std::string::npos) {
         v = str;
-    }
-    else
-    {
+    } else {
         k = str.substr(0, n);
         v = str.substr(n + 1);
     }
@@ -56,15 +50,12 @@ inline std::pair<std::string, std::string> extract_kv_(char sep, const std::stri
 
 // return vector of key/value pairs from sequence of "K1=V1,K2=V2,.."
 // "a=AAA,b=BBB,c=CCC,.." => {("a","AAA"),("b","BBB"),("c", "CCC"),...}
-inline std::unordered_map<std::string, std::string> extract_key_vals_(const std::string &str)
-{
+inline std::unordered_map<std::string, std::string> extract_key_vals_(const std::string &str) {
     std::string token;
     std::istringstream token_stream(str);
     std::unordered_map<std::string, std::string> rv{};
-    while (std::getline(token_stream, token, ','))
-    {
-        if (token.empty())
-        {
+    while (std::getline(token_stream, token, ',')) {
+        if (token.empty()) {
             continue;
         }
         auto kv = extract_kv_('=', token);
@@ -73,10 +64,8 @@ inline std::unordered_map<std::string, std::string> extract_key_vals_(const std:
     return rv;
 }
 
-void load_levels(const std::string &input)
-{
-    if (input.empty() || input.size() > 512)
-    {
+void load_levels(const std::string &input) {
+    if (input.empty() || input.size() > 512) {
         return;
     }
 
@@ -85,23 +74,19 @@ void load_levels(const std::string &input)
     level global_level = level::info;
     bool global_level_found = false;
 
-    for (auto &name_level : key_vals)
-    {
+    for (auto &name_level : key_vals) {
         const auto &logger_name = name_level.first;
         auto level_name = to_lower_(name_level.second);
         auto level = level_from_str(level_name);
         // ignore unrecognized level names
-        if (level == level::off && level_name != "off")
-        {
+        if (level == level::off && level_name != "off") {
             continue;
         }
         if (logger_name.empty()) // no logger name indicate global level
         {
             global_level_found = true;
             global_level = level;
-        }
-        else
-        {
+        } else {
             levels[logger_name] = level;
         }
     }

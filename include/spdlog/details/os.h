@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <spdlog/common.h>
 #include <ctime> // std::time_t
+#include <spdlog/common.h>
 
 namespace spdlog {
 namespace details {
@@ -22,22 +22,22 @@ SPDLOG_API std::tm gmtime() noexcept;
 
 // eol definition
 #if !defined(SPDLOG_EOL)
-#    ifdef _WIN32
-#        define SPDLOG_EOL "\r\n"
-#    else
-#        define SPDLOG_EOL "\n"
-#    endif
+    #ifdef _WIN32
+        #define SPDLOG_EOL "\r\n"
+    #else
+        #define SPDLOG_EOL "\n"
+    #endif
 #endif
 
 constexpr static const char *default_eol = SPDLOG_EOL;
 
 // folder separator
 #if !defined(SPDLOG_FOLDER_SEPS)
-#    ifdef _WIN32
-#        define SPDLOG_FOLDER_SEPS "\\/"
-#    else
-#        define SPDLOG_FOLDER_SEPS "/"
-#    endif
+    #ifdef _WIN32
+        #define SPDLOG_FOLDER_SEPS "\\/"
+    #else
+        #define SPDLOG_FOLDER_SEPS "/"
+    #endif
 #endif
 
 constexpr static const char folder_seps[] = SPDLOG_FOLDER_SEPS;

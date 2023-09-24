@@ -20,6 +20,5 @@ namespace helpers {
 //
 SPDLOG_API void load_levels(const std::string &txt);
 } // namespace helpers
-
 } // namespace cfg
 } // namespace spdlog
