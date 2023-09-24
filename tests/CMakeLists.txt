@@ -79,7 +79,6 @@ function(spdlog_prepare_test test_target spdlog_lib)
     set_tests_properties(${test_target} PROPERTIES RUN_SERIAL ON)
 endfunction()
 
-# The compiled library tests
 if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests spdlog::spdlog)
 endif()
