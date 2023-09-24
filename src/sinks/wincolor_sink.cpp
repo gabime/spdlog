@@ -173,4 +173,12 @@ template<typename ConsoleMutex>
 } // namespace sinks
 } // namespace spdlog
 
+
+// template instantiations
+template SPDLOG_API class spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_mutex>;
+template SPDLOG_API class spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_nullmutex>;
+
+template SPDLOG_API class spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_mutex>;
+template SPDLOG_API class spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_nullmutex>;
+
 #endif // _WIN32
