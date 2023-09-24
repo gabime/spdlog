@@ -15,7 +15,7 @@
 namespace spdlog {
 
 // public methods
-SPDLOG_INLINE logger::logger(const logger &other) noexcept
+ logger::logger(const logger &other) noexcept
     : name_(other.name_)
     , sinks_(other.sinks_)
     , level_(other.level_.load(std::memory_order_relaxed))
@@ -23,7 +23,7 @@ SPDLOG_INLINE logger::logger(const logger &other) noexcept
     , custom_err_handler_(other.custom_err_handler_)
 {}
 
-SPDLOG_INLINE logger::logger(logger &&other) noexcept
+ logger::logger(logger &&other) noexcept
     : name_(std::move(other.name_))
     , sinks_(std::move(other.sinks_))
     , level_(other.level_.load(std::memory_order_relaxed))
@@ -31,24 +31,24 @@ SPDLOG_INLINE logger::logger(logger &&other) noexcept
     , custom_err_handler_(std::move(other.custom_err_handler_))
 {}
 
-SPDLOG_INLINE void logger::set_level(level level)
+ void logger::set_level(level level)
 {
     level_.store(level);
 }
 
-SPDLOG_INLINE level logger::log_level() const
+ level logger::log_level() const
 {
     return static_cast<level>(level_.load(std::memory_order_relaxed));
 }
 
-SPDLOG_INLINE const std::string &logger::name() const
+ const std::string &logger::name() const
 {
     return name_;
 }
 
 // set formatting for the sinks in this logger.
 // each sink will get a separate instance of the formatter object.
-SPDLOG_INLINE void logger::set_formatter(std::unique_ptr<formatter> f)
+ void logger::set_formatter(std::unique_ptr<formatter> f)
 {
     for (auto it = sinks_.begin(); it != sinks_.end(); ++it)
     {
@@ -65,54 +65,54 @@ SPDLOG_INLINE void logger::set_formatter(std::unique_ptr<formatter> f)
     }
 }
 
-SPDLOG_INLINE void logger::set_pattern(std::string pattern, pattern_time_type time_type)
+ void logger::set_pattern(std::string pattern, pattern_time_type time_type)
 {
     auto new_formatter = std::make_unique<pattern_formatter>(std::move(pattern), time_type);
     set_formatter(std::move(new_formatter));
 }
 
 // flush functions
-SPDLOG_INLINE void logger::flush()
+ void logger::flush()
 {
     flush_();
 }
 
-SPDLOG_INLINE void logger::flush_on(level level)
+ void logger::flush_on(level level)
 {
     flush_level_.store(level);
 }
 
-SPDLOG_INLINE level logger::flush_level() const
+ level logger::flush_level() const
 {
     return static_cast<level>(flush_level_.load(std::memory_order_relaxed));
 }
 
 // sinks
-SPDLOG_INLINE const std::vector<sink_ptr> &logger::sinks() const
+ const std::vector<sink_ptr> &logger::sinks() const
 {
     return sinks_;
 }
 
-SPDLOG_INLINE std::vector<sink_ptr> &logger::sinks()
+ std::vector<sink_ptr> &logger::sinks()
 {
     return sinks_;
 }
 
 // error handler
-SPDLOG_INLINE void logger::set_error_handler(err_handler handler)
+ void logger::set_error_handler(err_handler handler)
 {
     custom_err_handler_ = std::move(handler);
 }
 
 // create new logger with same sinks and configuration.
-SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name)
+ std::shared_ptr<logger> logger::clone(std::string logger_name)
 {
     auto cloned = std::make_shared<logger>(*this);
     cloned->name_ = std::move(logger_name);
     return cloned;
 }
 
-SPDLOG_INLINE void logger::flush_()
+ void logger::flush_()
 {
     for (auto &sink : sinks_)
     {
@@ -124,13 +124,13 @@ SPDLOG_INLINE void logger::flush_()
     }
 }
 
-SPDLOG_INLINE bool logger::should_flush_(const details::log_msg &msg)
+ bool logger::should_flush_(const details::log_msg &msg)
 {
     auto flush_level = flush_level_.load(std::memory_order_relaxed);
     return (msg.log_level >= flush_level) && (msg.log_level != level::off);
 }
 
-SPDLOG_INLINE void logger::err_handler_(const std::string &msg)
+ void logger::err_handler_(const std::string &msg)
 {
     if (custom_err_handler_)
     {

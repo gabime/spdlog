@@ -38,27 +38,44 @@
 #    endif
 #endif
 
-#ifdef SPDLOG_COMPILED_LIB
-#    undef SPDLOG_HEADER_ONLY
-#    if defined(SPDLOG_SHARED_LIB)
-#        if defined(_WIN32)
-#            ifdef spdlog_EXPORTS
-#                define SPDLOG_API __declspec(dllexport)
-#            else // !spdlog_EXPORTS
-#                define SPDLOG_API __declspec(dllimport)
-#            endif
-#        else // !defined(_WIN32)
-#            define SPDLOG_API __attribute__((visibility("default")))
+
+#if defined(SPDLOG_SHARED_LIB)
+#    if defined(_WIN32)
+#        ifdef spdlog_EXPORTS
+#            define SPDLOG_API __declspec(dllexport)
+#        else // !spdlog_EXPORTS
+#            define SPDLOG_API __declspec(dllimport)
 #        endif
-#    else // !defined(SPDLOG_SHARED_LIB)
-#        define SPDLOG_API
+#    else // !defined(_WIN32)
+#        define SPDLOG_API __attribute__((visibility("default")))
 #    endif
-#    define SPDLOG_INLINE
-#else // !defined(SPDLOG_COMPILED_LIB)
+#else // !defined(SPDLOG_SHARED_LIB)
 #    define SPDLOG_API
-#    define SPDLOG_HEADER_ONLY
-#    define SPDLOG_INLINE inline
-#endif // #ifdef SPDLOG_COMPILED_LIB
+#endif
+
+//
+//
+//#ifdef SPDLOG_COMPILED_LIB
+//#    undef SPDLOG_HEADER_ONLY
+//#    if defined(SPDLOG_SHARED_LIB)
+//#        if defined(_WIN32)
+//#            ifdef spdlog_EXPORTS
+//#                define SPDLOG_API __declspec(dllexport)
+//#            else // !spdlog_EXPORTS
+//#                define SPDLOG_API __declspec(dllimport)
+//#            endif
+//#        else // !defined(_WIN32)
+//#            define SPDLOG_API __attribute__((visibility("default")))
+//#        endif
+//#    else // !defined(SPDLOG_SHARED_LIB)
+//#        define SPDLOG_API
+//#    endif
+//#    define
+//#else // !defined(SPDLOG_COMPILED_LIB)
+//#    define SPDLOG_API
+//#    define SPDLOG_HEADER_ONLY
+//#    define  inline
+//#endif // #ifdef SPDLOG_COMPILED_LIB
 
 #include <spdlog/fmt/fmt.h>
 

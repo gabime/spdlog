@@ -20,16 +20,16 @@
 namespace spdlog {
 namespace details {
 
-SPDLOG_INLINE file_helper::file_helper(const file_event_handlers &event_handlers)
+ file_helper::file_helper(const file_event_handlers &event_handlers)
     : event_handlers_(event_handlers)
 {}
 
-SPDLOG_INLINE file_helper::~file_helper()
+ file_helper::~file_helper()
 {
     close();
 }
 
-SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
+ void file_helper::open(const filename_t &fname, bool truncate)
 {
     close();
     filename_ = fname;
@@ -73,7 +73,7 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate)
     throw_spdlog_ex("Failed opening file " + os::filename_to_str(filename_) + " for writing", errno);
 }
 
-SPDLOG_INLINE void file_helper::reopen(bool truncate)
+ void file_helper::reopen(bool truncate)
 {
     if (filename_.empty())
     {
@@ -82,7 +82,7 @@ SPDLOG_INLINE void file_helper::reopen(bool truncate)
     this->open(filename_, truncate);
 }
 
-SPDLOG_INLINE void file_helper::flush()
+ void file_helper::flush()
 {
     if (std::fflush(fd_) != 0)
     {
@@ -90,7 +90,7 @@ SPDLOG_INLINE void file_helper::flush()
     }
 }
 
-SPDLOG_INLINE void file_helper::sync()
+ void file_helper::sync()
 {
     if (!os::fsync(fd_))
     {
@@ -98,7 +98,7 @@ SPDLOG_INLINE void file_helper::sync()
     }
 }
 
-SPDLOG_INLINE void file_helper::close()
+ void file_helper::close()
 {
     if (fd_ != nullptr)
     {
@@ -117,7 +117,7 @@ SPDLOG_INLINE void file_helper::close()
     }
 }
 
-SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf)
+ void file_helper::write(const memory_buf_t &buf)
 {
     size_t msg_size = buf.size();
     auto data = buf.data();
@@ -127,7 +127,7 @@ SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf)
     }
 }
 
-SPDLOG_INLINE size_t file_helper::size() const
+ size_t file_helper::size() const
 {
     if (fd_ == nullptr)
     {
@@ -136,7 +136,7 @@ SPDLOG_INLINE size_t file_helper::size() const
     return os::filesize(fd_);
 }
 
-SPDLOG_INLINE const filename_t &file_helper::filename() const
+ const filename_t &file_helper::filename() const
 {
     return filename_;
 }
@@ -154,7 +154,7 @@ SPDLOG_INLINE const filename_t &file_helper::filename() const
 // ".mylog" => (".mylog". "")
 // "my_folder/.mylog" => ("my_folder/.mylog", "")
 // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
-SPDLOG_INLINE std::tuple<filename_t, filename_t> file_helper::split_by_extension(const filename_t &fname)
+ std::tuple<filename_t, filename_t> file_helper::split_by_extension(const filename_t &fname)
 {
     auto ext_index = fname.rfind('.');
 

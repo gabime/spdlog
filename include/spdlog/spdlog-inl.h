@@ -12,97 +12,97 @@
 
 namespace spdlog {
 
-SPDLOG_INLINE void initialize_logger(std::shared_ptr<logger> logger)
+ void initialize_logger(std::shared_ptr<logger> logger)
 {
     details::registry::instance().initialize_logger(std::move(logger));
 }
 
-SPDLOG_INLINE std::shared_ptr<logger> get(const std::string &name)
+ std::shared_ptr<logger> get(const std::string &name)
 {
     return details::registry::instance().get(name);
 }
 
-SPDLOG_INLINE void set_formatter(std::unique_ptr<spdlog::formatter> formatter)
+ void set_formatter(std::unique_ptr<spdlog::formatter> formatter)
 {
     details::registry::instance().set_formatter(std::move(formatter));
 }
 
-SPDLOG_INLINE void set_pattern(std::string pattern, pattern_time_type time_type)
+ void set_pattern(std::string pattern, pattern_time_type time_type)
 {
     set_formatter(std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
 }
 
-SPDLOG_INLINE level get_level()
+ level get_level()
 {
     return default_logger_raw()->log_level();
 }
 
-SPDLOG_INLINE bool should_log(level level)
+ bool should_log(level level)
 {
     return default_logger_raw()->should_log(level);
 }
 
-SPDLOG_INLINE void set_level(level level)
+ void set_level(level level)
 {
     details::registry::instance().set_level(level);
 }
 
-SPDLOG_INLINE void flush_on(level level)
+ void flush_on(level level)
 {
     details::registry::instance().flush_on(level);
 }
 
-SPDLOG_INLINE void set_error_handler(void (*handler)(const std::string &msg))
+ void set_error_handler(void (*handler)(const std::string &msg))
 {
     details::registry::instance().set_error_handler(handler);
 }
 
-SPDLOG_INLINE void register_logger(std::shared_ptr<logger> logger)
+ void register_logger(std::shared_ptr<logger> logger)
 {
     details::registry::instance().register_logger(std::move(logger));
 }
 
-SPDLOG_INLINE void apply_all(const std::function<void(std::shared_ptr<logger>)> &fun)
+ void apply_all(const std::function<void(std::shared_ptr<logger>)> &fun)
 {
     details::registry::instance().apply_all(fun);
 }
 
-SPDLOG_INLINE void drop(const std::string &name)
+ void drop(const std::string &name)
 {
     details::registry::instance().drop(name);
 }
 
-SPDLOG_INLINE void drop_all()
+ void drop_all()
 {
     details::registry::instance().drop_all();
 }
 
-SPDLOG_INLINE void shutdown()
+ void shutdown()
 {
     details::registry::instance().shutdown();
 }
 
-SPDLOG_INLINE void set_automatic_registration(bool automatic_registration)
+ void set_automatic_registration(bool automatic_registration)
 {
     details::registry::instance().set_automatic_registration(automatic_registration);
 }
 
-SPDLOG_INLINE std::shared_ptr<spdlog::logger> default_logger()
+ std::shared_ptr<spdlog::logger> default_logger()
 {
     return details::registry::instance().default_logger();
 }
 
-SPDLOG_INLINE spdlog::logger *default_logger_raw()
+ spdlog::logger *default_logger_raw()
 {
     return details::registry::instance().get_default_raw();
 }
 
-SPDLOG_INLINE void set_default_logger(std::shared_ptr<spdlog::logger> default_logger)
+ void set_default_logger(std::shared_ptr<spdlog::logger> default_logger)
 {
     details::registry::instance().set_default_logger(std::move(default_logger));
 }
 
-SPDLOG_INLINE void apply_logger_env_levels(std::shared_ptr<logger> logger)
+ void apply_logger_env_levels(std::shared_ptr<logger> logger)
 {
     details::registry::instance().apply_logger_env_levels(std::move(logger));
 }

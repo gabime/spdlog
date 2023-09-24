@@ -12,7 +12,7 @@
 
 namespace spdlog {
 
-SPDLOG_INLINE spdlog::level level_from_str(const std::string &name) noexcept
+ spdlog::level level_from_str(const std::string &name) noexcept
 {
     auto it = std::find(std::begin(level_string_views), std::end(level_string_views), name);
     if (it != std::end(level_string_views))
@@ -30,11 +30,11 @@ SPDLOG_INLINE spdlog::level level_from_str(const std::string &name) noexcept
     return level::off;
 }
 
-SPDLOG_INLINE spdlog_ex::spdlog_ex(std::string msg)
+ spdlog_ex::spdlog_ex(std::string msg)
     : msg_(std::move(msg))
 {}
 
-SPDLOG_INLINE spdlog_ex::spdlog_ex(const std::string &msg, int last_errno)
+ spdlog_ex::spdlog_ex(const std::string &msg, int last_errno)
 {
 #ifdef SPDLOG_USE_STD_FORMAT
     msg_ = std::system_error(std::error_code(last_errno, std::generic_category()), msg).what();
@@ -45,17 +45,17 @@ SPDLOG_INLINE spdlog_ex::spdlog_ex(const std::string &msg, int last_errno)
 #endif
 }
 
-SPDLOG_INLINE const char *spdlog_ex::what() const noexcept
+ const char *spdlog_ex::what() const noexcept
 {
     return msg_.c_str();
 }
 
-SPDLOG_INLINE void throw_spdlog_ex(const std::string &msg, int last_errno)
+ void throw_spdlog_ex(const std::string &msg, int last_errno)
 {
     SPDLOG_THROW(spdlog_ex(msg, last_errno));
 }
 
-SPDLOG_INLINE void throw_spdlog_ex(std::string msg)
+ void throw_spdlog_ex(std::string msg)
 {
     SPDLOG_THROW(spdlog_ex(std::move(msg)));
 }
