@@ -45,7 +45,7 @@ template<typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_color(level level, std::uint16_t color)
 {
     std::lock_guard<mutex_t> lock(mutex_);
-    colors_[static_cast<size_t>(level)] = color;
+    colors_[level_to_number(level)] = color;
 }
 
 template<typename ConsoleMutex>
