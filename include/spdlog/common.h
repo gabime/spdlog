@@ -194,17 +194,17 @@ constexpr auto levels_count = level_to_number(level::n_levels);
 constexpr std::array<string_view_t, levels_count> level_string_views SPDLOG_LEVEL_NAMES;
 constexpr std::array<const char *, levels_count> short_level_names SPDLOG_SHORT_LEVEL_NAMES;
 
-constexpr string_view_t to_string_view(spdlog::level lvl) noexcept
+[[nodiscard]] constexpr string_view_t to_string_view(spdlog::level lvl) noexcept
 {
     return level_string_views.at(level_to_number(lvl));
 }
 
-constexpr const char *to_short_c_str(spdlog::level lvl) noexcept
+[[nodiscard]] constexpr const char *to_short_c_str(spdlog::level lvl) noexcept
 {
     return short_level_names.at(level_to_number(lvl));
 }
 
-SPDLOG_API spdlog::level level_from_str(const std::string &name) noexcept;
+SPDLOG_API [[nodiscard]] spdlog::level level_from_str(const std::string &name) noexcept;
 
 
 
@@ -320,23 +320,23 @@ namespace details {
 
 // to_string_view
 
-constexpr spdlog::string_view_t to_string_view(const memory_buf_t &buf) noexcept
+[[nodiscard]] constexpr spdlog::string_view_t to_string_view(const memory_buf_t &buf) noexcept
 {
     return spdlog::string_view_t{buf.data(), buf.size()};
 }
 
-constexpr spdlog::string_view_t to_string_view(spdlog::string_view_t str) noexcept
+[[nodiscard]] constexpr spdlog::string_view_t to_string_view(spdlog::string_view_t str) noexcept
 {
     return str;
 }
 
 #if defined(SPDLOG_WCHAR_FILENAMES)
-constexpr spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf) noexcept
+[[nodiscard]] constexpr spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf) noexcept
 {
     return spdlog::wstring_view_t{buf.data(), buf.size()};
 }
 
-constexpr spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) noexcept
+[[nodiscard]] constexpr spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) noexcept
 {
     return str;
 }
@@ -346,20 +346,20 @@ constexpr spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) noex
 #if defined(SPDLOG_USE_STD_FORMAT)
 #    if __cpp_lib_format >= 202207L // std::format and __cpp_lib_format >= 202207L
 template<typename T, typename... Args>
-constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept
+[[nodiscard]] constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept
 {
     return fmt.get();
 }
 #    else // std::format and __cpp_lib_format < 202207L
 template<typename T, typename... Args>
-constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept
+[[nodiscard]] constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept
 {
     return fmt;
 }
 #    endif
 #else // {fmt} version
 template<typename T, typename... Args>
-constexpr fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt) noexcept
+[[nodiscard]] constexpr fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt) noexcept
 {
     return fmt;
 }
