@@ -31,4 +31,3 @@ struct SPDLOG_API log_msg
 };
 } // namespace details
 } // namespace spdlog
-

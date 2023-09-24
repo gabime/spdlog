@@ -54,4 +54,3 @@ inline std::shared_ptr<logger> basic_logger_st(
 }
 
 } // namespace spdlog
-

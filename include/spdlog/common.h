@@ -37,7 +37,6 @@
 #    endif
 #endif
 
-
 #if defined(SPDLOG_SHARED_LIB)
 #    if defined(_WIN32)
 #        ifdef spdlog_EXPORTS
@@ -134,7 +133,6 @@ using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 #    define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
 #endif // SPDLOG_USE_STD_FORMAT
 
-
 #define SPDLOG_LEVEL_TRACE 0
 #define SPDLOG_LEVEL_DEBUG 1
 #define SPDLOG_LEVEL_INFO 2
@@ -165,17 +163,23 @@ enum class level
 };
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
-    using atomic_level_t = details::null_atomic<level>;
+using atomic_level_t = details::null_atomic<level>;
 #else
-    using atomic_level_t = std::atomic<level>;
+using atomic_level_t = std::atomic<level>;
 #endif
 
 #if !defined(SPDLOG_LEVEL_NAMES)
-#define SPDLOG_LEVEL_NAMES { "trace", "debug", "info", "warning", "error", "critical", "off"}
+#    define SPDLOG_LEVEL_NAMES                                                                                                             \
+        {                                                                                                                                  \
+            "trace", "debug", "info", "warning", "error", "critical", "off"                                                                \
+        }
 #endif
 
 #if !defined(SPDLOG_SHORT_LEVEL_NAMES)
-#define SPDLOG_SHORT_LEVEL_NAMES {"T", "D", "I", "W", "E", "C", "O"}
+#    define SPDLOG_SHORT_LEVEL_NAMES                                                                                                       \
+        {                                                                                                                                  \
+            "T", "D", "I", "W", "E", "C", "O"                                                                                              \
+        }
 #endif
 
 [[nodiscard]] constexpr size_t level_to_number(level lvl) noexcept
@@ -197,8 +201,6 @@ constexpr std::array<const char *, levels_count> short_level_names SPDLOG_SHORT_
 }
 
 SPDLOG_API [[nodiscard]] spdlog::level level_from_str(const std::string &name) noexcept;
-
-
 
 //
 // Color mode used by sinks with color support.

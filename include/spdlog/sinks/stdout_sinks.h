@@ -81,4 +81,3 @@ template<typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
 
 } // namespace spdlog
-

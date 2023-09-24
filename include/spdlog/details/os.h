@@ -116,4 +116,3 @@ SPDLOG_API bool fsync(FILE *fp);
 } // namespace os
 } // namespace details
 } // namespace spdlog
-

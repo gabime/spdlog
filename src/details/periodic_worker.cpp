@@ -7,7 +7,7 @@ namespace spdlog {
 namespace details {
 
 // stop the worker thread and join it
- periodic_worker::~periodic_worker()
+periodic_worker::~periodic_worker()
 {
     if (worker_thread_.joinable())
     {

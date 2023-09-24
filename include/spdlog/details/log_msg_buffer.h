@@ -27,4 +27,3 @@ public:
 
 } // namespace details
 } // namespace spdlog
-

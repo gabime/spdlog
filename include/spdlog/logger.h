@@ -27,7 +27,7 @@
         {                                                                                                                                  \
             if (!location.empty())                                                                                                         \
             {                                                                                                                              \
-                err_handler_(fmt_lib::format("{} [{}({})]", ex.what(), location.filename, location.line));              \
+                err_handler_(fmt_lib::format("{} [{}({})]", ex.what(), location.filename, location.line));                                 \
             }                                                                                                                              \
             else                                                                                                                           \
             {                                                                                                                              \

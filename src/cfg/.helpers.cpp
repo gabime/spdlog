@@ -1,7 +1,6 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-
 #include <spdlog/cfg/helpers.h>
 #include <spdlog/spdlog.h>
 #include <spdlog/details/registry.h>
@@ -74,7 +73,7 @@ inline std::unordered_map<std::string, std::string> extract_key_vals_(const std:
     return rv;
 }
 
- void load_levels(const std::string &input)
+void load_levels(const std::string &input)
 {
     if (input.empty() || input.size() > 512)
     {

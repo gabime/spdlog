@@ -63,4 +63,3 @@ private:
     async_overflow_policy overflow_policy_;
 };
 } // namespace spdlog
-

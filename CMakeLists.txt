@@ -145,12 +145,7 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # ---------------------------------------------------------------------------------------
 # Static/Shared library
 # ---------------------------------------------------------------------------------------
-file(GLOB SPDLOG_SRCS
-        src/*.cpp
-        src/details/*.cpp
-        src/sinks/*.cpp
-        src/cfg/*.cpp
-)
+file(GLOB SPDLOG_SRCS src/*.cpp src/details/*.cpp src/sinks/*.cpp src/cfg/*.cpp)
 
 if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
     list(APPEND SPDLOG_SRCS src/fmt/bundled_fmtlib_format.cpp)

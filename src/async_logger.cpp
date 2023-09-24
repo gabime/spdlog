@@ -8,18 +8,18 @@
 #include <memory>
 #include <string>
 
- spdlog::async_logger::async_logger(
+spdlog::async_logger::async_logger(
     std::string logger_name, sinks_init_list sinks_list, std::weak_ptr<details::thread_pool> tp, async_overflow_policy overflow_policy)
     : async_logger(std::move(logger_name), sinks_list.begin(), sinks_list.end(), std::move(tp), overflow_policy)
 {}
 
- spdlog::async_logger::async_logger(
+spdlog::async_logger::async_logger(
     std::string logger_name, sink_ptr single_sink, std::weak_ptr<details::thread_pool> tp, async_overflow_policy overflow_policy)
     : async_logger(std::move(logger_name), {std::move(single_sink)}, std::move(tp), overflow_policy)
 {}
 
 // send the log message to the thread pool
- void spdlog::async_logger::sink_it_(const details::log_msg &msg)
+void spdlog::async_logger::sink_it_(const details::log_msg &msg)
 {
     SPDLOG_TRY
     {
@@ -36,7 +36,7 @@
 }
 
 // send flush request to the thread pool
- void spdlog::async_logger::flush_()
+void spdlog::async_logger::flush_()
 {
     SPDLOG_TRY
     {
@@ -55,7 +55,7 @@
 //
 // backend functions - called from the thread pool to do the actual job
 //
- void spdlog::async_logger::backend_sink_it_(const details::log_msg &msg)
+void spdlog::async_logger::backend_sink_it_(const details::log_msg &msg)
 {
     for (auto &sink : sinks_)
     {
@@ -75,7 +75,7 @@
     }
 }
 
- void spdlog::async_logger::backend_flush_()
+void spdlog::async_logger::backend_flush_()
 {
     for (auto &sink : sinks_)
     {
@@ -87,7 +87,7 @@
     }
 }
 
- std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name)
+std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name)
 {
     auto cloned = std::make_shared<spdlog::async_logger>(*this);
     cloned->name_ = std::move(new_name);

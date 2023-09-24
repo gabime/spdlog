@@ -122,4 +122,3 @@ private:
     void compile_pattern_(const std::string &pattern);
 };
 } // namespace spdlog
-

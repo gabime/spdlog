@@ -1009,8 +1009,7 @@ private:
 
 } // namespace details
 
- pattern_formatter::pattern_formatter(
-    std::string pattern, pattern_time_type time_type, std::string eol, custom_flags custom_user_flags)
+pattern_formatter::pattern_formatter(std::string pattern, pattern_time_type time_type, std::string eol, custom_flags custom_user_flags)
     : pattern_(std::move(pattern))
     , eol_(std::move(eol))
     , pattern_time_type_(time_type)
@@ -1023,7 +1022,7 @@ private:
 }
 
 // use by default full formatter for if pattern is not given
- pattern_formatter::pattern_formatter(pattern_time_type time_type, std::string eol)
+pattern_formatter::pattern_formatter(pattern_time_type time_type, std::string eol)
     : pattern_("%+")
     , eol_(std::move(eol))
     , pattern_time_type_(time_type)
@@ -1034,7 +1033,7 @@ private:
     formatters_.push_back(std::make_unique<details::full_formatter>(details::padding_info{}));
 }
 
- std::unique_ptr<formatter> pattern_formatter::clone() const
+std::unique_ptr<formatter> pattern_formatter::clone() const
 {
     custom_flags cloned_custom_formatters;
     for (auto &it : custom_handlers_)
@@ -1050,7 +1049,7 @@ private:
 #endif
 }
 
- void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
+void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
 {
     if (need_localtime_)
     {
@@ -1070,19 +1069,19 @@ private:
     details::fmt_helper::append_string_view(eol_, dest);
 }
 
- void pattern_formatter::set_pattern(std::string pattern)
+void pattern_formatter::set_pattern(std::string pattern)
 {
     pattern_ = std::move(pattern);
     need_localtime_ = false;
     compile_pattern_(pattern_);
 }
 
- void pattern_formatter::need_localtime(bool need)
+void pattern_formatter::need_localtime(bool need)
 {
     need_localtime_ = need;
 }
 
- std::tm pattern_formatter::get_time_(const details::log_msg &msg)
+std::tm pattern_formatter::get_time_(const details::log_msg &msg)
 {
     if (pattern_time_type_ == pattern_time_type::local)
     {
@@ -1092,7 +1091,7 @@ private:
 }
 
 template<typename Padder>
- void pattern_formatter::handle_flag_(char flag, details::padding_info padding)
+void pattern_formatter::handle_flag_(char flag, details::padding_info padding)
 {
     // process custom flags
     auto it = custom_handlers_.find(flag);
@@ -1325,7 +1324,7 @@ template<typename Padder>
 // Extract given pad spec (e.g. %8X, %=8X, %-8!X, %8!X, %=8!X, %-8!X, %+8!X)
 // Advance the given it pass the end of the padding spec found (if any)
 // Return padding.
- details::padding_info pattern_formatter::handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end)
+details::padding_info pattern_formatter::handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end)
 {
     using details::padding_info;
     using details::scoped_padder;
@@ -1377,7 +1376,7 @@ template<typename Padder>
     return details::padding_info{std::min<size_t>(width, max_width), side, truncate};
 }
 
- void pattern_formatter::compile_pattern_(const std::string &pattern)
+void pattern_formatter::compile_pattern_(const std::string &pattern)
 {
     auto end = pattern.end();
     std::unique_ptr<details::aggregate_formatter> user_chars;

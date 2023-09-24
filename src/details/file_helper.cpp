@@ -13,16 +13,16 @@
 namespace spdlog {
 namespace details {
 
- file_helper::file_helper(const file_event_handlers &event_handlers)
+file_helper::file_helper(const file_event_handlers &event_handlers)
     : event_handlers_(event_handlers)
 {}
 
- file_helper::~file_helper()
+file_helper::~file_helper()
 {
     close();
 }
 
- void file_helper::open(const filename_t &fname, bool truncate)
+void file_helper::open(const filename_t &fname, bool truncate)
 {
     close();
     filename_ = fname;
@@ -66,7 +66,7 @@ namespace details {
     throw_spdlog_ex("Failed opening file " + os::filename_to_str(filename_) + " for writing", errno);
 }
 
- void file_helper::reopen(bool truncate)
+void file_helper::reopen(bool truncate)
 {
     if (filename_.empty())
     {
@@ -75,7 +75,7 @@ namespace details {
     this->open(filename_, truncate);
 }
 
- void file_helper::flush()
+void file_helper::flush()
 {
     if (std::fflush(fd_) != 0)
     {
@@ -83,7 +83,7 @@ namespace details {
     }
 }
 
- void file_helper::sync()
+void file_helper::sync()
 {
     if (!os::fsync(fd_))
     {
@@ -91,7 +91,7 @@ namespace details {
     }
 }
 
- void file_helper::close()
+void file_helper::close()
 {
     if (fd_ != nullptr)
     {
@@ -110,7 +110,7 @@ namespace details {
     }
 }
 
- void file_helper::write(const memory_buf_t &buf)
+void file_helper::write(const memory_buf_t &buf)
 {
     size_t msg_size = buf.size();
     auto data = buf.data();
@@ -120,7 +120,7 @@ namespace details {
     }
 }
 
- size_t file_helper::size() const
+size_t file_helper::size() const
 {
     if (fd_ == nullptr)
     {
@@ -129,7 +129,7 @@ namespace details {
     return os::filesize(fd_);
 }
 
- const filename_t &file_helper::filename() const
+const filename_t &file_helper::filename() const
 {
     return filename_;
 }
@@ -147,7 +147,7 @@ namespace details {
 // ".mylog" => (".mylog". "")
 // "my_folder/.mylog" => ("my_folder/.mylog", "")
 // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
- std::tuple<filename_t, filename_t> file_helper::split_by_extension(const filename_t &fname)
+std::tuple<filename_t, filename_t> file_helper::split_by_extension(const filename_t &fname)
 {
     auto ext_index = fname.rfind('.');
 

@@ -185,7 +185,7 @@ protected:
             qt_text_edit_,               // text edit to append to
             std::move(payload),          // text to append
             default_color_,              // default color
-            colors_.at(msg.log_level),       // color to apply
+            colors_.at(msg.log_level),   // color to apply
             color_range_start,           // color range start
             color_range_end};            // color range end
 
