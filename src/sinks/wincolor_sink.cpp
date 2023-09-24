@@ -2,15 +2,12 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 #ifdef _WIN32
 
-#    pragma once
+#include <spdlog/sinks/wincolor_sink.h>
+#include <spdlog/details/windows_include.h>
+#include <spdlog/common.h>
+#include <spdlog/pattern_formatter.h>
 
-#    include <spdlog/sinks/wincolor_sink.h>
-
-#    include <spdlog/details/windows_include.h>
-#    include <wincon.h>
-
-#    include <spdlog/common.h>
-#    include <spdlog/pattern_formatter.h>
+#include <wincon.h>
 
 namespace spdlog {
 namespace sinks {
@@ -20,7 +17,6 @@ wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color_mode mode)
     , mutex_(ConsoleMutex::mutex())
     , formatter_(std::make_unique<spdlog::pattern_formatter>())
 {
-
     set_color_mode_impl(mode);
     // set level colors
     colors_.at(level_to_number(level::trace)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;     // white
@@ -174,10 +170,11 @@ wincolor_stderr_sink<ConsoleMutex>::wincolor_stderr_sink(color_mode mode)
 } // namespace spdlog
 
 // template instantiations
-template SPDLOG_API class spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_mutex>;
-template SPDLOG_API class spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_nullmutex>;
-
-template SPDLOG_API class spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_mutex>;
-template SPDLOG_API class spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_stdout_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API spdlog::sinks::wincolor_stderr_sink<spdlog::details::console_nullmutex>;
 
 #endif // _WIN32
