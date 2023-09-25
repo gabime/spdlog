@@ -42,14 +42,14 @@ TEST_CASE("level_to_string_view", "[convert_to_string_view]") {
     REQUIRE(spdlog::to_string_view(spdlog::level::off) == "off");
 }
 
-TEST_CASE("to_short_c_str", "[convert_to_short_c_str]") {
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::trace)) == "T");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::debug)) == "D");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::info)) == "I");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::warn)) == "W");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::err)) == "E");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::critical)) == "C");
-    REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::off)) == "O");
+TEST_CASE("to_short_string_view", "[convert_to_short_c_str]") {
+    REQUIRE(spdlog::to_short_string_view(spdlog::level::trace) == "T");
+    REQUIRE(spdlog::to_short_string_view(spdlog::level::debug) == "D");
+    REQUIRE(spdlog::to_short_string_view(spdlog::level::info) == "I");
+    REQUIRE(spdlog::to_short_string_view(spdlog::level::warn) == "W");
+    REQUIRE(spdlog::to_short_string_view(spdlog::level::err) == "E");
+    REQUIRE(spdlog::to_short_string_view(spdlog::level::critical) == "C");
+    REQUIRE(spdlog::to_short_string_view(spdlog::level::off) == "O");
 }
 
 TEST_CASE("to_level_enum", "[convert_to_level_enum]") {
