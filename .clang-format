@@ -13,5 +13,6 @@ AlignEscapedNewlines: Left
 AlwaysBreakTemplateDeclarations: Yes
 PackConstructorInitializers: Never
 IndentPPDirectives: BeforeHash
+SortIncludes:    Never
 ...
 
