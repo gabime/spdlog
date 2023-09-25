@@ -12,7 +12,7 @@ BinPackParameters: false
 AlignEscapedNewlines: Left
 AlwaysBreakTemplateDeclarations: Yes
 PackConstructorInitializers: Never
-BreakConstructorInitializersBeforeComma: true
+BreakConstructorInitializersBeforeComma: false
 IndentPPDirectives: BeforeHash
 SortIncludes:    Never
 ...
