@@ -140,21 +140,6 @@ SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logge
 //   spdlog::apply_logger_env_levels(mylogger);
 SPDLOG_API void apply_logger_env_levels(std::shared_ptr<logger> logger);
 
-// Add a callback that is called whenever a logger is registered
-//
-// Useful for intercepting loggers that are dynamically created during the application's lifetime
-// (e.g. from dynamically loaded libraries, etc.)
-// Example:
-// void my_on_registration_callback(const std::shared_ptr<spdlog::logger>& logger) {
-//     logger->do_stuff();
-// }
-// ...
-// spdlog::add_on_registration_callback(my_on_registration_callback);
-SPDLOG_API void add_on_registration_callback(const std::function<void(const std::shared_ptr<logger>&)>& callback);
-
-// Clear all callbacks that were added to intercept registrations (see "add_on_registration_callback")
-SPDLOG_API void drop_all_on_registration_callbacks();
-
 template <typename... Args>
 inline void log(source_loc source,
                 level::level_enum lvl,

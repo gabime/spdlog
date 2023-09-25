@@ -89,12 +89,4 @@ SPDLOG_INLINE void apply_logger_env_levels(std::shared_ptr<logger> logger) {
     details::registry::instance().apply_logger_env_levels(std::move(logger));
 }
 
-SPDLOG_INLINE void add_on_registration_callback(const std::function<void(const std::shared_ptr<logger>&)>& callback) {
-    details::registry::instance().add_on_registration_callback(callback);
-}
-
-SPDLOG_INLINE void drop_all_on_registration_callbacks() {
-    details::registry::instance().drop_all_on_registration_callbacks();
-}
-
 }  // namespace spdlog
