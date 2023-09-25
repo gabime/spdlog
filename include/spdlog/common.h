@@ -187,7 +187,7 @@ constexpr std::array<string_view_t, levels_count> short_level_names SPDLOG_SHORT
     return level_string_views.at(level_to_number(lvl));
 }
 
-[[nodiscard]] constexpr const char *to_short_string_view(spdlog::level lvl) noexcept {
+[[nodiscard]] constexpr const string_view_t to_short_string_view(spdlog::level lvl) noexcept {
     return short_level_names.at(level_to_number(lvl));
 }
 
