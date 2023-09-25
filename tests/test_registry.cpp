@@ -129,6 +129,7 @@ TEST_CASE("add_on_registration_callback", "[registry]") {
 
     spdlog::drop_all_on_registration_callbacks();
     auto non_captured_registration_logger2 = spdlog::create<spdlog::sinks::stdout_color_sink_mt>("non_captured_registration_logger2");
+    spdlog::register_logger(non_captured_registration_logger2);
 
     // Check that only the automatically registered logged and the manually registered logger were captured
     REQUIRE(registered_logger_names == std::list<std::string>({"captured_registration_logger1", "captured_registration_logger2"}));
