@@ -12,18 +12,18 @@ namespace spdlog {
 
 // public methods
 logger::logger(const logger &other) noexcept
-    : name_(other.name_),
-      sinks_(other.sinks_),
-      level_(other.level_.load(std::memory_order_relaxed)),
-      flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
-      custom_err_handler_(other.custom_err_handler_) {}
+    : name_(other.name_)
+    , sinks_(other.sinks_)
+    , level_(other.level_.load(std::memory_order_relaxed))
+    , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
+    , custom_err_handler_(other.custom_err_handler_) {}
 
 logger::logger(logger &&other) noexcept
-    : name_(std::move(other.name_)),
-      sinks_(std::move(other.sinks_)),
-      level_(other.level_.load(std::memory_order_relaxed)),
-      flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
-      custom_err_handler_(std::move(other.custom_err_handler_)) {}
+    : name_(std::move(other.name_))
+    , sinks_(std::move(other.sinks_))
+    , level_(other.level_.load(std::memory_order_relaxed))
+    , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
+    , custom_err_handler_(std::move(other.custom_err_handler_)) {}
 
 void logger::set_level(level level) { level_.store(level); }
 
@@ -103,10 +103,11 @@ void logger::err_handler_(const std::string &msg) {
         char date_buf[64];
         std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
 #if defined(USING_R) && defined(R_R_H) // if in R environment
-        REprintf("[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf, name().c_str(), msg.c_str());
+        REprintf("[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf, name().c_str(),
+                 msg.c_str());
 #else
-        std::fprintf(stderr, "[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf, name().c_str(),
-                     msg.c_str());
+        std::fprintf(stderr, "[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf,
+                     name().c_str(), msg.c_str());
 #endif
     }
 }

@@ -26,7 +26,9 @@ thread_pool::thread_pool(size_t q_max_items,
     }
 }
 
-thread_pool::thread_pool(size_t q_max_items, size_t threads_n, std::function<void()> on_thread_start)
+thread_pool::thread_pool(size_t q_max_items,
+                         size_t threads_n,
+                         std::function<void()> on_thread_start)
     : thread_pool(q_max_items, threads_n, on_thread_start, [] {}) {}
 
 thread_pool::thread_pool(size_t q_max_items, size_t threads_n)

@@ -32,7 +32,8 @@ using default_factory = synchronous_factory;
 //   spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
 template <typename Sink, typename... SinkArgs>
 inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&...sink_args) {
-    return default_factory::create<Sink>(std::move(logger_name), std::forward<SinkArgs>(sink_args)...);
+    return default_factory::create<Sink>(std::move(logger_name),
+                                         std::forward<SinkArgs>(sink_args)...);
 }
 
 // Initialize and register a logger,
@@ -55,7 +56,8 @@ SPDLOG_API void set_formatter(std::unique_ptr<spdlog::formatter> formatter);
 
 // Set global format string.
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
-SPDLOG_API void set_pattern(std::string pattern, pattern_time_type time_type = pattern_time_type::local);
+SPDLOG_API void set_pattern(std::string pattern,
+                            pattern_time_type time_type = pattern_time_type::local);
 
 // Get global logging level
 SPDLOG_API level get_level();
@@ -181,17 +183,29 @@ inline void critical(loc_with_fmt fmt, Args &&...args) {
 }
 
 // log functions with no format string, just string
-inline void trace(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::trace, msg); }
+inline void trace(string_view_t msg, source_loc loc = source_loc::current()) {
+    log(loc, level::trace, msg);
+}
 
-inline void debug(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::debug, msg); }
+inline void debug(string_view_t msg, source_loc loc = source_loc::current()) {
+    log(loc, level::debug, msg);
+}
 
-inline void info(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::info, msg); }
+inline void info(string_view_t msg, source_loc loc = source_loc::current()) {
+    log(loc, level::info, msg);
+}
 
-inline void warn(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, spdlog::level::warn, msg); }
+inline void warn(string_view_t msg, source_loc loc = source_loc::current()) {
+    log(loc, spdlog::level::warn, msg);
+}
 
-inline void error(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::err, msg); }
+inline void error(string_view_t msg, source_loc loc = source_loc::current()) {
+    log(loc, level::err, msg);
+}
 
-inline void critical(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::critical, msg); }
+inline void critical(string_view_t msg, source_loc loc = source_loc::current()) {
+    log(loc, level::critical, msg);
+}
 #else
 template <typename... Args>
 inline void trace(format_string_t<Args...> fmt, Args &&...args) {
@@ -256,11 +270,13 @@ inline void critical(string_view_t msg) { log(level::critical, msg); }
     #define SPDLOG_LOGGER_CALL(logger, level, ...) \
         (logger)->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__)
 #else
-    #define SPDLOG_LOGGER_CALL(logger, level, ...) (logger)->log(spdlog::source_loc{}, level, __VA_ARGS__)
+    #define SPDLOG_LOGGER_CALL(logger, level, ...) \
+        (logger)->log(spdlog::source_loc{}, level, __VA_ARGS__)
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
-    #define SPDLOG_LOGGER_TRACE(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__)
+    #define SPDLOG_LOGGER_TRACE(logger, ...) \
+        SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__)
     #define SPDLOG_TRACE(...) SPDLOG_LOGGER_TRACE(spdlog::default_logger_raw(), __VA_ARGS__)
 #else
     #define SPDLOG_LOGGER_TRACE(logger, ...) (void)0
@@ -268,7 +284,8 @@ inline void critical(string_view_t msg) { log(level::critical, msg); }
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_DEBUG
-    #define SPDLOG_LOGGER_DEBUG(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::debug, __VA_ARGS__)
+    #define SPDLOG_LOGGER_DEBUG(logger, ...) \
+        SPDLOG_LOGGER_CALL(logger, spdlog::level::debug, __VA_ARGS__)
     #define SPDLOG_DEBUG(...) SPDLOG_LOGGER_DEBUG(spdlog::default_logger_raw(), __VA_ARGS__)
 #else
     #define SPDLOG_LOGGER_DEBUG(logger, ...) (void)0
@@ -276,7 +293,8 @@ inline void critical(string_view_t msg) { log(level::critical, msg); }
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_INFO
-    #define SPDLOG_LOGGER_INFO(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::info, __VA_ARGS__)
+    #define SPDLOG_LOGGER_INFO(logger, ...) \
+        SPDLOG_LOGGER_CALL(logger, spdlog::level::info, __VA_ARGS__)
     #define SPDLOG_INFO(...) SPDLOG_LOGGER_INFO(spdlog::default_logger_raw(), __VA_ARGS__)
 #else
     #define SPDLOG_LOGGER_INFO(logger, ...) (void)0
@@ -284,7 +302,8 @@ inline void critical(string_view_t msg) { log(level::critical, msg); }
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_WARN
-    #define SPDLOG_LOGGER_WARN(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::warn, __VA_ARGS__)
+    #define SPDLOG_LOGGER_WARN(logger, ...) \
+        SPDLOG_LOGGER_CALL(logger, spdlog::level::warn, __VA_ARGS__)
     #define SPDLOG_WARN(...) SPDLOG_LOGGER_WARN(spdlog::default_logger_raw(), __VA_ARGS__)
 #else
     #define SPDLOG_LOGGER_WARN(logger, ...) (void)0
@@ -292,7 +311,8 @@ inline void critical(string_view_t msg) { log(level::critical, msg); }
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_ERROR
-    #define SPDLOG_LOGGER_ERROR(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::err, __VA_ARGS__)
+    #define SPDLOG_LOGGER_ERROR(logger, ...) \
+        SPDLOG_LOGGER_CALL(logger, spdlog::level::err, __VA_ARGS__)
     #define SPDLOG_ERROR(...) SPDLOG_LOGGER_ERROR(spdlog::default_logger_raw(), __VA_ARGS__)
 #else
     #define SPDLOG_LOGGER_ERROR(logger, ...) (void)0
@@ -300,7 +320,8 @@ inline void critical(string_view_t msg) { log(level::critical, msg); }
 #endif
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_CRITICAL
-    #define SPDLOG_LOGGER_CRITICAL(logger, ...) SPDLOG_LOGGER_CALL(logger, spdlog::level::critical, __VA_ARGS__)
+    #define SPDLOG_LOGGER_CRITICAL(logger, ...) \
+        SPDLOG_LOGGER_CALL(logger, spdlog::level::critical, __VA_ARGS__)
     #define SPDLOG_CRITICAL(...) SPDLOG_LOGGER_CRITICAL(spdlog::default_logger_raw(), __VA_ARGS__)
 #else
     #define SPDLOG_LOGGER_CRITICAL(logger, ...) (void)0

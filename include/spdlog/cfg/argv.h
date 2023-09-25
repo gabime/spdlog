@@ -32,7 +32,9 @@ inline void load_argv_levels(int argc, const char **argv) {
     }
 }
 
-inline void load_argv_levels(int argc, char **argv) { load_argv_levels(argc, const_cast<const char **>(argv)); }
+inline void load_argv_levels(int argc, char **argv) {
+    load_argv_levels(argc, const_cast<const char **>(argv));
+}
 
 } // namespace cfg
 } // namespace spdlog

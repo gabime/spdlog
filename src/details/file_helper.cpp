@@ -52,7 +52,8 @@ void file_helper::open(const filename_t &fname, bool truncate) {
         details::os::sleep_for_millis(open_interval_);
     }
 
-    throw_spdlog_ex("Failed opening file " + os::filename_to_str(filename_) + " for writing", errno);
+    throw_spdlog_ex("Failed opening file " + os::filename_to_str(filename_) + " for writing",
+                    errno);
 }
 
 void file_helper::reopen(bool truncate) {

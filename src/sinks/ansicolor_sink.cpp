@@ -11,9 +11,9 @@ namespace sinks {
 
 template <typename ConsoleMutex>
 ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, color_mode mode)
-    : target_file_(target_file),
-      mutex_(ConsoleMutex::mutex()),
-      formatter_(std::make_unique<spdlog::pattern_formatter>())
+    : target_file_(target_file)
+    , mutex_(ConsoleMutex::mutex())
+    , formatter_(std::make_unique<spdlog::pattern_formatter>())
 
 {
     set_color_mode(mode);
@@ -70,7 +70,8 @@ void ansicolor_sink<ConsoleMutex>::set_pattern(const std::string &pattern) {
 }
 
 template <typename ConsoleMutex>
-void ansicolor_sink<ConsoleMutex>::set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) {
+void ansicolor_sink<ConsoleMutex>::set_formatter(
+    std::unique_ptr<spdlog::formatter> sink_formatter) {
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::move(sink_formatter);
 }
@@ -87,7 +88,8 @@ void ansicolor_sink<ConsoleMutex>::set_color_mode(color_mode mode) {
         should_do_colors_ = true;
         return;
     case color_mode::automatic:
-        should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
+        should_do_colors_ =
+            details::os::in_terminal(target_file_) && details::os::is_color_terminal();
         return;
     case color_mode::never:
         should_do_colors_ = false;
@@ -103,7 +105,9 @@ void ansicolor_sink<ConsoleMutex>::print_ccode_(const string_view_t &color_code)
 }
 
 template <typename ConsoleMutex>
-void ansicolor_sink<ConsoleMutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end) {
+void ansicolor_sink<ConsoleMutex>::print_range_(const memory_buf_t &formatted,
+                                                size_t start,
+                                                size_t end) {
     fwrite(formatted.data() + start, sizeof(char), end - start, target_file_);
 }
 

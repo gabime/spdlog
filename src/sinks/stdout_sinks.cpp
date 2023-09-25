@@ -24,9 +24,9 @@ namespace sinks {
 
 template <typename ConsoleMutex>
 stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
-    : mutex_(ConsoleMutex::mutex()),
-      file_(file),
-      formatter_(std::make_unique<spdlog::pattern_formatter>()) {
+    : mutex_(ConsoleMutex::mutex())
+    , file_(file)
+    , formatter_(std::make_unique<spdlog::pattern_formatter>()) {
 #ifdef _WIN32
     // get windows handle from the FILE* object
 
@@ -54,7 +54,8 @@ void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &msg) {
     DWORD bytes_written = 0;
     bool ok = ::WriteFile(handle_, formatted.data(), size, &bytes_written, nullptr) != 0;
     if (!ok) {
-        throw_spdlog_ex("stdout_sink_base: WriteFile() failed. GetLastError(): " + std::to_string(::GetLastError()));
+        throw_spdlog_ex("stdout_sink_base: WriteFile() failed. GetLastError(): " +
+                        std::to_string(::GetLastError()));
     }
 #else
     std::lock_guard<mutex_t> lock(mutex_);
@@ -78,7 +79,8 @@ void stdout_sink_base<ConsoleMutex>::set_pattern(const std::string &pattern) {
 }
 
 template <typename ConsoleMutex>
-void stdout_sink_base<ConsoleMutex>::set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) {
+void stdout_sink_base<ConsoleMutex>::set_formatter(
+    std::unique_ptr<spdlog::formatter> sink_formatter) {
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::move(sink_formatter);
 }

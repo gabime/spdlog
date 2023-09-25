@@ -7,7 +7,8 @@
 //
 // RAII over the owned thread:
 //    creates the thread on construction.
-//    stops and joins the thread on destruction (if the thread is executing a callback, wait for it to finish first).
+//    stops and joins the thread on destruction (if the thread is executing a callback, wait for it
+//    to finish first).
 
 #include <chrono>
 #include <condition_variable>
@@ -23,7 +24,8 @@ namespace details {
 class SPDLOG_API periodic_worker {
 public:
     template <typename Rep, typename Period>
-    periodic_worker(const std::function<void()> &callback_fun, std::chrono::duration<Rep, Period> interval) {
+    periodic_worker(const std::function<void()> &callback_fun,
+                    std::chrono::duration<Rep, Period> interval) {
         active_ = (interval > std::chrono::duration<Rep, Period>::zero());
         if (!active_) {
             return;

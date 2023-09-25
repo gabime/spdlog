@@ -1,9 +1,8 @@
 #include "includes.h"
 #include "test_sink.h"
 
-template<class T>
-std::string log_info(const T &what, spdlog::level logger_level = spdlog::level::info)
-{
+template <class T>
+std::string log_info(const T &what, spdlog::level logger_level = spdlog::level::info) {
 
     std::ostringstream oss;
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
@@ -16,8 +15,7 @@ std::string log_info(const T &what, spdlog::level logger_level = spdlog::level::
     return oss.str().substr(0, oss.str().length() - strlen(spdlog::details::os::default_eol));
 }
 
-TEST_CASE("basic_logging ", "[basic_logging]")
-{
+TEST_CASE("basic_logging ", "[basic_logging]") {
     // const char
     REQUIRE(log_info("Hello") == "Hello");
     REQUIRE(log_info("").empty());
@@ -27,8 +25,7 @@ TEST_CASE("basic_logging ", "[basic_logging]")
     REQUIRE(log_info(std::string()).empty());
 }
 
-TEST_CASE("log_levels", "[log_levels]")
-{
+TEST_CASE("log_levels", "[log_levels]") {
     REQUIRE(log_info("Hello", spdlog::level::err).empty());
     REQUIRE(log_info("Hello", spdlog::level::critical).empty());
     REQUIRE(log_info("Hello", spdlog::level::info) == "Hello");
@@ -36,8 +33,7 @@ TEST_CASE("log_levels", "[log_levels]")
     REQUIRE(log_info("Hello", spdlog::level::trace) == "Hello");
 }
 
-TEST_CASE("level_to_string_view", "[convert_to_string_view]")
-{
+TEST_CASE("level_to_string_view", "[convert_to_string_view]") {
     REQUIRE(spdlog::to_string_view(spdlog::level::trace) == "trace");
     REQUIRE(spdlog::to_string_view(spdlog::level::debug) == "debug");
     REQUIRE(spdlog::to_string_view(spdlog::level::info) == "info");
@@ -47,8 +43,7 @@ TEST_CASE("level_to_string_view", "[convert_to_string_view]")
     REQUIRE(spdlog::to_string_view(spdlog::level::off) == "off");
 }
 
-TEST_CASE("to_short_c_str", "[convert_to_short_c_str]")
-{
+TEST_CASE("to_short_c_str", "[convert_to_short_c_str]") {
     REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::trace)) == "T");
     REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::debug)) == "D");
     REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::info)) == "I");
@@ -58,8 +53,7 @@ TEST_CASE("to_short_c_str", "[convert_to_short_c_str]")
     REQUIRE(std::string(spdlog::to_short_c_str(spdlog::level::off)) == "O");
 }
 
-TEST_CASE("to_level_enum", "[convert_to_level_enum]")
-{
+TEST_CASE("to_level_enum", "[convert_to_level_enum]") {
     REQUIRE(spdlog::level_from_str("trace") == spdlog::level::trace);
     REQUIRE(spdlog::level_from_str("debug") == spdlog::level::debug);
     REQUIRE(spdlog::level_from_str("info") == spdlog::level::info);
@@ -71,8 +65,7 @@ TEST_CASE("to_level_enum", "[convert_to_level_enum]")
     REQUIRE(spdlog::level_from_str("null") == spdlog::level::off);
 }
 
-TEST_CASE("periodic flush", "[periodic_flush]")
-{
+TEST_CASE("periodic flush", "[periodic_flush]") {
     using spdlog::sinks::test_sink_mt;
     auto logger = spdlog::create<test_sink_mt>("periodic_flush");
     auto test_sink = std::static_pointer_cast<test_sink_mt>(logger->sinks()[0]);
@@ -84,8 +77,7 @@ TEST_CASE("periodic flush", "[periodic_flush]")
     spdlog::drop_all();
 }
 
-TEST_CASE("clone-logger", "[clone]")
-{
+TEST_CASE("clone-logger", "[clone]") {
     using spdlog::sinks::test_sink_mt;
     auto test_sink = std::make_shared<test_sink_mt>();
     auto logger = std::make_shared<spdlog::logger>("orig", test_sink);
@@ -106,8 +98,7 @@ TEST_CASE("clone-logger", "[clone]")
     spdlog::drop_all();
 }
 
-TEST_CASE("clone async", "[clone]")
-{
+TEST_CASE("clone async", "[clone]") {
     using spdlog::sinks::test_sink_st;
     spdlog::init_thread_pool(4, 1);
     auto test_sink = std::make_shared<test_sink_st>();
@@ -132,8 +123,7 @@ TEST_CASE("clone async", "[clone]")
     spdlog::drop_all();
 }
 
-TEST_CASE("default logger API", "[default logger]")
-{
+TEST_CASE("default logger API", "[default logger]") {
     std::ostringstream oss;
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
 

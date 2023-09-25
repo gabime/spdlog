@@ -22,10 +22,10 @@ rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
                                               std::size_t max_files,
                                               bool rotate_on_open,
                                               const file_event_handlers &event_handlers)
-    : base_filename_(std::move(base_filename)),
-      max_size_(max_size),
-      max_files_(max_files),
-      file_helper_{event_handlers} {
+    : base_filename_(std::move(base_filename))
+    , max_size_(max_size)
+    , max_files_(max_files)
+    , file_helper_{event_handlers} {
     if (max_size == 0) {
         throw_spdlog_ex("rotating sink constructor: max_size arg cannot be zero");
     }
@@ -109,10 +109,11 @@ void rotating_file_sink<Mutex>::rotate_() {
             // rates can cause the rename to fail with permission denied (because of antivirus?).
             details::os::sleep_for_millis(100);
             if (!rename_file_(src, target)) {
-                file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
+                file_helper_.reopen(
+                    true); // truncate the log file anyway to prevent it to grow beyond its limit!
                 current_size_ = 0;
-                throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " +
-                                    filename_to_str(target),
+                throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) +
+                                    " to " + filename_to_str(target),
                                 errno);
             }
         }
@@ -123,7 +124,8 @@ void rotating_file_sink<Mutex>::rotate_() {
 // delete the target if exists, and rename the src file  to target
 // return true on success, false otherwise.
 template <typename Mutex>
-bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src_filename, const filename_t &target_filename) {
+bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src_filename,
+                                             const filename_t &target_filename) {
     // try to delete the target file in case it already exists.
     (void)details::os::remove(target_filename);
     return details::os::rename(src_filename, target_filename) == 0;

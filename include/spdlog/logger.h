@@ -22,17 +22,18 @@
 #include <vector>
 
 #ifndef SPDLOG_NO_EXCEPTIONS
-    #define SPDLOG_LOGGER_CATCH(location)                                                                  \
-        catch (const std::exception &ex) {                                                                 \
-            if (!location.empty()) {                                                                       \
-                err_handler_(fmt_lib::format("{} [{}({})]", ex.what(), location.filename, location.line)); \
-            } else {                                                                                       \
-                err_handler_(ex.what());                                                                   \
-            }                                                                                              \
-        }                                                                                                  \
-        catch (...) {                                                                                      \
-            err_handler_("Rethrowing unknown exception in logger");                                        \
-            throw;                                                                                         \
+    #define SPDLOG_LOGGER_CATCH(location)                                                         \
+        catch (const std::exception &ex) {                                                        \
+            if (!location.empty()) {                                                              \
+                err_handler_(                                                                     \
+                    fmt_lib::format("{} [{}({})]", ex.what(), location.filename, location.line)); \
+            } else {                                                                              \
+                err_handler_(ex.what());                                                          \
+            }                                                                                     \
+        }                                                                                         \
+        catch (...) {                                                                             \
+            err_handler_("Rethrowing unknown exception in logger");                               \
+            throw;                                                                                \
         }
 #else
     #define SPDLOG_LOGGER_CATCH(location)
@@ -49,8 +50,8 @@ public:
     // Logger with range on sinks
     template <typename It>
     logger(std::string name, It begin, It end)
-        : name_(std::move(name)),
-          sinks_(begin, end) {}
+        : name_(std::move(name))
+        , sinks_(begin, end) {}
 
     // Logger with single sink
     logger(std::string name, sink_ptr single_sink)
@@ -76,7 +77,8 @@ public:
     template <typename... Args>
     void log(level lvl, format_string_t<Args...> fmt, Args &&...args) {
         if (should_log(lvl)) {
-            log_with_format_(source_loc{}, lvl, details::to_string_view(fmt), std::forward<Args>(args)...);
+            log_with_format_(source_loc{}, lvl, details::to_string_view(fmt),
+                             std::forward<Args>(args)...);
         }
     }
 
@@ -140,17 +142,29 @@ public:
 
     // log functions with no format string, just string
 
-    void trace(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::trace, msg); }
+    void trace(string_view_t msg, source_loc loc = source_loc::current()) {
+        log(loc, level::trace, msg);
+    }
 
-    void debug(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::debug, msg); }
+    void debug(string_view_t msg, source_loc loc = source_loc::current()) {
+        log(loc, level::debug, msg);
+    }
 
-    void info(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::info, msg); }
+    void info(string_view_t msg, source_loc loc = source_loc::current()) {
+        log(loc, level::info, msg);
+    }
 
-    void warn(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::warn, msg); }
+    void warn(string_view_t msg, source_loc loc = source_loc::current()) {
+        log(loc, level::warn, msg);
+    }
 
-    void error(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::err, msg); }
+    void error(string_view_t msg, source_loc loc = source_loc::current()) {
+        log(loc, level::err, msg);
+    }
 
-    void critical(string_view_t msg, source_loc loc = source_loc::current()) { log(loc, level::critical, msg); }
+    void critical(string_view_t msg, source_loc loc = source_loc::current()) {
+        log(loc, level::critical, msg);
+    }
 #else
     template <typename... Args>
     void trace(format_string_t<Args...> fmt, Args &&...args) {
@@ -197,7 +211,9 @@ public:
 #endif
 
     // return true if logging is enabled for the given level.
-    [[nodiscard]] bool should_log(level msg_level) const { return msg_level >= level_.load(std::memory_order_relaxed); }
+    [[nodiscard]] bool should_log(level msg_level) const {
+        return msg_level >= level_.load(std::memory_order_relaxed);
+    }
 
     // set the level of logging
     void set_level(level level);
@@ -241,7 +257,8 @@ protected:
     spdlog::atomic_level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
 
-    // common implementation for after templated public api has been resolved to format string and args
+    // common implementation for after templated public api has been resolved to format string and
+    // args
     template <typename... Args>
     void log_with_format_(source_loc loc, level lvl, string_view_t fmt, Args &&...args) {
         assert(should_log(lvl));

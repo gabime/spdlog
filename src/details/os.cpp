@@ -73,8 +73,8 @@ spdlog::log_clock::time_point now() noexcept {
     timespec ts;
     ::clock_gettime(CLOCK_REALTIME_COARSE, &ts);
     return std::chrono::time_point<log_clock, typename log_clock::duration>(
-        std::chrono::duration_cast<typename log_clock::duration>(std::chrono::seconds(ts.tv_sec) +
-                                                                 std::chrono::nanoseconds(ts.tv_nsec)));
+        std::chrono::duration_cast<typename log_clock::duration>(
+            std::chrono::seconds(ts.tv_sec) + std::chrono::nanoseconds(ts.tv_nsec)));
 
 #else
     return log_clock::now();
@@ -134,7 +134,8 @@ bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode) {
 #else // unix
     #if defined(SPDLOG_PREVENT_CHILD_FD)
     const int mode_flag = mode == SPDLOG_FILENAME_T("ab") ? O_APPEND : O_TRUNC;
-    const int fd = ::open((filename.c_str()), O_CREAT | O_WRONLY | O_CLOEXEC | mode_flag, mode_t(0644));
+    const int fd =
+        ::open((filename.c_str()), O_CREAT | O_WRONLY | O_CLOEXEC | mode_flag, mode_t(0644));
     if (fd == -1) {
         return true;
     }
@@ -158,7 +159,9 @@ int remove(const filename_t &filename) noexcept {
 #endif
 }
 
-int remove_if_exists(const filename_t &filename) noexcept { return path_exists(filename) ? remove(filename) : 0; }
+int remove_if_exists(const filename_t &filename) noexcept {
+    return path_exists(filename) ? remove(filename) : 0;
+}
 
 int rename(const filename_t &filename1, const filename_t &filename2) noexcept {
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
@@ -261,7 +264,8 @@ int utc_minutes_offset(const std::tm &tm) {
     return offset;
 #else
 
-    #if defined(sun) || defined(__sun) || defined(_AIX) || (defined(__NEWLIB__) && !defined(__TM_GMTOFF)) || \
+    #if defined(sun) || defined(__sun) || defined(_AIX) || \
+        (defined(__NEWLIB__) && !defined(__TM_GMTOFF)) ||  \
         (!defined(_BSD_SOURCE) && !defined(_GNU_SOURCE))
     // 'tm_gmtoff' field is BSD extension and it's missing on SunOS/Solaris
     struct helper {
@@ -396,17 +400,18 @@ bool is_color_terminal() noexcept {
             return true;
         }
 
-        static constexpr std::array<const char *, 16> terms = {{"ansi", "color", "console", "cygwin", "gnome",
-                                                                "konsole", "kterm", "linux", "msys", "putty", "rxvt",
-                                                                "screen", "vt100", "xterm", "alacritty", "vt102"}};
+        static constexpr std::array<const char *, 16> terms = {
+            {"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm", "linux", "msys",
+             "putty", "rxvt", "screen", "vt100", "xterm", "alacritty", "vt102"}};
 
         const char *env_term_p = std::getenv("TERM");
         if (env_term_p == nullptr) {
             return false;
         }
 
-        return std::any_of(terms.begin(), terms.end(),
-                           [&](const char *term) { return std::strstr(env_term_p, term) != nullptr; });
+        return std::any_of(terms.begin(), terms.end(), [&](const char *term) {
+            return std::strstr(env_term_p, term) != nullptr;
+        });
     }();
 
     return result;
@@ -438,12 +443,14 @@ void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target) {
 
     int result_size = static_cast<int>(target.capacity());
     if ((wstr_size + 1) * 2 > result_size) {
-        result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, NULL, 0, NULL, NULL);
+        result_size =
+            ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, NULL, 0, NULL, NULL);
     }
 
     if (result_size > 0) {
         target.resize(result_size);
-        result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, target.data(), result_size, NULL, NULL);
+        result_size = ::WideCharToMultiByte(CP_UTF8, 0, wstr.data(), wstr_size, target.data(),
+                                            result_size, NULL, NULL);
 
         if (result_size > 0) {
             target.resize(result_size);
@@ -451,7 +458,8 @@ void wstr_to_utf8buf(wstring_view_t wstr, memory_buf_t &target) {
         }
     }
 
-    throw_spdlog_ex(fmt_lib::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
+    throw_spdlog_ex(
+        fmt_lib::format("WideCharToMultiByte failed. Last error: {}", ::GetLastError()));
 }
 
 void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
@@ -466,19 +474,21 @@ void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
     }
 
     // find the size to allocate for the result buffer
-    int result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, NULL, 0);
+    int result_size =
+        ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, NULL, 0);
 
     if (result_size > 0) {
         target.resize(result_size);
-        result_size =
-            ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, target.data(), result_size);
+        result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size,
+                                            target.data(), result_size);
         if (result_size > 0) {
             assert(result_size == target.size());
             return;
         }
     }
 
-    throw_spdlog_ex(fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
+    throw_spdlog_ex(
+        fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
 }
 #endif // defined(SPDLOG_WCHAR_FILENAMES) && defined(_WIN32)
 

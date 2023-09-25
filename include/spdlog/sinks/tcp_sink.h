@@ -22,7 +22,8 @@
 // Simple tcp client sink
 // Connects to remote address and send the formatted log.
 // Will attempt to reconnect if connection drops.
-// If more complicated behaviour is needed (i.e get responses), you can inherit it and override the sink_it_ method.
+// If more complicated behaviour is needed (i.e get responses), you can inherit it and override the
+// sink_it_ method.
 
 namespace spdlog {
 namespace sinks {
@@ -33,8 +34,8 @@ struct tcp_sink_config {
     bool lazy_connect = false; // if true connect on first log call instead of on construction
 
     tcp_sink_config(std::string host, int port)
-        : server_host{std::move(host)},
-          server_port{port} {}
+        : server_host{std::move(host)}
+        , server_port{port} {}
 };
 
 template <typename Mutex>

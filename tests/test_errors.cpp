@@ -1,5 +1,6 @@
 /*
- * This content is released under the MIT License as specified in https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
+ * This content is released under the MIT License as specified in
+ * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
  */
 #include "includes.h"
 
@@ -8,25 +9,18 @@
 #define SIMPLE_LOG "test_logs/simple_log.txt"
 #define SIMPLE_ASYNC_LOG "test_logs/simple_async_log.txt"
 
-class failing_sink : public spdlog::sinks::base_sink<std::mutex>
-{
+class failing_sink : public spdlog::sinks::base_sink<std::mutex> {
 protected:
-    void sink_it_(const spdlog::details::log_msg &) final
-    {
+    void sink_it_(const spdlog::details::log_msg &) final {
         throw std::runtime_error("some error happened during log");
     }
 
-    void flush_() final
-    {
-        throw std::runtime_error("some error happened during flush");
-    }
+    void flush_() final { throw std::runtime_error("some error happened during flush"); }
 };
-struct custom_ex
-{};
+struct custom_ex {};
 
 #if !defined(SPDLOG_USE_STD_FORMAT) // std formt doesn't fully support runtime format strings
-TEST_CASE("default_error_handler", "[errors]")
-{
+TEST_CASE("default_error_handler", "[errors]") {
     prepare_logdir();
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
 
@@ -40,8 +34,7 @@ TEST_CASE("default_error_handler", "[errors]")
     REQUIRE(count_lines(SIMPLE_LOG) == 1);
 }
 
-TEST_CASE("custom_error_handler", "[errors]")
-{
+TEST_CASE("custom_error_handler", "[errors]") {
     prepare_logdir();
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename, true);
@@ -55,16 +48,14 @@ TEST_CASE("custom_error_handler", "[errors]")
 }
 #endif
 
-TEST_CASE("default_error_handler2", "[errors]")
-{
+TEST_CASE("default_error_handler2", "[errors]") {
     spdlog::drop_all();
     auto logger = spdlog::create<failing_sink>("failed_logger");
     logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
     REQUIRE_THROWS_AS(logger->info("Some message"), custom_ex);
 }
 
-TEST_CASE("flush_error_handler", "[errors]")
-{
+TEST_CASE("flush_error_handler", "[errors]") {
     spdlog::drop_all();
     auto logger = spdlog::create<failing_sink>("failed_logger");
     logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
@@ -72,19 +63,18 @@ TEST_CASE("flush_error_handler", "[errors]")
 }
 
 #if !defined(SPDLOG_USE_STD_FORMAT) // std formt doesn't fully support runtime format strings
-TEST_CASE("async_error_handler", "[errors]")
-{
+TEST_CASE("async_error_handler", "[errors]") {
     prepare_logdir();
     std::string err_msg("log failed with some msg");
 
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_ASYNC_LOG);
     {
         spdlog::init_thread_pool(128, 1);
-        auto logger = spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("logger", filename, true);
+        auto logger =
+            spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("logger", filename, true);
         logger->set_error_handler([=](const std::string &) {
             std::ofstream ofs("test_logs/custom_err.txt");
-            if (!ofs)
-            {
+            if (!ofs) {
                 throw std::runtime_error("Failed open test_logs/custom_err.txt");
             }
             ofs << err_msg;
@@ -101,8 +91,7 @@ TEST_CASE("async_error_handler", "[errors]")
 #endif
 
 // Make sure async error handler is executed
-TEST_CASE("async_error_handler2", "[errors]")
-{
+TEST_CASE("async_error_handler2", "[errors]") {
     prepare_logdir();
     std::string err_msg("This is async handler error message");
     {

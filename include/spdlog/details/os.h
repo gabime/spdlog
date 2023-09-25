@@ -41,7 +41,8 @@ constexpr static const char *default_eol = SPDLOG_EOL;
 #endif
 
 constexpr static const char folder_seps[] = SPDLOG_FOLDER_SEPS;
-constexpr static const filename_t::value_type folder_seps_filename[] = SPDLOG_FILENAME_T(SPDLOG_FOLDER_SEPS);
+constexpr static const filename_t::value_type folder_seps_filename[] =
+    SPDLOG_FILENAME_T(SPDLOG_FOLDER_SEPS);
 
 // fopen_s on non windows for writing
 SPDLOG_API bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode);
