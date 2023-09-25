@@ -259,6 +259,22 @@ SPDLOG_INLINE void registry::register_logger_(std::shared_ptr<logger> new_logger
     auto logger_name = new_logger->name();
     throw_if_exists_(logger_name);
     loggers_[logger_name] = std::move(new_logger);
+
+    const auto& logger = loggers_[logger_name];
+    for (const auto& on_registration_callback : on_registration_callbacks_) {
+        on_registration_callback(logger);
+    }
+}
+
+SPDLOG_INLINE void registry::add_on_registration_callback(
+    const std::function<void(std::shared_ptr<logger>)>& callback) {
+    std::lock_guard<std::mutex> lock(logger_map_mutex_);
+    on_registration_callbacks_.push_back(callback);
+}
+
+SPDLOG_INLINE void registry::drop_all_on_registration_callbacks() {
+    std::lock_guard<std::mutex> lock(logger_map_mutex_);
+    on_registration_callbacks_.clear();
 }
 
 }  // namespace details

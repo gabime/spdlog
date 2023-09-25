@@ -110,3 +110,30 @@ TEST_CASE("disable automatic registration", "[registry]") {
     spdlog::set_level(spdlog::level::info);
     spdlog::set_automatic_registration(true);
 }
+
+TEST_CASE("add_on_registration_callback", "[registry]") {
+    std::vector<std::string> registered_logger_names;
+    auto on_registration_callback = [&](std::shared_ptr<spdlog::logger> logger)
+    {
+        registered_logger_names.push_back(logger->name());
+    };
+    spdlog::add_on_registration_callback(on_registration_callback);
+
+    auto captured_registration_logger1 = spdlog::create<spdlog::sinks::stdout_color_sink_mt>("captured_registration_logger1");
+
+    spdlog::set_automatic_registration(false);
+    auto non_captured_registration_logger1 = spdlog::create<spdlog::sinks::stdout_color_sink_mt>("non_captured_registration_logger1");
+
+    auto captured_registration_logger2 = spdlog::create<spdlog::sinks::stdout_color_sink_mt>("captured_registration_logger2");
+    spdlog::register_logger(captured_registration_logger2);
+
+    spdlog::drop_all_on_registration_callbacks();
+    auto non_captured_registration_logger2 = spdlog::create<spdlog::sinks::stdout_color_sink_mt>("non_captured_registration_logger2");
+    spdlog::register_logger(non_captured_registration_logger2);
+
+    // Check that only the automatically registered logged and the manually registered logger were captured
+    REQUIRE(registered_logger_names == std::vector<std::string>({"captured_registration_logger1", "captured_registration_logger2"}));
+
+    spdlog::set_level(spdlog::level::info);
+    spdlog::set_automatic_registration(true);
+}
