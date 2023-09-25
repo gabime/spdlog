@@ -112,7 +112,7 @@ TEST_CASE("disable automatic registration", "[registry]") {
 }
 
 TEST_CASE("add_on_registration_callback", "[registry]") {
-    std::list<std::string> registered_logger_names;
+    std::vector<std::string> registered_logger_names;
     auto on_registration_callback = [&](const std::shared_ptr<spdlog::logger>& logger)
     {
         registered_logger_names.push_back(logger->name());
@@ -132,7 +132,7 @@ TEST_CASE("add_on_registration_callback", "[registry]") {
     spdlog::register_logger(non_captured_registration_logger2);
 
     // Check that only the automatically registered logged and the manually registered logger were captured
-    REQUIRE(registered_logger_names == std::list<std::string>({"captured_registration_logger1", "captured_registration_logger2"}));
+    REQUIRE(registered_logger_names == std::vector<std::string>({"captured_registration_logger1", "captured_registration_logger2"}));
 
     spdlog::set_level(spdlog::level::info);
     spdlog::set_automatic_registration(true);
