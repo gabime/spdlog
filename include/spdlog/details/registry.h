@@ -92,7 +92,7 @@ public:
 
     void apply_logger_env_levels(std::shared_ptr<logger> new_logger);
 
-    void add_on_registration_callback(const std::function<void(const std::shared_ptr<logger>&)>& callback);
+    void add_on_registration_callback(const std::function<void(std::shared_ptr<logger>)>& callback);
 
     void drop_all_on_registration_callbacks();
 
@@ -116,7 +116,7 @@ private:
     std::shared_ptr<logger> default_logger_;
     bool automatic_registration_ = true;
     size_t backtrace_n_messages_ = 0;
-    std::vector<std::function<void(const std::shared_ptr<logger>&)>> on_registration_callbacks_;
+    std::vector<std::function<void(std::shared_ptr<logger>)>> on_registration_callbacks_;
 };
 
 }  // namespace details

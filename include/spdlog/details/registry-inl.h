@@ -267,7 +267,7 @@ SPDLOG_INLINE void registry::register_logger_(std::shared_ptr<logger> new_logger
 }
 
 SPDLOG_INLINE void registry::add_on_registration_callback(
-    const std::function<void(const std::shared_ptr<logger>&)>& callback) {
+    const std::function<void(std::shared_ptr<logger>)>& callback) {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     on_registration_callbacks_.push_back(callback);
 }

@@ -113,7 +113,7 @@ TEST_CASE("disable automatic registration", "[registry]") {
 
 TEST_CASE("add_on_registration_callback", "[registry]") {
     std::vector<std::string> registered_logger_names;
-    auto on_registration_callback = [&](const std::shared_ptr<spdlog::logger>& logger)
+    auto on_registration_callback = [&](std::shared_ptr<spdlog::logger> logger)
     {
         registered_logger_names.push_back(logger->name());
     };
