@@ -55,7 +55,7 @@ void logger::flush() { flush_(); }
 
 void logger::flush_on(level level) { flush_level_.store(level); }
 
-level logger::flush_level() const { return static_cast<level>(flush_level_.load(std::memory_order_relaxed)); }
+level logger::flush_level() const { return flush_level_.load(std::memory_order_relaxed); }
 
 // sinks
 const std::vector<sink_ptr> &logger::sinks() const { return sinks_; }
