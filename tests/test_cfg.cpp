@@ -9,8 +9,7 @@ using spdlog::cfg::load_argv_levels;
 using spdlog::cfg::load_env_levels;
 using spdlog::sinks::test_sink_st;
 
-TEST_CASE("env", "[cfg]")
-{
+TEST_CASE("env", "[cfg]") {
     spdlog::drop("l1");
     auto l1 = spdlog::create<test_sink_st>("l1");
 #ifdef CATCH_PLATFORM_WINDOWS
@@ -24,8 +23,7 @@ TEST_CASE("env", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
 }
 
-TEST_CASE("argv1", "[cfg]")
-{
+TEST_CASE("argv1", "[cfg]") {
     spdlog::drop("l1");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=warn"};
     load_argv_levels(2, argv);
@@ -34,8 +32,7 @@ TEST_CASE("argv1", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
 }
 
-TEST_CASE("argv2", "[cfg]")
-{
+TEST_CASE("argv2", "[cfg]") {
     spdlog::drop("l1");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=warn,trace"};
     load_argv_levels(2, argv);
@@ -44,8 +41,7 @@ TEST_CASE("argv2", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::trace);
 }
 
-TEST_CASE("argv3", "[cfg]")
-{
+TEST_CASE("argv3", "[cfg]") {
     spdlog::set_level(spdlog::level::trace);
 
     spdlog::drop("l1");
@@ -56,8 +52,7 @@ TEST_CASE("argv3", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::trace);
 }
 
-TEST_CASE("argv4", "[cfg]")
-{
+TEST_CASE("argv4", "[cfg]") {
     spdlog::set_level(spdlog::level::info);
     spdlog::drop("l1");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=junk"};
@@ -66,8 +61,7 @@ TEST_CASE("argv4", "[cfg]")
     REQUIRE(l1->level() == spdlog::level::info);
 }
 
-TEST_CASE("argv5", "[cfg]")
-{
+TEST_CASE("argv5", "[cfg]") {
     spdlog::set_level(spdlog::level::info);
     spdlog::drop("l1");
     const char *argv[] = {"ignore", "ignore", "SPDLOG_LEVEL=l1=warn,trace"};
@@ -78,8 +72,7 @@ TEST_CASE("argv5", "[cfg]")
     spdlog::set_level(spdlog::level::info);
 }
 
-TEST_CASE("argv6", "[cfg]")
-{
+TEST_CASE("argv6", "[cfg]") {
     spdlog::set_level(spdlog::level::err);
     const char *argv[] = {""};
     load_argv_levels(1, argv);
@@ -87,8 +80,7 @@ TEST_CASE("argv6", "[cfg]")
     spdlog::set_level(spdlog::level::info);
 }
 
-TEST_CASE("argv7", "[cfg]")
-{
+TEST_CASE("argv7", "[cfg]") {
     spdlog::set_level(spdlog::level::err);
     const char *argv[] = {""};
     load_argv_levels(0, argv);
@@ -96,8 +88,7 @@ TEST_CASE("argv7", "[cfg]")
     spdlog::set_level(spdlog::level::info);
 }
 
-TEST_CASE("level-not-set-test1", "[cfg]")
-{
+TEST_CASE("level-not-set-test1", "[cfg]") {
     spdlog::drop("l1");
     const char *argv[] = {"ignore", ""};
     load_argv_levels(2, argv);
@@ -107,8 +98,7 @@ TEST_CASE("level-not-set-test1", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
 }
 
-TEST_CASE("level-not-set-test2", "[cfg]")
-{
+TEST_CASE("level-not-set-test2", "[cfg]") {
     spdlog::drop("l1");
     spdlog::drop("l2");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=trace"};
@@ -125,8 +115,7 @@ TEST_CASE("level-not-set-test2", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
 }
 
-TEST_CASE("level-not-set-test3", "[cfg]")
-{
+TEST_CASE("level-not-set-test3", "[cfg]") {
     spdlog::drop("l1");
     spdlog::drop("l2");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=trace"};
@@ -141,8 +130,7 @@ TEST_CASE("level-not-set-test3", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::info);
 }
 
-TEST_CASE("level-not-set-test4", "[cfg]")
-{
+TEST_CASE("level-not-set-test4", "[cfg]") {
     spdlog::drop("l1");
     spdlog::drop("l2");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=trace,warn"};
@@ -157,8 +145,7 @@ TEST_CASE("level-not-set-test4", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::warn);
 }
 
-TEST_CASE("level-not-set-test5", "[cfg]")
-{
+TEST_CASE("level-not-set-test5", "[cfg]") {
     spdlog::drop("l1");
     spdlog::drop("l2");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=l1=junk,warn"};
@@ -173,8 +160,7 @@ TEST_CASE("level-not-set-test5", "[cfg]")
     REQUIRE(spdlog::default_logger()->level() == spdlog::level::warn);
 }
 
-TEST_CASE("restore-to-default", "[cfg]")
-{
+TEST_CASE("restore-to-default", "[cfg]") {
     spdlog::drop("l1");
     spdlog::drop("l2");
     const char *argv[] = {"ignore", "SPDLOG_LEVEL=info"};

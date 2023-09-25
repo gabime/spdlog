@@ -50,7 +50,9 @@ public:
     }
 
 protected:
-    void sink_it_(const details::log_msg &msg) override { q_.push_back(details::log_msg_buffer{msg}); }
+    void sink_it_(const details::log_msg &msg) override {
+        q_.push_back(details::log_msg_buffer{msg});
+    }
     void flush_() override {}
 
 private:

@@ -84,11 +84,13 @@ public:
 
         // set TCP_NODELAY
         int enable_flag = 1;
-        ::setsockopt(socket_, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char *>(&enable_flag), sizeof(enable_flag));
+        ::setsockopt(socket_, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<char *>(&enable_flag),
+                     sizeof(enable_flag));
 
         // prevent sigpipe on systems where MSG_NOSIGNAL is not available
 #if defined(SO_NOSIGPIPE) && !defined(MSG_NOSIGNAL)
-        ::setsockopt(socket_, SOL_SOCKET, SO_NOSIGPIPE, reinterpret_cast<char *>(&enable_flag), sizeof(enable_flag));
+        ::setsockopt(socket_, SOL_SOCKET, SO_NOSIGPIPE, reinterpret_cast<char *>(&enable_flag),
+                     sizeof(enable_flag));
 #endif
 
 #if !defined(SO_NOSIGPIPE) && !defined(MSG_NOSIGNAL)
@@ -106,7 +108,8 @@ public:
 #else
             const int send_flags = 0;
 #endif
-            auto write_result = ::send(socket_, data + bytes_sent, n_bytes - bytes_sent, send_flags);
+            auto write_result =
+                ::send(socket_, data + bytes_sent, n_bytes - bytes_sent, send_flags);
             if (write_result < 0) {
                 close();
                 throw_spdlog_ex("write(2) failed", errno);

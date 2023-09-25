@@ -24,7 +24,9 @@ SPDLOG_INLINE const string_view_t &to_string_view(spdlog::level::level_enum l) S
     return level_string_views[l];
 }
 
-SPDLOG_INLINE const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT { return short_level_names[l]; }
+SPDLOG_INLINE const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT {
+    return short_level_names[l];
+}
 
 SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT {
     auto it = std::find(std::begin(level_string_views), std::end(level_string_views), name);
@@ -57,7 +59,9 @@ SPDLOG_INLINE spdlog_ex::spdlog_ex(const std::string &msg, int last_errno) {
 
 SPDLOG_INLINE const char *spdlog_ex::what() const SPDLOG_NOEXCEPT { return msg_.c_str(); }
 
-SPDLOG_INLINE void throw_spdlog_ex(const std::string &msg, int last_errno) { SPDLOG_THROW(spdlog_ex(msg, last_errno)); }
+SPDLOG_INLINE void throw_spdlog_ex(const std::string &msg, int last_errno) {
+    SPDLOG_THROW(spdlog_ex(msg, last_errno));
+}
 
 SPDLOG_INLINE void throw_spdlog_ex(std::string msg) { SPDLOG_THROW(spdlog_ex(std::move(msg))); }
 

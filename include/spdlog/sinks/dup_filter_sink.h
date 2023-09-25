@@ -20,8 +20,8 @@
 //     #include <spdlog/sinks/dup_filter_sink.h>
 //
 //     int main() {
-//         auto dup_filter = std::make_shared<dup_filter_sink_st>(std::chrono::seconds(5), level::info);
-//         dup_filter->add_sink(std::make_shared<stdout_color_sink_mt>());
+//         auto dup_filter = std::make_shared<dup_filter_sink_st>(std::chrono::seconds(5),
+//         level::info); dup_filter->add_sink(std::make_shared<stdout_color_sink_mt>());
 //         spdlog::logger l("logger", dup_filter);
 //         l.info("Hello");
 //         l.info("Hello");
@@ -42,8 +42,8 @@ public:
     template <class Rep, class Period>
     explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration,
                              level::level_enum notification_level = level::info)
-        : max_skip_duration_{max_skip_duration},
-          log_level_{notification_level} {}
+        : max_skip_duration_{max_skip_duration}
+        , log_level_{notification_level} {}
 
 protected:
     std::chrono::microseconds max_skip_duration_;
@@ -62,8 +62,8 @@ protected:
         // log the "skipped.." message
         if (skip_counter_ > 0) {
             char buf[64];
-            auto msg_size =
-                ::snprintf(buf, sizeof(buf), "Skipped %u duplicate messages..", static_cast<unsigned>(skip_counter_));
+            auto msg_size = ::snprintf(buf, sizeof(buf), "Skipped %u duplicate messages..",
+                                       static_cast<unsigned>(skip_counter_));
             if (msg_size > 0 && static_cast<size_t>(msg_size) < sizeof(buf)) {
                 details::log_msg skipped_msg{msg.source, msg.logger_name, log_level_,
                                              string_view_t{buf, static_cast<size_t>(msg_size)}};

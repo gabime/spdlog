@@ -25,10 +25,10 @@ struct padding_info {
 
     padding_info() = default;
     padding_info(size_t width, padding_info::pad_side side, bool truncate)
-        : width_(width),
-          side_(side),
-          truncate_(truncate),
-          enabled_(true) {}
+        : width_(width)
+        , side_(side)
+        , truncate_(truncate)
+        , enabled_(true) {}
 
     bool enabled() const { return enabled_; }
     size_t width_ = 0;
@@ -43,7 +43,8 @@ public:
         : padinfo_(padinfo) {}
     flag_formatter() = default;
     virtual ~flag_formatter() = default;
-    virtual void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) = 0;
+    virtual void
+    format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) = 0;
 
 protected:
     padding_info padinfo_;
@@ -55,7 +56,9 @@ class SPDLOG_API custom_flag_formatter : public details::flag_formatter {
 public:
     virtual std::unique_ptr<custom_flag_formatter> clone() const = 0;
 
-    void set_padding_info(const details::padding_info &padding) { flag_formatter::padinfo_ = padding; }
+    void set_padding_info(const details::padding_info &padding) {
+        flag_formatter::padinfo_ = padding;
+    }
 };
 
 class SPDLOG_API pattern_formatter final : public formatter {
@@ -102,7 +105,8 @@ private:
     // Extract given pad spec (e.g. %8X)
     // Advance the given it pass the end of the padding spec found (if any)
     // Return padding.
-    static details::padding_info handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end);
+    static details::padding_info handle_padspec_(std::string::const_iterator &it,
+                                                 std::string::const_iterator end);
 
     void compile_pattern_(const std::string &pattern);
 };

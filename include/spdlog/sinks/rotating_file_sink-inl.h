@@ -24,15 +24,16 @@ namespace spdlog {
 namespace sinks {
 
 template <typename Mutex>
-SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
-                                                            std::size_t max_size,
-                                                            std::size_t max_files,
-                                                            bool rotate_on_open,
-                                                            const file_event_handlers &event_handlers)
-    : base_filename_(std::move(base_filename)),
-      max_size_(max_size),
-      max_files_(max_files),
-      file_helper_{event_handlers} {
+SPDLOG_INLINE
+rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
+                                              std::size_t max_size,
+                                              std::size_t max_files,
+                                              bool rotate_on_open,
+                                              const file_event_handlers &event_handlers)
+    : base_filename_(std::move(base_filename))
+    , max_size_(max_size)
+    , max_files_(max_files)
+    , file_helper_{event_handlers} {
     if (max_size == 0) {
         throw_spdlog_ex("rotating sink constructor: max_size arg cannot be zero");
     }
@@ -51,7 +52,8 @@ SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_file
 // calc filename according to index and file extension if exists.
 // e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
 template <typename Mutex>
-SPDLOG_INLINE filename_t rotating_file_sink<Mutex>::calc_filename(const filename_t &filename, std::size_t index) {
+SPDLOG_INLINE filename_t rotating_file_sink<Mutex>::calc_filename(const filename_t &filename,
+                                                                  std::size_t index) {
     if (index == 0u) {
         return filename;
     }
@@ -116,10 +118,11 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_() {
             // rates can cause the rename to fail with permission denied (because of antivirus?).
             details::os::sleep_for_millis(100);
             if (!rename_file_(src, target)) {
-                file_helper_.reopen(true); // truncate the log file anyway to prevent it to grow beyond its limit!
+                file_helper_.reopen(
+                    true); // truncate the log file anyway to prevent it to grow beyond its limit!
                 current_size_ = 0;
-                throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) + " to " +
-                                    filename_to_str(target),
+                throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) +
+                                    " to " + filename_to_str(target),
                                 errno);
             }
         }

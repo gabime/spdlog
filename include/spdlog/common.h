@@ -49,7 +49,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
+#if !defined(SPDLOG_USE_STD_FORMAT) && \
+    FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
     #define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
     #define SPDLOG_FMT_STRING(format_string) FMT_STRING(format_string)
     #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
@@ -180,14 +181,15 @@ using fmt_runtime_string = fmt::runtime_format_string<Char>;
 using fmt_runtime_string = fmt::basic_runtime<Char>;
     #endif
 
-// clang doesn't like SFINAE disabled constructor in std::is_convertible<> so have to repeat the condition from
-// basic_format_string here, in addition, fmt::basic_runtime<Char> is only convertible to basic_format_string<Char> but
-// not basic_string_view<Char>
+// clang doesn't like SFINAE disabled constructor in std::is_convertible<> so have to repeat the
+// condition from basic_format_string here, in addition, fmt::basic_runtime<Char> is only
+// convertible to basic_format_string<Char> but not basic_string_view<Char>
 template <class T, class Char = char>
 struct is_convertible_to_basic_format_string
     : std::integral_constant<bool,
                              std::is_convertible<T, fmt::basic_string_view<Char>>::value ||
-                                 std::is_same<remove_cvref_t<T>, fmt_runtime_string<Char>>::value> {};
+                                 std::is_same<remove_cvref_t<T>, fmt_runtime_string<Char>>::value> {
+};
 
     #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
@@ -251,10 +253,11 @@ enum level_enum : int {
 #define SPDLOG_LEVEL_NAME_OFF spdlog::string_view_t("off", 3)
 
 #if !defined(SPDLOG_LEVEL_NAMES)
-    #define SPDLOG_LEVEL_NAMES                                                                                   \
-        {                                                                                                        \
-            SPDLOG_LEVEL_NAME_TRACE, SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO, SPDLOG_LEVEL_NAME_WARNING, \
-                SPDLOG_LEVEL_NAME_ERROR, SPDLOG_LEVEL_NAME_CRITICAL, SPDLOG_LEVEL_NAME_OFF                       \
+    #define SPDLOG_LEVEL_NAMES                                                                  \
+        {                                                                                       \
+            SPDLOG_LEVEL_NAME_TRACE, SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO,           \
+                SPDLOG_LEVEL_NAME_WARNING, SPDLOG_LEVEL_NAME_ERROR, SPDLOG_LEVEL_NAME_CRITICAL, \
+                SPDLOG_LEVEL_NAME_OFF                                                           \
         }
 #endif
 
@@ -303,9 +306,9 @@ private:
 struct source_loc {
     SPDLOG_CONSTEXPR source_loc() = default;
     SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
-        : filename{filename_in},
-          line{line_in},
-          funcname{funcname_in} {}
+        : filename{filename_in}
+        , line{line_in}
+        , funcname{funcname_in} {}
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT { return line == 0; }
     const char *filename{nullptr};
@@ -315,10 +318,10 @@ struct source_loc {
 
 struct file_event_handlers {
     file_event_handlers()
-        : before_open(nullptr),
-          after_open(nullptr),
-          before_close(nullptr),
-          after_close(nullptr) {}
+        : before_open(nullptr)
+        , after_open(nullptr)
+        , before_close(nullptr)
+        , after_close(nullptr) {}
 
     std::function<void(const filename_t &filename)> before_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> after_open;
@@ -330,18 +333,26 @@ namespace details {
 
 // to_string_view
 
-SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(const memory_buf_t &buf) SPDLOG_NOEXCEPT {
+SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t
+to_string_view(const memory_buf_t &buf) SPDLOG_NOEXCEPT {
     return spdlog::string_view_t{buf.data(), buf.size()};
 }
 
-SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(spdlog::string_view_t str) SPDLOG_NOEXCEPT { return str; }
+SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t
+to_string_view(spdlog::string_view_t str) SPDLOG_NOEXCEPT {
+    return str;
+}
 
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf) SPDLOG_NOEXCEPT {
+SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t
+to_string_view(const wmemory_buf_t &buf) SPDLOG_NOEXCEPT {
     return spdlog::wstring_view_t{buf.data(), buf.size()};
 }
 
-SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) SPDLOG_NOEXCEPT { return str; }
+SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t
+to_string_view(spdlog::wstring_view_t str) SPDLOG_NOEXCEPT {
+    return str;
+}
 #endif
 
 #ifndef SPDLOG_USE_STD_FORMAT

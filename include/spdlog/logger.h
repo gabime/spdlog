@@ -28,18 +28,18 @@
 #include <vector>
 
 #ifndef SPDLOG_NO_EXCEPTIONS
-    #define SPDLOG_LOGGER_CATCH(location)                                                                            \
-        catch (const std::exception &ex) {                                                                           \
-            if (location.filename) {                                                                                 \
-                err_handler_(                                                                                        \
-                    fmt_lib::format(SPDLOG_FMT_STRING("{} [{}({})]"), ex.what(), location.filename, location.line)); \
-            } else {                                                                                                 \
-                err_handler_(ex.what());                                                                             \
-            }                                                                                                        \
-        }                                                                                                            \
-        catch (...) {                                                                                                \
-            err_handler_("Rethrowing unknown exception in logger");                                                  \
-            throw;                                                                                                   \
+    #define SPDLOG_LOGGER_CATCH(location)                                                 \
+        catch (const std::exception &ex) {                                                \
+            if (location.filename) {                                                      \
+                err_handler_(fmt_lib::format(SPDLOG_FMT_STRING("{} [{}({})]"), ex.what(), \
+                                             location.filename, location.line));          \
+            } else {                                                                      \
+                err_handler_(ex.what());                                                  \
+            }                                                                             \
+        }                                                                                 \
+        catch (...) {                                                                     \
+            err_handler_("Rethrowing unknown exception in logger");                       \
+            throw;                                                                        \
         }
 #else
     #define SPDLOG_LOGGER_CATCH(location)
@@ -51,14 +51,14 @@ class SPDLOG_API logger {
 public:
     // Empty logger
     explicit logger(std::string name)
-        : name_(std::move(name)),
-          sinks_() {}
+        : name_(std::move(name))
+        , sinks_() {}
 
     // Logger with range on sinks
     template <typename It>
     logger(std::string name, It begin, It end)
-        : name_(std::move(name)),
-          sinks_(begin, end) {}
+        : name_(std::move(name))
+        , sinks_(begin, end) {}
 
     // Logger with single sink
     logger(std::string name, sink_ptr single_sink)
@@ -91,12 +91,15 @@ public:
     }
 
     // T cannot be statically converted to format string (including string_view/wstring_view)
-    template <class T, typename std::enable_if<!is_convertible_to_any_format_string<const T &>::value, int>::type = 0>
+    template <class T,
+              typename std::enable_if<!is_convertible_to_any_format_string<const T &>::value,
+                                      int>::type = 0>
     void log(source_loc loc, level::level_enum lvl, const T &msg) {
         log(loc, lvl, "{}", msg);
     }
 
-    void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg) {
+    void
+    log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg) {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
         if (!log_enabled && !traceback_enabled) {
@@ -161,7 +164,8 @@ public:
         log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
     }
 
-    void log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, wstring_view_t msg) {
+    void
+    log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, wstring_view_t msg) {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
         if (!log_enabled && !traceback_enabled) {
@@ -251,7 +255,9 @@ public:
     }
 
     // return true logging is enabled for the given level.
-    bool should_log(level::level_enum msg_level) const { return msg_level >= level_.load(std::memory_order_relaxed); }
+    bool should_log(level::level_enum msg_level) const {
+        return msg_level >= level_.load(std::memory_order_relaxed);
+    }
 
     // return true if backtrace logging is enabled.
     bool should_backtrace() const { return tracer_.enabled(); }

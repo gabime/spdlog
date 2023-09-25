@@ -1,17 +1,20 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-// Writing to Windows Event Log requires the registry entries below to be present, with the following modifications:
+// Writing to Windows Event Log requires the registry entries below to be present, with the
+// following modifications:
 // 1. <log_name>    should be replaced with your log name (e.g. your application name)
-// 2. <source_name> should be replaced with the specific source name and the key should be duplicated for
+// 2. <source_name> should be replaced with the specific source name and the key should be
+// duplicated for
 //                  each source used in the application
 //
-// Since typically modifications of this kind require elevation, it's better to do it as a part of setup procedure.
-// The snippet below uses mscoree.dll as the message file as it exists on most of the Windows systems anyway and
-// happens to contain the needed resource.
+// Since typically modifications of this kind require elevation, it's better to do it as a part of
+// setup procedure. The snippet below uses mscoree.dll as the message file as it exists on most of
+// the Windows systems anyway and happens to contain the needed resource.
 //
 // You can also specify a custom message file if needed.
-// Please refer to Event Log functions descriptions in MSDN for more details on custom message files.
+// Please refer to Event Log functions descriptions in MSDN for more details on custom message
+// files.
 
 /*---------------------------------------------------------------------------------------
 
@@ -69,9 +72,11 @@ struct win32_error : public spdlog_ex {
         std::string system_message;
 
         local_alloc_t format_message_result{};
-        auto format_message_succeeded = ::FormatMessageA(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
-            error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&format_message_result.hlocal_, 0, nullptr);
+        auto format_message_succeeded =
+            ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                                 FORMAT_MESSAGE_IGNORE_INSERTS,
+                             nullptr, error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                             (LPSTR)&format_message_result.hlocal_, 0, nullptr);
 
         if (format_message_succeeded && format_message_result.hlocal_) {
             system_message = fmt_lib::format(" ({})", (LPSTR)format_message_result.hlocal_);
@@ -124,18 +129,21 @@ public:
 
             ~process_token_t() { ::CloseHandle(token_handle_); }
 
-        } current_process_token(::GetCurrentProcess()); // GetCurrentProcess returns pseudohandle, no leak here!
+        } current_process_token(
+            ::GetCurrentProcess()); // GetCurrentProcess returns pseudohandle, no leak here!
 
-        // Get the required size, this is expected to fail with ERROR_INSUFFICIENT_BUFFER and return the token size
+        // Get the required size, this is expected to fail with ERROR_INSUFFICIENT_BUFFER and return
+        // the token size
         DWORD tusize = 0;
-        if (::GetTokenInformation(current_process_token.token_handle_, TokenUser, NULL, 0, &tusize)) {
+        if (::GetTokenInformation(current_process_token.token_handle_, TokenUser, NULL, 0,
+                                  &tusize)) {
             SPDLOG_THROW(win32_error("GetTokenInformation should fail"));
         }
 
         // get user token
         std::vector<unsigned char> buffer(static_cast<size_t>(tusize));
-        if (!::GetTokenInformation(current_process_token.token_handle_, TokenUser, (LPVOID)buffer.data(), tusize,
-                                   &tusize)) {
+        if (!::GetTokenInformation(current_process_token.token_handle_, TokenUser,
+                                   (LPVOID)buffer.data(), tusize, &tusize)) {
             SPDLOG_THROW(win32_error("GetTokenInformation"));
         }
 
@@ -208,14 +216,14 @@ protected:
         details::os::utf8_to_wstrbuf(string_view_t(formatted.data(), formatted.size()), buf);
 
         LPCWSTR lp_wstr = buf.data();
-        succeeded = static_cast<bool>(::ReportEventW(event_log_handle(), eventlog::get_event_type(msg),
-                                                     eventlog::get_event_category(msg), event_id_,
-                                                     current_user_sid_.as_sid(), 1, 0, &lp_wstr, nullptr));
+        succeeded = static_cast<bool>(::ReportEventW(
+            event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg),
+            event_id_, current_user_sid_.as_sid(), 1, 0, &lp_wstr, nullptr));
 #else
         LPCSTR lp_str = formatted.data();
-        succeeded = static_cast<bool>(::ReportEventA(event_log_handle(), eventlog::get_event_type(msg),
-                                                     eventlog::get_event_category(msg), event_id_,
-                                                     current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr));
+        succeeded = static_cast<bool>(::ReportEventA(
+            event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg),
+            event_id_, current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr));
 #endif
 
         if (!succeeded) {
@@ -226,14 +234,15 @@ protected:
     void flush_() override {}
 
 public:
-    win_eventlog_sink(std::string const &source, DWORD event_id = 1000 /* according to mscoree.dll */)
-        : source_(source),
-          event_id_(event_id) {
+    win_eventlog_sink(std::string const &source,
+                      DWORD event_id = 1000 /* according to mscoree.dll */)
+        : source_(source)
+        , event_id_(event_id) {
         try {
             current_user_sid_ = internal::sid_t::get_current_user_sid();
         } catch (...) {
-            // get_current_user_sid() is unlikely to fail and if it does, we can still proceed without
-            // current_user_sid but in the event log the record will have no user name
+            // get_current_user_sid() is unlikely to fail and if it does, we can still proceed
+            // without current_user_sid but in the event log the record will have no user name
         }
     }
 

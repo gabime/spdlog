@@ -30,7 +30,8 @@ namespace details {
 class thread_pool;
 }
 
-class SPDLOG_API async_logger final : public std::enable_shared_from_this<async_logger>, public logger {
+class SPDLOG_API async_logger final : public std::enable_shared_from_this<async_logger>,
+                                      public logger {
     friend class details::thread_pool;
 
 public:
@@ -40,9 +41,9 @@ public:
                  It end,
                  std::weak_ptr<details::thread_pool> tp,
                  async_overflow_policy overflow_policy = async_overflow_policy::block)
-        : logger(std::move(logger_name), begin, end),
-          thread_pool_(std::move(tp)),
-          overflow_policy_(overflow_policy) {}
+        : logger(std::move(logger_name), begin, end)
+        , thread_pool_(std::move(tp))
+        , overflow_policy_(overflow_policy) {}
 
     async_logger(std::string logger_name,
                  sinks_init_list sinks_list,

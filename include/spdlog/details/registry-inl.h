@@ -170,7 +170,8 @@ SPDLOG_INLINE void registry::set_error_handler(err_handler handler) {
     err_handler_ = std::move(handler);
 }
 
-SPDLOG_INLINE void registry::apply_all(const std::function<void(const std::shared_ptr<logger>)> &fun) {
+SPDLOG_INLINE void
+registry::apply_all(const std::function<void(const std::shared_ptr<logger>)> &fun) {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     for (auto &l : loggers_) {
         fun(l.second);

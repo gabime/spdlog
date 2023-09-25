@@ -37,9 +37,9 @@ struct async_msg : log_msg_buffer {
 // support for vs2013 move
 #if defined(_MSC_VER) && _MSC_VER <= 1800
     async_msg(async_msg &&other)
-        : log_msg_buffer(std::move(other)),
-          msg_type(other.msg_type),
-          worker_ptr(std::move(other.worker_ptr)) {}
+        : log_msg_buffer(std::move(other))
+        , msg_type(other.msg_type)
+        , worker_ptr(std::move(other.worker_ptr)) {}
 
     async_msg &operator=(async_msg &&other) {
         *static_cast<log_msg_buffer *>(this) = std::move(other);
@@ -54,14 +54,14 @@ struct async_msg : log_msg_buffer {
 
     // construct from log_msg with given type
     async_msg(async_logger_ptr &&worker, async_msg_type the_type, const details::log_msg &m)
-        : log_msg_buffer{m},
-          msg_type{the_type},
-          worker_ptr{std::move(worker)} {}
+        : log_msg_buffer{m}
+        , msg_type{the_type}
+        , worker_ptr{std::move(worker)} {}
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
-        : log_msg_buffer{},
-          msg_type{the_type},
-          worker_ptr{std::move(worker)} {}
+        : log_msg_buffer{}
+        , msg_type{the_type}
+        , worker_ptr{std::move(worker)} {}
 
     explicit async_msg(async_msg_type the_type)
         : async_msg{nullptr, the_type} {}
@@ -85,7 +85,9 @@ public:
     thread_pool(const thread_pool &) = delete;
     thread_pool &operator=(thread_pool &&) = delete;
 
-    void post_log(async_logger_ptr &&worker_ptr, const details::log_msg &msg, async_overflow_policy overflow_policy);
+    void post_log(async_logger_ptr &&worker_ptr,
+                  const details::log_msg &msg,
+                  async_overflow_policy overflow_policy);
     void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy);
     size_t overrun_counter();
     void reset_overrun_counter();

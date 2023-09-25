@@ -4,40 +4,35 @@
 using spdlog::memory_buf_t;
 using spdlog::details::to_string_view;
 
-void test_pad2(int n, const char *expected)
-{
+void test_pad2(int n, const char *expected) {
     memory_buf_t buf;
     spdlog::details::fmt_helper::pad2(n, buf);
 
     REQUIRE(to_string_view(buf) == expected);
 }
 
-void test_pad3(uint32_t n, const char *expected)
-{
+void test_pad3(uint32_t n, const char *expected) {
     memory_buf_t buf;
     spdlog::details::fmt_helper::pad3(n, buf);
 
     REQUIRE(to_string_view(buf) == expected);
 }
 
-void test_pad6(std::size_t n, const char *expected)
-{
+void test_pad6(std::size_t n, const char *expected) {
     memory_buf_t buf;
     spdlog::details::fmt_helper::pad6(n, buf);
 
     REQUIRE(to_string_view(buf) == expected);
 }
 
-void test_pad9(std::size_t n, const char *expected)
-{
+void test_pad9(std::size_t n, const char *expected) {
     memory_buf_t buf;
     spdlog::details::fmt_helper::pad9(n, buf);
 
     REQUIRE(to_string_view(buf) == expected);
 }
 
-TEST_CASE("pad2", "[fmt_helper]")
-{
+TEST_CASE("pad2", "[fmt_helper]") {
     test_pad2(0, "00");
     test_pad2(3, "03");
     test_pad2(10, "10");
@@ -49,8 +44,7 @@ TEST_CASE("pad2", "[fmt_helper]")
     test_pad2(-5, "-5");
 }
 
-TEST_CASE("pad3", "[fmt_helper]")
-{
+TEST_CASE("pad3", "[fmt_helper]") {
     test_pad3(0, "000");
     test_pad3(3, "003");
     test_pad3(10, "010");
@@ -63,8 +57,7 @@ TEST_CASE("pad3", "[fmt_helper]")
     test_pad3(1234, "1234");
 }
 
-TEST_CASE("pad6", "[fmt_helper]")
-{
+TEST_CASE("pad6", "[fmt_helper]") {
     test_pad6(0, "000000");
     test_pad6(3, "000003");
     test_pad6(23, "000023");
@@ -74,8 +67,7 @@ TEST_CASE("pad6", "[fmt_helper]")
     test_pad6(123456, "123456");
 }
 
-TEST_CASE("pad9", "[fmt_helper]")
-{
+TEST_CASE("pad9", "[fmt_helper]") {
     test_pad9(0, "000000000");
     test_pad9(3, "000000003");
     test_pad9(23, "000000023");

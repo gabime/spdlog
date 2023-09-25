@@ -31,7 +31,9 @@ SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items,
     }
 }
 
-SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n, std::function<void()> on_thread_start)
+SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items,
+                                       size_t threads_n,
+                                       std::function<void()> on_thread_start)
     : thread_pool(q_max_items, threads_n, on_thread_start, [] {}) {}
 
 SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items, size_t threads_n)
@@ -59,7 +61,8 @@ void SPDLOG_INLINE thread_pool::post_log(async_logger_ptr &&worker_ptr,
     post_async_msg_(std::move(async_m), overflow_policy);
 }
 
-void SPDLOG_INLINE thread_pool::post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy) {
+void SPDLOG_INLINE thread_pool::post_flush(async_logger_ptr &&worker_ptr,
+                                           async_overflow_policy overflow_policy) {
     post_async_msg_(async_msg(std::move(worker_ptr), async_msg_type::flush), overflow_policy);
 }
 
@@ -73,7 +76,8 @@ void SPDLOG_INLINE thread_pool::reset_discard_counter() { q_.reset_discard_count
 
 size_t SPDLOG_INLINE thread_pool::queue_size() { return q_.size(); }
 
-void SPDLOG_INLINE thread_pool::post_async_msg_(async_msg &&new_msg, async_overflow_policy overflow_policy) {
+void SPDLOG_INLINE thread_pool::post_async_msg_(async_msg &&new_msg,
+                                                async_overflow_policy overflow_policy) {
     if (overflow_policy == async_overflow_policy::block) {
         q_.enqueue(std::move(new_msg));
     } else if (overflow_policy == async_overflow_policy::overrun_oldest) {

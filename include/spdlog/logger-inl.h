@@ -17,12 +17,12 @@ namespace spdlog {
 
 // public methods
 SPDLOG_INLINE logger::logger(const logger &other)
-    : name_(other.name_),
-      sinks_(other.sinks_),
-      level_(other.level_.load(std::memory_order_relaxed)),
-      flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
-      custom_err_handler_(other.custom_err_handler_),
-      tracer_(other.tracer_) {}
+    : name_(other.name_)
+    , sinks_(other.sinks_)
+    , level_(other.level_.load(std::memory_order_relaxed))
+    , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
+    , custom_err_handler_(other.custom_err_handler_)
+    , tracer_(other.tracer_) {}
 
 SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT
     : name_(std::move(other.name_)),
@@ -109,7 +109,9 @@ SPDLOG_INLINE const std::vector<sink_ptr> &logger::sinks() const { return sinks_
 SPDLOG_INLINE std::vector<sink_ptr> &logger::sinks() { return sinks_; }
 
 // error handler
-SPDLOG_INLINE void logger::set_error_handler(err_handler handler) { custom_err_handler_ = std::move(handler); }
+SPDLOG_INLINE void logger::set_error_handler(err_handler handler) {
+    custom_err_handler_ = std::move(handler);
+}
 
 // create new logger with same sinks and configuration.
 SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name) {
@@ -119,7 +121,8 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name) {
 }
 
 // protected methods
-SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg, bool log_enabled, bool traceback_enabled) {
+SPDLOG_INLINE void
+logger::log_it_(const spdlog::details::log_msg &log_msg, bool log_enabled, bool traceback_enabled) {
     if (log_enabled) {
         sink_it_(log_msg);
     }
@@ -151,9 +154,11 @@ SPDLOG_INLINE void logger::flush_() {
 SPDLOG_INLINE void logger::dump_backtrace_() {
     using details::log_msg;
     if (tracer_.enabled() && !tracer_.empty()) {
-        sink_it_(log_msg{name(), level::info, "****************** Backtrace Start ******************"});
+        sink_it_(
+            log_msg{name(), level::info, "****************** Backtrace Start ******************"});
         tracer_.foreach_pop([this](const log_msg &msg) { this->sink_it_(msg); });
-        sink_it_(log_msg{name(), level::info, "****************** Backtrace End ********************"});
+        sink_it_(
+            log_msg{name(), level::info, "****************** Backtrace End ********************"});
     }
 }
 
@@ -181,10 +186,11 @@ SPDLOG_INLINE void logger::err_handler_(const std::string &msg) {
         char date_buf[64];
         std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
 #if defined(USING_R) && defined(R_R_H) // if in R environment
-        REprintf("[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf, name().c_str(), msg.c_str());
+        REprintf("[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf, name().c_str(),
+                 msg.c_str());
 #else
-        std::fprintf(stderr, "[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf, name().c_str(),
-                     msg.c_str());
+        std::fprintf(stderr, "[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf,
+                     name().c_str(), msg.c_str());
 #endif
     }
 }
