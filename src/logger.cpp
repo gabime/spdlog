@@ -27,7 +27,7 @@ logger::logger(logger &&other) noexcept
 
 void logger::set_level(level level) { level_.store(level); }
 
-level logger::log_level() const { return static_cast<level>(level_.load(std::memory_order_relaxed)); }
+level logger::log_level() const { return level_.load(std::memory_order_relaxed); }
 
 const std::string &logger::name() const { return name_; }
 
