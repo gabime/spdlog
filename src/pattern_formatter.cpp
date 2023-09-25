@@ -116,7 +116,7 @@ public:
         : flag_formatter(padinfo) {}
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override {
-        string_view_t level_name{to_short_c_str(msg.log_level)};
+        auto level_name = to_short_string_view(msg.log_level)};
         ScopedPadder p(level_name.size(), padinfo_, dest);
         fmt_helper::append_string_view(level_name, dest);
     }
