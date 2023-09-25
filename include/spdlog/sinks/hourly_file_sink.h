@@ -48,11 +48,11 @@ public:
                      bool truncate = false,
                      uint16_t max_files = 0,
                      const file_event_handlers &event_handlers = {})
-        : base_filename_(std::move(base_filename))
-        , file_helper_{event_handlers}
-        , truncate_(truncate)
-        , max_files_(max_files)
-        , filenames_q_() {
+        : base_filename_(std::move(base_filename)),
+          file_helper_{event_handlers},
+          truncate_(truncate),
+          max_files_(max_files),
+          filenames_q_() {
         auto now = log_clock::now();
         auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
         file_helper_.open(filename, truncate_);

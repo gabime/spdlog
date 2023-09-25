@@ -229,9 +229,9 @@ struct source_loc {
     constexpr source_loc(const char *filename_in,
                          std::uint_least32_t line_in,
                          const char *funcname_in)
-        : filename{filename_in}
-        , line{line_in}
-        , funcname{funcname_in} {}
+        : filename{filename_in},
+          line{line_in},
+          funcname{funcname_in} {}
 
 #ifdef SPDLOG_HAVE_STD_SOURCE_LOCATION
     static constexpr source_loc
@@ -262,23 +262,23 @@ struct loc_with_fmt {
     string_view_t fmt_string;
     template <typename S, typename = is_convertible_to_sv<S>>
     constexpr loc_with_fmt(S fmt_str, source_loc loc = source_loc::current()) noexcept
-        : loc(loc)
-        , fmt_string(fmt_str) {}
+        : loc(loc),
+          fmt_string(fmt_str) {}
 
 #ifndef SPDLOG_USE_STD_FORMAT
     constexpr loc_with_fmt(fmt::runtime_format_string<char> fmt_str,
                            source_loc loc = source_loc::current()) noexcept
-        : loc(loc)
-        , fmt_string(fmt_str.str) {}
+        : loc(loc),
+          fmt_string(fmt_str.str) {}
 #endif
 };
 
 struct file_event_handlers {
     file_event_handlers()
-        : before_open(nullptr)
-        , after_open(nullptr)
-        , before_close(nullptr)
-        , after_close(nullptr) {}
+        : before_open(nullptr),
+          after_open(nullptr),
+          before_close(nullptr),
+          after_close(nullptr) {}
 
     std::function<void(const filename_t &filename)> before_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> after_open;

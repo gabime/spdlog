@@ -21,15 +21,15 @@ class syslog_sink : public base_sink<Mutex> {
 
 public:
     syslog_sink(std::string ident, int syslog_option, int syslog_facility, bool enable_formatting)
-        : enable_formatting_{enable_formatting}
-        , syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
+        : enable_formatting_{enable_formatting},
+          syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
                           /* spdlog::level::debug      */ LOG_DEBUG,
                           /* spdlog::level::info       */ LOG_INFO,
                           /* spdlog::level::warn       */ LOG_WARNING,
                           /* spdlog::level::err        */ LOG_ERR,
                           /* spdlog::level::critical   */ LOG_CRIT,
-                          /* spdlog::level::off        */ LOG_INFO}}
-        , ident_{std::move(ident)} {
+                          /* spdlog::level::off        */ LOG_INFO}},
+          ident_{std::move(ident)} {
         // set ident to be program name if empty
         ::openlog(ident_.empty() ? nullptr : ident_.c_str(), syslog_option, syslog_facility);
     }

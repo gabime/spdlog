@@ -40,9 +40,9 @@ public:
                const std::string &db_name,
                const std::string &collection_name,
                const std::string &uri = "mongodb://localhost:27017")
-        : instance_(std::move(instance))
-        , db_name_(db_name)
-        , coll_name_(collection_name) {
+        : instance_(std::move(instance)),
+          db_name_(db_name),
+          coll_name_(collection_name) {
         try {
             client_ = spdlog::std::make_unique<mongocxx::client>(mongocxx::uri{uri});
         } catch (const std::exception &e) {

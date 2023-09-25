@@ -27,8 +27,8 @@ namespace details {
 class scoped_padder {
 public:
     scoped_padder(size_t wrapped_size, const padding_info &padinfo, memory_buf_t &dest)
-        : padinfo_(padinfo)
-        , dest_(dest) {
+        : padinfo_(padinfo),
+          dest_(dest) {
         remaining_pad_ = static_cast<long>(padinfo.width_) - static_cast<long>(wrapped_size);
         if (remaining_pad_ <= 0) {
             return;
@@ -756,8 +756,8 @@ public:
     using DurationUnits = Units;
 
     explicit elapsed_formatter(padding_info padinfo)
-        : flag_formatter(padinfo)
-        , last_message_time_(log_clock::now()) {}
+        : flag_formatter(padinfo),
+          last_message_time_(log_clock::now()) {}
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override {
         auto delta = (std::max)(msg.time - last_message_time_, log_clock::duration::zero());
@@ -863,23 +863,23 @@ pattern_formatter::pattern_formatter(std::string pattern,
                                      pattern_time_type time_type,
                                      std::string eol,
                                      custom_flags custom_user_flags)
-    : pattern_(std::move(pattern))
-    , eol_(std::move(eol))
-    , pattern_time_type_(time_type)
-    , need_localtime_(false)
-    , last_log_secs_(0)
-    , custom_handlers_(std::move(custom_user_flags)) {
+    : pattern_(std::move(pattern)),
+      eol_(std::move(eol)),
+      pattern_time_type_(time_type),
+      need_localtime_(false),
+      last_log_secs_(0),
+      custom_handlers_(std::move(custom_user_flags)) {
     std::memset(&cached_tm_, 0, sizeof(cached_tm_));
     compile_pattern_(pattern_);
 }
 
 // use by default full formatter for if pattern is not given
 pattern_formatter::pattern_formatter(pattern_time_type time_type, std::string eol)
-    : pattern_("%+")
-    , eol_(std::move(eol))
-    , pattern_time_type_(time_type)
-    , need_localtime_(true)
-    , last_log_secs_(0) {
+    : pattern_("%+"),
+      eol_(std::move(eol)),
+      pattern_time_type_(time_type),
+      need_localtime_(true),
+      last_log_secs_(0) {
     std::memset(&cached_tm_, 0, sizeof(cached_tm_));
     formatters_.push_back(std::make_unique<details::full_formatter>(details::padding_info{}));
 }

@@ -34,8 +34,8 @@ template <typename Mutex, int BufferID = log_id::LOG_ID_MAIN>
 class android_sink final : public base_sink<Mutex> {
 public:
     explicit android_sink(std::string tag = "spdlog", bool use_raw_msg = false)
-        : tag_(std::move(tag))
-        , use_raw_msg_(use_raw_msg) {}
+        : tag_(std::move(tag)),
+          use_raw_msg_(use_raw_msg) {}
 
 protected:
     void sink_it_(const details::log_msg &msg) override {

@@ -30,8 +30,8 @@ template <typename Mutex>
 class qt_sink : public base_sink<Mutex> {
 public:
     qt_sink(QObject *qt_object, std::string meta_method)
-        : qt_object_(qt_object)
-        , meta_method_(std::move(meta_method)) {
+        : qt_object_(qt_object),
+          meta_method_(std::move(meta_method)) {
         if (!qt_object_) {
             throw_spdlog_ex("qt_sink: qt_object is null");
         }
@@ -69,9 +69,9 @@ public:
                   int max_lines,
                   bool dark_colors = false,
                   bool is_utf8 = false)
-        : qt_text_edit_(qt_text_edit)
-        , max_lines_(max_lines)
-        , is_utf8_(is_utf8) {
+        : qt_text_edit_(qt_text_edit),
+          max_lines_(max_lines),
+          is_utf8_(is_utf8) {
         if (!qt_text_edit_) {
             throw_spdlog_ex("qt_color_text_sink: text_edit is null");
         }
@@ -131,13 +131,13 @@ protected:
                       QTextCharFormat level_color,
                       int color_range_start,
                       int color_range_end)
-            : max_lines(max_lines)
-            , q_text_edit(q_text_edit)
-            , payload(std::move(payload))
-            , default_color(default_color)
-            , level_color(level_color)
-            , color_range_start(color_range_start)
-            , color_range_end(color_range_end) {}
+            : max_lines(max_lines),
+              q_text_edit(q_text_edit),
+              payload(std::move(payload)),
+              default_color(default_color),
+              level_color(level_color),
+              color_range_start(color_range_start),
+              color_range_end(color_range_end) {}
         int max_lines;
         QTextEdit *q_text_edit;
         QString payload;

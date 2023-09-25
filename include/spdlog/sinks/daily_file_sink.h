@@ -72,13 +72,13 @@ public:
                     bool truncate = false,
                     uint16_t max_files = 0,
                     const file_event_handlers &event_handlers = {})
-        : base_filename_(std::move(base_filename))
-        , rotation_h_(rotation_hour)
-        , rotation_m_(rotation_minute)
-        , file_helper_{event_handlers}
-        , truncate_(truncate)
-        , max_files_(max_files)
-        , filenames_q_() {
+        : base_filename_(std::move(base_filename)),
+          rotation_h_(rotation_hour),
+          rotation_m_(rotation_minute),
+          file_helper_{event_handlers},
+          truncate_(truncate),
+          max_files_(max_files),
+          filenames_q_() {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 ||
             rotation_minute > 59) {
             throw_spdlog_ex("daily_file_sink: Invalid rotation time in ctor");

@@ -24,9 +24,9 @@ template <typename Mutex>
 class systemd_sink : public base_sink<Mutex> {
 public:
     systemd_sink(std::string ident = "", bool enable_formatting = false)
-        : ident_{std::move(ident)}
-        , enable_formatting_{enable_formatting}
-        , syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
+        : ident_{std::move(ident)},
+          enable_formatting_{enable_formatting},
+          syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
                           /* spdlog::level::debug      */ LOG_DEBUG,
                           /* spdlog::level::info       */ LOG_INFO,
                           /* spdlog::level::warn       */ LOG_WARNING,

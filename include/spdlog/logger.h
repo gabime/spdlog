@@ -50,8 +50,8 @@ public:
     // Logger with range on sinks
     template <typename It>
     logger(std::string name, It begin, It end)
-        : name_(std::move(name))
-        , sinks_(begin, end) {}
+        : name_(std::move(name)),
+          sinks_(begin, end) {}
 
     // Logger with single sink
     logger(std::string name, sink_ptr single_sink)

@@ -22,10 +22,10 @@ rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
                                               std::size_t max_files,
                                               bool rotate_on_open,
                                               const file_event_handlers &event_handlers)
-    : base_filename_(std::move(base_filename))
-    , max_size_(max_size)
-    , max_files_(max_files)
-    , file_helper_{event_handlers} {
+    : base_filename_(std::move(base_filename)),
+      max_size_(max_size),
+      max_files_(max_files),
+      file_helper_{event_handlers} {
     if (max_size == 0) {
         throw_spdlog_ex("rotating sink constructor: max_size arg cannot be zero");
     }

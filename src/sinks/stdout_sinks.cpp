@@ -24,9 +24,9 @@ namespace sinks {
 
 template <typename ConsoleMutex>
 stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
-    : mutex_(ConsoleMutex::mutex())
-    , file_(file)
-    , formatter_(std::make_unique<spdlog::pattern_formatter>()) {
+    : mutex_(ConsoleMutex::mutex()),
+      file_(file),
+      formatter_(std::make_unique<spdlog::pattern_formatter>()) {
 #ifdef _WIN32
     // get windows handle from the FILE* object
 

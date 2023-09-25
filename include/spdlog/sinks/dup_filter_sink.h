@@ -42,8 +42,8 @@ public:
     template <class Rep, class Period>
     explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration,
                              level notification_level = level::info)
-        : max_skip_duration_{max_skip_duration}
-        , log_level_{notification_level} {}
+        : max_skip_duration_{max_skip_duration},
+          log_level_{notification_level} {}
 
 protected:
     std::chrono::microseconds max_skip_duration_;

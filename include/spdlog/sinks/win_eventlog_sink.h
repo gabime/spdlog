@@ -227,8 +227,8 @@ protected:
 public:
     win_eventlog_sink(std::string const &source,
                       DWORD event_id = 1000 /* according to mscoree.dll */)
-        : source_(source)
-        , event_id_(event_id) {
+        : source_(source),
+          event_id_(event_id) {
         try {
             current_user_sid_ = internal::sid_t::get_current_user_sid();
         } catch (...) {
