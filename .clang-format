@@ -6,12 +6,13 @@ Standard:        c++17
 IndentWidth:     4
 TabWidth:        4
 UseTab:          Never
-ColumnLimit:     120
+ColumnLimit:     100
 AlignAfterOpenBracket: Align
 BinPackParameters: false
 AlignEscapedNewlines: Left
 AlwaysBreakTemplateDeclarations: Yes
 PackConstructorInitializers: Never
+BreakConstructorInitializersBeforeComma: true
 IndentPPDirectives: BeforeHash
 SortIncludes:    Never
 ...
