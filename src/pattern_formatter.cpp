@@ -7,6 +7,7 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/formatter.h>
 #include <spdlog/pattern_formatter.h>
+#include <spdlog/common.h>
 
 #include <algorithm>
 #include <array>
@@ -102,7 +103,7 @@ public:
         : flag_formatter(padinfo) {}
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override {
-        const string_view_t &level_name = to_string_view(msg.log_level);
+        auto level_name = to_string_view(msg.log_level);
         ScopedPadder p(level_name.size(), padinfo_, dest);
         fmt_helper::append_string_view(level_name, dest);
     }
@@ -116,7 +117,7 @@ public:
         : flag_formatter(padinfo) {}
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override {
-        auto level_name = to_short_string_view(msg.log_level)};
+        auto level_name = to_short_string_view(msg.log_level);
         ScopedPadder p(level_name.size(), padinfo_, dest);
         fmt_helper::append_string_view(level_name, dest);
     }
