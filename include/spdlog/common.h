@@ -123,7 +123,6 @@ using format_string_t = std::string_view;
     #define SPDLOG_BUF_TO_STRING(x) x
 #else  // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
-
 using string_view_t = fmt::basic_string_view<char>;
 using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 template <typename... Args>
@@ -182,13 +181,13 @@ using atomic_level_t = std::atomic<level>;
 }
 constexpr auto levels_count = level_to_number(level::n_levels);
 constexpr std::array<string_view_t, levels_count> level_string_views SPDLOG_LEVEL_NAMES;
-constexpr std::array<const char *, levels_count> short_level_names SPDLOG_SHORT_LEVEL_NAMES;
+constexpr std::array<string_view_t, levels_count> short_level_names SPDLOG_SHORT_LEVEL_NAMES;
 
 [[nodiscard]] constexpr string_view_t to_string_view(spdlog::level lvl) noexcept {
     return level_string_views.at(level_to_number(lvl));
 }
 
-[[nodiscard]] constexpr const char *to_short_c_str(spdlog::level lvl) noexcept {
+[[nodiscard]] constexpr const char *to_short_string_view(spdlog::level lvl) noexcept {
     return short_level_names.at(level_to_number(lvl));
 }
 
