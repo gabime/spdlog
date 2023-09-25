@@ -22,7 +22,6 @@ TEST_CASE("dequeue-empty-nowait", "[mpmc_blocking_q]") {
 }
 
 TEST_CASE("dequeue-empty-wait", "[mpmc_blocking_q]") {
-
     size_t q_size = 100;
     milliseconds wait_ms(250);
     milliseconds tolerance_wait(250);
@@ -59,7 +58,6 @@ TEST_CASE("dequeue-full-wait", "[mpmc_blocking_q]") {
 }
 
 TEST_CASE("enqueue_nowait", "[mpmc_blocking_q]") {
-
     size_t q_size = 1;
     spdlog::details::mpmc_blocking_queue<int> q(q_size);
     milliseconds tolerance_wait(10);
@@ -96,8 +94,8 @@ TEST_CASE("full_queue", "[mpmc_blocking_q]") {
     size_t q_size = 100;
     spdlog::details::mpmc_blocking_queue<int> q(q_size);
     for (int i = 0; i < static_cast<int>(q_size); i++) {
-        q.enqueue(i + 0); // i+0 to force rvalue and avoid tidy warnings on the same time if we
-                          // std::move(i) instead
+        q.enqueue(i + 0);  // i+0 to force rvalue and avoid tidy warnings on the same time if we
+                           // std::move(i) instead
     }
 
     q.enqueue_nowait(123456);

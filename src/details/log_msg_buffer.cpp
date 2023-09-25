@@ -46,5 +46,5 @@ void log_msg_buffer::update_string_views() {
     payload = string_view_t{buffer.data() + logger_name.size(), payload.size()};
 }
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

@@ -24,7 +24,7 @@ public:
     circular_q() = default;
 
     explicit circular_q(size_t max_items)
-        : max_items_(max_items + 1) // one item is reserved as marker for full q
+        : max_items_(max_items + 1)  // one item is reserved as marker for full q
           ,
           v_(max_items_) {}
 
@@ -46,7 +46,7 @@ public:
             v_[tail_] = std::move(item);
             tail_ = (tail_ + 1) % max_items_;
 
-            if (tail_ == head_) // overrun last item if full
+            if (tail_ == head_)  // overrun last item if full
             {
                 head_ = (head_ + 1) % max_items_;
                 ++overrun_counter_;
@@ -115,5 +115,5 @@ private:
         other.overrun_counter_ = 0;
     }
 };
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

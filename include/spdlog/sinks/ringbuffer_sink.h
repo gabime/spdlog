@@ -59,5 +59,5 @@ private:
 using ringbuffer_sink_mt = ringbuffer_sink<std::mutex>;
 using ringbuffer_sink_st = ringbuffer_sink<details::null_mutex>;
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog

@@ -251,7 +251,7 @@ inline void error(string_view_t msg) { log(level::err, msg); }
 inline void critical(string_view_t msg) { log(level::critical, msg); }
 #endif
 
-} // namespace spdlog
+}  // namespace spdlog
 
 //
 // enable/disable log calls at compile time according to global level.
@@ -328,4 +328,4 @@ inline void critical(string_view_t msg) { log(level::critical, msg); }
     #define SPDLOG_CRITICAL(...) (void)0
 #endif
 
-#endif // SPDLOG_H
+#endif  // SPDLOG_H

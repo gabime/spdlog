@@ -30,9 +30,9 @@ struct null_atomic {
 
     T exchange(T new_value, std::memory_order = std::memory_order_seq_cst) {
         std::swap(new_value, value);
-        return new_value; // return value before the call
+        return new_value;  // return value before the call
     }
 };
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

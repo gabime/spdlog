@@ -12,4 +12,4 @@ namespace sinks {
 class sink;
 }
 
-} // namespace spdlog
+}  // namespace spdlog

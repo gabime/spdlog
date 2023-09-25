@@ -173,5 +173,5 @@ private:
     spdlog::details::circular_q<T> q_;
     std::atomic<size_t> discard_counter_{0};
 };
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

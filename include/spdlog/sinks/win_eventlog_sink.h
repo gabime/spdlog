@@ -131,7 +131,7 @@ public:
             ~process_token_t() { ::CloseHandle(token_handle_); }
 
         } current_process_token(
-            ::GetCurrentProcess()); // GetCurrentProcess returns pseudohandle, no leak here!
+            ::GetCurrentProcess());  // GetCurrentProcess returns pseudohandle, no leak here!
 
         // Get the required size, this is expected to fail with ERROR_INSUFFICIENT_BUFFER and return
         // the token size
@@ -156,30 +156,30 @@ public:
 struct eventlog {
     static WORD get_event_type(details::log_msg const &msg) {
         switch (msg.log_level) {
-        case level::trace:
-        case level::debug:
-            return EVENTLOG_SUCCESS;
+            case level::trace:
+            case level::debug:
+                return EVENTLOG_SUCCESS;
 
-        case level::info:
-            return EVENTLOG_INFORMATION_TYPE;
+            case level::info:
+                return EVENTLOG_INFORMATION_TYPE;
 
-        case spdlog::level::warn:
-            return EVENTLOG_WARNING_TYPE;
+            case spdlog::level::warn:
+                return EVENTLOG_WARNING_TYPE;
 
-        case level::err:
-        case level::critical:
-        case level::off:
-            return EVENTLOG_ERROR_TYPE;
+            case level::err:
+            case level::critical:
+            case level::off:
+                return EVENTLOG_ERROR_TYPE;
 
-        default:
-            return EVENTLOG_INFORMATION_TYPE;
+            default:
+                return EVENTLOG_INFORMATION_TYPE;
         }
     }
 
     static WORD get_event_category(details::log_msg const &msg) { return (WORD)msg.log_level; }
 };
 
-} // namespace internal
+}  // namespace internal
 
 /*
  * Windows Event Log sink
@@ -238,15 +238,14 @@ public:
     }
 
     ~win_eventlog_sink() {
-        if (hEventLog_)
-            DeregisterEventSource(hEventLog_);
+        if (hEventLog_) DeregisterEventSource(hEventLog_);
     }
 };
 
-} // namespace win_eventlog
+}  // namespace win_eventlog
 
 using win_eventlog_sink_mt = win_eventlog::win_eventlog_sink<std::mutex>;
 using win_eventlog_sink_st = win_eventlog::win_eventlog_sink<details::null_mutex>;
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog

@@ -53,5 +53,5 @@ private:
     filename_t filename_;
     file_event_handlers event_handlers_;
 };
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

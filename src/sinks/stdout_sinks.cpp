@@ -10,13 +10,13 @@
     // so instead we use ::FileWrite
     #include <spdlog/details/windows_include.h>
 
-    #ifndef _USING_V110_SDK71_ // fileapi.h doesn't exist in winxp
-        #include <fileapi.h>   // WriteFile (..)
+    #ifndef _USING_V110_SDK71_  // fileapi.h doesn't exist in winxp
+        #include <fileapi.h>    // WriteFile (..)
     #endif
 
-    #include <io.h>    // _get_osfhandle(..)
-    #include <stdio.h> // _fileno(..)
-#endif                 // WIN32
+    #include <io.h>     // _get_osfhandle(..)
+    #include <stdio.h>  // _fileno(..)
+#endif                  // WIN32
 
 namespace spdlog {
 
@@ -38,7 +38,7 @@ stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
     if (handle_ == INVALID_HANDLE_VALUE && file != stdout && file != stderr) {
         throw_spdlog_ex("spdlog::stdout_sink_base: _get_osfhandle() failed", errno);
     }
-#endif // WIN32
+#endif  // WIN32
 }
 
 template <typename ConsoleMutex>
@@ -62,8 +62,8 @@ void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &msg) {
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
-#endif               // WIN32
-    ::fflush(file_); // flush every line to terminal
+#endif                // WIN32
+    ::fflush(file_);  // flush every line to terminal
 }
 
 template <typename ConsoleMutex>
@@ -95,7 +95,7 @@ template <typename ConsoleMutex>
 stderr_sink<ConsoleMutex>::stderr_sink()
     : stdout_sink_base<ConsoleMutex>(stderr) {}
 
-} // namespace sinks
+}  // namespace sinks
 
 // factory methods
 template <typename Factory>
@@ -117,7 +117,7 @@ template <typename Factory>
 std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name) {
     return Factory::template create<sinks::stderr_sink_st>(logger_name);
 }
-} // namespace spdlog
+}  // namespace spdlog
 
 // template instantiations for stdout/stderr loggers
 #include <spdlog/details/console_globals.h>
@@ -141,11 +141,11 @@ spdlog::stderr_logger_mt<spdlog::synchronous_factory>(const std::string &logger_
 template SPDLOG_API std::shared_ptr<spdlog::logger>
 spdlog::stderr_logger_st<spdlog::synchronous_factory>(const std::string &logger_name);
 
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stdout_logger_mt<spdlog::async_factory>(const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stdout_logger_st<spdlog::async_factory>(const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stderr_logger_mt<spdlog::async_factory>(const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stderr_logger_st<spdlog::async_factory>(const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt<spdlog::async_factory>(
+    const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st<spdlog::async_factory>(
+    const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt<spdlog::async_factory>(
+    const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st<spdlog::async_factory>(
+    const std::string &logger_name);

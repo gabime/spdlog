@@ -35,7 +35,7 @@ public:
             for (;;) {
                 std::unique_lock<std::mutex> lock(this->mutex_);
                 if (this->cv_.wait_for(lock, interval, [this] { return !this->active_; })) {
-                    return; // active_ == false, so exit this thread
+                    return;  // active_ == false, so exit this thread
                 }
                 callback_fun();
             }
@@ -53,5 +53,5 @@ private:
     std::condition_variable cv_;
 };
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

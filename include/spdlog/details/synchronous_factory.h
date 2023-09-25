@@ -19,4 +19,4 @@ struct synchronous_factory {
         return new_logger;
     }
 };
-} // namespace spdlog
+}  // namespace spdlog

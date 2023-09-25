@@ -34,8 +34,8 @@ void basic_file_sink<Mutex>::flush_() {
     file_helper_.flush();
 }
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog
 
 // template instantiations
 template class SPDLOG_API spdlog::sinks::basic_file_sink<std::mutex>;

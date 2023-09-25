@@ -41,20 +41,20 @@
     #if defined(_WIN32)
         #ifdef spdlog_EXPORTS
             #define SPDLOG_API __declspec(dllexport)
-        #else // !spdlog_EXPORTS
+        #else  // !spdlog_EXPORTS
             #define SPDLOG_API __declspec(dllimport)
         #endif
-    #else // !defined(_WIN32)
+    #else  // !defined(_WIN32)
         #define SPDLOG_API __attribute__((visibility("default")))
     #endif
-#else // !defined(SPDLOG_SHARED_LIB)
+#else  // !defined(SPDLOG_SHARED_LIB)
     #define SPDLOG_API
 #endif
 
 #include <spdlog/fmt/fmt.h>
 
 #if !defined(SPDLOG_USE_STD_FORMAT) && \
-    FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
+    FMT_VERSION >= 80000  // backward compatibility with fmt versions older than 8
     #define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
     #if defined(SPDLOG_WCHAR_FILENAMES)
         #include <spdlog/fmt/xchar.h>
@@ -121,7 +121,7 @@ using format_string_t = std::string_view;
     #endif
 
     #define SPDLOG_BUF_TO_STRING(x) x
-#else // use fmt lib instead of std::format
+#else  // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
 
 using string_view_t = fmt::basic_string_view<char>;
@@ -131,7 +131,7 @@ using format_string_t = fmt::format_string<Args...>;
 using wstring_view_t = fmt::basic_string_view<wchar_t>;
 using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
     #define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
-#endif // SPDLOG_USE_STD_FORMAT
+#endif  // SPDLOG_USE_STD_FORMAT
 
 #define SPDLOG_LEVEL_TRACE 0
 #define SPDLOG_LEVEL_DEBUG 1
@@ -204,8 +204,8 @@ enum class color_mode { always, automatic, never };
 // local time by default
 //
 enum class pattern_time_type {
-    local, // log localtime
-    utc    // log utc
+    local,  // log localtime
+    utc     // log utc
 };
 
 //
@@ -234,8 +234,8 @@ struct source_loc {
           funcname{funcname_in} {}
 
 #ifdef SPDLOG_HAVE_STD_SOURCE_LOCATION
-    static constexpr source_loc
-    current(const std::source_location source_location = std::source_location::current()) {
+    static constexpr source_loc current(
+        const std::source_location source_location = std::source_location::current()) {
         return source_loc{source_location.file_name(), source_location.line(),
                           source_location.function_name()};
     }
@@ -245,7 +245,7 @@ struct source_loc {
         return source_loc{source_location.file_name(), source_location.line(),
                           source_location.function_name()};
     }
-#else // no source location support
+#else  // no source location support
     static constexpr source_loc current() { return source_loc{}; }
 #endif
 
@@ -310,26 +310,26 @@ namespace details {
 
 // convert format_string<...> to string_view depending on format lib versions
 #if defined(SPDLOG_USE_STD_FORMAT)
-    #if __cpp_lib_format >= 202207L // std::format and __cpp_lib_format >= 202207L
+    #if __cpp_lib_format >= 202207L  // std::format and __cpp_lib_format >= 202207L
 template <typename T, typename... Args>
-[[nodiscard]] constexpr std::basic_string_view<T>
-to_string_view(std::basic_format_string<T, Args...> fmt) noexcept {
+[[nodiscard]] constexpr std::basic_string_view<T> to_string_view(
+    std::basic_format_string<T, Args...> fmt) noexcept {
     return fmt.get();
 }
-    #else // std::format and __cpp_lib_format < 202207L
+    #else  // std::format and __cpp_lib_format < 202207L
 template <typename T, typename... Args>
-[[nodiscard]] constexpr std::basic_string_view<T>
-to_string_view(std::basic_format_string<T, Args...> fmt) noexcept {
+[[nodiscard]] constexpr std::basic_string_view<T> to_string_view(
+    std::basic_format_string<T, Args...> fmt) noexcept {
     return fmt;
 }
     #endif
-#else // {fmt} version
+#else  // {fmt} version
 template <typename T, typename... Args>
-[[nodiscard]] constexpr fmt::basic_string_view<T>
-to_string_view(fmt::basic_format_string<T, Args...> fmt) noexcept {
+[[nodiscard]] constexpr fmt::basic_string_view<T> to_string_view(
+    fmt::basic_format_string<T, Args...> fmt) noexcept {
     return fmt;
 }
 #endif
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

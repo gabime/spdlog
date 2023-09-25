@@ -94,5 +94,5 @@ public:
         }
     }
 };
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

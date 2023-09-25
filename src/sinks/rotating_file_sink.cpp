@@ -34,7 +34,7 @@ rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
         throw_spdlog_ex("rotating sink constructor: max_files arg cannot exceed 200000");
     }
     file_helper_.open(calc_filename(base_filename_, 0));
-    current_size_ = file_helper_.size(); // expensive. called only once
+    current_size_ = file_helper_.size();  // expensive. called only once
     if (rotate_on_open && current_size_ > 0) {
         rotate_();
         current_size_ = 0;
@@ -106,11 +106,12 @@ void rotating_file_sink<Mutex>::rotate_() {
         if (!rename_file_(src, target)) {
             // if failed try again after a small delay.
             // this is a workaround to a windows issue, where very high rotation
-            // rates can cause the rename to fail with permission denied (because of antivirus?).
+            // rates can cause the rename to fail with permission denied (because of
+            // antivirus?).
             details::os::sleep_for_millis(100);
             if (!rename_file_(src, target)) {
-                file_helper_.reopen(
-                    true); // truncate the log file anyway to prevent it to grow beyond its limit!
+                file_helper_.reopen(true);  // truncate the log file anyway to prevent it
+                                            // to grow beyond its limit!
                 current_size_ = 0;
                 throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) +
                                     " to " + filename_to_str(target),
@@ -131,8 +132,8 @@ bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src_filename,
     return details::os::rename(src_filename, target_filename) == 0;
 }
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog
 
 // template instantiations
 template class SPDLOG_API spdlog::sinks::rotating_file_sink<std::mutex>;

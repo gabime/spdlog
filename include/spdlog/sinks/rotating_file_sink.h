@@ -55,7 +55,7 @@ private:
 using rotating_file_sink_mt = rotating_file_sink<std::mutex>;
 using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
 
-} // namespace sinks
+}  // namespace sinks
 
 //
 // factory functions
@@ -82,4 +82,4 @@ inline std::shared_ptr<logger> rotating_logger_st(const std::string &logger_name
     return Factory::template create<sinks::rotating_file_sink_st>(
         logger_name, filename, max_file_size, max_files, rotate_on_open, event_handlers);
 }
-} // namespace spdlog
+}  // namespace spdlog

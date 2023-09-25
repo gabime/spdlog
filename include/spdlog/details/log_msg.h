@@ -32,5 +32,5 @@ struct SPDLOG_API log_msg {
     source_loc source;
     string_view_t payload;
 };
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

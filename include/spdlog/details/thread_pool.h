@@ -48,7 +48,7 @@ struct async_msg : log_msg_buffer {
         worker_ptr = std::move(other.worker_ptr);
         return *this;
     }
-#else // (_MSC_VER) && _MSC_VER <= 1800
+#else  // (_MSC_VER) && _MSC_VER <= 1800
     async_msg(async_msg &&) = default;
     async_msg &operator=(async_msg &&) = default;
 #endif
@@ -110,5 +110,5 @@ private:
     bool process_next_msg_();
 };
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

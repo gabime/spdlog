@@ -38,7 +38,7 @@ void logger::set_formatter(std::unique_ptr<formatter> f) {
         if (std::next(it) == sinks_.end()) {
             // last element - we can be move it.
             (*it)->set_formatter(std::move(f));
-            break; // to prevent clang-tidy warning
+            break;  // to prevent clang-tidy warning
         } else {
             (*it)->set_formatter(f->clone());
         }
@@ -102,7 +102,7 @@ void logger::err_handler_(const std::string &msg) {
         auto tm_time = details::os::localtime(system_clock::to_time_t(now));
         char date_buf[64];
         std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
-#if defined(USING_R) && defined(R_R_H) // if in R environment
+#if defined(USING_R) && defined(R_R_H)  // if in R environment
         REprintf("[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf, name().c_str(),
                  msg.c_str());
 #else
@@ -111,4 +111,4 @@ void logger::err_handler_(const std::string &msg) {
 #endif
     }
 }
-} // namespace spdlog
+}  // namespace spdlog

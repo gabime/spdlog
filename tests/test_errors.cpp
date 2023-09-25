@@ -19,7 +19,7 @@ protected:
 };
 struct custom_ex {};
 
-#if !defined(SPDLOG_USE_STD_FORMAT) // std formt doesn't fully support runtime format strings
+#if !defined(SPDLOG_USE_STD_FORMAT)  // std formt doesn't fully support runtime format strings
 TEST_CASE("default_error_handler", "[errors]") {
     prepare_logdir();
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
@@ -62,7 +62,7 @@ TEST_CASE("flush_error_handler", "[errors]") {
     REQUIRE_THROWS_AS(logger->flush(), custom_ex);
 }
 
-#if !defined(SPDLOG_USE_STD_FORMAT) // std formt doesn't fully support runtime format strings
+#if !defined(SPDLOG_USE_STD_FORMAT)  // std formt doesn't fully support runtime format strings
 TEST_CASE("async_error_handler", "[errors]") {
     prepare_logdir();
     std::string err_msg("log failed with some msg");
@@ -82,7 +82,7 @@ TEST_CASE("async_error_handler", "[errors]") {
         logger->info("Good message #1");
         logger->info(SPDLOG_FMT_RUNTIME("Bad format msg {} {}"), "xxx");
         logger->info("Good message #2");
-        spdlog::drop("logger"); // force logger to drain the queue and shutdown
+        spdlog::drop("logger");  // force logger to drain the queue and shutdown
     }
     spdlog::init_thread_pool(128, 1);
     require_message_count(SIMPLE_ASYNC_LOG, 2);
@@ -100,12 +100,11 @@ TEST_CASE("async_error_handler2", "[errors]") {
         auto logger = spdlog::create_async<failing_sink>("failed_logger");
         logger->set_error_handler([=](const std::string &) {
             std::ofstream ofs("test_logs/custom_err2.txt");
-            if (!ofs)
-                throw std::runtime_error("Failed open test_logs/custom_err2.txt");
+            if (!ofs) throw std::runtime_error("Failed open test_logs/custom_err2.txt");
             ofs << err_msg;
         });
         logger->info("Hello failure");
-        spdlog::drop("failed_logger"); // force logger to drain the queue and shutdown
+        spdlog::drop("failed_logger");  // force logger to drain the queue and shutdown
     }
 
     spdlog::init_thread_pool(128, 1);

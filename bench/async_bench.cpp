@@ -35,16 +35,15 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count
 
 #ifdef _MSC_VER
     #pragma warning(push)
-    #pragma warning(disable : 4996) // disable fopen warning under msvc
-#endif                              // _MSC_VER
+    #pragma warning(disable : 4996)  // disable fopen warning under msvc
+#endif                               // _MSC_VER
 
 int count_lines(const char *filename) {
     int counter = 0;
     auto *infile = fopen(filename, "r");
     int ch;
     while (EOF != (ch = getc(infile))) {
-        if ('\n' == ch)
-            counter++;
+        if ('\n' == ch) counter++;
     }
     fclose(infile);
 
@@ -67,7 +66,6 @@ void verify_file(const char *filename, int expected_count) {
 #endif
 
 int main(int argc, char *argv[]) {
-
     int howmany = 1000000;
     int queue_size = std::min(howmany + 2, 8192);
     int threads = 10;
@@ -80,10 +78,8 @@ int main(int argc, char *argv[]) {
             return 0;
         }
 
-        if (argc > 1)
-            howmany = atoi(argv[1]);
-        if (argc > 2)
-            threads = atoi(argv[2]);
+        if (argc > 1) howmany = atoi(argv[1]);
+        if (argc > 2) threads = atoi(argv[2]);
         if (argc > 3) {
             queue_size = atoi(argv[3]);
             if (queue_size > 500000) {
@@ -92,8 +88,7 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        if (argc > 4)
-            iters = atoi(argv[4]);
+        if (argc > 4) iters = atoi(argv[4]);
 
         auto slot_size = sizeof(spdlog::details::async_msg);
         spdlog::info("-------------------------------------------------");

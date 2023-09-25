@@ -44,4 +44,4 @@ void throw_spdlog_ex(const std::string &msg, int last_errno) {
 
 void throw_spdlog_ex(std::string msg) { SPDLOG_THROW(spdlog_ex(std::move(msg))); }
 
-} // namespace spdlog
+}  // namespace spdlog

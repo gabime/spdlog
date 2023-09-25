@@ -23,7 +23,7 @@ TEST_CASE("test_rolling", "[circular_q]") {
 
     for (size_t i = 0; i < q_size + 2; i++) {
         auto val = i;
-        q.push_back(std::move(val)); // arg to push_back must be r value
+        q.push_back(std::move(val));  // arg to push_back must be r value
     }
 
     REQUIRE(q.size() == q_size);
@@ -49,7 +49,7 @@ TEST_CASE("test_rolling", "[circular_q]") {
 TEST_CASE("test_empty", "[circular_q]") {
     q_type q1(0);
     REQUIRE(q1.empty());
-    REQUIRE(q1.full()); // q with capacity 0 is considered full
+    REQUIRE(q1.full());  // q with capacity 0 is considered full
     q1.push_back(1);
     REQUIRE(q1.empty());
 

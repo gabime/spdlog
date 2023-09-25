@@ -109,5 +109,5 @@ private:
     bool automatic_registration_ = true;
 };
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

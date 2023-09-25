@@ -82,8 +82,9 @@ inline void init_thread_pool(size_t q_size,
     details::registry::instance().set_tp(std::move(tp));
 }
 
-inline void
-init_thread_pool(size_t q_size, size_t thread_count, std::function<void()> on_thread_start) {
+inline void init_thread_pool(size_t q_size,
+                             size_t thread_count,
+                             std::function<void()> on_thread_start) {
     init_thread_pool(q_size, thread_count, on_thread_start, [] {});
 }
 
@@ -96,4 +97,4 @@ inline void init_thread_pool(size_t q_size, size_t thread_count) {
 inline std::shared_ptr<spdlog::details::thread_pool> thread_pool() {
     return details::registry::instance().get_tp();
 }
-} // namespace spdlog
+}  // namespace spdlog

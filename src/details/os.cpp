@@ -17,9 +17,9 @@
 
 #ifdef _WIN32
     #include <spdlog/details/windows_include.h>
-    #include <fileapi.h> // for FlushFileBuffers
-    #include <io.h>      // for _get_osfhandle, _isatty, _fileno
-    #include <process.h> // for _get_pid
+    #include <fileapi.h>  // for FlushFileBuffers
+    #include <io.h>       // for _get_osfhandle, _isatty, _fileno
+    #include <process.h>  // for _get_pid
 
     #ifdef __MINGW32__
         #include <share.h>
@@ -30,37 +30,37 @@
         #include <limits>
     #endif
 
-    #include <direct.h> // for _mkdir/_wmkdir
+    #include <direct.h>  // for _mkdir/_wmkdir
 
-#else // unix
+#else  // unix
 
     #include <fcntl.h>
     #include <unistd.h>
 
     #ifdef __linux__
-        #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
+        #include <sys/syscall.h>  //Use gettid() syscall under linux to get thread id
 
     #elif defined(_AIX)
-        #include <pthread.h> // for pthread_getthrds_np
+        #include <pthread.h>  // for pthread_getthrds_np
 
     #elif defined(__DragonFly__) || defined(__FreeBSD__)
-        #include <pthread_np.h> // for pthread_getthreadid_np
+        #include <pthread_np.h>  // for pthread_getthreadid_np
 
     #elif defined(__NetBSD__)
-        #include <lwp.h> // for _lwp_self
+        #include <lwp.h>  // for _lwp_self
 
     #elif defined(__sun)
-        #include <thread.h> // for thr_self
+        #include <thread.h>  // for thr_self
     #endif
 
-#endif // unix
+#endif  // unix
 
 #if defined __APPLE__
     #include <AvailabilityMacros.h>
 #endif
 
-#ifndef __has_feature          // Clang - feature checking macros.
-    #define __has_feature(x) 0 // Compatibility with non-clang compilers.
+#ifndef __has_feature           // Clang - feature checking macros.
+    #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
 namespace spdlog {
@@ -68,7 +68,6 @@ namespace details {
 namespace os {
 
 spdlog::log_clock::time_point now() noexcept {
-
 #if defined __linux__ && defined SPDLOG_CLOCK_COARSE
     timespec ts;
     ::clock_gettime(CLOCK_REALTIME_COARSE, &ts);
@@ -81,7 +80,6 @@ spdlog::log_clock::time_point now() noexcept {
 #endif
 }
 std::tm localtime(const std::time_t &time_tt) noexcept {
-
 #ifdef _WIN32
     std::tm tm;
     ::localtime_s(&tm, &time_tt);
@@ -98,7 +96,6 @@ std::tm localtime() noexcept {
 }
 
 std::tm gmtime(const std::time_t &time_tt) noexcept {
-
 #ifdef _WIN32
     std::tm tm;
     ::gmtime_s(&tm, &time_tt);
@@ -131,7 +128,7 @@ bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode) {
         }
     }
     #endif
-#else // unix
+#else  // unix
     #if defined(SPDLOG_PREVENT_CHILD_FD)
     const int mode_flag = mode == SPDLOG_FILENAME_T("ab") ? O_APPEND : O_TRUNC;
     const int fd =
@@ -180,7 +177,7 @@ bool path_exists(const filename_t &filename) noexcept {
     auto attribs = ::GetFileAttributesA(filename.c_str());
     #endif
     return attribs != INVALID_FILE_ATTRIBUTES;
-#else // common linux/unix all have the stat system call
+#else  // common linux/unix all have the stat system call
     struct stat buffer;
     return (::stat(filename.c_str(), &buffer) == 0);
 #endif
@@ -199,20 +196,20 @@ size_t filesize(FILE *f) {
     }
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = ::_fileno(f);
-    #if defined(_WIN64) // 64 bits
+    #if defined(_WIN64)  // 64 bits
     __int64 ret = ::_filelengthi64(fd);
     if (ret >= 0) {
         return static_cast<size_t>(ret);
     }
 
-    #else // windows 32 bits
+    #else  // windows 32 bits
     long ret = ::_filelength(fd);
     if (ret >= 0) {
         return static_cast<size_t>(ret);
     }
     #endif
 
-#else // unix
+#else  // unix
     // OpenBSD and AIX doesn't compile with :: before the fileno(..)
     #if defined(__OpenBSD__) || defined(_AIX)
     int fd = fileno(f);
@@ -226,7 +223,7 @@ size_t filesize(FILE *f) {
     if (::fstat64(fd, &st) == 0) {
         return static_cast<size_t>(st.st_size);
     }
-    #else // other unix or linux 32 bits or cygwin
+    #else  // other unix or linux 32 bits or cygwin
     struct stat st;
     if (::fstat(fd, &st) == 0) {
         return static_cast<size_t>(st.st_size);
@@ -234,7 +231,7 @@ size_t filesize(FILE *f) {
     #endif
 #endif
     throw_spdlog_ex("Failed getting file size from fd", errno);
-    return 0; // will not be reached.
+    return 0;  // will not be reached.
 }
 
 #ifdef _MSC_VER
@@ -243,7 +240,6 @@ size_t filesize(FILE *f) {
 
 // Return utc offset in minutes or throw spdlog_ex on failure
 int utc_minutes_offset(const std::tm &tm) {
-
 #ifdef _WIN32
     #if _WIN32_WINNT < _WIN32_WINNT_WS08
     TIME_ZONE_INFORMATION tzinfo;
@@ -252,8 +248,7 @@ int utc_minutes_offset(const std::tm &tm) {
     DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
     auto rv = ::GetDynamicTimeZoneInformation(&tzinfo);
     #endif
-    if (rv == TIME_ZONE_ID_INVALID)
-        throw_spdlog_ex("Failed getting timezone info. ", errno);
+    if (rv == TIME_ZONE_ID_INVALID) throw_spdlog_ex("Failed getting timezone info. ", errno);
 
     int offset = -tzinfo.Bias;
     if (tm.tm_isdst) {
@@ -345,7 +340,7 @@ size_t _thread_id() noexcept {
     pthread_threadid_np(nullptr, &tid);
     #endif
     return static_cast<size_t>(tid);
-#else // Default to standard C++11 (other Unix)
+#else  // Default to standard C++11 (other Unix)
     return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
 #endif
 }
@@ -379,7 +374,6 @@ std::string filename_to_str(const filename_t &filename) { return filename; }
 #endif
 
 int pid() noexcept {
-
 #ifdef _WIN32
     return static_cast<int>(::GetCurrentProcessId());
 #else
@@ -421,7 +415,6 @@ bool is_color_terminal() noexcept {
 // Determine if the terminal attached
 // Source: https://github.com/agauniyal/rang/
 bool in_terminal(FILE *file) noexcept {
-
 #ifdef _WIN32
     return ::_isatty(_fileno(file)) != 0;
 #else
@@ -490,7 +483,7 @@ void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
     throw_spdlog_ex(
         fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
 }
-#endif // defined(SPDLOG_WCHAR_FILENAMES) && defined(_WIN32)
+#endif  // defined(SPDLOG_WCHAR_FILENAMES) && defined(_WIN32)
 
 // return true on success
 static bool mkdir_(const filename_t &path) {
@@ -527,7 +520,7 @@ bool create_dir(const filename_t &path) {
         auto subdir = path.substr(0, token_pos);
 
         if (!subdir.empty() && !path_exists(subdir) && !mkdir_(subdir)) {
-            return false; // return error if failed creating dir
+            return false;  // return error if failed creating dir
         }
         search_offset = token_pos + 1;
     } while (search_offset < path.size());
@@ -546,17 +539,16 @@ filename_t dir_name(const filename_t &path) {
 }
 
 std::string getenv(const char *field) {
-
 #if defined(_MSC_VER)
     #if defined(__cplusplus_winrt)
-    return std::string{}; // not supported under uwp
+    return std::string{};  // not supported under uwp
     #else
     size_t len = 0;
     char buf[128];
     bool ok = ::getenv_s(&len, buf, sizeof(buf), field) == 0;
     return ok ? buf : std::string{};
     #endif
-#else // revert to getenv
+#else  // revert to getenv
     char *buf = ::getenv(field);
     return buf ? buf : std::string{};
 #endif
@@ -572,6 +564,6 @@ bool fsync(FILE *fp) {
 #endif
 }
 
-} // namespace os
-} // namespace details
-} // namespace spdlog
+}  // namespace os
+}  // namespace details
+}  // namespace spdlog

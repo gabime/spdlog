@@ -25,5 +25,5 @@ protected:
     atomic_level_t level_{level::trace};
 };
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog

@@ -83,7 +83,7 @@ void load_levels(const std::string &input) {
         if (level == level::off && level_name != "off") {
             continue;
         }
-        if (logger_name.empty()) // no logger name indicate global level
+        if (logger_name.empty())  // no logger name indicate global level
         {
             global_level_found = true;
             global_level = level;
@@ -96,6 +96,6 @@ void load_levels(const std::string &input) {
                                              global_level_found ? &global_level : nullptr);
 }
 
-} // namespace helpers
-} // namespace cfg
-} // namespace spdlog
+}  // namespace helpers
+}  // namespace cfg
+}  // namespace spdlog

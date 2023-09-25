@@ -37,7 +37,6 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger]") {
 
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
     for (int i = 0; i < 10; ++i) {
-
         logger->info("Test message {}", i);
     }
     logger->flush();

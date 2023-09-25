@@ -41,7 +41,7 @@ public:
 
     void reset() { start_tp_ = clock::now(); }
 };
-} // namespace spdlog
+}  // namespace spdlog
 
 // Support for fmt formatting  (e.g. "{:012.9}" or just "{}")
 namespace
@@ -59,4 +59,4 @@ struct formatter<spdlog::stopwatch> : formatter<double> {
         return formatter<double>::format(sw.elapsed().count(), ctx);
     }
 };
-} // namespace std
+}  // namespace std

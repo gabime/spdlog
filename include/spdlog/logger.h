@@ -266,7 +266,7 @@ protected:
 #ifdef SPDLOG_USE_STD_FORMAT
             auto formatted = std::vformat(fmt, std::make_format_args(args...));
             sink_it_(details::log_msg(loc, name_, lvl, formatted));
-#else // use {fmt} lib
+#else  // use {fmt} lib
             memory_buf_t buf;
             fmt::vformat_to(std::back_inserter(buf), fmt, fmt::make_format_args(args...));
             sink_it_(details::log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size())));
@@ -297,4 +297,4 @@ protected:
     void err_handler_(const std::string &msg);
 };
 
-} // namespace spdlog
+}  // namespace spdlog

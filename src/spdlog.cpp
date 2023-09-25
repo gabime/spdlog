@@ -68,4 +68,4 @@ void apply_logger_env_levels(std::shared_ptr<logger> logger) {
     details::registry::instance().apply_logger_env_levels(std::move(logger));
 }
 
-} // namespace spdlog
+}  // namespace spdlog

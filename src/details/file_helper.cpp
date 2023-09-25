@@ -139,5 +139,5 @@ std::tuple<filename_t, filename_t> file_helper::split_by_extension(const filenam
     return std::make_tuple(fname.substr(0, ext_index), fname.substr(ext_index));
 }
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

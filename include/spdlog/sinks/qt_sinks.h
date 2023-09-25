@@ -167,13 +167,13 @@ protected:
             payload = QString::fromLatin1(str.data(), static_cast<int>(str.size()));
         }
 
-        invoke_params params{max_lines_,                // max lines
-                             qt_text_edit_,             // text edit to append to
-                             std::move(payload),        // text to append
-                             default_color_,            // default color
-                             colors_.at(msg.log_level), // color to apply
-                             color_range_start,         // color range start
-                             color_range_end};          // color range end
+        invoke_params params{max_lines_,                 // max lines
+                             qt_text_edit_,              // text edit to append to
+                             std::move(payload),         // text to append
+                             default_color_,             // default color
+                             colors_.at(msg.log_level),  // color to apply
+                             color_range_start,          // color range start
+                             color_range_end};           // color range end
 
         QMetaObject::invokeMethod(
             qt_text_edit_, [params]() { invoke_method_(params); }, Qt::AutoConnection);
@@ -193,7 +193,7 @@ protected:
         while (document->blockCount() > params.max_lines) {
             cursor.select(QTextCursor::BlockUnderCursor);
             cursor.removeSelectedText();
-            cursor.deleteChar(); // delete the newline after the block
+            cursor.deleteChar();  // delete the newline after the block
         }
 
         cursor.movePosition(QTextCursor::End);
@@ -232,7 +232,7 @@ using qt_sink_mt = qt_sink<std::mutex>;
 using qt_sink_st = qt_sink<details::null_mutex>;
 using qt_color_sink_mt = qt_color_sink<std::mutex>;
 using qt_color_sink_st = qt_color_sink<details::null_mutex>;
-} // namespace sinks
+}  // namespace sinks
 
 //
 // Factory functions
@@ -269,14 +269,16 @@ inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name,
 }
 // log to QObject
 template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
-qt_logger_mt(const std::string &logger_name, QObject *qt_object, const std::string &meta_method) {
+inline std::shared_ptr<logger> qt_logger_mt(const std::string &logger_name,
+                                            QObject *qt_object,
+                                            const std::string &meta_method) {
     return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_method);
 }
 
 template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger>
-qt_logger_st(const std::string &logger_name, QObject *qt_object, const std::string &meta_method) {
+inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name,
+                                            QObject *qt_object,
+                                            const std::string &meta_method) {
     return Factory::template create<sinks::qt_sink_st>(logger_name, qt_object, meta_method);
 }
 
@@ -299,4 +301,4 @@ inline std::shared_ptr<logger> qt_color_logger_st(const std::string &logger_name
                                                              false, is_utf8);
 }
 
-} // namespace spdlog
+}  // namespace spdlog

@@ -49,8 +49,8 @@ void bench_global_logger(benchmark::State &state, std::shared_ptr<spdlog::logger
 
 void bench_disabled_macro(benchmark::State &state, std::shared_ptr<spdlog::logger> logger) {
     int i = 0;
-    benchmark::DoNotOptimize(i);      // prevent unused warnings
-    benchmark::DoNotOptimize(logger); // prevent unused warnings
+    benchmark::DoNotOptimize(i);       // prevent unused warnings
+    benchmark::DoNotOptimize(logger);  // prevent unused warnings
     for (auto _ : state) {
         SPDLOG_LOGGER_DEBUG(logger, "Hello logger: msg number {}...............", i++);
     }
@@ -60,8 +60,8 @@ void bench_disabled_macro_global_logger(benchmark::State &state,
                                         std::shared_ptr<spdlog::logger> logger) {
     spdlog::set_default_logger(std::move(logger));
     int i = 0;
-    benchmark::DoNotOptimize(i);      // prevent unused warnings
-    benchmark::DoNotOptimize(logger); // prevent unused warnings
+    benchmark::DoNotOptimize(i);       // prevent unused warnings
+    benchmark::DoNotOptimize(logger);  // prevent unused warnings
     for (auto _ : state) {
         SPDLOG_DEBUG("Hello logger: msg number {}...............", i++);
     }
@@ -79,7 +79,7 @@ void bench_dev_null() {
         ->UseRealTime();
     spdlog::drop("/dev/null_mt");
 }
-#endif // __linux__
+#endif  // __linux__
 
 int main(int argc, char *argv[]) {
     using spdlog::sinks::null_sink_mt;
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef __linux
     bench_dev_null();
-#endif // __linux__
+#endif  // __linux__
 
     if (full_bench) {
         // basic_st

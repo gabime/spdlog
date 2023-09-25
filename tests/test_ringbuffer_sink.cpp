@@ -53,7 +53,7 @@ TEST_CASE("test_empty", "[ringbuffer_sink]") {
     spdlog::logger l("logger", sink);
 
     sink->drain([&](std::string_view) {
-        REQUIRE_FALSE(true); // should not be called since the sink is empty
+        REQUIRE_FALSE(true);  // should not be called since the sink is empty
     });
 }
 
@@ -67,6 +67,6 @@ TEST_CASE("test_empty_size", "[ringbuffer_sink]") {
     }
 
     sink->drain([&](std::string_view) {
-        REQUIRE_FALSE(true); // should not be called since the sink size is 0
+        REQUIRE_FALSE(true);  // should not be called since the sink size is 0
     });
 }

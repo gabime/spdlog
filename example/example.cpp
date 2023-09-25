@@ -32,7 +32,7 @@ void replace_default_logger_example();
 // #define SPDLOG_SOURCE_LOCATION
 
 #include "spdlog/spdlog.h"
-#include "spdlog/cfg/env.h" // support for loading levels from the environment variable
+#include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
 
 int main(int, char *[]) {
     // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
@@ -47,15 +47,15 @@ int main(int, char *[]) {
     spdlog::info("{:>8} aligned, {:<8} aligned", "right", "left");
 
     // Runtime log levels
-    spdlog::set_level(spdlog::level::info); // Set global log level to info
+    spdlog::set_level(spdlog::level::info);  // Set global log level to info
     spdlog::debug("This message should not be displayed!");
-    spdlog::set_level(spdlog::level::trace); // Set specific logger's log level
+    spdlog::set_level(spdlog::level::trace);  // Set specific logger's log level
     spdlog::debug("This message should be displayed..");
 
     // Customize msg format for all loggers
     spdlog::set_pattern("[%H:%M:%S %z] [%^%L%$] [thread %t] %v");
     spdlog::info("This an info message with custom format");
-    spdlog::set_pattern("%+"); // back to default format
+    spdlog::set_pattern("%+");  // back to default format
     spdlog::set_level(spdlog::level::info);
 
     try {
@@ -259,7 +259,7 @@ struct my_type {
         : i(i){};
 };
 
-#ifndef SPDLOG_USE_STD_FORMAT // when using fmtlib
+#ifndef SPDLOG_USE_STD_FORMAT  // when using fmtlib
 template <>
 struct fmt::formatter<my_type> : fmt::formatter<std::string> {
     auto format(my_type my, format_context &ctx) -> decltype(ctx.out()) {
@@ -267,7 +267,7 @@ struct fmt::formatter<my_type> : fmt::formatter<std::string> {
     }
 };
 
-#else // when using std::format
+#else  // when using std::format
 template <>
 struct std::formatter<my_type> : std::formatter<std::string> {
     auto format(my_type my, format_context &ctx) const -> decltype(ctx.out()) {
@@ -311,8 +311,9 @@ void android_example() {
 #include "spdlog/pattern_formatter.h"
 class my_formatter_flag : public spdlog::custom_flag_formatter {
 public:
-    void
-    format(const spdlog::details::log_msg &, const std::tm &, spdlog::memory_buf_t &dest) override {
+    void format(const spdlog::details::log_msg &,
+                const std::tm &,
+                spdlog::memory_buf_t &dest) override {
         std::string some_txt = "custom-flag";
         dest.append(some_txt.data(), some_txt.data() + some_txt.size());
     }

@@ -56,7 +56,7 @@ private:
     It begin_, end_;
     size_t size_per_line_;
 };
-} // namespace details
+}  // namespace details
 
 // create a dump_info that wraps the given container
 template <typename Container>
@@ -71,8 +71,8 @@ inline details::dump_info<typename Container::const_iterator> to_hex(const Conta
 #if __cpp_lib_span >= 202002L
 
 template <typename Value, size_t Extent>
-inline details::dump_info<typename std::span<Value, Extent>::iterator>
-to_hex(const std::span<Value, Extent> &container, size_t size_per_line = 32) {
+inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(
+    const std::span<Value, Extent> &container, size_t size_per_line = 32) {
     using Container = std::span<Value, Extent>;
     static_assert(sizeof(typename Container::value_type) == 1,
                   "sizeof(Container::value_type) != 1");
@@ -84,12 +84,13 @@ to_hex(const std::span<Value, Extent> &container, size_t size_per_line = 32) {
 
 // create dump_info from ranges
 template <typename It>
-inline details::dump_info<It>
-to_hex(const It range_begin, const It range_end, size_t size_per_line = 32) {
+inline details::dump_info<It> to_hex(const It range_begin,
+                                     const It range_end,
+                                     size_t size_per_line = 32) {
     return details::dump_info<It>(range_begin, range_end, size_per_line);
 }
 
-} // namespace spdlog
+}  // namespace spdlog
 
 namespace
 #ifdef SPDLOG_USE_STD_FORMAT
@@ -105,7 +106,7 @@ struct formatter<spdlog::details::dump_info<T>, char> {
     bool put_newlines = true;
     bool put_delimiters = true;
     bool use_uppercase = false;
-    bool put_positions = true; // position on start of each line
+    bool put_positions = true;  // position on start of each line
     bool show_ascii = false;
 
     // parse the format string flags
@@ -114,24 +115,24 @@ struct formatter<spdlog::details::dump_info<T>, char> {
         auto it = ctx.begin();
         while (it != ctx.end() && *it != '}') {
             switch (*it) {
-            case 'X':
-                use_uppercase = true;
-                break;
-            case 's':
-                put_delimiters = false;
-                break;
-            case 'p':
-                put_positions = false;
-                break;
-            case 'n':
-                put_newlines = false;
-                show_ascii = false;
-                break;
-            case 'a':
-                if (put_newlines) {
-                    show_ascii = true;
-                }
-                break;
+                case 'X':
+                    use_uppercase = true;
+                    break;
+                case 's':
+                    put_delimiters = false;
+                    break;
+                case 'p':
+                    put_positions = false;
+                    break;
+                case 'n':
+                    put_newlines = false;
+                    show_ascii = false;
+                    break;
+                case 'a':
+                    if (put_newlines) {
+                        show_ascii = true;
+                    }
+                    break;
             }
 
             ++it;
@@ -185,7 +186,7 @@ struct formatter<spdlog::details::dump_info<T>, char> {
             *inserter++ = hex_chars[(ch >> 4) & 0x0f];
             *inserter++ = hex_chars[ch & 0x0f];
         }
-        if (show_ascii) // add ascii to last line
+        if (show_ascii)  // add ascii to last line
         {
             if (the_range.get_end() - the_range.get_begin() > size_per_line) {
                 auto blank_num = size_per_line - (the_range.get_end() - start_of_line);
@@ -220,4 +221,4 @@ struct formatter<spdlog::details::dump_info<T>, char> {
         }
     }
 };
-} // namespace std
+}  // namespace std

@@ -24,5 +24,5 @@ public:
     log_msg_buffer &operator=(log_msg_buffer &&other) noexcept;
 };
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog
