@@ -19,8 +19,9 @@ SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items,
                                        std::function<void()> on_thread_stop)
     : q_(q_max_items) {
     if (threads_n == 0 || threads_n > 1000) {
-        throw_spdlog_ex("spdlog::thread_pool(): invalid threads_n param (valid "
-                        "range is 1-1000)");
+        throw_spdlog_ex(
+            "spdlog::thread_pool(): invalid threads_n param (valid "
+            "range is 1-1000)");
     }
     for (size_t i = 0; i < threads_n; i++) {
         threads_.emplace_back([this, on_thread_start, on_thread_stop] {
@@ -101,26 +102,26 @@ bool SPDLOG_INLINE thread_pool::process_next_msg_() {
     q_.dequeue(incoming_async_msg);
 
     switch (incoming_async_msg.msg_type) {
-    case async_msg_type::log: {
-        incoming_async_msg.worker_ptr->backend_sink_it_(incoming_async_msg);
-        return true;
-    }
-    case async_msg_type::flush: {
-        incoming_async_msg.worker_ptr->backend_flush_();
-        return true;
-    }
+        case async_msg_type::log: {
+            incoming_async_msg.worker_ptr->backend_sink_it_(incoming_async_msg);
+            return true;
+        }
+        case async_msg_type::flush: {
+            incoming_async_msg.worker_ptr->backend_flush_();
+            return true;
+        }
 
-    case async_msg_type::terminate: {
-        return false;
-    }
+        case async_msg_type::terminate: {
+            return false;
+        }
 
-    default: {
-        assert(false);
-    }
+        default: {
+            assert(false);
+        }
     }
 
     return true;
 }
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

@@ -24,7 +24,7 @@ using stdout_color_sink_st = ansicolor_stdout_sink_st;
 using stderr_color_sink_mt = ansicolor_stderr_sink_mt;
 using stderr_color_sink_st = ansicolor_stderr_sink_st;
 #endif
-} // namespace sinks
+}  // namespace sinks
 
 template <typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stdout_color_mt(const std::string &logger_name,
@@ -42,7 +42,7 @@ template <typename Factory = spdlog::synchronous_factory>
 std::shared_ptr<logger> stderr_color_st(const std::string &logger_name,
                                         color_mode mode = color_mode::automatic);
 
-} // namespace spdlog
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "stdout_color_sinks-inl.h"

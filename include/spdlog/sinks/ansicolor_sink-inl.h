@@ -55,7 +55,7 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg
         print_ccode_(reset);
         // after color range
         print_range_(formatted, msg.color_range_end, formatted.size());
-    } else // no color
+    } else  // no color
     {
         print_range_(formatted, 0, formatted.size());
     }
@@ -75,8 +75,8 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_pattern(const std::string &
 }
 
 template <typename ConsoleMutex>
-SPDLOG_INLINE void
-ansicolor_sink<ConsoleMutex>::set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) {
+SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_formatter(
+    std::unique_ptr<spdlog::formatter> sink_formatter) {
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::move(sink_formatter);
 }
@@ -89,18 +89,18 @@ SPDLOG_INLINE bool ansicolor_sink<ConsoleMutex>::should_color() {
 template <typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color_mode(color_mode mode) {
     switch (mode) {
-    case color_mode::always:
-        should_do_colors_ = true;
-        return;
-    case color_mode::automatic:
-        should_do_colors_ =
-            details::os::in_terminal(target_file_) && details::os::is_color_terminal();
-        return;
-    case color_mode::never:
-        should_do_colors_ = false;
-        return;
-    default:
-        should_do_colors_ = false;
+        case color_mode::always:
+            should_do_colors_ = true;
+            return;
+        case color_mode::automatic:
+            should_do_colors_ =
+                details::os::in_terminal(target_file_) && details::os::is_color_terminal();
+            return;
+        case color_mode::never:
+            should_do_colors_ = false;
+            return;
+        default:
+            should_do_colors_ = false;
     }
 }
 
@@ -131,5 +131,5 @@ template <typename ConsoleMutex>
 SPDLOG_INLINE ansicolor_stderr_sink<ConsoleMutex>::ansicolor_stderr_sink(color_mode mode)
     : ansicolor_sink<ConsoleMutex>(stderr, mode) {}
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog

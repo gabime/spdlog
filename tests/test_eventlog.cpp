@@ -72,4 +72,4 @@ TEST_CASE("eventlog", "[eventlog]") {
                       "my critical message", EVENTLOG_ERROR_TYPE);
 }
 
-#endif //_WIN32
+#endif  //_WIN32

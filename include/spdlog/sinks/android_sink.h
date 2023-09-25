@@ -52,7 +52,7 @@ protected:
         // See system/core/liblog/logger_write.c for explanation of return value
         int ret = android_log(priority, tag_.c_str(), msg_output);
         if (ret == -EPERM) {
-            return; // !__android_log_is_loggable
+            return;  // !__android_log_is_loggable
         }
         int retry_count = 0;
         while ((ret == -11 /*EAGAIN*/) && (retry_count < SPDLOG_ANDROID_RETRIES)) {
@@ -74,33 +74,33 @@ private:
     // __android_log_buf_write, if user explicitly provides a non-default log buffer. Otherwise,
     // when using the default log buffer, always log via __android_log_write.
     template <int ID = BufferID>
-    typename std::enable_if<ID == static_cast<int>(log_id::LOG_ID_MAIN), int>::type
-    android_log(int prio, const char *tag, const char *text) {
+    typename std::enable_if<ID == static_cast<int>(log_id::LOG_ID_MAIN), int>::type android_log(
+        int prio, const char *tag, const char *text) {
         return __android_log_write(prio, tag, text);
     }
 
     template <int ID = BufferID>
-    typename std::enable_if<ID != static_cast<int>(log_id::LOG_ID_MAIN), int>::type
-    android_log(int prio, const char *tag, const char *text) {
+    typename std::enable_if<ID != static_cast<int>(log_id::LOG_ID_MAIN), int>::type android_log(
+        int prio, const char *tag, const char *text) {
         return __android_log_buf_write(ID, prio, tag, text);
     }
 
     static android_LogPriority convert_to_android_(spdlog::level::level_enum level) {
         switch (level) {
-        case spdlog::level::trace:
-            return ANDROID_LOG_VERBOSE;
-        case spdlog::level::debug:
-            return ANDROID_LOG_DEBUG;
-        case spdlog::level::info:
-            return ANDROID_LOG_INFO;
-        case spdlog::level::warn:
-            return ANDROID_LOG_WARN;
-        case spdlog::level::err:
-            return ANDROID_LOG_ERROR;
-        case spdlog::level::critical:
-            return ANDROID_LOG_FATAL;
-        default:
-            return ANDROID_LOG_DEFAULT;
+            case spdlog::level::trace:
+                return ANDROID_LOG_VERBOSE;
+            case spdlog::level::debug:
+                return ANDROID_LOG_DEBUG;
+            case spdlog::level::info:
+                return ANDROID_LOG_INFO;
+            case spdlog::level::warn:
+                return ANDROID_LOG_WARN;
+            case spdlog::level::err:
+                return ANDROID_LOG_ERROR;
+            case spdlog::level::critical:
+                return ANDROID_LOG_FATAL;
+            default:
+                return ANDROID_LOG_DEFAULT;
         }
     }
 
@@ -116,7 +116,7 @@ using android_sink_buf_mt = android_sink<std::mutex, BufferId>;
 template <int BufferId = log_id::LOG_ID_MAIN>
 using android_sink_buf_st = android_sink<details::null_mutex, BufferId>;
 
-} // namespace sinks
+}  // namespace sinks
 
 // Create and register android syslog logger
 
@@ -132,6 +132,6 @@ inline std::shared_ptr<logger> android_logger_st(const std::string &logger_name,
     return Factory::template create<sinks::android_sink_st>(logger_name, tag);
 }
 
-} // namespace spdlog
+}  // namespace spdlog
 
-#endif // __ANDROID__
+#endif  // __ANDROID__

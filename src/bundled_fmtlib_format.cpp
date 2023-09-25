@@ -31,8 +31,10 @@ template FMT_API void buffer<char>::append(const char *, const char *);
 // DEPRECATED!
 // There is no correspondent extern template in format.h because of
 // incompatibility between clang and gcc (#2377).
-template FMT_API void
-vformat_to(buffer<char> &, string_view, basic_format_args<FMT_BUFFER_CONTEXT(char)>, locale_ref);
+template FMT_API void vformat_to(buffer<char> &,
+                                 string_view,
+                                 basic_format_args<FMT_BUFFER_CONTEXT(char)>,
+                                 locale_ref);
 
 // Explicit instantiations for wchar_t.
 
@@ -41,7 +43,7 @@ template FMT_API auto decimal_point_impl(locale_ref) -> wchar_t;
 
 template FMT_API void buffer<wchar_t>::append(const wchar_t *, const wchar_t *);
 
-} // namespace detail
+}  // namespace detail
 FMT_END_NAMESPACE
 
-#endif // !SPDLOG_FMT_EXTERNAL
+#endif  // !SPDLOG_FMT_EXTERNAL

@@ -35,8 +35,7 @@ std::size_t count_lines(const std::string &filename) {
 
     std::string line;
     size_t counter = 0;
-    while (std::getline(ifs, line))
-        counter++;
+    while (std::getline(ifs, line)) counter++;
     return counter;
 }
 
@@ -74,10 +73,9 @@ std::size_t count_files(const std::string &folder) {
     // Start iterating over the files in the folder directory.
     HANDLE hFind = ::FindFirstFileA((folder + "\\*").c_str(), &ffd);
     if (hFind != INVALID_HANDLE_VALUE) {
-        do // Managed to locate and create an handle to that folder.
+        do  // Managed to locate and create an handle to that folder.
         {
-            if (ffd.cFileName[0] != '.')
-                counter++;
+            if (ffd.cFileName[0] != '.') counter++;
         } while (::FindNextFileA(hFind, &ffd) != 0);
         ::FindClose(hFind);
     } else {
@@ -97,8 +95,7 @@ std::size_t count_files(const std::string &folder) {
 
     struct dirent *ep = nullptr;
     while ((ep = readdir(dp)) != nullptr) {
-        if (ep->d_name[0] != '.')
-            counter++;
+        if (ep->d_name[0] != '.') counter++;
     }
     (void)closedir(dp);
     return counter;

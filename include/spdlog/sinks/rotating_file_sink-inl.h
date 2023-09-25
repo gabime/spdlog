@@ -24,12 +24,12 @@ namespace spdlog {
 namespace sinks {
 
 template <typename Mutex>
-SPDLOG_INLINE
-rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
-                                              std::size_t max_size,
-                                              std::size_t max_files,
-                                              bool rotate_on_open,
-                                              const file_event_handlers &event_handlers)
+SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
+    filename_t base_filename,
+    std::size_t max_size,
+    std::size_t max_files,
+    bool rotate_on_open,
+    const file_event_handlers &event_handlers)
     : base_filename_(std::move(base_filename)),
       max_size_(max_size),
       max_files_(max_files),
@@ -42,7 +42,7 @@ rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
         throw_spdlog_ex("rotating sink constructor: max_files arg cannot exceed 200000");
     }
     file_helper_.open(calc_filename(base_filename_, 0));
-    current_size_ = file_helper_.size(); // expensive. called only once
+    current_size_ = file_helper_.size();  // expensive. called only once
     if (rotate_on_open && current_size_ > 0) {
         rotate_();
         current_size_ = 0;
@@ -119,7 +119,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_() {
             details::os::sleep_for_millis(100);
             if (!rename_file_(src, target)) {
                 file_helper_.reopen(
-                    true); // truncate the log file anyway to prevent it to grow beyond its limit!
+                    true);  // truncate the log file anyway to prevent it to grow beyond its limit!
                 current_size_ = 0;
                 throw_spdlog_ex("rotating_file_sink: failed renaming " + filename_to_str(src) +
                                     " to " + filename_to_str(target),
@@ -140,5 +140,5 @@ SPDLOG_INLINE bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src
     return details::os::rename(src_filename, target_filename) == 0;
 }
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog

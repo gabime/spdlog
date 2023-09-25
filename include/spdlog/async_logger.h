@@ -20,10 +20,10 @@ namespace spdlog {
 
 // Async overflow policy - block by default.
 enum class async_overflow_policy {
-    block,          // Block until message can be enqueued
-    overrun_oldest, // Discard oldest message in the queue if full when trying to
-                    // add new item.
-    discard_new     // Discard new message if the queue is full when trying to add new item.
+    block,           // Block until message can be enqueued
+    overrun_oldest,  // Discard oldest message in the queue if full when trying to
+                     // add new item.
+    discard_new      // Discard new message if the queue is full when trying to add new item.
 };
 
 namespace details {
@@ -67,7 +67,7 @@ private:
     std::weak_ptr<details::thread_pool> thread_pool_;
     async_overflow_policy overflow_policy_;
 };
-} // namespace spdlog
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "async_logger-inl.h"

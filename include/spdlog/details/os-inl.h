@@ -23,9 +23,9 @@
 
 #ifdef _WIN32
     #include <spdlog/details/windows_include.h>
-    #include <fileapi.h> // for FlushFileBuffers
-    #include <io.h>      // for _get_osfhandle, _isatty, _fileno
-    #include <process.h> // for _get_pid
+    #include <fileapi.h>  // for FlushFileBuffers
+    #include <io.h>       // for _get_osfhandle, _isatty, _fileno
+    #include <process.h>  // for _get_pid
 
     #ifdef __MINGW32__
         #include <share.h>
@@ -36,37 +36,37 @@
         #include <limits>
     #endif
 
-    #include <direct.h> // for _mkdir/_wmkdir
+    #include <direct.h>  // for _mkdir/_wmkdir
 
-#else // unix
+#else  // unix
 
     #include <fcntl.h>
     #include <unistd.h>
 
     #ifdef __linux__
-        #include <sys/syscall.h> //Use gettid() syscall under linux to get thread id
+        #include <sys/syscall.h>  //Use gettid() syscall under linux to get thread id
 
     #elif defined(_AIX)
-        #include <pthread.h> // for pthread_getthrds_np
+        #include <pthread.h>  // for pthread_getthrds_np
 
     #elif defined(__DragonFly__) || defined(__FreeBSD__)
-        #include <pthread_np.h> // for pthread_getthreadid_np
+        #include <pthread_np.h>  // for pthread_getthreadid_np
 
     #elif defined(__NetBSD__)
-        #include <lwp.h> // for _lwp_self
+        #include <lwp.h>  // for _lwp_self
 
     #elif defined(__sun)
-        #include <thread.h> // for thr_self
+        #include <thread.h>  // for thr_self
     #endif
 
-#endif // unix
+#endif  // unix
 
 #if defined __APPLE__
     #include <AvailabilityMacros.h>
 #endif
 
-#ifndef __has_feature          // Clang - feature checking macros.
-    #define __has_feature(x) 0 // Compatibility with non-clang compilers.
+#ifndef __has_feature           // Clang - feature checking macros.
+    #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
 namespace spdlog {
@@ -74,7 +74,6 @@ namespace details {
 namespace os {
 
 SPDLOG_INLINE spdlog::log_clock::time_point now() SPDLOG_NOEXCEPT {
-
 #if defined __linux__ && defined SPDLOG_CLOCK_COARSE
     timespec ts;
     ::clock_gettime(CLOCK_REALTIME_COARSE, &ts);
@@ -87,7 +86,6 @@ SPDLOG_INLINE spdlog::log_clock::time_point now() SPDLOG_NOEXCEPT {
 #endif
 }
 SPDLOG_INLINE std::tm localtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT {
-
 #ifdef _WIN32
     std::tm tm;
     ::localtime_s(&tm, &time_tt);
@@ -104,7 +102,6 @@ SPDLOG_INLINE std::tm localtime() SPDLOG_NOEXCEPT {
 }
 
 SPDLOG_INLINE std::tm gmtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT {
-
 #ifdef _WIN32
     std::tm tm;
     ::gmtime_s(&tm, &time_tt);
@@ -137,7 +134,7 @@ SPDLOG_INLINE bool fopen_s(FILE **fp, const filename_t &filename, const filename
         }
     }
     #endif
-#else // unix
+#else  // unix
     #if defined(SPDLOG_PREVENT_CHILD_FD)
     const int mode_flag = mode == SPDLOG_FILENAME_T("ab") ? O_APPEND : O_TRUNC;
     const int fd =
@@ -186,7 +183,7 @@ SPDLOG_INLINE bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT {
     auto attribs = ::GetFileAttributesA(filename.c_str());
     #endif
     return attribs != INVALID_FILE_ATTRIBUTES;
-#else // common linux/unix all have the stat system call
+#else  // common linux/unix all have the stat system call
     struct stat buffer;
     return (::stat(filename.c_str(), &buffer) == 0);
 #endif
@@ -205,20 +202,20 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
     }
 #if defined(_WIN32) && !defined(__CYGWIN__)
     int fd = ::_fileno(f);
-    #if defined(_WIN64) // 64 bits
+    #if defined(_WIN64)  // 64 bits
     __int64 ret = ::_filelengthi64(fd);
     if (ret >= 0) {
         return static_cast<size_t>(ret);
     }
 
-    #else // windows 32 bits
+    #else  // windows 32 bits
     long ret = ::_filelength(fd);
     if (ret >= 0) {
         return static_cast<size_t>(ret);
     }
     #endif
 
-#else // unix
+#else  // unix
     // OpenBSD and AIX doesn't compile with :: before the fileno(..)
     #if defined(__OpenBSD__) || defined(_AIX)
     int fd = fileno(f);
@@ -232,7 +229,7 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
     if (::fstat64(fd, &st) == 0) {
         return static_cast<size_t>(st.st_size);
     }
-    #else // other unix or linux 32 bits or cygwin
+    #else  // other unix or linux 32 bits or cygwin
     struct stat st;
     if (::fstat(fd, &st) == 0) {
         return static_cast<size_t>(st.st_size);
@@ -240,7 +237,7 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
     #endif
 #endif
     throw_spdlog_ex("Failed getting file size from fd", errno);
-    return 0; // will not be reached.
+    return 0;  // will not be reached.
 }
 
 #ifdef _MSC_VER
@@ -249,7 +246,6 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
 
 // Return utc offset in minutes or throw spdlog_ex on failure
 SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
-
 #ifdef _WIN32
     #if _WIN32_WINNT < _WIN32_WINNT_WS08
     TIME_ZONE_INFORMATION tzinfo;
@@ -258,8 +254,7 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
     DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
     auto rv = ::GetDynamicTimeZoneInformation(&tzinfo);
     #endif
-    if (rv == TIME_ZONE_ID_INVALID)
-        throw_spdlog_ex("Failed getting timezone info. ", errno);
+    if (rv == TIME_ZONE_ID_INVALID) throw_spdlog_ex("Failed getting timezone info. ", errno);
 
     int offset = -tzinfo.Bias;
     if (tm.tm_isdst) {
@@ -351,7 +346,7 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT {
     pthread_threadid_np(nullptr, &tid);
     #endif
     return static_cast<size_t>(tid);
-#else // Default to standard C++11 (other Unix)
+#else  // Default to standard C++11 (other Unix)
     return static_cast<size_t>(std::hash<std::thread::id>()(std::this_thread::get_id()));
 #endif
 }
@@ -360,7 +355,7 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT {
 SPDLOG_INLINE size_t thread_id() SPDLOG_NOEXCEPT {
 #if defined(SPDLOG_NO_TLS)
     return _thread_id();
-#else // cache thread id in tls
+#else  // cache thread id in tls
     static thread_local const size_t tid = _thread_id();
     return tid;
 #endif
@@ -388,7 +383,6 @@ SPDLOG_INLINE std::string filename_to_str(const filename_t &filename) { return f
 #endif
 
 SPDLOG_INLINE int pid() SPDLOG_NOEXCEPT {
-
 #ifdef _WIN32
     return conditional_static_cast<int>(::GetCurrentProcessId());
 #else
@@ -430,7 +424,6 @@ SPDLOG_INLINE bool is_color_terminal() SPDLOG_NOEXCEPT {
 // Determine if the terminal attached
 // Source: https://github.com/agauniyal/rang/
 SPDLOG_INLINE bool in_terminal(FILE *file) SPDLOG_NOEXCEPT {
-
 #ifdef _WIN32
     return ::_isatty(_fileno(file)) != 0;
 #else
@@ -499,8 +492,8 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
     throw_spdlog_ex(
         fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
 }
-#endif // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) &&
-       // defined(_WIN32)
+#endif  // (defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT) || defined(SPDLOG_WCHAR_FILENAMES)) &&
+        // defined(_WIN32)
 
 // return true on success
 static SPDLOG_INLINE bool mkdir_(const filename_t &path) {
@@ -537,7 +530,7 @@ SPDLOG_INLINE bool create_dir(const filename_t &path) {
         auto subdir = path.substr(0, token_pos);
 
         if (!subdir.empty() && !path_exists(subdir) && !mkdir_(subdir)) {
-            return false; // return error if failed creating dir
+            return false;  // return error if failed creating dir
         }
         search_offset = token_pos + 1;
     } while (search_offset < path.size());
@@ -556,17 +549,16 @@ SPDLOG_INLINE filename_t dir_name(const filename_t &path) {
 }
 
 std::string SPDLOG_INLINE getenv(const char *field) {
-
 #if defined(_MSC_VER)
     #if defined(__cplusplus_winrt)
-    return std::string{}; // not supported under uwp
+    return std::string{};  // not supported under uwp
     #else
     size_t len = 0;
     char buf[128];
     bool ok = ::getenv_s(&len, buf, sizeof(buf), field) == 0;
     return ok ? buf : std::string{};
     #endif
-#else // revert to getenv
+#else  // revert to getenv
     char *buf = ::getenv(field);
     return buf ? buf : std::string{};
 #endif
@@ -582,6 +574,6 @@ SPDLOG_INLINE bool fsync(FILE *fp) {
 #endif
 }
 
-} // namespace os
-} // namespace details
-} // namespace spdlog
+}  // namespace os
+}  // namespace details
+}  // namespace spdlog

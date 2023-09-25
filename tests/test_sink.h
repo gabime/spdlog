@@ -65,5 +65,5 @@ protected:
 using test_sink_mt = test_sink<std::mutex>;
 using test_sink_st = test_sink<details::null_mutex>;
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog

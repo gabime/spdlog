@@ -98,8 +98,10 @@ public:
         log(loc, lvl, "{}", msg);
     }
 
-    void
-    log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, string_view_t msg) {
+    void log(log_clock::time_point log_time,
+             source_loc loc,
+             level::level_enum lvl,
+             string_view_t msg) {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
         if (!log_enabled && !traceback_enabled) {
@@ -164,8 +166,10 @@ public:
         log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
     }
 
-    void
-    log(log_clock::time_point log_time, source_loc loc, level::level_enum lvl, wstring_view_t msg) {
+    void log(log_clock::time_point log_time,
+             source_loc loc,
+             level::level_enum lvl,
+             wstring_view_t msg) {
         bool log_enabled = should_log(lvl);
         bool traceback_enabled = tracer_.enabled();
         if (!log_enabled && !traceback_enabled) {
@@ -351,7 +355,7 @@ protected:
         }
         SPDLOG_LOGGER_CATCH(loc)
     }
-#endif // SPDLOG_WCHAR_TO_UTF8_SUPPORT
+#endif  // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
     // log the given message (if the given log level is high enough),
     // and save backtrace (if backtrace is enabled).
@@ -368,7 +372,7 @@ protected:
 
 void swap(logger &a, logger &b);
 
-} // namespace spdlog
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "logger-inl.h"

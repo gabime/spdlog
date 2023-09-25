@@ -141,8 +141,10 @@ SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logge
 SPDLOG_API void apply_logger_env_levels(std::shared_ptr<logger> logger);
 
 template <typename... Args>
-inline void
-log(source_loc source, level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args) {
+inline void log(source_loc source,
+                level::level_enum lvl,
+                format_string_t<Args...> fmt,
+                Args &&...args) {
     default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
 }
 
@@ -193,8 +195,10 @@ inline void log(level::level_enum lvl, const T &msg) {
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
 template <typename... Args>
-inline void
-log(source_loc source, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args) {
+inline void log(source_loc source,
+                level::level_enum lvl,
+                wformat_string_t<Args...> fmt,
+                Args &&...args) {
     default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
 }
 
@@ -264,7 +268,7 @@ inline void critical(const T &msg) {
     default_logger_raw()->critical(msg);
 }
 
-} // namespace spdlog
+}  // namespace spdlog
 
 //
 // enable/disable log calls at compile time according to global level.
@@ -345,4 +349,4 @@ inline void critical(const T &msg) {
     #include "spdlog-inl.h"
 #endif
 
-#endif // SPDLOG_H
+#endif  // SPDLOG_H

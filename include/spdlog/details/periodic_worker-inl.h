@@ -22,5 +22,5 @@ SPDLOG_INLINE periodic_worker::~periodic_worker() {
     }
 }
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

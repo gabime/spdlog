@@ -44,9 +44,9 @@ public:
         close();
         struct addrinfo hints {};
         memset(&hints, 0, sizeof(struct addrinfo));
-        hints.ai_family = AF_UNSPEC;     // To work with IPv4, IPv6, and so on
-        hints.ai_socktype = SOCK_STREAM; // TCP
-        hints.ai_flags = AI_NUMERICSERV; // port passed as as numeric value
+        hints.ai_family = AF_UNSPEC;      // To work with IPv4, IPv6, and so on
+        hints.ai_socktype = SOCK_STREAM;  // TCP
+        hints.ai_flags = AI_NUMERICSERV;  // port passed as as numeric value
         hints.ai_protocol = 0;
 
         auto port_str = std::to_string(port);
@@ -115,7 +115,7 @@ public:
                 throw_spdlog_ex("write(2) failed", errno);
             }
 
-            if (write_result == 0) // (probably should not happen but in any case..)
+            if (write_result == 0)  // (probably should not happen but in any case..)
             {
                 break;
             }
@@ -123,5 +123,5 @@ public:
         }
     }
 };
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

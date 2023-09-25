@@ -19,7 +19,7 @@
     #else
         #include <spdlog/sinks/ansicolor_sink.h>
     #endif
-#endif // SPDLOG_DISABLE_DEFAULT_LOGGER
+#endif  // SPDLOG_DISABLE_DEFAULT_LOGGER
 
 #include <chrono>
 #include <functional>
@@ -32,7 +32,6 @@ namespace details {
 
 SPDLOG_INLINE registry::registry()
     : formatter_(new pattern_formatter()) {
-
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
     // create default logger (ansicolor_stdout_sink_mt or wincolor_stdout_sink_mt in windows).
     #ifdef _WIN32
@@ -45,7 +44,7 @@ SPDLOG_INLINE registry::registry()
     default_logger_ = std::make_shared<spdlog::logger>(default_logger_name, std::move(color_sink));
     loggers_[default_logger_name] = default_logger_;
 
-#endif // SPDLOG_DISABLE_DEFAULT_LOGGER
+#endif  // SPDLOG_DISABLE_DEFAULT_LOGGER
 }
 
 SPDLOG_INLINE registry::~registry() = default;
@@ -170,8 +169,8 @@ SPDLOG_INLINE void registry::set_error_handler(err_handler handler) {
     err_handler_ = std::move(handler);
 }
 
-SPDLOG_INLINE void
-registry::apply_all(const std::function<void(const std::shared_ptr<logger>)> &fun) {
+SPDLOG_INLINE void registry::apply_all(
+    const std::function<void(const std::shared_ptr<logger>)> &fun) {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     for (auto &l : loggers_) {
         fun(l.second);
@@ -262,5 +261,5 @@ SPDLOG_INLINE void registry::register_logger_(std::shared_ptr<logger> new_logger
     loggers_[logger_name] = std::move(new_logger);
 }
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

@@ -107,8 +107,8 @@ using ansicolor_stdout_sink_st = ansicolor_stdout_sink<details::console_nullmute
 using ansicolor_stderr_sink_mt = ansicolor_stderr_sink<details::console_mutex>;
 using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::console_nullmutex>;
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "ansicolor_sink-inl.h"

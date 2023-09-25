@@ -94,7 +94,6 @@ TEST_CASE("flush", "[async]") {
 }
 
 TEST_CASE("async periodic flush", "[async]") {
-
     auto logger = spdlog::create_async<spdlog::sinks::test_sink_mt>("as");
     auto test_sink = std::static_pointer_cast<spdlog::sinks::test_sink_mt>(logger->sinks()[0]);
 

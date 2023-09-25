@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <ctime> // std::time_t
+#include <ctime>  // std::time_t
 #include <spdlog/common.h>
 
 namespace spdlog {
@@ -114,9 +114,9 @@ SPDLOG_API std::string getenv(const char *field);
 // Return true on success.
 SPDLOG_API bool fsync(FILE *fp);
 
-} // namespace os
-} // namespace details
-} // namespace spdlog
+}  // namespace os
+}  // namespace details
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "os-inl.h"

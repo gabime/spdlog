@@ -43,14 +43,15 @@ public:
         : padinfo_(padinfo) {}
     flag_formatter() = default;
     virtual ~flag_formatter() = default;
-    virtual void
-    format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) = 0;
+    virtual void format(const details::log_msg &msg,
+                        const std::tm &tm_time,
+                        memory_buf_t &dest) = 0;
 
 protected:
     padding_info padinfo_;
 };
 
-} // namespace details
+}  // namespace details
 
 class SPDLOG_API custom_flag_formatter : public details::flag_formatter {
 public:
@@ -110,7 +111,7 @@ private:
 
     void compile_pattern_(const std::string &pattern);
 };
-} // namespace spdlog
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "pattern_formatter-inl.h"

@@ -42,7 +42,7 @@ SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) SPDLOG
     }
     return level::off;
 }
-} // namespace level
+}  // namespace level
 
 SPDLOG_INLINE spdlog_ex::spdlog_ex(std::string msg)
     : msg_(std::move(msg)) {}
@@ -65,4 +65,4 @@ SPDLOG_INLINE void throw_spdlog_ex(const std::string &msg, int last_errno) {
 
 SPDLOG_INLINE void throw_spdlog_ex(std::string msg) { SPDLOG_THROW(spdlog_ex(std::move(msg))); }
 
-} // namespace spdlog
+}  // namespace spdlog

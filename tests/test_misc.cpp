@@ -3,7 +3,6 @@
 
 template <class T>
 std::string log_info(const T &what, spdlog::level::level_enum logger_level = spdlog::level::info) {
-
     std::ostringstream oss;
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
 

@@ -55,7 +55,7 @@ protected:
 using udp_sink_mt = udp_sink<std::mutex>;
 using udp_sink_st = udp_sink<spdlog::details::null_mutex>;
 
-} // namespace sinks
+}  // namespace sinks
 
 //
 // factory functions
@@ -66,4 +66,4 @@ inline std::shared_ptr<logger> udp_logger_mt(const std::string &logger_name,
     return Factory::template create<sinks::udp_sink_mt>(logger_name, skin_config);
 }
 
-} // namespace spdlog
+}  // namespace spdlog

@@ -37,8 +37,8 @@ public:
     void foreach_pop(std::function<void(const details::log_msg &)> fun);
 };
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "backtracer-inl.h"

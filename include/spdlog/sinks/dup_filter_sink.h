@@ -88,5 +88,5 @@ protected:
 using dup_filter_sink_mt = dup_filter_sink<std::mutex>;
 using dup_filter_sink_st = dup_filter_sink<details::null_mutex>;
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog

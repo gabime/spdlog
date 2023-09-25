@@ -85,7 +85,6 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]") {
     require_message_count(ROTATING_LOG, 10);
 
     for (int i = 0; i < 1000; i++) {
-
         logger->info("Test message {}", i);
     }
 

@@ -26,8 +26,8 @@ protected:
     level_t level_{level::trace};
 };
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "sink-inl.h"

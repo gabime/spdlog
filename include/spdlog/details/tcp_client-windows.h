@@ -66,9 +66,9 @@ public:
         struct addrinfo hints {};
         ZeroMemory(&hints, sizeof(hints));
 
-        hints.ai_family = AF_UNSPEC;     // To work with IPv4, IPv6, and so on
-        hints.ai_socktype = SOCK_STREAM; // TCP
-        hints.ai_flags = AI_NUMERICSERV; // port passed as as numeric value
+        hints.ai_family = AF_UNSPEC;      // To work with IPv4, IPv6, and so on
+        hints.ai_socktype = SOCK_STREAM;  // TCP
+        hints.ai_flags = AI_NUMERICSERV;  // port passed as as numeric value
         hints.ai_protocol = 0;
 
         auto port_str = std::to_string(port);
@@ -123,7 +123,7 @@ public:
                 throw_winsock_error_("send failed", last_error);
             }
 
-            if (write_result == 0) // (probably should not happen but in any case..)
+            if (write_result == 0)  // (probably should not happen but in any case..)
             {
                 break;
             }
@@ -131,5 +131,5 @@ public:
         }
     }
 };
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

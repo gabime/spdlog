@@ -53,8 +53,8 @@ private:
     filename_t filename_;
     file_event_handlers event_handlers_;
 };
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "file_helper-inl.h"

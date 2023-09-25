@@ -40,5 +40,5 @@ SPDLOG_INLINE log_msg::log_msg(string_view_t a_logger_name,
                                spdlog::string_view_t msg)
     : log_msg(os::now(), source_loc{}, a_logger_name, lvl, msg) {}
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

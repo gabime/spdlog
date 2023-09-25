@@ -22,7 +22,7 @@
 
 #include "utils.h"
 #include <atomic>
-#include <cstdlib> // EXIT_FAILURE
+#include <cstdlib>  // EXIT_FAILURE
 #include <memory>
 #include <string>
 #include <thread>
@@ -122,7 +122,6 @@ int main(int argc, char *argv[]) {
     int iters = 250000;
     size_t threads = 4;
     try {
-
         if (argc > 1) {
             iters = std::stoi(argv[1]);
         }

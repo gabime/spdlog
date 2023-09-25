@@ -18,8 +18,8 @@ SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::base_sink()
     : formatter_{details::make_unique<spdlog::pattern_formatter>()} {}
 
 template <typename Mutex>
-SPDLOG_INLINE
-spdlog::sinks::base_sink<Mutex>::base_sink(std::unique_ptr<spdlog::formatter> formatter)
+SPDLOG_INLINE spdlog::sinks::base_sink<Mutex>::base_sink(
+    std::unique_ptr<spdlog::formatter> formatter)
     : formatter_{std::move(formatter)} {}
 
 template <typename Mutex>

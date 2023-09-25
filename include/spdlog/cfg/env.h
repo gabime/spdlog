@@ -32,5 +32,5 @@ inline void load_env_levels() {
     }
 }
 
-} // namespace cfg
-} // namespace spdlog
+}  // namespace cfg
+}  // namespace spdlog

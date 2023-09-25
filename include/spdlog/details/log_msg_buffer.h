@@ -24,8 +24,8 @@ public:
     log_msg_buffer &operator=(log_msg_buffer &&other) SPDLOG_NOEXCEPT;
 };
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "log_msg_buffer-inl.h"

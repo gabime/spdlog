@@ -35,7 +35,7 @@ private:
 using basic_file_sink_mt = basic_file_sink<std::mutex>;
 using basic_file_sink_st = basic_file_sink<details::null_mutex>;
 
-} // namespace sinks
+}  // namespace sinks
 
 //
 // factory functions
@@ -58,7 +58,7 @@ inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name,
                                                                event_handlers);
 }
 
-} // namespace spdlog
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "basic_file_sink-inl.h"

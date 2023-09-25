@@ -19,7 +19,7 @@ TEST_CASE("create_dir", "[create_dir]") {
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/dir1/dir1"),
                            SPDLOG_FILENAME_T("test_logs/dir1/dir1")));
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/dir1/dir1"),
-                           SPDLOG_FILENAME_T("test_logs/dir1/dir1"))); // test existing
+                           SPDLOG_FILENAME_T("test_logs/dir1/dir1")));  // test existing
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/dir1///dir2//"),
                            SPDLOG_FILENAME_T("test_logs/dir1/dir2")));
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("./test_logs/dir1/dir3"),

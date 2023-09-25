@@ -53,14 +53,10 @@ SPDLOG_CONSTEXPR_FUNC unsigned int count_digits_fallback(T n) {
         // Integer division is slow so do it for a group of four digits instead
         // of for every digit. The idea comes from the talk by Alexandrescu
         // "Three Optimization Tips for C++". See speed-test for a comparison.
-        if (n < 10)
-            return count;
-        if (n < 100)
-            return count + 1;
-        if (n < 1000)
-            return count + 2;
-        if (n < 10000)
-            return count + 3;
+        if (n < 10) return count;
+        if (n < 100) return count + 1;
+        if (n < 1000) return count + 2;
+        if (n < 10000) return count + 3;
         n /= 10000u;
         count += 4;
     }
@@ -86,11 +82,11 @@ inline unsigned int count_digits(T n) {
 }
 
 inline void pad2(int n, memory_buf_t &dest) {
-    if (n >= 0 && n < 100) // 0-99
+    if (n >= 0 && n < 100)  // 0-99
     {
         dest.push_back(static_cast<char>('0' + n / 10));
         dest.push_back(static_cast<char>('0' + n % 10));
-    } else // unlikely, but just in case, let fmt deal with it
+    } else  // unlikely, but just in case, let fmt deal with it
     {
         fmt_lib::format_to(std::back_inserter(dest), SPDLOG_FMT_STRING("{:02}"), n);
     }
@@ -140,6 +136,6 @@ inline ToDuration time_fraction(log_clock::time_point tp) {
     return duration_cast<ToDuration>(duration) - duration_cast<ToDuration>(secs);
 }
 
-} // namespace fmt_helper
-} // namespace details
-} // namespace spdlog
+}  // namespace fmt_helper
+}  // namespace details
+}  // namespace spdlog

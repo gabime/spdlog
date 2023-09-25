@@ -15,4 +15,4 @@ namespace level {
 enum level_enum : int;
 }
 
-} // namespace spdlog
+}  // namespace spdlog

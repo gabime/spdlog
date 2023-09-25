@@ -164,7 +164,7 @@ private:
 using hourly_file_sink_mt = hourly_file_sink<std::mutex>;
 using hourly_file_sink_st = hourly_file_sink<details::null_mutex>;
 
-} // namespace sinks
+}  // namespace sinks
 
 //
 // factory functions
@@ -188,4 +188,4 @@ inline std::shared_ptr<logger> hourly_logger_st(const std::string &logger_name,
     return Factory::template create<sinks::hourly_file_sink_st>(logger_name, filename, truncate,
                                                                 max_files, event_handlers);
 }
-} // namespace spdlog
+}  // namespace spdlog

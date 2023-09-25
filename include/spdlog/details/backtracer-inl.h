@@ -59,5 +59,5 @@ SPDLOG_INLINE void backtracer::foreach_pop(std::function<void(const details::log
         messages_.pop_front();
     }
 }
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

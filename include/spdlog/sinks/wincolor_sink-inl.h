@@ -20,18 +20,17 @@ SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color
     : out_handle_(out_handle),
       mutex_(ConsoleMutex::mutex()),
       formatter_(details::make_unique<spdlog::pattern_formatter>()) {
-
     set_color_mode_impl(mode);
     // set level colors
-    colors_[level::trace] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; // white
-    colors_[level::debug] = FOREGROUND_GREEN | FOREGROUND_BLUE;                  // cyan
-    colors_[level::info] = FOREGROUND_GREEN;                                     // green
+    colors_[level::trace] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;  // white
+    colors_[level::debug] = FOREGROUND_GREEN | FOREGROUND_BLUE;                   // cyan
+    colors_[level::info] = FOREGROUND_GREEN;                                      // green
     colors_[level::warn] =
-        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // intense yellow
-    colors_[level::err] = FOREGROUND_RED | FOREGROUND_INTENSITY;  // intense red
+        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;  // intense yellow
+    colors_[level::err] = FOREGROUND_RED | FOREGROUND_INTENSITY;   // intense red
     colors_[level::critical] = BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN |
                                FOREGROUND_BLUE |
-                               FOREGROUND_INTENSITY; // intense white on red background
+                               FOREGROUND_INTENSITY;  // intense white on red background
     colors_[level::off] = 0;
 }
 
@@ -69,7 +68,7 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::log(const details::log_msg &msg)
         // reset to orig colors
         ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), orig_attribs);
         print_range_(formatted, msg.color_range_end, formatted.size());
-    } else // print without colors if color range is invalid (or color is disabled)
+    } else  // print without colors if color range is invalid (or color is disabled)
     {
         write_to_file_(formatted);
     }
@@ -126,7 +125,7 @@ wincolor_sink<ConsoleMutex>::set_foreground_color_(std::uint16_t attribs) {
     auto ignored =
         ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), static_cast<WORD>(new_attribs));
     (void)(ignored);
-    return static_cast<std::uint16_t>(orig_buffer_info.wAttributes); // return orig attribs
+    return static_cast<std::uint16_t>(orig_buffer_info.wAttributes);  // return orig attribs
 }
 
 // print a range of formatted message to console
@@ -160,5 +159,5 @@ SPDLOG_INLINE wincolor_stdout_sink<ConsoleMutex>::wincolor_stdout_sink(color_mod
 template <typename ConsoleMutex>
 SPDLOG_INLINE wincolor_stderr_sink<ConsoleMutex>::wincolor_stderr_sink(color_mode mode)
     : wincolor_sink<ConsoleMutex>(::GetStdHandle(STD_ERROR_HANDLE), mode) {}
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog

@@ -114,8 +114,8 @@ private:
     size_t backtrace_n_messages_ = 0;
 };
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "registry-inl.h"

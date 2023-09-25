@@ -24,5 +24,5 @@ struct console_nullmutex {
         return s_mutex;
     }
 };
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

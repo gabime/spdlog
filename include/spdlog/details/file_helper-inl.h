@@ -127,8 +127,8 @@ SPDLOG_INLINE const filename_t &file_helper::filename() const { return filename_
 // ".mylog" => (".mylog". "")
 // "my_folder/.mylog" => ("my_folder/.mylog", "")
 // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
-SPDLOG_INLINE std::tuple<filename_t, filename_t>
-file_helper::split_by_extension(const filename_t &fname) {
+SPDLOG_INLINE std::tuple<filename_t, filename_t> file_helper::split_by_extension(
+    const filename_t &fname) {
     auto ext_index = fname.rfind('.');
 
     // no valid extension found - return whole path and empty string as
@@ -147,5 +147,5 @@ file_helper::split_by_extension(const filename_t &fname) {
     return std::make_tuple(fname.substr(0, ext_index), fname.substr(ext_index));
 }
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog

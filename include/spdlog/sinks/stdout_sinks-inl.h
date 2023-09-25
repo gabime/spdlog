@@ -16,13 +16,13 @@
     // so instead we use ::FileWrite
     #include <spdlog/details/windows_include.h>
 
-    #ifndef _USING_V110_SDK71_ // fileapi.h doesn't exist in winxp
-        #include <fileapi.h>   // WriteFile (..)
+    #ifndef _USING_V110_SDK71_  // fileapi.h doesn't exist in winxp
+        #include <fileapi.h>    // WriteFile (..)
     #endif
 
-    #include <io.h>    // _get_osfhandle(..)
-    #include <stdio.h> // _fileno(..)
-#endif                 // WIN32
+    #include <io.h>     // _get_osfhandle(..)
+    #include <stdio.h>  // _fileno(..)
+#endif                  // WIN32
 
 namespace spdlog {
 
@@ -44,7 +44,7 @@ SPDLOG_INLINE stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
     if (handle_ == INVALID_HANDLE_VALUE && file != stdout && file != stderr) {
         throw_spdlog_ex("spdlog::stdout_sink_base: _get_osfhandle() failed", errno);
     }
-#endif // WIN32
+#endif  // WIN32
 }
 
 template <typename ConsoleMutex>
@@ -68,8 +68,8 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::log(const details::log_msg &m
     memory_buf_t formatted;
     formatter_->format(msg, formatted);
     ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
-#endif               // WIN32
-    ::fflush(file_); // flush every line to terminal
+#endif                // WIN32
+    ::fflush(file_);  // flush every line to terminal
 }
 
 template <typename ConsoleMutex>
@@ -85,8 +85,8 @@ SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::set_pattern(const std::string
 }
 
 template <typename ConsoleMutex>
-SPDLOG_INLINE void
-stdout_sink_base<ConsoleMutex>::set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) {
+SPDLOG_INLINE void stdout_sink_base<ConsoleMutex>::set_formatter(
+    std::unique_ptr<spdlog::formatter> sink_formatter) {
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::move(sink_formatter);
 }
@@ -101,7 +101,7 @@ template <typename ConsoleMutex>
 SPDLOG_INLINE stderr_sink<ConsoleMutex>::stderr_sink()
     : stdout_sink_base<ConsoleMutex>(stderr) {}
 
-} // namespace sinks
+}  // namespace sinks
 
 // factory methods
 template <typename Factory>
@@ -123,4 +123,4 @@ template <typename Factory>
 SPDLOG_INLINE std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name) {
     return Factory::template create<sinks::stderr_sink_st>(logger_name);
 }
-} // namespace spdlog
+}  // namespace spdlog

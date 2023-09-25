@@ -29,4 +29,4 @@ inline std::string format(const double &value) {
     return ss.str();
 }
 
-} // namespace utils
+}  // namespace utils

@@ -41,7 +41,7 @@ protected:
         }
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
-        formatted.push_back('\0'); // add a null terminator for OutputDebugString
+        formatted.push_back('\0');  // add a null terminator for OutputDebugString
     #if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
         wmemory_buf_t wformatted;
         details::os::utf8_to_wstrbuf(string_view_t(formatted.data(), formatted.size()), wformatted);
@@ -62,7 +62,7 @@ using msvc_sink_st = msvc_sink<details::null_mutex>;
 using windebug_sink_mt = msvc_sink_mt;
 using windebug_sink_st = msvc_sink_st;
 
-} // namespace sinks
-} // namespace spdlog
+}  // namespace sinks
+}  // namespace spdlog
 
 #endif

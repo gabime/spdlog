@@ -31,26 +31,26 @@
         #if defined(_WIN32)
             #ifdef spdlog_EXPORTS
                 #define SPDLOG_API __declspec(dllexport)
-            #else // !spdlog_EXPORTS
+            #else  // !spdlog_EXPORTS
                 #define SPDLOG_API __declspec(dllimport)
             #endif
-        #else // !defined(_WIN32)
+        #else  // !defined(_WIN32)
             #define SPDLOG_API __attribute__((visibility("default")))
         #endif
-    #else // !defined(SPDLOG_SHARED_LIB)
+    #else  // !defined(SPDLOG_SHARED_LIB)
         #define SPDLOG_API
     #endif
     #define SPDLOG_INLINE
-#else // !defined(SPDLOG_COMPILED_LIB)
+#else  // !defined(SPDLOG_COMPILED_LIB)
     #define SPDLOG_API
     #define SPDLOG_HEADER_ONLY
     #define SPDLOG_INLINE inline
-#endif // #ifdef SPDLOG_COMPILED_LIB
+#endif  // #ifdef SPDLOG_COMPILED_LIB
 
 #include <spdlog/fmt/fmt.h>
 
 #if !defined(SPDLOG_USE_STD_FORMAT) && \
-    FMT_VERSION >= 80000 // backward compatibility with fmt versions older than 8
+    FMT_VERSION >= 80000  // backward compatibility with fmt versions older than 8
     #define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
     #define SPDLOG_FMT_STRING(format_string) FMT_STRING(format_string)
     #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
@@ -162,7 +162,7 @@ using wformat_string_t = std::wstring_view;
         #endif
     #endif
     #define SPDLOG_BUF_TO_STRING(x) x
-#else // use fmt lib instead of std::format
+#else  // use fmt lib instead of std::format
 namespace fmt_lib = fmt;
 
 using string_view_t = fmt::basic_string_view<char>;
@@ -204,8 +204,8 @@ using wformat_string_t = fmt::wformat_string<Args...>;
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     #ifndef _WIN32
         #error SPDLOG_WCHAR_TO_UTF8_SUPPORT only supported on windows
-    #endif // _WIN32
-#endif     // SPDLOG_WCHAR_TO_UTF8_SUPPORT
+    #endif  // _WIN32
+#endif      // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
 template <class T>
 struct is_convertible_to_any_format_string
@@ -271,7 +271,7 @@ SPDLOG_API const string_view_t &to_string_view(spdlog::level::level_enum l) SPDL
 SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
 SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
-} // namespace level
+}  // namespace level
 
 //
 // Color mode used by sinks with color support.
@@ -283,8 +283,8 @@ enum class color_mode { always, automatic, never };
 // local time by default
 //
 enum class pattern_time_type {
-    local, // log localtime
-    utc    // log utc
+    local,  // log localtime
+    utc     // log utc
 };
 
 //
@@ -333,24 +333,24 @@ namespace details {
 
 // to_string_view
 
-SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t
-to_string_view(const memory_buf_t &buf) SPDLOG_NOEXCEPT {
+SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(const memory_buf_t &buf)
+    SPDLOG_NOEXCEPT {
     return spdlog::string_view_t{buf.data(), buf.size()};
 }
 
-SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t
-to_string_view(spdlog::string_view_t str) SPDLOG_NOEXCEPT {
+SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(spdlog::string_view_t str)
+    SPDLOG_NOEXCEPT {
     return str;
 }
 
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t
-to_string_view(const wmemory_buf_t &buf) SPDLOG_NOEXCEPT {
+SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf)
+    SPDLOG_NOEXCEPT {
     return spdlog::wstring_view_t{buf.data(), buf.size()};
 }
 
-SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t
-to_string_view(spdlog::wstring_view_t str) SPDLOG_NOEXCEPT {
+SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str)
+    SPDLOG_NOEXCEPT {
     return str;
 }
 #endif
@@ -362,14 +362,14 @@ inline fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args
 }
 #elif __cpp_lib_format >= 202207L
 template <typename T, typename... Args>
-SPDLOG_CONSTEXPR_FUNC std::basic_string_view<T>
-to_string_view(std::basic_format_string<T, Args...> fmt) SPDLOG_NOEXCEPT {
+SPDLOG_CONSTEXPR_FUNC std::basic_string_view<T> to_string_view(
+    std::basic_format_string<T, Args...> fmt) SPDLOG_NOEXCEPT {
     return fmt.get();
 }
 #endif
 
 // make_unique support for pre c++14
-#if __cplusplus >= 201402L // C++14 and beyond
+#if __cplusplus >= 201402L  // C++14 and beyond
 using std::enable_if_t;
 using std::make_unique;
 #else
@@ -394,8 +394,8 @@ constexpr T conditional_static_cast(U value) {
     return value;
 }
 
-} // namespace details
-} // namespace spdlog
+}  // namespace details
+}  // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
     #include "common-inl.h"
