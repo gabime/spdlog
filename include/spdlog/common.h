@@ -358,7 +358,6 @@ to_string_view(std::basic_format_string<T, Args...> fmt) SPDLOG_NOEXCEPT {
 #endif
 
 // make_unique support for pre c++14
-
 #if __cplusplus >= 201402L // C++14 and beyond
 using std::enable_if_t;
 using std::make_unique;
