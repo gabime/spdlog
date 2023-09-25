@@ -25,10 +25,10 @@ struct padding_info {
 
     padding_info() = default;
     padding_info(size_t width, padding_info::pad_side side, bool truncate)
-        : width_(width)
-        , side_(side)
-        , truncate_(truncate)
-        , enabled_(true) {}
+        : width_(width),
+          side_(side),
+          truncate_(truncate),
+          enabled_(true) {}
 
     bool enabled() const { return enabled_; }
     size_t width_ = 0;

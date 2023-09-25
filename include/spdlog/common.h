@@ -306,9 +306,9 @@ private:
 struct source_loc {
     SPDLOG_CONSTEXPR source_loc() = default;
     SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
-        : filename{filename_in}
-        , line{line_in}
-        , funcname{funcname_in} {}
+        : filename{filename_in},
+          line{line_in},
+          funcname{funcname_in} {}
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT { return line == 0; }
     const char *filename{nullptr};
@@ -318,10 +318,10 @@ struct source_loc {
 
 struct file_event_handlers {
     file_event_handlers()
-        : before_open(nullptr)
-        , after_open(nullptr)
-        , before_close(nullptr)
-        , after_close(nullptr) {}
+        : before_open(nullptr),
+          after_open(nullptr),
+          before_close(nullptr),
+          after_close(nullptr) {}
 
     std::function<void(const filename_t &filename)> before_open;
     std::function<void(const filename_t &filename, std::FILE *file_stream)> after_open;

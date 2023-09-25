@@ -34,8 +34,8 @@ struct tcp_sink_config {
     bool lazy_connect = false; // if true connect on first log call instead of on construction
 
     tcp_sink_config(std::string host, int port)
-        : server_host{std::move(host)}
-        , server_port{port} {}
+        : server_host{std::move(host)},
+          server_port{port} {}
 };
 
 template <typename Mutex>

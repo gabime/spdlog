@@ -30,9 +30,9 @@ struct kafka_sink_config {
     int32_t flush_timeout_ms = 1000;
 
     kafka_sink_config(std::string addr, std::string topic, int flush_timeout_ms = 1000)
-        : server_addr{std::move(addr)}
-        , produce_topic{std::move(topic)}
-        , flush_timeout_ms(flush_timeout_ms) {}
+        : server_addr{std::move(addr)},
+          produce_topic{std::move(topic)},
+          flush_timeout_ms(flush_timeout_ms) {}
 };
 
 template <typename Mutex>

@@ -28,8 +28,8 @@ struct udp_sink_config {
     uint16_t server_port;
 
     udp_sink_config(std::string host, uint16_t port)
-        : server_host{std::move(host)}
-        , server_port{port} {}
+        : server_host{std::move(host)},
+          server_port{port} {}
 };
 
 template <typename Mutex>

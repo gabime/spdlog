@@ -25,7 +25,8 @@ public:
 
     explicit circular_q(size_t max_items)
         : max_items_(max_items + 1) // one item is reserved as marker for full q
-        , v_(max_items_) {}
+          ,
+          v_(max_items_) {}
 
     circular_q(const circular_q &) = default;
     circular_q &operator=(const circular_q &) = default;

@@ -17,12 +17,12 @@ namespace spdlog {
 
 // public methods
 SPDLOG_INLINE logger::logger(const logger &other)
-    : name_(other.name_)
-    , sinks_(other.sinks_)
-    , level_(other.level_.load(std::memory_order_relaxed))
-    , flush_level_(other.flush_level_.load(std::memory_order_relaxed))
-    , custom_err_handler_(other.custom_err_handler_)
-    , tracer_(other.tracer_) {}
+    : name_(other.name_),
+      sinks_(other.sinks_),
+      level_(other.level_.load(std::memory_order_relaxed)),
+      flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
+      custom_err_handler_(other.custom_err_handler_),
+      tracer_(other.tracer_) {}
 
 SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT
     : name_(std::move(other.name_)),

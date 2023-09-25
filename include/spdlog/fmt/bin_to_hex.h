@@ -43,9 +43,9 @@ template <typename It>
 class dump_info {
 public:
     dump_info(It range_begin, It range_end, size_t size_per_line)
-        : begin_(range_begin)
-        , end_(range_end)
-        , size_per_line_(size_per_line) {}
+        : begin_(range_begin),
+          end_(range_end),
+          size_per_line_(size_per_line) {}
 
     // do not use begin() and end() to avoid collision with fmt/ranges
     It get_begin() const { return begin_; }
