@@ -4,7 +4,6 @@
 #pragma once
 
 #if defined(_WIN32)
-
     #include "../details/null_mutex.h"
     #include "base_sink.h"
 

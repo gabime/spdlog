@@ -11,13 +11,12 @@
 // If the widget's lifetime can be shorter than the logger's one, you should provide some permanent
 // QObject, and then use a standard signal/slot.
 //
-
+#include "base_sink.h"
 #include "../common.h"
 #include "../details/log_msg.h"
 #include "../details/synchronous_factory.h"
-#include "base_sink.h"
-#include <array>
 
+#include <array>
 #include <QPlainTextEdit>
 #include <QTextEdit>
 
