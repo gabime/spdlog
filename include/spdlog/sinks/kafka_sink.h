@@ -10,13 +10,14 @@
 // https://github.com/confluentinc/librdkafka
 //
 
-#include "spdlog/async.h"
-#include "spdlog/details/log_msg.h"
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/details/synchronous_factory.h"
-#include "spdlog/sinks/base_sink.h"
+#include "base_sink.h"
+#include "../async.h"
+#include "../details/log_msg.h"
+#include "../details/null_mutex.h"
+#include "../details/synchronous_factory.h"
+
 #include <mutex>
-#include <spdlog/common.h>
+#include "../common.h"
 
 // kafka header
 #include <librdkafka/rdkafkacpp.h>

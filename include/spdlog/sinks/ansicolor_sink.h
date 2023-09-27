@@ -6,9 +6,9 @@
 #include <array>
 #include <memory>
 #include <mutex>
-#include <spdlog/details/console_globals.h>
-#include <spdlog/details/null_mutex.h>
-#include <spdlog/sinks/sink.h>
+#include "../details/console_globals.h"
+#include "../details/null_mutex.h"
+#include "sink.h"
 #include <string>
 
 namespace spdlog {

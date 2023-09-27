@@ -3,8 +3,8 @@
 
 #pragma once
 
-#include <spdlog/details/log_msg.h>
-#include <spdlog/formatter.h>
+#include "../details/log_msg.h"
+#include "../formatter.h"
 
 namespace spdlog {
 namespace sinks {

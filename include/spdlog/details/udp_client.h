@@ -6,6 +6,10 @@
 // Helper RAII over unix udp client socket.
 // Will throw on construction if the socket creation failed.
 
+#include "../common.h"
+#include "os.h"
+
+
 #ifdef _WIN32
     #error "include udp_client-windows.h instead"
 #endif
@@ -15,11 +19,8 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/udp.h>
-#include <spdlog/common.h>
-#include <spdlog/details/os.h>
 #include <sys/socket.h>
 #include <unistd.h>
-
 #include <string>
 
 namespace spdlog {

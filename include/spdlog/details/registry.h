@@ -8,8 +8,8 @@
 // If user requests a non existing logger, nullptr will be returned
 // This class is thread safe
 
-#include <spdlog/common.h>
-#include <spdlog/details/periodic_worker.h>
+#include "../common.h"
+#include "periodic_worker.h"
 
 #include <chrono>
 #include <functional>

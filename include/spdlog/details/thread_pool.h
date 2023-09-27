@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include <spdlog/async.h>
-#include <spdlog/details/log_msg_buffer.h>
-#include <spdlog/details/mpmc_blocking_q.h>
-#include <spdlog/details/os.h>
+#include "../async.h"
+#include "log_msg_buffer.h"
+#include "mpmc_blocking_q.h"
+#include "os.h"
 
 #include <chrono>
 #include <functional>

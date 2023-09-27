@@ -8,8 +8,8 @@
 #endif
 
 // tcp client helper
-#include <spdlog/common.h>
-#include <spdlog/details/os.h>
+#include "../common.h"
+#include "os.h"
 
 #include <arpa/inet.h>
 #include <netdb.h>

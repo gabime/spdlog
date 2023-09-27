@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include <spdlog/common.h>
-#include <spdlog/details/circular_q.h>
-#include <spdlog/details/file_helper.h>
-#include <spdlog/details/null_mutex.h>
-#include <spdlog/details/os.h>
-#include <spdlog/details/synchronous_factory.h>
-#include <spdlog/fmt/chrono.h>
-#include <spdlog/fmt/fmt.h>
-#include <spdlog/sinks/base_sink.h>
+#include "../common.h"
+#include "../details/circular_q.h"
+#include "../details/file_helper.h"
+#include "../details/null_mutex.h"
+#include "../details/os.h"
+#include "../details/synchronous_factory.h"
+#include "../fmt/chrono.h"
+#include "../fmt/fmt.h"
+#include "base_sink.h"
 
 #include <chrono>
 #include <cstdio>
