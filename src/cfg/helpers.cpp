@@ -1,9 +1,9 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include <spdlog/cfg/helpers.h>
-#include <spdlog/details/registry.h>
-#include <spdlog/spdlog.h>
+#include "spdlog/cfg/helpers.h"
+#include "spdlog/details/registry.h"
+#include "spdlog/spdlog.h"
 
 #include <algorithm>
 #include <sstream>

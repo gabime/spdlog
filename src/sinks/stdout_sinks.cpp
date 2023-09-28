@@ -2,13 +2,13 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include <memory>
-#include <spdlog/pattern_formatter.h>
-#include <spdlog/sinks/stdout_sinks.h>
+#include "spdlog/pattern_formatter.h"
+#include "spdlog/sinks/stdout_sinks.h"
 
 #ifdef _WIN32
     // under windows using fwrite to non-binary stream results in \r\r\n (see issue #1675)
     // so instead we use ::FileWrite
-    #include <spdlog/details/windows_include.h>
+    #include "spdlog/details/windows_include.h"
 
     #ifndef _USING_V110_SDK71_  // fileapi.h doesn't exist in winxp
         #include <fileapi.h>    // WriteFile (..)
@@ -16,7 +16,7 @@
 
     #include <io.h>     // _get_osfhandle(..)
     #include <stdio.h>  // _fileno(..)
-#endif                  // WIN32
+#endif                  // _WIN32
 
 namespace spdlog {
 
@@ -120,7 +120,7 @@ std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name) {
 }  // namespace spdlog
 
 // template instantiations for stdout/stderr loggers
-#include <spdlog/details/console_globals.h>
+#include "spdlog/details/console_globals.h"
 template class SPDLOG_API spdlog::sinks::stdout_sink_base<spdlog::details::console_mutex>;
 template class SPDLOG_API spdlog::sinks::stdout_sink_base<spdlog::details::console_nullmutex>;
 template class SPDLOG_API spdlog::sinks::stdout_sink<spdlog::details::console_mutex>;
@@ -129,8 +129,8 @@ template class SPDLOG_API spdlog::sinks::stderr_sink<spdlog::details::console_mu
 template class SPDLOG_API spdlog::sinks::stderr_sink<spdlog::details::console_nullmutex>;
 
 // template instantiations for stdout/stderr factory functions
-#include <spdlog/async.h>
-#include <spdlog/details/synchronous_factory.h>
+#include "spdlog/async.h"
+#include "spdlog/details/synchronous_factory.h"
 
 template SPDLOG_API std::shared_ptr<spdlog::logger>
 spdlog::stdout_logger_mt<spdlog::synchronous_factory>(const std::string &logger_name);

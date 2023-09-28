@@ -1,11 +1,11 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include <spdlog/async.h>
-#include <spdlog/common.h>
-#include <spdlog/details/synchronous_factory.h>
-#include <spdlog/logger.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
+#include "spdlog/async.h"
+#include "spdlog/common.h"
+#include "spdlog/details/synchronous_factory.h"
+#include "spdlog/logger.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace spdlog {
 

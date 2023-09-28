@@ -1,9 +1,9 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include <spdlog/sinks/sink.h>
+#include "spdlog/sinks/sink.h"
 
-#include <spdlog/common.h>
+#include "spdlog/common.h"
 
 bool spdlog::sinks::sink::should_log(spdlog::level msg_level) const {
     return msg_level >= level_.load(std::memory_order_relaxed);

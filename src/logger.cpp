@@ -1,9 +1,9 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include <spdlog/logger.h>
-#include <spdlog/pattern_formatter.h>
-#include <spdlog/sinks/sink.h>
+#include "spdlog/logger.h"
+#include "spdlog/pattern_formatter.h"
+#include "spdlog/sinks/sink.h"
 
 #include <cstdio>
 #include <mutex>

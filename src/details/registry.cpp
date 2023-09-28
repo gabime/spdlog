@@ -1,19 +1,18 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include <spdlog/details/registry.h>
-
-#include <spdlog/common.h>
-#include <spdlog/details/periodic_worker.h>
-#include <spdlog/logger.h>
-#include <spdlog/pattern_formatter.h>
+#include "spdlog/details/registry.h"
+#include "spdlog/common.h"
+#include "spdlog/details/periodic_worker.h"
+#include "spdlog/logger.h"
+#include "spdlog/pattern_formatter.h"
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
     // support for the default stdout color logger
     #ifdef _WIN32
-        #include <spdlog/sinks/wincolor_sink.h>
+        #include "spdlog/sinks/wincolor_sink.h"
     #else
-        #include <spdlog/sinks/ansicolor_sink.h>
+        #include "spdlog/sinks/ansicolor_sink.h"
     #endif
 #endif  // SPDLOG_DISABLE_DEFAULT_LOGGER
 

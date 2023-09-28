@@ -1,8 +1,8 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include <spdlog/common.h>
-#include <spdlog/details/os.h>
+#include "spdlog/common.h"
+#include "spdlog/details/os.h"
 
 #include <algorithm>
 #include <array>
@@ -16,7 +16,7 @@
 #include <thread>
 
 #ifdef _WIN32
-    #include <spdlog/details/windows_include.h>
+    #include "spdlog/details/windows_include.h"
     #include <fileapi.h>  // for FlushFileBuffers
     #include <io.h>       // for _get_osfhandle, _isatty, _fileno
     #include <process.h>  // for _get_pid

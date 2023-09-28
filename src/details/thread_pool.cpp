@@ -2,8 +2,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include <cassert>
-#include <spdlog/common.h>
-#include <spdlog/details/thread_pool.h>
+#include "spdlog/common.h"
+#include "spdlog/details/thread_pool.h"
 
 namespace spdlog {
 namespace details {
