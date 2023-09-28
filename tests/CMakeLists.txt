@@ -28,7 +28,6 @@ set(SPDLOG_UTESTS_SOURCES
     test_file_logging.cpp
     test_daily_logger.cpp
     test_misc.cpp
-    test_eventlog.cpp
     test_pattern_formatter.cpp
     test_async.cpp
     test_registry.cpp
@@ -50,6 +49,10 @@ set(SPDLOG_UTESTS_SOURCES
     test_log_level.cpp
     test_include_sinks.cpp
 )
+
+if(WIN32)
+    list(APPEND SPDLOG_UTESTS_SOURCES test_eventlog.cpp)
+endif()
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
     list(APPEND SPDLOG_UTESTS_SOURCES test_errors.cpp)

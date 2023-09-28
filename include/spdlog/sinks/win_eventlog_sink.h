@@ -32,7 +32,6 @@ Windows Registry Editor Version 5.00
 -----------------------------------------------------------------------------------------*/
 
 #pragma once
-#ifdef _WIN32
 
 #include "../details/null_mutex.h"
 #include "base_sink.h"
@@ -250,5 +249,3 @@ using win_eventlog_sink_st = win_eventlog::win_eventlog_sink<details::null_mutex
 
 }  // namespace sinks
 }  // namespace spdlog
-
-#endif
