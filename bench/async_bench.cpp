@@ -10,14 +10,6 @@
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/spdlog.h"
 
-#if defined(SPDLOG_USE_STD_FORMAT)
-    #include <format>
-#elif defined(SPDLOG_FMT_EXTERNAL)
-    #include <fmt/format.h>
-#else
-    #include "spdlog/fmt/bundled/format.h"
-#endif
-
 #include <atomic>
 #include <iostream>
 #include <memory>
