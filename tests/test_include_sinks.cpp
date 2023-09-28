@@ -22,4 +22,5 @@
 #ifdef _WIN32
     #include "spdlog/sinks/win_eventlog_sink.h"
     #include "spdlog/sinks/wincolor_sink.h"
+    #includ "spdlog/sinks/msvc_sink.h"
 #endif
