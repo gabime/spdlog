@@ -6,15 +6,15 @@
 //
 // bench.cpp : spdlog benchmarks
 //
-#include "spdlog/async.h"
-#include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/spdlog.h"
-
 #include <atomic>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <thread>
+
+#include "spdlog/async.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/spdlog.h"
 
 using namespace std;
 using namespace std::chrono;
