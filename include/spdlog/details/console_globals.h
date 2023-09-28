@@ -3,8 +3,9 @@
 
 #pragma once
 
-#include "null_mutex.h"
 #include <mutex>
+
+#include "null_mutex.h"
 
 namespace spdlog {
 namespace details {

@@ -3,13 +3,13 @@
 
 #pragma once
 
+#include <mutex>
+#include <string>
+
 #include "../details/file_helper.h"
 #include "../details/null_mutex.h"
 #include "../details/synchronous_factory.h"
 #include "base_sink.h"
-
-#include <mutex>
-#include <string>
 
 namespace spdlog {
 namespace sinks {

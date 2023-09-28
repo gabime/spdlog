@@ -1,8 +1,9 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include "spdlog/common.h"
 #include "spdlog/details/os.h"
+
+#include <sys/stat.h>
 
 #include <algorithm>
 #include <array>
@@ -12,9 +13,11 @@
 #include <cstring>
 #include <ctime>
 #include <string>
-#include <sys/stat.h>
 #include <thread>
 
+#include "spdlog/common.h"
+
+// clang-format off
 #ifdef _WIN32
     #include "spdlog/details/windows_include.h"
     #include <fileapi.h>  // for FlushFileBuffers
@@ -63,6 +66,7 @@
     #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
+// clang-format on
 namespace spdlog {
 namespace details {
 namespace os {

@@ -3,18 +3,17 @@
 
 #pragma once
 
+#include <chrono>
+#include <ctime>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
+
 #include "common.h"
 #include "details/log_msg.h"
 #include "details/os.h"
 #include "formatter.h"
-
-#include <chrono>
-#include <ctime>
-#include <memory>
-
-#include <string>
-#include <unordered_map>
-#include <vector>
 
 namespace spdlog {
 namespace details {

@@ -3,15 +3,15 @@
 
 #pragma once
 
-#include "base_sink.h"
-#include "../details/circular_q.h"
-#include "../details/log_msg_buffer.h"
-#include "../details/null_mutex.h"
-
 #include <functional>
 #include <mutex>
 #include <string>
 #include <vector>
+
+#include "../details/circular_q.h"
+#include "../details/log_msg_buffer.h"
+#include "../details/null_mutex.h"
+#include "base_sink.h"
 
 namespace spdlog {
 namespace sinks {

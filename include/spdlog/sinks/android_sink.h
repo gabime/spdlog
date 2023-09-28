@@ -5,18 +5,19 @@
 
 #ifdef __ANDROID__
 
-    #include "../details/fmt_helper.h"
-    #include "../details/null_mutex.h"
-    #include "os.h"
-    #include "../details/synchronous_factory.h"
-    #include "base_sink.h"
-
     #include <android/log.h>
+
     #include <chrono>
     #include <mutex>
     #include <string>
     #include <thread>
     #include <type_traits>
+
+    #include "../details/fmt_helper.h"
+    #include "../details/null_mutex.h"
+    #include "../details/synchronous_factory.h"
+    #include "base_sink.h"
+    #include "os.h"
 
     #if !defined(SPDLOG_ANDROID_RETRIES)
         #define SPDLOG_ANDROID_RETRIES 2

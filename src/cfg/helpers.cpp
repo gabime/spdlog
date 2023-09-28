@@ -2,13 +2,14 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include "spdlog/cfg/helpers.h"
-#include "spdlog/details/registry.h"
-#include "spdlog/spdlog.h"
 
 #include <algorithm>
 #include <sstream>
 #include <string>
 #include <utility>
+
+#include "spdlog/details/registry.h"
+#include "spdlog/spdlog.h"
 
 namespace spdlog {
 namespace cfg {

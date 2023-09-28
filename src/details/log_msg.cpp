@@ -2,6 +2,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include "spdlog/details/log_msg.h"
+
 #include "spdlog/details/os.h"
 
 namespace spdlog {

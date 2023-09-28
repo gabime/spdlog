@@ -1,8 +1,7 @@
 
 #include "includes.h"
-#include "test_sink.h"
-
 #include "spdlog/sinks/win_eventlog_sink.h"
+#include "test_sink.h"
 
 static const LPCSTR TEST_SOURCE = "spdlog_test";
 
@@ -70,5 +69,3 @@ TEST_CASE("eventlog", "[eventlog]") {
     test_single_print([&test_logger](std::string const &msg) { test_logger.critical(msg); },
                       "my critical message", EVENTLOG_ERROR_TYPE);
 }
-
-

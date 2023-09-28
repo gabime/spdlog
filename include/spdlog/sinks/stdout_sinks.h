@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include <cstdio>
+
 #include "../details/console_globals.h"
 #include "../details/synchronous_factory.h"
 #include "sink.h"
-
-#include <cstdio>
 
 #ifdef _WIN32
     #include "../details/windows_include.h"

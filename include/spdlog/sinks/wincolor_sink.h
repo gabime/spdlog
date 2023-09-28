@@ -3,16 +3,16 @@
 
 #pragma once
 
-#include "../common.h"
-#include "../details/console_globals.h"
-#include "../details/null_mutex.h"
-#include "sink.h"
-
 #include <array>
 #include <cstdint>
 #include <memory>
 #include <mutex>
 #include <string>
+
+#include "../common.h"
+#include "../details/console_globals.h"
+#include "../details/null_mutex.h"
+#include "sink.h"
 
 namespace spdlog {
 namespace sinks {

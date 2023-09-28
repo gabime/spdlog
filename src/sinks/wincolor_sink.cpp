@@ -2,12 +2,13 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 #ifdef _WIN32
 
-    #include "spdlog/common.h"
-    #include "spdlog/details/windows_include.h"
-    #include "spdlog/pattern_formatter.h"
     #include "spdlog/sinks/wincolor_sink.h"
 
     #include <wincon.h>
+
+    #include "spdlog/common.h"
+    #include "spdlog/details/windows_include.h"
+    #include "spdlog/pattern_formatter.h"
 
 namespace spdlog {
 namespace sinks {

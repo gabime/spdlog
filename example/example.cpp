@@ -4,8 +4,8 @@
 
 // spdlog usage example
 
-#include <cstdio>
 #include <chrono>
+#include <cstdio>
 
 void load_levels_example();
 void stdout_logger_example();
@@ -31,8 +31,8 @@ void replace_default_logger_example();
 // This will add filename/line/column info to the log (and in to the resulting binary so take care).
 // #define SPDLOG_SOURCE_LOCATION
 
-#include "spdlog/spdlog.h"
 #include "spdlog/cfg/env.h"  // support for loading levels from the environment variable
+#include "spdlog/spdlog.h"
 
 int main(int, char *[]) {
     // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
@@ -220,8 +220,9 @@ void trace_example() {
 }
 
 // stopwatch example
-#include "spdlog/stopwatch.h"
 #include <thread>
+
+#include "spdlog/stopwatch.h"
 void stopwatch_example() {
     spdlog::stopwatch sw;
     std::this_thread::sleep_for(std::chrono::milliseconds(123));

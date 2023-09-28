@@ -10,13 +10,13 @@
 //    stops and joins the thread on destruction (if the thread is executing a callback, wait for it
 //    to finish first).
 
-#include "../common.h"
-
 #include <chrono>
 #include <condition_variable>
 #include <functional>
 #include <mutex>
 #include <thread>
+
+#include "../common.h"
 
 namespace spdlog {
 namespace details {

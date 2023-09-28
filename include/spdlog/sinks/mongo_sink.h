@@ -10,18 +10,17 @@
 // http://mongocxx.org/mongocxx-v3/installation/
 //
 
-#include "base_sink.h"
-#include "../common.h"
-#include "../details/log_msg.h"
-#include "../details/synchronous_factory.h"
-
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/types.hpp>
 #include <bsoncxx/view_or_value.hpp>
-
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
+
+#include "../common.h"
+#include "../details/log_msg.h"
+#include "../details/synchronous_factory.h"
+#include "base_sink.h"
 
 namespace spdlog {
 namespace sinks {
@@ -78,8 +77,9 @@ private:
     std::unique_ptr<mongocxx::client> client_ = nullptr;
 };
 
-#include "../details/null_mutex.h"
 #include <mutex>
+
+#include "../details/null_mutex.h"
 using mongo_sink_mt = mongo_sink<std::mutex>;
 using mongo_sink_st = mongo_sink<spdlog::details::null_mutex>;
 

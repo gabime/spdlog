@@ -3,11 +3,11 @@
 
 #pragma once
 
+#include <mutex>
+
 #include "../details/null_mutex.h"
 #include "../details/synchronous_factory.h"
 #include "base_sink.h"
-
-#include <mutex>
 
 namespace spdlog {
 namespace sinks {

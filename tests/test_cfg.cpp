@@ -1,9 +1,8 @@
 
 #include "includes.h"
-#include "test_sink.h"
-
-#include "spdlog/cfg/env.h"
 #include "spdlog/cfg/argv.h"
+#include "spdlog/cfg/env.h"
+#include "test_sink.h"
 
 using spdlog::cfg::load_argv_levels;
 using spdlog::cfg::load_env_levels;

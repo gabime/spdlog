@@ -2,9 +2,6 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
-#include "details/null_mutex.h"
-#include "tweakme.h"
-
 #include <array>
 #include <atomic>
 #include <chrono>
@@ -16,6 +13,9 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+
+#include "details/null_mutex.h"
+#include "tweakme.h"
 
 #if __has_include(<version>)
     #include <version>

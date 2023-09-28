@@ -20,6 +20,6 @@
 #include "spdlog/sinks/udp_sink.h"
 
 #ifdef _WIN32
-#include "spdlog/sinks/wincolor_sink.h"
-#include "spdlog/sinks/win_eventlog_sink.h"
+    #include "spdlog/sinks/win_eventlog_sink.h"
+    #include "spdlog/sinks/wincolor_sink.h"
 #endif

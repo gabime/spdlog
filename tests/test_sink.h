@@ -5,12 +5,13 @@
 
 #pragma once
 
-#include "spdlog/details/null_mutex.h"
-#include "spdlog/sinks/base_sink.h"
-#include "spdlog/fmt/fmt.h"
 #include <chrono>
 #include <mutex>
 #include <thread>
+
+#include "spdlog/details/null_mutex.h"
+#include "spdlog/fmt/fmt.h"
+#include "spdlog/sinks/base_sink.h"
 
 namespace spdlog {
 namespace sinks {

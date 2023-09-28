@@ -1,13 +1,7 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include "spdlog/details/fmt_helper.h"
-#include "spdlog/details/log_msg.h"
-#include "spdlog/details/os.h"
-#include "spdlog/fmt/fmt.h"
-#include "spdlog/formatter.h"
 #include "spdlog/pattern_formatter.h"
-#include "spdlog/common.h"
 
 #include <algorithm>
 #include <array>
@@ -18,6 +12,13 @@
 #include <string>
 #include <thread>
 #include <utility>
+
+#include "spdlog/common.h"
+#include "spdlog/details/fmt_helper.h"
+#include "spdlog/details/log_msg.h"
+#include "spdlog/details/os.h"
+#include "spdlog/fmt/fmt.h"
+#include "spdlog/formatter.h"
 
 namespace spdlog {
 namespace details {

@@ -1,9 +1,10 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
+#include "spdlog/spdlog.h"
+
 #include "spdlog/common.h"
 #include "spdlog/pattern_formatter.h"
-#include "spdlog/spdlog.h"
 
 namespace spdlog {
 

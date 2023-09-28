@@ -6,6 +6,7 @@
 #pragma once
 
 #include <cctype>
+
 #include "../common.h"
 
 #if defined(__has_include)

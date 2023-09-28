@@ -4,11 +4,11 @@
 #pragma once
 
 #if defined(_WIN32)
-    #include "../details/null_mutex.h"
-    #include "base_sink.h"
-
     #include <mutex>
     #include <string>
+
+    #include "../details/null_mutex.h"
+    #include "base_sink.h"
 
 // Avoid including windows.h (https://stackoverflow.com/a/30741042)
 extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char *lpOutputString);

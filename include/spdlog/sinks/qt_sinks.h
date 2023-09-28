@@ -11,14 +11,14 @@
 // If the widget's lifetime can be shorter than the logger's one, you should provide some permanent
 // QObject, and then use a standard signal/slot.
 //
-#include "base_sink.h"
-#include "../common.h"
-#include "../details/log_msg.h"
-#include "../details/synchronous_factory.h"
-
 #include <array>
 #include <QPlainTextEdit>
 #include <QTextEdit>
+
+#include "../common.h"
+#include "../details/log_msg.h"
+#include "../details/synchronous_factory.h"
+#include "base_sink.h"
 
 //
 // qt_sink class
@@ -224,8 +224,9 @@ protected:
     std::array<QTextCharFormat, level::n_levels> colors_;
 };
 
-#include "../details/null_mutex.h"
 #include <mutex>
+
+#include "../details/null_mutex.h"
 
 using qt_sink_mt = qt_sink<std::mutex>;
 using qt_sink_st = qt_sink<details::null_mutex>;

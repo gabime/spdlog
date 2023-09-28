@@ -1,7 +1,8 @@
-#include "includes.h"
-#include "test_sink.h"
 #include <map>
 #include <vector>
+
+#include "includes.h"
+#include "test_sink.h"
 
 TEST_CASE("test_default_level", "[log_level]") {
     auto test_sink = std::make_shared<spdlog::sinks::test_sink_st>();

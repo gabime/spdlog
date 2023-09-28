@@ -8,15 +8,15 @@
 // If user requests a non existing logger, nullptr will be returned
 // This class is thread safe
 
-#include "../common.h"
-#include "periodic_worker.h"
-
 #include <chrono>
 #include <functional>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <unordered_map>
+
+#include "../common.h"
+#include "periodic_worker.h"
 
 namespace spdlog {
 class logger;

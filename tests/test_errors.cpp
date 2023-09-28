@@ -2,9 +2,9 @@
  * This content is released under the MIT License as specified in
  * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
  */
-#include "includes.h"
-
 #include <iostream>
+
+#include "includes.h"
 
 #define SIMPLE_LOG "test_logs/simple_log.txt"
 #define SIMPLE_ASYNC_LOG "test_logs/simple_async_log.txt"

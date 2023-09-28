@@ -6,11 +6,11 @@
 //
 // bench.cpp : spdlog benchmarks
 //
-#include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/sinks/rotating_file_sink.h"
+#include "spdlog/spdlog.h"
 
 #if defined(SPDLOG_USE_STD_FORMAT)
     #include <format>
@@ -20,12 +20,13 @@
     #include "spdlog/fmt/bundled/format.h"
 #endif
 
-#include "utils.h"
 #include <atomic>
 #include <cstdlib>  // EXIT_FAILURE
 #include <memory>
 #include <string>
 #include <thread>
+
+#include "utils.h"
 
 void bench(int howmany, std::shared_ptr<spdlog::logger> log);
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, size_t thread_count);

@@ -1,14 +1,15 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include "spdlog/common.h"
 #include "spdlog/details/file_helper.h"
-#include "spdlog/details/os.h"
 
 #include <cerrno>
 #include <cstdio>
 #include <string>
 #include <tuple>
+
+#include "spdlog/common.h"
+#include "spdlog/details/os.h"
 
 namespace spdlog {
 namespace details {

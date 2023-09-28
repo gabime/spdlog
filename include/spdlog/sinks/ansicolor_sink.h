@@ -6,10 +6,11 @@
 #include <array>
 #include <memory>
 #include <mutex>
+#include <string>
+
 #include "../details/console_globals.h"
 #include "../details/null_mutex.h"
 #include "sink.h"
-#include <string>
 
 namespace spdlog {
 namespace sinks {

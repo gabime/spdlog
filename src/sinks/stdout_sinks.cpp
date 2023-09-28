@@ -1,10 +1,13 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include <memory>
-#include "spdlog/pattern_formatter.h"
 #include "spdlog/sinks/stdout_sinks.h"
 
+#include <memory>
+
+#include "spdlog/pattern_formatter.h"
+
+// clang-format off
 #ifdef _WIN32
     // under windows using fwrite to non-binary stream results in \r\r\n (see issue #1675)
     // so instead we use ::FileWrite
@@ -18,6 +21,7 @@
     #include <stdio.h>  // _fileno(..)
 #endif                  // _WIN32
 
+// clang-format on
 namespace spdlog {
 
 namespace sinks {

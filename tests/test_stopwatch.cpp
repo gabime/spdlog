@@ -1,6 +1,6 @@
 #include "includes.h"
-#include "test_sink.h"
 #include "spdlog/stopwatch.h"
+#include "test_sink.h"
 
 TEST_CASE("stopwatch1", "[stopwatch]") {
     using std::chrono::milliseconds;

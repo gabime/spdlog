@@ -2,12 +2,12 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 #pragma once
 
-#include "../common.h"
-#include "../fmt/fmt.h"
-
 #include <chrono>
 #include <iterator>
 #include <type_traits>
+
+#include "../common.h"
+#include "../fmt/fmt.h"
 
 #ifdef SPDLOG_USE_STD_FORMAT
     #include <charconv>

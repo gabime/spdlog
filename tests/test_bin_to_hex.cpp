@@ -1,6 +1,6 @@
 #include "includes.h"
-#include "test_sink.h"
 #include "spdlog/fmt/bin_to_hex.h"
+#include "test_sink.h"
 
 TEST_CASE("to_hex", "[to_hex]") {
     std::ostringstream oss;

@@ -33,15 +33,15 @@ Windows Registry Editor Version 5.00
 
 #pragma once
 
-#include "../details/null_mutex.h"
-#include "base_sink.h"
-
-#include "../details/windows_include.h"
 #include <winbase.h>
 
 #include <mutex>
 #include <string>
 #include <vector>
+
+#include "../details/null_mutex.h"
+#include "../details/windows_include.h"
+#include "base_sink.h"
 
 namespace spdlog {
 namespace sinks {

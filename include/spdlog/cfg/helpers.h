@@ -3,8 +3,9 @@
 
 #pragma once
 
-#include "../common.h"
 #include <unordered_map>
+
+#include "../common.h"
 
 namespace spdlog {
 namespace cfg {

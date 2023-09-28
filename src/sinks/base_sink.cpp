@@ -1,12 +1,13 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-#include "spdlog/common.h"
-#include "spdlog/pattern_formatter.h"
 #include "spdlog/sinks/base_sink.h"
 
 #include <memory>
 #include <mutex>
+
+#include "spdlog/common.h"
+#include "spdlog/pattern_formatter.h"
 
 template <typename Mutex>
 spdlog::sinks::base_sink<Mutex>::base_sink()

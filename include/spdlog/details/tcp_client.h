@@ -8,9 +8,6 @@
 #endif
 
 // tcp client helper
-#include "../common.h"
-#include "os.h"
-
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -19,6 +16,9 @@
 #include <unistd.h>
 
 #include <string>
+
+#include "../common.h"
+#include "os.h"
 
 namespace spdlog {
 namespace details {

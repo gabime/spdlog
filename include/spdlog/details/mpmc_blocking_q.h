@@ -10,11 +10,11 @@
 // dequeue_for(..) - will block until the queue is not empty or timeout have
 // passed.
 
-#include "circular_q.h"
-
 #include <atomic>
 #include <condition_variable>
 #include <mutex>
+
+#include "circular_q.h"
 
 namespace spdlog {
 namespace details {

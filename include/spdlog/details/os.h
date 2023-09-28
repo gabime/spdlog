@@ -3,8 +3,9 @@
 
 #pragma once
 
-#include "../common.h"
 #include <ctime>  // std::time_t
+
+#include "../common.h"
 
 namespace spdlog {
 namespace details {

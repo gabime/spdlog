@@ -2,11 +2,12 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include "spdlog/logger.h"
-#include "spdlog/pattern_formatter.h"
-#include "spdlog/sinks/sink.h"
 
 #include <cstdio>
 #include <mutex>
+
+#include "spdlog/pattern_formatter.h"
+#include "spdlog/sinks/sink.h"
 
 namespace spdlog {
 

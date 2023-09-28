@@ -3,6 +3,12 @@
 
 #pragma once
 
+#include <chrono>
+#include <cstdio>
+#include <ctime>
+#include <mutex>
+#include <string>
+
 #include "../common.h"
 #include "../details/circular_q.h"
 #include "../details/file_helper.h"
@@ -11,12 +17,6 @@
 #include "../details/synchronous_factory.h"
 #include "../fmt/fmt.h"
 #include "base_sink.h"
-
-#include <chrono>
-#include <cstdio>
-#include <ctime>
-#include <mutex>
-#include <string>
 
 namespace spdlog {
 namespace sinks {

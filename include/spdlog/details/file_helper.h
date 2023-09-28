@@ -3,8 +3,9 @@
 
 #pragma once
 
-#include "../common.h"
 #include <tuple>
+
+#include "../common.h"
 
 namespace spdlog {
 namespace details {

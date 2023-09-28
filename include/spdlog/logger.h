@@ -14,12 +14,12 @@
 // The use of private formatter per sink provides the opportunity to cache some
 // formatted data, and support for different format per sink.
 
+#include <cassert>
+#include <vector>
+
 #include "common.h"
 #include "details/log_msg.h"
 #include "sinks/sink.h"
-
-#include <cassert>
-#include <vector>
 
 #ifndef SPDLOG_NO_EXCEPTIONS
     #define SPDLOG_LOGGER_CATCH(location)                                                         \

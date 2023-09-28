@@ -3,8 +3,8 @@
 #ifdef _WIN32
     #include <windows.h>
 #else
-    #include <sys/types.h>
     #include <dirent.h>
+    #include <sys/types.h>
 #endif
 
 void prepare_logdir() {
