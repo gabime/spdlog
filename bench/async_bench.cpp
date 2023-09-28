@@ -16,13 +16,10 @@
 #include <string>
 #include <thread>
 
-#include "utils.h"
-
 using namespace std;
 using namespace std::chrono;
 using namespace spdlog;
 using namespace spdlog::sinks;
-using namespace utils;
 
 void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, int thread_count);
 
@@ -111,7 +108,7 @@ int main(int argc, char *argv[]) {
         spdlog::info("*********************************");
         spdlog::info("Queue Overflow Policy: overrun");
         spdlog::info("*********************************");
-        // do same test but discard oldest if queue is full instead of blocking
+        // do same test but discard the oldest if queue is full instead of blocking
         filename = "logs/basic_async-overrun.log";
         for (int i = 0; i < iters; i++) {
             auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
