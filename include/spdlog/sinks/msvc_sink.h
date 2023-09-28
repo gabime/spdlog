@@ -3,12 +3,11 @@
 
 #pragma once
 
-#if defined(_WIN32)
-    #include <mutex>
-    #include <string>
+#include <mutex>
+#include <string>
 
-    #include "../details/null_mutex.h"
-    #include "base_sink.h"
+#include "../details/null_mutex.h"
+#include "base_sink.h"
 
 // Avoid including windows.h (https://stackoverflow.com/a/30741042)
 extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char *lpOutputString);
@@ -51,4 +50,3 @@ using windebug_sink_st = msvc_sink_st;
 }  // namespace sinks
 }  // namespace spdlog
 
-#endif
