@@ -1,4 +1,3 @@
-#include "spdlog/sinks/ansicolor_sink.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/callback_sink.h"
 #include "spdlog/sinks/daily_file_sink.h"
@@ -11,12 +10,12 @@
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/stdout_sinks.h"
-#include "spdlog/sinks/syslog_sink.h"
 #include "spdlog/sinks/tcp_sink.h"
 #include "spdlog/sinks/udp_sink.h"
 
 #ifdef _WIN32
     #include "spdlog/sinks/win_eventlog_sink.h"
-    #include "spdlog/sinks/wincolor_sink.h"
-    #includ "spdlog/sinks/msvc_sink.h"
+    #include "spdlog/sinks/msvc_sink.h"
+#else
+    #include "spdlog/sinks/syslog_sink.h"
 #endif
