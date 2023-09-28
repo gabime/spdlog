@@ -10,7 +10,7 @@
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
     #if !defined(SPDLOG_FMT_EXTERNAL)
-        #include <spdlog/fmt/bundled/chrono.h>
+        #include "../fmt/bundled/chrono.h"
     #else
         #include <fmt/chrono.h>
     #endif

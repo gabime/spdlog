@@ -10,7 +10,7 @@
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
     #if !defined(SPDLOG_FMT_EXTERNAL)
-        #include <spdlog/fmt/bundled/xchar.h>
+        #include "../fmt/bundled/xchar.h"
     #else
         #include <fmt/xchar.h>
     #endif

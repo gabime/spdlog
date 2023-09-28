@@ -10,7 +10,7 @@
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
     #if !defined(SPDLOG_FMT_EXTERNAL)
-        #include <spdlog/fmt/bundled/ranges.h>
+        #include "../fmt/bundled/ranges.h"
     #else
         #include <fmt/ranges.h>
     #endif

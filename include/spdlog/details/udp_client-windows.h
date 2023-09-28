@@ -6,10 +6,10 @@
 // Helper RAII over winsock udp client socket.
 // Will throw on construction if socket creation failed.
 
-#include "../common.h"
 #include "os.h"
+#include "windows_include.h"
+#include "../common.h"
 
-#include <spdlog/details/windows_include.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>

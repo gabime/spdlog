@@ -14,9 +14,9 @@
 // This is because each message in the queue holds a shared_ptr to the
 // originating logger.
 
-#include <spdlog/async_logger.h>
-#include <spdlog/details/registry.h>
-#include <spdlog/details/thread_pool.h>
+#include "async_logger.h"
+#include "details/registry.h"
+#include "details/thread_pool.h"
 
 #include <functional>
 #include <memory>

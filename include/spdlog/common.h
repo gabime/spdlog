@@ -2,8 +2,8 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #pragma once
-#include <spdlog/details/null_mutex.h>
-#include <spdlog/tweakme.h>
+#include "details/null_mutex.h"
+#include "tweakme.h"
 
 #include <array>
 #include <atomic>
@@ -51,13 +51,13 @@
     #define SPDLOG_API
 #endif
 
-#include <spdlog/fmt/fmt.h>
+#include "fmt/fmt.h"
 
 #if !defined(SPDLOG_USE_STD_FORMAT) && \
     FMT_VERSION >= 80000  // backward compatibility with fmt versions older than 8
     #define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
     #if defined(SPDLOG_WCHAR_FILENAMES)
-        #include <spdlog/fmt/xchar.h>
+        #include "fmt/xchar.h"
     #endif
 #else
     #define SPDLOG_FMT_RUNTIME(format_string) format_string

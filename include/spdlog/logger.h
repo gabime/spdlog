@@ -14,9 +14,9 @@
 // The use of private formatter per sink provides the opportunity to cache some
 // formatted data, and support for different format per sink.
 
-#include <spdlog/common.h>
-#include <spdlog/details/log_msg.h>
-#include <spdlog/sinks/sink.h>
+#include "common.h"
+#include "details/log_msg.h"
+#include "sinks/sink.h"
 
 #include <cassert>
 #include <vector>

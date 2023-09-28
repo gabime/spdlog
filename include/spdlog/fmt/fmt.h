@@ -13,8 +13,8 @@
 #if defined(SPDLOG_USE_STD_FORMAT)  // SPDLOG_USE_STD_FORMAT is defined - use std::format
     #include <format>
 #elif !defined(SPDLOG_FMT_EXTERNAL)
-    #include <spdlog/fmt/bundled/core.h>
-    #include <spdlog/fmt/bundled/format.h>
+    #include "bundled/core.h"
+    #include "bundled/format.h"
 #else  // SPDLOG_FMT_EXTERNAL is defined - use external fmtlib
     #include <fmt/core.h>
     #include <fmt/format.h>

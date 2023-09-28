@@ -12,9 +12,9 @@
 //    2. Push a new copy of the message to a queue (or block the caller until
 //    space is available in the queue)
 // Upon destruction, logs all remaining messages in the queue before
-// destructing..
+// destructing
 
-#include <spdlog/logger.h>
+#include "logger.h"
 
 namespace spdlog {
 

@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <spdlog/common.h>
+#include "../common.h"
 #include <unordered_map>
 
 namespace spdlog {

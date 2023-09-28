@@ -10,7 +10,7 @@
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
     #if !defined(SPDLOG_FMT_EXTERNAL)
-        #include <spdlog/fmt/bundled/compile.h>
+            #include "../fmt/bundled/compile.h"
     #else
         #include <fmt/compile.h>
     #endif
