@@ -3,6 +3,8 @@
  * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
  */
 #include "includes.h"
+#include "spdlog/sinks/daily_file_sink.h"
+#include "spdlog/sinks/rotating_file_sink.h"
 
 #ifdef SPDLOG_USE_STD_FORMAT
 using filename_memory_buf_t = std::basic_string<spdlog::filename_t::value_type>;
@@ -73,7 +75,6 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger]") {
     }
 
     logger->flush();
-
     require_message_count(filename_buf_to_utf8string(w), 10);
 }
 

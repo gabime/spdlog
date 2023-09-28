@@ -1,4 +1,6 @@
 #include "includes.h"
+#include "spdlog/sinks/daily_file_sink.h"
+#include "spdlog/sinks/rotating_file_sink.h"
 
 static const char *const tested_logger_name = "null_logger";
 static const char *const tested_logger_name2 = "null_logger2";

@@ -1,4 +1,5 @@
 #include "includes.h"
+#include "spdlog/sinks/ostream_sink.h"
 #include "test_sink.h"
 
 using spdlog::memory_buf_t;

@@ -3,6 +3,8 @@
  * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
  */
 #include "includes.h"
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/rotating_file_sink.h"
 
 #define SIMPLE_LOG "test_logs/simple_log"
 #define ROTATING_LOG "test_logs/rotating_log"

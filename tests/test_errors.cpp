@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "includes.h"
+#include "spdlog/sinks/basic_file_sink.h"
 
 #define SIMPLE_LOG "test_logs/simple_log.txt"
 #define SIMPLE_ASYNC_LOG "test_logs/simple_async_log.txt"

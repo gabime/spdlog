@@ -4,6 +4,7 @@
  */
 
 #include "includes.h"
+#include "spdlog/sinks/basic_file_sink.h"
 
 #if SPDLOG_ACTIVE_LEVEL != SPDLOG_LEVEL_DEBUG
     #error "Invalid SPDLOG_ACTIVE_LEVEL in test. Should be SPDLOG_LEVEL_DEBUG"

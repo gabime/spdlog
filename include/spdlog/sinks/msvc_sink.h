@@ -49,4 +49,3 @@ using windebug_sink_st = msvc_sink_st;
 
 }  // namespace sinks
 }  // namespace spdlog
-
