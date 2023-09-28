@@ -33,15 +33,16 @@ Windows Registry Editor Version 5.00
 
 #pragma once
 
-#include <winbase.h>
+// clang-format off
+#include "base_sink.h"
+#include "../details/null_mutex.h"
+#include "../details/windows_include.h"
 
+#include <winbase.h>
 #include <mutex>
 #include <string>
 #include <vector>
-
-#include "../details/null_mutex.h"
-#include "../details/windows_include.h"
-#include "base_sink.h"
+// clang-format on
 
 namespace spdlog {
 namespace sinks {
