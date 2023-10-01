@@ -84,4 +84,11 @@ endfunction()
 
 if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests spdlog::spdlog)
+
+    # copy dll to the executable folder for msvc
+    if(MSVC AND (SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS))
+        add_custom_command(TARGET spdlog-utests  POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_FILE:spdlog> $<TARGET_FILE_DIR:spdlog-utests>)
+    endif()
+
 endif()
