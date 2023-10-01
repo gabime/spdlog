@@ -6,6 +6,10 @@
 namespace spdlog {
 namespace details {
 
+// copy logger name and payload to buffer so can be used asynchronously
+// note: source location pointers are copied without allocation since they
+// are compiler generated const chars* (__FILE__, __LINE__, __FUNCTION__)
+// if you pass custom strings to source location, make sure they outlive the log_msg_buffer
 log_msg_buffer::log_msg_buffer(const log_msg &orig_msg)
     : log_msg{orig_msg} {
     buffer.append(logger_name.begin(), logger_name.end());
