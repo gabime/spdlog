@@ -15,6 +15,8 @@ message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
 include(GNUInstallDirs)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 # ---------------------------------------------------------------------------------------
 # Set default build to release
 # ---------------------------------------------------------------------------------------
@@ -145,18 +147,24 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # ---------------------------------------------------------------------------------------
 # Static/Shared library
 # ---------------------------------------------------------------------------------------
-file(GLOB SPDLOG_SRCS src/*.cpp src/details/*.cpp src/sinks/*.cpp src/cfg/*.cpp)
+file(GLOB SPDLOG_HEADERS "include/spdlog/*.h" "include/spdlog/sinks/*.h" "include/spdlog/details/*.h" "include/spdlog/fmt/*.h"  "include/spdlog/cfg/*.h" )
+file(GLOB SPDLOG_SRCS "src/*.cpp" "src/details/*.cpp" "src/sinks/*.cpp" "src/cfg/*.cpp")
 
+
+# add {fmt} lib sources is not using external fmt
 if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
+    file(GLOB BUNDLED_FMT_HEADERS "include/spdlog/fmt/bundled/*.h")
+    list(APPEND SPDLOG_HEADERS ${BUNDLED_FMT_HEADERS})
     list(APPEND SPDLOG_SRCS src/fmt/bundled_fmtlib_format.cpp)
 endif()
+
 
 if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
     if(WIN32)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)
         list(APPEND SPDLOG_SRCS ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
     endif()
-    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
+    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_HEADERS})
     target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED_LIB)
     if(MSVC)
         target_compile_options(spdlog PUBLIC $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<NOT:$<COMPILE_LANGUAGE:CUDA>>>:/wd4251
@@ -166,7 +174,7 @@ if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
         target_compile_definitions(spdlog PRIVATE FMT_LIB_EXPORT PUBLIC FMT_SHARED)
     endif()
 else()
-    add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_ALL_HEADERS})
+    add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_HEADERS})
 endif()
 
 add_library(spdlog::spdlog ALIAS spdlog)
@@ -184,6 +192,13 @@ spdlog_enable_warnings(spdlog)
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION
                                                                   ${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR})
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
+
+# set source groups for visual studio
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+	list(REMOVE_ITEM SPDLOG_SRCS "${CMAKE_CURRENT_BINARY_DIR}/version.rc") 
+	source_group(TREE  ${CMAKE_SOURCE_DIR}/include PREFIX include FILES ${SPDLOG_HEADERS})
+	source_group(TREE  ${CMAKE_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})
+endif()
 
 if(COMMAND target_precompile_headers AND SPDLOG_ENABLE_PCH)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/pch.h.in ${PROJECT_BINARY_DIR}/spdlog_pch.h @ONLY)
