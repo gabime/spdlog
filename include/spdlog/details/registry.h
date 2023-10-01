@@ -28,7 +28,9 @@ class SPDLOG_API registry {
 public:
     using log_levels = std::unordered_map<std::string, level>;
 
-    static registry &instance();
+    static registry *instance();
+    registry();
+    ~registry();
     registry(const registry &) = delete;
     registry &operator=(const registry &) = delete;
 
@@ -89,9 +91,6 @@ public:
     void apply_logger_env_levels(std::shared_ptr<logger> new_logger);
 
 private:
-    registry();
-    ~registry();
-
     void throw_if_exists_(const std::string &logger_name);
     void register_logger_(std::shared_ptr<logger> new_logger);
     std::mutex logger_map_mutex_, flusher_mutex_;

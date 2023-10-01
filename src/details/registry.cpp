@@ -211,8 +211,8 @@ void registry::set_levels(log_levels levels, level *global_level) {
     }
 }
 
-registry &registry::instance() {
-    static registry s_instance;
+registry *registry::instance() {
+    static registry *s_instance = new registry();
     return s_instance;
 }
 

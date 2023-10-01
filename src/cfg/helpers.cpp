@@ -93,8 +93,8 @@ void load_levels(const std::string &input) {
         }
     }
 
-    details::registry::instance().set_levels(std::move(levels),
-                                             global_level_found ? &global_level : nullptr);
+    details::registry::instance()->set_levels(std::move(levels),
+                                              global_level_found ? &global_level : nullptr);
 }
 
 }  // namespace helpers

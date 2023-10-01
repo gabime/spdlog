@@ -76,7 +76,7 @@ SPDLOG_API void flush_on(level level);
 // Warning: Use only if all your loggers are thread safe!
 template <typename Rep, typename Period>
 inline void flush_every(std::chrono::duration<Rep, Period> interval) {
-    details::registry::instance().flush_every(interval);
+    details::registry::instance()->flush_every(interval);
 }
 
 // Set global error handler
