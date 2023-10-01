@@ -192,7 +192,7 @@ constexpr std::array<string_view_t, levels_count> short_level_names SPDLOG_SHORT
     return short_level_names.at(level_to_number(lvl));
 }
 
-SPDLOG_API [[nodiscard]] spdlog::level level_from_str(const std::string &name) noexcept;
+[[nodiscard]] SPDLOG_API spdlog::level level_from_str(const std::string &name) noexcept;
 
 //
 // Color mode used by sinks with color support.
