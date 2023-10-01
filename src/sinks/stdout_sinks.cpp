@@ -51,7 +51,7 @@ void stdout_sink_base<Mutex>::sink_it_(const details::log_msg &msg) {
     }
 
     memory_buf_t formatted;
-    base_sink<Mutex>::formatter_->formatter_->format(msg, formatted);
+    base_sink<Mutex>::formatter_->format(msg, formatted);
     auto size = static_cast<DWORD>(formatted.size());
     DWORD bytes_written = 0;
     bool ok = ::WriteFile(handle_, formatted.data(), size, &bytes_written, nullptr) != 0;

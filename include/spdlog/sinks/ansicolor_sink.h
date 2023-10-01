@@ -76,7 +76,7 @@ private:
     FILE *target_file_;
     bool should_do_colors_;
     std::array<std::string, levels_count> colors_;
-    void print_ccode_(const string_view_t &color_code);
+    void print_ccode_(const string_view_t color_code);
     void print_range_(const memory_buf_t &formatted, size_t start, size_t end);
     static std::string to_string_(const string_view_t sv);
 };
