@@ -63,9 +63,6 @@ option(SPDLOG_BUILD_ALL "Build all artifacts" OFF)
 # build shared option
 option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
 
-# precompiled headers option
-option(SPDLOG_ENABLE_PCH "Build static or shared library using precompiled header to speed up compilation time" OFF)
-
 # build position independent code
 option(SPDLOG_BUILD_PIC "Build position independent code (-fPIC)" OFF)
 
@@ -203,11 +200,6 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio")
     list(REMOVE_ITEM SPDLOG_SRCS "${CMAKE_CURRENT_BINARY_DIR}/version.rc")
     source_group(TREE ${CMAKE_SOURCE_DIR}/include PREFIX include FILES ${SPDLOG_HEADERS})
     source_group(TREE ${CMAKE_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})
-endif()
-
-if(COMMAND target_precompile_headers AND SPDLOG_ENABLE_PCH)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/pch.h.in ${PROJECT_BINARY_DIR}/spdlog_pch.h @ONLY)
-    target_precompile_headers(spdlog PRIVATE ${PROJECT_BINARY_DIR}/spdlog_pch.h)
 endif()
 
 # ---------------------------------------------------------------------------------------
