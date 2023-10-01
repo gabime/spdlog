@@ -36,6 +36,41 @@ public:
     void set_color_mode(color_mode mode);
     bool should_color();
 
+    // Formatting codes
+    static constexpr spdlog::string_view_t reset = "\033[m";
+    static constexpr spdlog::string_view_t bold = "\033[1m";
+    static constexpr spdlog::string_view_t dark = "\033[2m";
+    static constexpr spdlog::string_view_t underline = "\033[4m";
+    static constexpr spdlog::string_view_t blink = "\033[5m";
+    static constexpr spdlog::string_view_t reverse = "\033[7m";
+    static constexpr spdlog::string_view_t concealed = "\033[8m";
+    static constexpr spdlog::string_view_t clear_line = "\033[K";
+
+    // Foreground colors
+    static constexpr spdlog::string_view_t black = "\033[30m";
+    static constexpr spdlog::string_view_t red = "\033[31m";
+    static constexpr spdlog::string_view_t green = "\033[32m";
+    static constexpr spdlog::string_view_t yellow = "\033[33m";
+    static constexpr spdlog::string_view_t blue = "\033[34m";
+    static constexpr spdlog::string_view_t magenta = "\033[35m";
+    static constexpr spdlog::string_view_t cyan = "\033[36m";
+    static constexpr spdlog::string_view_t white = "\033[37m";
+
+    // Background colors
+    static constexpr spdlog::string_view_t on_black = "\033[40m";
+    static constexpr spdlog::string_view_t on_red = "\033[41m";
+    static constexpr spdlog::string_view_t on_green = "\033[42m";
+    static constexpr spdlog::string_view_t on_yellow = "\033[43m";
+    static constexpr spdlog::string_view_t on_blue = "\033[44m";
+    static constexpr spdlog::string_view_t on_magenta = "\033[45m";
+    static constexpr spdlog::string_view_t on_cyan = "\033[46m";
+    static constexpr spdlog::string_view_t on_white = "\033[47m";
+
+    // Bold colors
+    static constexpr spdlog::string_view_t yellow_bold = "\033[33m\033[1m";
+    static constexpr spdlog::string_view_t red_bold = "\033[31m\033[1m";
+    static constexpr spdlog::string_view_t bold_on_red = "\033[1m\033[41m";
+
 private:
     void sink_it_(const details::log_msg &msg) override;
     void flush_() override;
