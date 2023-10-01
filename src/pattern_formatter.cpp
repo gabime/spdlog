@@ -679,35 +679,12 @@ public:
     explicit short_filename_formatter(padding_info padinfo)
         : flag_formatter(padinfo) {}
 
-#ifdef _MSC_VER
-    #pragma warning(push)
-    #pragma warning(disable : 4127)  // consider using 'if constexpr' instead
-#endif                               // _MSC_VER
-    static const char *basename(const char *filename) {
-        // if the size is 2 (1 character + null terminator) we can use the more efficient strrchr
-        // the branch will be elided by optimizations
-        if (sizeof(os::folder_seps) == 2) {
-            const char *rv = std::strrchr(filename, os::folder_seps[0]);
-            return rv != nullptr ? rv + 1 : filename;
-        } else {
-            const std::reverse_iterator<const char *> begin(filename + std::strlen(filename));
-            const std::reverse_iterator<const char *> end(filename);
-
-            const auto it = std::find_first_of(begin, end, std::begin(os::folder_seps),
-                                               std::end(os::folder_seps) - 1);
-            return it != end ? it.base() : filename;
-        }
-    }
-#ifdef _MSC_VER
-    #pragma warning(pop)
-#endif  // _MSC_VER
-
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override {
         if (msg.source.empty()) {
             ScopedPadder p(0, padinfo_, dest);
             return;
         }
-        auto filename = basename(msg.source.filename);
+        const char *filename = msg.source.short_filename;
         size_t text_size = padinfo_.enabled() ? std::char_traits<char>::length(filename) : 0;
         ScopedPadder p(text_size, padinfo_, dest);
         fmt_helper::append_string_view(filename, dest);
@@ -841,9 +818,7 @@ public:
         // add source location if present
         if (!msg.source.empty()) {
             dest.push_back('[');
-            const char *filename =
-                details::short_filename_formatter<details::null_scoped_padder>::basename(
-                    msg.source.filename);
+            const char *filename = msg.source.short_filename;
             fmt_helper::append_string_view(filename, dest);
             dest.push_back(':');
             fmt_helper::append_int(msg.source.line, dest);

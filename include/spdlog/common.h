@@ -16,18 +16,11 @@
 #include <type_traits>
 
 #include "details/null_mutex.h"
+#include "source_loc.h"
 #include "tweakme.h"
 
 #if __has_include(<version>)
     #include <version>
-#endif
-
-#if __cpp_lib_source_location >= 201907
-    #include <source_location>
-    #define SPDLOG_HAVE_STD_SOURCE_LOCATION
-#elif __has_include(<experimental/source_location>)
-    #include <experimental/source_location>
-    #define SPDLOG_HAVE_EXPERIMENTAL_SOURCE_LOCATION
 #endif
 
 #ifdef SPDLOG_USE_STD_FORMAT
@@ -94,7 +87,7 @@ class sink;
 
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
 using filename_t = std::wstring;
-    // allow macro expansion to occur in SPDLOG_FILENAME_T
+// allow macro expansion to occur in SPDLOG_FILENAME_T
     #define SPDLOG_FILENAME_T_INNER(s) L##s
     #define SPDLOG_FILENAME_T(s) SPDLOG_FILENAME_T_INNER(s)
 #else
@@ -180,6 +173,7 @@ using atomic_level_t = std::atomic<level>;
 [[nodiscard]] constexpr size_t level_to_number(level lvl) noexcept {
     return static_cast<size_t>(lvl);
 }
+
 constexpr auto levels_count = level_to_number(level::n_levels);
 constexpr std::array<string_view_t, levels_count> level_string_views SPDLOG_LEVEL_NAMES;
 constexpr std::array<string_view_t, levels_count> short_level_names SPDLOG_SHORT_LEVEL_NAMES;
@@ -214,7 +208,9 @@ enum class pattern_time_type {
 class SPDLOG_API spdlog_ex : public std::exception {
 public:
     explicit spdlog_ex(std::string msg);
+
     spdlog_ex(const std::string &msg, int last_errno);
+
     [[nodiscard]] const char *what() const noexcept override;
 
 private:
@@ -222,54 +218,27 @@ private:
 };
 
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
+
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(std::string msg);
-
-struct source_loc {
-    constexpr source_loc() = default;
-    constexpr source_loc(const char *filename_in,
-                         std::uint_least32_t line_in,
-                         const char *funcname_in)
-        : filename{filename_in},
-          line{line_in},
-          funcname{funcname_in} {}
-
-#ifdef SPDLOG_HAVE_STD_SOURCE_LOCATION
-    static constexpr source_loc current(
-        const std::source_location source_location = std::source_location::current()) {
-        return source_loc{source_location.file_name(), source_location.line(),
-                          source_location.function_name()};
-    }
-#elif defined(SPDLOG_HAVE_EXPERIMENTAL_SOURCE_LOCATION)
-    static constexpr source_loc current(const std::experimental::source_location source_location =
-                                            std::experimental::source_location::current()) {
-        return source_loc{source_location.file_name(), source_location.line(),
-                          source_location.function_name()};
-    }
-#else  // no source location support
-    static constexpr source_loc current() { return source_loc{}; }
-#endif
-
-    [[nodiscard]] constexpr bool empty() const noexcept { return line == 0; }
-    const char *filename{nullptr};
-    std::uint_least32_t line{0};
-    const char *funcname{nullptr};
-};
 
 // trick to capture format string and caller's source location with variadic template.
 // see logger::info() etc. to understand how it's used.
 struct loc_with_fmt {
     source_loc loc;
     string_view_t fmt_string;
+
     template <typename S, typename = is_convertible_to_sv<S>>
     constexpr loc_with_fmt(S fmt_str, source_loc loc = source_loc::current()) noexcept
         : loc(loc),
           fmt_string(fmt_str) {}
 
 #ifndef SPDLOG_USE_STD_FORMAT
+
     constexpr loc_with_fmt(fmt::runtime_format_string<char> fmt_str,
                            source_loc loc = source_loc::current()) noexcept
         : loc(loc),
           fmt_string(fmt_str.str) {}
+
 #endif
 };
 
@@ -324,11 +293,13 @@ template <typename T, typename... Args>
 }
     #endif
 #else  // {fmt} version
+
 template <typename T, typename... Args>
 [[nodiscard]] constexpr fmt::basic_string_view<T> to_string_view(
     fmt::basic_format_string<T, Args...> fmt) noexcept {
     return fmt;
 }
+
 #endif
 
 }  // namespace details
