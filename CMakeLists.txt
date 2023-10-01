@@ -297,6 +297,7 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio")
     source_group(TREE ${CMAKE_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})    
     source_group(sources FILES ${VERSION_RC})
 endif()
+
 # ---------------------------------------------------------------------------------------
 # Use {fmt} lib package if using external fmt
 # ---------------------------------------------------------------------------------------
