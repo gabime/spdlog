@@ -2,7 +2,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 #ifdef _WIN32
 
-// clang-format off
+    // clang-format off
 #include "spdlog/details/windows_include.h"
 #include "spdlog/sinks/wincolor_sink.h"
 #include "spdlog/common.h"

@@ -14,8 +14,8 @@
 #include "spdlog/sinks/udp_sink.h"
 
 #ifdef _WIN32
-    #include "spdlog/sinks/win_eventlog_sink.h"
     #include "spdlog/sinks/msvc_sink.h"
+    #include "spdlog/sinks/win_eventlog_sink.h"
 #else
     #include "spdlog/sinks/syslog_sink.h"
 #endif

@@ -3,8 +3,12 @@
 
 #include "spdlog/spdlog.h"
 
+#include <memory>
+
 #include "spdlog/common.h"
+#include "spdlog/logger.h"
 #include "spdlog/pattern_formatter.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 namespace spdlog {
 
@@ -22,7 +26,7 @@ void set_formatter(std::unique_ptr<spdlog::formatter> formatter) {
 
 void set_pattern(std::string pattern, pattern_time_type time_type) {
     set_formatter(
-        std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
+        std::make_unique<spdlog::pattern_formatter>(std::move(pattern), time_type));
 }
 
 level get_level() { return default_logger_raw()->log_level(); }
@@ -68,5 +72,4 @@ void set_default_logger(std::shared_ptr<spdlog::logger> default_logger) {
 void apply_logger_env_levels(std::shared_ptr<logger> logger) {
     details::registry::instance().apply_logger_env_levels(std::move(logger));
 }
-
 }  // namespace spdlog

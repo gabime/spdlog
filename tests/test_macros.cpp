@@ -1,6 +1,6 @@
 /*
  * This content is released under the MIT License as specified in
- * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
+ * https://raw.githubusercontent.com/gabime/spdlog/v2.x/LICENSE
  */
 
 #include "includes.h"

@@ -10,7 +10,6 @@
 #include <string>
 
 #include "../common.h"
-#include "../details/console_globals.h"
 #include "../details/null_mutex.h"
 #include "sink.h"
 
