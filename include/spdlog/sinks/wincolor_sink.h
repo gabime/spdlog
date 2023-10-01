@@ -29,12 +29,12 @@ public:
     wincolor_sink &operator=(const wincolor_sink &other) = delete;
 
     // change the color for the given level
-    void set_color(level level, std::uint16_t color);       
+    void set_color(level level, std::uint16_t color);
     void set_color_mode(color_mode mode);
 
-private:    
-    void *out_handle_;    
-    bool should_do_colors_;    
+private:
+    void *out_handle_;
+    bool should_do_colors_;
     std::array<std::uint16_t, levels_count> colors_;
 
     // set foreground color and return the orig console attributes (for resetting later)

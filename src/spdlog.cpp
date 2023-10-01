@@ -25,8 +25,7 @@ void set_formatter(std::unique_ptr<spdlog::formatter> formatter) {
 }
 
 void set_pattern(std::string pattern, pattern_time_type time_type) {
-    set_formatter(
-        std::make_unique<spdlog::pattern_formatter>(std::move(pattern), time_type));
+    set_formatter(std::make_unique<spdlog::pattern_formatter>(std::move(pattern), time_type));
 }
 
 level get_level() { return default_logger_raw()->log_level(); }

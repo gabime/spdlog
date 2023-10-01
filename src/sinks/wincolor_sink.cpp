@@ -2,20 +2,22 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 #ifdef _WIN32
 
-    // clang-format off
+// clang-format off
 #include "spdlog/details/windows_include.h"
 #include "spdlog/sinks/wincolor_sink.h"
 #include "spdlog/common.h"
 #include <wincon.h>
 // clang-format on
 
-#include <mutex>
-#include <spdlog/details/null_mutex.h>
+    #include <spdlog/details/null_mutex.h>
+
+    #include <mutex>
 
 namespace spdlog {
 namespace sinks {
 template <typename Mutex>
-wincolor_sink<Mutex>::wincolor_sink(void *out_handle, color_mode mode) : out_handle_(out_handle) {
+wincolor_sink<Mutex>::wincolor_sink(void *out_handle, color_mode mode)
+    : out_handle_(out_handle) {
     set_color_mode_impl(mode);
     // set level colors
     colors_.at(level_to_number(level::trace)) =
@@ -48,7 +50,7 @@ void wincolor_sink<Mutex>::sink_it_(const details::log_msg &msg) {
     if (out_handle_ == nullptr || out_handle_ == INVALID_HANDLE_VALUE) {
         return;
     }
-    
+
     msg.color_range_start = 0;
     msg.color_range_end = 0;
     memory_buf_t formatted;
@@ -73,7 +75,6 @@ template <typename Mutex>
 void wincolor_sink<Mutex>::flush_() {
     // windows console always flushed?
 }
-
 
 template <typename Mutex>
 void wincolor_sink<Mutex>::set_color_mode(color_mode mode) {
@@ -112,9 +113,7 @@ std::uint16_t wincolor_sink<Mutex>::set_foreground_color_(std::uint16_t attribs)
 
 // print a range of formatted message to console
 template <typename Mutex>
-void wincolor_sink<Mutex>::print_range_(const memory_buf_t &formatted,
-                                               size_t start,
-                                               size_t end) {
+void wincolor_sink<Mutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end) {
     if (end > start) {
         auto size = static_cast<DWORD>(end - start);
         auto ignored = ::WriteConsoleA(static_cast<HANDLE>(out_handle_), formatted.data() + start,

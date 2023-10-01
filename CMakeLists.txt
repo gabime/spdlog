@@ -147,9 +147,15 @@ message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # ---------------------------------------------------------------------------------------
 # Static/Shared library
 # ---------------------------------------------------------------------------------------
-file(GLOB SPDLOG_HEADERS "include/spdlog/*.h" "include/spdlog/sinks/*.h" "include/spdlog/details/*.h" "include/spdlog/fmt/*.h"  "include/spdlog/cfg/*.h" )
+file(
+    GLOB
+    SPDLOG_HEADERS
+    "include/spdlog/*.h"
+    "include/spdlog/sinks/*.h"
+    "include/spdlog/details/*.h"
+    "include/spdlog/fmt/*.h"
+    "include/spdlog/cfg/*.h")
 file(GLOB SPDLOG_SRCS "src/*.cpp" "src/details/*.cpp" "src/sinks/*.cpp" "src/cfg/*.cpp")
-
 
 # add {fmt} lib sources is not using external fmt
 if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
@@ -157,7 +163,6 @@ if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTE
     list(APPEND SPDLOG_HEADERS ${BUNDLED_FMT_HEADERS})
     list(APPEND SPDLOG_SRCS src/fmt/bundled_fmtlib_format.cpp)
 endif()
-
 
 if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
     if(WIN32)
@@ -195,9 +200,9 @@ set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
 
 # set source groups for visual studio
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
-	list(REMOVE_ITEM SPDLOG_SRCS "${CMAKE_CURRENT_BINARY_DIR}/version.rc") 
-	source_group(TREE  ${CMAKE_SOURCE_DIR}/include PREFIX include FILES ${SPDLOG_HEADERS})
-	source_group(TREE  ${CMAKE_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})
+    list(REMOVE_ITEM SPDLOG_SRCS "${CMAKE_CURRENT_BINARY_DIR}/version.rc")
+    source_group(TREE ${CMAKE_SOURCE_DIR}/include PREFIX include FILES ${SPDLOG_HEADERS})
+    source_group(TREE ${CMAKE_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})
 endif()
 
 if(COMMAND target_precompile_headers AND SPDLOG_ENABLE_PCH)
