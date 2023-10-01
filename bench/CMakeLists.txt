@@ -39,5 +39,5 @@ target_link_libraries(formatter-bench PRIVATE benchmark::benchmark spdlog::spdlo
 
 # copy dll to the executable folder for msvc
 if(MSVC AND (SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS))
-	add_custom_command(TARGET bench POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:spdlog> $<TARGET_FILE_DIR:bench>)    
+	add_custom_command(TARGET latency POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:spdlog> $<TARGET_FILE_DIR:latency>)    
 endif()
