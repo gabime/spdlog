@@ -90,16 +90,9 @@ void logger::err_handler_(const std::string &msg) {
         custom_err_handler_(msg);
     } else {
         using std::chrono::system_clock;
-        static std::mutex mutex;
-        static std::chrono::system_clock::time_point last_report_time;
         static size_t err_counter = 0;
-        std::lock_guard<std::mutex> lk{mutex};
         auto now = system_clock::now();
         err_counter++;
-        if (now - last_report_time < std::chrono::seconds(1)) {
-            return;
-        }
-        last_report_time = now;
         auto tm_time = details::os::localtime(system_clock::to_time_t(now));
         char date_buf[64];
         std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
