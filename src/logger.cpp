@@ -37,7 +37,7 @@ const std::string &logger::name() const { return name_; }
 void logger::set_formatter(std::unique_ptr<formatter> f) {
     for (auto it = sinks_.begin(); it != sinks_.end(); ++it) {
         if (std::next(it) == sinks_.end()) {
-            // last element - we can be move it.
+            // last element - we can move it.
             (*it)->set_formatter(std::move(f));
             break;  // to prevent clang-tidy warning
         } else {
