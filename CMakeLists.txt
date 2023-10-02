@@ -297,12 +297,6 @@ if(CMAKE_GENERATOR MATCHES "Visual Studio")
     source_group(TREE ${CMAKE_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})    
     source_group(sources FILES ${VERSION_RC})
 endif()
-
-if(COMMAND target_precompile_headers AND SPDLOG_ENABLE_PCH)
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/pch.h.in ${PROJECT_BINARY_DIR}/spdlog_pch.h @ONLY)
-    target_precompile_headers(spdlog PRIVATE ${PROJECT_BINARY_DIR}/spdlog_pch.h)
-endif()
-
 # ---------------------------------------------------------------------------------------
 # Use {fmt} lib package if using external fmt
 # ---------------------------------------------------------------------------------------
