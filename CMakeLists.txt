@@ -145,21 +145,117 @@ endif()
 find_package(Threads REQUIRED)
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 # ---------------------------------------------------------------------------------------
-# Static/Shared library
+# Library sources
 # ---------------------------------------------------------------------------------------
-file(
-    GLOB
-    SPDLOG_HEADERS
-    "include/spdlog/*.h"
-    "include/spdlog/sinks/*.h"
-    "include/spdlog/details/*.h"
-    "include/spdlog/fmt/*.h"
-    "include/spdlog/cfg/*.h")
-file(GLOB SPDLOG_SRCS "src/*.cpp" "src/details/*.cpp" "src/sinks/*.cpp" "src/cfg/*.cpp")
+set(SPDLOG_HEADERS
+    "include/spdlog/async.h"
+    "include/spdlog/async_logger.h"
+    "include/spdlog/common.h"
+    "include/spdlog/formatter.h"
+    "include/spdlog/fwd.h"
+    "include/spdlog/logger.h"
+    "include/spdlog/pattern_formatter.h"
+    "include/spdlog/source_loc.h"
+    "include/spdlog/spdlog.h"
+    "include/spdlog/stopwatch.h"
+    "include/spdlog/tweakme.h"
+    "include/spdlog/version.h"
+    "include/spdlog/cfg/argv.h"
+    "include/spdlog/cfg/env.h"
+    "include/spdlog/cfg/helpers.h"
+    "include/spdlog/details/circular_q.h"
+    "include/spdlog/details/console_globals.h"
+    "include/spdlog/details/file_helper.h"
+    "include/spdlog/details/fmt_helper.h"
+    "include/spdlog/details/log_msg.h"
+    "include/spdlog/details/log_msg_buffer.h"
+    "include/spdlog/details/mpmc_blocking_q.h"
+    "include/spdlog/details/null_mutex.h"
+    "include/spdlog/details/os.h"
+    "include/spdlog/details/periodic_worker.h"
+    "include/spdlog/details/registry.h"
+    "include/spdlog/details/synchronous_factory.h"
+    "include/spdlog/details/tcp_client-windows.h"
+    "include/spdlog/details/tcp_client.h"
+    "include/spdlog/details/thread_pool.h"
+    "include/spdlog/details/udp_client-windows.h"
+    "include/spdlog/details/udp_client.h"
+    "include/spdlog/details/windows_include.h"
+    "include/spdlog/fmt/bin_to_hex.h"
+    "include/spdlog/fmt/chrono.h"
+    "include/spdlog/fmt/compile.h"
+    "include/spdlog/fmt/fmt.h"
+    "include/spdlog/fmt/ostr.h"
+    "include/spdlog/fmt/ranges.h"
+    "include/spdlog/fmt/std.h"
+    "include/spdlog/fmt/xchar.h"
+    "include/spdlog/sinks/android_sink.h"
+    "include/spdlog/sinks/ansicolor_sink.h"
+    "include/spdlog/sinks/base_sink.h"
+    "include/spdlog/sinks/basic_file_sink.h"
+    "include/spdlog/sinks/callback_sink.h"
+    "include/spdlog/sinks/daily_file_sink.h"
+    "include/spdlog/sinks/dist_sink.h"
+    "include/spdlog/sinks/dup_filter_sink.h"
+    "include/spdlog/sinks/hourly_file_sink.h"
+    "include/spdlog/sinks/kafka_sink.h"
+    "include/spdlog/sinks/mongo_sink.h"
+    "include/spdlog/sinks/msvc_sink.h"
+    "include/spdlog/sinks/null_sink.h"
+    "include/spdlog/sinks/ostream_sink.h"
+    "include/spdlog/sinks/qt_sinks.h"
+    "include/spdlog/sinks/ringbuffer_sink.h"
+    "include/spdlog/sinks/rotating_file_sink.h"
+    "include/spdlog/sinks/sink.h"
+    "include/spdlog/sinks/stdout_color_sinks.h"
+    "include/spdlog/sinks/stdout_sinks.h"
+    "include/spdlog/sinks/syslog_sink.h"
+    "include/spdlog/sinks/systemd_sink.h"
+    "include/spdlog/sinks/tcp_sink.h"
+    "include/spdlog/sinks/udp_sink.h"
+    "include/spdlog/sinks/win_eventlog_sink.h"
+    "include/spdlog/sinks/wincolor_sink.h")
 
-# add {fmt} lib sources is not using external fmt
-if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
-    file(GLOB BUNDLED_FMT_HEADERS "include/spdlog/fmt/bundled/*.h")
+set(SPDLOG_SRCS 
+    "src/async_logger.cpp"
+    "src/common.cpp"
+    "src/logger.cpp"
+    "src/pattern_formatter.cpp"
+    "src/spdlog.cpp"
+    "src/cfg/helpers.cpp"
+    "src/details/file_helper.cpp"
+    "src/details/log_msg.cpp"
+    "src/details/log_msg_buffer.cpp"
+    "src/details/os.cpp"
+    "src/details/periodic_worker.cpp"
+    "src/details/registry.cpp"
+    "src/details/thread_pool.cpp"    
+    "src/sinks/ansicolor_sink.cpp"
+    "src/sinks/base_sink.cpp"
+    "src/sinks/basic_file_sink.cpp"
+    "src/sinks/rotating_file_sink.cpp"
+    "src/sinks/sink.cpp"
+    "src/sinks/stdout_color_sinks.cpp"
+    "src/sinks/stdout_sinks.cpp"
+    "src/sinks/wincolor_sink.cpp")
+
+# bundle {fmt} lib sources if required (true by default)
+if(NOT SPDLOG_USE_STD_FORMAT AND NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)    
+    set(BUNDLED_FMT_HEADERS     
+        "include/spdlog/fmt/bundled/args.h"
+        "include/spdlog/fmt/bundled/chrono.h"
+        "include/spdlog/fmt/bundled/color.h"
+        "include/spdlog/fmt/bundled/compile.h"
+        "include/spdlog/fmt/bundled/core.h"
+        "include/spdlog/fmt/bundled/format-inl.h"
+        "include/spdlog/fmt/bundled/format.h"
+        "include/spdlog/fmt/bundled/locale.h"
+        "include/spdlog/fmt/bundled/os.h"
+        "include/spdlog/fmt/bundled/ostream.h"
+        "include/spdlog/fmt/bundled/printf.h"
+        "include/spdlog/fmt/bundled/ranges.h"
+        "include/spdlog/fmt/bundled/std.h"
+        "include/spdlog/fmt/bundled/xchar.h")
     list(APPEND SPDLOG_HEADERS ${BUNDLED_FMT_HEADERS})
     list(APPEND SPDLOG_SRCS src/fmt/bundled_fmtlib_format.cpp)
 endif()
@@ -211,7 +307,7 @@ if(COMMAND target_precompile_headers AND SPDLOG_ENABLE_PCH)
 endif()
 
 # ---------------------------------------------------------------------------------------
-# Use fmt package if using external fmt
+# Use {fmt} lib package if using external fmt
 # ---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
     if(NOT TARGET fmt::fmt)
