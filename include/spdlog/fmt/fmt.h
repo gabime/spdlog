@@ -16,6 +16,6 @@
     #include <fmt/core.h>
     #include <fmt/format.h>
 #else  // use bundled {fmt} lib
-     #include "bundled/core.h"
+    #include "bundled/core.h"
     #include "bundled/format.h"
 #endif
