@@ -166,10 +166,10 @@ endif()
 
 if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
     if(WIN32)
-        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)
-        list(APPEND SPDLOG_SRCS ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
+        set(VERSION_RC ${CMAKE_CURRENT_BINARY_DIR}/version.rc )
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)        
     endif()
-    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_HEADERS})
+    add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_HEADERS} ${VERSION_RC})
     target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED_LIB)
     if(MSVC)
         target_compile_options(spdlog PUBLIC $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<NOT:$<COMPILE_LANGUAGE:CUDA>>>:/wd4251
@@ -200,9 +200,9 @@ set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
 
 # set source groups for visual studio
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
-    list(REMOVE_ITEM SPDLOG_SRCS "${CMAKE_CURRENT_BINARY_DIR}/version.rc")
     source_group(TREE ${CMAKE_SOURCE_DIR}/include PREFIX include FILES ${SPDLOG_HEADERS})
-    source_group(TREE ${CMAKE_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})
+    source_group(TREE ${CMAKE_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})    
+    source_group(sources FILES ${VERSION_RC})
 endif()
 
 if(COMMAND target_precompile_headers AND SPDLOG_ENABLE_PCH)
