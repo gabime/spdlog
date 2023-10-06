@@ -161,7 +161,6 @@ set(SPDLOG_HEADERS
     "include/spdlog/cfg/env.h"
     "include/spdlog/cfg/helpers.h"
     "include/spdlog/details/circular_q.h"
-    "include/spdlog/details/console_globals.h"
     "include/spdlog/details/file_helper.h"
     "include/spdlog/details/fmt_helper.h"
     "include/spdlog/details/log_msg.h"
