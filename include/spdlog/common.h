@@ -70,11 +70,19 @@
     #define SPDLOG_CONSTEXPR constexpr
 #endif
 
-#ifndef __has_feature
-#    define __has_feature(x) 0
+#ifdef __has_feature
+#    define SPDLOG_HAS_FEATURE(x) __has_feature(x)
+#else
+#    define SPDLOG_HAS_FEATURE(x) 0
 #endif
 
-#if (__has_feature(cxx_relaxed_constexpr) || (defined(_MSC_VER) && (_MSC_VER >= 1912)) ||                                                  \
+// Check if relaxed C++14 constexpr is supported
+// GCC doesn't allow throw in constexpr until version 6 (bug 67371)
+// This needs to stay synchronized with FMT_CONSTEXPR otherwise we can run into
+// situations where spdlog constexpr functions can try to call non-constexpr
+// fmt functions
+// See https://github.com/gabime/spdlog/issues/2856 where this happens with nvcc
+#if (SPDLOG_HAS_FEATURE(cxx_relaxed_constexpr) || (defined(_MSC_VER) && (_MSC_VER >= 1912)) ||                                                  \
      (defined(__GNUC__) && __GNUC__ >= 6 && defined(__cplusplus) && __cplusplus >= 201402L)) &&                                            \
     !defined(__ICL) && !defined(__INTEL_COMPILER) && !defined(__NVCC__)
     #define SPDLOG_CONSTEXPR_FUNC constexpr
