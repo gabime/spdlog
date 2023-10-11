@@ -70,24 +70,19 @@
     #define SPDLOG_CONSTEXPR constexpr
 #endif
 
-#ifdef __has_feature
-#    define SPDLOG_HAS_FEATURE(x) __has_feature(x)
-#else
-#    define SPDLOG_HAS_FEATURE(x) 0
-#endif
-
-// Check if relaxed C++14 constexpr is supported
-// GCC doesn't allow throw in constexpr until version 6 (bug 67371)
-// This needs to stay synchronized with FMT_CONSTEXPR otherwise we can run into
-// situations where spdlog constexpr functions can try to call non-constexpr
-// fmt functions
-// See https://github.com/gabime/spdlog/issues/2856 where this happens with nvcc
-#if (SPDLOG_HAS_FEATURE(cxx_relaxed_constexpr) || (defined(_MSC_VER) && (_MSC_VER >= 1912)) ||                                                  \
-     (defined(__GNUC__) && __GNUC__ >= 6 && defined(__cplusplus) && __cplusplus >= 201402L)) &&                                            \
-    !defined(__ICL) && !defined(__INTEL_COMPILER) && !defined(__NVCC__)
+// If building with std::format, can just use constexpr, otherwise if building with fmt
+// SPDLOG_CONSTEXPR_FUNC needs to be set the same as FMT_CONSTEXPR to avoid situations where
+// a constexpr function in spdlog could end up calling a non-constexpr function in fmt
+// depending on the compiler
+// If fmt determines it can't use constexpr, we should inline the function instead
+#ifdef SPDLOG_USE_STD_FORMAT
     #define SPDLOG_CONSTEXPR_FUNC constexpr
-#else
-    #define SPDLOG_CONSTEXPR_FUNC inline
+#else  // Being built with fmt
+    #if FMT_USE_CONSTEXPR
+        #define SPDLOG_CONSTEXPR_FUNC FMT_CONSTEXPR
+    #else
+	#define SPDLOG_CONSTEXPR_FUNC inline
+    #endif
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
