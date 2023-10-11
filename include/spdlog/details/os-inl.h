@@ -332,15 +332,21 @@ SPDLOG_INLINE size_t _thread_id() SPDLOG_NOEXCEPT {
     return static_cast<size_t>(::thr_self());
 #elif __APPLE__
     uint64_t tid;
-    // There is no pthread_threadid_np prior to 10.6, and it is not supported on any PPC,
+    // There is no pthread_threadid_np prior to Mac OS X 10.6, and it is not supported on any PPC,
     // including 10.6.8 Rosetta. __POWERPC__ is Apple-specific define encompassing ppc and ppc64.
-    #if (MAC_OS_X_VERSION_MAX_ALLOWED < 1060) || defined(__POWERPC__)
-    tid = pthread_mach_thread_np(pthread_self());
-    #elif MAC_OS_X_VERSION_MIN_REQUIRED < 1060
-    if (&pthread_threadid_np) {
-        pthread_threadid_np(nullptr, &tid);
-    } else {
+    #ifdef MAC_OS_X_VERSION_MAX_ALLOWED
+    {
+        #if (MAC_OS_X_VERSION_MAX_ALLOWED < 1060) || defined(__POWERPC__)
         tid = pthread_mach_thread_np(pthread_self());
+        #elif MAC_OS_X_VERSION_MIN_REQUIRED < 1060
+        if (&pthread_threadid_np) {
+            pthread_threadid_np(nullptr, &tid);
+        } else {
+            tid = pthread_mach_thread_np(pthread_self());
+        }
+        #else
+        pthread_threadid_np(nullptr, &tid);
+        #endif
     }
     #else
     pthread_threadid_np(nullptr, &tid);
