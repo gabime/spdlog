@@ -867,6 +867,30 @@ private:
     memory_buf_t cached_datetime_;
 };
 
+template <typename ScopedPadder>
+class mdc_formatter : public flag_formatter {
+public:
+    explicit mdc_formatter(padding_info padinfo)
+        : flag_formatter(padinfo) {}
+
+    void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) override {
+        auto mdc_map = MDC::get_context();
+        if (!mdc_map.empty()) {
+            auto last_element = *(--mdc_map.end());
+            for (const auto &pair : mdc_map) {
+                std::string mdc_content_;
+                if (pair != last_element) {
+                    mdc_content_ = pair.first + ':' + pair.second + ' ';
+                } else {
+                    mdc_content_ = pair.first + ':' + pair.second;
+                }
+                ScopedPadder p(mdc_content_.size(), padinfo_, dest);
+                fmt_helper::append_string_view(mdc_content_, dest);
+            }
+        }
+    }
+};
+
 }  // namespace details
 
 SPDLOG_INLINE pattern_formatter::pattern_formatter(std::string pattern,
@@ -1157,6 +1181,10 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
             formatters_.push_back(
                 details::make_unique<details::elapsed_formatter<Padder, std::chrono::seconds>>(
                     padding));
+            break;
+
+        case ('&'):
+            formatters_.push_back(details::make_unique<details::mdc_formatter<Padder>>(padding));
             break;
 
         default:  // Unknown flag appears as is
