@@ -70,13 +70,19 @@
     #define SPDLOG_CONSTEXPR constexpr
 #endif
 
-// If building with fmt SPDLOG_CONSTEXPR_FUNC needs to be set the same as FMT_CONSTEXPR
-// to avoid situations where a constexpr function in spdlog could end up calling
-// a non-constexpr function in fmt depending on the compiler
-#ifdef FMT_CONSTEXPR
-    #define SPDLOG_CONSTEXPR_FUNC FMT_CONSTEXPR
-#else
+// If building with std::format, can just use constexpr, otherwise if building with fmt
+// SPDLOG_CONSTEXPR_FUNC needs to be set the same as FMT_CONSTEXPR to avoid situations where
+// a constexpr function in spdlog could end up calling a non-constexpr function in fmt
+// depending on the compiler
+// If fmt determines it can't use constexpr, we should inline the function instead
+#ifdef SPDLOG_USE_STD_FORMAT
     #define SPDLOG_CONSTEXPR_FUNC constexpr
+#else  // Being built with fmt
+    #if FMT_USE_CONSTEXPR
+        #define SPDLOG_CONSTEXPR_FUNC FMT_CONSTEXPR
+    #else
+	#define SPDLOG_CONSTEXPR_FUNC inline
+    #endif
 #endif
 
 #if defined(__GNUC__) || defined(__clang__)
