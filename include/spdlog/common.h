@@ -15,7 +15,6 @@
 #include <string>
 #include <type_traits>
 
-#include "details/null_mutex.h"
 #include "source_loc.h"
 #include "tweakme.h"
 

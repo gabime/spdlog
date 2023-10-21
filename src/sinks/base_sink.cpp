@@ -8,6 +8,7 @@
 
 #include "spdlog/common.h"
 #include "spdlog/pattern_formatter.h"
+#include "spdlog/details/null_mutex.h"
 
 template <typename Mutex>
 spdlog::sinks::base_sink<Mutex>::base_sink()
