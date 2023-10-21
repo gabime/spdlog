@@ -24,11 +24,7 @@
 #endif
 
 #ifdef SPDLOG_USE_STD_FORMAT
-    #if __cpp_lib_format >= 202207L
-        #include <format>
-    #else
-        #include <string_view>
-    #endif
+    #include <format>
 #endif
 
 #if defined(SPDLOG_SHARED_LIB)
