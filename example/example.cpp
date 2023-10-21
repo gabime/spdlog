@@ -170,7 +170,7 @@ void async_example() {
 // {:n} - don't split the output to lines.
 
 #if !defined SPDLOG_USE_STD_FORMAT || defined(_MSC_VER)
-#include "spdlog/fmt/bin_to_hex.h"
+    #include "spdlog/fmt/bin_to_hex.h"
 void binary_example() {
     std::vector<char> buf(80);
     for (int i = 0; i < 80; i++) {
