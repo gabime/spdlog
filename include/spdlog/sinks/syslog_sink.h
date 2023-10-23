@@ -61,19 +61,19 @@ protected:
     void flush_() override {}
     bool enable_formatting_ = false;
 
-private:
-    using levels_array = std::array<int, 7>;
-    levels_array syslog_levels_;
-    // must store the ident because the man says openlog might use the pointer as
-    // is and not a string copy
-    const std::string ident_;
-
     //
     // Simply maps spdlog's log level to syslog priority level.
     //
     int syslog_prio_from_level(const details::log_msg &msg) const {
         return syslog_levels_.at(static_cast<levels_array::size_type>(msg.level));
     }
+
+private:
+    using levels_array = std::array<int, 7>;
+    levels_array syslog_levels_;
+    // must store the ident because the man says openlog might use the pointer as
+    // is and not a string copy
+    const std::string ident_;
 };
 
 using syslog_sink_mt = syslog_sink<std::mutex>;
