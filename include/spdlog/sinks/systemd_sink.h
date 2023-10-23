@@ -70,7 +70,7 @@ protected:
             err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(),
                                     "PRIORITY=%d", syslog_level(msg.level),
 #ifndef SPDLOG_NO_THREAD_ID
-                                    "TID=%zu", details::os::thread_id(),
+                                    "TID=%zu", msg.thread_id,
 #endif
                                     "SYSLOG_IDENTIFIER=%.*s",
                                     static_cast<int>(syslog_identifier.size()),
@@ -79,7 +79,7 @@ protected:
             err = (sd_journal_send)("MESSAGE=%.*s", static_cast<int>(length), payload.data(),
                                     "PRIORITY=%d", syslog_level(msg.level),
 #ifndef SPDLOG_NO_THREAD_ID
-                                    "TID=%zu", details::os::thread_id(),
+                                    "TID=%zu", msg.thread_id,
 #endif
                                     "SYSLOG_IDENTIFIER=%.*s",
                                     static_cast<int>(syslog_identifier.size()),
