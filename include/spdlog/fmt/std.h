@@ -8,6 +8,7 @@
 // include bundled or external copy of fmtlib's std support (for formatting e.g.
 // std::filesystem::path, std::thread::id, std::monostate, std::variant, ...)
 //
+#include <spdlog/tweakme.h>
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
     #if !defined(SPDLOG_FMT_EXTERNAL)
