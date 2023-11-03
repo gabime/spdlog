@@ -90,7 +90,10 @@ public:
 
     static registry &instance();
 
-    void apply_logger_env_levels(std::shared_ptr<logger> new_logger);
+    // explicitely free the singleton instance.
+    static void free();
+
+    void apply_logger_env_levels(std::shared_ptr<logger> new_logger);   
 
 private:
     registry();
@@ -112,6 +115,9 @@ private:
     std::shared_ptr<logger> default_logger_;
     bool automatic_registration_ = true;
     size_t backtrace_n_messages_ = 0;
+
+    static registry* s_instance;
+    static std::mutex s_instanceMutex;
 };
 
 }  // namespace details

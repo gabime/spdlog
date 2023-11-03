@@ -30,6 +30,9 @@
 namespace spdlog {
 namespace details {
 
+registry* registry::s_instance = nullptr;
+std::mutex registry::s_instanceMutex;
+
 SPDLOG_INLINE registry::registry()
     : formatter_(new pattern_formatter()) {
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
@@ -237,9 +240,19 @@ SPDLOG_INLINE void registry::set_levels(log_levels levels, level::level_enum *gl
     }
 }
 
-SPDLOG_INLINE registry &registry::instance() {
-    static registry s_instance;
-    return s_instance;
+SPDLOG_INLINE void registry::free() {
+    std::lock_guard<std::mutex> lock(s_instanceMutex);
+
+    delete s_instance;
+    s_instance = nullptr;
+}
+
+SPDLOG_INLINE registry &registry::instance() {    
+    std::lock_guard<std::mutex> lock(s_instanceMutex);
+    if (s_instance == nullptr) {
+        s_instance = new registry();
+    }
+    return *s_instance;
 }
 
 SPDLOG_INLINE void registry::apply_logger_env_levels(std::shared_ptr<logger> new_logger) {
