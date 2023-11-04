@@ -116,7 +116,7 @@ private:
     bool automatic_registration_ = true;
     size_t backtrace_n_messages_ = 0;
 
-    static registry* s_instance;
+    static std::atomic<registry*> s_instance;
     static std::mutex s_instanceMutex;
 };
 
