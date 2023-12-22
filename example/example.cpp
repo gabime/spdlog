@@ -180,7 +180,7 @@ void async_example() {
 #if !defined SPDLOG_USE_STD_FORMAT || defined(_MSC_VER)
     #include "spdlog/fmt/bin_to_hex.h"
 void binary_example() {
-    std::vector<char> buf(80);
+    std::vector<char> buf;
     for (int i = 0; i < 80; i++) {
         buf.push_back(static_cast<char>(i & 0xff));
     }
