@@ -85,6 +85,8 @@ option(SPDLOG_BUILD_WARNINGS "Enable compiler warnings" OFF)
 option(SPDLOG_SYSTEM_INCLUDES "Include as system headers (skip for clang-tidy)." OFF)
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_USE_STD_FORMAT "Use std::format instead of fmt library." OFF)
+option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of of fetching from gitub." OFF)
+
 option(SPDLOG_NO_EXCEPTIONS "Compile with -fno-exceptions. Call abort() on any spdlog exceptions" OFF)
 
 if(SPDLOG_USE_STD_FORMAT AND CMAKE_CXX_STANDARD LESS 20)
@@ -126,20 +128,11 @@ if(SPDLOG_BUILD_PIC)
 endif()
 
 
-include(FetchContent)
-
-Set(FETCHCONTENT_QUIET FALSE)
-FetchContent_Declare(
-        fmt
-        GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-        GIT_TAG 10.1.1
-        GIT_PROGRESS TRUE
-)
-
-
-FetchContent_MakeAvailable(fmt)
-# Get and print the version of fmt
-#find_package(fmt REQUIRED)
+if (SPDLOG_FMT_EXTERNAL)
+    find_package(fmt REQUIRED)
+else()
+    include(cmake/fmtlib.cmake)
+endif()
 
 find_package(Threads REQUIRED)
 message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
@@ -264,9 +257,7 @@ target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTER
                                                                   "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 target_link_libraries(spdlog PUBLIC fmt::fmt)
-
 spdlog_enable_warnings(spdlog)
-
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION
                                                                   ${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR})
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
