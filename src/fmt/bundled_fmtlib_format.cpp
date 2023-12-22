@@ -2,7 +2,7 @@
 // Copyright (c) 2012 - 2016, Victor Zverovich
 // All rights reserved.
 
-#if !defined(SPDLOG_FMT_EXTERNAL) && !defined(SPDLOG_USE_STD_FORMAT)
+#if defined(SPDLOG_USE_STD_FORMAT)
 
 #include "spdlog/fmt/bundled/format-inl.h"
 FMT_BEGIN_NAMESPACE
@@ -38,4 +38,4 @@ template FMT_API void buffer<wchar_t>::append(const wchar_t *, const wchar_t *);
 }  // namespace detail
 FMT_END_NAMESPACE
 
-#endif  // !SPDLOG_FMT_EXTERNAL
+#endif  // defined(SPDLOG_USE_STD_FORMAT)

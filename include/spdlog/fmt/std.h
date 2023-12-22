@@ -11,9 +11,5 @@
 #include <spdlog/tweakme.h>
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
-    #if !defined(SPDLOG_FMT_EXTERNAL)
-        #include "../fmt/bundled/std.h"
-    #else
-        #include <fmt/std.h>
-    #endif
+    #include <fmt/std.h>
 #endif
