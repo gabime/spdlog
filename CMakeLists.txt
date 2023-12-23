@@ -11,7 +11,6 @@ include(cmake/ide.cmake)
 spdlog_extract_version()
 
 project(spdlog VERSION ${SPDLOG_VERSION} LANGUAGES CXX)
-message(STATUS "Build spdlog: ${SPDLOG_VERSION}")
 
 include(GNUInstallDirs)
 
@@ -130,16 +129,29 @@ if(SPDLOG_BUILD_SHARED)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
+message(STATUS "spdlog version: ${SPDLOG_VERSION}")
+message(STATUS "spdlog build type: " ${CMAKE_BUILD_TYPE})
+message(STATUS "spdlog build shared: " ${BUILD_SHARED_LIBS})
+message(STATUS "spdlog use std format: " ${SPDLOG_USE_STD_FORMAT})
+message(STATUS "spdlog fmt external: " ${SPDLOG_FMT_EXTERNAL})
+
+# ---------------------------------------------------------------------------------------
+# Find {fmt} library if not using std::format
+# ---------------------------------------------------------------------------------------
 if(NOT SPDLOG_USE_STD_FORMAT)
     if (SPDLOG_FMT_EXTERNAL)
         find_package(fmt REQUIRED)
+        message(STATUS "Using external fmt lib version: ${fmt_VERSION}")
     else()
         include(cmake/fmtlib.cmake)
     endif()
 endif()
 
+# ---------------------------------------------------------------------------------------
+# Threads library is required
+# ---------------------------------------------------------------------------------------
 find_package(Threads REQUIRED)
-message(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
+
 # ---------------------------------------------------------------------------------------
 # Library sources
 # ---------------------------------------------------------------------------------------

@@ -1,6 +1,5 @@
 include(FetchContent)
 
-Set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(
         fmt
         GIT_REPOSITORY https://github.com/fmtlib/fmt.git
@@ -10,9 +9,10 @@ FetchContent_Declare(
 
 FetchContent_GetProperties(fmt)
 if(NOT fmt_POPULATED)
+    message(STATUS "Fetching fmt lib...")
     FetchContent_Populate(fmt)
     # We do not require os features of fmt
     set(FMT_OS OFF CACHE BOOL "Disable FMT_OS" FORCE)
-    add_subdirectory(${fmt_SOURCE_DIR} ${fmt_BINARY_DIR})
+    add_subdirectory(${fmt_SOURCE_DIR} ${fmt_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif ()
 
