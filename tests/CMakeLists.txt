@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.14)
 project(spdlog_utests CXX)
 
 if(NOT TARGET spdlog)
@@ -88,11 +88,10 @@ endfunction()
 if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests spdlog::spdlog)
 
-    # copy dll to the executable folder for msvc
+    # copy dlls to the executable folder for msvc
     if(MSVC AND (SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS))
-        add_custom_command(
-            TARGET spdlog-utests POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:spdlog>
-                                                    $<TARGET_FILE_DIR:spdlog-utests>)
+        add_custom_command(TARGET spdlog-utests POST_BUILD COMMAND ${CMAKE_COMMAND} 
+			-E copy_if_different $<TARGET_FILE:spdlog> $<TARGET_FILE:fmt> $<TARGET_FILE:Catch2::Catch2> $<TARGET_FILE:Catch2::Catch2WithMain> $<TARGET_FILE_DIR:spdlog-utests>)
     endif()
 
 endif()

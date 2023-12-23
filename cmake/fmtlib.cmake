@@ -2,7 +2,7 @@ include(FetchContent)
 
 # Always build static fmtlib version
 set(BUILD_SHARED_LIBS_ORIG "${BUILD_SHARED_LIBS}")
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Disable BUILD_SHARED_LIBS for fmtlib" FORCE)
+#set(BUILD_SHARED_LIBS OFF CACHE BOOL "Disable BUILD_SHARED_LIBS for fmtlib" FORCE)
 
 Set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(

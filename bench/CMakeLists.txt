@@ -1,6 +1,6 @@
 # Copyright(c) 2019 spdlog authors Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.14)
 project(spdlog_bench CXX)
 
 if(NOT TARGET spdlog)
@@ -36,8 +36,8 @@ target_link_libraries(latency PRIVATE benchmark::benchmark spdlog::spdlog)
 add_executable(formatter-bench formatter-bench.cpp)
 target_link_libraries(formatter-bench PRIVATE benchmark::benchmark spdlog::spdlog)
 
-# copy dll to the executable folder for msvc
+# copy dlls to the executable folder for msvc
 if(MSVC AND (SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS))
-    add_custom_command(TARGET latency POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:spdlog>
-                                                         $<TARGET_FILE_DIR:latency>)
+    add_custom_command(TARGET latency POST_BUILD COMMAND ${CMAKE_COMMAND} 
+		-E copy_if_different $<TARGET_FILE:spdlog> $<TARGET_FILE:fmt>  $<TARGET_FILE:benchmark::benchmark> $<TARGET_FILE_DIR:latency>)
 endif()
