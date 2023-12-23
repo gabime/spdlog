@@ -63,8 +63,6 @@ option(SPDLOG_BUILD_ALL "Build all artifacts" OFF)
 # build shared option
 option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
 
-# build position independent code
-option(SPDLOG_BUILD_PIC "Build position independent code (-fPIC)" OFF)
 
 # example options
 option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
@@ -127,10 +125,9 @@ if(SPDLOG_TIDY)
     message(STATUS "Enabled clang-tidy")
 endif()
 
-if(SPDLOG_BUILD_PIC OR SPDLOG_BUILD_SHARED)
+if(SPDLOG_BUILD_SHARED)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
-
 
 if(NOT SPDLOG_USE_STD_FORMAT)
     if (SPDLOG_FMT_EXTERNAL)
