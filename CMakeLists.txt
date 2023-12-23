@@ -126,6 +126,7 @@ if(SPDLOG_TIDY)
 endif()
 
 if(SPDLOG_BUILD_SHARED)
+    set(BUILD_SHARED_LIBS ON)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
@@ -234,7 +235,7 @@ set(SPDLOG_SRCS
     "src/sinks/wincolor_sink.cpp")
 
 
-if(SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
     if(WIN32)
         set(VERSION_RC ${CMAKE_CURRENT_BINARY_DIR}/version.rc )
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)        
