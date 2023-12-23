@@ -93,6 +93,10 @@ if(SPDLOG_USE_STD_FORMAT AND CMAKE_CXX_STANDARD LESS 20)
     message(FATAL_ERROR "SPDLOG_USE_STD_FORMAT must be used with CMAKE_CXX_STANDARD >= 20")
 endif()
 
+if(SPDLOG_USE_STD_FORMAT AND SPDLOG_FMT_EXTERNAL)
+    message(FATAL_ERROR "SPDLOG_USE_STD_FORMAT and SPDLOG_FMT_EXTERNAL are mutually exclusive")
+endif()
+
 # misc tweakme options
 if(WIN32)
     option(SPDLOG_WCHAR_FILENAMES "Support wchar filenames" OFF)
@@ -128,10 +132,12 @@ if(SPDLOG_BUILD_PIC)
 endif()
 
 
-if (SPDLOG_FMT_EXTERNAL)
-    find_package(fmt REQUIRED)
-else()
-    include(cmake/fmtlib.cmake)
+if(NOT SPDLOG_USE_STD_FORMAT)
+    if (SPDLOG_FMT_EXTERNAL)
+        find_package(fmt REQUIRED)
+    else()
+        include(cmake/fmtlib.cmake)
+    endif()
 endif()
 
 find_package(Threads REQUIRED)
@@ -256,7 +262,9 @@ endif()
 target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                                                   "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
-target_link_libraries(spdlog PUBLIC fmt::fmt)
+if(NOT SPDLOG_USE_STD_FORMAT)
+    target_link_libraries(spdlog PUBLIC fmt::fmt)
+endif()
 spdlog_enable_warnings(spdlog)
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION
                                                                   ${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR})
