@@ -127,7 +127,7 @@ if(SPDLOG_TIDY)
     message(STATUS "Enabled clang-tidy")
 endif()
 
-if(SPDLOG_BUILD_PIC)
+if(SPDLOG_BUILD_PIC OR SPDLOG_BUILD_SHARED)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
