@@ -10,6 +10,7 @@ endif()
 
 find_package(Threads REQUIRED)
 find_package(benchmark CONFIG)
+
 if(NOT benchmark_FOUND)
     message(STATUS "Using CMake Version ${CMAKE_VERSION}")
     # User can fetch googlebenchmark
@@ -35,9 +36,3 @@ target_link_libraries(latency PRIVATE benchmark::benchmark spdlog::spdlog)
 
 add_executable(formatter-bench formatter-bench.cpp)
 target_link_libraries(formatter-bench PRIVATE benchmark::benchmark spdlog::spdlog)
-
-# copy dlls to the executable folder for msvc
-if(MSVC AND (SPDLOG_BUILD_SHARED OR BUILD_SHARED_LIBS))
-    add_custom_command(TARGET latency POST_BUILD COMMAND ${CMAKE_COMMAND} 
-		-E copy_if_different $<TARGET_FILE:spdlog> $<TARGET_FILE:fmt>  $<TARGET_FILE:benchmark::benchmark> $<TARGET_FILE_DIR:latency>)
-endif()

@@ -129,6 +129,14 @@ if(SPDLOG_BUILD_SHARED)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
+# place dlls in the same directory as the executables on msvc		
+if(BUILD_SHARED_LIBS AND MSVC)
+	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>)
+	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>)
+	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>)
+	set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>)
+endif()
+
 message(STATUS "spdlog version: ${SPDLOG_VERSION}")
 message(STATUS "spdlog build type: " ${CMAKE_BUILD_TYPE})
 message(STATUS "spdlog build shared: " ${BUILD_SHARED_LIBS})
@@ -255,8 +263,9 @@ if(BUILD_SHARED_LIBS)
     add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_HEADERS} ${VERSION_RC})
     target_compile_definitions(spdlog PUBLIC SPDLOG_SHARED_LIB)
     if(MSVC)
+        # disable dlls related warnings on msvc
         target_compile_options(spdlog PUBLIC $<$<AND:$<CXX_COMPILER_ID:MSVC>,$<NOT:$<COMPILE_LANGUAGE:CUDA>>>:/wd4251
-                                             /wd4275>)
+                                             /wd4275>)        
     endif()
 else()
     add_library(spdlog STATIC ${SPDLOG_SRCS} ${SPDLOG_HEADERS})
