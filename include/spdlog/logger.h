@@ -77,7 +77,8 @@ public:
     template <typename... Args>
     void log(level lvl, format_string_t<Args...> fmt, Args &&...args) {
         if (should_log(lvl)) {
-            log_with_format_(source_loc{}, lvl, details::to_string_view(fmt),
+            constexpr source_loc empty_loc{};
+            log_with_format_(empty_loc, lvl, details::to_string_view(fmt),
                              std::forward<Args>(args)...);
         }
     }
@@ -98,7 +99,8 @@ public:
 
     void log(level lvl, string_view_t msg) {
         if (should_log(lvl)) {
-            sink_it_(details::log_msg(source_loc{}, name_, lvl, msg));
+            constexpr source_loc empty_loc{};
+            sink_it_(details::log_msg(empty_loc, name_, lvl, msg));
         }
     }
 
