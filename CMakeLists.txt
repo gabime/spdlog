@@ -34,10 +34,6 @@ elseif(CMAKE_CXX_STANDARD LESS 17)
 endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# make sure __cplusplus is defined when using msvc and enable parallel build
-if(MSVC)
-    string(APPEND CMAKE_CXX_FLAGS " /Zc:__cplusplus /MP")
-endif()
 
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -129,13 +125,19 @@ if(SPDLOG_BUILD_SHARED)
     set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 endif()
 
-# place dlls in the same directory as the executables on msvc		
-if(BUILD_SHARED_LIBS AND MSVC)
+if(MSVC)
+	# place dlls and libs and executables in the same directory
 	set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>)
 	set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>)
 	set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>)
-	set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>)
+	set(CMAKE_PDB_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/$<CONFIG>)	   
+		
+	# make sure __cplusplus is defined
+	add_compile_options(/Zc:__cplusplus)
+	# enable parallel build for the solution
+	add_compile_options(/MP)
 endif()
+
 
 message(STATUS "spdlog version: ${SPDLOG_VERSION}")
 message(STATUS "spdlog build type: " ${CMAKE_BUILD_TYPE})
