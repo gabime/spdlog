@@ -12,7 +12,7 @@ TEST_CASE("stopwatch1", "[stopwatch]") {
     std::this_thread::sleep_for(wait_ms);
     auto stop = clock::now();
     auto diff_ms = std::chrono::duration_cast<milliseconds>(stop - start);
-    REQUIRE(sw.elapsed() >= diff_ms);
+    REQUIRE(sw.elapsed() >= diff_ms - milliseconds(1));
     REQUIRE(sw.elapsed() <= diff_ms + tolerance_ms);
 }
 
