@@ -75,8 +75,5 @@ build_script:
 
       cmake --build . --config %BUILD_TYPE%
 
-before_test:
-  - set PATH=%PATH%;C:\projects\spdlog\build\_deps\catch2-build\src\%BUILD_TYPE%;C:\projects\spdlog\build\%BUILD_TYPE%
-  
 test_script:
   - C:\projects\spdlog\build\tests\%BUILD_TYPE%\spdlog-utests.exe
