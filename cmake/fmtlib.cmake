@@ -13,4 +13,5 @@ if(NOT fmt_POPULATED)
     # We do not require os features of fmt
     set(FMT_OS OFF CACHE BOOL "Disable FMT_OS" FORCE)
     add_subdirectory(${fmt_SOURCE_DIR} ${fmt_BINARY_DIR})
+	set_target_properties(fmt PROPERTIES FOLDER "third-party")
 endif ()

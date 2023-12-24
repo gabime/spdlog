@@ -24,6 +24,7 @@ else()
             GIT_TAG 53d0d913a422d356b23dd927547febdf69ee9081 # v3.5.0
     )
     FetchContent_MakeAvailable(Catch2)
+	set_target_properties(Catch2 Catch2WithMain PROPERTIES FOLDER "third-party")
 endif()
 
 set(SPDLOG_UTESTS_SOURCES

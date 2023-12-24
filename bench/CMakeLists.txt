@@ -22,6 +22,7 @@ if(NOT benchmark_FOUND)
     # Do not build and run googlebenchmark tests
     FetchContent_Declare(googlebenchmark GIT_REPOSITORY https://github.com/google/benchmark.git GIT_TAG v1.6.0)
     FetchContent_MakeAvailable(googlebenchmark)
+	set_target_properties(benchmark PROPERTIES FOLDER "third-party")
 endif()
 
 add_executable(bench bench.cpp)
