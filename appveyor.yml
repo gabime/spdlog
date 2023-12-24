@@ -76,4 +76,4 @@ build_script:
       cmake --build . --config %BUILD_TYPE%
 
 test_script:
-  - C:\projects\spdlog\build\tests\%BUILD_TYPE%\spdlog-utests.exe
+  - C:\projects\spdlog\build\bin\%BUILD_TYPE%\spdlog-utests.exe
