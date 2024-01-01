@@ -22,5 +22,5 @@ THE SOFTWARE.
 
 -- NOTE: Third party dependency used by this software --
 This software depends on the fmt lib (MIT License),
-and users must comply to its license: https://github.com/fmtlib/fmt/blob/master/LICENSE.rst
+and users must comply to its license: https://raw.githubusercontent.com/fmtlib/fmt/master/LICENSE
 
