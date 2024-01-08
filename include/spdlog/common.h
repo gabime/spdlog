@@ -107,7 +107,13 @@
 #endif
 
 #ifndef SPDLOG_FUNCTION
-    #define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
+    // use std::source_location instead of macros if available
+    #ifdef __cpp_lib_source_location
+        #define SPDLOG_STD_SOURCE_LOCATION
+        #include <source_location>
+    #else
+        #define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
+    #endif
 #endif
 
 #ifdef SPDLOG_NO_EXCEPTIONS
@@ -324,6 +330,13 @@ struct source_loc {
         : filename{filename_in},
           line{line_in},
           funcname{funcname_in} {}
+
+    #ifdef SPDLOG_STD_SOURCE_LOCATION
+    SPDLOG_CONSTEXPR source_loc(const std::source_location& loc)
+        : filename{loc.file_name()},
+          line{loc.line()},
+          funcname{loc.function_name()} {}
+    #endif
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT { return line == 0; }
     const char *filename{nullptr};
