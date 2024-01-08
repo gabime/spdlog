@@ -9,6 +9,7 @@
 #include <atomic>
 #include <chrono>
 #include <cstdio>
+#include <cstdint>
 #include <exception>
 #include <functional>
 #include <initializer_list>
@@ -319,14 +320,14 @@ private:
 
 struct source_loc {
     SPDLOG_CONSTEXPR source_loc() = default;
-    SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
+    SPDLOG_CONSTEXPR source_loc(const char *filename_in, std::uint_least32_t line_in, const char *funcname_in)
         : filename{filename_in},
           line{line_in},
           funcname{funcname_in} {}
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT { return line == 0; }
     const char *filename{nullptr};
-    int line{0};
+    std::uint_least32_t line{0};
     const char *funcname{nullptr};
 };
 
