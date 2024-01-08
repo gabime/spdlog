@@ -16,8 +16,13 @@
 #include <string>
 #include <type_traits>
 
+#ifdef __has_include
+    #if __has_include(<version>)
+        #include <version>
+    #endif
+#endif
+
 #ifdef SPDLOG_USE_STD_FORMAT
-    #include <version>
     #if __cpp_lib_format >= 202207L
         #include <format>
     #else
