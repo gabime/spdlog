@@ -42,18 +42,6 @@ build/*
 # .orig files
 *.orig
 
-# example  files
-example/*
-!example/example.cpp
-!example/bench.cpp
-!example/utils.h
-!example/Makefile*
-!example/example.sln
-!example/example.vcxproj
-!example/CMakeLists.txt
-!example/meson.build
-!example/multisink.cpp
-!example/jni
 
 # generated files
 generated
