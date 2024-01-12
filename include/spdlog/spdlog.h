@@ -15,11 +15,11 @@
 #include <mutex>
 #include <string>
 
-#include "common.h"
-#include "details/registry.h"
-#include "details/synchronous_factory.h"
-#include "logger.h"
-#include "version.h"
+#include "./common.h"
+#include "./details/registry.h"
+#include "./details/synchronous_factory.h"
+#include "./logger.h"
+#include "./version.h"
 
 namespace spdlog {
 
