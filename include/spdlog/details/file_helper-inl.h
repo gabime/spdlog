@@ -98,6 +98,7 @@ SPDLOG_INLINE void file_helper::close() {
 }
 
 SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf) {
+    if(fd_ == nullptr) return;
     size_t msg_size = buf.size();
     auto data = buf.data();
     if (std::fwrite(data, 1, msg_size, fd_) != msg_size) {
