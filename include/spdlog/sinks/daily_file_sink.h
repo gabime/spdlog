@@ -16,8 +16,7 @@
 #include "../details/null_mutex.h"
 #include "../details/os.h"
 #include "../details/synchronous_factory.h"
-#include "../fmt/chrono.h"
-#include "../fmt/fmt.h"
+#include "fmt/chrono.h"
 #include "base_sink.h"
 
 namespace spdlog {

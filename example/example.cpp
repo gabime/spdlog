@@ -194,7 +194,7 @@ void binary_example() {
 
 // Log a vector of numbers
 #ifndef SPDLOG_USE_STD_FORMAT
-    #include "spdlog/fmt/ranges.h"
+    #include "fmt/ranges.h"
 void vector_example() {
     std::vector<int> vec = {1, 2, 3};
     spdlog::info("Vector example: {}", vec);

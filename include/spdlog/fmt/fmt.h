@@ -14,6 +14,5 @@
 #if defined(SPDLOG_USE_STD_FORMAT)  // use std::format
     #include <format>
 #else
-    #include <fmt/core.h>
-    #include <fmt/format.h>
+    #include "fmt/format.h"
 #endif

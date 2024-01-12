@@ -11,7 +11,7 @@
 #include "spdlog/common.h"
 #include "spdlog/details/file_helper.h"
 #include "spdlog/details/os.h"
-#include "spdlog/fmt/fmt.h"
+//#include "spdlog/fmt/fmt.h"
 
 namespace spdlog {
 namespace sinks {
