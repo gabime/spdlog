@@ -4,7 +4,7 @@
 #pragma once
 
 #define SPDLOG_VER_MAJOR 1
-#define SPDLOG_VER_MINOR 12
+#define SPDLOG_VER_MINOR 13
 #define SPDLOG_VER_PATCH 0
 
 #define SPDLOG_TO_VERSION(major, minor, patch) (major * 10000 + minor * 100 + patch)
