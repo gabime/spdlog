@@ -1,4 +1,5 @@
 # Auto generated files
+include/spdlog/spdlog_config.h
 [Dd]ebug/
 [Rr]elease/
 build/*

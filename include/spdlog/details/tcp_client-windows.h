@@ -14,7 +14,7 @@
 #include <string>
 
 #include "../common.h"
-#include "os.h"
+#include "./os.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Mswsock.lib")

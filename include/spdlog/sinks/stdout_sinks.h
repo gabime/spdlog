@@ -7,8 +7,8 @@
 
 #include "../details/synchronous_factory.h"
 #include "../details/null_mutex.h"
-#include "base_sink.h"
-#include "sink.h"
+#include "./base_sink.h"
+#include "./sink.h"
 
 #ifdef _WIN32
     #include "../details/windows_include.h"

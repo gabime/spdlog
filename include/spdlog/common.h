@@ -15,8 +15,9 @@
 #include <string>
 #include <type_traits>
 
-#include "source_loc.h"
-#include "tweakme.h"
+#include "./spdlog_config.h"
+#include "./source_loc.h"
+
 
 #if __has_include(<version>)
     #include <version>

@@ -18,9 +18,9 @@
 #include <memory>
 #include <mutex>
 
-#include "async_logger.h"
-#include "details/registry.h"
-#include "details/thread_pool.h"
+#include "./async_logger.h"
+#include "./details/registry.h"
+#include "./details/thread_pool.h"
 
 namespace spdlog {
 

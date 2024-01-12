@@ -10,10 +10,10 @@
 #include <unordered_map>
 #include <vector>
 
-#include "common.h"
-#include "details/log_msg.h"
-#include "details/os.h"
-#include "formatter.h"
+#include "./common.h"
+#include "./details/log_msg.h"
+#include "./details/os.h"
+#include "./formatter.h"
 
 namespace spdlog {
 namespace details {

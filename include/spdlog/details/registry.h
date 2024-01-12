@@ -16,7 +16,7 @@
 #include <unordered_map>
 
 #include "../common.h"
-#include "periodic_worker.h"
+#include "./periodic_worker.h"
 
 namespace spdlog {
 class logger;

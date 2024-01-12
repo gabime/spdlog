@@ -10,7 +10,7 @@
 
 #include "../details/log_msg.h"
 #include "../details/null_mutex.h"
-#include "dist_sink.h"
+#include "./dist_sink.h"
 
 // Duplicate message removal sink.
 // Skip the message if previous one is identical and less than "max_skip_duration" have passed

@@ -9,7 +9,7 @@
 // Include a bundled header-only copy of fmtlib or an external one.
 // By default, spdlog include its own copy.
 //
-#include <spdlog/tweakme.h>
+#include "../spdlog_config.h"
 
 #if defined(SPDLOG_USE_STD_FORMAT)  // use std::format
     #include <format>

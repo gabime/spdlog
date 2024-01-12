@@ -11,7 +11,7 @@
 #include "../details/log_msg.h"
 #include "../details/null_mutex.h"
 #include "../pattern_formatter.h"
-#include "base_sink.h"
+#include "./base_sink.h"
 
 // Distribution sink (mux). Stores a vector of sinks which get called when log
 // is called

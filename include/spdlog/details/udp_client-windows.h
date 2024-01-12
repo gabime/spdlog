@@ -14,8 +14,8 @@
 #include <string>
 
 #include "../common.h"
-#include "os.h"
-#include "windows_include.h"
+#include "./os.h"
+#include "./windows_include.h"
 
 #if defined(_MSC_VER)
     #pragma comment(lib, "Ws2_32.lib")

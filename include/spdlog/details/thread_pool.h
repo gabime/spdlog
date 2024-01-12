@@ -10,9 +10,9 @@
 #include <vector>
 
 #include "../async.h"
-#include "log_msg_buffer.h"
-#include "mpmc_blocking_q.h"
-#include "os.h"
+#include "./log_msg_buffer.h"
+#include "./mpmc_blocking_q.h"
+#include "./os.h"
 
 namespace spdlog {
 class async_logger;

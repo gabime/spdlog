@@ -19,7 +19,7 @@
 #include <string>
 
 #include "../common.h"
-#include "os.h"
+#include "./os.h"
 
 namespace spdlog {
 namespace details {

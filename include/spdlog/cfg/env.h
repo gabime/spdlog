@@ -4,7 +4,7 @@
 #pragma once
 #include "../details/os.h"
 #include "../details/registry.h"
-#include "helpers.h"
+#include "./helpers.h"
 
 //
 // Init levels and patterns from env variables SPDLOG_LEVEL

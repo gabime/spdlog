@@ -176,7 +176,6 @@ set(SPDLOG_HEADERS
     "include/spdlog/source_loc.h"
     "include/spdlog/spdlog.h"
     "include/spdlog/stopwatch.h"
-    "include/spdlog/tweakme.h"
     "include/spdlog/version.h"
     "include/spdlog/cfg/argv.h"
     "include/spdlog/cfg/env.h"
@@ -250,6 +249,11 @@ set(SPDLOG_SRCS
     "src/sinks/stdout_sinks.cpp"
     "src/sinks/wincolor_sink.cpp")
 
+# Generate spdlog_config.h based on the current configuration
+set(OUT_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/spdlog_config.h")
+message(STATUS "Generating ${OUT_CONFIG_FILE}")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/spdlog_config.h.in" ${OUT_CONFIG_FILE} @ONLY)
+list(APPEND SPDLOG_HEADERS ${OUT_CONFIG_FILE})
 
 if(BUILD_SHARED_LIBS)
     if(WIN32)
@@ -299,23 +303,6 @@ if(ANDROID)
     target_link_libraries(spdlog PUBLIC log)
 endif()
 
-# ---------------------------------------------------------------------------------------
-# Misc definitions according to tweak options
-# ---------------------------------------------------------------------------------------
-foreach(
-    SPDLOG_OPTION
-    SPDLOG_WCHAR_FILENAMES
-    SPDLOG_NO_EXCEPTIONS
-    SPDLOG_CLOCK_COARSE
-    SPDLOG_PREVENT_CHILD_FD
-    SPDLOG_NO_THREAD_ID
-    SPDLOG_NO_ATOMIC_LEVELS
-    SPDLOG_DISABLE_DEFAULT_LOGGER
-    SPDLOG_USE_STD_FORMAT)
-    if(${SPDLOG_OPTION})
-        target_compile_definitions(spdlog PUBLIC ${SPDLOG_OPTION})
-    endif()
-endforeach()
 
 # ---------------------------------------------------------------------------------------
 # If exceptions are disabled, disable them in the bundled fmt as well
@@ -407,4 +394,9 @@ if(SPDLOG_INSTALL)
     # Support creation of installable packages
     # ---------------------------------------------------------------------------------------
     include(cmake/spdlogCPack.cmake)
+
+    # Install spdlog_config.h file
+    # Assume your tweakme.h.in is located in the same directory as CMakeLists.txt
+    set(TWEAKME_IN "${CMAKE_CURRENT_SOURCE_DIR}/tweakme.h.in")
+    set(TWEAKME_OUT "${CMAKE_CURRENT_BINARY_DIR}/include/spdlog/tweakme.h")
 endif()

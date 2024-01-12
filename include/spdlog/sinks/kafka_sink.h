@@ -17,7 +17,7 @@
 #include "../details/log_msg.h"
 #include "../details/null_mutex.h"
 #include "../details/synchronous_factory.h"
-#include "base_sink.h"
+#include "./base_sink.h"
 
 // kafka header
 #include <librdkafka/rdkafkacpp.h>

@@ -14,7 +14,7 @@
 // Upon destruction, logs all remaining messages in the queue before
 // destructing
 
-#include "logger.h"
+#include "./logger.h"
 
 namespace spdlog {
 

@@ -11,7 +11,7 @@
 
 #include "../common.h"
 #include "../details/log_msg.h"
-#include "sink.h"
+#include "./sink.h"
 
 namespace spdlog {
 namespace sinks {

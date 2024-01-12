@@ -16,7 +16,7 @@
 #include "../details/os.h"
 #include "../details/synchronous_factory.h"
 #include "../fmt/fmt.h"
-#include "base_sink.h"
+#include "./base_sink.h"
 
 namespace spdlog {
 namespace sinks {

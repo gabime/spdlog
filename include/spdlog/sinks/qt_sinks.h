@@ -18,7 +18,7 @@
 #include "../common.h"
 #include "../details/log_msg.h"
 #include "../details/synchronous_factory.h"
-#include "base_sink.h"
+#include "./base_sink.h"
 
 //
 // qt_sink class

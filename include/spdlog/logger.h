@@ -17,9 +17,9 @@
 #include <cassert>
 #include <vector>
 
-#include "common.h"
-#include "details/log_msg.h"
-#include "sinks/sink.h"
+#include "./common.h"
+#include "./details/log_msg.h"
+#include "./sinks/sink.h"
 
 #ifndef SPDLOG_NO_EXCEPTIONS
     #define SPDLOG_LOGGER_CATCH(location)                                                         \

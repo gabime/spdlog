@@ -3,7 +3,7 @@
 
 #pragma once
 #include "../details/registry.h"
-#include "helpers.h"
+#include "./helpers.h"
 
 //
 // Init log levels using each argv entry that starts with "SPDLOG_LEVEL="

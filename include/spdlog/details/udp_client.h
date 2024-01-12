@@ -7,7 +7,7 @@
 // Will throw on construction if the socket creation failed.
 
 #include "../common.h"
-#include "os.h"
+#include "./os.h"
 
 #ifdef _WIN32
     #error "include udp_client-windows.h instead"

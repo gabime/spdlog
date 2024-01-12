@@ -34,7 +34,7 @@ Windows Registry Editor Version 5.00
 #pragma once
 
 // clang-format off
-#include "base_sink.h"
+#include "./base_sink.h"
 #include "../details/null_mutex.h"
 #include "../details/windows_include.h"
 

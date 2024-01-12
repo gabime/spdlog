@@ -14,7 +14,7 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "circular_q.h"
+#include "./circular_q.h"
 
 namespace spdlog {
 namespace details {

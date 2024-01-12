@@ -8,7 +8,7 @@
 #include "../details/null_mutex.h"
 #include "../details/os.h"
 #include "../details/synchronous_factory.h"
-#include "base_sink.h"
+#include "./base_sink.h"
 #ifndef SD_JOURNAL_SUPPRESS_LOCATION
     #define SD_JOURNAL_SUPPRESS_LOCATION
 #endif
