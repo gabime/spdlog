@@ -837,7 +837,7 @@ pattern_formatter::pattern_formatter(std::string pattern,
       pattern_time_type_{time_type},
       need_localtime_{false},
       cached_tm_{},
-      last_log_secs_{0},
+      last_log_secs_{},
       custom_handlers_{std::move(custom_user_flags)} {
     compile_pattern_(pattern_);
 }
@@ -849,7 +849,7 @@ pattern_formatter::pattern_formatter(pattern_time_type time_type, std::string eo
       pattern_time_type_{time_type},
       need_localtime_{true},
       cached_tm_{},
-      last_log_secs_{0} {
+      last_log_secs_{} {
     formatters_.push_back(std::make_unique<details::full_formatter>(details::padding_info{}));
 }
 
