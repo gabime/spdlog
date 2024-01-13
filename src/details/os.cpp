@@ -84,14 +84,14 @@ spdlog::log_clock::time_point now() noexcept {
 #endif
 }
 std::tm localtime(const std::time_t &time_tt) noexcept {
+    std::tm* rv;
+    std::tm tm;
 #ifdef _WIN32
-    std::tm tm;
-    ::localtime_s(&tm, &time_tt);
+    rv = ::localtime_s(&tm, &time_tt);
 #else
-    std::tm tm;
-    ::localtime_r(&time_tt, &tm);
+    rv = ::localtime_r(&time_tt, &tm);
 #endif
-    return tm;
+    return rv != nullptr ? tm : std::tm{};
 }
 
 std::tm localtime() noexcept {
