@@ -55,10 +55,8 @@ TEST_CASE("eventlog", "[eventlog]") {
 
     test_sink->set_pattern("%v");
 
-    test_single_print([&test_logger](std::string const &msg) { test_logger.trace(msg); }, "my trace message",
-                      EVENTLOG_SUCCESS);
-    test_single_print([&test_logger](std::string const &msg) { test_logger.debug(msg); }, "my debug message",
-                      EVENTLOG_SUCCESS);
+    test_single_print([&test_logger](std::string const &msg) { test_logger.trace(msg); }, "my trace message", EVENTLOG_SUCCESS);
+    test_single_print([&test_logger](std::string const &msg) { test_logger.debug(msg); }, "my debug message", EVENTLOG_SUCCESS);
     test_single_print([&test_logger](std::string const &msg) { test_logger.info(msg); }, "my info message",
                       EVENTLOG_INFORMATION_TYPE);
     test_single_print([&test_logger](std::string const &msg) { test_logger.warn(msg); }, "my warn message",

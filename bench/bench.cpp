@@ -38,8 +38,8 @@ static const int max_threads = 1000;
 
 void bench_threaded_logging(size_t threads, int iters) {
     spdlog::info("**************************************************************");
-    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "Multi threaded: {:L} threads, {:L} messages",
-                                         threads, iters));
+    spdlog::info(
+        spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "Multi threaded: {:L} threads, {:L} messages", threads, iters));
     spdlog::info("**************************************************************");
 
     auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
@@ -121,8 +121,8 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log) {
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
 
-    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec",
-                                         log->name(), delta_d, size_t(howmany / delta_d)));
+    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(),
+                                         delta_d, size_t(howmany / delta_d)));
     spdlog::drop(log->name());
 }
 
@@ -148,8 +148,8 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, size_t thread_co
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec",
-                                         log->name(), delta_d, size_t(howmany / delta_d)));
+    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(),
+                                         delta_d, size_t(howmany / delta_d)));
     spdlog::drop(log->name());
 }
 

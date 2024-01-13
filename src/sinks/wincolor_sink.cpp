@@ -20,14 +20,12 @@ wincolor_sink<Mutex>::wincolor_sink(void *out_handle, color_mode mode)
     : out_handle_(out_handle) {
     set_color_mode_impl(mode);
     // set level colors
-    colors_.at(level_to_number(level::trace)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;  // white
-    colors_.at(level_to_number(level::debug)) = FOREGROUND_GREEN | FOREGROUND_BLUE;                   // cyan
-    colors_.at(level_to_number(level::info)) = FOREGROUND_GREEN;                                      // green
-    colors_.at(level_to_number(level::warn)) =
-        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;                     // intense yellow
-    colors_.at(level_to_number(level::err)) = FOREGROUND_RED | FOREGROUND_INTENSITY;  // intense red
-    colors_.at(level_to_number(level::critical)) = BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN |
-                                                   FOREGROUND_BLUE |
+    colors_.at(level_to_number(level::trace)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;      // white
+    colors_.at(level_to_number(level::debug)) = FOREGROUND_GREEN | FOREGROUND_BLUE;                       // cyan
+    colors_.at(level_to_number(level::info)) = FOREGROUND_GREEN;                                          // green
+    colors_.at(level_to_number(level::warn)) = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;  // intense yellow
+    colors_.at(level_to_number(level::err)) = FOREGROUND_RED | FOREGROUND_INTENSITY;                      // intense red
+    colors_.at(level_to_number(level::critical)) = BACKGROUND_RED | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE |
                                                    FOREGROUND_INTENSITY;  // intense white on red background
     colors_.at(level_to_number(level::off)) = 0;
 }
@@ -113,8 +111,7 @@ template <typename Mutex>
 void wincolor_sink<Mutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end) {
     if (end > start) {
         auto size = static_cast<DWORD>(end - start);
-        auto ignored =
-            ::WriteConsoleA(static_cast<HANDLE>(out_handle_), formatted.data() + start, size, nullptr, nullptr);
+        auto ignored = ::WriteConsoleA(static_cast<HANDLE>(out_handle_), formatted.data() + start, size, nullptr, nullptr);
         (void)(ignored);
     }
 }

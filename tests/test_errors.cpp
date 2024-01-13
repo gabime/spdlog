@@ -12,9 +12,7 @@
 
 class failing_sink : public spdlog::sinks::base_sink<std::mutex> {
 protected:
-    void sink_it_(const spdlog::details::log_msg &) final {
-        throw std::runtime_error("some error happened during log");
-    }
+    void sink_it_(const spdlog::details::log_msg &) final { throw std::runtime_error("some error happened during log"); }
 
     void flush_() final { throw std::runtime_error("some error happened during flush"); }
 };

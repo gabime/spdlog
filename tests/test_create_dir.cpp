@@ -21,18 +21,16 @@ TEST_CASE("create_dir", "[create_dir]") {
                            SPDLOG_FILENAME_T("test_logs/dir1/dir1")));  // test existing
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/dir1///dir2//"), SPDLOG_FILENAME_T("test_logs/dir1/dir2")));
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("./test_logs/dir1/dir3"), SPDLOG_FILENAME_T("test_logs/dir1/dir3")));
-    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/../test_logs/dir1/dir4"),
-                           SPDLOG_FILENAME_T("test_logs/dir1/dir4")));
+    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/../test_logs/dir1/dir4"), SPDLOG_FILENAME_T("test_logs/dir1/dir4")));
 
 #ifdef WIN32
     // test backslash folder separator
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs\\dir1\\dir222"), SPDLOG_FILENAME_T("test_logs\\dir1\\dir222")));
-    REQUIRE(
-        try_create_dir(SPDLOG_FILENAME_T("test_logs\\dir1\\dir223\\"), SPDLOG_FILENAME_T("test_logs\\dir1\\dir223\\")));
+    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs\\dir1\\dir223\\"), SPDLOG_FILENAME_T("test_logs\\dir1\\dir223\\")));
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T(".\\test_logs\\dir1\\dir2\\dir99\\..\\dir23"),
                            SPDLOG_FILENAME_T("test_logs\\dir1\\dir2\\dir23")));
-    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs\\..\\test_logs\\dir1\\dir5"),
-                           SPDLOG_FILENAME_T("test_logs\\dir1\\dir5")));
+    REQUIRE(
+        try_create_dir(SPDLOG_FILENAME_T("test_logs\\..\\test_logs\\dir1\\dir5"), SPDLOG_FILENAME_T("test_logs\\dir1\\dir5")));
 #endif
 }
 

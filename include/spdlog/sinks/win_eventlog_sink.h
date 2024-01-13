@@ -75,8 +75,8 @@ struct win32_error : public spdlog_ex {
 
         local_alloc_t format_message_result{};
         auto format_message_succeeded = ::FormatMessageA(
-            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
-            error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&format_message_result.hlocal_, 0, nullptr);
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, error_code,
+            MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&format_message_result.hlocal_, 0, nullptr);
 
         if (format_message_succeeded && format_message_result.hlocal_) {
             system_message = fmt_lib::format(" ({})", (LPSTR)format_message_result.hlocal_);
@@ -140,8 +140,7 @@ public:
 
         // get user token
         std::vector<unsigned char> buffer(static_cast<size_t>(tusize));
-        if (!::GetTokenInformation(current_process_token.token_handle_, TokenUser, (LPVOID)buffer.data(), tusize,
-                                   &tusize)) {
+        if (!::GetTokenInformation(current_process_token.token_handle_, TokenUser, (LPVOID)buffer.data(), tusize, &tusize)) {
             SPDLOG_THROW(win32_error("GetTokenInformation"));
         }
 
@@ -210,9 +209,9 @@ protected:
         formatted.push_back('\0');
 
         LPCSTR lp_str = formatted.data();
-        succeeded = static_cast<bool>(::ReportEventA(event_log_handle(), eventlog::get_event_type(msg),
-                                                     eventlog::get_event_category(msg), event_id_,
-                                                     current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr));
+        succeeded =
+            static_cast<bool>(::ReportEventA(event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg),
+                                             event_id_, current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr));
 
         if (!succeeded) {
             SPDLOG_THROW(win32_error("ReportEvent"));

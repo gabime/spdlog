@@ -40,9 +40,7 @@ struct source_loc {
     static constexpr source_loc current() { return source_loc{}; }
 #endif
 
-    [[nodiscard]] constexpr bool empty() const noexcept {
-        return line == 0 || filename == nullptr || short_filename == nullptr;
-    }
+    [[nodiscard]] constexpr bool empty() const noexcept { return line == 0 || filename == nullptr || short_filename == nullptr; }
 
     const char *filename{nullptr};
     const char *short_filename{nullptr};

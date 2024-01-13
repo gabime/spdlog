@@ -218,8 +218,7 @@ size_t filesize(FILE *f) {
     int fd = ::fileno(f);
     #endif
     // 64 bits(but not in osx, linux/musl or cygwin, where fstat64 is deprecated)
-    #if ((defined(__linux__) && defined(__GLIBC__)) || defined(__sun) || defined(_AIX)) && \
-        (defined(__LP64__) || defined(_LP64))
+    #if ((defined(__linux__) && defined(__GLIBC__)) || defined(__sun) || defined(_AIX)) && (defined(__LP64__) || defined(_LP64))
     struct stat64 st;
     if (::fstat64(fd, &st) == 0) {
         return static_cast<size_t>(st.st_size);
@@ -400,9 +399,9 @@ bool is_color_terminal() noexcept {
             return true;
         }
 
-        static constexpr std::array<const char *, 16> terms = {{"ansi", "color", "console", "cygwin", "gnome",
-                                                                "konsole", "kterm", "linux", "msys", "putty", "rxvt",
-                                                                "screen", "vt100", "xterm", "alacritty", "vt102"}};
+        static constexpr std::array<const char *, 16> terms = {{"ansi", "color", "console", "cygwin", "gnome", "konsole", "kterm",
+                                                                "linux", "msys", "putty", "rxvt", "screen", "vt100", "xterm",
+                                                                "alacritty", "vt102"}};
 
         const char *env_term_p = std::getenv("TERM");
         if (env_term_p == nullptr) {
@@ -473,8 +472,7 @@ void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
 
     if (result_size > 0) {
         target.resize(result_size);
-        result_size =
-            ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, target.data(), result_size);
+        result_size = ::MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, str.data(), str_size, target.data(), result_size);
         if (result_size > 0) {
             assert(result_size == target.size());
             return;

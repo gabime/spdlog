@@ -23,9 +23,9 @@ SPDLOG_API std::tm gmtime() noexcept;
 
 // eol definition
 #ifdef _WIN32
-    constexpr static const char *default_eol = "\r\n";
+constexpr static const char *default_eol = "\r\n";
 #else
-    constexpr static const char *default_eol = "\n";
+constexpr static const char *default_eol = "\n";
 #endif
 
 // folder separator

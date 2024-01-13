@@ -12,9 +12,7 @@
 
 namespace spdlog {
 
-void initialize_logger(std::shared_ptr<logger> logger) {
-    details::registry::instance().initialize_logger(std::move(logger));
-}
+void initialize_logger(std::shared_ptr<logger> logger) { details::registry::instance().initialize_logger(std::move(logger)); }
 
 std::shared_ptr<logger> get(const std::string &name) { return details::registry::instance().get(name); }
 
@@ -34,17 +32,11 @@ void set_level(level level) { details::registry::instance().set_level(level); }
 
 void flush_on(level level) { details::registry::instance().flush_on(level); }
 
-void set_error_handler(void (*handler)(const std::string &msg)) {
-    details::registry::instance().set_error_handler(handler);
-}
+void set_error_handler(void (*handler)(const std::string &msg)) { details::registry::instance().set_error_handler(handler); }
 
-void register_logger(std::shared_ptr<logger> logger) {
-    details::registry::instance().register_logger(std::move(logger));
-}
+void register_logger(std::shared_ptr<logger> logger) { details::registry::instance().register_logger(std::move(logger)); }
 
-void apply_all(const std::function<void(std::shared_ptr<logger>)> &fun) {
-    details::registry::instance().apply_all(fun);
-}
+void apply_all(const std::function<void(std::shared_ptr<logger>)> &fun) { details::registry::instance().apply_all(fun); }
 
 void drop(const std::string &name) { details::registry::instance().drop(name); }
 

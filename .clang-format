@@ -6,7 +6,7 @@ Standard:        c++17
 IndentWidth:     4
 TabWidth:        4
 UseTab:          Never
-ColumnLimit:     120
+ColumnLimit:     130
 AlignAfterOpenBracket: Align
 BinPackParameters: false
 AlignEscapedNewlines: Left

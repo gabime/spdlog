@@ -96,8 +96,8 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < iters; i++) {
             auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
             auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
-            auto logger = std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp),
-                                                         async_overflow_policy::block);
+            auto logger =
+                std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp), async_overflow_policy::block);
             bench_mt(howmany, std::move(logger), threads);
             // verify_file(filename, howmany);
         }

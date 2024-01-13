@@ -43,9 +43,8 @@ protected:
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
         const string_view_t str = string_view_t(formatted.data(), formatted.size());
-        QMetaObject::invokeMethod(
-            qt_object_, meta_method_.c_str(), Qt::AutoConnection,
-            Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
+        QMetaObject::invokeMethod(qt_object_, meta_method_.c_str(), Qt::AutoConnection,
+                                  Q_ARG(QString, QString::fromUtf8(str.data(), static_cast<int>(str.size())).trimmed()));
     }
 
     void flush_() override {}
@@ -206,8 +205,7 @@ protected:
 
         // insert the colorized text
         cursor.setCharFormat(params.level_color);
-        cursor.insertText(
-            params.payload.mid(params.color_range_start, params.color_range_end - params.color_range_start));
+        cursor.insertText(params.payload.mid(params.color_range_start, params.color_range_end - params.color_range_start));
 
         // insert the text after the color range with default format
         cursor.setCharFormat(params.default_color);
@@ -266,16 +264,12 @@ inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name,
 }
 // log to QObject
 template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> qt_logger_mt(const std::string &logger_name,
-                                            QObject *qt_object,
-                                            const std::string &meta_method) {
+inline std::shared_ptr<logger> qt_logger_mt(const std::string &logger_name, QObject *qt_object, const std::string &meta_method) {
     return Factory::template create<sinks::qt_sink_mt>(logger_name, qt_object, meta_method);
 }
 
 template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name,
-                                            QObject *qt_object,
-                                            const std::string &meta_method) {
+inline std::shared_ptr<logger> qt_logger_st(const std::string &logger_name, QObject *qt_object, const std::string &meta_method) {
     return Factory::template create<sinks::qt_sink_st>(logger_name, qt_object, meta_method);
 }
 

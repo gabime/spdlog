@@ -61,8 +61,7 @@ private:
 
 // create a dump_info that wraps the given container
 template <typename Container>
-inline details::dump_info<typename Container::const_iterator> to_hex(const Container &container,
-                                                                     size_t size_per_line = 32) {
+inline details::dump_info<typename Container::const_iterator> to_hex(const Container &container, size_t size_per_line = 32) {
     static_assert(sizeof(typename Container::value_type) == 1, "sizeof(Container::value_type) != 1");
     using Iter = typename Container::const_iterator;
     return details::dump_info<Iter>(std::begin(container), std::end(container), size_per_line);
@@ -139,8 +138,7 @@ struct formatter<spdlog::details::dump_info<T>, char> {
 
     // format the given bytes range as hex
     template <typename FormatContext, typename Container>
-    auto format(const spdlog::details::dump_info<Container> &the_range, FormatContext &ctx) const
-        -> decltype(ctx.out()) {
+    auto format(const spdlog::details::dump_info<Container> &the_range, FormatContext &ctx) const -> decltype(ctx.out()) {
         constexpr const char *hex_upper = "0123456789ABCDEF";
         constexpr const char *hex_lower = "0123456789abcdef";
         const char *hex_chars = use_uppercase ? hex_upper : hex_lower;

@@ -173,8 +173,7 @@ inline std::shared_ptr<logger> hourly_logger_mt(const std::string &logger_name,
                                                 bool truncate = false,
                                                 uint16_t max_files = 0,
                                                 const file_event_handlers &event_handlers = {}) {
-    return Factory::template create<sinks::hourly_file_sink_mt>(logger_name, filename, truncate, max_files,
-                                                                event_handlers);
+    return Factory::template create<sinks::hourly_file_sink_mt>(logger_name, filename, truncate, max_files, event_handlers);
 }
 
 template <typename Factory = spdlog::synchronous_factory>
@@ -183,7 +182,6 @@ inline std::shared_ptr<logger> hourly_logger_st(const std::string &logger_name,
                                                 bool truncate = false,
                                                 uint16_t max_files = 0,
                                                 const file_event_handlers &event_handlers = {}) {
-    return Factory::template create<sinks::hourly_file_sink_st>(logger_name, filename, truncate, max_files,
-                                                                event_handlers);
+    return Factory::template create<sinks::hourly_file_sink_st>(logger_name, filename, truncate, max_files, event_handlers);
 }
 }  // namespace spdlog

@@ -42,15 +42,14 @@ TEST_CASE("short level", "[pattern_formatter]") {
 }
 
 TEST_CASE("name", "[pattern_formatter]") {
-    REQUIRE(log_to_str("Some message", "[%n] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[pattern_tester] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester] Some message\n");
 }
 
 TEST_CASE("date MM/DD/YY ", "[pattern_formatter]") {
     auto now_tm = spdlog::details::os::localtime();
     std::stringstream oss;
-    oss << std::setfill('0') << std::setw(2) << now_tm.tm_mon + 1 << "/" << std::setw(2) << now_tm.tm_mday << "/"
-        << std::setw(2) << (now_tm.tm_year + 1900) % 1000 << " Some message\n";
+    oss << std::setfill('0') << std::setw(2) << now_tm.tm_mon + 1 << "/" << std::setw(2) << now_tm.tm_mday << "/" << std::setw(2)
+        << (now_tm.tm_year + 1900) % 1000 << " Some message\n";
     REQUIRE(log_to_str("Some message", "%D %v", spdlog::pattern_time_type::local, "\n") == oss.str());
 }
 
@@ -126,24 +125,18 @@ TEST_CASE("color range test6", "[pattern_formatter]") {
 //
 
 TEST_CASE("level_left_padded", "[pattern_formatter]") {
-    REQUIRE(log_to_str("Some message", "[%8l] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[    info] Some message\n");
-    REQUIRE(log_to_str("Some message", "[%8!l] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[    info] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%8l] %v", spdlog::pattern_time_type::local, "\n") == "[    info] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%8!l] %v", spdlog::pattern_time_type::local, "\n") == "[    info] Some message\n");
 }
 
 TEST_CASE("level_right_padded", "[pattern_formatter]") {
-    REQUIRE(log_to_str("Some message", "[%-8l] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[info    ] Some message\n");
-    REQUIRE(log_to_str("Some message", "[%-8!l] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[info    ] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%-8l] %v", spdlog::pattern_time_type::local, "\n") == "[info    ] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%-8!l] %v", spdlog::pattern_time_type::local, "\n") == "[info    ] Some message\n");
 }
 
 TEST_CASE("level_center_padded", "[pattern_formatter]") {
-    REQUIRE(log_to_str("Some message", "[%=8l] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[  info  ] Some message\n");
-    REQUIRE(log_to_str("Some message", "[%=8!l] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[  info  ] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%=8l] %v", spdlog::pattern_time_type::local, "\n") == "[  info  ] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%=8!l] %v", spdlog::pattern_time_type::local, "\n") == "[  info  ] Some message\n");
 }
 
 TEST_CASE("short level_left_padded", "[pattern_formatter]") {
@@ -162,20 +155,17 @@ TEST_CASE("short level_center_padded", "[pattern_formatter]") {
 }
 
 TEST_CASE("left_padded_short", "[pattern_formatter]") {
-    REQUIRE(log_to_str("Some message", "[%3n] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[pattern_tester] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%3n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester] Some message\n");
     REQUIRE(log_to_str("Some message", "[%3!n] %v", spdlog::pattern_time_type::local, "\n") == "[pat] Some message\n");
 }
 
 TEST_CASE("right_padded_short", "[pattern_formatter]") {
-    REQUIRE(log_to_str("Some message", "[%-3n] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[pattern_tester] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%-3n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester] Some message\n");
     REQUIRE(log_to_str("Some message", "[%-3!n] %v", spdlog::pattern_time_type::local, "\n") == "[pat] Some message\n");
 }
 
 TEST_CASE("center_padded_short", "[pattern_formatter]") {
-    REQUIRE(log_to_str("Some message", "[%=3n] %v", spdlog::pattern_time_type::local, "\n") ==
-            "[pattern_tester] Some message\n");
+    REQUIRE(log_to_str("Some message", "[%=3n] %v", spdlog::pattern_time_type::local, "\n") == "[pattern_tester] Some message\n");
     REQUIRE(log_to_str("Some message", "[%=3!n] %v", spdlog::pattern_time_type::local, "\n") == "[pat] Some message\n");
 }
 
@@ -220,13 +210,11 @@ TEST_CASE("padding_truncate_funcname", "[pattern_formatter]") {
     auto formatter = std::unique_ptr<spdlog::formatter>(new spdlog::pattern_formatter(pattern));
     test_sink.set_formatter(std::move(formatter));
 
-    spdlog::details::log_msg msg1{spdlog::source_loc{"ignored", 1, "func"}, "test_logger", spdlog::level::info,
-                                  "message"};
+    spdlog::details::log_msg msg1{spdlog::source_loc{"ignored", 1, "func"}, "test_logger", spdlog::level::info, "message"};
     test_sink.log(msg1);
     REQUIRE(test_sink.lines()[0] == "message [ func]");
 
-    spdlog::details::log_msg msg2{spdlog::source_loc{"ignored", 1, "function"}, "test_logger", spdlog::level::info,
-                                  "message"};
+    spdlog::details::log_msg msg2{spdlog::source_loc{"ignored", 1, "function"}, "test_logger", spdlog::level::info, "message"};
     test_sink.log(msg2);
     REQUIRE(test_sink.lines()[1] == "message [funct]");
 }
@@ -238,8 +226,7 @@ TEST_CASE("padding_funcname", "[pattern_formatter]") {
     auto formatter = std::unique_ptr<spdlog::formatter>(new spdlog::pattern_formatter(pattern));
     test_sink.set_formatter(std::move(formatter));
 
-    spdlog::details::log_msg msg1{spdlog::source_loc{"ignored", 1, "func"}, "test_logger", spdlog::level::info,
-                                  "message"};
+    spdlog::details::log_msg msg1{spdlog::source_loc{"ignored", 1, "func"}, "test_logger", spdlog::level::info, "message"};
     test_sink.log(msg1);
     REQUIRE(test_sink.lines()[0] == "message [      func]");
 
@@ -293,8 +280,7 @@ TEST_CASE("clone-formatter", "[pattern_formatter]") {
 
 TEST_CASE("clone-formatter-2", "[pattern_formatter]") {
     using spdlog::pattern_time_type;
-    auto formatter_1 =
-        std::make_shared<spdlog::pattern_formatter>("%D %X [%] [%n] %v", pattern_time_type::utc, "xxxxxx\n");
+    auto formatter_1 = std::make_shared<spdlog::pattern_formatter>("%D %X [%] [%n] %v", pattern_time_type::utc, "xxxxxx\n");
     auto formatter_2 = formatter_1->clone();
     std::string logger_name = "test2";
     spdlog::details::log_msg msg(logger_name, spdlog::level::info, "some message");
@@ -328,9 +314,7 @@ public:
 
     std::string some_txt;
 
-    std::unique_ptr<custom_flag_formatter> clone() const override {
-        return std::make_unique<custom_test_flag>(some_txt);
-    }
+    std::unique_ptr<custom_flag_formatter> clone() const override { return std::make_unique<custom_test_flag>(some_txt); }
 };
 // test clone with custom flag formatters
 TEST_CASE("clone-custom_formatter", "[pattern_formatter]") {
@@ -345,8 +329,7 @@ TEST_CASE("clone-custom_formatter", "[pattern_formatter]") {
     formatter_1->format(msg, formatted_1);
     formatter_2->format(msg, formatted_2);
 
-    auto expected =
-        spdlog::fmt_lib::format("[logger-name] [custom_output] some message{}", spdlog::details::os::default_eol);
+    auto expected = spdlog::fmt_lib::format("[logger-name] [custom_output] some message{}", spdlog::details::os::default_eol);
 
     REQUIRE(to_string_view(formatted_1) == expected);
     REQUIRE(to_string_view(formatted_2) == expected);
@@ -416,8 +399,7 @@ TEST_CASE("custom flags", "[pattern_formatter]") {
 
     spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info, "some message");
     formatter->format(msg, formatted);
-    auto expected =
-        spdlog::fmt_lib::format("[logger-name] [custom1] [custom2] some message{}", spdlog::details::os::default_eol);
+    auto expected = spdlog::fmt_lib::format("[logger-name] [custom1] [custom2] some message{}", spdlog::details::os::default_eol);
 
     REQUIRE(to_string_view(formatted) == expected);
 }
@@ -432,8 +414,8 @@ TEST_CASE("custom flags-padding", "[pattern_formatter]") {
 
     spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info, "some message");
     formatter->format(msg, formatted);
-    auto expected = spdlog::fmt_lib::format("[logger-name] [custom1] [     custom2] some message{}",
-                                            spdlog::details::os::default_eol);
+    auto expected =
+        spdlog::fmt_lib::format("[logger-name] [custom1] [     custom2] some message{}", spdlog::details::os::default_eol);
 
     REQUIRE(to_string_view(formatted) == expected);
 }

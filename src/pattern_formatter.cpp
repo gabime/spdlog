@@ -62,9 +62,7 @@ public:
     }
 
 private:
-    void pad_it(long count) {
-        fmt_helper::append_string_view(string_view_t(spaces_.data(), static_cast<size_t>(count)), dest_);
-    }
+    void pad_it(long count) { fmt_helper::append_string_view(string_view_t(spaces_.data(), static_cast<size_t>(count)), dest_); }
 
     const padding_info &padinfo_;
     memory_buf_t &dest_;
@@ -146,8 +144,7 @@ public:
 };
 
 // Full weekday name
-static std::array<const char *, 7> full_days{
-    {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}};
+static std::array<const char *, 7> full_days{{"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}};
 
 template <typename ScopedPadder>
 class A_formatter : public flag_formatter {
@@ -180,8 +177,8 @@ public:
 };
 
 // Full month name
-static const std::array<const char *, 12> full_months{{"January", "February", "March", "April", "May", "June", "July",
-                                                       "August", "September", "October", "November", "December"}};
+static const std::array<const char *, 12> full_months{
+    {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}};
 
 template <typename ScopedPadder>
 class B_formatter final : public flag_formatter {
@@ -614,9 +611,7 @@ public:
     explicit color_stop_formatter(padding_info padinfo)
         : flag_formatter(padinfo) {}
 
-    void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override {
-        msg.color_range_end = dest.size();
-    }
+    void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override { msg.color_range_end = dest.size(); }
 };
 
 // print source location
@@ -635,8 +630,7 @@ public:
         size_t text_size;
         if (padinfo_.enabled()) {
             // calc text size for padding based on "filename:line"
-            text_size =
-                std::char_traits<char>::length(msg.source.filename) + ScopedPadder::count_digits(msg.source.line) + 1;
+            text_size = std::char_traits<char>::length(msg.source.filename) + ScopedPadder::count_digits(msg.source.line) + 1;
         } else {
             text_size = 0;
         }
@@ -858,8 +852,7 @@ std::unique_ptr<formatter> pattern_formatter::clone() const {
     for (auto &it : custom_handlers_) {
         cloned_custom_formatters[it.first] = it.second->clone();
     }
-    auto cloned =
-        std::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_, std::move(cloned_custom_formatters));
+    auto cloned = std::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_, std::move(cloned_custom_formatters));
     cloned->need_localtime(need_localtime_);
 #if defined(__GNUC__) && __GNUC__ < 5
     return std::move(cloned);
@@ -1088,18 +1081,15 @@ void pattern_formatter::handle_flag_(char flag, details::padding_info padding) {
             break;
 
         case ('u'):  // elapsed time since last log message in nanos
-            formatters_.push_back(
-                std::make_unique<details::elapsed_formatter<Padder, std::chrono::nanoseconds>>(padding));
+            formatters_.push_back(std::make_unique<details::elapsed_formatter<Padder, std::chrono::nanoseconds>>(padding));
             break;
 
         case ('i'):  // elapsed time since last log message in micros
-            formatters_.push_back(
-                std::make_unique<details::elapsed_formatter<Padder, std::chrono::microseconds>>(padding));
+            formatters_.push_back(std::make_unique<details::elapsed_formatter<Padder, std::chrono::microseconds>>(padding));
             break;
 
         case ('o'):  // elapsed time since last log message in millis
-            formatters_.push_back(
-                std::make_unique<details::elapsed_formatter<Padder, std::chrono::milliseconds>>(padding));
+            formatters_.push_back(std::make_unique<details::elapsed_formatter<Padder, std::chrono::milliseconds>>(padding));
             break;
 
         case ('O'):  // elapsed time since last log message in seconds
@@ -1131,8 +1121,7 @@ void pattern_formatter::handle_flag_(char flag, details::padding_info padding) {
 // Extract given pad spec (e.g. %8X, %=8X, %-8!X, %8!X, %=8!X, %-8!X, %+8!X)
 // Advance the given it pass the end of the padding spec found (if any)
 // Return padding.
-details::padding_info pattern_formatter::handle_padspec_(std::string::const_iterator &it,
-                                                         std::string::const_iterator end) {
+details::padding_info pattern_formatter::handle_padspec_(std::string::const_iterator &it, std::string::const_iterator end) {
     using details::padding_info;
     using details::scoped_padder;
     const size_t max_width = 64;

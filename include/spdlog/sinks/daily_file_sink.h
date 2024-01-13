@@ -29,8 +29,8 @@ struct daily_filename_calculator {
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm) {
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
-        return fmt_lib::format(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900,
-                               now_tm.tm_mon + 1, now_tm.tm_mday, ext);
+        return fmt_lib::format(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}{}"), basename, now_tm.tm_year + 1900, now_tm.tm_mon + 1,
+                               now_tm.tm_mday, ext);
     }
 };
 
@@ -214,8 +214,8 @@ inline std::shared_ptr<logger> daily_logger_format_mt(const std::string &logger_
                                                       bool truncate = false,
                                                       uint16_t max_files = 0,
                                                       const file_event_handlers &event_handlers = {}) {
-    return Factory::template create<sinks::daily_file_format_sink_mt>(logger_name, filename, hour, minute, truncate,
-                                                                      max_files, event_handlers);
+    return Factory::template create<sinks::daily_file_format_sink_mt>(logger_name, filename, hour, minute, truncate, max_files,
+                                                                      event_handlers);
 }
 
 template <typename Factory = spdlog::synchronous_factory>
@@ -238,7 +238,7 @@ inline std::shared_ptr<logger> daily_logger_format_st(const std::string &logger_
                                                       bool truncate = false,
                                                       uint16_t max_files = 0,
                                                       const file_event_handlers &event_handlers = {}) {
-    return Factory::template create<sinks::daily_file_format_sink_st>(logger_name, filename, hour, minute, truncate,
-                                                                      max_files, event_handlers);
+    return Factory::template create<sinks::daily_file_format_sink_st>(logger_name, filename, hour, minute, truncate, max_files,
+                                                                      event_handlers);
 }
 }  // namespace spdlog

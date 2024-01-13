@@ -37,8 +37,7 @@ TEST_CASE("test_sink_levels", "[log_level]") {
 auto get_expected_messages(spdlog::level level) {
     // expected messages for each level
     static const std::map<spdlog::level, std::vector<std::string>> messages = {
-        {spdlog::level::trace,
-         {"trace hello", "debug hello", "info hello", "warning hello", "error hello", "critical hello"}},
+        {spdlog::level::trace, {"trace hello", "debug hello", "info hello", "warning hello", "error hello", "critical hello"}},
         {spdlog::level::debug, {"debug hello", "info hello", "warning hello", "error hello", "critical hello"}},
         {spdlog::level::info, {"info hello", "warning hello", "error hello", "critical hello"}},
         {spdlog::level::warn, {"warning hello", "error hello", "critical hello"}},

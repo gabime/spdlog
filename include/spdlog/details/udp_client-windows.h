@@ -75,8 +75,8 @@ public:
         }
 
         int option_value = TX_BUFFER_SIZE;
-        if (::setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, reinterpret_cast<const char *>(&option_value),
-                         sizeof(option_value)) < 0) {
+        if (::setsockopt(socket_, SOL_SOCKET, SO_SNDBUF, reinterpret_cast<const char *>(&option_value), sizeof(option_value)) <
+            0) {
             int last_error = ::WSAGetLastError();
             cleanup_();
             throw_winsock_error_("error: setsockopt(SO_SNDBUF) Failed!", last_error);

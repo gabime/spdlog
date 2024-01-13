@@ -31,8 +31,8 @@ TEST_CASE("daily_logger with dateonly calculator", "[daily_logger]") {
     spdlog::filename_t basename = SPDLOG_FILENAME_T("test_logs/daily_dateonly");
     std::tm tm = spdlog::details::os::localtime();
     filename_memory_buf_t w;
-    spdlog::fmt_lib::format_to(std::back_inserter(w), SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}"), basename,
-                               tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+    spdlog::fmt_lib::format_to(std::back_inserter(w), SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}"), basename, tm.tm_year + 1900,
+                               tm.tm_mon + 1, tm.tm_mday);
 
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
     for (int i = 0; i < 10; ++i) {
@@ -62,8 +62,8 @@ TEST_CASE("daily_logger with custom calculator", "[daily_logger]") {
     spdlog::filename_t basename = SPDLOG_FILENAME_T("test_logs/daily_dateonly");
     std::tm tm = spdlog::details::os::localtime();
     filename_memory_buf_t w;
-    spdlog::fmt_lib::format_to(std::back_inserter(w), SPDLOG_FILENAME_T("{}{:04d}{:02d}{:02d}"), basename,
-                               tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday);
+    spdlog::fmt_lib::format_to(std::back_inserter(w), SPDLOG_FILENAME_T("{}{:04d}{:02d}{:02d}"), basename, tm.tm_year + 1900,
+                               tm.tm_mon + 1, tm.tm_mday);
 
     auto logger = spdlog::create<sink_type>("logger", basename, 0, 0);
     for (int i = 0; i < 10; ++i) {
@@ -100,8 +100,8 @@ TEST_CASE("rotating_file_sink::calc_filename3", "[rotating_file_sink]") {
 
 TEST_CASE("daily_file_sink::daily_filename_calculator", "[daily_file_sink]") {
     // daily_YYYY-MM-DD_hh-mm.txt
-    auto filename = spdlog::sinks::daily_filename_calculator::calc_filename(SPDLOG_FILENAME_T("daily.txt"),
-                                                                            spdlog::details::os::localtime());
+    auto filename =
+        spdlog::sinks::daily_filename_calculator::calc_filename(SPDLOG_FILENAME_T("daily.txt"), spdlog::details::os::localtime());
     // date regex based on https://www.regular-expressions.info/dates.html
     std::basic_regex<spdlog::filename_t::value_type> re(
         SPDLOG_FILENAME_T(R"(^daily_(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])\.txt$)"));
@@ -113,11 +113,10 @@ TEST_CASE("daily_file_sink::daily_filename_calculator", "[daily_file_sink]") {
 TEST_CASE("daily_file_sink::daily_filename_format_calculator", "[daily_file_sink]") {
     std::tm tm = spdlog::details::os::localtime();
     // example-YYYY-MM-DD.log
-    auto filename =
-        spdlog::sinks::daily_filename_format_calculator::calc_filename(SPDLOG_FILENAME_T("example-%Y-%m-%d.log"), tm);
+    auto filename = spdlog::sinks::daily_filename_format_calculator::calc_filename(SPDLOG_FILENAME_T("example-%Y-%m-%d.log"), tm);
 
-    REQUIRE(filename == spdlog::fmt_lib::format(SPDLOG_FILENAME_T("example-{:04d}-{:02d}-{:02d}.log"),
-                                                tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday));
+    REQUIRE(filename == spdlog::fmt_lib::format(SPDLOG_FILENAME_T("example-{:04d}-{:02d}-{:02d}.log"), tm.tm_year + 1900,
+                                                tm.tm_mon + 1, tm.tm_mday));
 }
 
 /* Test removal of old files */

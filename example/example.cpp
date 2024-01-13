@@ -276,8 +276,7 @@ void user_defined_example() { spdlog::info("user defined type: {}", my_type(14))
 // Custom error handler. Will be triggered on log failure.
 void err_handler_example() {
     // can be set globally or per logger(logger->set_error_handler(..))
-    spdlog::set_error_handler(
-        [](const std::string &msg) { printf("*** Custom log error handler: %s ***\n", msg.c_str()); });
+    spdlog::set_error_handler([](const std::string &msg) { printf("*** Custom log error handler: %s ***\n", msg.c_str()); });
 }
 
 // syslog example (linux/osx/freebsd)

@@ -91,8 +91,7 @@ int main(int argc, char *argv[]) {
     auto disabled_logger = std::make_shared<spdlog::logger>("bench", std::make_shared<null_sink_mt>());
     disabled_logger->set_level(spdlog::level::off);
     benchmark::RegisterBenchmark("disabled-at-compile-time", bench_disabled_macro, disabled_logger);
-    benchmark::RegisterBenchmark("disabled-at-compile-time (global logger)", bench_disabled_macro_global_logger,
-                                 disabled_logger);
+    benchmark::RegisterBenchmark("disabled-at-compile-time (global logger)", bench_disabled_macro_global_logger, disabled_logger);
     benchmark::RegisterBenchmark("disabled-at-runtime", bench_logger, disabled_logger);
     benchmark::RegisterBenchmark("disabled-at-runtime (global logger)", bench_global_logger, disabled_logger);
 
@@ -112,8 +111,7 @@ int main(int argc, char *argv[]) {
         spdlog::drop("basic_st");
 
         // rotating st
-        auto rotating_st =
-            spdlog::rotating_logger_st("rotating_st", "latency_logs/rotating_st.log", file_size, rotating_files);
+        auto rotating_st = spdlog::rotating_logger_st("rotating_st", "latency_logs/rotating_st.log", file_size, rotating_files);
         benchmark::RegisterBenchmark("rotating_st", bench_logger, std::move(rotating_st))->UseRealTime();
         spdlog::drop("rotating_st");
 
@@ -134,11 +132,8 @@ int main(int argc, char *argv[]) {
         spdlog::drop("basic_mt");
 
         // rotating mt
-        auto rotating_mt =
-            spdlog::rotating_logger_mt("rotating_mt", "latency_logs/rotating_mt.log", file_size, rotating_files);
-        benchmark::RegisterBenchmark("rotating_mt", bench_logger, std::move(rotating_mt))
-            ->Threads(n_threads)
-            ->UseRealTime();
+        auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "latency_logs/rotating_mt.log", file_size, rotating_files);
+        benchmark::RegisterBenchmark("rotating_mt", bench_logger, std::move(rotating_mt))->Threads(n_threads)->UseRealTime();
         spdlog::drop("rotating_mt");
 
         // daily mt
@@ -150,8 +145,8 @@ int main(int argc, char *argv[]) {
     // async
     auto queue_size = 1024 * 1024 * 3;
     auto tp = std::make_shared<spdlog::details::thread_pool>(queue_size, 1);
-    auto async_logger = std::make_shared<spdlog::async_logger>(
-        "async_logger", std::make_shared<null_sink_mt>(), std::move(tp), spdlog::async_overflow_policy::overrun_oldest);
+    auto async_logger = std::make_shared<spdlog::async_logger>("async_logger", std::make_shared<null_sink_mt>(), std::move(tp),
+                                                               spdlog::async_overflow_policy::overrun_oldest);
     benchmark::RegisterBenchmark("async_logger", bench_logger, async_logger)->Threads(n_threads)->UseRealTime();
     benchmark::Initialize(&argc, argv);
     benchmark::RunSpecifiedBenchmarks();

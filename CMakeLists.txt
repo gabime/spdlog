@@ -287,8 +287,7 @@ if(NOT SPDLOG_USE_STD_FORMAT)
     target_link_libraries(spdlog PUBLIC fmt::fmt)
 endif()
 spdlog_enable_warnings(spdlog)
-set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION
-                                                                  ${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR})
+set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION  ${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR})
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
 
 # set source groups for visual studio
