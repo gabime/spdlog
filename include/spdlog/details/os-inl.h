@@ -177,12 +177,12 @@ SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename
 // Return true if path exists (file or directory)
 SPDLOG_INLINE bool path_exists(const filename_t &filename) SPDLOG_NOEXCEPT {
 #ifdef _WIN32
+    struct _stat buffer;
     #ifdef SPDLOG_WCHAR_FILENAMES
-    auto attribs = ::GetFileAttributesW(filename.c_str());
+    return (::_wstat(filename.c_str(), &buffer) == 0);
     #else
-    auto attribs = ::GetFileAttributesA(filename.c_str());
+    return (::_stat(filename.c_str(), &buffer) == 0);
     #endif
-    return attribs != INVALID_FILE_ATTRIBUTES;
 #else  // common linux/unix all have the stat system call
     struct stat buffer;
     return (::stat(filename.c_str(), &buffer) == 0);
