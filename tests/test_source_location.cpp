@@ -14,8 +14,7 @@ TEST_CASE("test_source_location", "[source_location]") {
     oss_logger.set_pattern("%s:%# %v");
 
     oss_logger.info("Hello {}", "source location");
-    REQUIRE(oss.str() ==
-            std::string("test_source_location.cpp:16 Hello source location") + default_eol);
+    REQUIRE(oss.str() == std::string("test_source_location.cpp:16 Hello source location") + default_eol);
 }
 
 #endif

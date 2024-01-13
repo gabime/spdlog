@@ -10,8 +10,7 @@ static void test_single_print(std::function<void(std::string const &)> do_log,
                               WORD expected_ev_type) {
     using namespace std::chrono;
     do_log(expected_contents);
-    const auto expected_time_generated =
-        duration_cast<seconds>(system_clock::now().time_since_epoch()).count();
+    const auto expected_time_generated = duration_cast<seconds>(system_clock::now().time_since_epoch()).count();
 
     struct handle_t {
         HANDLE handle_;
@@ -26,16 +25,16 @@ static void test_single_print(std::function<void(std::string const &)> do_log,
     REQUIRE(event_log.handle_);
 
     DWORD read_bytes{}, size_needed{};
-    auto ok = ::ReadEventLogA(event_log.handle_, EVENTLOG_SEQUENTIAL_READ | EVENTLOG_BACKWARDS_READ,
-                              0, &read_bytes, 0, &read_bytes, &size_needed);
+    auto ok = ::ReadEventLogA(event_log.handle_, EVENTLOG_SEQUENTIAL_READ | EVENTLOG_BACKWARDS_READ, 0, &read_bytes, 0,
+                              &read_bytes, &size_needed);
     REQUIRE(!ok);
     REQUIRE(::GetLastError() == ERROR_INSUFFICIENT_BUFFER);
 
     std::vector<char> record_buffer(size_needed);
     PEVENTLOGRECORD record = (PEVENTLOGRECORD)record_buffer.data();
 
-    ok = ::ReadEventLogA(event_log.handle_, EVENTLOG_SEQUENTIAL_READ | EVENTLOG_BACKWARDS_READ, 0,
-                         record, size_needed, &read_bytes, &size_needed);
+    ok = ::ReadEventLogA(event_log.handle_, EVENTLOG_SEQUENTIAL_READ | EVENTLOG_BACKWARDS_READ, 0, record, size_needed,
+                         &read_bytes, &size_needed);
     REQUIRE(ok);
 
     REQUIRE(record->NumStrings == 1);
@@ -56,16 +55,16 @@ TEST_CASE("eventlog", "[eventlog]") {
 
     test_sink->set_pattern("%v");
 
-    test_single_print([&test_logger](std::string const &msg) { test_logger.trace(msg); },
-                      "my trace message", EVENTLOG_SUCCESS);
-    test_single_print([&test_logger](std::string const &msg) { test_logger.debug(msg); },
-                      "my debug message", EVENTLOG_SUCCESS);
-    test_single_print([&test_logger](std::string const &msg) { test_logger.info(msg); },
-                      "my info message", EVENTLOG_INFORMATION_TYPE);
-    test_single_print([&test_logger](std::string const &msg) { test_logger.warn(msg); },
-                      "my warn message", EVENTLOG_WARNING_TYPE);
-    test_single_print([&test_logger](std::string const &msg) { test_logger.error(msg); },
-                      "my error message", EVENTLOG_ERROR_TYPE);
-    test_single_print([&test_logger](std::string const &msg) { test_logger.critical(msg); },
-                      "my critical message", EVENTLOG_ERROR_TYPE);
+    test_single_print([&test_logger](std::string const &msg) { test_logger.trace(msg); }, "my trace message",
+                      EVENTLOG_SUCCESS);
+    test_single_print([&test_logger](std::string const &msg) { test_logger.debug(msg); }, "my debug message",
+                      EVENTLOG_SUCCESS);
+    test_single_print([&test_logger](std::string const &msg) { test_logger.info(msg); }, "my info message",
+                      EVENTLOG_INFORMATION_TYPE);
+    test_single_print([&test_logger](std::string const &msg) { test_logger.warn(msg); }, "my warn message",
+                      EVENTLOG_WARNING_TYPE);
+    test_single_print([&test_logger](std::string const &msg) { test_logger.error(msg); }, "my error message",
+                      EVENTLOG_ERROR_TYPE);
+    test_single_print([&test_logger](std::string const &msg) { test_logger.critical(msg); }, "my critical message",
+                      EVENTLOG_ERROR_TYPE);
 }

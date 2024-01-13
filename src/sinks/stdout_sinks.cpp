@@ -56,8 +56,7 @@ void stdout_sink_base<Mutex>::sink_it_(const details::log_msg &msg) {
     DWORD bytes_written = 0;
     bool ok = ::WriteFile(handle_, formatted.data(), size, &bytes_written, nullptr) != 0;
     if (!ok) {
-        throw_spdlog_ex("stdout_sink_base: WriteFile() failed. GetLastError(): " +
-                        std::to_string(::GetLastError()));
+        throw_spdlog_ex("stdout_sink_base: WriteFile() failed. GetLastError(): " + std::to_string(::GetLastError()));
     }
 #else
     memory_buf_t formatted;
@@ -118,14 +117,14 @@ template class SPDLOG_API spdlog::sinks::stderr_sink<spdlog::details::null_mutex
 #include "spdlog/async.h"
 #include "spdlog/details/synchronous_factory.h"
 
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stdout_logger_mt<spdlog::synchronous_factory>(const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stdout_logger_st<spdlog::synchronous_factory>(const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stderr_logger_mt<spdlog::synchronous_factory>(const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stderr_logger_st<spdlog::synchronous_factory>(const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt<spdlog::synchronous_factory>(
+    const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st<spdlog::synchronous_factory>(
+    const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt<spdlog::synchronous_factory>(
+    const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st<spdlog::synchronous_factory>(
+    const std::string &logger_name);
 
 template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt<spdlog::async_factory>(
     const std::string &logger_name);

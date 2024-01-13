@@ -58,12 +58,10 @@ protected:
 
         if (client_ != nullptr) {
             auto doc = document{} << "timestamp" << bsoncxx::types::b_date(msg.time) << "level"
-                                  << level::to_string_view(msg.log_level).data() << "level_num"
-                                  << msg.log_level << "message"
-                                  << std::string(msg.payload.begin(), msg.payload.end())
-                                  << "logger_name"
-                                  << std::string(msg.logger_name.begin(), msg.logger_name.end())
-                                  << "thread_id" << static_cast<int>(msg.thread_id) << finalize;
+                                  << level::to_string_view(msg.log_level).data() << "level_num" << msg.log_level
+                                  << "message" << std::string(msg.payload.begin(), msg.payload.end()) << "logger_name"
+                                  << std::string(msg.logger_name.begin(), msg.logger_name.end()) << "thread_id"
+                                  << static_cast<int>(msg.thread_id) << finalize;
             client_->database(db_name_).collection(coll_name_).insert_one(doc.view());
         }
     }
@@ -86,23 +84,19 @@ using mongo_sink_st = mongo_sink<spdlog::details::null_mutex>;
 }  // namespace sinks
 
 template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> mongo_logger_mt(
-    const std::string &logger_name,
-    const std::string &db_name,
-    const std::string &collection_name,
-    const std::string &uri = "mongodb://localhost:27017") {
-    return Factory::template create<sinks::mongo_sink_mt>(logger_name, db_name, collection_name,
-                                                          uri);
+inline std::shared_ptr<logger> mongo_logger_mt(const std::string &logger_name,
+                                               const std::string &db_name,
+                                               const std::string &collection_name,
+                                               const std::string &uri = "mongodb://localhost:27017") {
+    return Factory::template create<sinks::mongo_sink_mt>(logger_name, db_name, collection_name, uri);
 }
 
 template <typename Factory = spdlog::synchronous_factory>
-inline std::shared_ptr<logger> mongo_logger_st(
-    const std::string &logger_name,
-    const std::string &db_name,
-    const std::string &collection_name,
-    const std::string &uri = "mongodb://localhost:27017") {
-    return Factory::template create<sinks::mongo_sink_st>(logger_name, db_name, collection_name,
-                                                          uri);
+inline std::shared_ptr<logger> mongo_logger_st(const std::string &logger_name,
+                                               const std::string &db_name,
+                                               const std::string &collection_name,
+                                               const std::string &uri = "mongodb://localhost:27017") {
+    return Factory::template create<sinks::mongo_sink_st>(logger_name, db_name, collection_name, uri);
 }
 
 }  // namespace spdlog

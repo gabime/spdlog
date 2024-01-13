@@ -88,8 +88,8 @@ inline std::shared_ptr<logger> syslog_logger_mt(const std::string &logger_name,
                                                 int syslog_option = 0,
                                                 int syslog_facility = LOG_USER,
                                                 bool enable_formatting = false) {
-    return Factory::template create<sinks::syslog_sink_mt>(logger_name, syslog_ident, syslog_option,
-                                                           syslog_facility, enable_formatting);
+    return Factory::template create<sinks::syslog_sink_mt>(logger_name, syslog_ident, syslog_option, syslog_facility,
+                                                           enable_formatting);
 }
 
 template <typename Factory = spdlog::synchronous_factory>
@@ -98,7 +98,7 @@ inline std::shared_ptr<logger> syslog_logger_st(const std::string &logger_name,
                                                 int syslog_option = 0,
                                                 int syslog_facility = LOG_USER,
                                                 bool enable_formatting = false) {
-    return Factory::template create<sinks::syslog_sink_st>(logger_name, syslog_ident, syslog_option,
-                                                           syslog_facility, enable_formatting);
+    return Factory::template create<sinks::syslog_sink_st>(logger_name, syslog_ident, syslog_option, syslog_facility,
+                                                           enable_formatting);
 }
 }  // namespace spdlog

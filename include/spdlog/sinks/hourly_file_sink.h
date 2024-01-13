@@ -29,9 +29,8 @@ struct hourly_filename_calculator {
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm) {
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
-        return fmt_lib::format(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}{}"), basename,
-                               now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday,
-                               now_tm.tm_hour, ext);
+        return fmt_lib::format(SPDLOG_FILENAME_T("{}_{:04d}-{:02d}-{:02d}_{:02d}{}"), basename, now_tm.tm_year + 1900,
+                               now_tm.tm_mon + 1, now_tm.tm_mday, now_tm.tm_hour, ext);
     }
 };
 
@@ -145,8 +144,7 @@ private:
             bool ok = remove_if_exists(old_filename) == 0;
             if (!ok) {
                 filenames_q_.push_back(std::move(current_file));
-                SPDLOG_THROW(spdlog_ex(
-                    "Failed removing hourly file " + filename_to_str(old_filename), errno));
+                SPDLOG_THROW(spdlog_ex("Failed removing hourly file " + filename_to_str(old_filename), errno));
             }
         }
         filenames_q_.push_back(std::move(current_file));
@@ -175,8 +173,8 @@ inline std::shared_ptr<logger> hourly_logger_mt(const std::string &logger_name,
                                                 bool truncate = false,
                                                 uint16_t max_files = 0,
                                                 const file_event_handlers &event_handlers = {}) {
-    return Factory::template create<sinks::hourly_file_sink_mt>(logger_name, filename, truncate,
-                                                                max_files, event_handlers);
+    return Factory::template create<sinks::hourly_file_sink_mt>(logger_name, filename, truncate, max_files,
+                                                                event_handlers);
 }
 
 template <typename Factory = spdlog::synchronous_factory>
@@ -185,7 +183,7 @@ inline std::shared_ptr<logger> hourly_logger_st(const std::string &logger_name,
                                                 bool truncate = false,
                                                 uint16_t max_files = 0,
                                                 const file_event_handlers &event_handlers = {}) {
-    return Factory::template create<sinks::hourly_file_sink_st>(logger_name, filename, truncate,
-                                                                max_files, event_handlers);
+    return Factory::template create<sinks::hourly_file_sink_st>(logger_name, filename, truncate, max_files,
+                                                                event_handlers);
 }
 }  // namespace spdlog

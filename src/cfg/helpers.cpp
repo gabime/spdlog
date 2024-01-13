@@ -17,9 +17,8 @@ namespace helpers {
 
 // inplace convert to lowercase
 inline std::string &to_lower_(std::string &str) {
-    std::transform(str.begin(), str.end(), str.begin(), [](char ch) {
-        return static_cast<char>((ch >= 'A' && ch <= 'Z') ? ch + ('a' - 'A') : ch);
-    });
+    std::transform(str.begin(), str.end(), str.begin(),
+                   [](char ch) { return static_cast<char>((ch >= 'A' && ch <= 'Z') ? ch + ('a' - 'A') : ch); });
     return str;
 }
 
@@ -93,8 +92,7 @@ void load_levels(const std::string &input) {
         }
     }
 
-    details::registry::instance().set_levels(std::move(levels),
-                                             global_level_found ? &global_level : nullptr);
+    details::registry::instance().set_levels(std::move(levels), global_level_found ? &global_level : nullptr);
 }
 
 }  // namespace helpers

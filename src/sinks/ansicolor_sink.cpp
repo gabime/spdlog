@@ -45,8 +45,7 @@ void ansicolor_sink<Mutex>::set_color_mode(color_mode mode) {
             should_do_colors_ = true;
             return;
         case color_mode::automatic:
-            should_do_colors_ =
-                details::os::in_terminal(target_file_) && details::os::is_color_terminal();
+            should_do_colors_ = details::os::in_terminal(target_file_) && details::os::is_color_terminal();
             return;
         case color_mode::never:
             should_do_colors_ = false;

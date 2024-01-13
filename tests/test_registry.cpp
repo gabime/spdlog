@@ -11,29 +11,25 @@ TEST_CASE("register_drop", "[registry]") {
     spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name);
     REQUIRE(spdlog::get(tested_logger_name) != nullptr);
     // Throw if registering existing name
-    REQUIRE_THROWS_AS(spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name),
-                      spdlog::spdlog_ex);
+    REQUIRE_THROWS_AS(spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name), spdlog::spdlog_ex);
 }
 
 TEST_CASE("explicit register", "[registry]") {
     spdlog::drop_all();
-    auto logger = std::make_shared<spdlog::logger>(tested_logger_name,
-                                                   std::make_shared<spdlog::sinks::null_sink_st>());
+    auto logger = std::make_shared<spdlog::logger>(tested_logger_name, std::make_shared<spdlog::sinks::null_sink_st>());
     spdlog::register_logger(logger);
     REQUIRE(spdlog::get(tested_logger_name) != nullptr);
     // Throw if registering existing name
-    REQUIRE_THROWS_AS(spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name),
-                      spdlog::spdlog_ex);
+    REQUIRE_THROWS_AS(spdlog::create<spdlog::sinks::null_sink_mt>(tested_logger_name), spdlog::spdlog_ex);
 }
 #endif
 
 TEST_CASE("apply_all", "[registry]") {
     spdlog::drop_all();
-    auto logger = std::make_shared<spdlog::logger>(tested_logger_name,
-                                                   std::make_shared<spdlog::sinks::null_sink_st>());
+    auto logger = std::make_shared<spdlog::logger>(tested_logger_name, std::make_shared<spdlog::sinks::null_sink_st>());
     spdlog::register_logger(logger);
-    auto logger2 = std::make_shared<spdlog::logger>(
-        tested_logger_name2, std::make_shared<spdlog::sinks::null_sink_st>());
+    auto logger2 =
+        std::make_shared<spdlog::logger>(tested_logger_name2, std::make_shared<spdlog::sinks::null_sink_st>());
     spdlog::register_logger(logger2);
 
     int counter = 0;
@@ -100,8 +96,8 @@ TEST_CASE("disable automatic registration", "[registry]") {
     spdlog::set_level(level);
     // but disable automatic registration
     spdlog::set_automatic_registration(false);
-    auto logger1 = spdlog::create<spdlog::sinks::daily_file_sink_st>(
-        tested_logger_name, SPDLOG_FILENAME_T("filename"), 11, 59);
+    auto logger1 =
+        spdlog::create<spdlog::sinks::daily_file_sink_st>(tested_logger_name, SPDLOG_FILENAME_T("filename"), 11, 59);
     auto logger2 = spdlog::create_async<spdlog::sinks::stdout_color_sink_mt>(tested_logger_name2);
     // loggers should not be part of the registry
     REQUIRE_FALSE(spdlog::get(tested_logger_name));

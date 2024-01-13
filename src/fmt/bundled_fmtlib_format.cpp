@@ -4,7 +4,7 @@
 
 #if defined(SPDLOG_USE_STD_FORMAT)
 
-#include "spdlog/fmt/bundled/format-inl.h"
+    #include "spdlog/fmt/bundled/format-inl.h"
 FMT_BEGIN_NAMESPACE
 namespace detail {
 
@@ -23,10 +23,7 @@ template FMT_API auto decimal_point_impl(locale_ref) -> char;
 
 template FMT_API void buffer<char>::append(const char *, const char *);
 
-template FMT_API void vformat_to(buffer<char> &,
-                                 string_view,
-                                 typename vformat_args<>::type,
-                                 locale_ref);
+template FMT_API void vformat_to(buffer<char> &, string_view, typename vformat_args<>::type, locale_ref);
 
 // Explicit instantiations for wchar_t.
 

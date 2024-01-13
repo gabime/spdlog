@@ -63,8 +63,7 @@ private:
 template <typename Container>
 inline details::dump_info<typename Container::const_iterator> to_hex(const Container &container,
                                                                      size_t size_per_line = 32) {
-    static_assert(sizeof(typename Container::value_type) == 1,
-                  "sizeof(Container::value_type) != 1");
+    static_assert(sizeof(typename Container::value_type) == 1, "sizeof(Container::value_type) != 1");
     using Iter = typename Container::const_iterator;
     return details::dump_info<Iter>(std::begin(container), std::end(container), size_per_line);
 }
@@ -72,11 +71,10 @@ inline details::dump_info<typename Container::const_iterator> to_hex(const Conta
 #if __cpp_lib_span >= 202002L
 
 template <typename Value, size_t Extent>
-inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(
-    const std::span<Value, Extent> &container, size_t size_per_line = 32) {
+inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(const std::span<Value, Extent> &container,
+                                                                              size_t size_per_line = 32) {
     using Container = std::span<Value, Extent>;
-    static_assert(sizeof(typename Container::value_type) == 1,
-                  "sizeof(Container::value_type) != 1");
+    static_assert(sizeof(typename Container::value_type) == 1, "sizeof(Container::value_type) != 1");
     using Iter = typename Container::iterator;
     return details::dump_info<Iter>(std::begin(container), std::end(container), size_per_line);
 }
@@ -85,9 +83,7 @@ inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(
 
 // create dump_info from ranges
 template <typename It>
-inline details::dump_info<It> to_hex(const It range_begin,
-                                     const It range_end,
-                                     size_t size_per_line = 32) {
+inline details::dump_info<It> to_hex(const It range_begin, const It range_end, size_t size_per_line = 32) {
     return details::dump_info<It>(range_begin, range_end, size_per_line);
 }
 
@@ -160,8 +156,7 @@ struct formatter<spdlog::details::dump_info<T>, char> {
         for (auto i = the_range.get_begin(); i != the_range.get_end(); i++) {
             auto ch = static_cast<unsigned char>(*i);
 
-            if (put_newlines &&
-                (i == the_range.get_begin() || i - start_of_line >= size_per_line)) {
+            if (put_newlines && (i == the_range.get_begin() || i - start_of_line >= size_per_line)) {
                 if (show_ascii && i != the_range.get_begin()) {
                     *inserter++ = delimiter;
                     *inserter++ = delimiter;

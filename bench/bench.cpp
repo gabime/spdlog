@@ -38,16 +38,15 @@ static const int max_threads = 1000;
 
 void bench_threaded_logging(size_t threads, int iters) {
     spdlog::info("**************************************************************");
-    spdlog::info(spdlog::fmt_lib::format(
-        std::locale("en_US.UTF-8"), "Multi threaded: {:L} threads, {:L} messages", threads, iters));
+    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "Multi threaded: {:L} threads, {:L} messages",
+                                         threads, iters));
     spdlog::info("**************************************************************");
 
     auto basic_mt = spdlog::basic_logger_mt("basic_mt", "logs/basic_mt.log", true);
     bench_mt(iters, std::move(basic_mt), threads);
 
     spdlog::info("");
-    auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt.log", file_size,
-                                                  rotating_files);
+    auto rotating_mt = spdlog::rotating_logger_mt("rotating_mt", "logs/rotating_mt.log", file_size, rotating_files);
     bench_mt(iters, std::move(rotating_mt), threads);
 
     spdlog::info("");
@@ -62,16 +61,14 @@ void bench_threaded_logging(size_t threads, int iters) {
 
 void bench_single_threaded(int iters) {
     spdlog::info("**************************************************************");
-    spdlog::info(
-        spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "Single threaded: {} messages", iters));
+    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "Single threaded: {} messages", iters));
     spdlog::info("**************************************************************");
 
     auto basic_st = spdlog::basic_logger_st("basic_st", "logs/basic_st.log", true);
     bench(iters, std::move(basic_st));
 
     spdlog::info("");
-    auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size,
-                                                  rotating_files);
+    auto rotating_st = spdlog::rotating_logger_st("rotating_st", "logs/rotating_st.log", file_size, rotating_files);
     bench(iters, std::move(rotating_st));
 
     spdlog::info("");
@@ -98,8 +95,7 @@ int main(int argc, char *argv[]) {
         }
 
         if (threads > max_threads) {
-            throw std::runtime_error(
-                spdlog::fmt_lib::format("Number of threads exceeds maximum({})", max_threads));
+            throw std::runtime_error(spdlog::fmt_lib::format("Number of threads exceeds maximum({})", max_threads));
         }
 
         bench_single_threaded(iters);
@@ -125,9 +121,8 @@ void bench(int howmany, std::shared_ptr<spdlog::logger> log) {
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
 
-    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"),
-                                         "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(),
-                                         delta_d, size_t(howmany / delta_d)));
+    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec",
+                                         log->name(), delta_d, size_t(howmany / delta_d)));
     spdlog::drop(log->name());
 }
 
@@ -153,9 +148,8 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> log, size_t thread_co
 
     auto delta = high_resolution_clock::now() - start;
     auto delta_d = duration_cast<duration<double>>(delta).count();
-    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"),
-                                         "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec", log->name(),
-                                         delta_d, size_t(howmany / delta_d)));
+    spdlog::info(spdlog::fmt_lib::format(std::locale("en_US.UTF-8"), "{:<30} Elapsed: {:0.2f} secs {:>16L}/sec",
+                                         log->name(), delta_d, size_t(howmany / delta_d)));
     spdlog::drop(log->name());
 }
 

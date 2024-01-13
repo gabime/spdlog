@@ -44,8 +44,7 @@ void verify_file(const char *filename, int expected_count) {
     spdlog::info("Verifying {} to contain {} line..", filename, expected_count);
     auto count = count_lines(filename);
     if (count != expected_count) {
-        spdlog::error("Test failed. {} has {} lines instead of {}", filename, count,
-                      expected_count);
+        spdlog::error("Test failed. {} has {} lines instead of {}", filename, count, expected_count);
         exit(1);
     }
     spdlog::info("Line count OK ({})\n", count);
@@ -85,8 +84,7 @@ int main(int argc, char *argv[]) {
         spdlog::info("Messages     : {:L}", howmany);
         spdlog::info("Threads      : {:L}", threads);
         spdlog::info("Queue        : {:L} slots", queue_size);
-        spdlog::info("Queue memory : {:L} x {:L} = {:L} KB ", queue_size, slot_size,
-                     (queue_size * slot_size) / 1024);
+        spdlog::info("Queue memory : {:L} x {:L} = {:L} KB ", queue_size, slot_size, (queue_size * slot_size) / 1024);
         spdlog::info("Total iters  : {:L}", iters);
         spdlog::info("-------------------------------------------------");
 
@@ -98,8 +96,8 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < iters; i++) {
             auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
             auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
-            auto logger = std::make_shared<async_logger>(
-                "async_logger", std::move(file_sink), std::move(tp), async_overflow_policy::block);
+            auto logger = std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp),
+                                                         async_overflow_policy::block);
             bench_mt(howmany, std::move(logger), threads);
             // verify_file(filename, howmany);
         }
@@ -113,9 +111,8 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < iters; i++) {
             auto tp = std::make_shared<details::thread_pool>(queue_size, 1);
             auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename, true);
-            auto logger =
-                std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp),
-                                               async_overflow_policy::overrun_oldest);
+            auto logger = std::make_shared<async_logger>("async_logger", std::move(file_sink), std::move(tp),
+                                                         async_overflow_policy::overrun_oldest);
             bench_mt(howmany, std::move(logger), threads);
         }
         spdlog::shutdown();
@@ -142,8 +139,7 @@ void bench_mt(int howmany, std::shared_ptr<spdlog::logger> logger, int thread_co
     int msgs_per_thread_mod = howmany % thread_count;
     for (int t = 0; t < thread_count; ++t) {
         if (t == 0 && msgs_per_thread_mod)
-            threads.push_back(
-                std::thread(thread_fun, logger, msgs_per_thread + msgs_per_thread_mod));
+            threads.push_back(std::thread(thread_fun, logger, msgs_per_thread + msgs_per_thread_mod));
         else
             threads.push_back(std::thread(thread_fun, logger, msgs_per_thread));
     }

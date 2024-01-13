@@ -15,9 +15,8 @@
 #include <string>
 #include <type_traits>
 
-#include "./spdlog_config.h"
 #include "./source_loc.h"
-
+#include "./spdlog_config.h"
 
 #if __has_include(<version>)
     #include <version>
@@ -43,8 +42,7 @@
 
 #include "fmt/fmt.h"
 
-#if !defined(SPDLOG_USE_STD_FORMAT) && \
-    FMT_VERSION >= 80000  // backward compatibility with fmt versions older than 8
+#if !defined(SPDLOG_USE_STD_FORMAT) && FMT_VERSION >= 80000  // backward compatibility with fmt versions older than 8
     #define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
     #if defined(SPDLOG_WCHAR_FILENAMES)
         #include "fmt/xchar.h"
@@ -156,14 +154,12 @@ using atomic_level_t = details::null_atomic<level>;
 using atomic_level_t = std::atomic<level>;
 #endif
 
-
-[[nodiscard]] constexpr size_t level_to_number(level lvl) noexcept {
-    return static_cast<size_t>(lvl);
-}
+[[nodiscard]] constexpr size_t level_to_number(level lvl) noexcept { return static_cast<size_t>(lvl); }
 
 constexpr auto levels_count = level_to_number(level::n_levels);
-constexpr std::array<string_view_t, levels_count> level_string_views  { "trace", "debug", "info", "warning", "error", "critical", "off" };
-constexpr std::array<string_view_t, levels_count> short_level_names { "T", "D", "I", "W", "E", "C", "O" };
+constexpr std::array<string_view_t, levels_count> level_string_views{"trace", "debug",    "info", "warning",
+                                                                     "error", "critical", "off"};
+constexpr std::array<string_view_t, levels_count> short_level_names{"T", "D", "I", "W", "E", "C", "O"};
 
 [[nodiscard]] constexpr string_view_t to_string_view(spdlog::level lvl) noexcept {
     return level_string_views.at(level_to_number(lvl));
@@ -221,8 +217,7 @@ struct loc_with_fmt {
 
 #ifndef SPDLOG_USE_STD_FORMAT
 
-    constexpr loc_with_fmt(fmt::runtime_format_string<char> fmt_str,
-                           source_loc loc = source_loc::current()) noexcept
+    constexpr loc_with_fmt(fmt::runtime_format_string<char> fmt_str, source_loc loc = source_loc::current()) noexcept
         : loc(loc),
           fmt_string(fmt_str.str) {}
 
@@ -250,40 +245,33 @@ namespace details {
     return spdlog::string_view_t{buf.data(), buf.size()};
 }
 
-[[nodiscard]] constexpr spdlog::string_view_t to_string_view(spdlog::string_view_t str) noexcept {
-    return str;
-}
+[[nodiscard]] constexpr spdlog::string_view_t to_string_view(spdlog::string_view_t str) noexcept { return str; }
 
 #if defined(SPDLOG_WCHAR_FILENAMES)
 [[nodiscard]] constexpr spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf) noexcept {
     return spdlog::wstring_view_t{buf.data(), buf.size()};
 }
 
-[[nodiscard]] constexpr spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) noexcept {
-    return str;
-}
+[[nodiscard]] constexpr spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str) noexcept { return str; }
 #endif
 
 // convert format_string<...> to string_view depending on format lib versions
 #if defined(SPDLOG_USE_STD_FORMAT)
     #if __cpp_lib_format >= 202207L  // std::format and __cpp_lib_format >= 202207L
 template <typename T, typename... Args>
-[[nodiscard]] constexpr std::basic_string_view<T> to_string_view(
-    std::basic_format_string<T, Args...> fmt) noexcept {
+[[nodiscard]] constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept {
     return fmt.get();
 }
     #else  // std::format and __cpp_lib_format < 202207L
 template <typename T, typename... Args>
-[[nodiscard]] constexpr std::basic_string_view<T> to_string_view(
-    std::basic_format_string<T, Args...> fmt) noexcept {
+[[nodiscard]] constexpr std::basic_string_view<T> to_string_view(std::basic_format_string<T, Args...> fmt) noexcept {
     return fmt;
 }
     #endif
 #else  // {fmt} version
 
 template <typename T, typename... Args>
-[[nodiscard]] constexpr fmt::basic_string_view<T> to_string_view(
-    fmt::basic_format_string<T, Args...> fmt) noexcept {
+[[nodiscard]] constexpr fmt::basic_string_view<T> to_string_view(fmt::basic_format_string<T, Args...> fmt) noexcept {
     return fmt;
 }
 

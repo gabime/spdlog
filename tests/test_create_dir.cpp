@@ -16,23 +16,19 @@ bool try_create_dir(const spdlog::filename_t &path, const spdlog::filename_t &no
 TEST_CASE("create_dir", "[create_dir]") {
     prepare_logdir();
 
-    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/dir1/dir1"),
-                           SPDLOG_FILENAME_T("test_logs/dir1/dir1")));
+    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/dir1/dir1"), SPDLOG_FILENAME_T("test_logs/dir1/dir1")));
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/dir1/dir1"),
                            SPDLOG_FILENAME_T("test_logs/dir1/dir1")));  // test existing
-    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/dir1///dir2//"),
-                           SPDLOG_FILENAME_T("test_logs/dir1/dir2")));
-    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("./test_logs/dir1/dir3"),
-                           SPDLOG_FILENAME_T("test_logs/dir1/dir3")));
+    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/dir1///dir2//"), SPDLOG_FILENAME_T("test_logs/dir1/dir2")));
+    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("./test_logs/dir1/dir3"), SPDLOG_FILENAME_T("test_logs/dir1/dir3")));
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs/../test_logs/dir1/dir4"),
                            SPDLOG_FILENAME_T("test_logs/dir1/dir4")));
 
 #ifdef WIN32
     // test backslash folder separator
-    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs\\dir1\\dir222"),
-                           SPDLOG_FILENAME_T("test_logs\\dir1\\dir222")));
-    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs\\dir1\\dir223\\"),
-                           SPDLOG_FILENAME_T("test_logs\\dir1\\dir223\\")));
+    REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs\\dir1\\dir222"), SPDLOG_FILENAME_T("test_logs\\dir1\\dir222")));
+    REQUIRE(
+        try_create_dir(SPDLOG_FILENAME_T("test_logs\\dir1\\dir223\\"), SPDLOG_FILENAME_T("test_logs\\dir1\\dir223\\")));
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T(".\\test_logs\\dir1\\dir2\\dir99\\..\\dir23"),
                            SPDLOG_FILENAME_T("test_logs\\dir1\\dir2\\dir23")));
     REQUIRE(try_create_dir(SPDLOG_FILENAME_T("test_logs\\..\\test_logs\\dir1\\dir5"),
@@ -60,16 +56,13 @@ TEST_CASE("dir_name", "[create_dir]") {
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(dir/file)")) == SPDLOG_FILENAME_T("dir"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(dir\file.txt)")) == SPDLOG_FILENAME_T("dir"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(dir/file)")) == SPDLOG_FILENAME_T("dir"));
-    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(dir\file.txt\)")) ==
-            SPDLOG_FILENAME_T(R"(dir\file.txt)"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(dir\file.txt\)")) == SPDLOG_FILENAME_T(R"(dir\file.txt)"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(\dir\file.txt)")) == SPDLOG_FILENAME_T(R"(\dir)"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(\\dir\file.txt)")) == SPDLOG_FILENAME_T(R"(\\dir)"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(..\file.txt)")) == SPDLOG_FILENAME_T(".."));
     REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(.\file.txt)")) == SPDLOG_FILENAME_T("."));
-    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(c:\\a\b\c\d\file.txt)")) ==
-            SPDLOG_FILENAME_T(R"(c:\\a\b\c\d)"));
-    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(c://a/b/c/d/file.txt)")) ==
-            SPDLOG_FILENAME_T(R"(c://a/b/c/d)"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(c:\\a\b\c\d\file.txt)")) == SPDLOG_FILENAME_T(R"(c:\\a\b\c\d)"));
+    REQUIRE(dir_name(SPDLOG_FILENAME_T(R"(c://a/b/c/d/file.txt)")) == SPDLOG_FILENAME_T(R"(c://a/b/c/d)"));
 #endif
     REQUIRE(dir_name(SPDLOG_FILENAME_T("dir/")) == SPDLOG_FILENAME_T("dir"));
     REQUIRE(dir_name(SPDLOG_FILENAME_T("dir///")) == SPDLOG_FILENAME_T("dir//"));

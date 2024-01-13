@@ -63,8 +63,7 @@ public:
 
 private:
     void pad_it(long count) {
-        fmt_helper::append_string_view(string_view_t(spaces_.data(), static_cast<size_t>(count)),
-                                       dest_);
+        fmt_helper::append_string_view(string_view_t(spaces_.data(), static_cast<size_t>(count)), dest_);
     }
 
     const padding_info &padinfo_;
@@ -74,9 +73,7 @@ private:
 };
 
 struct null_scoped_padder {
-    null_scoped_padder(size_t /*wrapped_size*/,
-                       const padding_info & /*padinfo*/,
-                       memory_buf_t & /*dest*/) {}
+    null_scoped_padder(size_t /*wrapped_size*/, const padding_info & /*padinfo*/, memory_buf_t & /*dest*/) {}
 
     template <typename T>
     static unsigned int count_digits(T /* number */) {
@@ -183,9 +180,8 @@ public:
 };
 
 // Full month name
-static const std::array<const char *, 12> full_months{{"January", "February", "March", "April",
-                                                       "May", "June", "July", "August", "September",
-                                                       "October", "November", "December"}};
+static const std::array<const char *, 12> full_months{{"January", "February", "March", "April", "May", "June", "July",
+                                                       "August", "September", "October", "November", "December"}};
 
 template <typename ScopedPadder>
 class B_formatter final : public flag_formatter {
@@ -582,9 +578,7 @@ public:
     explicit ch_formatter(char ch)
         : ch_(ch) {}
 
-    void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override {
-        dest.push_back(ch_);
-    }
+    void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override { dest.push_back(ch_); }
 
 private:
     char ch_;
@@ -641,8 +635,8 @@ public:
         size_t text_size;
         if (padinfo_.enabled()) {
             // calc text size for padding based on "filename:line"
-            text_size = std::char_traits<char>::length(msg.source.filename) +
-                        ScopedPadder::count_digits(msg.source.line) + 1;
+            text_size =
+                std::char_traits<char>::length(msg.source.filename) + ScopedPadder::count_digits(msg.source.line) + 1;
         } else {
             text_size = 0;
         }
@@ -666,8 +660,7 @@ public:
             ScopedPadder p(0, padinfo_, dest);
             return;
         }
-        size_t text_size =
-            padinfo_.enabled() ? std::char_traits<char>::length(msg.source.filename) : 0;
+        size_t text_size = padinfo_.enabled() ? std::char_traits<char>::length(msg.source.filename) : 0;
         ScopedPadder p(text_size, padinfo_, dest);
         fmt_helper::append_string_view(msg.source.filename, dest);
     }
@@ -721,8 +714,7 @@ public:
             ScopedPadder p(0, padinfo_, dest);
             return;
         }
-        size_t text_size =
-            padinfo_.enabled() ? std::char_traits<char>::length(msg.source.funcname) : 0;
+        size_t text_size = padinfo_.enabled() ? std::char_traits<char>::length(msg.source.funcname) : 0;
         ScopedPadder p(text_size, padinfo_, dest);
         fmt_helper::append_string_view(msg.source.funcname, dest);
     }
@@ -866,8 +858,8 @@ std::unique_ptr<formatter> pattern_formatter::clone() const {
     for (auto &it : custom_handlers_) {
         cloned_custom_formatters[it.first] = it.second->clone();
     }
-    auto cloned = std::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_,
-                                                      std::move(cloned_custom_formatters));
+    auto cloned =
+        std::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_, std::move(cloned_custom_formatters));
     cloned->need_localtime(need_localtime_);
 #if defined(__GNUC__) && __GNUC__ < 5
     return std::move(cloned);
@@ -878,8 +870,7 @@ std::unique_ptr<formatter> pattern_formatter::clone() const {
 
 void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest) {
     if (need_localtime_) {
-        const auto secs =
-            std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
+        const auto secs = std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
         if (secs != last_log_secs_) {
             cached_tm_ = get_time_(msg);
             last_log_secs_ = secs;
@@ -935,8 +926,7 @@ void pattern_formatter::handle_flag_(char flag, details::padding_info padding) {
             break;
 
         case 'L':  // short level
-            formatters_.push_back(
-                std::make_unique<details::short_level_formatter<Padder>>(padding));
+            formatters_.push_back(std::make_unique<details::short_level_formatter<Padder>>(padding));
             break;
 
         case ('t'):  // thread id
@@ -1074,28 +1064,23 @@ void pattern_formatter::handle_flag_(char flag, details::padding_info padding) {
             break;
 
         case ('@'):  // source location (filename:filenumber)
-            formatters_.push_back(
-                std::make_unique<details::source_location_formatter<Padder>>(padding));
+            formatters_.push_back(std::make_unique<details::source_location_formatter<Padder>>(padding));
             break;
 
         case ('s'):  // short source filename - without directory name
-            formatters_.push_back(
-                std::make_unique<details::short_filename_formatter<Padder>>(padding));
+            formatters_.push_back(std::make_unique<details::short_filename_formatter<Padder>>(padding));
             break;
 
         case ('g'):  // full source filename
-            formatters_.push_back(
-                std::make_unique<details::source_filename_formatter<Padder>>(padding));
+            formatters_.push_back(std::make_unique<details::source_filename_formatter<Padder>>(padding));
             break;
 
         case ('#'):  // source line number
-            formatters_.push_back(
-                std::make_unique<details::source_linenum_formatter<Padder>>(padding));
+            formatters_.push_back(std::make_unique<details::source_linenum_formatter<Padder>>(padding));
             break;
 
         case ('!'):  // source funcname
-            formatters_.push_back(
-                std::make_unique<details::source_funcname_formatter<Padder>>(padding));
+            formatters_.push_back(std::make_unique<details::source_funcname_formatter<Padder>>(padding));
             break;
 
         case ('%'):  // % char
@@ -1104,26 +1089,21 @@ void pattern_formatter::handle_flag_(char flag, details::padding_info padding) {
 
         case ('u'):  // elapsed time since last log message in nanos
             formatters_.push_back(
-                std::make_unique<details::elapsed_formatter<Padder, std::chrono::nanoseconds>>(
-                    padding));
+                std::make_unique<details::elapsed_formatter<Padder, std::chrono::nanoseconds>>(padding));
             break;
 
         case ('i'):  // elapsed time since last log message in micros
             formatters_.push_back(
-                std::make_unique<details::elapsed_formatter<Padder, std::chrono::microseconds>>(
-                    padding));
+                std::make_unique<details::elapsed_formatter<Padder, std::chrono::microseconds>>(padding));
             break;
 
         case ('o'):  // elapsed time since last log message in millis
             formatters_.push_back(
-                std::make_unique<details::elapsed_formatter<Padder, std::chrono::milliseconds>>(
-                    padding));
+                std::make_unique<details::elapsed_formatter<Padder, std::chrono::milliseconds>>(padding));
             break;
 
         case ('O'):  // elapsed time since last log message in seconds
-            formatters_.push_back(
-                std::make_unique<details::elapsed_formatter<Padder, std::chrono::seconds>>(
-                    padding));
+            formatters_.push_back(std::make_unique<details::elapsed_formatter<Padder, std::chrono::seconds>>(padding));
             break;
 
         default:  // Unknown flag appears as is
@@ -1139,8 +1119,7 @@ void pattern_formatter::handle_flag_(char flag, details::padding_info padding) {
             // message" spdlog::set_pattern("[%3!!] %v") => "[mai] some message"
             else {
                 padding.truncate_ = false;
-                formatters_.push_back(
-                    std::make_unique<details::source_funcname_formatter<Padder>>(padding));
+                formatters_.push_back(std::make_unique<details::source_funcname_formatter<Padder>>(padding));
                 unknown_flag->add_ch(flag);
                 formatters_.push_back((std::move(unknown_flag)));
             }

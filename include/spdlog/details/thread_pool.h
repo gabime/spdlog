@@ -86,9 +86,7 @@ public:
     thread_pool(const thread_pool &) = delete;
     thread_pool &operator=(thread_pool &&) = delete;
 
-    void post_log(async_logger_ptr &&worker_ptr,
-                  const details::log_msg &msg,
-                  async_overflow_policy overflow_policy);
+    void post_log(async_logger_ptr &&worker_ptr, const details::log_msg &msg, async_overflow_policy overflow_policy);
     void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy);
     size_t overrun_counter();
     void reset_overrun_counter();

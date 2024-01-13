@@ -25,10 +25,7 @@ log_msg::log_msg(spdlog::log_clock::time_point log_time,
       payload(msg) {
 }
 
-log_msg::log_msg(spdlog::source_loc loc,
-                 string_view_t a_logger_name,
-                 spdlog::level lvl,
-                 spdlog::string_view_t msg)
+log_msg::log_msg(spdlog::source_loc loc, string_view_t a_logger_name, spdlog::level lvl, spdlog::string_view_t msg)
     : log_msg(os::now(), loc, a_logger_name, lvl, msg) {}
 
 log_msg::log_msg(string_view_t a_logger_name, spdlog::level lvl, spdlog::string_view_t msg)

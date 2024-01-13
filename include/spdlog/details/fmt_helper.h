@@ -65,8 +65,7 @@ constexpr unsigned int count_digits_fallback(T n) {
 
 template <typename T>
 inline unsigned int count_digits(T n) {
-    using count_type =
-        typename std::conditional<(sizeof(T) > sizeof(uint32_t)), uint64_t, uint32_t>::type;
+    using count_type = typename std::conditional<(sizeof(T) > sizeof(uint32_t)), uint64_t, uint32_t>::type;
 #ifdef SPDLOG_USE_STD_FORMAT
     return count_digits_fallback(static_cast<count_type>(n));
 #else

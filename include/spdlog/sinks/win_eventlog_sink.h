@@ -74,11 +74,9 @@ struct win32_error : public spdlog_ex {
         std::string system_message;
 
         local_alloc_t format_message_result{};
-        auto format_message_succeeded =
-            ::FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                                 FORMAT_MESSAGE_IGNORE_INSERTS,
-                             nullptr, error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                             (LPSTR)&format_message_result.hlocal_, 0, nullptr);
+        auto format_message_succeeded = ::FormatMessageA(
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr,
+            error_code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&format_message_result.hlocal_, 0, nullptr);
 
         if (format_message_succeeded && format_message_result.hlocal_) {
             system_message = fmt_lib::format(" ({})", (LPSTR)format_message_result.hlocal_);
@@ -131,21 +129,19 @@ public:
 
             ~process_token_t() { ::CloseHandle(token_handle_); }
 
-        } current_process_token(
-            ::GetCurrentProcess());  // GetCurrentProcess returns pseudohandle, no leak here!
+        } current_process_token(::GetCurrentProcess());  // GetCurrentProcess returns pseudohandle, no leak here!
 
         // Get the required size, this is expected to fail with ERROR_INSUFFICIENT_BUFFER and return
         // the token size
         DWORD tusize = 0;
-        if (::GetTokenInformation(current_process_token.token_handle_, TokenUser, NULL, 0,
-                                  &tusize)) {
+        if (::GetTokenInformation(current_process_token.token_handle_, TokenUser, NULL, 0, &tusize)) {
             SPDLOG_THROW(win32_error("GetTokenInformation should fail"));
         }
 
         // get user token
         std::vector<unsigned char> buffer(static_cast<size_t>(tusize));
-        if (!::GetTokenInformation(current_process_token.token_handle_, TokenUser,
-                                   (LPVOID)buffer.data(), tusize, &tusize)) {
+        if (!::GetTokenInformation(current_process_token.token_handle_, TokenUser, (LPVOID)buffer.data(), tusize,
+                                   &tusize)) {
             SPDLOG_THROW(win32_error("GetTokenInformation"));
         }
 
@@ -214,9 +210,9 @@ protected:
         formatted.push_back('\0');
 
         LPCSTR lp_str = formatted.data();
-        succeeded = static_cast<bool>(::ReportEventA(
-            event_log_handle(), eventlog::get_event_type(msg), eventlog::get_event_category(msg),
-            event_id_, current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr));
+        succeeded = static_cast<bool>(::ReportEventA(event_log_handle(), eventlog::get_event_type(msg),
+                                                     eventlog::get_event_category(msg), event_id_,
+                                                     current_user_sid_.as_sid(), 1, 0, &lp_str, nullptr));
 
         if (!succeeded) {
             SPDLOG_THROW(win32_error("ReportEvent"));
@@ -226,8 +222,7 @@ protected:
     void flush_() override {}
 
 public:
-    win_eventlog_sink(std::string const &source,
-                      DWORD event_id = 1000 /* according to mscoree.dll */)
+    win_eventlog_sink(std::string const &source, DWORD event_id = 1000 /* according to mscoree.dll */)
         : source_(source),
           event_id_(event_id) {
         try {

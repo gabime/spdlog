@@ -36,9 +36,7 @@ public:
     stopwatch()
         : start_tp_{clock::now()} {}
 
-    std::chrono::duration<double> elapsed() const {
-        return std::chrono::duration<double>(clock::now() - start_tp_);
-    }
+    std::chrono::duration<double> elapsed() const { return std::chrono::duration<double>(clock::now() - start_tp_); }
 
     void reset() { start_tp_ = clock::now(); }
 };

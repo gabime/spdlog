@@ -77,7 +77,6 @@ TEST_CASE("dup_filter_test5", "[dup_filter_sink]") {
     dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "message1"});
     dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "message2"});
 
-    REQUIRE(test_sink->msg_counter() ==
-            3);  // skip 2 messages but log the "skipped.." message before message2
+    REQUIRE(test_sink->msg_counter() == 3);  // skip 2 messages but log the "skipped.." message before message2
     REQUIRE(test_sink->lines()[1] == "Skipped 2 duplicate messages..");
 }

@@ -37,9 +37,8 @@ void replace_default_logger_example();
 int main(int, char *[]) {
     // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
     load_levels_example();
-
-    spdlog::info("Welcome to spdlog version {}.{}.{} !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR,
-                 SPDLOG_VER_PATCH);
+    SPDLOG_INFO("This message should be displayed..");
+    spdlog::info("Welcome to spdlog version {}.{}.{} !", SPDLOG_VER_MAJOR, SPDLOG_VER_MINOR, SPDLOG_VER_PATCH);
     spdlog::warn("Easy padding in numbers like {:08d}", 12);
     spdlog::critical("Support for int: {0:d};  hex: {0:x};  oct: {0:o}; bin: {0:b}", 42);
     spdlog::info("Support for floats {:03.2f}", 1.23456);
@@ -99,7 +98,7 @@ int main(int, char *[]) {
 #include "spdlog/sinks/stdout_color_sinks.h"
 // or #include "spdlog/sinks/stdout_sinks.h" if no colors needed.
 void stdout_logger_example() {
-    // Create color multi threaded logger.
+    // Create color multithreading logger.
     auto console = spdlog::stdout_color_mt("console");
     // or for stderr:
     // auto console = spdlog::stderr_color_mt("error-logger");
@@ -114,8 +113,7 @@ void basic_example() {
 #include "spdlog/sinks/rotating_file_sink.h"
 void rotating_example() {
     // Create a file rotating logger with 5mb size max and 3 rotated files.
-    auto rotating_logger =
-        spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
+    auto rotating_logger = spdlog::rotating_logger_mt("some_logger_name", "logs/rotating.txt", 1048576 * 5, 3);
 }
 
 #include "spdlog/sinks/daily_file_sink.h"
@@ -127,10 +125,9 @@ void daily_example() {
 #include "spdlog/sinks/callback_sink.h"
 void callback_example() {
     // Create the logger
-    auto logger = spdlog::callback_logger_mt("custom_callback_logger",
-                                             [](const spdlog::details::log_msg & /*msg*/) {
-                                                 // do what you need to do with msg
-                                             });
+    auto logger = spdlog::callback_logger_mt("custom_callback_logger", [](const spdlog::details::log_msg & /*msg*/) {
+        // do what you need to do with msg
+    });
 }
 
 void load_levels_example() {
@@ -148,8 +145,7 @@ void load_levels_example() {
 void async_example() {
     // Default thread pool settings can be modified *before* creating the async logger:
     // spdlog::init_thread_pool(32768, 1); // queue with max 32k items 1 backing thread.
-    auto async_file =
-        spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt");
+    auto async_file = spdlog::basic_logger_mt<spdlog::async_factory>("async_file_logger", "logs/async_log.txt");
     // alternatively:
     // auto async_file =
     // spdlog::create_async<spdlog::sinks::basic_file_sink_mt>("async_file_logger",
@@ -177,8 +173,7 @@ void binary_example() {
         buf.push_back(static_cast<char>(i & 0xff));
     }
     spdlog::info("Binary example: {}", spdlog::to_hex(buf));
-    spdlog::info("Another binary example:{:n}",
-                 spdlog::to_hex(std::begin(buf), std::begin(buf) + 10));
+    spdlog::info("Another binary example:{:n}", spdlog::to_hex(std::begin(buf), std::begin(buf) + 10));
     // more examples:
     // logger->info("uppercase: {:X}", spdlog::to_hex(buf));
     // logger->info("uppercase, no delimiters: {:Xs}", spdlog::to_hex(buf));
@@ -243,8 +238,7 @@ void multi_sink_example() {
     console_sink->set_level(spdlog::level::warn);
     console_sink->set_pattern("[multi_sink_example] [%^%l%$] %v");
 
-    auto file_sink =
-        std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multisink.txt", true);
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/multisink.txt", true);
     file_sink->set_level(spdlog::level::trace);
 
     spdlog::logger logger("multi_sink", {console_sink, file_sink});
@@ -282,9 +276,8 @@ void user_defined_example() { spdlog::info("user defined type: {}", my_type(14))
 // Custom error handler. Will be triggered on log failure.
 void err_handler_example() {
     // can be set globally or per logger(logger->set_error_handler(..))
-    spdlog::set_error_handler([](const std::string &msg) {
-        printf("*** Custom log error handler: %s ***\n", msg.c_str());
-    });
+    spdlog::set_error_handler(
+        [](const std::string &msg) { printf("*** Custom log error handler: %s ***\n", msg.c_str()); });
 }
 
 // syslog example (linux/osx/freebsd)
@@ -312,16 +305,12 @@ void android_example() {
 #include "spdlog/pattern_formatter.h"
 class my_formatter_flag : public spdlog::custom_flag_formatter {
 public:
-    void format(const spdlog::details::log_msg &,
-                const std::tm &,
-                spdlog::memory_buf_t &dest) override {
+    void format(const spdlog::details::log_msg &, const std::tm &, spdlog::memory_buf_t &dest) override {
         std::string some_txt = "custom-flag";
         dest.append(some_txt.data(), some_txt.data() + some_txt.size());
     }
 
-    std::unique_ptr<custom_flag_formatter> clone() const override {
-        return std::make_unique<my_formatter_flag>();
-    }
+    std::unique_ptr<custom_flag_formatter> clone() const override { return std::make_unique<my_formatter_flag>(); }
 };
 
 void custom_flags_example() {
@@ -334,9 +323,7 @@ void custom_flags_example() {
 void file_events_example() {
     // pass the spdlog::file_event_handlers to file sinks for open/close log file notifications
     spdlog::file_event_handlers handlers;
-    handlers.before_open = [](spdlog::filename_t filename) {
-        spdlog::info("Before opening {}", filename);
-    };
+    handlers.before_open = [](spdlog::filename_t filename) { spdlog::info("Before opening {}", filename); };
     handlers.after_open = [](spdlog::filename_t filename, std::FILE *fstream) {
         spdlog::info("After opening {}", filename);
         fputs("After opening\n", fstream);
@@ -345,11 +332,8 @@ void file_events_example() {
         spdlog::info("Before closing {}", filename);
         fputs("Before closing\n", fstream);
     };
-    handlers.after_close = [](spdlog::filename_t filename) {
-        spdlog::info("After closing {}", filename);
-    };
-    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/events-sample.txt",
-                                                                         true, handlers);
+    handlers.after_close = [](spdlog::filename_t filename) { spdlog::info("After closing {}", filename); };
+    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/events-sample.txt", true, handlers);
     spdlog::logger my_logger("some_logger", file_sink);
     my_logger.info("Some log line");
 }
@@ -358,8 +342,7 @@ void replace_default_logger_example() {
     // store the old logger so we don't break other examples.
     auto old_logger = spdlog::default_logger();
 
-    auto new_logger =
-        spdlog::basic_logger_mt("new_default_logger", "logs/new-default-log.txt", true);
+    auto new_logger = spdlog::basic_logger_mt("new_default_logger", "logs/new-default-log.txt", true);
     spdlog::set_default_logger(new_logger);
     spdlog::set_level(spdlog::level::info);
     spdlog::debug("This message should not be displayed!");

@@ -16,9 +16,7 @@ void initialize_logger(std::shared_ptr<logger> logger) {
     details::registry::instance().initialize_logger(std::move(logger));
 }
 
-std::shared_ptr<logger> get(const std::string &name) {
-    return details::registry::instance().get(name);
-}
+std::shared_ptr<logger> get(const std::string &name) { return details::registry::instance().get(name); }
 
 void set_formatter(std::unique_ptr<spdlog::formatter> formatter) {
     details::registry::instance().set_formatter(std::move(formatter));
@@ -58,9 +56,7 @@ void set_automatic_registration(bool automatic_registration) {
     details::registry::instance().set_automatic_registration(automatic_registration);
 }
 
-std::shared_ptr<spdlog::logger> default_logger() {
-    return details::registry::instance().default_logger();
-}
+std::shared_ptr<spdlog::logger> default_logger() { return details::registry::instance().default_logger(); }
 
 spdlog::logger *default_logger_raw() { return details::registry::instance().get_default_raw(); }
 
