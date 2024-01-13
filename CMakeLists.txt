@@ -353,8 +353,14 @@ if(SPDLOG_INSTALL)
     # Include files
     # ---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+
+    if(NOT SPDLOG_USE_STD_FORMAT)
+        set(FMT_TARGET "fmt")
+    else ()
+        set(FMT_TARGET "")
+    endif()
     install(
-        TARGETS spdlog fmt
+        TARGETS spdlog ${FMT_TARGET}
         EXPORT spdlog
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
