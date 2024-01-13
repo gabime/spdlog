@@ -11,6 +11,7 @@ clang-analyzer-*,
 -google-runtime-references,
 -misc-non-private-member-variables-in-classes,
 -readability-braces-around-statements,
+-readability-identifier-length,
 -google-readability-braces-around-statements,
 -cppcoreguidelines-avoid-magic-numbers,
 -readability-magic-numbers,
@@ -21,7 +22,8 @@ clang-analyzer-*,
 -modernize-avoid-c-arrays,
 -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
 -readability-named-parameter,
--cert-env33-c
+-cert-env33-c,
+-modernize-concat-nested-namespaces
 '
 
 

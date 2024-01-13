@@ -23,8 +23,8 @@ void file_helper::open(const filename_t &fname, bool truncate) {
     close();
     filename_ = fname;
 
-    auto *mode = SPDLOG_FILENAME_T("ab");
-    auto *trunc_mode = SPDLOG_FILENAME_T("wb");
+    const auto *mode = SPDLOG_FILENAME_T("ab");
+    const auto *trunc_mode = SPDLOG_FILENAME_T("wb");
 
     if (event_handlers_.before_open) {
         event_handlers_.before_open(filename_);
@@ -37,7 +37,7 @@ void file_helper::open(const filename_t &fname, bool truncate) {
             // opening the actual log-we-write-to in "ab" mode, since that
             // interacts more politely with eternal processes that might
             // rotate/truncate the file underneath us.
-            std::FILE *tmp;
+            std::FILE *tmp = nullptr;
             if (os::fopen_s(&tmp, fname, trunc_mode)) {
                 continue;
             }
@@ -93,7 +93,7 @@ void file_helper::close() {
 void file_helper::write(const memory_buf_t &buf) {
     if (fd_ == nullptr) return;
     size_t msg_size = buf.size();
-    auto data = buf.data();
+    const auto *data = buf.data();
     if (std::fwrite(data, 1, msg_size, fd_) != msg_size) {
         throw_spdlog_ex("Failed writing to file " + os::filename_to_str(filename_), errno);
     }

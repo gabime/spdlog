@@ -65,7 +65,7 @@ SPDLOG_API level get_level();
 SPDLOG_API void set_level(level level);
 
 // Determine whether the default logger should log messages with a certain level
-SPDLOG_API bool should_log(level lvl);
+SPDLOG_API bool should_log(level level);
 
 // Set global flush level
 SPDLOG_API void flush_on(level level);

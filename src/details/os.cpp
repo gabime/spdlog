@@ -84,12 +84,12 @@ spdlog::log_clock::time_point now() noexcept {
 #endif
 }
 std::tm localtime(const std::time_t &time_tt) noexcept {
-    std::tm* rv;
-    std::tm tm;
 #ifdef _WIN32
-    rv = ::localtime_s(&tm, &time_tt);
+    std::tm tm;
+    const auto *rv = ::localtime_s(&tm, &time_tt);
 #else
-    rv = ::localtime_r(&time_tt, &tm);
+    std::tm tm;
+    const auto *rv = ::localtime_r(&time_tt, &tm);
 #endif
     return rv != nullptr ? tm : std::tm{};
 }
@@ -548,7 +548,7 @@ std::string getenv(const char *field) {
     #endif
 #else  // revert to getenv
     char *buf = ::getenv(field);
-    return buf ? buf : std::string{};
+    return buf != nullptr ? buf : std::string{};
 #endif
 }
 
