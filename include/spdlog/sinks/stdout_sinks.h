@@ -36,7 +36,7 @@ private:
     void flush_() override;
 #ifdef _WIN32
     HANDLE handle_;
-#endif  // WIN32
+#endif  // _WIN32
 };
 
 template <typename Mutex>

@@ -37,8 +37,7 @@ struct async_factory_impl {
     static std::shared_ptr<async_logger> create(std::string logger_name, SinkArgs &&...args) {
         auto &registry_inst = details::registry::instance();
 
-        // create global thread pool if not already exists..
-
+        // create global thread pool if not already exists
         auto &mutex = registry_inst.tp_mutex();
         std::lock_guard<std::recursive_mutex> tp_lock(mutex);
         auto tp = registry_inst.get_tp();

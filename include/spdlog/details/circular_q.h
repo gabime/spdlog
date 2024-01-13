@@ -32,7 +32,7 @@ public:
     circular_q &operator=(const circular_q &) = default;
 
     // move cannot be default,
-    // since we need to reset head_, tail_, etc to zero in the moved object
+    // since we need to reset head_, tail_, etc. to zero in the moved object
     circular_q(circular_q &&other) noexcept { copy_moveable(std::move(other)); }
 
     circular_q &operator=(circular_q &&other) noexcept {

@@ -56,7 +56,7 @@
         #include <thread.h>  // for thr_self
     #endif
 
-#endif  // unix
+#endif  // _WIN32
 
 #if defined __APPLE__
     #include <AvailabilityMacros.h>

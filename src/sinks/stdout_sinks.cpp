@@ -40,7 +40,7 @@ stdout_sink_base<Mutex>::stdout_sink_base(FILE *file)
     if (handle_ == INVALID_HANDLE_VALUE && file != stdout && file != stderr) {
         throw_spdlog_ex("spdlog::stdout_sink_base: _get_osfhandle() failed", errno);
     }
-#endif  // WIN32
+#endif  // _WIN32
 }
 
 template <typename Mutex>
@@ -62,7 +62,7 @@ void stdout_sink_base<Mutex>::sink_it_(const details::log_msg &msg) {
     memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);
     ::fwrite(formatted.data(), sizeof(char), formatted.size(), file_);
-#endif                // WIN32
+#endif                // _WIN32
     ::fflush(file_);  // flush every line to terminal
 }
 
