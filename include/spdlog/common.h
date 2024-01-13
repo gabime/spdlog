@@ -105,6 +105,12 @@
     #endif
 #endif
 
+// Add constructor to spdlog::source_loc using std::source_location
+#if __cpp_lib_source_location >= 201907L
+    #define SPDLOG_STD_SOURCE_LOCATION
+    #include <source_location>
+#endif
+
 #ifndef SPDLOG_FUNCTION
     #define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
 #endif
@@ -323,6 +329,13 @@ struct source_loc {
         : filename{filename_in},
           line{line_in},
           funcname{funcname_in} {}
+
+    #ifdef SPDLOG_STD_SOURCE_LOCATION
+    SPDLOG_CONSTEXPR source_loc(const std::source_location& loc)
+        : filename{loc.file_name()},
+          line{static_cast<int>(loc.line())},
+          funcname{loc.function_name()} {}
+    #endif
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT { return line == 0; }
     const char *filename{nullptr};
