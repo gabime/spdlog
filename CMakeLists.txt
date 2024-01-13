@@ -354,7 +354,7 @@ if(SPDLOG_INSTALL)
     # ---------------------------------------------------------------------------------------
     install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
     install(
-        TARGETS spdlog
+        TARGETS spdlog fmt
         EXPORT spdlog
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
