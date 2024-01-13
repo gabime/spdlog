@@ -86,12 +86,13 @@ spdlog::log_clock::time_point now() noexcept {
 std::tm localtime(const std::time_t &time_tt) noexcept {
 #ifdef _WIN32
     std::tm tm;
-    const auto *rv = ::localtime_s(&tm, &time_tt);
+    const auto rv = ::localtime_s(&tm, &time_tt);
+    return rv == 0 ? tm : std::tm{};
 #else
     std::tm tm;
     const auto *rv = ::localtime_r(&time_tt, &tm);
-#endif
     return rv != nullptr ? tm : std::tm{};
+#endif
 }
 
 std::tm localtime() noexcept {
