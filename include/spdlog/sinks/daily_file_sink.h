@@ -17,7 +17,6 @@
 #include "../details/os.h"
 #include "../details/synchronous_factory.h"
 #include "./base_sink.h"
-#include "fmt/chrono.h"
 
 namespace spdlog {
 namespace sinks {
