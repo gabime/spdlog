@@ -22,15 +22,11 @@ SPDLOG_API std::tm gmtime(const std::time_t &time_tt) noexcept;
 SPDLOG_API std::tm gmtime() noexcept;
 
 // eol definition
-#if !defined(SPDLOG_EOL)
-    #ifdef _WIN32
-        #define SPDLOG_EOL "\r\n"
-    #else
-        #define SPDLOG_EOL "\n"
-    #endif
+#ifdef _WIN32
+    constexpr static const char *default_eol = "\r\n";
+#else
+    constexpr static const char *default_eol = "\n";
 #endif
-
-constexpr static const char *default_eol = SPDLOG_EOL;
 
 // folder separator
 #if !defined(SPDLOG_FOLDER_SEPS)
