@@ -156,23 +156,14 @@ using atomic_level_t = details::null_atomic<level>;
 using atomic_level_t = std::atomic<level>;
 #endif
 
-#if !defined(SPDLOG_LEVEL_NAMES)
-    #define SPDLOG_LEVEL_NAMES \
-        { "trace", "debug", "info", "warning", "error", "critical", "off" }
-#endif
-
-#if !defined(SPDLOG_SHORT_LEVEL_NAMES)
-    #define SPDLOG_SHORT_LEVEL_NAMES \
-        { "T", "D", "I", "W", "E", "C", "O" }
-#endif
 
 [[nodiscard]] constexpr size_t level_to_number(level lvl) noexcept {
     return static_cast<size_t>(lvl);
 }
 
 constexpr auto levels_count = level_to_number(level::n_levels);
-constexpr std::array<string_view_t, levels_count> level_string_views SPDLOG_LEVEL_NAMES;
-constexpr std::array<string_view_t, levels_count> short_level_names SPDLOG_SHORT_LEVEL_NAMES;
+constexpr std::array<string_view_t, levels_count> level_string_views  { "trace", "debug", "info", "warning", "error", "critical", "off" };
+constexpr std::array<string_view_t, levels_count> short_level_names { "T", "D", "I", "W", "E", "C", "O" };
 
 [[nodiscard]] constexpr string_view_t to_string_view(spdlog::level lvl) noexcept {
     return level_string_views.at(level_to_number(lvl));
