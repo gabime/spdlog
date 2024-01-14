@@ -21,24 +21,14 @@ SPDLOG_API std::tm gmtime(const std::time_t &time_tt) noexcept;
 
 SPDLOG_API std::tm gmtime() noexcept;
 
-// eol definition
+// eol definition and folder separator for the current os
 #ifdef _WIN32
-constexpr static const char *default_eol = "\r\n";
+    constexpr static const char *default_eol = "\r\n";
+    constexpr static const filename_t::value_type folder_seps_filename[] = SPDLOG_FILENAME_T("\\/");
 #else
-constexpr static const char *default_eol = "\n";
+    constexpr static const char *default_eol = "\n";
+    constexpr static const filename_t::value_type folder_seps_filename[] = SPDLOG_FILENAME_T("/");
 #endif
-
-// folder separator
-#if !defined(SPDLOG_FOLDER_SEPS)
-    #ifdef _WIN32
-        #define SPDLOG_FOLDER_SEPS "\\/"
-    #else
-        #define SPDLOG_FOLDER_SEPS "/"
-    #endif
-#endif
-
-constexpr static const char folder_seps[] = SPDLOG_FOLDER_SEPS;
-constexpr static const filename_t::value_type folder_seps_filename[] = SPDLOG_FILENAME_T(SPDLOG_FOLDER_SEPS);
 
 // fopen_s on non windows for writing
 SPDLOG_API bool fopen_s(FILE **fp, const filename_t &filename, const filename_t &mode);
