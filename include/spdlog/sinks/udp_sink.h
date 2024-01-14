@@ -7,7 +7,7 @@
 #include "../details/null_mutex.h"
 #include "./base_sink.h"
 #ifdef _WIN32
-    #include "../details/udp_client-windows.h"
+    #include "../details/udp_client_windows.h"
 #else
     #include "../details/udp_client_unix.h"
 #endif

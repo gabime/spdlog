@@ -7,7 +7,7 @@
 #include "../details/null_mutex.h"
 #include "./base_sink.h"
 #ifdef _WIN32
-    #include "../details/tcp_client-windows.h"
+    #include "../details/tcp_client_windows.h"
 #else
     #include "../details/tcp_client_unix.h"
 #endif
