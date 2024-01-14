@@ -15,7 +15,6 @@
     #endif
 #endif  // SPDLOG_DISABLE_DEFAULT_LOGGER
 
-#include <chrono>
 #include <functional>
 #include <memory>
 #include <string>
