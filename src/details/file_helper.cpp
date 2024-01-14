@@ -6,7 +6,6 @@
 #include <cerrno>
 #include <cstdio>
 
-
 #include "spdlog/common.h"
 #include "spdlog/details/os.h"
 

@@ -2,6 +2,7 @@
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
 #include "spdlog/details/registry.h"
+
 #include "spdlog/common.h"
 #include "spdlog/logger.h"
 #include "spdlog/pattern_formatter.h"

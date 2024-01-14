@@ -85,21 +85,20 @@ bool logger::should_flush_(const details::log_msg &msg) {
     return (msg.log_level >= flush_level) && (msg.log_level != level::off);
 }
 
-    void logger::err_handler_(const std::string &msg) {
-        if (custom_err_handler_) {
-            custom_err_handler_(msg);
-        } else {
-            using std::chrono::system_clock;
-            auto now = system_clock::now();
-            auto tm_time = details::os::localtime(system_clock::to_time_t(now));
-            char date_buf[64];
-            std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
+void logger::err_handler_(const std::string &msg) {
+    if (custom_err_handler_) {
+        custom_err_handler_(msg);
+    } else {
+        using std::chrono::system_clock;
+        auto now = system_clock::now();
+        auto tm_time = details::os::localtime(system_clock::to_time_t(now));
+        char date_buf[64];
+        std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
 #if defined(USING_R) && defined(R_R_H)  // if in R environment
-            REprintf("[*** LOG ERROR ***] [%s] [%s] %s\n", date_buf, name().c_str(), msg.c_str());
+        REprintf("[*** LOG ERROR ***] [%s] [%s] %s\n", date_buf, name().c_str(), msg.c_str());
 #else
-            std::fprintf(stderr, "[*** LOG ERROR ***] [%s] [%s] %s\n", date_buf,
-                         name().c_str(), msg.c_str());
+        std::fprintf(stderr, "[*** LOG ERROR ***] [%s] [%s] %s\n", date_buf, name().c_str(), msg.c_str());
 #endif
-        }
     }
+}
 }  // namespace spdlog
