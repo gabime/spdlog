@@ -194,9 +194,6 @@ set(SPDLOG_HEADERS
 
     "include/spdlog/details/tcp_client_unix.h"
     "include/spdlog/details/thread_pool.h"
-    "include/spdlog/details/udp_client_windows.h"
-    "include/spdlog/details/udp_client_unix.h"
-    "include/spdlog/details/windows_include.h"
     "include/spdlog/fmt/bin_to_hex.h"
     "include/spdlog/fmt/fmt.h"
     "include/spdlog/sinks/android_sink.h"
@@ -252,6 +249,8 @@ if(WIN32)
     list(APPEND SPDLOG_SRCS "src/details/os_windows.cpp")
     list(APPEND SPDLOG_HEADERS "include/spdlog/details/tcp_client_windows.h")
     list(APPEND SPDLOG_HEADERS "include/spdlog/details/udp_client_windows.h")
+    list(APPEND SPDLOG_HEADERS "include/spdlog/details/windows_include.h")
+
 else()
     list(APPEND SPDLOG_SRCS "src/details/os_unix.cpp")
     list(APPEND SPDLOG_HEADERS "include/spdlog/details/tcp_client_unix.h")
@@ -264,8 +263,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/spdlog_config.h.in" ${OUT_CONF
 list(APPEND SPDLOG_HEADERS ${OUT_CONFIG_FILE})
 if(BUILD_SHARED_LIBS)
     if(WIN32)
-        set(VERSION_RC ${CMAKE_CURRENT_BINARY_DIR}/version.rc
-                src/details/os_unix.cpp)
+        set(VERSION_RC ${CMAKE_CURRENT_BINARY_DIR}/version.rc)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)        
     endif()
     add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_HEADERS} ${VERSION_RC})
