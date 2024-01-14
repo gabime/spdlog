@@ -73,6 +73,7 @@ std::shared_ptr<logger> logger::clone(std::string logger_name) {
     return cloned;
 }
 
+// private methods
 void logger::flush_() {
     for (auto &sink : sinks_) {
         SPDLOG_TRY { sink->flush(); }
