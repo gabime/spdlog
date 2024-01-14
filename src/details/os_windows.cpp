@@ -105,11 +105,10 @@ int rename(const filename_t &filename1, const filename_t &filename2) noexcept {
 // Return true if path exists (file or directory)
 bool path_exists(const filename_t &filename) noexcept {
 #ifdef SPDLOG_WCHAR_FILENAMES
-    auto attribs = ::GetFileAttributesW(filename.c_str());
+    return (::_wstat(filename.c_str(), &buffer) == 0);
 #else
-    auto attribs = ::GetFileAttributesA(filename.c_str());
+    return (::_stat(filename.c_str(), &buffer) == 0);
 #endif
-    return attribs != INVALID_FILE_ATTRIBUTES;
 }
 
 #ifdef _MSC_VER
