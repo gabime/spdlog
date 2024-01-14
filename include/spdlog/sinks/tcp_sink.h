@@ -9,7 +9,7 @@
 #ifdef _WIN32
     #include "../details/tcp_client-windows.h"
 #else
-    #include "../details/tcp_client.h"
+    #include "../details/tcp_client_unix.h"
 #endif
 
 #include <chrono>
@@ -65,7 +65,7 @@ protected:
 
     void flush_() override {}
     tcp_sink_config config_;
-    details::tcp_client client_;
+    details::tcp_client_unix client_;
 };
 
 using tcp_sink_mt = tcp_sink<std::mutex>;

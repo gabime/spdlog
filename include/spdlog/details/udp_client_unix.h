@@ -10,7 +10,7 @@
 #include "./os.h"
 
 #ifdef _WIN32
-    #error "include udp_client-windows.h instead"
+    #error "include udp_client_windows.h instead"
 #endif
 
 #include <arpa/inet.h>
@@ -26,7 +26,7 @@
 namespace spdlog {
 namespace details {
 
-class udp_client {
+class udp_client_unix {
     static constexpr int TX_BUFFER_SIZE = 1024 * 10;
     int socket_ = -1;
     struct sockaddr_in sockAddr_;
@@ -39,7 +39,7 @@ class udp_client {
     }
 
 public:
-    udp_client(const std::string &host, uint16_t port) {
+    udp_client_unix(const std::string &host, uint16_t port) {
         socket_ = ::socket(PF_INET, SOCK_DGRAM, 0);
         if (socket_ < 0) {
             throw_spdlog_ex("error: Create Socket Failed!");
@@ -63,7 +63,7 @@ public:
         ::memset(sockAddr_.sin_zero, 0x00, sizeof(sockAddr_.sin_zero));
     }
 
-    ~udp_client() { cleanup_(); }
+    ~udp_client_unix() { cleanup_(); }
 
     int fd() const { return socket_; }
 

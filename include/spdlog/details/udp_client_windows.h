@@ -25,7 +25,7 @@
 
 namespace spdlog {
 namespace details {
-class udp_client {
+class udp_client_unix {
     static constexpr int TX_BUFFER_SIZE = 1024 * 10;
     SOCKET socket_ = INVALID_SOCKET;
     sockaddr_in addr_ = {};
@@ -55,7 +55,7 @@ class udp_client {
     }
 
 public:
-    udp_client(const std::string &host, uint16_t port) {
+    udp_client_unix(const std::string &host, uint16_t port) {
         init_winsock_();
 
         addr_.sin_family = PF_INET;
@@ -83,7 +83,7 @@ public:
         }
     }
 
-    ~udp_client() { cleanup_(); }
+    ~udp_client_unix() { cleanup_(); }
 
     SOCKET fd() const { return socket_; }
 

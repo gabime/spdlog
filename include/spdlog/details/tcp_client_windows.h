@@ -22,7 +22,7 @@
 
 namespace spdlog {
 namespace details {
-class tcp_client {
+class tcp_client_unix {
     SOCKET socket_ = INVALID_SOCKET;
 
     static void init_winsock_() {
@@ -42,9 +42,9 @@ class tcp_client {
     }
 
 public:
-    tcp_client() { init_winsock_(); }
+    tcp_client_unix() { init_winsock_(); }
 
-    ~tcp_client() {
+    ~tcp_client_unix() {
         close();
         ::WSACleanup();
     }

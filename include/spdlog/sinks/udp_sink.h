@@ -9,7 +9,7 @@
 #ifdef _WIN32
     #include "../details/udp_client-windows.h"
 #else
-    #include "../details/udp_client.h"
+    #include "../details/udp_client_unix.h"
 #endif
 
 #include <chrono>
@@ -49,7 +49,7 @@ protected:
     }
 
     void flush_() override {}
-    details::udp_client client_;
+    details::udp_client_unix client_;
 };
 
 using udp_sink_mt = udp_sink<std::mutex>;

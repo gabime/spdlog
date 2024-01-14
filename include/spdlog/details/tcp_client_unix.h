@@ -4,7 +4,7 @@
 #pragma once
 
 #ifdef _WIN32
-    #error include tcp_client-windows.h instead
+    #error include tcp_client_windows.h instead
 #endif
 
 // tcp client helper
@@ -23,7 +23,7 @@
 
 namespace spdlog {
 namespace details {
-class tcp_client {
+class tcp_client_unix {
     int socket_ = -1;
 
 public:
@@ -38,7 +38,7 @@ public:
 
     int fd() const { return socket_; }
 
-    ~tcp_client() { close(); }
+    ~tcp_client_unix() { close(); }
 
     // try to connect or throw on failure
     void connect(const std::string &host, int port) {

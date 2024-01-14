@@ -191,11 +191,11 @@ set(SPDLOG_HEADERS
     "include/spdlog/details/periodic_worker.h"
     "include/spdlog/details/registry.h"
     "include/spdlog/details/synchronous_factory.h"
-    "include/spdlog/details/tcp_client-windows.h"
-    "include/spdlog/details/tcp_client.h"
+
+    "include/spdlog/details/tcp_client_unix.h"
     "include/spdlog/details/thread_pool.h"
-    "include/spdlog/details/udp_client-windows.h"
-    "include/spdlog/details/udp_client.h"
+    "include/spdlog/details/udp_client_windows.h"
+    "include/spdlog/details/udp_client_unix.h"
     "include/spdlog/details/windows_include.h"
     "include/spdlog/fmt/bin_to_hex.h"
     "include/spdlog/fmt/fmt.h"
@@ -236,7 +236,6 @@ set(SPDLOG_SRCS
     "src/details/file_helper.cpp"
     "src/details/log_msg.cpp"
     "src/details/log_msg_buffer.cpp"
-    "src/details/os.cpp"
     "src/details/periodic_worker.cpp"
     "src/details/registry.cpp"
     "src/details/thread_pool.cpp"    
@@ -249,6 +248,15 @@ set(SPDLOG_SRCS
     "src/sinks/stdout_sinks.cpp"
     "src/sinks/wincolor_sink.cpp")
 
+if(WIN32)
+    list(APPEND SPDLOG_SRCS "src/details/os_windows.cpp")
+    list(APPEND SPDLOG_HEADERS "include/spdlog/details/tcp_client_windows.h")
+    list(APPEND SPDLOG_HEADERS "include/spdlog/details/udp_client_windows.h")
+else()
+    list(APPEND SPDLOG_SRCS "src/details/os_unix.cpp")
+    list(APPEND SPDLOG_HEADERS "include/spdlog/details/tcp_client_unix.h")
+    list(APPEND SPDLOG_HEADERS "include/spdlog/details/udp_client_unix.h")
+endif()
 # Generate spdlog_config.h based on the current configuration
 set(OUT_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/spdlog_config.h")
 message(STATUS "Generating ${OUT_CONFIG_FILE}")
@@ -256,7 +264,8 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/spdlog_config.h.in" ${OUT_CONF
 list(APPEND SPDLOG_HEADERS ${OUT_CONFIG_FILE})
 if(BUILD_SHARED_LIBS)
     if(WIN32)
-        set(VERSION_RC ${CMAKE_CURRENT_BINARY_DIR}/version.rc )
+        set(VERSION_RC ${CMAKE_CURRENT_BINARY_DIR}/version.rc
+                src/details/os_unix.cpp)
         configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.rc.in ${CMAKE_CURRENT_BINARY_DIR}/version.rc @ONLY)        
     endif()
     add_library(spdlog SHARED ${SPDLOG_SRCS} ${SPDLOG_HEADERS} ${VERSION_RC})
