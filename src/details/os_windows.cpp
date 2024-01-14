@@ -5,6 +5,10 @@
     #error "_WIN32 only source file"
 #endif
 
+// clang-format off
+#include "spdlog/details/windows_include.h"
+// clang-format on
+
 #include <fileapi.h>  // for FlushFileBuffers
 #include <io.h>       // for _get_osfhandle, _isatty, _fileno
 #include <process.h>  // for _get_pid
@@ -22,7 +26,6 @@
 
 #include "spdlog/common.h"
 #include "spdlog/details/os.h"
-#include "spdlog/details/windows_include.h"
 
 #ifdef __MINGW32__
     #include <share.h>
@@ -189,7 +192,6 @@ std::string filename_to_str(const filename_t &filename) { return filename; }
 #endif
 
 int pid() noexcept { return static_cast<int>(::GetCurrentProcessId()); }
-
 
 bool is_color_terminal() noexcept { return true; }
 
