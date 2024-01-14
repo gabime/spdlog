@@ -5,8 +5,7 @@
 
 #include <cerrno>
 #include <cstdio>
-#include <string>
-#include <tuple>
+
 
 #include "spdlog/common.h"
 #include "spdlog/details/os.h"
