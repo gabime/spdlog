@@ -191,8 +191,6 @@ set(SPDLOG_HEADERS
     "include/spdlog/details/periodic_worker.h"
     "include/spdlog/details/registry.h"
     "include/spdlog/details/synchronous_factory.h"
-
-    "include/spdlog/details/tcp_client_unix.h"
     "include/spdlog/details/thread_pool.h"
     "include/spdlog/fmt/bin_to_hex.h"
     "include/spdlog/fmt/fmt.h"
