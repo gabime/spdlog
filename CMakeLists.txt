@@ -218,8 +218,7 @@ set(SPDLOG_HEADERS
     "include/spdlog/sinks/systemd_sink.h"
     "include/spdlog/sinks/tcp_sink.h"
     "include/spdlog/sinks/udp_sink.h"
-    "include/spdlog/sinks/win_eventlog_sink.h"
-    "include/spdlog/sinks/wincolor_sink.h")
+    )
 
 set(SPDLOG_SRCS 
     "src/async_logger.cpp"
@@ -240,20 +239,25 @@ set(SPDLOG_SRCS
     "src/sinks/rotating_file_sink.cpp"
     "src/sinks/sink.cpp"
     "src/sinks/stdout_color_sinks.cpp"
-    "src/sinks/stdout_sinks.cpp"
-    "src/sinks/wincolor_sink.cpp")
+    "src/sinks/stdout_sinks.cpp")
 
 if(WIN32)
-    list(APPEND SPDLOG_SRCS "src/details/os_windows.cpp")
-    list(APPEND SPDLOG_HEADERS "include/spdlog/details/tcp_client_windows.h")
-    list(APPEND SPDLOG_HEADERS "include/spdlog/details/udp_client_windows.h")
-    list(APPEND SPDLOG_HEADERS "include/spdlog/details/windows_include.h")
-
+    list(APPEND SPDLOG_SRCS
+            "src/details/os_windows.cpp"
+            "src/sinks/wincolor_sink.cpp")
+    list(APPEND SPDLOG_HEADERS
+            "include/spdlog/details/tcp_client_windows.h"
+            "include/spdlog/details/udp_client_windows.h"
+            "include/spdlog/details/windows_include.h"
+            "include/spdlog/sinks/win_eventlog_sink.h"
+            "include/spdlog/sinks/wincolor_sink.h")
 else()
     list(APPEND SPDLOG_SRCS "src/details/os_unix.cpp")
-    list(APPEND SPDLOG_HEADERS "include/spdlog/details/tcp_client_unix.h")
-    list(APPEND SPDLOG_HEADERS "include/spdlog/details/udp_client_unix.h")
+    list(APPEND SPDLOG_HEADERS
+            "include/spdlog/details/tcp_client_unix.h"
+            "include/spdlog/details/udp_client_unix.h")
 endif()
+
 # Generate spdlog_config.h based on the current configuration
 set(OUT_CONFIG_FILE "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/spdlog_config.h")
 message(STATUS "Generating ${OUT_CONFIG_FILE}")
