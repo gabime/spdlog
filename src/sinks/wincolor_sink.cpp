@@ -1,17 +1,16 @@
 // Copyright(c) 2015-present, Gabi Melman & spdlog contributors.
 // Distributed under the MIT License (http://opensource.org/licenses/MIT)
-#ifdef _WIN32
 
 // clang-format off
 #include "spdlog/details/windows_include.h"
-#include "spdlog/sinks/wincolor_sink.h"
-#include "spdlog/common.h"
 #include <wincon.h>
+#include <mutex>
 // clang-format on
 
-    #include <spdlog/details/null_mutex.h>
+#include "spdlog/sinks/wincolor_sink.h"
 
-    #include <mutex>
+#include "spdlog/common.h"
+#include "spdlog/details/null_mutex.h"
 
 namespace spdlog {
 namespace sinks {
@@ -145,5 +144,3 @@ template class SPDLOG_API spdlog::sinks::wincolor_stdout_sink<spdlog::details::n
 
 template class SPDLOG_API spdlog::sinks::wincolor_stderr_sink<std::mutex>;
 template class SPDLOG_API spdlog::sinks::wincolor_stderr_sink<spdlog::details::null_mutex>;
-
-#endif  // _WIN32
