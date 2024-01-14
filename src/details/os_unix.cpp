@@ -322,7 +322,7 @@ std::string getenv(const char *field) {
     return buf != nullptr ? buf : std::string{};
 }
 
-// Do fsync by FILE handlerpointer
+// Do fsync by FILE pointer
 // Return true on success
 bool fsync(FILE *fp) { return ::fsync(fileno(fp)) == 0; }
 
