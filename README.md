@@ -79,7 +79,8 @@ int main()
     spdlog::set_pattern("[%H:%M:%S %z] [%n] [%^---%L---%$] [thread %t] %v");
     
     // Compile time log levels
-    // define SPDLOG_ACTIVE_LEVEL to desired level
+    // Note that this does not change the current log level, it will only
+    // remove (depending on SPDLOG_ACTIVE_LEVEL) the call on the release code.
     SPDLOG_TRACE("Some trace message with param {}", 42);
     SPDLOG_DEBUG("Some debug message");
 }
