@@ -81,7 +81,7 @@
     #if FMT_USE_CONSTEXPR
         #define SPDLOG_CONSTEXPR_FUNC FMT_CONSTEXPR
     #else
-	#define SPDLOG_CONSTEXPR_FUNC inline
+        #define SPDLOG_CONSTEXPR_FUNC inline
     #endif
 #endif
 
