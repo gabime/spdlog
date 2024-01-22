@@ -144,52 +144,52 @@ template <typename... Args>
 inline void log(source_loc source,
                 level::level_enum lvl,
                 format_string_t<Args...> fmt,
-                Args &&...args) {
+                Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args) {
+inline void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void trace(format_string_t<Args...> fmt, Args &&...args) {
+inline void trace(format_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void debug(format_string_t<Args...> fmt, Args &&...args) {
+inline void debug(format_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void info(format_string_t<Args...> fmt, Args &&...args) {
+inline void info(format_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void warn(format_string_t<Args...> fmt, Args &&...args) {
+inline void warn(format_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void error(format_string_t<Args...> fmt, Args &&...args) {
+inline void error(format_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->error(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void critical(format_string_t<Args...> fmt, Args &&...args) {
+inline void critical(format_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
 }
 
 template <typename T>
-inline void log(source_loc source, level::level_enum lvl, const T &msg) {
+inline void log(source_loc source, level::level_enum lvl, const T &msg) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->log(source, lvl, msg);
 }
 
 template <typename T>
-inline void log(level::level_enum lvl, const T &msg) {
+inline void log(level::level_enum lvl, const T &msg) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->log(lvl, msg);
 }
 
@@ -198,73 +198,73 @@ template <typename... Args>
 inline void log(source_loc source,
                 level::level_enum lvl,
                 wformat_string_t<Args...> fmt,
-                Args &&...args) {
+                Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args) {
+inline void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void trace(wformat_string_t<Args...> fmt, Args &&...args) {
+inline void trace(wformat_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void debug(wformat_string_t<Args...> fmt, Args &&...args) {
+inline void debug(wformat_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void info(wformat_string_t<Args...> fmt, Args &&...args) {
+inline void info(wformat_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void warn(wformat_string_t<Args...> fmt, Args &&...args) {
+inline void warn(wformat_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void error(wformat_string_t<Args...> fmt, Args &&...args) {
+inline void error(wformat_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->error(fmt, std::forward<Args>(args)...);
 }
 
 template <typename... Args>
-inline void critical(wformat_string_t<Args...> fmt, Args &&...args) {
+inline void critical(wformat_string_t<Args...> fmt, Args &&...args) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
 }
 #endif
 
 template <typename T>
-inline void trace(const T &msg) {
+inline void trace(const T &msg) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->trace(msg);
 }
 
 template <typename T>
-inline void debug(const T &msg) {
+inline void debug(const T &msg) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->debug(msg);
 }
 
 template <typename T>
-inline void info(const T &msg) {
+inline void info(const T &msg) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->info(msg);
 }
 
 template <typename T>
-inline void warn(const T &msg) {
+inline void warn(const T &msg) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->warn(msg);
 }
 
 template <typename T>
-inline void error(const T &msg) {
+inline void error(const T &msg) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->error(msg);
 }
 
 template <typename T>
-inline void critical(const T &msg) {
+inline void critical(const T &msg) SPDLOG_COND_NOEXCEPT {
     default_logger_raw()->critical(msg);
 }
 

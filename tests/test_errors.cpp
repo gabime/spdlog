@@ -39,11 +39,16 @@ TEST_CASE("custom_error_handler", "[errors]") {
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("logger", filename, true);
     logger->flush_on(spdlog::level::info);
-    logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
+    bool error_seen = false;
+    logger->set_error_handler([&](const std::string &) { error_seen = true; });
     logger->info("Good message #1");
+    REQUIRE_FALSE(error_seen);
 
-    REQUIRE_THROWS_AS(logger->info(SPDLOG_FMT_RUNTIME("Bad format msg {} {}"), "xxx"), custom_ex);
+    logger->info(SPDLOG_FMT_RUNTIME("Bad format msg {} {}"), "xxx");
+    REQUIRE(error_seen);
+    error_seen = false;
     logger->info("Good message #2");
+    REQUIRE_FALSE(error_seen);
     require_message_count(SIMPLE_LOG, 2);
 }
 #endif
@@ -51,8 +56,10 @@ TEST_CASE("custom_error_handler", "[errors]") {
 TEST_CASE("default_error_handler2", "[errors]") {
     spdlog::drop_all();
     auto logger = spdlog::create<failing_sink>("failed_logger");
-    logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
-    REQUIRE_THROWS_AS(logger->info("Some message"), custom_ex);
+    bool error_seen = false;
+    logger->set_error_handler([&](const std::string &) { error_seen = true; });
+    logger->info("Some message");
+    REQUIRE(error_seen);
 }
 
 TEST_CASE("flush_error_handler", "[errors]") {
@@ -61,6 +68,15 @@ TEST_CASE("flush_error_handler", "[errors]") {
     logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
     REQUIRE_THROWS_AS(logger->flush(), custom_ex);
 }
+
+#if !defined(SPDLOG_LOGGER_NOEXCEPT)
+TEST_CASE("custom_throw_error_handler", "[errors]") {
+    spdlog::drop_all();
+    auto logger = spdlog::create<failing_sink>("failed_logger");
+    logger->set_error_handler([=](const std::string &) { throw custom_ex(); });
+    REQUIRE_THROWS_AS(logger->info("Some message"), custom_ex);
+}
+#endif
 
 #if !defined(SPDLOG_USE_STD_FORMAT)
 TEST_CASE("async_error_handler", "[errors]") {

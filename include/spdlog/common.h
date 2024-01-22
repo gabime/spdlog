@@ -70,6 +70,12 @@
     #define SPDLOG_CONSTEXPR constexpr
 #endif
 
+#ifdef SPDLOG_LOGGER_NOEXCEPT
+    #define SPDLOG_COND_NOEXCEPT SPDLOG_NOEXCEPT
+#else
+    #define SPDLOG_COND_NOEXCEPT
+#endif
+
 // If building with std::format, can just use constexpr, otherwise if building with fmt
 // SPDLOG_CONSTEXPR_FUNC needs to be set the same as FMT_CONSTEXPR to avoid situations where
 // a constexpr function in spdlog could end up calling a non-constexpr function in fmt

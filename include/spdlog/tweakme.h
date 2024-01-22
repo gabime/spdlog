@@ -139,3 +139,16 @@
 // # define SPDLOG_FUNCTION __FUNCTION__
 // #endif
 ///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// Uncomment to declare all output functionality in spdlog namespace and on spdlog::logger as
+// noexcept. This may allow the compiler to perform further optimizations when logging is performed.
+// Additionally, static analysis can assume that logging never throws, which may be useful
+// when logging is used in inherently exception-unsafe places such as destructors.
+//
+// Note that this will result in program termination if the registered error handler
+// throws. It might also interact badly with mechanisms that inject exceptions into running
+// code (such as the pthread_cancel implementation of NPTL).
+//
+// #define SPDLOG_LOGGER_NOEXCEPT
+///////////////////////////////////////////////////////////////////////////////
