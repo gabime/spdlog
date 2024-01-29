@@ -53,7 +53,13 @@ struct daily_filename_format_calculator {
 #else
         std::stringstream stream;
 #endif
+#if __GNUC__ >= 5
         stream << std::put_time(&now_tm, file_path.c_str());
+#else
+        char time_buf[64];
+        std::strftime(time_buf, sizeof(time_buf), file_path.c_str(), &now_tm);
+        stream << time_buf;
+#endif
         return stream.str();
     }
 };
