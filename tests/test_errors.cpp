@@ -19,7 +19,7 @@ protected:
 };
 struct custom_ex {};
 
-#if !defined(SPDLOG_USE_STD_FORMAT)  // std formt doesn't fully support tuntime strings
+#if !defined(SPDLOG_USE_STD_FORMAT)  // std format doesn't fully support runtime strings
 TEST_CASE("default_error_handler", "[errors]") {
     prepare_logdir();
     spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
