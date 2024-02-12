@@ -152,7 +152,7 @@ TEST_CASE("file_event_handlers", "[file_helper]") {
         helper.reopen(true);
         events.clear();
     }
-    // make sure that the file_helper destrcutor calls the close callbacks if needed
+    // make sure that the file_helper destructor calls the close callbacks if needed
     REQUIRE(events == std::vector<flags>{flags::before_close, flags::after_close});
     REQUIRE(file_contents(TEST_FILENAME) == "after_open\nbefore_close\n");
 }
