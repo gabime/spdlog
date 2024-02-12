@@ -152,18 +152,10 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::print_range_(const memory_buf_t 
 
 template <typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::write_to_file_(const memory_buf_t &formatted) {
-    DWORD bytes_written = 0;
-#if defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-    wmemory_buf_t wformatted;
-    details::os::utf8_to_wstrbuf(string_view_t(formatted.data(), formatted.size()), wformatted);
-    auto size = static_cast<DWORD>(wformatted.size() * sizeof(WCHAR));
-    auto ignored = ::WriteFile(static_cast<HANDLE>(out_handle_), wformatted.data(), size,
-                               &bytes_written, nullptr);
-#else
     auto size = static_cast<DWORD>(formatted.size());
+    DWORD bytes_written = 0;
     auto ignored = ::WriteFile(static_cast<HANDLE>(out_handle_), formatted.data(), size,
                                &bytes_written, nullptr);
-#endif
     (void)(ignored);
 }
 
