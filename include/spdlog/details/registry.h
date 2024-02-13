@@ -68,7 +68,7 @@ public:
         periodic_flusher_ = details::make_unique<periodic_worker>(clbk, interval);
     }
 
-    std::unique_ptr<periodic_worker> &get_flusher() { return periodic_flusher_; }
+    std::unique_ptr<periodic_worker> &get_flusher() { std::lock_guard<std::mutex> lock(flusher_mutex_); return periodic_flusher_; }
 
     void set_error_handler(err_handler handler);
 

@@ -89,9 +89,4 @@ SPDLOG_INLINE void apply_logger_env_levels(std::shared_ptr<logger> logger) {
     details::registry::instance().apply_logger_env_levels(std::move(logger));
 }
 
-SPDLOG_INLINE std::unique_ptr<spdlog::details::periodic_worker> &get_flusher()
-{
-    return details::registry::instance().get_flusher();
-}
-
 }  // namespace spdlog
