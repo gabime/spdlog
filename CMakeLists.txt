@@ -1,6 +1,7 @@
 # Copyright(c) 2019 spdlog authors Distributed under the MIT License (http://opensource.org/licenses/MIT)
 
-cmake_minimum_required(VERSION 3.11)
+# Require minimum v3.13 so we can set options externally without a warning
+cmake_minimum_required(VERSION 3.13)
 
 # ---------------------------------------------------------------------------------------
 # Start spdlog project
