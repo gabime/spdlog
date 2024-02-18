@@ -125,6 +125,15 @@ public:
 
     void log(level::level_enum lvl, string_view_t msg) { log(source_loc{}, lvl, msg); }
 
+    void log_raw(const details::log_msg &log_msg) {
+        bool log_enabled = should_log(log_msg.level);
+        bool traceback_enabled = tracer_.enabled();
+        if (!log_enabled && !traceback_enabled) {
+            return;
+        }
+        log_it_(log_msg, log_enabled, traceback_enabled);
+    }
+
     template <typename... Args>
     void trace(format_string_t<Args...> fmt, Args &&...args) {
         log(level::trace, fmt, std::forward<Args>(args)...);
