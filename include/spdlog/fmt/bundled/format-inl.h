@@ -9,20 +9,16 @@
 #define FMT_FORMAT_INL_H_
 
 #include <algorithm>
-#include <cctype>
 #include <cerrno>  // errno
 #include <climits>
 #include <cmath>
-#include <cstdarg>
-#include <cstring>  // std::memmove
-#include <cwchar>
 #include <exception>
 
 #ifndef FMT_STATIC_THOUSANDS_SEPARATOR
 #  include <locale>
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(FMT_WINDOWS_NO_WCHAR)
 #  include <io.h>  // _isatty
 #endif
 
@@ -62,8 +58,8 @@ FMT_FUNC void format_error_code(detail::buffer<char>& out, int error_code,
   error_code_size += detail::to_unsigned(detail::count_digits(abs_value));
   auto it = buffer_appender<char>(out);
   if (message.size() <= inline_buffer_size - error_code_size)
-    format_to(it, FMT_STRING("{}{}"), message, SEP);
-  format_to(it, FMT_STRING("{}{}"), ERROR_STR, error_code);
+    fmt::format_to(it, FMT_STRING("{}{}"), message, SEP);
+  fmt::format_to(it, FMT_STRING("{}{}"), ERROR_STR, error_code);
   FMT_ASSERT(out.size() <= inline_buffer_size, "");
 }
 
@@ -77,9 +73,8 @@ FMT_FUNC void report_error(format_func func, int error_code,
 }
 
 // A wrapper around fwrite that throws on error.
-inline void fwrite_fully(const void* ptr, size_t size, size_t count,
-                         FILE* stream) {
-  size_t written = std::fwrite(ptr, size, count, stream);
+inline void fwrite_fully(const void* ptr, size_t count, FILE* stream) {
+  size_t written = std::fwrite(ptr, 1, count, stream);
   if (written < count)
     FMT_THROW(system_error(errno, FMT_STRING("cannot write to file")));
 }
@@ -90,7 +85,7 @@ locale_ref::locale_ref(const Locale& loc) : locale_(&loc) {
   static_assert(std::is_same<Locale, std::locale>::value, "");
 }
 
-template <typename Locale> Locale locale_ref::get() const {
+template <typename Locale> auto locale_ref::get() const -> Locale {
   static_assert(std::is_same<Locale, std::locale>::value, "");
   return locale_ ? *static_cast<const std::locale*>(locale_) : std::locale();
 }
@@ -102,7 +97,8 @@ FMT_FUNC auto thousands_sep_impl(locale_ref loc) -> thousands_sep_result<Char> {
   auto thousands_sep = grouping.empty() ? Char() : facet.thousands_sep();
   return {std::move(grouping), thousands_sep};
 }
-template <typename Char> FMT_FUNC Char decimal_point_impl(locale_ref loc) {
+template <typename Char>
+FMT_FUNC auto decimal_point_impl(locale_ref loc) -> Char {
   return std::use_facet<std::numpunct<Char>>(loc.get<std::locale>())
       .decimal_point();
 }
@@ -115,96 +111,74 @@ template <typename Char> FMT_FUNC Char decimal_point_impl(locale_ref) {
   return '.';
 }
 #endif
+
+FMT_FUNC auto write_loc(appender out, loc_value value,
+                        const format_specs<>& specs, locale_ref loc) -> bool {
+#ifndef FMT_STATIC_THOUSANDS_SEPARATOR
+  auto locale = loc.get<std::locale>();
+  // We cannot use the num_put<char> facet because it may produce output in
+  // a wrong encoding.
+  using facet = format_facet<std::locale>;
+  if (std::has_facet<facet>(locale))
+    return std::use_facet<facet>(locale).put(out, value, specs);
+  return facet(locale).put(out, value, specs);
+#endif
+  return false;
+}
 }  // namespace detail
 
-#if !FMT_MSC_VERSION
-FMT_API FMT_FUNC format_error::~format_error() noexcept = default;
+template <typename Locale> typename Locale::id format_facet<Locale>::id;
+
+#ifndef FMT_STATIC_THOUSANDS_SEPARATOR
+template <typename Locale> format_facet<Locale>::format_facet(Locale& loc) {
+  auto& numpunct = std::use_facet<std::numpunct<char>>(loc);
+  grouping_ = numpunct.grouping();
+  if (!grouping_.empty()) separator_ = std::string(1, numpunct.thousands_sep());
+}
+
+template <>
+FMT_API FMT_FUNC auto format_facet<std::locale>::do_put(
+    appender out, loc_value val, const format_specs<>& specs) const -> bool {
+  return val.visit(
+      detail::loc_writer<>{out, specs, separator_, grouping_, decimal_point_});
+}
 #endif
 
-FMT_FUNC std::system_error vsystem_error(int error_code, string_view format_str,
-                                         format_args args) {
+FMT_FUNC auto vsystem_error(int error_code, string_view fmt, format_args args)
+    -> std::system_error {
   auto ec = std::error_code(error_code, std::generic_category());
-  return std::system_error(ec, vformat(format_str, args));
+  return std::system_error(ec, vformat(fmt, args));
 }
 
 namespace detail {
 
-template <typename F> inline bool operator==(basic_fp<F> x, basic_fp<F> y) {
+template <typename F>
+inline auto operator==(basic_fp<F> x, basic_fp<F> y) -> bool {
   return x.f == y.f && x.e == y.e;
 }
 
 // Compilers should be able to optimize this into the ror instruction.
-FMT_CONSTEXPR inline uint32_t rotr(uint32_t n, uint32_t r) noexcept {
+FMT_CONSTEXPR inline auto rotr(uint32_t n, uint32_t r) noexcept -> uint32_t {
   r &= 31;
   return (n >> r) | (n << (32 - r));
 }
-FMT_CONSTEXPR inline uint64_t rotr(uint64_t n, uint32_t r) noexcept {
+FMT_CONSTEXPR inline auto rotr(uint64_t n, uint32_t r) noexcept -> uint64_t {
   r &= 63;
   return (n >> r) | (n << (64 - r));
 }
 
-// Computes 128-bit result of multiplication of two 64-bit unsigned integers.
-inline uint128_fallback umul128(uint64_t x, uint64_t y) noexcept {
-#if FMT_USE_INT128
-  auto p = static_cast<uint128_opt>(x) * static_cast<uint128_opt>(y);
-  return {static_cast<uint64_t>(p >> 64), static_cast<uint64_t>(p)};
-#elif defined(_MSC_VER) && defined(_M_X64)
-  auto result = uint128_fallback();
-  result.lo_ = _umul128(x, y, &result.hi_);
-  return result;
-#else
-  const uint64_t mask = static_cast<uint64_t>(max_value<uint32_t>());
-
-  uint64_t a = x >> 32;
-  uint64_t b = x & mask;
-  uint64_t c = y >> 32;
-  uint64_t d = y & mask;
-
-  uint64_t ac = a * c;
-  uint64_t bc = b * c;
-  uint64_t ad = a * d;
-  uint64_t bd = b * d;
-
-  uint64_t intermediate = (bd >> 32) + (ad & mask) + (bc & mask);
-
-  return {ac + (intermediate >> 32) + (ad >> 32) + (bc >> 32),
-          (intermediate << 32) + (bd & mask)};
-#endif
-}
-
 // Implementation of Dragonbox algorithm: https://github.com/jk-jeon/dragonbox.
 namespace dragonbox {
-// Computes upper 64 bits of multiplication of two 64-bit unsigned integers.
-inline uint64_t umul128_upper64(uint64_t x, uint64_t y) noexcept {
-#if FMT_USE_INT128
-  auto p = static_cast<uint128_opt>(x) * static_cast<uint128_opt>(y);
-  return static_cast<uint64_t>(p >> 64);
-#elif defined(_MSC_VER) && defined(_M_X64)
-  return __umulh(x, y);
-#else
-  return umul128(x, y).high();
-#endif
-}
-
-// Computes upper 128 bits of multiplication of a 64-bit unsigned integer and a
-// 128-bit unsigned integer.
-inline uint128_fallback umul192_upper128(uint64_t x,
-                                         uint128_fallback y) noexcept {
-  uint128_fallback r = umul128(x, y.high());
-  r += umul128_upper64(x, y.low());
-  return r;
-}
-
 // Computes upper 64 bits of multiplication of a 32-bit unsigned integer and a
 // 64-bit unsigned integer.
-inline uint64_t umul96_upper64(uint32_t x, uint64_t y) noexcept {
+inline auto umul96_upper64(uint32_t x, uint64_t y) noexcept -> uint64_t {
   return umul128_upper64(static_cast<uint64_t>(x) << 32, y);
 }
 
 // Computes lower 128 bits of multiplication of a 64-bit unsigned integer and a
 // 128-bit unsigned integer.
-inline uint128_fallback umul192_lower128(uint64_t x,
-                                         uint128_fallback y) noexcept {
+inline auto umul192_lower128(uint64_t x, uint128_fallback y) noexcept
+    -> uint128_fallback {
   uint64_t high = x * y.high();
   uint128_fallback high_low = umul128(x, y.low());
   return {high + high_low.high(), high_low.low()};
@@ -212,29 +186,17 @@ inline uint128_fallback umul192_lower128(uint64_t x,
 
 // Computes lower 64 bits of multiplication of a 32-bit unsigned integer and a
 // 64-bit unsigned integer.
-inline uint64_t umul96_lower64(uint32_t x, uint64_t y) noexcept {
+inline auto umul96_lower64(uint32_t x, uint64_t y) noexcept -> uint64_t {
   return x * y;
 }
 
-// Computes floor(log10(pow(2, e))) for e in [-2620, 2620] using the method from
-// https://fmt.dev/papers/Dragonbox.pdf#page=28, section 6.1.
-inline int floor_log10_pow2(int e) noexcept {
-  FMT_ASSERT(e <= 2620 && e >= -2620, "too large exponent");
-  static_assert((-1 >> 1) == -1, "right shift is not arithmetic");
-  return (e * 315653) >> 20;
-}
-
 // Various fast log computations.
-inline int floor_log2_pow10(int e) noexcept {
-  FMT_ASSERT(e <= 1233 && e >= -1233, "too large exponent");
-  return (e * 1741647) >> 19;
-}
-inline int floor_log10_pow2_minus_log10_4_over_3(int e) noexcept {
+inline auto floor_log10_pow2_minus_log10_4_over_3(int e) noexcept -> int {
   FMT_ASSERT(e <= 2936 && e >= -2985, "too large exponent");
   return (e * 631305 - 261663) >> 21;
 }
 
-static constexpr struct {
+FMT_INLINE_VARIABLE constexpr struct {
   uint32_t divisor;
   int shift_amount;
 } div_small_pow10_infos[] = {{10, 16}, {100, 16}};
@@ -243,7 +205,7 @@ static constexpr struct {
 // divisible by pow(10, N).
 // Precondition: n <= pow(10, N + 1).
 template <int N>
-bool check_divisibility_and_divide_by_pow10(uint32_t& n) noexcept {
+auto check_divisibility_and_divide_by_pow10(uint32_t& n) noexcept -> bool {
   // The numbers below are chosen such that:
   //   1. floor(n/d) = floor(nm / 2^k) where d=10 or d=100,
   //   2. nm mod 2^k < m if and only if n is divisible by d,
@@ -268,7 +230,7 @@ bool check_divisibility_and_divide_by_pow10(uint32_t& n) noexcept {
 
 // Computes floor(n / pow(10, N)) for small n and N.
 // Precondition: n <= pow(10, N + 1).
-template <int N> uint32_t small_division_by_pow10(uint32_t n) noexcept {
+template <int N> auto small_division_by_pow10(uint32_t n) noexcept -> uint32_t {
   constexpr auto info = div_small_pow10_infos[N - 1];
   FMT_ASSERT(n <= info.divisor * 10, "n is too large");
   constexpr uint32_t magic_number =
@@ -277,24 +239,24 @@ template <int N> uint32_t small_division_by_pow10(uint32_t n) noexcept {
 }
 
 // Computes floor(n / 10^(kappa + 1)) (float)
-inline uint32_t divide_by_10_to_kappa_plus_1(uint32_t n) noexcept {
+inline auto divide_by_10_to_kappa_plus_1(uint32_t n) noexcept -> uint32_t {
   // 1374389535 = ceil(2^37/100)
   return static_cast<uint32_t>((static_cast<uint64_t>(n) * 1374389535) >> 37);
 }
 // Computes floor(n / 10^(kappa + 1)) (double)
-inline uint64_t divide_by_10_to_kappa_plus_1(uint64_t n) noexcept {
+inline auto divide_by_10_to_kappa_plus_1(uint64_t n) noexcept -> uint64_t {
   // 2361183241434822607 = ceil(2^(64+7)/1000)
   return umul128_upper64(n, 2361183241434822607ull) >> 7;
 }
 
 // Various subroutines using pow10 cache
-template <class T> struct cache_accessor;
+template <typename T> struct cache_accessor;
 
 template <> struct cache_accessor<float> {
   using carrier_uint = float_info<float>::carrier_uint;
   using cache_entry_type = uint64_t;
 
-  static uint64_t get_cached_power(int k) noexcept {
+  static auto get_cached_power(int k) noexcept -> uint64_t {
     FMT_ASSERT(k >= float_info<float>::min_k && k <= float_info<float>::max_k,
                "k is out of range");
     static constexpr const uint64_t pow10_significands[] = {
@@ -336,20 +298,23 @@ template <> struct cache_accessor<float> {
     bool is_integer;
   };
 
-  static compute_mul_result compute_mul(
-      carrier_uint u, const cache_entry_type& cache) noexcept {
+  static auto compute_mul(carrier_uint u,
+                          const cache_entry_type& cache) noexcept
+      -> compute_mul_result {
     auto r = umul96_upper64(u, cache);
     return {static_cast<carrier_uint>(r >> 32),
             static_cast<carrier_uint>(r) == 0};
   }
 
-  static uint32_t compute_delta(const cache_entry_type& cache,
-                                int beta) noexcept {
+  static auto compute_delta(const cache_entry_type& cache, int beta) noexcept
+      -> uint32_t {
     return static_cast<uint32_t>(cache >> (64 - 1 - beta));
   }
 
-  static compute_mul_parity_result compute_mul_parity(
-      carrier_uint two_f, const cache_entry_type& cache, int beta) noexcept {
+  static auto compute_mul_parity(carrier_uint two_f,
+                                 const cache_entry_type& cache,
+                                 int beta) noexcept
+      -> compute_mul_parity_result {
     FMT_ASSERT(beta >= 1, "");
     FMT_ASSERT(beta < 64, "");
 
@@ -358,22 +323,22 @@ template <> struct cache_accessor<float> {
             static_cast<uint32_t>(r >> (32 - beta)) == 0};
   }
 
-  static carrier_uint compute_left_endpoint_for_shorter_interval_case(
-      const cache_entry_type& cache, int beta) noexcept {
+  static auto compute_left_endpoint_for_shorter_interval_case(
+      const cache_entry_type& cache, int beta) noexcept -> carrier_uint {
     return static_cast<carrier_uint>(
         (cache - (cache >> (num_significand_bits<float>() + 2))) >>
         (64 - num_significand_bits<float>() - 1 - beta));
   }
 
-  static carrier_uint compute_right_endpoint_for_shorter_interval_case(
-      const cache_entry_type& cache, int beta) noexcept {
+  static auto compute_right_endpoint_for_shorter_interval_case(
+      const cache_entry_type& cache, int beta) noexcept -> carrier_uint {
     return static_cast<carrier_uint>(
         (cache + (cache >> (num_significand_bits<float>() + 1))) >>
         (64 - num_significand_bits<float>() - 1 - beta));
   }
 
-  static carrier_uint compute_round_up_for_shorter_interval_case(
-      const cache_entry_type& cache, int beta) noexcept {
+  static auto compute_round_up_for_shorter_interval_case(
+      const cache_entry_type& cache, int beta) noexcept -> carrier_uint {
     return (static_cast<carrier_uint>(
                 cache >> (64 - num_significand_bits<float>() - 2 - beta)) +
             1) /
@@ -385,7 +350,7 @@ template <> struct cache_accessor<double> {
   using carrier_uint = float_info<double>::carrier_uint;
   using cache_entry_type = uint128_fallback;
 
-  static uint128_fallback get_cached_power(int k) noexcept {
+  static auto get_cached_power(int k) noexcept -> uint128_fallback {
     FMT_ASSERT(k >= float_info<double>::min_k && k <= float_info<double>::max_k,
                "k is out of range");
 
@@ -1009,8 +974,22 @@ template <> struct cache_accessor<double> {
       {0xfcf62c1dee382c42, 0x46729e03dd9ed7b6},
       {0x9e19db92b4e31ba9, 0x6c07a2c26a8346d2},
       {0xc5a05277621be293, 0xc7098b7305241886},
-      { 0xf70867153aa2db38,
-        0xb8cbee4fc66d1ea8 }
+      {0xf70867153aa2db38, 0xb8cbee4fc66d1ea8},
+      {0x9a65406d44a5c903, 0x737f74f1dc043329},
+      {0xc0fe908895cf3b44, 0x505f522e53053ff3},
+      {0xf13e34aabb430a15, 0x647726b9e7c68ff0},
+      {0x96c6e0eab509e64d, 0x5eca783430dc19f6},
+      {0xbc789925624c5fe0, 0xb67d16413d132073},
+      {0xeb96bf6ebadf77d8, 0xe41c5bd18c57e890},
+      {0x933e37a534cbaae7, 0x8e91b962f7b6f15a},
+      {0xb80dc58e81fe95a1, 0x723627bbb5a4adb1},
+      {0xe61136f2227e3b09, 0xcec3b1aaa30dd91d},
+      {0x8fcac257558ee4e6, 0x213a4f0aa5e8a7b2},
+      {0xb3bd72ed2af29e1f, 0xa988e2cd4f62d19e},
+      {0xe0accfa875af45a7, 0x93eb1b80a33b8606},
+      {0x8c6c01c9498d8b88, 0xbc72f130660533c4},
+      {0xaf87023b9bf0ee6a, 0xeb8fad7c7f8680b5},
+      {0xdb68c2ca82ed2a05, 0xa67398db9f6820e2},
 #else
       {0xff77b1fcbebcdc4f, 0x25e8e89c13bb0f7b},
       {0xce5d73ff402d98e3, 0xfb0a3d212dc81290},
@@ -1034,8 +1013,8 @@ template <> struct cache_accessor<double> {
       {0x8da471a9de737e24, 0x5ceaecfed289e5d3},
       {0xe4d5e82392a40515, 0x0fabaf3feaa5334b},
       {0xb8da1662e7b00a17, 0x3d6a751f3b936244},
-      { 0x95527a5202df0ccb,
-        0x0f37801e0c43ebc9 }
+      {0x95527a5202df0ccb, 0x0f37801e0c43ebc9},
+      {0xf13e34aabb430a15, 0x647726b9e7c68ff0}
 #endif
     };
 
@@ -1095,19 +1074,22 @@ template <> struct cache_accessor<double> {
     bool is_integer;
   };
 
-  static compute_mul_result compute_mul(
-      carrier_uint u, const cache_entry_type& cache) noexcept {
+  static auto compute_mul(carrier_uint u,
+                          const cache_entry_type& cache) noexcept
+      -> compute_mul_result {
     auto r = umul192_upper128(u, cache);
     return {r.high(), r.low() == 0};
   }
 
-  static uint32_t compute_delta(cache_entry_type const& cache,
-                                int beta) noexcept {
+  static auto compute_delta(cache_entry_type const& cache, int beta) noexcept
+      -> uint32_t {
     return static_cast<uint32_t>(cache.high() >> (64 - 1 - beta));
   }
 
-  static compute_mul_parity_result compute_mul_parity(
-      carrier_uint two_f, const cache_entry_type& cache, int beta) noexcept {
+  static auto compute_mul_parity(carrier_uint two_f,
+                                 const cache_entry_type& cache,
+                                 int beta) noexcept
+      -> compute_mul_parity_result {
     FMT_ASSERT(beta >= 1, "");
     FMT_ASSERT(beta < 64, "");
 
@@ -1116,31 +1098,35 @@ template <> struct cache_accessor<double> {
             ((r.high() << beta) | (r.low() >> (64 - beta))) == 0};
   }
 
-  static carrier_uint compute_left_endpoint_for_shorter_interval_case(
-      const cache_entry_type& cache, int beta) noexcept {
+  static auto compute_left_endpoint_for_shorter_interval_case(
+      const cache_entry_type& cache, int beta) noexcept -> carrier_uint {
     return (cache.high() -
             (cache.high() >> (num_significand_bits<double>() + 2))) >>
            (64 - num_significand_bits<double>() - 1 - beta);
   }
 
-  static carrier_uint compute_right_endpoint_for_shorter_interval_case(
-      const cache_entry_type& cache, int beta) noexcept {
+  static auto compute_right_endpoint_for_shorter_interval_case(
+      const cache_entry_type& cache, int beta) noexcept -> carrier_uint {
     return (cache.high() +
             (cache.high() >> (num_significand_bits<double>() + 1))) >>
            (64 - num_significand_bits<double>() - 1 - beta);
   }
 
-  static carrier_uint compute_round_up_for_shorter_interval_case(
-      const cache_entry_type& cache, int beta) noexcept {
+  static auto compute_round_up_for_shorter_interval_case(
+      const cache_entry_type& cache, int beta) noexcept -> carrier_uint {
     return ((cache.high() >> (64 - num_significand_bits<double>() - 2 - beta)) +
             1) /
            2;
   }
 };
 
+FMT_FUNC auto get_cached_power(int k) noexcept -> uint128_fallback {
+  return cache_accessor<double>::get_cached_power(k);
+}
+
 // Various integer checks
-template <class T>
-bool is_left_endpoint_integer_shorter_interval(int exponent) noexcept {
+template <typename T>
+auto is_left_endpoint_integer_shorter_interval(int exponent) noexcept -> bool {
   const int case_shorter_interval_left_endpoint_lower_threshold = 2;
   const int case_shorter_interval_left_endpoint_upper_threshold = 3;
   return exponent >= case_shorter_interval_left_endpoint_lower_threshold &&
@@ -1148,12 +1134,12 @@ bool is_left_endpoint_integer_shorter_interval(int exponent) noexcept {
 }
 
 // Remove trailing zeros from n and return the number of zeros removed (float)
-FMT_INLINE int remove_trailing_zeros(uint32_t& n) noexcept {
+FMT_INLINE int remove_trailing_zeros(uint32_t& n, int s = 0) noexcept {
   FMT_ASSERT(n != 0, "");
-  const uint32_t mod_inv_5 = 0xcccccccd;
-  const uint32_t mod_inv_25 = mod_inv_5 * mod_inv_5;
+  // Modular inverse of 5 (mod 2^32): (mod_inv_5 * 5) mod 2^32 = 1.
+  constexpr uint32_t mod_inv_5 = 0xcccccccd;
+  constexpr uint32_t mod_inv_25 = 0xc28f5c29;  // = mod_inv_5 * mod_inv_5
 
-  int s = 0;
   while (true) {
     auto q = rotr(n * mod_inv_25, 2);
     if (q > max_value<uint32_t>() / 100) break;
@@ -1165,7 +1151,6 @@ FMT_INLINE int remove_trailing_zeros(uint32_t& n) noexcept {
     n = q;
     s |= 1;
   }
-
   return s;
 }
 
@@ -1179,32 +1164,17 @@ FMT_INLINE int remove_trailing_zeros(uint64_t& n) noexcept {
 
   // Is n is divisible by 10^8?
   if ((nm.high() & ((1ull << (90 - 64)) - 1)) == 0 && nm.low() < magic_number) {
-    // If yes, work with the quotient.
+    // If yes, work with the quotient...
     auto n32 = static_cast<uint32_t>(nm.high() >> (90 - 64));
-
-    const uint32_t mod_inv_5 = 0xcccccccd;
-    const uint32_t mod_inv_25 = mod_inv_5 * mod_inv_5;
-
-    int s = 8;
-    while (true) {
-      auto q = rotr(n32 * mod_inv_25, 2);
-      if (q > max_value<uint32_t>() / 100) break;
-      n32 = q;
-      s += 2;
-    }
-    auto q = rotr(n32 * mod_inv_5, 1);
-    if (q <= max_value<uint32_t>() / 10) {
-      n32 = q;
-      s |= 1;
-    }
-
+    // ... and use the 32 bit variant of the function
+    int s = remove_trailing_zeros(n32, 8);
     n = n32;
     return s;
   }
 
   // If n is not divisible by 10^8, work with n itself.
-  const uint64_t mod_inv_5 = 0xcccccccccccccccd;
-  const uint64_t mod_inv_25 = mod_inv_5 * mod_inv_5;
+  constexpr uint64_t mod_inv_5 = 0xcccccccccccccccd;
+  constexpr uint64_t mod_inv_25 = 0x8f5c28f5c28f5c29;  // mod_inv_5 * mod_inv_5
 
   int s = 0;
   while (true) {
@@ -1223,7 +1193,7 @@ FMT_INLINE int remove_trailing_zeros(uint64_t& n) noexcept {
 }
 
 // The main algorithm for shorter interval case
-template <class T>
+template <typename T>
 FMT_INLINE decimal_fp<T> shorter_interval_case(int exponent) noexcept {
   decimal_fp<T> ret_value;
   // Compute k and beta
@@ -1270,7 +1240,7 @@ FMT_INLINE decimal_fp<T> shorter_interval_case(int exponent) noexcept {
   return ret_value;
 }
 
-template <typename T> decimal_fp<T> to_decimal(T x) noexcept {
+template <typename T> auto to_decimal(T x) noexcept -> decimal_fp<T> {
   // Step 1: integer promotion & Schubfach multiplier calculation.
 
   using carrier_uint = typename float_info<T>::carrier_uint;
@@ -1394,17 +1364,6 @@ small_divisor_case_label:
   return ret_value;
 }
 }  // namespace dragonbox
-
-#ifdef _MSC_VER
-FMT_FUNC auto fmt_snprintf(char* buf, size_t size, const char* fmt, ...)
-    -> int {
-  auto args = va_list();
-  va_start(args, fmt);
-  int result = vsnprintf_s(buf, size, _TRUNCATE, fmt, args);
-  va_end(args);
-  return result;
-}
-#endif
 }  // namespace detail
 
 template <> struct formatter<detail::bigint> {
@@ -1413,23 +1372,22 @@ template <> struct formatter<detail::bigint> {
     return ctx.begin();
   }
 
-  template <typename FormatContext>
-  auto format(const detail::bigint& n, FormatContext& ctx) const ->
-      typename FormatContext::iterator {
+  auto format(const detail::bigint& n, format_context& ctx) const
+      -> format_context::iterator {
     auto out = ctx.out();
     bool first = true;
     for (auto i = n.bigits_.size(); i > 0; --i) {
       auto value = n.bigits_[i - 1u];
       if (first) {
-        out = format_to(out, FMT_STRING("{:x}"), value);
+        out = fmt::format_to(out, FMT_STRING("{:x}"), value);
         first = false;
         continue;
       }
-      out = format_to(out, FMT_STRING("{:08x}"), value);
+      out = fmt::format_to(out, FMT_STRING("{:08x}"), value);
     }
     if (n.exp_ > 0)
-      out = format_to(out, FMT_STRING("p{}"),
-                      n.exp_ * detail::bigint::bigit_bits);
+      out = fmt::format_to(out, FMT_STRING("p{}"),
+                           n.exp_ * detail::bigint::bigit_bits);
     return out;
   }
 };
@@ -1465,7 +1423,7 @@ FMT_FUNC void report_system_error(int error_code,
   report_error(format_system_error, error_code, message);
 }
 
-FMT_FUNC std::string vformat(string_view fmt, format_args args) {
+FMT_FUNC auto vformat(string_view fmt, format_args args) -> std::string {
   // Don't optimize the "{}" case to keep the binary size small and because it
   // can be better optimized in fmt::format anyway.
   auto buffer = memory_buffer();
@@ -1474,57 +1432,54 @@ FMT_FUNC std::string vformat(string_view fmt, format_args args) {
 }
 
 namespace detail {
-#ifdef _WIN32
+#if !defined(_WIN32) || defined(FMT_WINDOWS_NO_WCHAR)
+FMT_FUNC auto write_console(int, string_view) -> bool { return false; }
+FMT_FUNC auto write_console(std::FILE*, string_view) -> bool { return false; }
+#else
 using dword = conditional_t<sizeof(long) == 4, unsigned long, unsigned>;
 extern "C" __declspec(dllimport) int __stdcall WriteConsoleW(  //
     void*, const void*, dword, dword*, void*);
 
-FMT_FUNC bool write_console(std::FILE* f, string_view text) {
-  auto fd = _fileno(f);
-  if (_isatty(fd)) {
-    detail::utf8_to_utf16 u16(string_view(text.data(), text.size()));
-    auto written = detail::dword();
-    if (detail::WriteConsoleW(reinterpret_cast<void*>(_get_osfhandle(fd)),
-                              u16.c_str(), static_cast<uint32_t>(u16.size()),
-                              &written, nullptr)) {
-      return true;
-    }
-  }
-  // We return false if the file descriptor was not TTY, or it was but
-  // SetConsoleW failed which can happen if the output has been redirected to
-  // NUL. In both cases when we return false, we should attempt to do regular
-  // write via fwrite or std::ostream::write.
-  return false;
+FMT_FUNC bool write_console(int fd, string_view text) {
+  auto u16 = utf8_to_utf16(text);
+  return WriteConsoleW(reinterpret_cast<void*>(_get_osfhandle(fd)), u16.c_str(),
+                       static_cast<dword>(u16.size()), nullptr, nullptr) != 0;
+}
+
+FMT_FUNC auto write_console(std::FILE* f, string_view text) -> bool {
+  return write_console(_fileno(f), text);
+}
+#endif
+
+#ifdef _WIN32
+// Print assuming legacy (non-Unicode) encoding.
+FMT_FUNC void vprint_mojibake(std::FILE* f, string_view fmt, format_args args) {
+  auto buffer = memory_buffer();
+  detail::vformat_to(buffer, fmt, args);
+  fwrite_fully(buffer.data(), buffer.size(), f);
 }
 #endif
 
 FMT_FUNC void print(std::FILE* f, string_view text) {
 #ifdef _WIN32
-  if (write_console(f, text)) return;
+  int fd = _fileno(f);
+  if (_isatty(fd)) {
+    std::fflush(f);
+    if (write_console(fd, text)) return;
+  }
 #endif
-  detail::fwrite_fully(text.data(), 1, text.size(), f);
+  fwrite_fully(text.data(), text.size(), f);
 }
 }  // namespace detail
 
-FMT_FUNC void vprint(std::FILE* f, string_view format_str, format_args args) {
-  memory_buffer buffer;
-  detail::vformat_to(buffer, format_str, args);
+FMT_FUNC void vprint(std::FILE* f, string_view fmt, format_args args) {
+  auto buffer = memory_buffer();
+  detail::vformat_to(buffer, fmt, args);
   detail::print(f, {buffer.data(), buffer.size()});
 }
 
-#ifdef _WIN32
-// Print assuming legacy (non-Unicode) encoding.
-FMT_FUNC void detail::vprint_mojibake(std::FILE* f, string_view format_str,
-                                      format_args args) {
-  memory_buffer buffer;
-  detail::vformat_to(buffer, format_str,
-                     basic_format_args<buffer_context<char>>(args));
-  fwrite_fully(buffer.data(), 1, buffer.size(), f);
-}
-#endif
-
-FMT_FUNC void vprint(string_view format_str, format_args args) {
-  vprint(stdout, format_str, args);
+FMT_FUNC void vprint(string_view fmt, format_args args) {
+  vprint(stdout, fmt, args);
 }
 
 namespace detail {
