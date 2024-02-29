@@ -84,6 +84,22 @@ SPDLOG_INLINE std::shared_ptr<logger> registry::get(const std::string &logger_na
     return found == loggers_.end() ? nullptr : found->second;
 }
 
+#if __cplusplus >= 201703L  // C++17
+SPDLOG_INLINE std::shared_ptr<logger> registry::get(std::string_view logger_name) {
+    std::lock_guard<std::mutex> lock(logger_map_mutex_);
+    for (const auto &[key, val] : loggers_) {
+        if (key == logger_name) {
+            return val;
+        }
+    }
+    return nullptr;
+}
+
+SPDLOG_INLINE std::shared_ptr<logger> registry::get(const char *logger_name) {
+    return get(std::string_view(logger_name));
+}
+#endif
+
 SPDLOG_INLINE std::shared_ptr<logger> registry::default_logger() {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
     return default_logger_;
