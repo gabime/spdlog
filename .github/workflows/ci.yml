@@ -26,7 +26,7 @@ jobs:
       - name: Setup
         run: |
           apt-get update
-          apt-get install software-properties-common          
+          apt-get install software-properties-common  -y
           add-apt-repository ppa:git-core/ppa -y
           apt-get install -y curl git pkg-config libsystemd-dev
           CMAKE_VERSION="3.24.2"
