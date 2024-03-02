@@ -301,8 +301,8 @@ set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX d)
 
 # set source groups for visual studio
 if(CMAKE_GENERATOR MATCHES "Visual Studio")
-    source_group(TREE ${CMAKE_SOURCE_DIR}/include PREFIX include FILES ${SPDLOG_HEADERS})
-    source_group(TREE ${CMAKE_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})    
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/include PREFIX include FILES ${SPDLOG_HEADERS})
+    source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/src PREFIX sources FILES ${SPDLOG_SRCS})    
     source_group(sources FILES ${VERSION_RC})
 endif()
 
