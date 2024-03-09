@@ -18,6 +18,10 @@
 #include <string>
 #include <unordered_map>
 
+#if __cplusplus >= 201703L  // C++17
+    #include <string_view>
+#endif
+
 namespace spdlog {
 class logger;
 
@@ -33,6 +37,10 @@ public:
     void register_logger(std::shared_ptr<logger> new_logger);
     void initialize_logger(std::shared_ptr<logger> new_logger);
     std::shared_ptr<logger> get(const std::string &logger_name);
+#if __cplusplus >= 201703L  // C++17
+    std::shared_ptr<logger> get(std::string_view logger_name);
+    std::shared_ptr<logger> get(const char *logger_name);
+#endif
     std::shared_ptr<logger> default_logger();
 
     // Return raw ptr to the default logger.
