@@ -7,10 +7,76 @@
     #include <dirent.h>
 #endif
 
+#ifdef __VXWORKS__
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
+
+#ifndef PATH_MAX
+#define PATH_MAX 1024
+#endif
+
+/* 0 - sucess -1 - failed */
+static int vxRemoveDir
+    (
+    const char * dirName
+    )
+    {
+    char            fileName [PATH_MAX];
+    DIR *           odir;
+    struct dirent * ent;
+    int             fd;
+    struct stat     fsST;
+   
+    if (dirName == nullptr) {
+        return -1;
+        }
+
+    odir = opendir (dirName);
+    if (odir == nullptr) {
+        return -1;
+        }
+
+    while ((ent = readdir (odir)) != nullptr) {
+        if ((strncmp(ent->d_name, ".", PATH_MAX) == 0) || 
+            (strncmp(ent->d_name, "..", PATH_MAX) == 0)) {
+            continue;
+            }
+        (void) sprintf (fileName, "%s/%s", dirName, ent->d_name);
+
+        fd = open (fileName, O_RDONLY, 0777);
+        if (fd == -1) {
+            (void) closedir (odir);
+            return -1;
+            }
+        
+        (void) fstat (fd, &fsST);
+        (void) close (fd);
+        if (S_ISDIR (fsST.st_mode)) {
+            if (vxRemoveDir (fileName) == -1) {
+                return -1;
+                }
+            }
+        // remove this file
+        (void) remove (fileName);
+        }
+    (void) closedir (odir);
+    rmdir (dirName);
+
+    return 0;
+    }
+#endif
+
 void prepare_logdir() {
     spdlog::drop_all();
 #ifdef _WIN32
     system("rmdir /S /Q test_logs");
+#elif __VXWORKS__
+    // Sometimes, the directory test_logs is not exist, vxRemoveDir return -1.
+    // So don't check return value. 
+    (void) vxRemoveDir ("test_logs"); 
 #else
     auto rv = system("rm -rf test_logs");
     if (rv != 0) {
