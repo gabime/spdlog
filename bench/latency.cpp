@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     benchmark::RegisterBenchmark("null_sink_st", bench_logger, null_logger_st);
     benchmark::RegisterBenchmark("null_sink_st (global logger)", bench_global_logger, null_logger_st);
 
-#ifdef __linux
+#ifdef __linux__
     bench_dev_null();
 #endif  // __linux__
 
