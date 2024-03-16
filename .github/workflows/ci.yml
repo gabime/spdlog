@@ -40,13 +40,6 @@ jobs:
           fi
           echo "CC=clang-${{ matrix.config.version }}" >> $GITHUB_ENV
           echo "CXX=clang++-${{ matrix.config.version }}" >> $GITHUB_ENV
-      - name: Setup Git # update git to support sparse-checkout for gcc:7 images
-        if: matrix.config.compiler == 'gcc' && matrix.config.version == 7
-        run: |
-          apt-get install -y software-properties-common  # Install the necessary package
-          add-apt-repository ppa:git-core/ppa -y
-          apt-get update
-          apt-get install git -y
       - name: Build
         run: |
           mkdir -p build && cd build
