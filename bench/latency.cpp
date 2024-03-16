@@ -87,7 +87,7 @@ void bench_dev_null() {
 static std::string prepare_null_loggers() {
     spdlog::drop_all();
     const std::string some_logger_name = "Some logger name";
-    const int null_logger_count = 10;
+    const int null_logger_count = 9;
     for (int i = 0; i < null_logger_count; i++) {
         spdlog::create<spdlog::sinks::null_sink_mt>(some_logger_name + std::to_string(i));
     }
