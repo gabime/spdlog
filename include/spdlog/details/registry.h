@@ -13,6 +13,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 #include "../common.h"
@@ -35,6 +36,8 @@ public:
     void register_logger(std::shared_ptr<logger> new_logger);
     void initialize_logger(std::shared_ptr<logger> new_logger);
     std::shared_ptr<logger> get(const std::string &logger_name);
+    std::shared_ptr<logger> get(std::string_view logger_name);
+    std::shared_ptr<logger> get(const char *logger_name);
     std::shared_ptr<logger> default_logger();
 
     // Return raw ptr to the default logger.

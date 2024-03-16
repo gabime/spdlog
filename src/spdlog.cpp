@@ -16,6 +16,10 @@ void initialize_logger(std::shared_ptr<logger> logger) { details::registry::inst
 
 std::shared_ptr<logger> get(const std::string &name) { return details::registry::instance().get(name); }
 
+std::shared_ptr<logger> get(std::string_view name) {return details::registry::instance().get(name); }
+
+std::shared_ptr<logger> get(const char *name) { return details::registry::instance().get(name); }
+
 void set_formatter(std::unique_ptr<spdlog::formatter> formatter) {
     details::registry::instance().set_formatter(std::move(formatter));
 }
