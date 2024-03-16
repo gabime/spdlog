@@ -2,10 +2,8 @@ include(FetchContent)
 
 FetchContent_Declare(
         fmt
-        GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-        GIT_TAG e69e5f977d458f2650bb346dadf2ad30c5320281 # 10.2.1
-        GIT_SHALLOW ON
-        GIT_PROGRESS TRUE
+        URL https://github.com/fmtlib/fmt/archive/refs/tags/10.2.1.tar.gz
+        URL_HASH SHA256=1250e4cc58bf06ee631567523f48848dc4596133e163f02615c97f78bab6c811
 )
 
 FetchContent_GetProperties(fmt)
