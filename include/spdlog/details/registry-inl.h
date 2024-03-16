@@ -78,21 +78,40 @@ SPDLOG_INLINE void registry::initialize_logger(std::shared_ptr<logger> new_logge
     }
 }
 
-SPDLOG_INLINE std::shared_ptr<logger> registry::get(const std::string &logger_name) {
-    std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    auto found = loggers_.find(logger_name);
-    return found == loggers_.end() ? nullptr : found->second;
+// if the map is small do a sequential search, otherwise use the standard find()
+std::shared_ptr<logger> registry::get(const std::string &logger_name) {
+    if (loggers_.size() <= 20) {
+        for (const auto &[key, val]: loggers_) {
+            if (logger_name == key) {
+                return val;
+            }
+        }
+        return nullptr;
+    }
+    else {
+        auto found = loggers_.find(logger_name);
+        return found == loggers_.end() ? nullptr : found->second;
+    }
 }
 
 #if __cplusplus >= 201703L  // C++17
+// if the map is small do a sequential search and avoid creating string for find(logger_name)
+// otherwise use the standard find()
 SPDLOG_INLINE std::shared_ptr<logger> registry::get(std::string_view logger_name) {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    for (const auto &[key, val] : loggers_) {
-        if (key == logger_name) {
-            return val;
+    if (loggers_.size() <= 20) {
+        for (const auto &[key, val]: loggers_) {
+            if (logger_name == key) {
+                return val;
+            }
         }
+        return nullptr;
     }
-    return nullptr;
+    // otherwise use the normal map lookup
+    else {
+        auto found = loggers_.find(std::string(logger_name));
+        return found == loggers_.end() ? nullptr : found->second;
+    }
 }
 
 SPDLOG_INLINE std::shared_ptr<logger> registry::get(const char *logger_name) {
