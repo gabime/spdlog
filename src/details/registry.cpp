@@ -12,7 +12,9 @@
 #ifdef _WIN32
 #include "spdlog/sinks/wincolor_sink.h"
 #else
+
 #include "spdlog/sinks/ansicolor_sink.h"
+
 #endif
 #endif  // SPDLOG_DISABLE_DEFAULT_LOGGER
 
@@ -74,12 +76,20 @@ namespace spdlog {
 
         std::shared_ptr<logger> registry::get(std::string_view logger_name) {
             std::lock_guard<std::mutex> lock(logger_map_mutex_);
-            for (const auto &[key, val]: loggers_) {
-                if (logger_name == key) {
-                    return val;
+            // if the map is small do a sequential search to avoid creating string for find(logger_name)
+            if (loggers_.size() <= 20) {
+                for (const auto &[key, val]: loggers_) {
+                    if (logger_name == key) {
+                        return val;
+                    }
                 }
+                return nullptr;
             }
-            return nullptr;
+            // otherwise use the normal map lookup
+            else {
+                auto found = loggers_.find(std::string(logger_name));
+                return found == loggers_.end() ? nullptr : found->second;
+            }
         }
 
         std::shared_ptr<logger> registry::get(const char *logger_name) {
