@@ -99,7 +99,7 @@ std::shared_ptr<logger> registry::get(const std::string &logger_name) {
 // otherwise use the standard find()
 SPDLOG_INLINE std::shared_ptr<logger> registry::get(std::string_view logger_name) {
     std::lock_guard<std::mutex> lock(logger_map_mutex_);
-    if (loggers_.size() <= 20) {
+    if (loggers_.size() <= 10) {
         for (const auto &[key, val]: loggers_) {
             if (logger_name == key) {
                 return val;
