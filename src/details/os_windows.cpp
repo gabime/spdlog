@@ -104,6 +104,7 @@ int rename(const filename_t &filename1, const filename_t &filename2) noexcept {
 
 // Return true if path exists (file or directory)
 bool path_exists(const filename_t &filename) noexcept {
+    struct _stat buffer;
 #ifdef SPDLOG_WCHAR_FILENAMES
     return (::_wstat(filename.c_str(), &buffer) == 0);
 #else
