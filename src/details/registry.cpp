@@ -72,6 +72,7 @@ namespace spdlog {
 
         // if the map is small do a sequential search, otherwise use the standard find()
         std::shared_ptr<logger> registry::get(const std::string &logger_name) {
+            std::lock_guard<std::mutex> lock(logger_map_mutex_);
             if (loggers_.size() <= small_map_threshold) {
                 for (const auto &[key, val]: loggers_) {
                     if (logger_name == key) {
@@ -90,7 +91,6 @@ namespace spdlog {
         // otherwise use the standard find()
         std::shared_ptr<logger> registry::get(std::string_view logger_name) {
             std::lock_guard<std::mutex> lock(logger_map_mutex_);
-
             if (loggers_.size() <= small_map_threshold) {
                 for (const auto &[key, val]: loggers_) {
                     if (logger_name == key) {
