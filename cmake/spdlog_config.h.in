@@ -9,6 +9,7 @@
 // Support wchar filenames (Windows only)
 #cmakedefine SPDLOG_WCHAR_FILENAMES
 
+// No exceptions. Will do std::abort() instead
 #cmakedefine SPDLOG_NO_EXCEPTIONS
 
 // Use CLOCK_REALTIME_COARSE on Linux
