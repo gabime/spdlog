@@ -5,12 +5,12 @@
 
 #ifndef SPDLOG_HEADER_ONLY
     #include <spdlog/pattern_formatter.h>
-    #include <spdlog/mdc.h>
 #endif
 
 #include <spdlog/details/fmt_helper.h>
 #include <spdlog/details/log_msg.h>
 #include <spdlog/details/os.h>
+#include <spdlog/mdc.h>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/formatter.h>
 
