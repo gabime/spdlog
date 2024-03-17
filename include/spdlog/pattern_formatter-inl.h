@@ -877,16 +877,24 @@ public:
     void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override {
         auto mdc_map = mdc::get_context();
         if (!mdc_map.empty()) {
-            auto last_element = *(--mdc_map.end());
-            for (const auto &pair : mdc_map) {
-                std::string mdc_content_;
-                if (pair != last_element) {
-                    mdc_content_ = pair.first + ':' + pair.second + ' ';
-                } else {
-                    mdc_content_ = pair.first + ':' + pair.second;
+            auto last_element = --mdc_map.end();
+            for (auto it = mdc_map.begin(); it != mdc_map.end(); ++it) {
+                auto &pair = *it;
+                const auto &key = pair.first;
+                const auto &value = pair.second;
+                size_t content_size = key.size() + value.size() + 1;  // 1 for ':'
+
+                if (it != last_element) {
+                    content_size++;  // 1 for ' '
                 }
-                ScopedPadder p(mdc_content_.size(), padinfo_, dest);
-                fmt_helper::append_string_view(mdc_content_, dest);
+
+                ScopedPadder p(content_size, padinfo_, dest);
+                fmt_helper::append_string_view(key, dest);
+                fmt_helper::append_string_view(":", dest);
+                fmt_helper::append_string_view(value, dest);
+                if (it != last_element) {
+                    fmt_helper::append_string_view(" ", dest);
+                }
             }
         }
     }
