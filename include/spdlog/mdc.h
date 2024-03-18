@@ -1,4 +1,5 @@
 #include <spdlog/common.h>
+#include <map>
 
 namespace spdlog {
 
