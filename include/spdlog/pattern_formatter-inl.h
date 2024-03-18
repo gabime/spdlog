@@ -868,6 +868,8 @@ private:
     memory_buf_t cached_datetime_;
 };
 
+// Class for formatting Mapped Diagnostic Context (MDC) in log messages.
+// Example: [logger-name] [info] [mdc_key_1:mdc_value_1 mdc_key_2:mdc_value_2] some message
 template <typename ScopedPadder>
 class mdc_formatter : public flag_formatter {
 public:
