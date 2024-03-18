@@ -876,7 +876,10 @@ public:
 
     void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override {
         auto mdc_map = mdc::get_context();
-        if (!mdc_map.empty()) {
+        if (mdc_map.empty()) {
+            ScopedPadder p(0, padinfo_, dest);
+            return;
+        } else {
             auto last_element = --mdc_map.end();
             for (auto it = mdc_map.begin(); it != mdc_map.end(); ++it) {
                 auto &pair = *it;
