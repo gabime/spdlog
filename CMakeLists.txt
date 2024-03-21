@@ -84,6 +84,10 @@ option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
 # warning options
 option(SPDLOG_BUILD_WARNINGS "Enable compiler warnings" OFF)
 
+# owning sourceloc strings options
+option(SPDLOG_ASYNC_OWNING_SOURCELOC_STRINGS "Async loggers take owership of source_loc strings" OFF)
+
+
 # install options
 option(SPDLOG_SYSTEM_INCLUDES "Include as system headers (skip for clang-tidy)." OFF)
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
@@ -248,6 +252,7 @@ foreach(
     SPDLOG_NO_TLS
     SPDLOG_NO_ATOMIC_LEVELS
     SPDLOG_DISABLE_DEFAULT_LOGGER
+    SPDLOG_ASYNC_OWNING_SOURCELOC_STRINGS
     SPDLOG_USE_STD_FORMAT)
     if(${SPDLOG_OPTION})
         target_compile_definitions(spdlog PUBLIC ${SPDLOG_OPTION})
