@@ -43,13 +43,15 @@ SPDLOG_LOGGER_CATCH(msg.source)
 }
 
 // send flush request to the thread pool
-SPDLOG_INLINE void spdlog::async_logger::flush_(){
-    SPDLOG_TRY{if (auto pool_ptr = thread_pool_.lock()){
-        pool_ptr->post_flush(shared_from_this(), overflow_policy_);
-}
-else {
+SPDLOG_INLINE void spdlog::async_logger::flush_(){SPDLOG_TRY{auto pool_ptr = thread_pool_.lock();
+if (!pool_ptr) {
     throw_spdlog_ex("async flush: thread pool doesn't exist anymore");
 }
+
+std::future<void> future = pool_ptr->post_flush(shared_from_this(), overflow_policy_);
+// Wait for the flush operation to complete.
+// This might throw exception if the flush message get dropped because of overflow.
+future.get();
 }
 SPDLOG_LOGGER_CATCH(source_loc())
 }

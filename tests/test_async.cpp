@@ -93,6 +93,49 @@ TEST_CASE("flush", "[async]") {
     REQUIRE(test_sink->flush_counter() == 1);
 }
 
+TEST_CASE("multithread flush", "[async]") {
+    auto test_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
+    size_t queue_size = 2;
+    size_t messages = 10;
+    size_t n_threads = 10;
+    size_t flush_count = 1024;
+    std::mutex mtx;
+    std::vector<std::string> errmsgs;
+    {
+        auto tp = std::make_shared<spdlog::details::thread_pool>(queue_size, 1);
+        auto logger = std::make_shared<spdlog::async_logger>(
+            "as", test_sink, tp, spdlog::async_overflow_policy::discard_new);
+
+        logger->set_error_handler([&](const std::string &) {
+            std::unique_lock<std::mutex> lock(mtx);
+            errmsgs.push_back("Broken promise");
+        });
+
+        for (size_t i = 0; i < messages; i++) {
+            logger->info("Hello message #{}", i);
+        }
+
+        std::vector<std::thread> threads;
+        for (size_t i = 0; i < n_threads; i++) {
+            threads.emplace_back([logger, flush_count] {
+                for (size_t j = 0; j < flush_count; j++) {
+                    // flush does not throw exception even if failed.
+                    // Instead, the error handler is invoked.
+                    logger->flush();
+                }
+            });
+        }
+
+        for (auto &t : threads) {
+            t.join();
+        }
+    }
+    REQUIRE(test_sink->flush_counter() >= 1);
+    REQUIRE(test_sink->flush_counter() + errmsgs.size() == n_threads * flush_count);
+    REQUIRE(errmsgs.size() >= 1);
+    REQUIRE(errmsgs[0] == "Broken promise");
+}
+
 TEST_CASE("async periodic flush", "[async]") {
     auto logger = spdlog::create_async<spdlog::sinks::test_sink_mt>("as");
     auto test_sink = std::static_pointer_cast<spdlog::sinks::test_sink_mt>(logger->sinks()[0]);

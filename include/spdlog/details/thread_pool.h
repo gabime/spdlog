@@ -9,6 +9,7 @@
 
 #include <chrono>
 #include <functional>
+#include <future>
 #include <memory>
 #include <thread>
 #include <vector>
@@ -27,6 +28,7 @@ enum class async_msg_type { log, flush, terminate };
 struct async_msg : log_msg_buffer {
     async_msg_type msg_type{async_msg_type::log};
     async_logger_ptr worker_ptr;
+    std::promise<void> flush_promise;
 
     async_msg() = default;
     ~async_msg() = default;
@@ -56,12 +58,22 @@ struct async_msg : log_msg_buffer {
     async_msg(async_logger_ptr &&worker, async_msg_type the_type, const details::log_msg &m)
         : log_msg_buffer{m},
           msg_type{the_type},
-          worker_ptr{std::move(worker)} {}
+          worker_ptr{std::move(worker)},
+          flush_promise{} {}
 
     async_msg(async_logger_ptr &&worker, async_msg_type the_type)
         : log_msg_buffer{},
           msg_type{the_type},
-          worker_ptr{std::move(worker)} {}
+          worker_ptr{std::move(worker)},
+          flush_promise{} {}
+
+    async_msg(async_logger_ptr &&worker,
+              async_msg_type the_type,
+              std::promise<void> &&promise)
+        : log_msg_buffer{},
+          msg_type{the_type},
+          worker_ptr{std::move(worker)},
+          flush_promise{std::move(promise)} {}
 
     explicit async_msg(async_msg_type the_type)
         : async_msg{nullptr, the_type} {}
@@ -88,7 +100,8 @@ public:
     void post_log(async_logger_ptr &&worker_ptr,
                   const details::log_msg &msg,
                   async_overflow_policy overflow_policy);
-    void post_flush(async_logger_ptr &&worker_ptr, async_overflow_policy overflow_policy);
+    std::future<void> post_flush(async_logger_ptr &&worker_ptr,
+                                 async_overflow_policy overflow_policy);
     size_t overrun_counter();
     void reset_overrun_counter();
     size_t discard_counter();
