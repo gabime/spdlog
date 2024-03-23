@@ -98,7 +98,7 @@ TEST_CASE("multithread flush", "[async]") {
     size_t queue_size = 2;
     size_t messages = 10;
     size_t n_threads = 10;
-    size_t flush_count = 1024;
+    size_t flush_count = 2048;
     std::mutex mtx;
     std::vector<std::string> errmsgs;
     {
