@@ -132,7 +132,6 @@ TEST_CASE("multithread flush", "[async]") {
     }
     REQUIRE(test_sink->flush_counter() >= 1);
     REQUIRE(test_sink->flush_counter() + errmsgs.size() == n_threads * flush_count);
-    
     if (errmsgs.size() > 0) { 
         REQUIRE(errmsgs[0] == "Broken promise"); 
     }
