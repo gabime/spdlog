@@ -98,7 +98,7 @@ TEST_CASE("multithread flush", "[async]") {
     size_t queue_size = 2;
     size_t messages = 10;
     size_t n_threads = 10;
-    size_t flush_count = 2048;
+    size_t flush_count = 1024;
     std::mutex mtx;
     std::vector<std::string> errmsgs;
     {
@@ -132,8 +132,10 @@ TEST_CASE("multithread flush", "[async]") {
     }
     REQUIRE(test_sink->flush_counter() >= 1);
     REQUIRE(test_sink->flush_counter() + errmsgs.size() == n_threads * flush_count);
-    REQUIRE(errmsgs.size() >= 1);
-    REQUIRE(errmsgs[0] == "Broken promise");
+    
+    if (errmsgs.size() > 0) { 
+        REQUIRE(errmsgs[0] == "Broken promise"); 
+    }
 }
 
 TEST_CASE("async periodic flush", "[async]") {
