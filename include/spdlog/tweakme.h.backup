@@ -102,16 +102,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Uncomment to customize level names (e.g. "MY TRACE")
 //
-#include <string_view>
-using namespace std::string_view_literals;
-#define SPDLOG_LEVEL_NAMES { "TRACE"sv, "DEBUG"sv, "INFO"sv, "WARN"sv, "ERROR"sv, "FATAL"sv, "OFF"sv }
+#define SPDLOG_LEVEL_NAMES { "MY TRACE"sv, "MY DEBUG"sv, "MY INFO"sv, "MY WARNING"sv, "MY ERROR"sv, "MY CRITICAL"sv, "OFF"sv }
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 // Uncomment to customize short level names (e.g. "MT")
 // These can be longer than one character.
 //
-#define SPDLOG_SHORT_LEVEL_NAMES { "T", "D", "I", "W", "E", "F", "O" }
+#define SPDLOG_SHORT_LEVEL_NAMES { "T", "D", "I", "W", "E", "C", "O" }
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
