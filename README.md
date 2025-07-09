@@ -242,33 +242,31 @@ void multi_sink_example()
 ```
 
 ---
-#### Register several loggers - each with a different format and log level
+#### Register several loggers - change global level
 ```c++
 
 // Creation of loggers. Registration of loggers.
 // Setting a default logger. Setting a global level to all registered loggers. 
 void multi_loggers_example()
 {
-    auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/filesink.txt", true);
-    file_sink->set_level(spdlog::level::warning);
-
-    spdlog::logger file_logger("file_logger", file_sink);
-    file_logger->set_level(spdlog::level::info);
-    spdlog::register_logger(file_logger); // register manually, because the logger created from sink, and will not be registered automatically
-    spdlog::set_default_logger(file_logger);
+    auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/sink.txt", true);
+    spdlog::logger logger1("logger1", sink);
+    spdlog::register_logger(logger1);  // register manually, because the logger created from sink, and will not be registered automatically
+    spdlog::set_default_logger(logger1);
     
-    spdlog::info("info message to file_logger, then passed to sink, but sink will not log it, because sink set to warning level")
+    spdlog::info("info message to the logger1 (now specified as default)")
 
-    auto basic_logger = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt"); // registered automatically
-    spdlog::set_default_logger(basic_logger); // reset default logger to basic_logger
-    spdlog::default_logger()->set_level(spdlog::level::trace); // set level for default logger to trace
+    auto logger2 = spdlog::basic_logger_mt("logger2", "logs/logger2.txt"); // registered automatically
+    spdlog::set_default_logger(logger2); // reset default logger to logger2
+    spdlog::default_logger()->set_level(spdlog::level::trace); // set level for the default logger (logger2) to trace
 
-    spdlog::trace("trace message to the basic_logger (now specified as default)");
+    spdlog::trace("trace message to the logger2 (now specified as default)");
 
     spdlog::set_level(spdlog::level::off) // (sic!) set level for *all* registered loggers to off (disable)
   
-    file_logger.warn("warn message will not appear because level set to off");
-    basic_logger.warn("warn message will not appear because level set to off");
+    logger1.warn("warn message will not appear because the level set to off");
+    logger2.warn("warn message will not appear because the level set to off");
+    spdlog::warn("warn message will not appear because the level set to off");
 }
 ```
 
