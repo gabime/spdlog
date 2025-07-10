@@ -245,22 +245,16 @@ void multi_sink_example()
 #### Register several loggers - change global level
 ```c++
 
-// Creation of loggers. Registration of loggers.
-// Setting a default logger. Setting a global level to all registered loggers. 
-void multi_loggers_example()
+// Creation of loggers. Set levels to all registered loggers. 
+void set_level_example()
 {
-    auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/sink.txt", true);
-    spdlog::logger logger1("logger1", sink);
-    spdlog::register_logger(logger1);  // register manually, because the logger created from sink, and will not be registered automatically
-    spdlog::set_default_logger(logger1);
-    
-    spdlog::info("info message to the logger1 (now specified as default)")
+    auto logger1 = spdlog::basic_logger_mt("logger1", "logs/logger1.txt");
+    auto logger2 = spdlog::basic_logger_mt("logger2", "logs/logger2.txt");
 
-    auto logger2 = spdlog::basic_logger_mt("logger2", "logs/logger2.txt"); // registered automatically
-    spdlog::set_default_logger(logger2); // reset default logger to logger2
+    spdlog::set_default_logger(logger2);
     spdlog::default_logger()->set_level(spdlog::level::trace); // set level for the default logger (logger2) to trace
 
-    spdlog::trace("trace message to the logger2 (now specified as default)");
+    spdlog::trace("trace message to the logger2 (specified as default)");
 
     spdlog::set_level(spdlog::level::off) // (sic!) set level for *all* registered loggers to off (disable)
   
