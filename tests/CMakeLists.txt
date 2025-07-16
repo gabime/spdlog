@@ -49,7 +49,8 @@ set(SPDLOG_UTESTS_SOURCES
     test_time_point.cpp
     test_stopwatch.cpp
     test_circular_q.cpp
-    test_bin_to_hex.cpp)
+    test_bin_to_hex.cpp
+    test_ringbuffer.cpp)
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
     list(APPEND SPDLOG_UTESTS_SOURCES test_errors.cpp)
