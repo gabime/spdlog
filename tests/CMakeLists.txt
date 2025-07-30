@@ -75,7 +75,7 @@ function(spdlog_prepare_test test_target spdlog_lib)
     elseif(SPDLOG_SANITIZE_THREAD)
         spdlog_enable_thread_sanitizer(${test_target})
     endif()
-    add_test(NAME ${test_target} COMMAND ${test_target})
+    add_test(NAME ${test_target} COMMAND ${test_target} --order decl)
     set_tests_properties(${test_target} PROPERTIES RUN_SERIAL ON)
 endfunction()
 
