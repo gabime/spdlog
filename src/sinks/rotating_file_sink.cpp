@@ -21,11 +21,13 @@ rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
                                               std::size_t max_size,
                                               std::size_t max_files,
                                               bool rotate_on_open,
-                                              const file_event_handlers &event_handlers)
+                                              const file_event_handlers &event_handlers,
+                                              const details::log_msg &new_file_message)
     : base_filename_(std::move(base_filename)),
       max_size_(max_size),
       max_files_(max_files),
-      file_helper_{event_handlers} {
+      file_helper_{event_handlers},
+      new_file_message_{new_file_message} {
     if (max_size == 0) {
         throw_spdlog_ex("rotating sink constructor: max_size arg cannot be zero");
     }
@@ -40,6 +42,14 @@ rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
         current_size_ = 0;
     }
 }
+
+template <typename Mutex>
+rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
+                                              std::size_t max_size,
+                                              std::size_t max_files,
+                                              bool rotate_on_open,
+                                              const details::log_msg &new_file_message)
+    : rotating_file_sink(base_filename, max_size, max_files, rotate_on_open, {}, new_file_message) {}
 
 // calc filename according to index and file extension if exists.
 // e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
@@ -127,6 +137,10 @@ void rotating_file_sink<Mutex>::rotate_() {
         }
     }
     file_helper_.reopen(true);
+    if (!new_file_message_.payload.empty()) {
+        new_file_message_.time = details::os::now();
+        sink_it_(new_file_message_);
+    }
 }
 
 // delete the target if exists, and rename the src file  to target

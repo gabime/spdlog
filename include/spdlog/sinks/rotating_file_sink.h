@@ -21,7 +21,14 @@ public:
                        std::size_t max_size,
                        std::size_t max_files,
                        bool rotate_on_open = false,
-                       const file_event_handlers &event_handlers = {});
+                       const file_event_handlers &event_handlers = {},
+                       const details::log_msg &new_file_message = {});
+
+    rotating_file_sink(filename_t base_filename,
+                       std::size_t max_size,
+                       std::size_t max_files,
+                       bool rotate_on_open,
+                       const details::log_msg &new_file_message);
 
     static filename_t calc_filename(const filename_t &filename, std::size_t index);
     filename_t filename();
@@ -48,6 +55,7 @@ private:
     std::size_t max_files_;
     std::size_t current_size_;
     details::file_helper file_helper_;
+    details::log_msg new_file_message_;
 };
 
 using rotating_file_sink_mt = rotating_file_sink<std::mutex>;
