@@ -106,3 +106,20 @@ TEST_CASE("rotating_file_logger4", "[rotating_logger]") {
     REQUIRE(get_filesize(ROTATING_LOG) > 0);
     REQUIRE(get_filesize(ROTATING_LOG ".1") > 0);
 }
+
+TEST_CASE("rotating_file_logger5", "[rotating_logger]") {
+    prepare_logdir();
+    size_t max_size = 1024 * 10;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+    auto rotating_msg = spdlog::details::log_msg("ROTATING_FILE_SINK", spdlog::level::info, "rotating file");
+    auto sink = std::make_shared<spdlog::sinks::rotating_file_sink_st>(basename, max_size, 2, false, rotating_msg);
+    auto logger = std::make_shared<spdlog::logger>("rotating_sink_logger", sink);
+    logger->info("Test message - pre-rotation");
+    logger->flush();
+    sink->rotate_now();
+    logger->info("Test message - post-rotation");
+    logger->flush();
+    REQUIRE(get_filesize(ROTATING_LOG) > 0);
+    REQUIRE(get_filesize(ROTATING_LOG ".1") > 0);
+    require_message_count(ROTATING_LOG, 2);
+}
