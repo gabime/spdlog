@@ -4,6 +4,7 @@
 #pragma once
 
 #include <mutex>
+#include <optional>
 #include <string>
 
 #include "../details/file_helper.h"
@@ -17,11 +18,20 @@ namespace sinks {
 template <typename Mutex>
 class rotating_file_sink final : public base_sink<Mutex> {
 public:
+    using file_rotation_event_handler = std::function<std::optional<details::log_msg>(const filename_t &)>;
+
     rotating_file_sink(filename_t base_filename,
                        std::size_t max_size,
                        std::size_t max_files,
                        bool rotate_on_open = false,
-                       const file_event_handlers &event_handlers = {});
+                       const file_event_handlers &event_handlers = {},
+                       file_rotation_event_handler file_rotating_event_callback = nullptr);
+
+    rotating_file_sink(filename_t base_filename,
+                       std::size_t max_size,
+                       std::size_t max_files,
+                       bool rotate_on_open,
+                       file_rotation_event_handler file_rotating_event_callback);
 
     static filename_t calc_filename(const filename_t &filename, std::size_t index);
     filename_t filename();
@@ -48,6 +58,7 @@ private:
     std::size_t max_files_;
     std::size_t current_size_;
     details::file_helper file_helper_;
+    file_rotation_event_handler file_rotating_event_callback_;
 };
 
 using rotating_file_sink_mt = rotating_file_sink<std::mutex>;

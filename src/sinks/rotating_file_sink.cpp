@@ -21,11 +21,13 @@ rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
                                               std::size_t max_size,
                                               std::size_t max_files,
                                               bool rotate_on_open,
-                                              const file_event_handlers &event_handlers)
+                                              const file_event_handlers &event_handlers,
+                                              file_rotation_event_handler file_rotating_event_callback)
     : base_filename_(std::move(base_filename)),
       max_size_(max_size),
       max_files_(max_files),
-      file_helper_{event_handlers} {
+      file_helper_{event_handlers},
+      file_rotating_event_callback_{file_rotating_event_callback} {
     if (max_size == 0) {
         throw_spdlog_ex("rotating sink constructor: max_size arg cannot be zero");
     }
@@ -40,6 +42,14 @@ rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
         current_size_ = 0;
     }
 }
+
+template <typename Mutex>
+rotating_file_sink<Mutex>::rotating_file_sink(filename_t base_filename,
+                                              std::size_t max_size,
+                                              std::size_t max_files,
+                                              bool rotate_on_open,
+                                              file_rotation_event_handler file_rotating_event_callback)
+    : rotating_file_sink(base_filename, max_size, max_files, rotate_on_open, {}, file_rotating_event_callback) {}
 
 // calc filename according to index and file extension if exists.
 // e.g. calc_filename("logs/mylog.txt, 3) => "logs/mylog.3.txt".
@@ -127,6 +137,10 @@ void rotating_file_sink<Mutex>::rotate_() {
         }
     }
     file_helper_.reopen(true);
+    if (file_rotating_event_callback_) {
+        auto msg = file_rotating_event_callback_(file_helper_.filename());
+        if (msg) sink_it_(*msg);
+    }
 }
 
 // delete the target if exists, and rename the src file  to target
