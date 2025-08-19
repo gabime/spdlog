@@ -126,14 +126,14 @@ TEST_CASE("rotating_file_logger5", "[rotating_logger]") {
 }
 
 TEST_CASE("rotating_file_logger6", "[rotating_logger]") {
-    auto empty_callback = [](const spdlog::filename_t &) -> std::optional<spdlog::details::log_msg> {
+    auto callback = [](const spdlog::filename_t &) -> std::optional<spdlog::details::log_msg> {
         return spdlog::details::log_msg{spdlog::log_clock::now(), {}, "COMMON", spdlog::level::info, "rotating file log message"};
     };
 
     prepare_logdir();
     size_t max_size = 1024 * 10;
     spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
-    auto sink = std::make_shared<spdlog::sinks::rotating_file_sink_st>(basename, max_size, 2, false, empty_callback);
+    auto sink = std::make_shared<spdlog::sinks::rotating_file_sink_st>(basename, max_size, 2, false, callback);
     auto logger = std::make_shared<spdlog::logger>("rotating_sink_logger", sink);
     logger->info("Test message - pre-rotation");
     logger->flush();
