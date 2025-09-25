@@ -469,12 +469,15 @@ constexpr FMT_ALWAYS_INLINE const char* narrow(const char* s) { return s; }
 template <typename Char>
 FMT_CONSTEXPR auto compare(const Char* s1, const Char* s2, std::size_t n)
     -> int {
-  if (!is_constant_evaluated() && sizeof(Char) == 1) return memcmp(s1, s2, n);
-  for (; n != 0; ++s1, ++s2, --n) {
-    if (*s1 < *s2) return -1;
-    if (*s1 > *s2) return 1;
+  if constexpr (!is_constant_evaluated() && sizeof(Char) == 1) {
+      return memcmp(s1, s2, n);
+  }else {
+    for (; n != 0; ++s1, ++s2, --n) {
+        if (*s1 < *s2) return -1;
+        if (*s1 > *s2) return 1;
+    }
+    return 0;
   }
-  return 0;
 }
 
 namespace adl {
