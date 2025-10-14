@@ -13,8 +13,11 @@
 #include <spdlog/pattern_formatter.h>
 
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
+    // Include emscripten sink on emscripten builds
+    #if defined(__EMSCRIPTEN__)
+        #include <spdlog/sinks/emscripten_sink.h>
     // support for the default stdout color logger
-    #ifdef _WIN32
+    #elif defined(_WIN32)
         #include <spdlog/sinks/wincolor_sink.h>
     #else
         #include <spdlog/sinks/ansicolor_sink.h>
@@ -33,8 +36,10 @@ namespace details {
 SPDLOG_INLINE registry::registry()
     : formatter_(new pattern_formatter()) {
 #ifndef SPDLOG_DISABLE_DEFAULT_LOGGER
-    // create default logger (ansicolor_stdout_sink_mt or wincolor_stdout_sink_mt in windows).
-    #ifdef _WIN32
+    // create default logger (ansicolor_stdout_sink_mt or wincolor_stdout_sink_mt in windows, or emscripten_sink_mt on emscripten).
+    #if defined(__EMSCRIPTEN__)
+    auto color_sink = std::make_shared<sinks::emscripten_sink_mt>();
+    #elif defined(_WIN32)
     auto color_sink = std::make_shared<sinks::wincolor_stdout_sink_mt>();
     #else
     auto color_sink = std::make_shared<sinks::ansicolor_stdout_sink_mt>();
