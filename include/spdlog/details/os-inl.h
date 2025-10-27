@@ -489,7 +489,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
         result_size =
             ::MultiByteToWideChar(CP_UTF8, 0, str.data(), str_size, target.data(), result_size);
         if (result_size > 0) {
-            assert(result_size == target.size());
+            assert(result_size == static_cast<int>(target.size()));
             return;
         }
     }
