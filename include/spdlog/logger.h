@@ -17,6 +17,7 @@
 #include <spdlog/common.h>
 #include <spdlog/details/backtracer.h>
 #include <spdlog/details/log_msg.h>
+#include <spdlog/desensitizer.h>
 
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     #ifndef _WIN32
@@ -25,6 +26,8 @@
     #include <spdlog/details/os.h>
 #endif
 
+#include <functional>
+#include <memory>
 #include <vector>
 
 #ifndef SPDLOG_NO_EXCEPTIONS
@@ -52,7 +55,8 @@ public:
     // Empty logger
     explicit logger(std::string name)
         : name_(std::move(name)),
-          sinks_() {}
+          sinks_(),
+          desensitizer_(std::make_shared<desensitizer>()) {}
 
     // Logger with range on sinks
     template <typename It>
@@ -74,6 +78,21 @@ public:
     logger(logger &&other) SPDLOG_NOEXCEPT;
     logger &operator=(logger other) SPDLOG_NOEXCEPT;
     void swap(spdlog::logger &other) SPDLOG_NOEXCEPT;
+    
+    // 设置脱敏器
+    void set_desensitizer(std::shared_ptr<desensitizer> desensitizer);
+    
+    // 获取脱敏器
+    std::shared_ptr<desensitizer> get_desensitizer() const;
+    
+    // 添加日志消费回调
+    void add_callback(std::function<void(const details::log_msg &)> callback);
+    
+    // 移除日志消费回调
+    void remove_callback(std::function<void(const details::log_msg &)> callback);
+    
+    // 清空所有日志消费回调
+    void clear_callbacks();
 
     template <typename... Args>
     void log(source_loc loc, level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args) {
@@ -311,6 +330,8 @@ protected:
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
     details::backtracer tracer_;
+    std::shared_ptr<desensitizer> desensitizer_;
+    std::vector<std::function<void(const details::log_msg &)>> callbacks_;
 
     // common implementation for after templated public api has been resolved
     template <typename... Args>

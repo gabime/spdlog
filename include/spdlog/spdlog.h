@@ -98,6 +98,19 @@ SPDLOG_API void register_logger(std::shared_ptr<logger> logger);
 // Will replace any existing logger with the same name.
 SPDLOG_API void register_or_replace(std::shared_ptr<logger> logger);
 
+// Log aggregator functions
+// Get global log aggregator instance
+SPDLOG_API std::shared_ptr<spdlog::aggregator> aggregator();
+
+// Set maximum number of logs to keep in aggregator
+SPDLOG_API void set_max_aggregated_logs(size_t max_logs);
+
+// Get all aggregated logs with specified level or higher
+SPDLOG_API std::vector<spdlog::details::log_msg> get_aggregated_logs(level::level_enum level = level::trace);
+
+// Clear all aggregated logs
+SPDLOG_API void clear_aggregated_logs();
+
 // Apply a user-defined function on all registered loggers
 // Example:
 // spdlog::apply_all([&](std::shared_ptr<spdlog::logger> l) {l->flush();});

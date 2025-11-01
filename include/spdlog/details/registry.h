@@ -10,6 +10,7 @@
 
 #include <spdlog/common.h>
 #include <spdlog/details/periodic_worker.h>
+#include <spdlog/aggregator.h>
 
 #include <chrono>
 #include <functional>
@@ -121,6 +122,8 @@ private:
     std::shared_ptr<logger> default_logger_;
     bool automatic_registration_ = true;
     size_t backtrace_n_messages_ = 0;
+    std::shared_ptr<aggregator> aggregator_;
+    size_t max_aggregated_logs_ = 1000;
 };
 
 }  // namespace details

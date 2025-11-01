@@ -22,7 +22,8 @@ SPDLOG_INLINE logger::logger(const logger &other)
       level_(other.level_.load(std::memory_order_relaxed)),
       flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
       custom_err_handler_(other.custom_err_handler_),
-      tracer_(other.tracer_) {}
+      tracer_(other.tracer_),
+      desensitizer_(other.desensitizer_) {}
 
 SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT
     : name_(std::move(other.name_)),
@@ -30,7 +31,8 @@ SPDLOG_INLINE logger::logger(logger &&other) SPDLOG_NOEXCEPT
       level_(other.level_.load(std::memory_order_relaxed)),
       flush_level_(other.flush_level_.load(std::memory_order_relaxed)),
       custom_err_handler_(std::move(other.custom_err_handler_)),
-      tracer_(std::move(other.tracer_))
+      tracer_(std::move(other.tracer_)),
+      desensitizer_(std::move(other.desensitizer_))
 
 {}
 
@@ -55,6 +57,7 @@ SPDLOG_INLINE void logger::swap(spdlog::logger &other) SPDLOG_NOEXCEPT {
 
     custom_err_handler_.swap(other.custom_err_handler_);
     std::swap(tracer_, other.tracer_);
+    std::swap(desensitizer_, other.desensitizer_);
 }
 
 SPDLOG_INLINE void swap(logger &a, logger &b) noexcept { a.swap(b); }
@@ -113,6 +116,31 @@ SPDLOG_INLINE void logger::set_error_handler(err_handler handler) {
     custom_err_handler_ = std::move(handler);
 }
 
+SPDLOG_INLINE void logger::set_desensitizer(std::shared_ptr<desensitizer> desensitizer) {
+    desensitizer_ = std::move(desensitizer);
+}
+
+SPDLOG_INLINE std::shared_ptr<desensitizer> logger::get_desensitizer() const {
+    return desensitizer_;
+}
+
+SPDLOG_INLINE void logger::add_callback(std::function<void(const details::log_msg &)> callback) {
+    callbacks_.push_back(std::move(callback));
+}
+
+SPDLOG_INLINE void logger::remove_callback(std::function<void(const details::log_msg &)> callback) {
+    callbacks_.erase(std::remove_if(callbacks_.begin(), callbacks_.end(),
+        [&callback](const std::function<void(const details::log_msg &)> &c) {
+            return c.target_type() == callback.target_type() &&
+                   c.target<void(const details::log_msg &)>() == callback.target<void(const details::log_msg &)>();
+        }),
+        callbacks_.end());
+}
+
+SPDLOG_INLINE void logger::clear_callbacks() {
+    callbacks_.clear();
+}
+
 // create new logger with same sinks and configuration.
 SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name) {
     auto cloned = std::make_shared<logger>(*this);
@@ -124,11 +152,28 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name) {
 SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg,
                                    bool log_enabled,
                                    bool traceback_enabled) {
+    // 应用脱敏
+    details::log_msg desensitized_msg = log_msg;
+    if (desensitizer_) {
+        desensitizer_->desensitize(desensitized_msg);
+    }
+
     if (log_enabled) {
-        sink_it_(log_msg);
+        sink_it_(desensitized_msg);
     }
     if (traceback_enabled) {
-        tracer_.push_back(log_msg);
+        tracer_.push_back(desensitized_msg);
+    }
+    
+    // 调用所有注册的回调函数
+    for (const auto &callback : callbacks_) {
+        try {
+            callback(desensitized_msg);
+        } catch (const std::exception &ex) {
+            err_handler_(fmt::format("Callback failed: {}", ex.what()));
+        } catch (...) {
+            err_handler_("Callback failed with unknown exception");
+        }
     }
 }
 
