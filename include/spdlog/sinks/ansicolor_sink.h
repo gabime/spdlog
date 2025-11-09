@@ -78,8 +78,10 @@ public:
     const string_view_t red_bold = "\033[31m\033[1m";
     const string_view_t bold_on_red = "\033[1m\033[41m";
 
-private:
+protected:
     FILE *target_file_;
+
+private:
     mutex_t &mutex_;
     bool should_do_colors_;
     std::unique_ptr<spdlog::formatter> formatter_;
