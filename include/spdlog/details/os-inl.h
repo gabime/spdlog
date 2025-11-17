@@ -567,7 +567,8 @@ SPDLOG_INLINE filename_t dir_name(const filename_t &path) {
     #pragma warning(disable : 4996)
 #endif  // _MSC_VER
 std::string SPDLOG_INLINE getenv(const char *field) {
-#if defined(_MSC_VER) && (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
+#if defined(_MSC_VER) && defined(WINAPI_FAMILY) && defined(WINAPI_FAMILY_DESKTOP_APP) && \
+    (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
     return std::string{};  // not supported under uwp
 #else
     char *buf = std::getenv(field);
