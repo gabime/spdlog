@@ -33,6 +33,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_misc.cpp
     test_eventlog.cpp
     test_pattern_formatter.cpp
+    test_static_pattern_formatter.cpp
     test_async.cpp
     test_registry.cpp
     test_macros.cpp
