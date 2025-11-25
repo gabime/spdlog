@@ -18,9 +18,8 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - { compiler: gcc, version: 7, build_type: Release, cppstd: 11 }
-          - { compiler: gcc, version: 9, build_type: Release, cppstd: 17 }
-          - { compiler: gcc, version: 11, build_type: Debug, cppstd: 20 }
+          - { compiler: gcc, version: 9, build_type: Release, cppstd: 11 }
+          - { compiler: gcc, version: 11, build_type: Debug, cppstd: 17 }
           - { compiler: gcc, version: 12, build_type: Release, cppstd: 20 }
           - { compiler: gcc, version: 12, build_type: Debug, cppstd: 20, asan: ON }
           - { compiler: clang, version: 12, build_type: Debug, cppstd: 17 }

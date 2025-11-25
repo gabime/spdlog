@@ -23,7 +23,6 @@
 
 #ifdef _WIN32
     #include <spdlog/details/windows_include.h>
-    #include <fileapi.h>  // for FlushFileBuffers
     #include <io.h>       // for _get_osfhandle, _isatty, _fileno
     #include <process.h>  // for _get_pid
 
@@ -490,7 +489,7 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
         result_size =
             ::MultiByteToWideChar(CP_UTF8, 0, str.data(), str_size, target.data(), result_size);
         if (result_size > 0) {
-            assert(result_size == target.size());
+            assert(result_size == static_cast<int>(target.size()));
             return;
         }
     }
@@ -568,7 +567,8 @@ SPDLOG_INLINE filename_t dir_name(const filename_t &path) {
     #pragma warning(disable : 4996)
 #endif  // _MSC_VER
 std::string SPDLOG_INLINE getenv(const char *field) {
-#if defined(_MSC_VER) && defined(__cplusplus_winrt)
+#if defined(_MSC_VER) && defined(WINAPI_FAMILY) && defined(WINAPI_FAMILY_DESKTOP_APP) && \
+    (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
     return std::string{};  // not supported under uwp
 #else
     char *buf = std::getenv(field);
