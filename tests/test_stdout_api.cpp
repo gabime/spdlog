@@ -5,6 +5,7 @@
 #include "includes.h"
 #include "spdlog/sinks/stdout_sinks.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+
 TEST_CASE("stdout_st", "[stdout]") {
     auto l = spdlog::stdout_logger_st("test");
     l->set_pattern("%+");
