@@ -246,14 +246,14 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
 // Return utc offset in minutes or throw spdlog_ex on failure
 #if !defined(SPDLOG_NO_TZ_OFFSET)
 SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
-#ifdef _WIN32
-    #if _WIN32_WINNT < _WIN32_WINNT_WS08
+    #ifdef _WIN32
+        #if _WIN32_WINNT < _WIN32_WINNT_WS08
     TIME_ZONE_INFORMATION tzinfo;
     auto rv = ::GetTimeZoneInformation(&tzinfo);
-    #else
+        #else
     DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
     auto rv = ::GetDynamicTimeZoneInformation(&tzinfo);
-    #endif
+        #endif
     if (rv == TIME_ZONE_ID_INVALID) throw_spdlog_ex("Failed getting timezone info. ", errno);
 
     int offset = -tzinfo.Bias;
@@ -263,12 +263,12 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
         offset -= tzinfo.StandardBias;
     }
     return offset;
-#else
+    #else
     auto offset_seconds = tm.tm_gmtoff;
     return static_cast<int>(offset_seconds / 60);
-#endif
+    #endif
 }
-#endif // SPDLOG_NO_TZ_OFFSET
+#endif  // SPDLOG_NO_TZ_OFFSET
 
 // Return current thread id as size_t
 // It exists because the std::this_thread::get_id() is much slower(especially

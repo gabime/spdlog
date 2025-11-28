@@ -87,7 +87,8 @@ TEST_CASE("GMT offset ", "[pattern_formatter]") {
 #else
     const std::string expected_result = "+??:??\n";
 #endif
-    REQUIRE(log_to_str_with_time(yesterday, "Some message", "%z", spdlog::pattern_time_type::utc, "\n") == expected_result);
+    REQUIRE(log_to_str_with_time(yesterday, "Some message", "%z", spdlog::pattern_time_type::utc,
+                                 "\n") == expected_result);
 }
 
 TEST_CASE("color range test1", "[pattern_formatter]") {
