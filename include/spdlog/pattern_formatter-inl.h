@@ -510,6 +510,7 @@ public:
 };
 
 // ISO 8601 offset from UTC in timezone (+-HH:MM)
+// If SPDLOG_NO_TZ_OFFSET is defined, print "+??.??" instead.
 template <typename ScopedPadder>
 class z_formatter final : public flag_formatter {
 public:
@@ -524,6 +525,10 @@ public:
         const size_t field_size = 6;
         ScopedPadder p(field_size, padinfo_, dest);
 
+        #ifdef SPDLOG_NO_TZ_OFFSET
+        const char *str = "+??:??";
+        dest.append(str, str + 6);
+        #else
         auto total_minutes = get_cached_offset(msg, tm_time);
         bool is_negative = total_minutes < 0;
         if (is_negative) {
@@ -536,6 +541,7 @@ public:
         fmt_helper::pad2(total_minutes / 60, dest);  // hours
         dest.push_back(':');
         fmt_helper::pad2(total_minutes % 60, dest);  // minutes
+        #endif // SPDLOG_NO_TZ_OFFSET
     }
 
 private:
@@ -1154,12 +1160,10 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
             formatters_.push_back(details::make_unique<details::T_formatter<Padder>>(padding));
             need_localtime_ = true;
             break;
-
         case ('z'):  // timezone
-            formatters_.push_back(details::make_unique<details::z_formatter<Padder>>(padding));
-            need_localtime_ = true;
+                formatters_.push_back(details::make_unique<details::z_formatter<Padder>>(padding));
+                need_localtime_ = true;
             break;
-
         case ('P'):  // pid
             formatters_.push_back(details::make_unique<details::pid_formatter<Padder>>(padding));
             break;

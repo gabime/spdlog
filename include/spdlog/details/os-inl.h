@@ -244,6 +244,7 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
 #endif
 
 // Return utc offset in minutes or throw spdlog_ex on failure
+#if !defined(SPDLOG_NO_TZ_OFFSET)
 SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
 #ifdef _WIN32
     #if _WIN32_WINNT < _WIN32_WINNT_WS08
@@ -263,46 +264,11 @@ SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
     }
     return offset;
 #else
-
-    #if defined(sun) || defined(__sun) || defined(_AIX) ||                        \
-        (defined(__NEWLIB__) && !defined(__TM_GMTOFF)) ||                         \
-        (!defined(__APPLE__) && !defined(_BSD_SOURCE) && !defined(_GNU_SOURCE) && \
-         (!defined(_POSIX_VERSION) || (_POSIX_VERSION < 202405L)))
-    // 'tm_gmtoff' field is BSD extension and it's missing on SunOS/Solaris
-    struct helper {
-        static long int calculate_gmt_offset(const std::tm &localtm = details::os::localtime(),
-                                             const std::tm &gmtm = details::os::gmtime()) {
-            int local_year = localtm.tm_year + (1900 - 1);
-            int gmt_year = gmtm.tm_year + (1900 - 1);
-
-            long int days = (
-                // difference in day of year
-                localtm.tm_yday -
-                gmtm.tm_yday
-
-                // + intervening leap days
-                + ((local_year >> 2) - (gmt_year >> 2)) - (local_year / 100 - gmt_year / 100) +
-                ((local_year / 100 >> 2) - (gmt_year / 100 >> 2))
-
-                // + difference in years * 365 */
-                + static_cast<long int>(local_year - gmt_year) * 365);
-
-            long int hours = (24 * days) + (localtm.tm_hour - gmtm.tm_hour);
-            long int mins = (60 * hours) + (localtm.tm_min - gmtm.tm_min);
-            long int secs = (60 * mins) + (localtm.tm_sec - gmtm.tm_sec);
-
-            return secs;
-        }
-    };
-
-    auto offset_seconds = helper::calculate_gmt_offset(tm);
-    #else
     auto offset_seconds = tm.tm_gmtoff;
-    #endif
-
     return static_cast<int>(offset_seconds / 60);
 #endif
 }
+#endif // SPDLOG_NO_TZ_OFFSET
 
 // Return current thread id as size_t
 // It exists because the std::this_thread::get_id() is much slower(especially

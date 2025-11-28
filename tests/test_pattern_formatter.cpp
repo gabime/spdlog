@@ -82,8 +82,12 @@ TEST_CASE("GMT offset ", "[pattern_formatter]") {
     const auto now = std::chrono::system_clock::now();
     const auto yesterday = now - 24h;
 
-    REQUIRE(log_to_str_with_time(yesterday, "Some message", "%z", spdlog::pattern_time_type::utc,
-                                 "\n") == "+00:00\n");
+#ifndef SPDLOG_NO_TZ_OFFSET
+    const std::string expected_result = "+00:00\n";
+#else
+    const std::string expected_result = "+??:??\n";
+#endif
+    REQUIRE(log_to_str_with_time(yesterday, "Some message", "%z", spdlog::pattern_time_type::utc, "\n") == expected_result);
 }
 
 TEST_CASE("color range test1", "[pattern_formatter]") {
