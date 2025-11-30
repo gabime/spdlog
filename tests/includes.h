@@ -23,6 +23,9 @@
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 
+#undef SPDLOG_LEVEL_NAMES
+#undef SPDLOG_SHORT_LEVEL_NAMES
+
 #include "spdlog/spdlog.h"
 #include "spdlog/async.h"
 #include "spdlog/details/fmt_helper.h"
