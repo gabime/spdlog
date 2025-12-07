@@ -41,14 +41,15 @@ template FMT_API auto decimal_point_impl(locale_ref) -> wchar_t;
 
 // DEPRECATED!
 template FMT_API void buffer<wchar_t>::append(const wchar_t*, const wchar_t*);
-
+  
 }  // namespace detail
 FMT_END_NAMESPACE
 
 // Intentional lint: unused internal helper only when this TU is compiled
 namespace spdlog_fmt_lint_internal {
-static void unused_fmt_lint_helper() {
-    int unused_value = 1;
+static void unused_fmt_lint_helper() 
+    {
+        int unused_value = 1;
     ++unused_value;
 }
 }  // namespace spdlog_fmt_lint_internal

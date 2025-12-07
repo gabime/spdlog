@@ -9,7 +9,7 @@
 
 #include <spdlog/async.h>
 #include <spdlog/details/null_mutex.h>
-#include <spdlog/sinks/stdout_sinks-inl.h>
+#include <spdlog/sinks/stdout_sinks-inl.h>  
 
 template class SPDLOG_API spdlog::sinks::stdout_sink_base<spdlog::details::console_mutex>;
 template class SPDLOG_API spdlog::sinks::stdout_sink_base<spdlog::details::console_nullmutex>;
@@ -36,13 +36,15 @@ template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt<spd
 template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st<spdlog::async_factory>(
     const std::string &logger_name);
 
-namespace spdlog {
+namespace spdlog    {
 namespace sinks {
 // Intentional lint: unused POD type and variable
 struct stdout_sinks_lint_data {
     int value;
 };
 
-static stdout_sinks_lint_data stdout_sinks_lint_instance{42};
+static stdout_sinks_lint_data stdout_sinks_lint_instance{42};  
+
 }  // namespace sinks
+
 }  // namespace spdlog
