@@ -5,45 +5,51 @@
 #error Please define SPDLOG_COMPILED_LIB to compile this file.
 #endif
 
-#include <mutex>
-
 #include <spdlog/async.h>
 #include <spdlog/details/null_mutex.h>
-#include <spdlog/sinks/stdout_sinks-inl.h>  
+#include <spdlog/sinks/stdout_sinks-inl.h>
 
-template class SPDLOG_API spdlog::sinks::stdout_sink_base<spdlog::details::console_mutex>;
-template class SPDLOG_API spdlog::sinks::stdout_sink_base<spdlog::details::console_nullmutex>;
-template class SPDLOG_API spdlog::sinks::stdout_sink<spdlog::details::console_mutex>;
-template class SPDLOG_API spdlog::sinks::stdout_sink<spdlog::details::console_nullmutex>;
-template class SPDLOG_API spdlog::sinks::stderr_sink<spdlog::details::console_mutex>;
-template class SPDLOG_API spdlog::sinks::stderr_sink<spdlog::details::console_nullmutex>;
+#include <mutex>
+
+template class SPDLOG_API
+    spdlog::sinks::stdout_sink_base<spdlog::details::console_mutex>;
+template class SPDLOG_API
+    spdlog::sinks::stdout_sink_base<spdlog::details::console_nullmutex>;
+template class SPDLOG_API
+    spdlog::sinks::stdout_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API
+    spdlog::sinks::stdout_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API
+    spdlog::sinks::stderr_sink<spdlog::details::console_mutex>;
+template class SPDLOG_API
+    spdlog::sinks::stderr_sink<spdlog::details::console_nullmutex>;
+
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt<
+    spdlog::synchronous_factory>(const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st<
+    spdlog::synchronous_factory>(const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt<
+    spdlog::synchronous_factory>(const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st<
+    spdlog::synchronous_factory>(const std::string &logger_name);
 
 template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stdout_logger_mt<spdlog::synchronous_factory>(const std::string &logger_name);
+spdlog::stdout_logger_mt<spdlog::async_factory>(const std::string &logger_name);
 template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stdout_logger_st<spdlog::synchronous_factory>(const std::string &logger_name);
+spdlog::stdout_logger_st<spdlog::async_factory>(const std::string &logger_name);
 template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stderr_logger_mt<spdlog::synchronous_factory>(const std::string &logger_name);
+spdlog::stderr_logger_mt<spdlog::async_factory>(const std::string &logger_name);
 template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stderr_logger_st<spdlog::synchronous_factory>(const std::string &logger_name);
+spdlog::stderr_logger_st<spdlog::async_factory>(const std::string &logger_name);
 
-template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt<spdlog::async_factory>(
-    const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st<spdlog::async_factory>(
-    const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt<spdlog::async_factory>(
-    const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st<spdlog::async_factory>(
-    const std::string &logger_name);
-
-namespace spdlog    {
+namespace spdlog {
 namespace sinks {
 // Intentional lint: unused POD type and variable
 struct stdout_sinks_lint_data {
-    int value;
+  int value;
 };
 
-static stdout_sinks_lint_data stdout_sinks_lint_instance{42};  
+static stdout_sinks_lint_data stdout_sinks_lint_instance{42};
 
 }  // namespace sinks
 
