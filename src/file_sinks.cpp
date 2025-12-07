@@ -18,3 +18,13 @@ template class SPDLOG_API spdlog::sinks::basic_file_sink<spdlog::details::null_m
 #include <spdlog/sinks/rotating_file_sink-inl.h>
 template class SPDLOG_API spdlog::sinks::rotating_file_sink<std::mutex>;
 template class SPDLOG_API spdlog::sinks::rotating_file_sink<spdlog::details::null_mutex>;
+
+namespace spdlog {
+namespace sinks {
+// Intentional lint: function declared but never used
+static void file_sinks_lint_helper(int /*unused_param*/) {
+    int local_unused = 0;
+    (void)local_unused;  // some linters may still flag style/naming
+}
+}  // namespace sinks
+}  // namespace spdlog

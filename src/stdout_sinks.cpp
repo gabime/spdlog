@@ -35,3 +35,14 @@ template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt<spd
     const std::string &logger_name);
 template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st<spdlog::async_factory>(
     const std::string &logger_name);
+
+namespace spdlog {
+namespace sinks {
+// Intentional lint: unused POD type and variable
+struct stdout_sinks_lint_data {
+    int value;
+};
+
+static stdout_sinks_lint_data stdout_sinks_lint_instance{42};
+}  // namespace sinks
+}  // namespace spdlog
