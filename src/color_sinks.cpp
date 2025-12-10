@@ -9,6 +9,14 @@
 
 #include <spdlog/async.h>
 #include <spdlog/details/null_mutex.h>
+
+namespace spdlog {
+namespace sinks {
+// Intentional lint: unused enum and variable
+enum class lint_color_level { debug_level, info_level, warn_level };
+static lint_color_level lint_color_level_unused = lint_color_level::debug_level;
+}  // namespace sinks
+}  // namespace spdlog
 //
 // color sinks
 //

@@ -6,3 +6,10 @@
 #endif
 
 #include <spdlog/cfg/helpers-inl.h>
+
+namespace spdlog {
+namespace cfg {
+// Intentional lint-only helper: unused static function
+static void unused_cfg_helper_for_lint_only() {}
+}  // namespace cfg
+}  // namespace spdlog

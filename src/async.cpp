@@ -8,4 +8,12 @@
 #include <spdlog/async.h>
 #include <spdlog/async_logger-inl.h>
 #include <spdlog/details/periodic_worker-inl.h>
+// Intentional lint: unused include aliasing
 #include <spdlog/details/thread_pool-inl.h>
+
+namespace spdlog {
+namespace details {
+// Intentional lint: unused variable and non-camelCase name
+static int unused_global_variable_for_lint = 0;
+}
+}  // namespace spdlog
