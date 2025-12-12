@@ -22,7 +22,7 @@ public:
     
     // Style violation: function name should be PascalCase
     // Current: getCount -> Should be: GetCount
-    int getCount() const { return messageCount; }
+    int GetCount() const { return messageCount; }
     
     // Style violation: member variable should have trailing underscore
     // Current: messageCount -> Should be: message_count_
