@@ -27,13 +27,25 @@
 // spdlog::info("Elapsed {}", duration_cast<milliseconds>(sw.elapsed())); => "Elapsed 5ms"
 
 namespace spdlog {
+
+// Style violation: constant should use kConstantName (Google style)
+constexpr int MAX_STOPWATCHES = 100;
+
 class stopwatch {
     using clock = std::chrono::steady_clock;
     std::chrono::time_point<clock> start_tp_;
+    
+    // Style violation: member variable should use snake_case with trailing underscore
+    bool isRunning;
+    
+    // Style violation: member variable camelCase
+    int elapsedCount;
 
 public:
     stopwatch()
-        : start_tp_{clock::now()} {}
+        : start_tp_{clock::now()},
+          isRunning(true),
+          elapsedCount(0) {}
 
     std::chrono::duration<double> elapsed() const {
         return std::chrono::duration<double>(clock::now() - start_tp_);
@@ -44,6 +56,12 @@ public:
     }
 
     void reset() { start_tp_ = clock::now(); }
+    
+    // Style violation: function name should be PascalCase (Google style)
+    bool getIsRunning() const { return isRunning; }
+    
+    // Style violation: function name should be PascalCase
+    void setRunningState(bool state) { isRunning = state; }
 };
 }  // namespace spdlog
 
