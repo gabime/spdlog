@@ -79,6 +79,7 @@ option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" OFF)
 
 # bench options
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
+option(SPDLOG_BUILD_REVIEW_FIXTURES "Build code review fixtures" OFF)
 
 # sanitizer options
 option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
@@ -343,6 +344,11 @@ endif()
 if(SPDLOG_BUILD_BENCH OR SPDLOG_BUILD_ALL)
     message(STATUS "Generating benchmarks")
     add_subdirectory(bench)
+endif()
+
+if(SPDLOG_BUILD_REVIEW_FIXTURES)
+    message(STATUS "Generating code review fixtures")
+    add_subdirectory(review_fixtures)
 endif()
 
 # ---------------------------------------------------------------------------------------
