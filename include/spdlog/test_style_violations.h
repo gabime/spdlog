@@ -68,7 +68,7 @@ private:
     
     // Style violation: member variable camelCase instead of snake_case_
     // Current: workerThread -> Should be: worker_thread_
-    std::unique_ptr<void*> workerThread;
+    std::unique_ptr<void*> worker_thread_;
 };
 
 // Style violation: function name should be PascalCase
