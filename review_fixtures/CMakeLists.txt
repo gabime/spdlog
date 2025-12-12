@@ -16,7 +16,11 @@ set(SPDLOG_REVIEW_FIXTURES_SOURCES
     fixture_leak.cpp
     fixture_data_race.cpp
     fixture_deadlock.cpp
-    fixture_format_string_injection.cpp)
+    fixture_format_string_injection.cpp
+    fixture_complex_ownership.cpp
+    fixture_complex_iterator_invalidation.cpp
+    fixture_complex_exception_safety.cpp
+    fixture_complex_concurrency.cpp)
 
 foreach(src ${SPDLOG_REVIEW_FIXTURES_SOURCES})
     get_filename_component(target_name ${src} NAME_WE)
