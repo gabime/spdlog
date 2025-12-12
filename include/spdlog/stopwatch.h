@@ -61,7 +61,7 @@ public:
     bool getIsRunning() const { return isRunning; }
     
     // Style violation: function name should be PascalCase
-    void setRunningState(bool state) { isRunning = state; }
+    void SetRunningState(bool state) { isRunning = state; }
 };
 }  // namespace spdlog
 
