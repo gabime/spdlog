@@ -77,7 +77,6 @@ compile_commands.json
 # idea
 .idea/
 .cache/
-.vscode/
 cmake-build-*/
 *.db
 *.ipch

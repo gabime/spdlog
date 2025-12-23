@@ -1,0 +1,131 @@
+{
+    "cmake.sourceDirectory": "${workspaceFolder}",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.generator": "Ninja",
+    "cmake.cmakePath": "E:/Qt/Tools/CMake_64/bin/cmake.exe",
+    "cmake.exportCompileCommandsFile": true,
+    "cmake.configureArgs": [
+        "-DCMAKE_PREFIX_PATH=E:/Qt/6.8.3/mingw_64",
+        "-DCMAKE_C_COMPILER=E:/Qt/Tools/mingw1120_64/bin/gcc.exe",
+        "-DCMAKE_CXX_COMPILER=E:/Qt/Tools/mingw1120_64/bin/g++.exe",
+        "-DCMAKE_SYSTEM_CODE_PAGE=UTF8",
+        "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+    ],
+    "cmake.preferredGenerators": [
+        "Ninja"
+    ],
+    "cmake.configureEnvironment": {
+        "LANG": "zh_CN.UTF-8",
+        "LC_ALL": "zh_CN.UTF-8",
+        "PYTHONIOENCODING": "utf-8",
+        "CMAKE_SYSTEM_CODE_PAGE": "UTF8"
+    },
+    "cmake.buildEnvironment": {
+        "LANG": "zh_CN.UTF-8",
+        "LC_ALL": "zh_CN.UTF-8",
+        "PYTHONIOENCODING": "utf-8",
+        "CMAKE_SYSTEM_CODE_PAGE": "UTF8"
+    },
+    "cmake.configureSettings": {
+        "CMAKE_MAKE_PROGRAM": "E:/Qt/Tools/Ninja/ninja.exe"
+    },
+    "cmake.enableDebugConfig": true,
+    "cmake.buildArgs": [
+        "-j4"
+    ],
+    "cmake.configureOnOpen": true,
+    "cmake.buildBeforeRun": true,
+    "cmake.parallelJobs": 4,
+    "cmake.showOptionsMovedNotification": false,
+    "cmake.copyCompileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "cmake.defaultVariants": {
+        "buildType": {
+            "default": "debug",
+            "description": "构建类型",
+            "choices": {
+                "debug": {
+                    "short": "Debug",
+                    "long": "启用调试信息和禁用优化",
+                    "buildType": "Debug"
+                },
+                "release": {
+                    "short": "Release",
+                    "long": "禁用调试信息并启用优化",
+                    "buildType": "Release"
+                }
+            }
+        }
+    },
+    "files.associations": {
+        "*.h": "cpp",
+        "*.cpp": "cpp",
+        "*.ui": "xml",
+        "*.qrc": "xml"
+    },
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "C_Cpp.default.compilerPath": "E:/Qt/Tools/mingw1120_64/bin/g++.exe",
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/build/compile_commands.json",
+    "C_Cpp.default.intelliSenseMode": "gcc-x64",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/**"
+    ],
+    "python.terminal.activateEnvironment": false,
+    "python.terminal.activateEnvInCurrentTerminal": false,
+    "terminal.integrated.encoding": "utf8",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "cmake.debugConfig": {
+        "type": "cppdbg",
+        "request": "launch",
+        "MIMode": "gdb",
+        "miDebuggerPath": "E:/Qt/Tools/mingw1120_64/bin/gdb.exe",
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "openOnSessionStart",
+        "externalConsole": false,
+        "stopAtEntry": false,
+        "environment": [
+            {
+                "name": "PATH",
+                "value": "E:\\Qt\\6.8.3\\mingw_64\\bin;E:\\Qt\\Tools\\mingw1120_64\\bin;${workspaceFolder}\\build\\example;C:\\WINDOWS\\SYSTEM32;C:\\WINDOWS\\System32;C:\\WINDOWS;${env:PATH}"
+            },
+            {
+                "name": "QT_PLUGIN_PATH",
+                "value": "E:\\Qt\\6.8.3\\mingw_64\\plugins"
+            },
+            {
+                "name": "QT_QPA_PLATFORM_PLUGIN_PATH",
+                "value": "E:\\Qt\\6.8.3\\mingw_64\\plugins\\platforms"
+            },
+            {
+                "name": "SystemRoot",
+                "value": "C:\\WINDOWS"
+            },
+            {
+                "name": "SystemDrive",
+                "value": "C:"
+            }
+        ],
+        "args": [],
+        "cwd": "${workspaceFolder}/build/example",
+        "program": "${workspaceFolder}/build/example/example.exe",
+        "preLaunchTask": "CMake: build",
+        "setupCommands": [
+            {
+                "description": "为 gdb 启用整齐打印",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            },
+            {
+                "description": "设置目标架构为x86_64",
+                "text": "set architecture i386:x86-64",
+                "ignoreFailures": true
+            },
+            {
+                "description": "设置PATH环境变量",
+                "text": "set environment PATH=E:\\Qt\\6.8.3\\mingw_64\\bin;E:\\Qt\\Tools\\mingw1120_64\\bin;${workspaceFolder}\\build\\example;C:\\WINDOWS\\SYSTEM32;C:\\WINDOWS\\System32;C:\\WINDOWS",
+                "ignoreFailures": true
+            }
+        ]
+    }
+}

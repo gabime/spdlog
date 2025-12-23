@@ -1,0 +1,73 @@
+{
+    "version": "0.2.0",
+    "configurations": [     
+        {
+            "name": "Debug Automation (CMake Tools)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${command:cmake.launchTargetPath}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/example",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "E:\\Qt\\6.8.3\\mingw_64\\bin;E:\\Qt\\Tools\\mingw1120_64\\bin;${workspaceFolder}\\build\\example;${env:PATH}"
+                },
+                {
+                    "name": "QT_PLUGIN_PATH",
+                    "value": "E:\\Qt\\6.8.3\\mingw_64\\plugins"
+                },
+                {
+                    "name": "QT_QPA_PLATFORM_PLUGIN_PATH",
+                    "value": "E:\\Qt\\6.8.3\\mingw_64\\plugins\\platforms"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "E:\\Qt\\Tools\\mingw1120_64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "设置目标架构为x86_64",
+                    "text": "set architecture i386:x86-64",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "CMake: build",
+            "visualizerFile": "c:\\Users\\CodeMaker808\\AppData\\Roaming\\Code\\User\\workspaceStorage\\6d520562307e6e9f37595f1cb02b6bbd\\tonka3000.qtvsctools\\qt.natvis.xml"
+        },
+        {
+            "name": "Run Automation (No Debug)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/example/example.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/build/example",
+            "environment": [
+                {
+                    "name": "PATH",
+                    "value": "E:\\Qt\\6.8.3\\mingw_64\\bin;E:\\Qt\\Tools\\mingw1120_64\\bin;${workspaceFolder}\\build\\example;${env:PATH}"
+                },
+                {
+                    "name": "QT_PLUGIN_PATH",
+                    "value": "E:\\Qt\\6.8.3\\mingw_64\\plugins"
+                },
+                {
+                    "name": "QT_QPA_PLATFORM_PLUGIN_PATH",
+                    "value": "E:\\Qt\\6.8.3\\mingw_64\\plugins\\platforms"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "E:\\Qt\\Tools\\mingw1120_64\\bin\\gdb.exe",
+            "preLaunchTask": "CMake: build",
+            "visualizerFile": "c:\\Users\\CodeMaker808\\AppData\\Roaming\\Code\\User\\workspaceStorage\\6d520562307e6e9f37595f1cb02b6bbd\\tonka3000.qtvsctools\\qt.natvis.xml"
+        }
+    ]
+}
