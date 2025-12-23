@@ -2,18 +2,18 @@
   {
     "name": "Qt 6.8.3 MinGW 64-bit",
     "compilers": {
-      "C": "E:/Qt/Tools/mingw1120_64/bin/gcc.exe",
-      "CXX": "E:/Qt/Tools/mingw1120_64/bin/g++.exe"
+      "C": "C:/Qt/Tools/mingw1120_64/bin/gcc.exe",
+      "CXX": "C:/Qt/Tools/mingw1120_64/bin/g++.exe"
     },
     "environmentVariables": {
-      "PATH": "E:\\Qt\\6.8.3\\mingw_64\\bin;E:\\Qt\\Tools\\mingw1120_64\\bin;${env:PATH}",
-      "QT_PLUGIN_PATH": "E:\\Qt\\6.8.3\\mingw_64\\plugins",
-      "QT_QPA_PLATFORM_PLUGIN_PATH": "E:\\Qt\\6.8.3\\mingw_64\\plugins\\platforms"
+      "PATH": "C:\\Qt\\6.8.3\\mingw_64\\bin;C:\\Qt\\Tools\\mingw1120_64\\bin;${env:PATH}",
+      "QT_PLUGIN_PATH": "C:\\Qt\\6.8.3\\mingw_64\\plugins",
+      "QT_QPA_PLATFORM_PLUGIN_PATH": "C:\\Qt\\6.8.3\\mingw_64\\plugins\\platforms"
     },
     "cmakeSettings": {
-      "CMAKE_PREFIX_PATH": "E:/Qt/6.8.3/mingw_64",
-      "CMAKE_C_COMPILER": "E:/Qt/Tools/mingw1120_64/bin/gcc.exe",
-      "CMAKE_CXX_COMPILER": "E:/Qt/Tools/mingw1120_64/bin/g++.exe"
+      "CMAKE_PREFIX_PATH": "C:/Qt/6.8.3/mingw_64",
+      "CMAKE_C_COMPILER": "C:/Qt/Tools/mingw1120_64/bin/gcc.exe",
+      "CMAKE_CXX_COMPILER": "C:/Qt/Tools/mingw1120_64/bin/g++.exe"
     }
   }
 ]
