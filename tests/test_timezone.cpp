@@ -70,15 +70,9 @@ public:
     }
 };
 
-// =============================================================================
+//
 // Test the `utc_minutes_offset(const std::tm &tm)` function under various timezones and dates.
-// These tests rely on the `ScopedTZ` helper class.
-// 1. Upon construction, ScopedTZ sets the process-wide 'TZ' environment variable
-//    to a specific region
-// 2. This forces the C-Runtime to behave AS IF the computer were physically located in that
-// timezone.
-// 3. Upon destruction (end of scope), ScopedTZ restores the original timezone.
-// =============================================================================
+//
 using spdlog::details::os::utc_minutes_offset;
 
 TEST_CASE("UTC Offset - Western Hemisphere (USA)", "[timezone][west]") {
@@ -176,4 +170,4 @@ TEST_CASE("UTC Offset - Edge Case: Leap Year", "[timezone][edge]") {
     REQUIRE(utc_minutes_offset(tm) == -300);
 }
 
-#endif
+#endif  // !SPDLOG_NO_TZ_OFFSET
