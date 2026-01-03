@@ -525,16 +525,15 @@ public:
     void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) override {
         const size_t field_size = 6;
         ScopedPadder p(field_size, padinfo_, dest);
-
-        if (time_type_ == pattern_time_type::utc) {
-            dest.append("+00:00", "+00:00" + 6);
-            return;
-        }
-
 #ifdef SPDLOG_NO_TZ_OFFSET
         const char *str = "+??:??";
         dest.append(str, str + 6);
 #else
+        if (time_type_ == pattern_time_type::utc) {
+            const char *zeroes = "+00:00";
+            dest.append(zeroes, zeroes + 6);
+            return;
+        }
         auto total_minutes = get_cached_offset(msg, tm_time);
         bool is_negative = total_minutes < 0;
         if (is_negative) {
