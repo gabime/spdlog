@@ -51,7 +51,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_circular_q.cpp
     test_bin_to_hex.cpp
     test_ringbuffer.cpp
-	test_timezone.cpp
+    test_timezone.cpp
 )
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
