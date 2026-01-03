@@ -77,7 +77,7 @@ TEST_CASE("date MM/DD/YY ", "[pattern_formatter]") {
             oss.str());
 }
 
-// see test_timezone.cpp for actutal UTC offset calculation tests
+// see test_timezone.cpp for actual UTC offset calculation tests
 TEST_CASE("UTC offset", "[pattern_formatter]") {
     using namespace std::chrono_literals;
     const auto now = std::chrono::system_clock::now();
