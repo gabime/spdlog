@@ -4,6 +4,7 @@
 
 #include <ctime>
 #include <cstdlib>
+#include <cstring>
 
 // Helper to construct a simple std::tm from components
 std::tm make_tm(int year, int month, int day, int hour, int minute) {
