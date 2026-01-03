@@ -243,14 +243,40 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
 #pragma warning(pop)
 #endif
 
+#include <ctime>
+
+// Returns the UTC offset in minutes (e.g., +120 for UTC+2) for the given tm.
+SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
+#ifdef _WIN32
+    // On Windows, std::tm lacks an offset field. We calculate it by interpreting
+    // the SAME timestamp as both "Local Time" (via mktime) and "UTC" (via _mkgmtime).
+    // The difference between the two resulting epochs is the local timezone offset.
+    // We copy the tm struct because both functions modify it
+
+    std::tm local_tm = tm;
+    std::time_t true_utc_time = std::mktime(&local_tm);
+    if (true_utc_time == -1) return 0;
+
+    std::tm utc_tm = tm;
+    std::time_t face_value_time = _mkgmtime(&utc_tm);
+    if (face_value_time == -1) return 0;
+
+    auto offset_seconds = face_value_time - true_utc_time;
+    return static_cast<int>(offset_seconds / 60);
+
+#else
+    return static_cast<int>(tm.tm_gmtoff / 60);
+#endif
+}
+
 // Return utc offset in minutes or throw spdlog_ex on failure
 #if !defined(SPDLOG_NO_TZ_OFFSET)
-SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
+SPDLOG_INLINE int utc_minutes_offset2(const std::tm &tm) {
 #ifdef _WIN32
 #if _WIN32_WINNT < _WIN32_WINNT_WS08
     TIME_ZONE_INFORMATION tzinfo;
     auto rv = ::GetTimeZoneInformation(&tzinfo);
-#else
+#else    
     DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
     auto rv = ::GetDynamicTimeZoneInformation(&tzinfo);
 #endif

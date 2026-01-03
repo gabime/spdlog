@@ -1,6 +1,6 @@
 #include "includes.h"
 #include "test_sink.h"
-
+#include <regex>
 #include <chrono>
 
 using spdlog::memory_buf_t;
@@ -77,18 +77,20 @@ TEST_CASE("date MM/DD/YY ", "[pattern_formatter]") {
             oss.str());
 }
 
-TEST_CASE("GMT offset ", "[pattern_formatter]") {
+// see test_timezone.cpp for actutal UTC offset calculation tests
+TEST_CASE("UTC offset", "[pattern_formatter]") {
     using namespace std::chrono_literals;
     const auto now = std::chrono::system_clock::now();
-    const auto yesterday = now - 24h;
+    std::string result =
+        log_to_str_with_time(now, "Some message", "%z", spdlog::pattern_time_type::local, "\n");
 
 #ifndef SPDLOG_NO_TZ_OFFSET
-    const std::string expected_result = "+00:00\n";
+    // Match format: +HH:MM or -HH:MM
+    std::regex re(R"([+-]\d{2}:[0-5]\d\n)");
+    REQUIRE(std::regex_match(result, re));
 #else
-    const std::string expected_result = "+??:??\n";
+    REQUIRE(result == "+??:??\n");
 #endif
-    REQUIRE(log_to_str_with_time(yesterday, "Some message", "%z", spdlog::pattern_time_type::utc,
-                                 "\n") == expected_result);
 }
 
 TEST_CASE("color range test1", "[pattern_formatter]") {
