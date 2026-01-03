@@ -7,7 +7,7 @@
 
 // Helper to construct a simple std::tm from components
 std::tm make_tm(int year, int month, int day, int hour, int minute) {
-    std::tm t = {0};
+    std::tm t{};
     t.tm_year = year - 1900;
     t.tm_mon = month - 1;
     t.tm_mday = day;
