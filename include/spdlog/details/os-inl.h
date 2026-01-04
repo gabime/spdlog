@@ -246,21 +246,18 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
 #if !defined(SPDLOG_NO_TZ_OFFSET)
 #ifdef _WIN32
 // Compare the timestamp as Local (mktime) vs UTC (_mkgmtime) to get the offset.
-// This replaces our previous implementation using GetDynamicTimeZoneInformation().
-// It is ~2.5x faster and fixes potential inaccuracy of DST handling of past timestamps.
 SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
-    std::tm local_tm = tm;  // copy since mktime may adjust it
-    std::time_t true_utc_time = std::mktime(&local_tm);
-    if (true_utc_time == -1) {
-        return 0;  // Fallback if time is out of range (e.g. pre-1970)
+    std::tm local_tm = tm;  // copy since mktime might adjust it (normalize dates, set tm_isdst)
+    std::time_t local_time_t = std::mktime(&local_tm);
+    if (local_time_t == -1) {
+        return 0; // fallback
     }
 
-    std::tm utc_tm = tm;  // copy since _mkgmtime may adjust it
-    std::time_t face_value_time = _mkgmtime(&utc_tm);
-    if (face_value_time == -1) {
-        return 0;  // Fallback
+    std::time_t utc_time_t = _mkgmtime(&local_tm);
+    if (utc_time_t == -1) {
+        return 0; // fallback
     }
-    auto offset_seconds = face_value_time - true_utc_time;
+    auto offset_seconds = utc_time_t - local_time_t;
     return static_cast<int>(offset_seconds / 60);
 }
 #else
