@@ -15,7 +15,7 @@ struct null_mutex {
 };
 
 struct null_atomic_int {
-    int value;
+    int value{0};
     null_atomic_int() = default;
 
     explicit null_atomic_int(int new_value)
