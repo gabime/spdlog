@@ -1011,7 +1011,7 @@ SPDLOG_INLINE void pattern_formatter::set_pattern(std::string pattern) {
 
 SPDLOG_INLINE void pattern_formatter::need_localtime(bool need) { need_localtime_ = need; }
 
-SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg) {
+SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg) const {
     if (pattern_time_type_ == pattern_time_type::local) {
         return details::os::localtime(log_clock::to_time_t(msg.time));
     }

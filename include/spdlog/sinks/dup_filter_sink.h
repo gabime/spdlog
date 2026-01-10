@@ -78,8 +78,8 @@ protected:
     }
 
     // return whether the log msg should be displayed (true) or skipped (false)
-    bool filter_(const details::log_msg &msg) {
-        auto filter_duration = msg.time - last_msg_time_;
+    bool filter_(const details::log_msg &msg) const {
+        const auto filter_duration = msg.time - last_msg_time_;
         return (filter_duration > max_skip_duration_) || (msg.payload != last_msg_payload_);
     }
 };
