@@ -164,8 +164,7 @@ SPDLOG_INLINE void logger::dump_backtrace_() {
 }
 
 SPDLOG_INLINE bool logger::should_flush_(const details::log_msg &msg) const {
-    auto flush_level = flush_level_.load(std::memory_order_relaxed);
-    return (msg.level >= flush_level) && (msg.level != level::off);
+    return (msg.level >= flush_level()) && (msg.level != level::off);
 }
 
 SPDLOG_INLINE void logger::err_handler_(const std::string &msg) const {
