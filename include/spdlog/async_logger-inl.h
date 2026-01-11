@@ -57,15 +57,15 @@ SPDLOG_LOGGER_CATCH(source_loc())
 //
 // backend functions - called from the thread pool to do the actual job
 //
-SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg &msg) {
+SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg &incoming_log_msg) {
     for (auto &sink : sinks_) {
-        if (sink->should_log(msg.level)) {
-            SPDLOG_TRY { sink->log(msg); }
-            SPDLOG_LOGGER_CATCH(msg.source)
+        if (sink->should_log(incoming_log_msg.level)) {
+            SPDLOG_TRY { sink->log(incoming_log_msg); }
+            SPDLOG_LOGGER_CATCH(incoming_log_msg.source)
         }
     }
 
-    if (should_flush_(msg)) {
+    if (should_flush_(incoming_log_msg)) {
         backend_flush_();
     }
 }
