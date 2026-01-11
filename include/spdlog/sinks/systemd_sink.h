@@ -36,15 +36,17 @@ protected:
     std::string ident_;
     bool enable_formatting_ = false;
     using levels_array = std::array<int, 7>;
-    static constexpr levels_array syslog_levels_{/* spdlog::level::trace      */ LOG_DEBUG,
-                                                 /* spdlog::level::debug      */ LOG_DEBUG,
-                                                 /* spdlog::level::info       */ LOG_INFO,
-                                                 /* spdlog::level::warn       */ LOG_WARNING,
-                                                 /* spdlog::level::err        */ LOG_ERR,
-                                                 /* spdlog::level::critical   */ LOG_CRIT,
-                                                 /* spdlog::level::off        */ LOG_INFO};
+#if __cplusplus >= 201703L
+    static inline constexpr levels_array syslog_levels_{/* spdlog::level::trace      */ LOG_DEBUG,
+                                                        /* spdlog::level::debug      */ LOG_DEBUG,
+                                                        /* spdlog::level::info       */ LOG_INFO,
+                                                        /* spdlog::level::warn       */ LOG_WARNING,
+                                                        /* spdlog::level::err        */ LOG_ERR,
+                                                        /* spdlog::level::critical   */ LOG_CRIT,
+                                                        /* spdlog::level::off        */ LOG_INFO};
+#endif
 
-    void sink_it_(const details::log_msg &msg) override {
+    void sink_it_(const details::log_msg& msg) override {
         int err;
         string_view_t payload;
         memory_buf_t formatted;
@@ -92,7 +94,16 @@ protected:
         }
     }
 
-    SPDLOG_NODISCARD constexpr int syslog_level(level::level_enum l) const SPDLOG_NOEXCEPT {
+    SPDLOG_NODISCARD constexpr int syslog_level(level::level_enum l) const {
+#if __cplusplus < 201703L
+        constexpr levels_array syslog_levels_{/* spdlog::level::trace      */ LOG_DEBUG,
+                                              /* spdlog::level::debug      */ LOG_DEBUG,
+                                              /* spdlog::level::info       */ LOG_INFO,
+                                              /* spdlog::level::warn       */ LOG_WARNING,
+                                              /* spdlog::level::err        */ LOG_ERR,
+                                              /* spdlog::level::critical   */ LOG_CRIT,
+                                              /* spdlog::level::off        */ LOG_INFO};
+#endif
         return syslog_levels_.at(static_cast<levels_array::size_type>(l));
     }
 

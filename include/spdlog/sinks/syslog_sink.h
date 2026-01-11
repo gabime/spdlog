@@ -15,6 +15,8 @@ namespace spdlog {
 
 namespace details {
 using levels_array = std::array<int, 7>;
+
+#if __cplusplus >= 201703L
 SPDLOG_INLINE constexpr levels_array syslog_levels_{/* spdlog::level::trace      */ LOG_DEBUG,
                                                     /* spdlog::level::debug      */ LOG_DEBUG,
                                                     /* spdlog::level::info       */ LOG_INFO,
@@ -22,6 +24,16 @@ SPDLOG_INLINE constexpr levels_array syslog_levels_{/* spdlog::level::trace     
                                                     /* spdlog::level::err        */ LOG_ERR,
                                                     /* spdlog::level::critical   */ LOG_CRIT,
                                                     /* spdlog::level::off        */ LOG_INFO};
+#else
+static constexpr levels_array syslog_levels_{       /* spdlog::level::trace      */ LOG_DEBUG,
+                                                    /* spdlog::level::debug      */ LOG_DEBUG,
+                                                    /* spdlog::level::info       */ LOG_INFO,
+                                                    /* spdlog::level::warn       */ LOG_WARNING,
+                                                    /* spdlog::level::err        */ LOG_ERR,
+                                                    /* spdlog::level::critical   */ LOG_CRIT,
+                                                    /* spdlog::level::off        */ LOG_INFO};
+#endif
+
 }  // namespace details
 
 namespace sinks {

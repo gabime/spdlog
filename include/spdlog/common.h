@@ -281,8 +281,6 @@ SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_OFF{"off", 3};
 #if !defined(SPDLOG_LEVEL_NAMES)
 using level_names_t = std::array<spdlog::string_view_t, n_levels>;
 
-using level_names_value_t = level_names_t::value_type;
-
 #if __cplusplus >= 201703L
 SPDLOG_INLINE
 #endif
@@ -292,10 +290,10 @@ SPDLOG_CONSTEXPR level_names_t SPDLOG_LEVEL_NAMES{
     SPDLOG_LEVEL_NAME_OFF};
 #endif
 
+using level_names_value_t = decltype(SPDLOG_LEVEL_NAMES)::value_type;
+
 #if !defined(SPDLOG_SHORT_LEVEL_NAMES)
 using short_level_names_t = std::array<const char*, n_levels>;
-
-using level_short_names_value_t = short_level_names_t::value_type;
 
 #if __cplusplus >= 201703L
 SPDLOG_INLINE
@@ -303,6 +301,8 @@ SPDLOG_INLINE
 SPDLOG_CONSTEXPR short_level_names_t SPDLOG_SHORT_LEVEL_NAMES{"T", "D", "I", "W", "E", "C", "O"};
 
 #endif
+
+using level_short_names_value_t = decltype(SPDLOG_SHORT_LEVEL_NAMES)::value_type;
 
 SPDLOG_API SPDLOG_NODISCARD SPDLOG_INLINE SPDLOG_CONSTEXPR const level_names_value_t& to_string_view(
     spdlog::level::level_enum l) SPDLOG_NOEXCEPT {

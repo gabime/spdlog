@@ -102,6 +102,7 @@ public:
 
 private:
     registry();
+    ~registry();
 
     void throw_if_exists_(const std::string &logger_name);
     void register_logger_(std::shared_ptr<logger> new_logger);
