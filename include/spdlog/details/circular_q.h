@@ -58,17 +58,16 @@ public:
 
     // Return reference to the front item.
     // If there are no elements in the container, the behavior is undefined.
-    const T &front() const { return v_[head_]; }
+    const T &front() const SPDLOG_NOEXCEPT { return v_[head_]; }
 
-    T &front() { return v_[head_]; }
+    T &front() SPDLOG_NOEXCEPT { return v_[head_]; }
 
     // Return number of elements actually stored
-    size_t size() const {
+    size_t size() const SPDLOG_NOEXCEPT {
         if (tail_ >= head_) {
             return tail_ - head_;
-        } else {
-            return max_items_ - (head_ - tail_);
         }
+        return max_items_ - (head_ - tail_);
     }
 
     // Return const reference to item by index.
@@ -82,9 +81,9 @@ public:
     // If there are no elements in the container, the behavior is undefined.
     void pop_front() { head_ = (head_ + 1) % max_items_; }
 
-    bool empty() const { return tail_ == head_; }
+    bool empty() const SPDLOG_NOEXCEPT { return tail_ == head_; }
 
-    bool full() const {
+    bool full() const SPDLOG_NOEXCEPT {
         // head is ahead of the tail by 1
         if (max_items_ > 0) {
             return ((tail_ + 1) % max_items_) == head_;
@@ -92,9 +91,9 @@ public:
         return false;
     }
 
-    size_t overrun_counter() const { return overrun_counter_; }
+    size_t overrun_counter() const SPDLOG_NOEXCEPT { return overrun_counter_; }
 
-    void reset_overrun_counter() { overrun_counter_ = 0; }
+    void reset_overrun_counter() SPDLOG_NOEXCEPT { overrun_counter_ = 0; }
 
 private:
     // copy from other&& and reset it to disabled state

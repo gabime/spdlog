@@ -96,7 +96,7 @@ SPDLOG_INLINE std::tm localtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT {
 }
 
 SPDLOG_INLINE std::tm localtime() SPDLOG_NOEXCEPT {
-    std::time_t now_t = ::time(nullptr);
+    const std::time_t now_t = ::time(nullptr);
     return localtime(now_t);
 }
 
@@ -112,7 +112,7 @@ SPDLOG_INLINE std::tm gmtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT {
 }
 
 SPDLOG_INLINE std::tm gmtime() SPDLOG_NOEXCEPT {
-    std::time_t now_t = ::time(nullptr);
+    const std::time_t now_t = ::time(nullptr);
     return gmtime(now_t);
 }
 
@@ -200,9 +200,9 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
         throw_spdlog_ex("Failed getting file size. fd is null");
     }
 #if defined(_WIN32) && !defined(__CYGWIN__)
-    int fd = ::_fileno(f);
+    const int fd = ::_fileno(f);
 #if defined(_WIN64)  // 64 bits
-    __int64 ret = ::_filelengthi64(fd);
+    const __int64 ret = ::_filelengthi64(fd);
     if (ret >= 0) {
         return static_cast<size_t>(ret);
     }
@@ -248,16 +248,16 @@ SPDLOG_INLINE size_t filesize(FILE *f) {
 // Compare the timestamp as Local (mktime) vs UTC (_mkgmtime) to get the offset.
 SPDLOG_INLINE int utc_minutes_offset(const std::tm &tm) {
     std::tm local_tm = tm;  // copy since mktime might adjust it (normalize dates, set tm_isdst)
-    std::time_t local_time_t = std::mktime(&local_tm);
+    const std::time_t local_time_t = std::mktime(&local_tm);
     if (local_time_t == -1) {
-        return 0; // fallback
+        return 0;  // fallback
     }
 
-    std::time_t utc_time_t = _mkgmtime(&local_tm);
+    const std::time_t utc_time_t = _mkgmtime(&local_tm);
     if (utc_time_t == -1) {
-        return 0; // fallback
+        return 0;  // fallback
     }
-    auto offset_seconds = utc_time_t - local_time_t;
+    const auto offset_seconds = utc_time_t - local_time_t;
     return static_cast<int>(offset_seconds / 60);
 }
 #else
@@ -522,7 +522,7 @@ SPDLOG_INLINE bool create_dir(const filename_t &path) {
 // "abc" => ""
 // "abc///" => "abc//"
 SPDLOG_INLINE filename_t dir_name(const filename_t &path) {
-    auto pos = path.find_last_of(folder_seps_filename);
+    const auto pos = path.find_last_of(folder_seps_filename);
     return pos != filename_t::npos ? path.substr(0, pos) : filename_t{};
 }
 

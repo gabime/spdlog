@@ -41,7 +41,7 @@ public:
     // This make the default API faster, but cannot be used concurrently with set_default_logger().
     // e.g do not call set_default_logger() from one thread while calling spdlog::info() from
     // another.
-    logger *get_default_raw();
+    logger *get_default_raw() const SPDLOG_NOEXCEPT;
 
     // set default logger and add it to the registry if not registered already.
     // default logger is stored in default_logger_ (for faster retrieval) and in the loggers_ map.
@@ -67,7 +67,7 @@ public:
     template <typename Rep, typename Period>
     void flush_every(std::chrono::duration<Rep, Period> interval) {
         std::lock_guard<std::mutex> lock(flusher_mutex_);
-        auto clbk = [this]() { this->flush_all(); };
+        const auto clbk = [this]() { this->flush_all(); };
         periodic_flusher_ = details::make_unique<periodic_worker>(clbk, interval);
     }
 
@@ -102,7 +102,6 @@ public:
 
 private:
     registry();
-    ~registry();
 
     void throw_if_exists_(const std::string &logger_name);
     void register_logger_(std::shared_ptr<logger> new_logger);

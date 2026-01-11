@@ -5,7 +5,7 @@
 
 // multi producer-multi consumer blocking queue.
 // enqueue(..) - will block until room found to put the new message.
-// enqueue_nowait(..) - enqueue immediately. overruns oldest message if no 
+// enqueue_nowait(..) - enqueue immediately. overruns oldest message if no
 // room left.
 // dequeue_for(..) - will block until the queue is not empty or timeout have
 // passed.
@@ -152,7 +152,9 @@ public:
         return q_.overrun_counter();
     }
 
-    size_t discard_counter() { return discard_counter_.load(std::memory_order_relaxed); }
+    size_t discard_counter() const SPDLOG_NOEXCEPT {
+        return discard_counter_.load(std::memory_order_relaxed);
+    }
 
     size_t size() {
         std::lock_guard<std::mutex> lock(queue_mutex_);

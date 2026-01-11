@@ -266,11 +266,11 @@ public:
     // return true if backtrace logging is enabled.
     bool should_backtrace() const { return tracer_.enabled(); }
 
-    void set_level(level::level_enum log_level);
+    void set_level(level::level_enum log_level) SPDLOG_NOEXCEPT;
 
-    level::level_enum level() const;
+    level::level_enum level() const SPDLOG_NOEXCEPT;
 
-    const std::string &name() const;
+    const std::string &name() const SPDLOG_NOEXCEPT;
 
     // set formatting for the sinks in this logger.
     // each sink will get a separate instance of the formatter object.
@@ -294,15 +294,15 @@ public:
     level::level_enum flush_level() const;
 
     // sinks
-    const std::vector<sink_ptr> &sinks() const;
+    const std::vector<sink_ptr> &sinks() const SPDLOG_NOEXCEPT;
 
-    std::vector<sink_ptr> &sinks();
+    std::vector<sink_ptr> &sinks() SPDLOG_NOEXCEPT;
 
     // error handler
     void set_error_handler(err_handler);
 
     // create new logger with same sinks and configuration.
-    virtual std::shared_ptr<logger> clone(std::string logger_name);
+    virtual std::shared_ptr<logger> clone(std::string logger_name) const;
 
 protected:
     std::string name_;

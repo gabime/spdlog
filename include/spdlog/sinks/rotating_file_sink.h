@@ -21,11 +21,11 @@ template <typename Mutex>
 class rotating_file_sink final : public base_sink<Mutex> {
 public:
     static constexpr size_t MaxFiles = 200000;
-    rotating_file_sink(filename_t base_filename,
-                       std::size_t max_size,
-                       std::size_t max_files,
-                       bool rotate_on_open = false,
-                       const file_event_handlers &event_handlers = {});
+    explicit rotating_file_sink(filename_t base_filename,
+                                std::size_t max_size,
+                                std::size_t max_files,
+                                bool rotate_on_open = false,
+                                const file_event_handlers &event_handlers = {});
     static filename_t calc_filename(const filename_t &filename, std::size_t index);
     filename_t filename();
     void rotate_now();

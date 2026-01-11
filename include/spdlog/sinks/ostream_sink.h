@@ -20,6 +20,9 @@ public:
     ostream_sink(const ostream_sink &) = delete;
     ostream_sink &operator=(const ostream_sink &) = delete;
 
+    ostream_sink(ostream_sink &&) = default;
+    ostream_sink &operator=(ostream_sink &&) = default;
+
 protected:
     void sink_it_(const details::log_msg &msg) override {
         memory_buf_t formatted;

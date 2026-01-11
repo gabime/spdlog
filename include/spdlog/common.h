@@ -6,6 +6,7 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/tweakme.h>
 
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <cstdio>
@@ -93,6 +94,12 @@
 #define SPDLOG_DEPRECATED
 #endif
 
+#if __cplusplus >= 201703L
+#define SPDLOG_NODISCARD [[nodiscard]]
+#else
+#define SPDLOG_NODISCARD
+#endif
+
 // disable thread local on msvc 2013
 #ifndef SPDLOG_NO_TLS
 #if (defined(_MSC_VER) && (_MSC_VER < 1900)) || defined(__cplusplus_winrt)
@@ -101,7 +108,7 @@
 #endif
 
 #ifndef SPDLOG_FUNCTION
-#define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
+#define SPDLOG_FUNCTION static_cast<const char*>(__FUNCTION__)
 #endif
 
 #ifdef SPDLOG_NO_EXCEPTIONS
@@ -115,8 +122,8 @@
 #else
 #define SPDLOG_TRY try
 #define SPDLOG_THROW(ex) throw(ex)
-#define SPDLOG_CATCH_STD             \
-    catch (const std::exception &) { \
+#define SPDLOG_CATCH_STD            \
+    catch (const std::exception&) { \
     }
 #endif
 
@@ -141,7 +148,7 @@ using filename_t = std::string;
 using log_clock = std::chrono::system_clock;
 using sink_ptr = std::shared_ptr<sinks::sink>;
 using sinks_init_list = std::initializer_list<sink_ptr>;
-using err_handler = std::function<void(const std::string &err_msg)>;
+using err_handler = std::function<void(const std::string& err_msg)>;
 #ifdef SPDLOG_USE_STD_FORMAT
 namespace fmt_lib = std;
 
@@ -253,32 +260,61 @@ enum level_enum : int {
     n_levels
 };
 
-#define SPDLOG_LEVEL_NAME_TRACE spdlog::string_view_t("trace", 5)
-#define SPDLOG_LEVEL_NAME_DEBUG spdlog::string_view_t("debug", 5)
-#define SPDLOG_LEVEL_NAME_INFO spdlog::string_view_t("info", 4)
-#define SPDLOG_LEVEL_NAME_WARNING spdlog::string_view_t("warning", 7)
-#define SPDLOG_LEVEL_NAME_ERROR spdlog::string_view_t("error", 5)
-#define SPDLOG_LEVEL_NAME_CRITICAL spdlog::string_view_t("critical", 8)
-#define SPDLOG_LEVEL_NAME_OFF spdlog::string_view_t("off", 3)
+#if __cplusplus >= 201703L
+SPDLOG_INLINE SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_TRACE{"trace", 5};
+SPDLOG_INLINE SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_DEBUG{"debug", 5};
+SPDLOG_INLINE SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_INFO{"info", 4};
+SPDLOG_INLINE SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_WARNING{"warning", 7};
+SPDLOG_INLINE SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_ERROR{"error", 5};
+SPDLOG_INLINE SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_CRITICAL{"critical", 8};
+SPDLOG_INLINE SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_OFF{"off", 3};
+#else
+SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_TRACE{"trace", 5};
+SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_DEBUG{"debug", 5};
+SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_INFO{"info", 4};
+SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_WARNING{"warning", 7};
+SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_ERROR{"error", 5};
+SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_CRITICAL{"critical", 8};
+SPDLOG_CONSTEXPR spdlog::string_view_t SPDLOG_LEVEL_NAME_OFF{"off", 3};
+#endif
 
 #if !defined(SPDLOG_LEVEL_NAMES)
-#define SPDLOG_LEVEL_NAMES                                                                  \
-    {                                                                                       \
-        SPDLOG_LEVEL_NAME_TRACE, SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO,           \
-            SPDLOG_LEVEL_NAME_WARNING, SPDLOG_LEVEL_NAME_ERROR, SPDLOG_LEVEL_NAME_CRITICAL, \
-            SPDLOG_LEVEL_NAME_OFF                                                           \
-    }
+using level_names_t = std::array<spdlog::string_view_t, n_levels>;
+
+using level_names_value_t = level_names_t::value_type;
+
+#if __cplusplus >= 201703L
+SPDLOG_INLINE
+#endif
+SPDLOG_CONSTEXPR level_names_t SPDLOG_LEVEL_NAMES{
+    SPDLOG_LEVEL_NAME_TRACE,   SPDLOG_LEVEL_NAME_DEBUG, SPDLOG_LEVEL_NAME_INFO,
+    SPDLOG_LEVEL_NAME_WARNING, SPDLOG_LEVEL_NAME_ERROR, SPDLOG_LEVEL_NAME_CRITICAL,
+    SPDLOG_LEVEL_NAME_OFF};
 #endif
 
 #if !defined(SPDLOG_SHORT_LEVEL_NAMES)
+using short_level_names_t = std::array<const char*, n_levels>;
 
-#define SPDLOG_SHORT_LEVEL_NAMES \
-    { "T", "D", "I", "W", "E", "C", "O" }
+using level_short_names_value_t = short_level_names_t::value_type;
+
+#if __cplusplus >= 201703L
+SPDLOG_INLINE
+#endif
+SPDLOG_CONSTEXPR short_level_names_t SPDLOG_SHORT_LEVEL_NAMES{"T", "D", "I", "W", "E", "C", "O"};
+
 #endif
 
-SPDLOG_API const string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
+SPDLOG_API SPDLOG_NODISCARD SPDLOG_INLINE SPDLOG_CONSTEXPR const level_names_value_t& to_string_view(
+    spdlog::level::level_enum l) SPDLOG_NOEXCEPT {
+    return SPDLOG_LEVEL_NAMES[l];
+}
+
+SPDLOG_API SPDLOG_NODISCARD SPDLOG_INLINE SPDLOG_CONSTEXPR level_short_names_value_t
+to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT {
+    return SPDLOG_SHORT_LEVEL_NAMES[l];
+}
+
+SPDLOG_API spdlog::level::level_enum from_str(const std::string& name) SPDLOG_NOEXCEPT;
 
 }  // namespace level
 
@@ -302,47 +338,41 @@ enum class pattern_time_type {
 class SPDLOG_API spdlog_ex : public std::exception {
 public:
     explicit spdlog_ex(std::string msg);
-    spdlog_ex(const std::string &msg, int last_errno);
-    const char *what() const SPDLOG_NOEXCEPT override;
+    spdlog_ex(const std::string& msg, int last_errno);
+    const char* what() const SPDLOG_NOEXCEPT override;
 
 private:
     std::string msg_;
 };
 
-[[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
+[[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string& msg, int last_errno);
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(std::string msg);
 
 struct source_loc {
     SPDLOG_CONSTEXPR source_loc() = default;
-    SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
+    SPDLOG_CONSTEXPR source_loc(const char* filename_in, int line_in, const char* funcname_in)
         : filename{filename_in},
           line{line_in},
           funcname{funcname_in} {}
 
     SPDLOG_CONSTEXPR bool empty() const SPDLOG_NOEXCEPT { return line <= 0; }
-    const char *filename{nullptr};
+    const char* filename{nullptr};
     int line{0};
-    const char *funcname{nullptr};
+    const char* funcname{nullptr};
 };
 
 struct file_event_handlers {
-    file_event_handlers()
-        : before_open(nullptr),
-          after_open(nullptr),
-          before_close(nullptr),
-          after_close(nullptr) {}
-
-    std::function<void(const filename_t &filename)> before_open;
-    std::function<void(const filename_t &filename, std::FILE *file_stream)> after_open;
-    std::function<void(const filename_t &filename, std::FILE *file_stream)> before_close;
-    std::function<void(const filename_t &filename)> after_close;
+    std::function<void(const filename_t& filename)> before_open{nullptr};
+    std::function<void(const filename_t& filename, std::FILE* file_stream)> after_open{nullptr};
+    std::function<void(const filename_t& filename, std::FILE* file_stream)> before_close{nullptr};
+    std::function<void(const filename_t& filename)> after_close{nullptr};
 };
 
 namespace details {
 
 // to_string_view
 
-SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(const memory_buf_t &buf)
+SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(const memory_buf_t& buf)
     SPDLOG_NOEXCEPT {
     return spdlog::string_view_t{buf.data(), buf.size()};
 }
@@ -353,7 +383,7 @@ SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(spdlog::string_view_t
 }
 
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf)
+SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(const wmemory_buf_t& buf)
     SPDLOG_NOEXCEPT {
     return spdlog::wstring_view_t{buf.data(), buf.size()};
 }
@@ -381,7 +411,7 @@ template <bool B, class T = void>
 using enable_if_t = typename std::enable_if<B, T>::type;
 
 template <typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args &&...args) {
+std::unique_ptr<T> make_unique(Args&&... args) {
     static_assert(!std::is_array<T>::value, "arrays not supported");
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
 }

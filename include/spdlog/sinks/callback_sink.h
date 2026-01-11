@@ -13,7 +13,7 @@
 namespace spdlog {
 
 // callbacks type
-typedef std::function<void(const details::log_msg &msg)> custom_log_callback;
+using custom_log_callback = std::function<void(const details::log_msg &msg)>;
 
 namespace sinks {
 /*

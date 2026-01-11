@@ -88,8 +88,8 @@ public:
         }
 
         auto now = log_clock::now();
-        const auto new_filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
-        file_helper_.open(new_filename, truncate_);
+        auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
+        file_helper_.open(filename, truncate_);
         rotation_tp_ = next_rotation_tp_();
 
         if (max_files_ > 0) {
@@ -107,8 +107,8 @@ protected:
         auto time = msg.time;
         bool should_rotate = time >= rotation_tp_;
         if (should_rotate) {
-            const auto new_filename = FileNameCalc::calc_filename(base_filename_, now_tm(time));
-            file_helper_.open(new_filename, truncate_);
+            auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(time));
+            file_helper_.open(filename, truncate_);
             rotation_tp_ = next_rotation_tp_();
         }
         memory_buf_t formatted;
@@ -131,11 +131,11 @@ private:
         std::vector<filename_t> filenames;
         auto now = log_clock::now();
         while (filenames.size() < max_files_) {
-            const auto new_filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
-            if (!path_exists(new_filename)) {
+            auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
+            if (!path_exists(filename)) {
                 break;
             }
-            filenames.emplace_back(new_filename);
+            filenames.emplace_back(filename);
             now -= std::chrono::hours(24);
         }
         for (auto iter = filenames.rbegin(); iter != filenames.rend(); ++iter) {
@@ -143,7 +143,7 @@ private:
         }
     }
 
-    tm now_tm(log_clock::time_point tp) {
+    tm now_tm(log_clock::time_point tp) SPDLOG_NOEXCEPT {
         time_t tnow = log_clock::to_time_t(tp);
         return spdlog::details::os::localtime(tnow);
     }

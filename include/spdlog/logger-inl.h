@@ -11,7 +11,12 @@
 #include <spdlog/pattern_formatter.h>
 #include <spdlog/sinks/sink.h>
 
+#include <algorithm>
+#include <atomic>
 #include <cstdio>
+#if __cplusplus >= 202002L
+#include <ranges>
+#endif
 
 namespace spdlog {
 
@@ -59,26 +64,33 @@ SPDLOG_INLINE void logger::swap(spdlog::logger &other) SPDLOG_NOEXCEPT {
 
 SPDLOG_INLINE void swap(logger &a, logger &b) noexcept { a.swap(b); }
 
-SPDLOG_INLINE void logger::set_level(level::level_enum log_level) { level_.store(log_level); }
+SPDLOG_INLINE void logger::set_level(level::level_enum log_level) SPDLOG_NOEXCEPT {
+    level_.store(log_level);
+}
 
-SPDLOG_INLINE level::level_enum logger::level() const {
+SPDLOG_INLINE level::level_enum logger::level() const SPDLOG_NOEXCEPT {
     return static_cast<level::level_enum>(level_.load(std::memory_order_relaxed));
 }
 
-SPDLOG_INLINE const std::string &logger::name() const { return name_; }
+SPDLOG_INLINE const std::string &logger::name() const SPDLOG_NOEXCEPT { return name_; }
 
 // set formatting for the sinks in this logger.
 // each sink will get a separate instance of the formatter object.
 SPDLOG_INLINE void logger::set_formatter(std::unique_ptr<formatter> f) {
-    for (auto it = sinks_.begin(); it != sinks_.end(); ++it) {
-        if (std::next(it) == sinks_.end()) {
-            // last element - we can be move it.
-            (*it)->set_formatter(std::move(f));
-            break;  // to prevent clang-tidy warning
-        } else {
-            (*it)->set_formatter(f->clone());
-        }
+    if (sinks_.empty()) {
+        return;
     }
+#if __cplusplus >= 202002L
+    auto sink_view{sinks_ | std::views::take(sinks_.size() - 1)};
+
+    std::ranges::for_each(sink_view,
+                          [&f](const sink_ptr &sink) { sink->set_formatter(f->clone()); });
+
+#else
+    std::for_each(sinks_.cbegin(), std::prev(sinks_.cend()),
+                  [&f](const sink_ptr &sink) { sink->set_formatter(f->clone()); });
+#endif
+    sinks_.back()->set_formatter(std::move(f));
 }
 
 SPDLOG_INLINE void logger::set_pattern(std::string pattern, pattern_time_type time_type) {
@@ -104,9 +116,9 @@ SPDLOG_INLINE level::level_enum logger::flush_level() const {
 }
 
 // sinks
-SPDLOG_INLINE const std::vector<sink_ptr> &logger::sinks() const { return sinks_; }
+SPDLOG_INLINE const std::vector<sink_ptr> &logger::sinks() const SPDLOG_NOEXCEPT { return sinks_; }
 
-SPDLOG_INLINE std::vector<sink_ptr> &logger::sinks() { return sinks_; }
+SPDLOG_INLINE std::vector<sink_ptr> &logger::sinks() SPDLOG_NOEXCEPT { return sinks_; }
 
 // error handler
 SPDLOG_INLINE void logger::set_error_handler(err_handler handler) {
@@ -114,7 +126,7 @@ SPDLOG_INLINE void logger::set_error_handler(err_handler handler) {
 }
 
 // create new logger with same sinks and configuration.
-SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name) {
+SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name) const {
     auto cloned = std::make_shared<logger>(*this);
     cloned->name_ = std::move(logger_name);
     return cloned;
@@ -133,7 +145,7 @@ SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg,
 }
 
 SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg) {
-    for (auto &sink : sinks_) {
+    for (const auto &sink : sinks_) {
         if (sink->should_log(msg.level)) {
             SPDLOG_TRY { sink->log(msg); }
             SPDLOG_LOGGER_CATCH(msg.source)
@@ -146,7 +158,7 @@ SPDLOG_INLINE void logger::sink_it_(const details::log_msg &msg) {
 }
 
 SPDLOG_INLINE void logger::flush_() {
-    for (auto &sink : sinks_) {
+    for (const auto &sink : sinks_) {
         SPDLOG_TRY { sink->flush(); }
         SPDLOG_LOGGER_CATCH(source_loc())
     }
@@ -164,7 +176,8 @@ SPDLOG_INLINE void logger::dump_backtrace_() {
 }
 
 SPDLOG_INLINE bool logger::should_flush_(const details::log_msg &msg) const {
-    return (msg.level >= flush_level()) && (msg.level != level::off);
+    const auto flush_level = flush_level_.load(std::memory_order_relaxed);
+    return (msg.level >= flush_level) && (msg.level != level::off);
 }
 
 SPDLOG_INLINE void logger::err_handler_(const std::string &msg) const {
@@ -176,15 +189,16 @@ SPDLOG_INLINE void logger::err_handler_(const std::string &msg) const {
         static std::chrono::system_clock::time_point last_report_time;
         static size_t err_counter = 0;
         std::lock_guard<std::mutex> lk{mutex};
-        auto now = system_clock::now();
+        const auto now = system_clock::now();
         err_counter++;
         if (now - last_report_time < std::chrono::seconds(1)) {
             return;
         }
         last_report_time = now;
-        auto tm_time = details::os::localtime(system_clock::to_time_t(now));
+        const auto tm_time = details::os::localtime(system_clock::to_time_t(now));
         char date_buf[64];
         std::strftime(date_buf, sizeof(date_buf), "%Y-%m-%d %H:%M:%S", &tm_time);
+
 #if defined(USING_R) && defined(R_R_H)  // if in R environment
         REprintf("[*** LOG ERROR #%04zu ***] [%s] [%s] %s\n", err_counter, date_buf, name().c_str(),
                  msg.c_str());

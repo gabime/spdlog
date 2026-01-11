@@ -25,14 +25,7 @@ class systemd_sink : public base_sink<Mutex> {
 public:
     systemd_sink(std::string ident = "", bool enable_formatting = false)
         : ident_{std::move(ident)},
-          enable_formatting_{enable_formatting},
-          syslog_levels_{{/* spdlog::level::trace      */ LOG_DEBUG,
-                          /* spdlog::level::debug      */ LOG_DEBUG,
-                          /* spdlog::level::info       */ LOG_INFO,
-                          /* spdlog::level::warn       */ LOG_WARNING,
-                          /* spdlog::level::err        */ LOG_ERR,
-                          /* spdlog::level::critical   */ LOG_CRIT,
-                          /* spdlog::level::off        */ LOG_INFO}} {}
+          enable_formatting_{enable_formatting} {}
 
     ~systemd_sink() override {}
 
@@ -40,10 +33,16 @@ public:
     systemd_sink &operator=(const systemd_sink &) = delete;
 
 protected:
-    const std::string ident_;
+    std::string ident_;
     bool enable_formatting_ = false;
     using levels_array = std::array<int, 7>;
-    levels_array syslog_levels_;
+    static constexpr levels_array syslog_levels_{/* spdlog::level::trace      */ LOG_DEBUG,
+                                                 /* spdlog::level::debug      */ LOG_DEBUG,
+                                                 /* spdlog::level::info       */ LOG_INFO,
+                                                 /* spdlog::level::warn       */ LOG_WARNING,
+                                                 /* spdlog::level::err        */ LOG_ERR,
+                                                 /* spdlog::level::critical   */ LOG_CRIT,
+                                                 /* spdlog::level::off        */ LOG_INFO};
 
     void sink_it_(const details::log_msg &msg) override {
         int err;
@@ -93,7 +92,7 @@ protected:
         }
     }
 
-    int syslog_level(level::level_enum l) {
+    SPDLOG_NODISCARD constexpr int syslog_level(level::level_enum l) const SPDLOG_NOEXCEPT {
         return syslog_levels_.at(static_cast<levels_array::size_type>(l));
     }
 

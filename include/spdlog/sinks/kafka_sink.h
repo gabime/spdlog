@@ -38,7 +38,7 @@ struct kafka_sink_config {
 template <typename Mutex>
 class kafka_sink : public base_sink<Mutex> {
 public:
-    kafka_sink(kafka_sink_config config)
+    explicit kafka_sink(kafka_sink_config config)
         : config_{std::move(config)} {
         try {
             std::string errstr;

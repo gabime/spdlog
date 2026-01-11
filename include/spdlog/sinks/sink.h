@@ -17,9 +17,9 @@ public:
     virtual void set_pattern(const std::string &pattern) = 0;
     virtual void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) = 0;
 
-    void set_level(level::level_enum log_level);
-    level::level_enum level() const;
-    bool should_log(level::level_enum msg_level) const;
+    void set_level(level::level_enum log_level) SPDLOG_NOEXCEPT;
+    level::level_enum level() const SPDLOG_NOEXCEPT;
+    bool should_log(level::level_enum msg_level) const SPDLOG_NOEXCEPT;
 
 protected:
     // sink log level - default is all

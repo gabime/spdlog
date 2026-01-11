@@ -51,7 +51,7 @@ protected:
     level::level_enum skipped_msg_log_level_ = spdlog::level::level_enum::off;
 
     void sink_it_(const details::log_msg &msg) override {
-        bool filtered = filter_(msg);
+        const bool filtered = filter_(msg);
         if (!filtered) {
             skip_counter_ += 1;
             skipped_msg_log_level_ = msg.level;
@@ -61,8 +61,8 @@ protected:
         // log the "skipped.." message
         if (skip_counter_ > 0) {
             char buf[64];
-            auto msg_size = ::snprintf(buf, sizeof(buf), "Skipped %u duplicate messages..",
-                                       static_cast<unsigned>(skip_counter_));
+            const auto msg_size = ::snprintf(buf, sizeof(buf), "Skipped %u duplicate messages..",
+                                             static_cast<unsigned>(skip_counter_));
             if (msg_size > 0 && static_cast<size_t>(msg_size) < sizeof(buf)) {
                 details::log_msg skipped_msg{msg.source, msg.logger_name, skipped_msg_log_level_,
                                              string_view_t{buf, static_cast<size_t>(msg_size)}};
@@ -78,7 +78,7 @@ protected:
     }
 
     // return whether the log msg should be displayed (true) or skipped (false)
-    bool filter_(const details::log_msg &msg) const {
+    SPDLOG_NODISCARD bool filter_(const details::log_msg &msg) const {
         const auto filter_duration = msg.time - last_msg_time_;
         return (filter_duration > max_skip_duration_) || (msg.payload != last_msg_payload_);
     }

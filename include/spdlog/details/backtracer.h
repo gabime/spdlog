@@ -34,7 +34,7 @@ public:
     bool empty() const;
 
     // pop all items in the q and apply the given fun on each of them.
-    void foreach_pop(std::function<void(const details::log_msg &)> fun);
+    void foreach_pop(const std::function<void(const details::log_msg &)> &fun);
 };
 
 }  // namespace details

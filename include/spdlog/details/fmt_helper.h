@@ -40,7 +40,7 @@ inline void append_int(T n, memory_buf_t &dest) {
 #else
 template <typename T>
 inline void append_int(T n, memory_buf_t &dest) {
-    fmt::format_int i(n);
+    const fmt::format_int i(n);
     dest.append(i.data(), i.data() + i.size());
 }
 #endif
@@ -131,8 +131,8 @@ template <typename ToDuration>
 inline ToDuration time_fraction(log_clock::time_point tp) {
     using std::chrono::duration_cast;
     using std::chrono::seconds;
-    auto duration = tp.time_since_epoch();
-    auto secs = duration_cast<seconds>(duration);
+    const auto duration = tp.time_since_epoch();
+    const auto secs = duration_cast<seconds>(duration);
     return duration_cast<ToDuration>(duration) - duration_cast<ToDuration>(secs);
 }
 

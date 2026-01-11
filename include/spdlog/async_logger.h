@@ -16,10 +16,13 @@
 
 #include <spdlog/logger.h>
 
+#include <cstdint>
+#include <memory>
+
 namespace spdlog {
 
 // Async overflow policy - block by default.
-enum class async_overflow_policy {
+enum class async_overflow_policy : std::uint8_t {
     block,           // Block until message can be enqueued
     overrun_oldest,  // Discard oldest message in the queue if full when trying to
                      // add new item.
@@ -55,7 +58,7 @@ public:
                  std::weak_ptr<details::thread_pool> tp,
                  async_overflow_policy overflow_policy = async_overflow_policy::block);
 
-    std::shared_ptr<logger> clone(std::string new_name) override;
+    std::shared_ptr<logger> clone(std::string new_name) const override;
 
 protected:
     void sink_it_(const details::log_msg &msg) override;

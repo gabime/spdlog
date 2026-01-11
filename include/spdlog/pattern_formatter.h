@@ -15,13 +15,14 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <cstdint>
 
 namespace spdlog {
 namespace details {
 
 // padding information.
 struct padding_info {
-    enum class pad_side { left, right, center };
+    enum class pad_side : std::uint8_t { left, right, center };
 
     padding_info() = default;
     padding_info(size_t width, padding_info::pad_side side, bool truncate)
@@ -30,7 +31,7 @@ struct padding_info {
           truncate_(truncate),
           enabled_(true) {}
 
-    bool enabled() const { return enabled_; }
+    bool enabled() const noexcept { return enabled_; }
     size_t width_ = 0;
     pad_side side_ = pad_side::left;
     bool truncate_ = false;
@@ -94,12 +95,12 @@ private:
     std::string eol_;
     pattern_time_type pattern_time_type_;
     bool need_localtime_;
-    std::tm cached_tm_;
+    std::tm cached_tm_{};
     std::chrono::seconds last_log_secs_;
     std::vector<std::unique_ptr<details::flag_formatter>> formatters_;
     custom_flags custom_handlers_;
 
-    std::tm get_time_(const details::log_msg &msg) const;
+    std::tm get_time_(const details::log_msg &msg);
     template <typename Padder>
     void handle_flag_(char flag, details::padding_info padding);
 

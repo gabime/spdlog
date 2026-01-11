@@ -32,7 +32,7 @@ SPDLOG_INLINE spdlog::async_logger::async_logger(std::string logger_name,
 
 // send the log message to the thread pool
 SPDLOG_INLINE void spdlog::async_logger::sink_it_(const details::log_msg &msg){
-    SPDLOG_TRY{if (auto pool_ptr = thread_pool_.lock()){
+    SPDLOG_TRY{if (const auto pool_ptr = thread_pool_.lock()){
         pool_ptr -> post_log(shared_from_this(), msg, overflow_policy_);
 }
 else {
@@ -44,7 +44,7 @@ SPDLOG_LOGGER_CATCH(msg.source)
 
 // send flush request to the thread pool
 SPDLOG_INLINE void spdlog::async_logger::flush_(){
-    SPDLOG_TRY{if (auto pool_ptr = thread_pool_.lock()){
+    SPDLOG_TRY{if (const auto pool_ptr = thread_pool_.lock()){
         pool_ptr -> post_flush(shared_from_this(), overflow_policy_);
 }
 else {
@@ -58,7 +58,7 @@ SPDLOG_LOGGER_CATCH(source_loc())
 // backend functions - called from the thread pool to do the actual job
 //
 SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg &msg) {
-    for (auto &sink : sinks_) {
+    for (const auto &sink : sinks_) {
         if (sink->should_log(msg.level)) {
             SPDLOG_TRY { sink->log(msg); }
             SPDLOG_LOGGER_CATCH(msg.source)
@@ -71,13 +71,14 @@ SPDLOG_INLINE void spdlog::async_logger::backend_sink_it_(const details::log_msg
 }
 
 SPDLOG_INLINE void spdlog::async_logger::backend_flush_() {
-    for (auto &sink : sinks_) {
+    for (const auto &sink : sinks_) {
         SPDLOG_TRY { sink->flush(); }
         SPDLOG_LOGGER_CATCH(source_loc())
     }
 }
 
-SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(std::string new_name) {
+SPDLOG_INLINE std::shared_ptr<spdlog::logger> spdlog::async_logger::clone(
+    std::string new_name) const {
     auto cloned = std::make_shared<spdlog::async_logger>(*this);
     cloned->name_ = std::move(new_name);
     return cloned;

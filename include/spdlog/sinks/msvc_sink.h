@@ -31,7 +31,7 @@ template <typename Mutex>
 class msvc_sink : public base_sink<Mutex> {
 public:
     msvc_sink() = default;
-    msvc_sink(bool check_debugger_present)
+    explicit msvc_sink(bool check_debugger_present)
         : check_debugger_present_{check_debugger_present} {}
 
 protected:

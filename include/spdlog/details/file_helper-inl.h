@@ -27,8 +27,8 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate) {
     close();
     filename_ = fname;
 
-    auto *mode = SPDLOG_FILENAME_T("ab");
-    auto *trunc_mode = SPDLOG_FILENAME_T("wb");
+    constexpr const auto *mode = SPDLOG_FILENAME_T("ab");
+    constexpr const auto *trunc_mode = SPDLOG_FILENAME_T("wb");
 
     if (event_handlers_.before_open) {
         event_handlers_.before_open(filename_);
@@ -97,8 +97,8 @@ SPDLOG_INLINE void file_helper::close() {
 
 SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf) {
     if (fd_ == nullptr) return;
-    size_t msg_size = buf.size();
-    auto data = buf.data();
+    const size_t msg_size = buf.size();
+    const auto data = buf.data();
 
     if (!details::os::fwrite_bytes(data, msg_size, fd_)) {
         throw_spdlog_ex("Failed writing to file " + os::filename_to_str(filename_), errno);
@@ -129,7 +129,7 @@ SPDLOG_INLINE const filename_t &file_helper::filename() const { return filename_
 // "my_folder/.mylog.txt" => ("my_folder/.mylog", ".txt")
 SPDLOG_INLINE std::tuple<filename_t, filename_t> file_helper::split_by_extension(
     const filename_t &fname) {
-    auto ext_index = fname.rfind('.');
+    const auto ext_index = fname.rfind('.');
 
     // no valid extension found - return whole path and empty string as
     // extension
@@ -138,7 +138,7 @@ SPDLOG_INLINE std::tuple<filename_t, filename_t> file_helper::split_by_extension
     }
 
     // treat cases like "/etc/rc.d/somelogfile or "/abc/.hiddenfile"
-    auto folder_index = fname.find_last_of(details::os::folder_seps_filename);
+    const auto folder_index = fname.find_last_of(details::os::folder_seps_filename);
     if (folder_index != filename_t::npos && folder_index >= ext_index - 1) {
         return std::make_tuple(fname, filename_t());
     }

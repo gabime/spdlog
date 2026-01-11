@@ -46,10 +46,10 @@ template <typename Mutex, typename FileNameCalc = hourly_filename_calculator>
 class hourly_file_sink final : public base_sink<Mutex> {
 public:
     // create hourly file sink which rotates on given time
-    hourly_file_sink(filename_t base_filename,
-                     bool truncate = false,
-                     uint16_t max_files = 0,
-                     const file_event_handlers &event_handlers = {})
+    explicit hourly_file_sink(filename_t base_filename,
+                              bool truncate = false,
+                              uint16_t max_files = 0,
+                              const file_event_handlers &event_handlers = {})
         : base_filename_(std::move(base_filename)),
           file_helper_{event_handlers},
           truncate_(truncate),
@@ -73,8 +73,8 @@ public:
 
 protected:
     void sink_it_(const details::log_msg &msg) override {
-        auto time = msg.time;
-        bool should_rotate = time >= rotation_tp_;
+        const auto time = msg.time;
+        const bool should_rotate = time >= rotation_tp_;
         if (should_rotate) {
             if (remove_init_file_) {
                 file_helper_.close();
@@ -103,6 +103,8 @@ private:
 
         filenames_q_ = details::circular_q<filename_t>(static_cast<size_t>(max_files_));
         std::vector<filename_t> filenames;
+        filenames.reserve(max_files_);
+
         auto now = log_clock::now();
         while (filenames.size() < max_files_) {
             auto filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
@@ -117,17 +119,17 @@ private:
         }
     }
 
-    tm now_tm(log_clock::time_point tp) {
-        time_t tnow = log_clock::to_time_t(tp);
+    static tm now_tm(log_clock::time_point tp) SPDLOG_NOEXCEPT {
+        const time_t tnow = log_clock::to_time_t(tp);
         return spdlog::details::os::localtime(tnow);
     }
 
-    log_clock::time_point next_rotation_tp_() {
-        auto now = log_clock::now();
+    static log_clock::time_point next_rotation_tp_() {
+        const auto now = log_clock::now();
         tm date = now_tm(now);
         date.tm_min = 0;
         date.tm_sec = 0;
-        auto rotation_time = log_clock::from_time_t(std::mktime(&date));
+        const auto rotation_time = log_clock::from_time_t(std::mktime(&date));
         if (rotation_time > now) {
             return rotation_time;
         }
@@ -142,9 +144,9 @@ private:
 
         filename_t current_file = file_helper_.filename();
         if (filenames_q_.full()) {
-            auto old_filename = std::move(filenames_q_.front());
+            const auto old_filename = std::move(filenames_q_.front());
             filenames_q_.pop_front();
-            bool ok = remove_if_exists(old_filename) == 0;
+            const bool ok = remove_if_exists(old_filename) == 0;
             if (!ok) {
                 filenames_q_.push_back(std::move(current_file));
                 SPDLOG_THROW(spdlog_ex(

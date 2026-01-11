@@ -32,9 +32,9 @@ public:
 
     static std::string get(const std::string &key) {
         auto &context = get_context();
-        auto it = context.find(key);
-        if (it != context.end()) {
-            return it->second;
+        const auto iter = context.find(key);
+        if (iter != context.end()) {
+            return iter->second;
         }
         return "";
     }
