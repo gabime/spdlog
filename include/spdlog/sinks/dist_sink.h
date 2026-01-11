@@ -24,7 +24,7 @@ class dist_sink : public base_sink<Mutex> {
 public:
     dist_sink() = default;
     explicit dist_sink(std::vector<std::shared_ptr<sink>> sinks)
-        : sinks_(sinks) {}
+        : sinks_(std::move(sinks)) {}
 
     dist_sink(const dist_sink &) = delete;
     dist_sink &operator=(const dist_sink &) = delete;
