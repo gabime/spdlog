@@ -26,8 +26,8 @@ inline void load_argv_levels(int argc, const char **argv) {
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
         if (arg.find(spdlog_level_prefix) == 0) {
-            auto levels_string = arg.substr(spdlog_level_prefix.size());
-            helpers::load_levels(levels_string);
+            const auto levels_spec = arg.substr(spdlog_level_prefix.size());
+            helpers::load_levels(levels_spec);
         }
     }
 }

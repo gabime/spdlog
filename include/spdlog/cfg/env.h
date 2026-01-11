@@ -26,9 +26,9 @@
 namespace spdlog {
 namespace cfg {
 inline void load_env_levels(const char* var = "SPDLOG_LEVEL") {
-    auto env_val = details::os::getenv(var);
-    if (!env_val.empty()) {
-        helpers::load_levels(env_val);
+    const auto levels_spec = details::os::getenv(var);
+    if (!levels_spec.empty()) {
+        helpers::load_levels(levels_spec);
     }
 }
 
