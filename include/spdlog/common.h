@@ -306,12 +306,12 @@ using level_short_names_value_t = decltype(SPDLOG_SHORT_LEVEL_NAMES)::value_type
 
 SPDLOG_API SPDLOG_NODISCARD SPDLOG_INLINE SPDLOG_CONSTEXPR const level_names_value_t& to_string_view(
     spdlog::level::level_enum l) SPDLOG_NOEXCEPT {
-    return SPDLOG_LEVEL_NAMES[l];
+    return SPDLOG_LEVEL_NAMES[static_cast<std::size_t>(l)];
 }
 
 SPDLOG_API SPDLOG_NODISCARD SPDLOG_INLINE SPDLOG_CONSTEXPR level_short_names_value_t
 to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT {
-    return SPDLOG_SHORT_LEVEL_NAMES[l];
+    return SPDLOG_SHORT_LEVEL_NAMES[static_cast<std::size_t>(l)];
 }
 
 SPDLOG_API spdlog::level::level_enum from_str(const std::string& name) SPDLOG_NOEXCEPT;
