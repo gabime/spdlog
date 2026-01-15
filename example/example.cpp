@@ -267,16 +267,16 @@ void multi_sink_example() {
 
 // User defined types logging
 struct my_type {
-    int i = 0;
-    explicit my_type(int i)
-        : i(i) {}
+    int value_ = 0;
+    explicit my_type(int value)
+        : value_(value) {}
 };
 
 #ifndef SPDLOG_USE_STD_FORMAT  // when using fmtlib
 template <>
 struct fmt::formatter<my_type> : fmt::formatter<std::string> {
     auto format(my_type my, format_context &ctx) const -> decltype(ctx.out()) {
-        return fmt::format_to(ctx.out(), "[my_type i={}]", my.i);
+        return fmt::format_to(ctx.out(), "[my_type value={}]", my.value_);
     }
 };
 
@@ -284,7 +284,7 @@ struct fmt::formatter<my_type> : fmt::formatter<std::string> {
 template <>
 struct std::formatter<my_type> : std::formatter<std::string> {
     auto format(my_type my, format_context &ctx) const -> decltype(ctx.out()) {
-        return std::format_to(ctx.out(), "[my_type i={}]", my.i);
+        return std::format_to(ctx.out(), "[my_type value={}]", my.value_);
     }
 };
 #endif
