@@ -21,3 +21,15 @@ if(SPDLOG_BUILD_EXAMPLE_HO)
     add_executable(example_header_only example.cpp)
     target_link_libraries(example_header_only PRIVATE spdlog::spdlog_header_only)
 endif()
+
+# ---------------------------------------------------------------------------------------
+# Example of using business logger
+# ---------------------------------------------------------------------------------------
+add_executable(business_logger_example business_logger_example.cpp)
+target_link_libraries(business_logger_example PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
+
+# ---------------------------------------------------------------------------------------
+# Simple test for business logger
+# ---------------------------------------------------------------------------------------
+add_executable(simple_business_logger_test simple_business_logger_test.cpp)
+target_link_libraries(simple_business_logger_test PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
