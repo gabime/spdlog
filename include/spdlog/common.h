@@ -278,6 +278,9 @@ enum level_enum : int {
 
 SPDLOG_API const string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
 SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
+
+// Checks whether name is the same as one of the log level names and returns the respective enum.
+// The comparison is case-insensitive.
 SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
 }  // namespace level
@@ -295,6 +298,11 @@ enum class pattern_time_type {
     local,  // log localtime
     utc     // log utc
 };
+
+//
+// Returns true if two strings are equal, case-insensitive
+//
+SPDLOG_API bool strings_equal_ci(string_view_t s1, string_view_t s2);
 
 //
 // Log exception

@@ -29,15 +29,18 @@ SPDLOG_INLINE const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOE
 }
 
 SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT {
-    auto it = std::find(std::begin(level_string_views), std::end(level_string_views), name);
+    auto it = std::find_if(std::begin(level_string_views), std::end(level_string_views),
+                           [name](string_view_t sv) { return strings_equal_ci(name, sv); } );
+
     if (it != std::end(level_string_views))
         return static_cast<level::level_enum>(std::distance(std::begin(level_string_views), it));
 
     // check also for "warn" and "err" before giving up..
-    if (name == "warn") {
+    if (strings_equal_ci(name, "warn") && strings_equal_ci(to_string_view(level::warn), "warning")) {
         return level::warn;
     }
-    if (name == "err") {
+    else if (strings_equal_ci(name, "err") && strings_equal_ci(to_string_view(level::err), "error")) {
+    // if (name == "err") {
         return level::err;
     }
     return level::off;
@@ -64,5 +67,25 @@ SPDLOG_INLINE void throw_spdlog_ex(const std::string &msg, int last_errno) {
 }
 
 SPDLOG_INLINE void throw_spdlog_ex(std::string msg) { SPDLOG_THROW(spdlog_ex(std::move(msg))); }
+
+#if __cplusplus >= 201703L
+constexpr
+#endif
+SPDLOG_API char to_lower(char ch) {
+    return static_cast<char>((ch >= 'A' && ch <= 'Z') ? ch + ('a' - 'A') : ch);
+}
+
+
+SPDLOG_INLINE bool strings_equal_ci(string_view_t s1, string_view_t s2) {
+    if (s1.size() != s2.size()) {
+        return false;
+    }
+    for(size_t idx = 0; idx < s1.size(); idx++) {
+        if (to_lower(s1[idx]) != to_lower(s2[idx])) {
+            return false;
+        }
+    }
+    return true;
+}
 
 }  // namespace spdlog

@@ -19,13 +19,6 @@ namespace spdlog {
 namespace cfg {
 namespace helpers {
 
-// inplace convert to lowercase
-inline std::string &to_lower_(std::string &str) {
-    std::transform(str.begin(), str.end(), str.begin(), [](char ch) {
-        return static_cast<char>((ch >= 'A' && ch <= 'Z') ? ch + ('a' - 'A') : ch);
-    });
-    return str;
-}
 
 // inplace trim spaces
 inline std::string &trim_(std::string &str) {
@@ -82,10 +75,9 @@ SPDLOG_INLINE void load_levels(const std::string &levels_spec) {
 
     for (auto &name_level : key_vals) {
         const auto &logger_name = name_level.first;
-        const auto &level_name = to_lower_(name_level.second);
-        const auto level = level::from_str(level_name);
+        const auto level = level::from_str(name_level.second);
         // ignore unrecognized level names
-        if (level == level::off && level_name != "off") {
+        if (level == level::off && !strings_equal_ci(name_level.second, to_string_view(level::off))) {
             continue;
         }
         if (logger_name.empty())  // no logger name indicates global level
