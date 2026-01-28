@@ -56,6 +56,7 @@ set(SPDLOG_UTESTS_SOURCES
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
     list(APPEND SPDLOG_UTESTS_SOURCES test_errors.cpp)
+    list(APPEND SPDLOG_UTESTS_SOURCES test_error_recovery.cpp)
 endif()
 
 if(systemd_FOUND)
