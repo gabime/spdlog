@@ -258,7 +258,7 @@ public:
         log(level::critical, msg);
     }
 
-    // return true logging is enabled for the given level.
+    // return true if logging is enabled for the given level.
     bool should_log(level::level_enum msg_level) const {
         return msg_level >= level_.load(std::memory_order_relaxed);
     }
