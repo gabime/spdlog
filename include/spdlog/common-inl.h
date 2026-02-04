@@ -29,15 +29,31 @@ SPDLOG_INLINE const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOE
 }
 
 SPDLOG_INLINE spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT {
-    auto it = std::find(std::begin(level_string_views), std::end(level_string_views), name);
+    auto it = std::find_if(std::begin(level_string_views), std::end(level_string_views),
+                           [&name](const string_view_t &level_name) {
+                               return level_name.size() == name.size() &&
+                                      std::equal(name.begin(), name.end(), level_name.begin(),
+                                                 [](char a, char b) {
+                                                     return std::tolower(static_cast<unsigned char>(a)) ==
+                                                            std::tolower(static_cast<unsigned char>(b));
+                                                 });
+                           });
     if (it != std::end(level_string_views))
         return static_cast<level::level_enum>(std::distance(std::begin(level_string_views), it));
 
     // check also for "warn" and "err" before giving up..
-    if (name == "warn") {
+    auto iequals = [](const std::string &a, const std::string &b) {
+        return a.size() == b.size() &&
+               std::equal(a.begin(), a.end(), b.begin(), [](char ac, char bc) {
+                   return std::tolower(static_cast<unsigned char>(ac)) ==
+                          std::tolower(static_cast<unsigned char>(bc));
+               });
+    };
+
+    if (iequals(name, "warn")) {
         return level::warn;
     }
-    if (name == "err") {
+    if (iequals(name, "err")) {
         return level::err;
     }
     return level::off;
