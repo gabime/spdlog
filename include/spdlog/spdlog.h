@@ -204,42 +204,42 @@ inline void log(source_loc source,
                 level::level_enum lvl,
                 wformat_string_t<Args...> fmt,
                 Args &&...args) {
-    default_logger_raw()->log(source, lvl, fmt.str, std::forward<Args>(args)...);
+    default_logger_raw()->log(source, lvl, fmt.get(), std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 inline void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args) {
-    default_logger_raw()->log(source_loc{}, lvl, fmt.str, std::forward<Args>(args)...);
+    default_logger_raw()->log(source_loc{}, lvl, fmt.get(), std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 inline void trace(wformat_string_t<Args...> fmt, Args &&...args) {
-    default_logger_raw()->trace(fmt.str, std::forward<Args>(args)...);
+    default_logger_raw()->trace(fmt.get(), std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 inline void debug(wformat_string_t<Args...> fmt, Args &&...args) {
-    default_logger_raw()->debug(fmt.str, std::forward<Args>(args)...);
+    default_logger_raw()->debug(fmt.get(), std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 inline void info(wformat_string_t<Args...> fmt, Args &&...args) {
-    default_logger_raw()->info(fmt.str, std::forward<Args>(args)...);
+    default_logger_raw()->info(fmt.get(), std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 inline void warn(wformat_string_t<Args...> fmt, Args &&...args) {
-    default_logger_raw()->warn(fmt.str, std::forward<Args>(args)...);
+    default_logger_raw()->warn(fmt.get(), std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 inline void error(wformat_string_t<Args...> fmt, Args &&...args) {
-    default_logger_raw()->error(fmt.str, std::forward<Args>(args)...);
+    default_logger_raw()->error(fmt.get(), std::forward<Args>(args)...);
 }
 
 template <typename... Args>
 inline void critical(wformat_string_t<Args...> fmt, Args &&...args) {
-    default_logger_raw()->critical(fmt.str, std::forward<Args>(args)...);
+    default_logger_raw()->critical(fmt.get(), std::forward<Args>(args)...);
 }
 #endif
 

@@ -158,12 +158,12 @@ public:
 #ifdef SPDLOG_WCHAR_TO_UTF8_SUPPORT
     template <typename... Args>
     void log(source_loc loc, level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args) {
-        log_(loc, lvl, fmt.str, std::forward<Args>(args)...);
+        log_(loc, lvl, fmt.get(), std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args) {
-        log(source_loc{}, lvl, fmt.str, std::forward<Args>(args)...);
+        log(source_loc{}, lvl, fmt.get(), std::forward<Args>(args)...);
     }
 
     void log(log_clock::time_point log_time,
@@ -199,32 +199,32 @@ public:
 
     template <typename... Args>
     void trace(wformat_string_t<Args...> fmt, Args &&...args) {
-        log(level::trace, fmt.str, std::forward<Args>(args)...);
+        log(level::trace, fmt.get(), std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void debug(wformat_string_t<Args...> fmt, Args &&...args) {
-        log(level::debug, fmt.str, std::forward<Args>(args)...);
+        log(level::debug, fmt.get(), std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void info(wformat_string_t<Args...> fmt, Args &&...args) {
-        log(level::info, fmt.str, std::forward<Args>(args)...);
+        log(level::info, fmt.get(), std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void warn(wformat_string_t<Args...> fmt, Args &&...args) {
-        log(level::warn, fmt.str, std::forward<Args>(args)...);
+        log(level::warn, fmt.get(), std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void error(wformat_string_t<Args...> fmt, Args &&...args) {
-        log(level::err, fmt.str, std::forward<Args>(args)...);
+        log(level::err, fmt.get(), std::forward<Args>(args)...);
     }
 
     template <typename... Args>
     void critical(wformat_string_t<Args...> fmt, Args &&...args) {
-        log(level::critical, fmt.str, std::forward<Args>(args)...);
+        log(level::critical, fmt.get(), std::forward<Args>(args)...);
     }
 #endif
 
