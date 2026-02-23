@@ -150,74 +150,42 @@ inline void log(source_loc source,
                 level::level_enum lvl,
                 format_string_t<Args...> fmt,
                 Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->log(source, lvl, fmt.str, std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void log(level::level_enum lvl, format_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->log(source_loc{}, lvl, fmt.str, std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void trace(format_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->trace(fmt.str, std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void debug(format_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->debug(fmt.str, std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void info(format_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->info(fmt.str, std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void warn(format_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->warn(fmt.str, std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void error(format_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->error(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->error(fmt.str, std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void critical(format_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->critical(fmt.str, std::forward<Args>(args)...);
-#endif
 }
 
 template <typename T>
@@ -236,74 +204,42 @@ inline void log(source_loc source,
                 level::level_enum lvl,
                 wformat_string_t<Args...> fmt,
                 Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->log(source, lvl, fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->log(source, lvl, fmt.get(), std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void log(level::level_enum lvl, wformat_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->log(source_loc{}, lvl, fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->log(source_loc{}, lvl, fmt.get(), std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void trace(wformat_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->trace(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->trace(fmt.get(), std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void debug(wformat_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->debug(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->debug(fmt.get(), std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void info(wformat_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->info(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->info(fmt.get(), std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void warn(wformat_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->warn(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->warn(fmt.get(), std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void error(wformat_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->error(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->error(fmt.get(), std::forward<Args>(args)...);
-#endif
 }
 
 template <typename... Args>
 inline void critical(wformat_string_t<Args...> fmt, Args &&...args) {
-#ifdef SPDLOG_USE_STD_FORMAT
     default_logger_raw()->critical(fmt, std::forward<Args>(args)...);
-#else
-    default_logger_raw()->critical(fmt.get(), std::forward<Args>(args)...);
-#endif
 }
 #endif
 
