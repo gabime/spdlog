@@ -7,12 +7,15 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ${{ matrix.config.runner }}
     strategy:
       fail-fast: true
       matrix:
         config:
-          - GENERATOR: "Visual Studio 17 2022"
+          # x64 configurations
+          - platform: x64
+            runner: windows-latest
+            GENERATOR: "Visual Studio 17 2022"
             BUILD_TYPE: Release
             BUILD_SHARED: 'ON'
             FATAL_ERRORS: 'ON'
@@ -21,7 +24,9 @@ jobs:
             BUILD_EXAMPLE: 'OFF'
             USE_STD_FORMAT: 'ON'
             CXX_STANDARD: 20
-          - GENERATOR: "Visual Studio 17 2022"
+          - platform: x64
+            runner: windows-latest
+            GENERATOR: "Visual Studio 17 2022"
             BUILD_TYPE: Release
             BUILD_SHARED: 'ON'
             FATAL_ERRORS: 'ON'
@@ -30,7 +35,43 @@ jobs:
             BUILD_EXAMPLE: 'OFF'
             USE_STD_FORMAT: 'ON'
             CXX_STANDARD: 20
-          - GENERATOR: "Visual Studio 17 2022"
+          - platform: x64
+            runner: windows-latest
+            GENERATOR: "Visual Studio 17 2022"
+            BUILD_TYPE: Release
+            BUILD_SHARED: 'ON'
+            FATAL_ERRORS: 'ON'
+            WCHAR: 'OFF'
+            WCHAR_FILES: 'OFF'
+            BUILD_EXAMPLE: 'ON'
+            USE_STD_FORMAT: 'OFF'
+            CXX_STANDARD: 17
+          # ARM64 configurations
+          - platform: ARM64
+            runner: windows-11-arm
+            GENERATOR: "Visual Studio 17 2022"
+            BUILD_TYPE: Release
+            BUILD_SHARED: 'ON'
+            FATAL_ERRORS: 'ON'
+            WCHAR: 'OFF'
+            WCHAR_FILES: 'OFF'
+            BUILD_EXAMPLE: 'OFF'
+            USE_STD_FORMAT: 'ON'
+            CXX_STANDARD: 20
+          - platform: ARM64
+            runner: windows-11-arm
+            GENERATOR: "Visual Studio 17 2022"
+            BUILD_TYPE: Release
+            BUILD_SHARED: 'ON'
+            FATAL_ERRORS: 'ON'
+            WCHAR: 'ON'
+            WCHAR_FILES: 'ON'
+            BUILD_EXAMPLE: 'OFF'
+            USE_STD_FORMAT: 'ON'
+            CXX_STANDARD: 20
+          - platform: ARM64
+            runner: windows-11-arm
+            GENERATOR: "Visual Studio 17 2022"
             BUILD_TYPE: Release
             BUILD_SHARED: 'ON'
             FATAL_ERRORS: 'ON'
@@ -49,7 +90,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake -G "${{ matrix.config.GENERATOR }}"  -A x64 `
+          cmake -G "${{ matrix.config.GENERATOR }}" -A ${{ matrix.config.platform }} `
             -D CMAKE_BUILD_TYPE=${{ matrix.config.BUILD_TYPE }} `
             -D BUILD_SHARED_LIBS=${{ matrix.config.BUILD_SHARED }} `
             -D SPDLOG_WCHAR_SUPPORT=${{ matrix.config.WCHAR }} `
@@ -76,4 +117,4 @@ jobs:
           build\tests\${{ matrix.config.BUILD_TYPE }}\spdlog-utests.exe
 
 
-  
+ 
