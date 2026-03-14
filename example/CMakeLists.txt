@@ -15,6 +15,13 @@ add_executable(example example.cpp)
 target_link_libraries(example PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
 # ---------------------------------------------------------------------------------------
+# Multi-module logger example
+# ---------------------------------------------------------------------------------------
+add_executable(multi_module_example multi_module_example.cpp multi_module_logger.cpp)
+target_link_libraries(multi_module_example PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
+target_compile_features(multi_module_example PRIVATE cxx_std_17)
+
+# ---------------------------------------------------------------------------------------
 # Example of using header-only library
 # ---------------------------------------------------------------------------------------
 if(SPDLOG_BUILD_EXAMPLE_HO)
