@@ -194,7 +194,13 @@ endif()
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
 target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                                                   "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-target_link_libraries(spdlog PUBLIC Threads::Threads)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "QNX")
+    target_compile_definitions(spdlog PUBLIC _QNX_SOURCE) 
+    target_link_libraries(spdlog PUBLIC socket)
+else()
+    target_link_libraries(spdlog PUBLIC Threads::Threads)
+endif()
 spdlog_enable_warnings(spdlog)
 
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION
