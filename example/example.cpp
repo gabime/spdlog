@@ -23,6 +23,7 @@ void user_defined_example();
 void err_handler_example();
 void syslog_example();
 void udp_example();
+void serial_port_example();
 void custom_flags_example();
 void file_events_example();
 void replace_default_logger_example();
@@ -32,7 +33,7 @@ void mdc_example();
 #include "spdlog/cfg/env.h"   // support for loading levels from the environment variable
 #include "spdlog/fmt/ostr.h"  // support for user defined types
 
-int main(int, char *[]) {
+int main(int, char*[]) {
     try {
         // Log levels can be loaded from argv/env using "SPDLOG_LEVEL"
         load_levels_example();
@@ -82,6 +83,7 @@ int main(int, char *[]) {
         trace_example();
         stopwatch_example();
         udp_example();
+        serial_port_example();
         custom_flags_example();
         file_events_example();
         replace_default_logger_example();
@@ -100,7 +102,7 @@ int main(int, char *[]) {
     }
 
     // Exceptions will only be thrown upon failed logger or sink construction (not during logging).
-    catch (const spdlog::spdlog_ex &ex) {
+    catch (const spdlog::spdlog_ex& ex) {
         std::printf("Log initialization failed: %s\n", ex.what());
         return 1;
     }
@@ -138,7 +140,7 @@ void daily_example() {
 void callback_example() {
     // Create the logger
     auto logger = spdlog::callback_logger_mt("custom_callback_logger",
-                                             [](const spdlog::details::log_msg & /*msg*/) {
+                                             [](const spdlog::details::log_msg& /*msg*/) {
                                                  // do what you need to do with msg
                                              });
 }
@@ -249,6 +251,23 @@ void udp_example() {
     my_logger->info("hello world");
 }
 
+#include "spdlog/sinks/serial_port_sinks.h"
+void serial_port_example() {
+#ifdef _WIN32
+    // Use COMx (for COM10+ the sink automatically converts to \\.\COMx format).
+    spdlog::sinks::serial_port_sink_config cfg("COM3", 115200, 1000, true);
+#else
+    // Typical Linux serial device examples: /dev/ttyS0, /dev/ttyUSB0, /dev/ttyACM0
+    spdlog::sinks::serial_port_sink_config cfg("/dev/ttyUSB0", 115200, 1000, true);
+#endif
+
+    auto serial_logger = spdlog::serial_logger_mt("serial_logger", cfg);
+    serial_logger->set_level(spdlog::level::info);
+
+    // Uncomment after setting a valid serial port on your machine.
+    // serial_logger->info("hello serial port");
+}
+
 // A logger with multiple sinks (stdout and file) - each with a different format and log level.
 void multi_sink_example() {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -275,7 +294,7 @@ struct my_type {
 #ifndef SPDLOG_USE_STD_FORMAT  // when using fmtlib
 template <>
 struct fmt::formatter<my_type> : fmt::formatter<std::string> {
-    auto format(my_type my, format_context &ctx) const -> decltype(ctx.out()) {
+    auto format(my_type my, format_context& ctx) const -> decltype(ctx.out()) {
         return fmt::format_to(ctx.out(), "[my_type value={}]", my.value_);
     }
 };
@@ -283,7 +302,7 @@ struct fmt::formatter<my_type> : fmt::formatter<std::string> {
 #else  // when using std::format
 template <>
 struct std::formatter<my_type> : std::formatter<std::string> {
-    auto format(my_type my, format_context &ctx) const -> decltype(ctx.out()) {
+    auto format(my_type my, format_context& ctx) const -> decltype(ctx.out()) {
         return std::format_to(ctx.out(), "[my_type value={}]", my.value_);
     }
 };
@@ -294,7 +313,7 @@ void user_defined_example() { spdlog::info("user defined type: {}", my_type(14))
 // Custom error handler. Will be triggered on log failure.
 void err_handler_example() {
     // can be set globally or per logger(logger->set_error_handler(..))
-    spdlog::set_error_handler([](const std::string &msg) {
+    spdlog::set_error_handler([](const std::string& msg) {
         printf("*** Custom log error handler: %s ***\n", msg.c_str());
     });
 }
@@ -324,9 +343,9 @@ void android_example() {
 #include "spdlog/pattern_formatter.h"
 class my_formatter_flag : public spdlog::custom_flag_formatter {
 public:
-    void format(const spdlog::details::log_msg &,
-                const std::tm &,
-                spdlog::memory_buf_t &dest) override {
+    void format(const spdlog::details::log_msg&,
+                const std::tm&,
+                spdlog::memory_buf_t& dest) override {
         std::string some_txt = "custom-flag";
         dest.append(some_txt.data(), some_txt.data() + some_txt.size());
     }
@@ -350,11 +369,11 @@ void file_events_example() {
     handlers.before_open = [](spdlog::filename_t filename) {
         spdlog::info("Before opening {}", filename);
     };
-    handlers.after_open = [](spdlog::filename_t filename, std::FILE *fstream) {
+    handlers.after_open = [](spdlog::filename_t filename, std::FILE* fstream) {
         spdlog::info("After opening {}", filename);
         fputs("After opening\n", fstream);
     };
-    handlers.before_close = [](spdlog::filename_t filename, std::FILE *fstream) {
+    handlers.before_close = [](spdlog::filename_t filename, std::FILE* fstream) {
         spdlog::info("Before closing {}", filename);
         fputs("Before closing\n", fstream);
     };
