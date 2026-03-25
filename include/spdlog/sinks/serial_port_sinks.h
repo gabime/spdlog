@@ -40,6 +40,10 @@ struct serial_port_sink_config {
     serial_stop_bits stop_bits = serial_stop_bits::one;
     serial_parity parity = serial_parity::none;
     serial_handshake handshake = serial_handshake::none;
+    // Maximum time in milliseconds to block on write operations.
+    // On Windows this is applied via SetCommTimeouts.
+    // On POSIX platforms this is currently a best-effort hint only;
+    // writes may still block indefinitely depending on the serial driver.
     int write_timeout_ms = 1000;
     bool lazy_open = false;
 
@@ -110,6 +114,9 @@ public:
         dcb.ByteSize = to_win_data_size_(config.data_size);
         dcb.StopBits = to_win_stop_bits_(config.stop_bits);
         dcb.Parity = to_win_parity_(config.parity);
+        // fParity enables hardware parity checking; must be TRUE when parity is
+        // odd or even, otherwise the Parity field has no effect.
+        dcb.fParity = config.parity != serial_parity::none ? TRUE : FALSE;
         dcb.fBinary = TRUE;
         dcb.fDtrControl = DTR_CONTROL_ENABLE;
         dcb.fOutxCtsFlow =
@@ -134,11 +141,38 @@ public:
                             static_cast<int>(::GetLastError()));
         }
 #else
-        fd_ = ::open(config.port_name.c_str(), O_WRONLY | O_NOCTTY | O_SYNC);
+        // Open with O_NONBLOCK so that open() itself does not block waiting for
+        // carrier detect (CD). CLOCAL is applied below via tcsetattr; once that
+        // is done we restore blocking I/O with fcntl so subsequent writes block
+        // normally.
+        int open_flags = O_WRONLY | O_NOCTTY | O_NONBLOCK;
+#if defined(SPDLOG_PREVENT_CHILD_FD) && defined(O_CLOEXEC)
+        open_flags |= O_CLOEXEC;
+#endif
+        fd_ = ::open(config.port_name.c_str(), open_flags);
         if (fd_ < 0) {
             throw_spdlog_ex("serial_port_sink: failed opening serial port", errno);
         }
 
+#if defined(SPDLOG_PREVENT_CHILD_FD) && !defined(O_CLOEXEC)
+        // Fallback: set FD_CLOEXEC on platforms that lack O_CLOEXEC.
+        {
+            const int fd_flags = ::fcntl(fd_, F_GETFD);
+            if (fd_flags != -1) {
+                ::fcntl(fd_, F_SETFD, fd_flags | FD_CLOEXEC);
+            }
+        }
+#endif
+
+        // Restore blocking I/O now that open() has returned; CLOCAL will be set
+        // by tcsetattr below so CD can no longer stall the port.
+        {
+            const int flags = ::fcntl(fd_, F_GETFL, 0);
+            if (flags < 0 || ::fcntl(fd_, F_SETFL, flags & ~O_NONBLOCK) < 0) {
+                close();
+                throw_spdlog_ex("serial_port_sink: fcntl failed to clear O_NONBLOCK", errno);
+            }
+        }
         termios tty{};
         if (::tcgetattr(fd_, &tty) != 0) {
             close();
@@ -146,36 +180,38 @@ public:
         }
 
         ::cfmakeraw(&tty);
-        tty.c_cflag |= static_cast<unsigned int>(CLOCAL | CREAD);
-        tty.c_cflag &= static_cast<unsigned int>(~CSIZE);
-        tty.c_cflag |= to_posix_data_size_(config.data_size);
+        // Use tcflag_t for all bitmask operations to avoid truncation on
+        // platforms (e.g. BSD/macOS) where tcflag_t is wider than unsigned int.
+        tty.c_cflag |= static_cast<tcflag_t>(CLOCAL | CREAD);
+        tty.c_cflag &= static_cast<tcflag_t>(~CSIZE);
+        tty.c_cflag |= static_cast<tcflag_t>(to_posix_data_size_(config.data_size));
 
         if (config.stop_bits == serial_stop_bits::two) {
-            tty.c_cflag |= static_cast<unsigned int>(CSTOPB);
+            tty.c_cflag |= static_cast<tcflag_t>(CSTOPB);
         } else {
-            tty.c_cflag &= static_cast<unsigned int>(~CSTOPB);
+            tty.c_cflag &= static_cast<tcflag_t>(~CSTOPB);
         }
 
         switch (config.parity) {
             case serial_parity::none:
-                tty.c_cflag &= static_cast<unsigned int>(~PARENB);
-                tty.c_cflag &= static_cast<unsigned int>(~PARODD);
+                tty.c_cflag &= static_cast<tcflag_t>(~PARENB);
+                tty.c_cflag &= static_cast<tcflag_t>(~PARODD);
                 break;
             case serial_parity::odd:
-                tty.c_cflag |= static_cast<unsigned int>(PARENB);
-                tty.c_cflag |= static_cast<unsigned int>(PARODD);
+                tty.c_cflag |= static_cast<tcflag_t>(PARENB);
+                tty.c_cflag |= static_cast<tcflag_t>(PARODD);
                 break;
             case serial_parity::even:
-                tty.c_cflag |= static_cast<unsigned int>(PARENB);
-                tty.c_cflag &= static_cast<unsigned int>(~PARODD);
+                tty.c_cflag |= static_cast<tcflag_t>(PARENB);
+                tty.c_cflag &= static_cast<tcflag_t>(~PARODD);
                 break;
         }
 
 #ifdef CRTSCTS
         if (config.handshake == serial_handshake::hardware_flow_control) {
-            tty.c_cflag |= static_cast<unsigned int>(CRTSCTS);
+            tty.c_cflag |= static_cast<tcflag_t>(CRTSCTS);
         } else {
-            tty.c_cflag &= static_cast<unsigned int>(~CRTSCTS);
+            tty.c_cflag &= static_cast<tcflag_t>(~CRTSCTS);
         }
 #endif
 
