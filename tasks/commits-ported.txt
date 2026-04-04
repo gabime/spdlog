@@ -23,6 +23,7 @@ f1d748e5 os_windows: drop fileapi.h include (#3444; v2 uses os_windows.cpp not o
 ad725d34 os::getenv via std::getenv (MSVC 4996); 677a2d93 test_stopwatch 500ms waits
 3f7e5028 utf8_to_wstrbuf assert: result_size vs static_cast<int>(target.size()) (#3479)
 a6215527 ringbuffer_sink: throw if n_items==0; test_ringbuffer_sink (#3436)
+847db337 dup_filter_sink: skipped-msg notification level from last duplicate (#3390)
 # SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
 # SUPERSEDED: 6c5d6329 should_log comment — v2 logger.h already correct
 # SUPERSEDED: 2aa8b6c9 file_helper write fd_ — v2 file_helper.cpp already has guard

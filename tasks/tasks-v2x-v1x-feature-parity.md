@@ -6,8 +6,8 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 
 - **Done:** Integration branch created and pushed; merge-base and v1-only commit list exported; triage template and merge-report draft added; direct `git merge origin/v1.x` was attempted and **aborted** (v2.x file-tree divergence vs v1.x — see [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md)).
 - **Ports:** [`commits-ported.txt`](commits-ported.txt). **Full triage (245 v1-only SHAs):** [`v1-triage-complete.md`](v1-triage-complete.md) — **PORTED**, **PENDING**, **SUPERSEDED**, or **N/A** (merge commits). **All unit tests pass** (`ctest` Release, Windows).
-- **Latest pass:** Triage sync (`ad725d34` **getenv**, `677a2d93` stopwatch timing, utf8/syslog/stopwatch **SUPERSEDED**); `3f7e5028` **utf8** assert sign-compare; `a6215527` **ringbuffer** `n_items==0` throws; `287333ee` color **`final`** **SUPERSEDED** (v2 sink headers differ). Commits pushed on **`integration/v2-sync-v1`** as work lands. See [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md).
-- **Triage snapshot:** **27 PORTED**, **26 SUPERSEDED**, **114 N/A**, **78 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md).
+- **Latest pass:** `847db337` **dup_filter_sink** — “Skipped N duplicates” notification uses **last duplicate’s** log level (`msg.log_level`); ctor no longer takes `notification_level`. See [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md).
+- **Triage snapshot:** **28 PORTED**, **26 SUPERSEDED**, **114 N/A**, **77 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md).
 - **Remaining:** Topical ports from `v1-commit-inventory.txt` — **fmt / CMake 5A** (bundled fmt bump, warning flags); large batches still **PENDING**.
 
 ## Relevant Files
@@ -71,7 +71,7 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
   - [ ] 4.5 Spot-check platform-specific areas called out in PRD (e.g. Windows/UWP, POSIX `TZ`, TCP) on representative configs if possible.
 
 - [ ] 5.0 Documentation, merge report, and release readiness (4B)
-  - [ ] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *(Partial: [`v1-triage-complete.md`](v1-triage-complete.md) lists all 245 SHAs; **27** ported, **26** superseded, **114** N/A, **78** **PENDING** — reclassify PENDING over time.)*
+  - [ ] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *(Partial: [`v1-triage-complete.md`](v1-triage-complete.md) lists all 245 SHAs; **28** ported, **26** superseded, **114** N/A, **77** **PENDING** — reclassify PENDING over time.)*
   - [x] 5.2 Write **merge report**: areas touched, conflict resolutions, rejected or deferred ports with rationale.
   - [ ] 5.3 Update **README** (build, fmt version, branch notes) and version header for v2.x pre-release.
   - [ ] 5.4 Add **migration / release notes** for downstream users (API preserved per **2A**, dependency changes per **5A**).

@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 27 **PORTED**, 26 **SUPERSEDED**, 114 **N/A**, 78 **PENDING**.
+**Counts (this revision):** 28 **PORTED**, 26 **SUPERSEDED**, 114 **N/A**, 77 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -194,7 +194,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `bd0609d7` | Update README.md | N/A (docs-only) |
 | `cec28bf8` | Fix links to local reference. (#3378) | N/A (docs-only) |
 | `bb8694b5` | Fix links for #3380 (#3381) | N/A (docs-only) |
-| `847db337` | dup_filter_sink: remove notification_level argument; use last message log level for notification instead (#3390) | PENDING |
+| `847db337` | dup_filter_sink: remove notification_level argument; use last message log level for notification instead (#3390) | PORTED (`dup_filter_sink.h` — `skipped_msg_log_level_` from `msg.log_level`; `tests/test_dup_filter.cpp`) |
 | `548b2642` | Fix warning C4530 (#3393) | PENDING |
 | `7e022c43` | Feature 3379 (#3397) | PENDING |
 | `943fcbd7` | Register replace logger (#3398) | N/A (v1 registry API) |
