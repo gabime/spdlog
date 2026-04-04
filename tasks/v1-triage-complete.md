@@ -8,7 +8,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 - **N/A** — Reserved for merge-only commits or explicit non-applicability (set manually when triaging).
 - **SUPERSEDED** — v2.x already satisfies the intent (different implementation path).
 
-Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
+All v1-only SHAs in range now have a terminal status (**PORTED**, **SUPERSEDED**, or **N/A**). Further work (e.g. **5A** fmt bump, optional MDC on v2) is tracked outside this table.
 
 **Counts (this revision):** 42 **PORTED**, 56 **SUPERSEDED**, 147 **N/A**, 0 **PENDING**.
 
