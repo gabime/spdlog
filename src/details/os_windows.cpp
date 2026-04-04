@@ -107,24 +107,22 @@ size_t filesize(FILE *f) {
     #pragma warning(pop)
 #endif
 
-// Return utc offset in minutes or throw spdlog_ex on failure
+// Compare the timestamp as local (mktime) vs UTC (_mkgmtime) to get the offset.
+// Matches v1.x behavior: better historical DST handling than GetTimeZoneInformation alone.
 int utc_minutes_offset(const std::tm &tm) {
-#if _WIN32_WINNT < _WIN32_WINNT_WS08
-    TIME_ZONE_INFORMATION tzinfo;
-    auto rv = ::GetTimeZoneInformation(&tzinfo);
-#else
-    DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
-    auto rv = ::GetDynamicTimeZoneInformation(&tzinfo);
-#endif
-    if (rv == TIME_ZONE_ID_INVALID) throw_spdlog_ex("Failed getting timezone info. ", errno);
-
-    int offset = -tzinfo.Bias;
-    if (tm.tm_isdst) {
-        offset -= tzinfo.DaylightBias;
-    } else {
-        offset -= tzinfo.StandardBias;
+    std::tm local_tm = tm;  // copy since mktime might adjust it (normalize dates, set tm_isdst)
+    std::time_t local_time_t = std::mktime(&local_tm);
+    if (local_time_t == static_cast<std::time_t>(-1)) {
+        return 0;  // fallback
     }
-    return offset;
+
+    std::time_t utc_time_t = _mkgmtime(&local_tm);
+    if (utc_time_t == static_cast<std::time_t>(-1)) {
+        return 0;  // fallback
+    }
+
+    const auto offset_seconds = utc_time_t - local_time_t;
+    return static_cast<int>(offset_seconds / 60);
 }
 
 // Return current thread id as size_t

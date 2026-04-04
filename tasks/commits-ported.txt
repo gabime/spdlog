@@ -2,3 +2,4 @@
 # One line per landed port: <sha> <short subject>
 
 09a674b7 Fix %z when pattern_type_type is utc - should be +00:00
+b656d1ce Windows utc_minutes_offset(): DST accuracy + tests (pattern_formatter, test_timezone)

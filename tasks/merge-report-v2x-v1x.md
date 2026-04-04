@@ -38,8 +38,9 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | v1.x commit | Summary | v2.x location |
 |-------------|---------|---------------|
 | `09a674b7` | `%z` with `pattern_time_type::utc` must print `+00:00` (not local offset). | `src/pattern_formatter.cpp` — `z_formatter` takes `pattern_time_type`; early return for UTC. |
+| `b656d1ce` | Windows `utc_minutes_offset()` via `mktime` / `_mkgmtime`; pattern tests + dedicated timezone tests. | `src/details/os_windows.cpp`; `tests/test_pattern_formatter.cpp`; `tests/test_timezone.cpp` (new); `tests/CMakeLists.txt`; `include/spdlog/details/os.h` (doc comment). |
 
-**Validation:** `ctest` Release on Windows — all unit tests passed after this port.
+**Validation:** `ctest` Release on Windows — all unit tests passed after these ports.
 
 ## Integration branch
 
