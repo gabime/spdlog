@@ -3,6 +3,9 @@
  * https://raw.githubusercontent.com/gabime/spdlog/v2.x/LICENSE
  */
 #include "includes.h"
+
+#include <iterator>
+
 #include "spdlog/common.h"
 #include "spdlog/sinks/callback_sink.h"
 #include "test_sink.h"
@@ -14,7 +17,8 @@ TEST_CASE("custom_callback_logger", "[custom_callback_logger]") {
         spdlog::memory_buf_t formatted;
         formatter.format(msg, formatted);
         auto eol_len = strlen(spdlog::details::os::default_eol);
-        lines.emplace_back(formatted.begin(), formatted.end() - eol_len);
+        using diff_t = typename std::iterator_traits<decltype(formatted.end())>::difference_type;
+        lines.emplace_back(formatted.begin(), formatted.end() - static_cast<diff_t>(eol_len));
     });
     std::shared_ptr<spdlog::sinks::test_sink_st> test_sink(new spdlog::sinks::test_sink_st);
 

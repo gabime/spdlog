@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 39 **PORTED**, 51 **SUPERSEDED**, 118 **N/A**, 37 **PENDING**.
+**Counts (this revision):** 40 **PORTED**, 53 **SUPERSEDED**, 118 **N/A**, 34 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -44,7 +44,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `ddce4215` | fmt/*.h: include tweakme.h to set SPDLOG_FMT_EXTERNAL according to system (#2923) | N/A (v2 has no `tweakme.h`; fmt wiring is CMake-driven) |
 | `ac55e604` | Update README.md | N/A (docs-only) |
 | `ba508057` | Update example.cpp to fix the vector issue in bin_example (#2963) | SUPERSEDED (`example/example.cpp` `binary_example` uses `push_back`; not `vector(80)`) |
-| `c1569a3d` | Bump to catch2 v3.5.0 | PENDING |
+| `c1569a3d` | Bump to catch2 v3.5.0 | SUPERSEDED (`tests/CMakeLists.txt` FetchContent `GIT_TAG` … `v3.5.0`) |
 | `1ef8d3ce` | Fix #2967 | SUPERSEDED (`LICENSE` fmt URL already `raw.githubusercontent.com/.../LICENSE`) |
 | `7cb90d1a` | Fix MSVC compile flag for no exceptions (#2974) | N/A (v2 `CMakeLists.txt` has no `SPDLOG_NO_EXCEPTIONS` / `-fno-exceptions` wiring; add when porting that option) |
 | `2aa8b6c9` | Check fd_ is not nullptr in file_helper | SUPERSEDED (`src/details/file_helper.cpp` `write` already guards `fd_ == nullptr`) |
@@ -73,7 +73,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `819eb27c` | Use find if registry is bigger than 10 in  registry::get(std::string_view logger_name) | N/A (same) |
 | `23587b0d` | Fixed regisry-inl.h | N/A (same) |
 | `d03eb40c` | Added Mapped Diagnostic Context (MDC) support (#2907) | PENDING |
-| `73e2e02b` | Fix #3038 (#3044) | PENDING |
+| `73e2e02b` | Fix #3038 (#3044) | SUPERSEDED (`src/details/os_windows.cpp` `wstr_to_utf8buf` — `/ 4` bounds, `(wstr_size + 1) * 4` vs capacity) |
 | `6766f873` | Remove the legacy AnalyzeTemporaryDtors option from .clang-tidy. (#3048) | SUPERSEDED (`.clang-tidy` on v2 does not set `AnalyzeTemporaryDtors`) |
 | `6725584e` | Make async_logger::flush() synchronous and wait for the flush to complete (#3049) | PENDING |
 | `c9ce17ab` | INSTALL.md has been updated to provide current status information. (#3052) | N/A (no `INSTALL.md` on v2 tree) |
@@ -176,7 +176,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `276ee5f5` | fix: update to_string_view function for fmt 11.1 (#3301) | PENDING |
 | `7f8060d5` | fix: Compatibility with external fmtlib 11.1.1 (#3312) | PENDING |
 | `96a8f625` | fix: remove unused to_string_view overload in fmt >= 11.1 (#3314) | PENDING |
-| `ad0f31c0` | Enabled bin_to_hex utest for stdformat, fixed std::formatter (#3315) | PENDING |
+| `ad0f31c0` | Enabled bin_to_hex utest for stdformat, fixed std::formatter (#3315) | PORTED (`test_sink.h` / `test_custom_callbacks.cpp` iterator `difference_type` cast; v2 `bin_to_hex` non-`const` `delimiter`; tests always include `test_bin_to_hex.cpp`) |
 | `d7155530` | Added SPDLOG_FWRITE_UNLOCKED option to CMakeLists.txt (#3318) | SUPERSEDED (same `CheckSymbolExists` / `SPDLOG_FWRITE_UNLOCKED` wiring as `1e6250e1` on v2) |
 | `96a7d2a1` | Format CMakeLists.txt | N/A (formatting only) |
 | `57505989` | SPDLOG_LEVEL_NAMES, comment use string_view_literals (#3291) | N/A (v2 has no `tweakme.h` / `SPDLOG_LEVEL_NAMES`; levels in `common.h`) |

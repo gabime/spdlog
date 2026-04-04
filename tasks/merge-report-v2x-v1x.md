@@ -83,6 +83,9 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `96c9a62b` | *(SUPERSEDED)* async clone test race — `test_misc.cpp` uses `test_sink_mt`. | — |
 | `1e6250e1` | *(SUPERSEDED)* `fwrite_bytes` / non-locking fwrite — `os_unix.cpp`, `os_windows.cpp`, `file_helper`, CMake. | — |
 | `d7155530` | *(SUPERSEDED)* `SPDLOG_FWRITE_UNLOCKED` from symbol check — same CMake path as above. | — |
+| `c1569a3d` | *(SUPERSEDED)* Catch2 **v3.5.0** — `tests/CMakeLists.txt` `FetchContent` `GIT_TAG`. | — |
+| `73e2e02b` | *(SUPERSEDED)* `#3038` / `#3044` UTF-16→UTF-8 size checks — `wstr_to_utf8buf` in `os_windows.cpp`. | — |
+| `ad0f31c0` | `test_sink` / callback tests: **`iterator_traits::difference_type`** cast for `end() - eol_len` (#3315). | `tests/test_sink.h`, `tests/test_custom_callbacks.cpp` |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |
