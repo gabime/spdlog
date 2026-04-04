@@ -59,6 +59,14 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `f1d748e5` | Drop redundant `#include <fileapi.h>` when `windows.h` already provides APIs (older SDK compatibility). | `src/details/os_windows.cpp` (v1 had `os-inl.h`) |
 | `7cbf2a69` | `ansicolor_sink`: public `set_color_mode` locks; internal `set_color_mode_` must not re-lock (v1 #3323). | `src/sinks/ansicolor_sink.cpp` — removed nested `lock_guard` in `set_color_mode_` (avoids deadlock). |
 | `e593f669` | *(SUPERSEDED)* `-Wextra-semi` / stray `;` after `}` — v2 `bench`, `example`, `callback_sink`, `msvc_sink` already clean. | — |
+| `ad725d34` | `std::getenv` in `spdlog::details::os::getenv` (MSVC: suppress C4996; UWP: empty). | `src/details/os_windows.cpp`, `src/details/os_unix.cpp` |
+| `677a2d93` | Less flaky stopwatch tests (longer sleep). | `tests/test_stopwatch.cpp` |
+| `a45c9390` | *(SUPERSEDED)* `stopwatch::elapsed_ms()` — already on v2. | — |
+| `eeb22c13` | *(SUPERSEDED)* `syslog_sink` virtual `syslog_prio_from_level` — already on v2. | — |
+| `5673e9e5` `fe4f9952` | *(SUPERSEDED)* UTF-8 → UTF-16 conversion behavior + tests — v2 `os_windows.cpp` / `test_misc.cpp`. | — |
+| `3f7e5028` | `assert` sign-compare in `utf8_to_wstrbuf` (`int` vs `size_t`). | `src/details/os_windows.cpp` |
+| `a6215527` | `ringbuffer_sink(0)` throws; test expects `spdlog_ex` (v2 uses `drain` API, not v1 `last_formatted`). | `include/spdlog/sinks/ringbuffer_sink.h`, `tests/test_ringbuffer_sink.cpp` |
+| `287333ee` | *(SUPERSEDED)* drop `final` from color sinks — v2 headers differ from v1 patch context. | — |
 | `4397dac5` | `SPDLOG_DEBUG_POSTFIX` CMake cache (override debug library name suffix). | `CMakeLists.txt` — default `-${MAJOR}.${MINOR}d` (same as previous v2 hardcode). |
 | `c49c7cf9` | Allow **empty** debug postfix (quoted property). | Same `CMakeLists.txt` change as `4397dac5`. |
 | `ae525b75` | Self-contained `circular_q.h` (include `common.h`). | `include/spdlog/details/circular_q.h` |

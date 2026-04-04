@@ -20,6 +20,9 @@ ae525b75 circular_q.h include spdlog/common.h (#3026)
 7a950e02 d343d413 ebfa9069 9edab1b5 SPDLOG_MSVC_UTF8 + /utf-8 only for MSVC (CXX_COMPILER_ID) (#3260)
 f1d748e5 os_windows: drop fileapi.h include (#3444; v2 uses os_windows.cpp not os-inl.h)
 7cbf2a69 ansicolor: set_color_mode_ without nested mutex (matches #3323; fixes double-lock)
+ad725d34 os::getenv via std::getenv (MSVC 4996); 677a2d93 test_stopwatch 500ms waits
+3f7e5028 utf8_to_wstrbuf assert: result_size vs static_cast<int>(target.size()) (#3479)
+a6215527 ringbuffer_sink: throw if n_items==0; test_ringbuffer_sink (#3436)
 # SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
 # SUPERSEDED: 6c5d6329 should_log comment — v2 logger.h already correct
 # SUPERSEDED: 2aa8b6c9 file_helper write fd_ — v2 file_helper.cpp already has guard
@@ -55,5 +58,9 @@ f1d748e5 os_windows: drop fileapi.h include (#3444; v2 uses os_windows.cpp not o
 # SUPERSEDED: 66ac83e7 a34e08c7 .gitignore .vs out/build CMakeSettings — already in .gitignore
 # SUPERSEDED: 2c76e610 Sep vs Sept — src/pattern_formatter.cpp already uses "Sep"
 # SUPERSEDED: e593f669 -Wextra-semi — v2 sources already avoid extra `;` after `}` / `override {}`
+# SUPERSEDED: a45c9390 stopwatch elapsed_ms — already in stopwatch.h
+# SUPERSEDED: eeb22c13 syslog virtual prio — already in syslog_sink.h
+# SUPERSEDED: 5673e9e5 fe4f9952 utf8_to_wstrbuf + tests — os_windows + test_misc
+# SUPERSEDED: 287333ee color sinks final — v2 ansicolor/wincolor headers differ from v1
 # N/A batch: README / wiki / docs-only SHAs; v1 ci.yml & win CI churn; CMake comment-only; LICENSE optional
 # N/A: 943fcbd7 registry; 27cb4c76 MDC readme; 3edc8036 catch test order; Coverity CI; 7cee026b v1 TSAN CI line

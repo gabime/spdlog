@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 23 **PORTED**, 21 **SUPERSEDED**, 114 **N/A**, 87 **PENDING**.
+**Counts (this revision):** 27 **PORTED**, 26 **SUPERSEDED**, 114 **N/A**, 78 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -61,7 +61,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `bc4b3295` | Update ci.yml | N/A (same) |
 | `60faedb0` | Update ci.yml | N/A (same) |
 | `5532231b` | feature: adds string view overloads for logger accessor (#3023) | N/A (v1 registry/logger accessor API; v2 has no multi-logger registry) |
-| `a45c9390` | Update stopwatch.h (#3034) | PENDING |
+| `a45c9390` | Update stopwatch.h (#3034) | SUPERSEDED (`include/spdlog/stopwatch.h` already has `elapsed_ms()`) |
 | `ae525b75` | Add missing include (#3026) | PORTED (`include/spdlog/details/circular_q.h` — `#include <spdlog/common.h>`) |
 | `e0410f43` | Update ci.yml | N/A (v1 legacy CI) |
 | `0621a7ae` | fix ci | N/A (same) |
@@ -110,7 +110,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `2d4acf8c` | Added mdc example | PENDING |
 | `27cb4c76` | Added mdc example to readme | N/A (docs; v2 has no MDC yet) |
 | `c3aed4b6` | Add wide character formatting and output support to wincolor_sink. (#3092) | PENDING |
-| `eeb22c13` | Allow customization of syslog_sink (#3124) | PENDING |
+| `eeb22c13` | Allow customization of syslog_sink (#3124) | SUPERSEDED (`syslog_sink.h` — `virtual syslog_prio_from_level`, `levels_array` protected) |
 | `d276069a` | make example compatible with fmt 11 (#3130) | PENDING |
 | `885b5473` | Fix building with `FMT_ENFORCE_COMPILE_STRING` (#3137) | PENDING |
 | `5ebfc927` | fix: set `/Zc:__cplusplus` and `/MP` to MSVC only (#3139) | SUPERSEDED (`CMakeLists.txt` already uses `CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"` for `/Zc:__cplusplus` and `/MP`) |
@@ -152,8 +152,8 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `35345182` | Update README.md (#3240) | N/A (docs-only) |
 | `5fd32e1a` | Update README.md | N/A (docs-only) |
 | `63f08750` | Removed if in ci | N/A (v1 CI) |
-| `5673e9e5` | utf8_to_wstrbuf now handles invalid utf8 sequences (#3244) | PENDING |
-| `fe4f9952` | Fix utf8_to_wstrbuf tests (#3245) | PENDING |
+| `5673e9e5` | utf8_to_wstrbuf now handles invalid utf8 sequences (#3244) | SUPERSEDED (`os_windows.cpp` + `test_misc.cpp` Windows UTF tests) |
+| `fe4f9952` | Fix utf8_to_wstrbuf tests (#3245) | SUPERSEDED (`test_misc.cpp` uses `std::wstring(buffer.data(), buffer.size())`) |
 | `d343d413` | CMake option to Enable/disable msvc /utf-8 flag (on by default) | PORTED (same as `7a950e02` / `9edab1b5`) |
 | `68f6ec7a` | Merge branch 'v1.x' of https://github.com/gabime/spdlog into v1.x | N/A (merge commit) |
 | `ebfa9069` | CMake option to Enable/disable msvc /utf-8 flag (on by default) | PORTED (duplicate subject; same CMake port) |
@@ -203,14 +203,14 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `7ca6a4fb` | Update commemt | N/A (comment-only) |
 | `c73b8cc4` | Update comment | N/A (comment-only) |
 | `6fa36017` | Version 1.15.3 | N/A (v1.x release version bump) |
-| `677a2d93` | Update test_stopwatch.cpp | PENDING |
+| `677a2d93` | Update test_stopwatch.cpp | PORTED (`tests/test_stopwatch.cpp` — 500ms waits) |
 | `37ff4664` | Add coverity scan to CI and fix warnings (#3400) | N/A (optional third-party CI; not required for v2 parity) |
 | `5d89b5b9` | Update jetbrains logo (#3401) | N/A (docs asset; optional for v2) |
 | `b18a234e` | Fix coverity ci | N/A (Coverity CI follow-up) |
 | `e655dbb6` | Fix issue #3408 | PENDING |
-| `ad725d34` | Use std::getenv #3414 (#3415) | PENDING |
-| `287333ee` | Remove unnecessary and inconsistent "final" from color sinks (#3430) | PENDING |
-| `a6215527` | Fix ringbuffer tests for newline (#3436) | PENDING |
+| `ad725d34` | Use std::getenv #3414 (#3415) | PORTED (`os_windows.cpp` / `os_unix.cpp` — `std::getenv`; MSVC 4996 suppressed; no v2 `cfg/` `load_levels`) |
+| `287333ee` | Remove unnecessary and inconsistent "final" from color sinks (#3430) | SUPERSEDED (v2 `ansicolor_sink`/`wincolor_sink` layout differs; no `final` on same methods as v1 patch) |
+| `a6215527` | Fix ringbuffer tests for newline (#3436) | PORTED (`ringbuffer_sink.h` reject `n_items==0`; `test_ringbuffer_sink.cpp` — v2 API uses `drain`, not v1 `last_formatted`) |
 | `4619e18a` | Update windows.yml | N/A (v1 workflow history; triage current `.github/workflows` separately) |
 | `6fd67ce1` | Update windows.yml | N/A (same) |
 | `4397dac5` | chore(cmake): add option to override CMAKE_DEBUG_POSTFIX (#3433) | PORTED (`SPDLOG_DEBUG_POSTFIX` cache; default `-${MAJOR}.${MINOR}d` matches prior v2 hardcode) |
@@ -223,7 +223,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `1bea38ed` | clang-format | N/A (formatting only) |
 | `486b5555` | Version 1.16.0 | N/A (v1.x release version bump) |
 | `dd3ca04a` | set CMAKE_BUILD_TYPE only in top-level project (#3480) | PORTED |
-| `3f7e5028` | fix sign-compare warning (#3479) | PENDING |
+| `3f7e5028` | fix sign-compare warning (#3479) | PORTED (`os_windows.cpp` `utf8_to_wstrbuf` — `assert` vs `static_cast<int>(target.size())`) |
 | `88a0e07a` | Change access scope for ANSI target_file_ from private to protected (#3486) | PORTED (`include/spdlog/sinks/ansicolor_sink.h`) |
 | `cdbd64e2` | Fix sign conversion warnings in qt_sinks.h (#3487) | PENDING |
 | `8806ca65` | Fix UWP detection. (#3489) | PENDING |
