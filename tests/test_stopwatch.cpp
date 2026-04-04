@@ -5,7 +5,7 @@
 TEST_CASE("stopwatch1", "[stopwatch]") {
     using std::chrono::milliseconds;
     using clock = std::chrono::steady_clock;
-    milliseconds wait_ms(200);
+    milliseconds wait_ms(500);
     milliseconds tolerance_ms(250);
     auto start = clock::now();
     spdlog::stopwatch sw;
@@ -22,7 +22,7 @@ TEST_CASE("stopwatch2", "[stopwatch]") {
     using std::chrono::milliseconds;
     using clock = std::chrono::steady_clock;
 
-    clock::duration wait_duration(milliseconds(200));
+    clock::duration wait_duration(milliseconds(500));
     clock::duration tolerance_duration(milliseconds(250));
 
     auto test_sink = std::make_shared<test_sink_st>();

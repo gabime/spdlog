@@ -5,8 +5,10 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 ## Progress (2026-04-04)
 
 - **Done:** Integration branch created and pushed; merge-base and v1-only commit list exported; triage template and merge-report draft added; direct `git merge origin/v1.x` was attempted and **aborted** (v2.x file-tree divergence vs v1.x — see [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md)).
-- **Ports:** [`commits-ported.txt`](commits-ported.txt). **Full triage (245 v1-only SHAs):** [`v1-triage-complete.md`](v1-triage-complete.md) — each commit **PORTED**, **PENDING**, or **N/A** (merge commits). **All unit tests pass** (`ctest` Release, Windows).
-- **Remaining:** Topical ports from `v1-commit-inventory.txt` (fmt / CI / other fixes per **5A** and triage).
+- **Ports:** [`commits-ported.txt`](commits-ported.txt). **Full triage (245 v1-only SHAs):** [`v1-triage-complete.md`](v1-triage-complete.md) — **PORTED**, **PENDING**, **SUPERSEDED**, or **N/A** (merge commits). **All unit tests pass** (`ctest` Release, Windows).
+- **Latest pass:** `f1d748e5` **no `fileapi.h`** in `os_windows.cpp`; `7cbf2a69` **ansicolor** lock nesting aligned with v1 (`set_color_mode_` no nested mutex); `e593f669` **SUPERSEDED** (`-Wextra-semi` clean in v2). See [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md).
+- **Triage snapshot:** **23 PORTED**, **21 SUPERSEDED**, **114 N/A**, **87 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md).
+- **Remaining:** Topical ports from `v1-commit-inventory.txt` — **fmt / CMake 5A** (bundled fmt bump, warning flags); large batches still **PENDING**.
 
 ## Relevant Files
 
@@ -68,7 +70,7 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
   - [ ] 4.5 Spot-check platform-specific areas called out in PRD (e.g. Windows/UWP, POSIX `TZ`, TCP) on representative configs if possible.
 
 - [ ] 5.0 Documentation, merge report, and release readiness (4B)
-  - [ ] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *(Partial: [`v1-triage-complete.md`](v1-triage-complete.md) lists all 245 SHAs; **7** ported, **2** N/A merge, **236** still **PENDING** — reclassify PENDING over time.)*
+  - [ ] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *(Partial: [`v1-triage-complete.md`](v1-triage-complete.md) lists all 245 SHAs; **23** ported, **21** superseded, **114** N/A, **87** **PENDING** — reclassify PENDING over time.)*
   - [x] 5.2 Write **merge report**: areas touched, conflict resolutions, rejected or deferred ports with rationale.
   - [ ] 5.3 Update **README** (build, fmt version, branch notes) and version header for v2.x pre-release.
   - [ ] 5.4 Add **migration / release notes** for downstream users (API preserved per **2A**, dependency changes per **5A**).

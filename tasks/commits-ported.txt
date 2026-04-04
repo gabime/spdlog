@@ -10,4 +10,50 @@ d2100d5d Include fcntl.h in Unix tcp client header (v2: tcp_client_unix.h)
 45b67eee dup_filter_sink: constructor taking vector of sinks (#3549)
 566b2d14 Case-insensitive level_from_str (src/common.cpp; tests)
 dd3ca04a CMAKE_BUILD_TYPE default only for top-level project (CMakeLists.txt)
+32dd298d mpmc_blocking_q.h file-header comment (enqueue_nowait overrun behavior)
+0209b12c tests/includes.h: undef SPDLOG_LEVEL_NAMES / SHORT for default test expectations (#3492)
+4397dac5 c49c7cf9 SPDLOG_DEBUG_POSTFIX cache + quoted DEBUG_POSTFIX (#3433 #3530)
+ae525b75 circular_q.h include spdlog/common.h (#3026)
+33375433 null_atomic T value{} value-initialize (#3513)
+6b240a89 udp_client_unix sendto reinterpret_cast sockaddr (#3509)
+88a0e07a ansicolor_sink: target_file_ protected for custom sinks (#3486)
+7a950e02 d343d413 ebfa9069 9edab1b5 SPDLOG_MSVC_UTF8 + /utf-8 only for MSVC (CXX_COMPILER_ID) (#3260)
+f1d748e5 os_windows: drop fileapi.h include (#3444; v2 uses os_windows.cpp not os-inl.h)
+7cbf2a69 ansicolor: set_color_mode_ without nested mutex (matches #3323; fixes double-lock)
 # SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
+# SUPERSEDED: 6c5d6329 should_log comment — v2 logger.h already correct
+# SUPERSEDED: 2aa8b6c9 file_helper write fd_ — v2 file_helper.cpp already has guard
+# SUPERSEDED: 2d5179ba syslog_prio_from_level protected — v2 syslog_sink.h already
+# SUPERSEDED: 8b331e2c systemd TID — v2 systemd_sink.h uses msg.thread_id
+# SUPERSEDED: 479a5ac3 Apple pthread_threadid_np / iOS — v2 os_unix.cpp already
+# SUPERSEDED: f24f7fa2 base_sink mutex include — v2 base_sink.cpp
+# SUPERSEDED: 2169a6f6 lock_guard in mpmc_blocking_q — v2 already
+# SUPERSEDED: 271f0f3b daily/hourly max_files docs — v2 already (deduped daily comment line)
+# SUPERSEDED: 8979f7fb Windows path_exists UTF-8 — v2 std::filesystem::exists
+# SUPERSEDED: a3a0c9d6 suggest-override — v2 base_sink.h final override
+# SUPERSEDED: 5ebfc927 MSVC flags clang-cl — v2 CMAKE_CXX_COMPILER_ID STREQUAL MSVC
+# SUPERSEDED: 94a8e87c create_dir drive letter #3079 — v2 filesystem::create_directories
+# N/A: 7cb90d1a MSVC no-exceptions flag — no SPDLOG_NO_EXCEPTIONS in v2 CMake yet
+# SUPERSEDED: d387fdf9 MINGW CMAKE_CXX_EXTENSIONS — already in CMakeLists.txt
+# N/A: 4052bc06 819eb27c 23587b0d registry-inl get() — v2 has no multi-logger registry
+# N/A: 134f9194 registry formatting — no registry headers on v2
+# N/A: 3403f278 set_default_logger registry — v2 global logger API differs
+# N/A: b6eeb736 e5865186 logger-register callbacks + revert — no lasting v1 delta
+# N/A: ddce4215 fmt tweakme include — v2 no tweakme.h
+# N/A: 5532231b 37b84769 registry string_view accessor + revert — no registry on v2
+# N/A: 3b4c775b set_default_logger comment — registry
+# N/A: c9ce17ab INSTALL.md — not in v2 tree
+# N/A: 2969dde4 revert fmt 10.2.1 bump — pair with d8e0ad46 / 5A
+# SUPERSEDED: 6766f873 clang-tidy AnalyzeTemporaryDtors — not in v2 .clang-tidy
+# N/A batch: clang-format / mass reformat SHAs (9e36a158 … b3688ba1, 22b0f4fc, 1bea38ed)
+# N/A: logo / jetbrains assets (c5452e05, 595a5247, ff205fd2, 5d89b5b9)
+# N/A: v1.x version bumps (7c02e204, 238c9ffa, 2122eb21, 8e561337, ac432c36, 48bcf39a, 486b5555, 6fa36017, 79524ddd)
+# N/A: 508d20f0 blame-ignore-revs; 0c4fb032 SPDLOG_CONSTEXPR_FUNC; f4afd81c trivial common.h
+# N/A: d3730937 a5cfbf36 FMT_UNICODE cmake + revert
+# SUPERSEDED: 15f53968 null_sink final
+# SUPERSEDED: 51a0deca daily_file_sink duplicate doc line — already fixed on integration branch
+# SUPERSEDED: 66ac83e7 a34e08c7 .gitignore .vs out/build CMakeSettings — already in .gitignore
+# SUPERSEDED: 2c76e610 Sep vs Sept — src/pattern_formatter.cpp already uses "Sep"
+# SUPERSEDED: e593f669 -Wextra-semi — v2 sources already avoid extra `;` after `}` / `override {}`
+# N/A batch: README / wiki / docs-only SHAs; v1 ci.yml & win CI churn; CMake comment-only; LICENSE optional
+# N/A: 943fcbd7 registry; 27cb4c76 MDC readme; 3edc8036 catch test order; Coverity CI; 7cee026b v1 TSAN CI line

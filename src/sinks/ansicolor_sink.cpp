@@ -43,7 +43,6 @@ void ansicolor_sink<Mutex>::set_color_mode(color_mode mode) {
 
 template <typename Mutex>
 void ansicolor_sink<Mutex>::set_color_mode_(color_mode mode) {
-    std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
     switch (mode) {
         case color_mode::always:
             should_do_colors_ = true;

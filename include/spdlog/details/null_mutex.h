@@ -16,7 +16,7 @@ struct null_mutex {
 
 template <typename T>
 struct null_atomic {
-    T value;
+    T value{};
 
     null_atomic() = default;
 

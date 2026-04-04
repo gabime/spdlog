@@ -67,6 +67,9 @@ option(SPDLOG_NO_THREAD_ID "prevent spdlog from querying the thread id on each l
 option(SPDLOG_DISABLE_GLOBAL_LOGGER "Disable global logger creation" OFF)
 option(SPDLOG_NO_TLS "Disable thread local storage" OFF)
 option(SPDLOG_TIDY "run clang-tidy" OFF)
+set(SPDLOG_DEBUG_POSTFIX "-${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR}d" CACHE STRING
+        "Filename postfix for libraries in debug builds (empty string allowed)")
+option(SPDLOG_MSVC_UTF8 "Enable/disable MSVC /utf-8 flag (recommended for fmt)" ON)
 if (SPDLOG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -231,11 +234,17 @@ target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTER
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 target_link_libraries(spdlog PUBLIC fmt::fmt)
+if (MSVC)
+    if (SPDLOG_MSVC_UTF8)
+        # Pass /utf-8 only for real MSVC (not clang-cl); see fmtlib and #3260.
+        target_compile_options(spdlog PUBLIC $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/utf-8>)
+    endif ()
+endif ()
 spdlog_enable_warnings(spdlog)
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION
         ${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR})
 set(SPDLOG_NAME spdlog-${SPDLOG_VERSION_MAJOR})
-set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX "-${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR}d")
+set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX "${SPDLOG_DEBUG_POSTFIX}")
 # ---------------------------------------------------------------------------------------
 # Set prefix and source group for visual studio
 # ---------------------------------------------------------------------------------------

@@ -269,8 +269,8 @@ bool is_color_terminal() noexcept {
 bool in_terminal(FILE *file) noexcept { return ::isatty(fileno(file)) != 0; }
 
 std::string getenv(const char *field) {
-    char *buf = ::getenv(field);
-    return buf != nullptr ? buf : std::string{};
+    char *buf = std::getenv(field);
+    return buf != nullptr ? std::string(buf) : std::string{};
 }
 
 // Do fsync by FILE pointer

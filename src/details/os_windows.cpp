@@ -6,10 +6,9 @@
 #endif
 
 // clang-format off
-#include "spdlog/details/windows_include.h" // must be included before fileapi.h etc.
+#include "spdlog/details/windows_include.h" // must be first; provides FlushFileBuffers via Windows headers
 // clang-format on
 
-#include <fileapi.h>  // for FlushFileBuffers
 #include <io.h>       // for _get_osfhandle, _isatty, _fileno
 #include <process.h>  // for _get_pid
 #include <sys/stat.h>
@@ -218,21 +217,21 @@ void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
     throw_spdlog_ex(fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
 }
 
+#ifdef _MSC_VER
+    #pragma warning(push)
+    #pragma warning(disable : 4996)
+#endif
 std::string getenv(const char *field) {
-#if defined(_MSC_VER)
-    #if defined(__cplusplus_winrt)
+#if defined(_MSC_VER) && defined(__cplusplus_winrt)
     return std::string{};  // not supported under uwp
-    #else
-    size_t len = 0;
-    char buf[128];
-    bool ok = ::getenv_s(&len, buf, sizeof(buf), field) == 0;
-    return ok ? buf : std::string{};
-    #endif
-#else  // revert to getenv
-    char *buf = ::getenv(field);
-    return buf != nullptr ? buf : std::string{};
+#else
+    char *buf = std::getenv(field);
+    return buf != nullptr ? std::string(buf) : std::string{};
 #endif
 }
+#ifdef _MSC_VER
+    #pragma warning(pop)
+#endif
 
 // Do fsync by FILE handlerpointer
 // Return true on success
