@@ -31,7 +31,15 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 
 ## Conflict resolutions
 
-*(None committed — merge was aborted.)*
+*(None from a merge commit — merge was aborted.)*
+
+## Ports landed (manual / topical)
+
+| v1.x commit | Summary | v2.x location |
+|-------------|---------|---------------|
+| `09a674b7` | `%z` with `pattern_time_type::utc` must print `+00:00` (not local offset). | `src/pattern_formatter.cpp` — `z_formatter` takes `pattern_time_type`; early return for UTC. |
+
+**Validation:** `ctest` Release on Windows — all unit tests passed after this port.
 
 ## Integration branch
 

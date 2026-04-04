@@ -1,0 +1,4 @@
+# v1.x commits ported to integration/v2-sync-v1 (manual / cherry-pick)
+# One line per landed port: <sha> <short subject>
+
+09a674b7 Fix %z when pattern_type_type is utc - should be +00:00

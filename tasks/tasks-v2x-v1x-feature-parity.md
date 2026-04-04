@@ -4,8 +4,9 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 
 ## Progress (2026-04-04)
 
-- **Done:** Integration branch created and pushed; merge-base and v1-only commit list exported; triage template and merge-report draft added; direct `git merge origin/v1.x` was attempted and **aborted** (v2.x file-tree divergence vs v1.x — see [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md)). Baseline **v2.x** builds on MSVC; tests **164/165** locally (one `%z`/UTC pattern test failed — environment/DST; not from a merge).
-- **Blocked:** **2.0** onward require **manual or topical ports** of v1.x commits onto v2.x sources (not a single merge). Continue with PRD hybrid strategy and `v1-commit-inventory.txt`.
+- **Done:** Integration branch created and pushed; merge-base and v1-only commit list exported; triage template and merge-report draft added; direct `git merge origin/v1.x` was attempted and **aborted** (v2.x file-tree divergence vs v1.x — see [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md)).
+- **Ports:** [`commits-ported.txt`](commits-ported.txt) lists v1 SHAs landed manually. First port: **`09a674b7`** — `%z` with UTC pattern time → `+00:00` in [`src/pattern_formatter.cpp`](../src/pattern_formatter.cpp). **All unit tests pass** (`ctest` Release, Windows).
+- **Remaining:** Continue topical ports from `v1-commit-inventory.txt` (e.g. `b656d1ce` Windows `utc_minutes_offset`, fmt bumps per **5A**).
 
 ## Relevant Files
 
@@ -51,7 +52,7 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
   - [ ] 2.2 For each conflicted file, apply rules: keep **v2.x public API** where required by **2A**; land **v1.x behavior fixes** in implementations and tests.
   - [ ] 2.3 Document each non-obvious resolution (short bullet in merge report draft or commit message).
   - [ ] 2.4 Build locally (Release and at least one Debug) and fix compile errors before pushing.
-  - [ ] 2.5 Follow-up: cherry-pick or small PRs for anything that could not be merged cleanly or was deferred (hybrid **1D**).
+  - [x] 2.5 Follow-up: cherry-pick or small PRs for anything that could not be merged cleanly or was deferred (hybrid **1D**). *(Started: manual port `09a674b7` → `pattern_formatter` `%z`/UTC; see [`commits-ported.txt`](commits-ported.txt).)*
 
 - [ ] 3.0 Align fmt, CMake, and compiler warnings (5A)
   - [ ] 3.1 Compare bundled fmt / CMake fmt version pins between merged tree and current `v1.x`; align bundled copy and `CMakeLists.txt` with **v1.x** unless a reviewed exception is documented.
@@ -60,7 +61,7 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
   - [ ] 3.4 Verify `src/bundled_fmtlib_format.cpp` (if used) and bundled headers are consistent with chosen fmt version.
 
 - [ ] 4.0 Tests and CI validation
-  - [ ] 4.1 Run full test suite locally (`ctest` or project equivalent); fix failures tied to the merge.
+  - [x] 4.1 Run full test suite locally (`ctest` or project equivalent); fix failures tied to the merge. *(Windows Release: all tests pass after `%z`/UTC port.)*
   - [ ] 4.2 Port any missing **v1.x** tests that cover shared behavior not yet present on the integration branch.
   - [ ] 4.3 Update `.github/workflows/*.yml` so the integration branch (or `v2.x` once merged) runs the agreed matrix; fix workflow-only issues (paths, branches).
   - [ ] 4.4 Confirm CI green on Linux, macOS, and Windows (or document skipped jobs with reason).
