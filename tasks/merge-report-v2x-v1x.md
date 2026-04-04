@@ -42,6 +42,7 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `0f7562a0` | POSIX `TZ` strings with explicit DST rules in `test_timezone` (avoids musl / impl-defined behavior). | `tests/test_timezone.cpp` |
 | `d2100d5d` | `#include <fcntl.h>` for Unix TCP client (v1 had `tcp_client.h`; v2 uses `tcp_client_unix.h`). | `include/spdlog/details/tcp_client_unix.h` |
 | `3c61b051` | GitHub Actions `actions/checkout@v6` (Node deprecation). | `.github/workflows/linux.yml`, `macos.yml`, `windows.yml` |
+| `9fe79692` | Thread sanitizer: `SPDLOG_SANITIZE_THREAD` option, mutual exclusion with address sanitizer, sanitizers applied to **`spdlog`** lib target (#3237). | `CMakeLists.txt` (options + `spdlog_enable_*` on `spdlog`); `tests/CMakeLists.txt` already used helpers |
 | `9ecdf5c8` | Optional connect timeout (non-blocking + `select`); `SO_RCVTIMEO` / `SO_SNDTIMEO` when `timeout_ms` is positive; `tcp_sink_config::timeout_ms` + ctor overload. | `tcp_client_windows.h`, `tcp_client_unix.h`, `tcp_sink.h` |
 | `45b67eee` | `dup_filter_sink` constructor taking `std::vector<std::shared_ptr<sink>>`. | `include/spdlog/sinks/dup_filter_sink.h` |
 | `847db337` | `dup_filter_sink`: drop ctor `notification_level`; “Skipped …” uses level of last duplicate (`msg.log_level`). | `include/spdlog/sinks/dup_filter_sink.h`, `tests/test_dup_filter.cpp` |
@@ -52,7 +53,7 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `ae1de0dc` | *(N/A)* `load_env_levels("VAR")` — no `spdlog/cfg/` on v2. | — |
 | `cdbd64e2` | `qt_color_sink`: `QString::fromUtf8` length `qsizetype`; `colors_.at` index `static_cast<size_t>(msg.log_level)`. | `include/spdlog/sinks/qt_sinks.h` |
 | `9c582574` | *(SUPERSEDED)* Apple / POSIX.1-2024 use `tm.tm_gmtoff` — v2 `os_unix.cpp` already has the `#if` guard from #3366. | — |
-| `6004e3d1` | **`SPDLOG_NO_TZ_OFFSET`**: `%z` prints `+??:??`; `utc_minutes_offset` returns 0; CMake `PUBLIC` define. `test_timezone` already guarded. | `CMakeLists.txt`, `src/pattern_formatter.cpp`, `os_unix.cpp`, `os_windows.cpp`, `tests/test_pattern_formatter.cpp` |
+| `6004e3d1` | **`SPDLOG_NO_TZ_OFFSET`**: `%z` prints `+??:??`; `utc_minutes_offset` returns 0; CMake `PUBLIC` define. `test_timezone` already guarded. | `CMakeLists.txt`, `src/pattern_formatter.cpp`, `src/details/os_unix.cpp`, `src/details/os_windows.cpp`, `tests/test_pattern_formatter.cpp` |
 | `10320184` | *(SUPERSEDED)* `#3360` padding truncate / `%D` width — v2 `pattern_formatter.cpp` already matches. | — |
 | `5931a3d6` | *(SUPERSEDED)* Win32 header include order (`windows_include.h` before others) — v2 `src/details/os_windows.cpp`; no `os-inl.h`. | — |
 | `ba508057` | *(SUPERSEDED)* `binary_example` must not use `vector<char>(80)` with 80 pushes — v2 `example.cpp` builds buffer with `push_back` in a loop. | — |
@@ -165,13 +166,14 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `276ee5f5` `7f8060d5` `96a8f625` | **SUPERSEDED** | fmt **11.1** `to_string_view` / external fmt fixes — v2 `logger::log_with_format_` + no v1 `common.h` `to_string_view(fmt)` chain (`1685e694` triage). |
 | `3c23c27d` | **N/A** | Revert of `7f8060d5`; no separate port. |
 
-### Triage close-out (MDC / TSAN / fmt **5A**)
+### Triage close-out (MDC / fmt **5A**)
+
+*`9fe79692` (TSAN CMake) is listed in **Ports landed** above.*
 
 | v1.x commit(s) | Disposition | Notes |
 |----------------|-------------|--------|
 | `d03eb40c` … `c1fbafdc` | **N/A** | **MDC** stack (`mdc.h`, examples, TLS fix) — v2 tree has no MDC public API (**PRD 2A**). |
 | `7e022c43` | **N/A** | **Feature #3379** bundles MDC with v1-only layout; non-MDC behavior covered by other ports. |
-| `9fe79692` | **PORTED** | **TSAN:** `SPDLOG_SANITIZE_THREAD` CMake option, mutual exclusion with address sanitizer, `spdlog_enable_thread_sanitizer` / `spdlog_enable_addr_sanitizer` on **`spdlog`** target (tests already used helpers). |
 | `0d31acae` `4418909a` `ea3e747e` `878ad2e3` `2c1eafc8` `3f03542d` | **SUPERSEDED** | **fmt 12.1.0** FetchContent + **`FMT_INSTALL ON`** (fmt 12 subproject default) + MSVC **`/wd4834`** on `fmt` — matches `origin/v1.x` bundled `FMT_VERSION` **120100** (**5A**). |
 
 **Full SHA list:** [`v1-triage-complete.md`](v1-triage-complete.md).
