@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 41 **PORTED**, 58 **SUPERSEDED**, 129 **N/A**, 17 **PENDING**.
+**Counts (this revision):** 42 **PORTED**, 56 **SUPERSEDED**, 147 **N/A**, 0 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -72,7 +72,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `4052bc06` | Use find if registry is bigger than 20 in  registry::get(std::string_view logger_name) | N/A (v2.x no `registry::get` / `registry-inl.h`) |
 | `819eb27c` | Use find if registry is bigger than 10 in  registry::get(std::string_view logger_name) | N/A (same) |
 | `23587b0d` | Fixed regisry-inl.h | N/A (same) |
-| `d03eb40c` | Added Mapped Diagnostic Context (MDC) support (#2907) | PENDING |
+| `d03eb40c` | Added Mapped Diagnostic Context (MDC) support (#2907) | N/A (v2 has no `mdc.h` / MDC API — **2A** surface) |
 | `73e2e02b` | Fix #3038 (#3044) | SUPERSEDED (`src/details/os_windows.cpp` `wstr_to_utf8buf` — `/ 4` bounds, `(wstr_size + 1) * 4` vs capacity) |
 | `6766f873` | Remove the legacy AnalyzeTemporaryDtors option from .clang-tidy. (#3048) | SUPERSEDED (`.clang-tidy` on v2 does not set `AnalyzeTemporaryDtors`) |
 | `6725584e` | Make async_logger::flush() synchronous and wait for the flush to complete (#3049) | N/A (v2 has no `async_logger` class; use `async_sink::flush` / `wait_all`) |
@@ -82,12 +82,12 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `62302019` | Update test_async.cpp | N/A (same) |
 | `d8e0ad46` | Updated bundled fmt to 10.2.1 | N/A (superseded by current bundled fmt in `cmake/fmtlib.cmake`; track fmt under **5A**) |
 | `2969dde4` | Revert "Updated bundled fmt to 10.2.1" | N/A (revert of `d8e0ad46`; triage fmt bumps under **5A** separately) |
-| `f030afe6` | Update mdc.h | PENDING |
-| `1f930174` | Update mdc.h | PENDING |
-| `4517ce8b` | Update mdc.h | PENDING |
-| `cba66029` | Update mdc | PENDING |
-| `1253a57d` | Add mdc support for default format | PENDING |
-| `8fed530b` | Update mdc.h | PENDING |
+| `f030afe6` | Update mdc.h | N/A (same — no MDC on v2) |
+| `1f930174` | Update mdc.h | N/A (same) |
+| `4517ce8b` | Update mdc.h | N/A (same) |
+| `cba66029` | Update mdc | N/A (same) |
+| `1253a57d` | Add mdc support for default format | N/A (same) |
+| `8fed530b` | Update mdc.h | N/A (same) |
 | `a2b42620` | Update CMakeLists.txt to fix #3029 | SUPERSEDED (v2 `cmake_minimum_required(VERSION 3.23)` — supersedes v1 `3.10...3.21`) |
 | `1e7d7e07` | Updated bundled fmt to 10.2.1 | N/A (duplicate fmt bump line; **5A**) |
 | `e3f5a4fe` | Update cmake to define FMT_LIB_EXPORT when building shared lib | SUPERSEDED (v2 links `fmt::fmt` from FetchContent / external; fmt target owns `FMT_*` exports — not inlined bundled fmt in `spdlog`) |
@@ -106,8 +106,8 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `37b84769` | Revert pr #3023 (std::string_view overloads for logger accessor for c++17) | N/A (revert of `5532231b`; registry not on v2) |
 | `22b0f4fc` | Clang format | N/A (formatting only) |
 | `2122eb21` | Update spdlog version to 1.14.1 | N/A (v1.x release version bump) |
-| `3b4fd93b` | Updated comment about mdc | PENDING |
-| `2d4acf8c` | Added mdc example | PENDING |
+| `3b4fd93b` | Updated comment about mdc | N/A (same) |
+| `2d4acf8c` | Added mdc example | N/A (same) |
 | `27cb4c76` | Added mdc example to readme | N/A (docs; v2 has no MDC yet) |
 | `c3aed4b6` | Add wide character formatting and output support to wincolor_sink. (#3092) | PORTED (`SPDLOG_WCHAR_CONSOLE` / `SPDLOG_UTF8_TO_WCHAR_CONSOLE`; `WriteConsoleW` + `utf8_to_wstrbuf` in `wincolor_sink.cpp`) |
 | `eeb22c13` | Allow customization of syslog_sink (#3124) | SUPERSEDED (`syslog_sink.h` — `virtual syslog_prio_from_level`, `levels_array` protected) |
@@ -117,8 +117,8 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `a3a0c9d6` | compilation error gcc 8.5 with [-Werror=suggest-override] (#3158) | SUPERSEDED (`base_sink.h` already `final override` on `log`/`flush`/`set_pattern`/`set_formatter`) |
 | `271f0f3b` | Add info about max_files in the docstrings of hourly/daily file sinks (#3170) | SUPERSEDED (doc text already in `daily_file_sink.h` / `hourly_file_sink.h`; removed duplicate `max_files` line in daily) |
 | `2169a6f6` | use std::lock_guard instead of std::unique_lock (#3179) | SUPERSEDED (`mpmc_blocking_q.h` — `overrun_counter`/`size`/`reset_overrun_counter` already use `lock_guard`) |
-| `362214a3` | fix/issue-3101: fix the issue where mdc ignores SPDLOG_NO_TLS (#3184) | PENDING |
-| `c1fbafdc` | Update mdc.h (#3185) | PENDING |
+| `362214a3` | fix/issue-3101: fix the issue where mdc ignores SPDLOG_NO_TLS (#3184) | N/A (same) |
+| `c1fbafdc` | Update mdc.h (#3185) | N/A (same) |
 | `ffd5aa41` | Update conan install command in README (#3172) | N/A (docs-only) |
 | `bdd1dff3` | Update CMakeLists.txt, Fix spelling errors (#3193) | N/A (trivial CMake / spelling; no functional port) |
 | `2c76e610` | Fix #3194 - Use Sep instead of Sept for abbreviated  month | SUPERSEDED (`src/pattern_formatter.cpp` abbreviated months already use `"Sep"`) |
@@ -129,7 +129,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `63d18842` | Gabime/async flush (#3235) | N/A (follow-on to v1 thread-pool flush; not applicable on v2 `async_sink`) |
 | `85bdab0c` | Update bundled fmt to 11.0.2 (#3236) | SUPERSEDED (bundled fmt **11.1.4** in `cmake/fmtlib.cmake`) |
 | `96c9a62b` | Fixed race condition in tests | SUPERSEDED (`tests/test_misc.cpp` “clone async” uses `test_sink_mt` / `async_sink`) |
-| `9fe79692` | Gabime/tsan (#3237) | PENDING |
+| `9fe79692` | Gabime/tsan (#3237) | PORTED (`SPDLOG_SANITIZE_THREAD` option + mutual exclusion with ADDRESS; `spdlog_enable_*` on `spdlog` lib + tests — matches v1 #3237) |
 | `7a950e02` | add /utf-8 flag for msvc | PORTED (`CMakeLists.txt` — `SPDLOG_MSVC_UTF8` + MSVC-only genex; see `9edab1b5`) |
 | `d3730937` | Better support for FMT_UNICODE in cmake | N/A (pair with `a5cfbf36` revert; triage **FMT_UNICODE** under **5A**) |
 | `a5cfbf36` | Revert "Better support for FMT_UNICODE in cmake" | N/A (revert of `d3730937`) |
@@ -196,9 +196,9 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `bb8694b5` | Fix links for #3380 (#3381) | N/A (docs-only) |
 | `847db337` | dup_filter_sink: remove notification_level argument; use last message log level for notification instead (#3390) | PORTED (`dup_filter_sink.h` — `skipped_msg_log_level_` from `msg.log_level`; `tests/test_dup_filter.cpp`) |
 | `548b2642` | Fix warning C4530 (#3393) | N/A (v2 `CMakeLists.txt` has no `SPDLOG_NO_EXCEPTIONS` / `/EHs-c-` / `_HAS_EXCEPTIONS=0` block) |
-| `7e022c43` | Feature 3379 (#3397) | PENDING |
+| `7e022c43` | Feature 3379 (#3397) | N/A (v1 bundle: MDC + rotating-file / CMake / tests; v2 has no MDC — non-MDC slices already covered elsewhere) |
 | `943fcbd7` | Register replace logger (#3398) | N/A (v1 registry API) |
-| `0d31acae` | Fmt 11.2.0 (#3399) | PENDING |
+| `0d31acae` | Fmt 11.2.0 (#3399) | N/A (bundled fmt bump — align with **5A**; current pin **11.1.4** in `cmake/fmtlib.cmake`) |
 | `070e1c97` | Update comment | N/A (comment-only) |
 | `7ca6a4fb` | Update commemt | N/A (comment-only) |
 | `c73b8cc4` | Update comment | N/A (comment-only) |
@@ -219,7 +219,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `9ecdf5c8` | Added timeout for TCP calls such as connect, send, recv (#3432) | PORTED |
 | `3edc8036` | Run tests in the order they are declared in the source file. (#3451) | N/A (Catch2 test registration order; optional) |
 | `f1d748e5` | Remove the fileapi.h include in os-inl.h (#3444) | PORTED (`src/details/os_windows.cpp` — drop redundant `#include <fileapi.h>`; `windows_include.h` / `windows.h` sufficient for `FlushFileBuffers`) |
-| `4418909a` | Bump fmt to 12.0.0 | PENDING |
+| `4418909a` | Bump fmt to 12.0.0 | N/A (fmt **12.x** — **5A**) |
 | `1bea38ed` | clang-format | N/A (formatting only) |
 | `486b5555` | Version 1.16.0 | N/A (v1.x release version bump) |
 | `dd3ca04a` | set CMAKE_BUILD_TYPE only in top-level project (#3480) | PORTED |
@@ -229,11 +229,11 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `8806ca65` | Fix UWP detection. (#3489) | PORTED (`src/details/os_windows.cpp` `getenv` — `WINAPI_FAMILY` vs `WINAPI_FAMILY_DESKTOP_APP`) |
 | `6004e3d1` | Fix issue #3483 (#3491) | PORTED (`SPDLOG_NO_TZ_OFFSET` CMake option; `z_formatter`; `utc_minutes_offset` stubs; tests; v1 `test_stdout_api` extra case N/A) |
 | `b3688ba1` | Set IndentPPDirectives to "None" on clang-format | N/A (formatting / tooling only) |
-| `ea3e747e` | Bump fmt to 12.1.0 | PENDING |
+| `ea3e747e` | Bump fmt to 12.1.0 | N/A (same — **5A**) |
 | `c5061bb9` | Update LICENSE file | N/A (license text may differ; reconcile at release if needed) |
-| `878ad2e3` | Supress MSVC C4834 warning triggeed by fmt 12.1.0 | PENDING |
-| `2c1eafc8` | Backport warning fix from fmt head | PENDING |
-| `3f03542d` | Remove warning 4834 suppression | PENDING |
+| `878ad2e3` | Supress MSVC C4834 warning triggeed by fmt 12.1.0 | N/A (MSVC C4834 + fmt **12.1** — **5A** with fmt bump) |
+| `2c1eafc8` | Backport warning fix from fmt head | N/A (same) |
+| `3f03542d` | Remove warning 4834 suppression | N/A (same) |
 | `d2100d5d` | Fix: include <fcntl.h> in tcp_client.h to avoid compilation failures on Unix (#3497) | PORTED |
 | `0209b12c` | tests: fix unit tests to not be affected by custom level names (#3492) | PORTED (`tests/includes.h` — `#undef` custom level name macros before spdlog includes) |
 | `32dd298d` | Docs: fix misleading comment in blocking_queue header (#3504) | PORTED (`include/spdlog/details/mpmc_blocking_q.h` file header; per-method comments already correct) |

@@ -165,6 +165,15 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `276ee5f5` `7f8060d5` `96a8f625` | **SUPERSEDED** | fmt **11.1** `to_string_view` / external fmt fixes — v2 `logger::log_with_format_` + no v1 `common.h` `to_string_view(fmt)` chain (`1685e694` triage). |
 | `3c23c27d` | **N/A** | Revert of `7f8060d5`; no separate port. |
 
+### Triage close-out (MDC / TSAN / fmt **5A**)
+
+| v1.x commit(s) | Disposition | Notes |
+|----------------|-------------|--------|
+| `d03eb40c` … `c1fbafdc` | **N/A** | **MDC** stack (`mdc.h`, examples, TLS fix) — v2 tree has no MDC public API (**PRD 2A**). |
+| `7e022c43` | **N/A** | **Feature #3379** bundles MDC with v1-only layout; non-MDC behavior covered by other ports. |
+| `9fe79692` | **PORTED** | **TSAN:** `SPDLOG_SANITIZE_THREAD` CMake option, mutual exclusion with address sanitizer, `spdlog_enable_thread_sanitizer` / `spdlog_enable_addr_sanitizer` on **`spdlog`** target (tests already used helpers). |
+| `0d31acae` `4418909a` `ea3e747e` `878ad2e3` `2c1eafc8` `3f03542d` | **N/A** | **fmt 11.2+ / 12.x** and **MSVC C4834** follow-on — defer to **5A** (current bundled **11.1.4**). |
+
 **Full SHA list:** [`v1-triage-complete.md`](v1-triage-complete.md).
 
 **Validation:** `ctest` Release on Windows — all unit tests passed after these ports.

@@ -6,9 +6,14 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 
 - **Done:** Integration branch created and pushed; merge-base and v1-only commit list exported; triage template and merge-report draft added; direct `git merge origin/v1.x` was attempted and **aborted** (v2.x file-tree divergence vs v1.x — see [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md)).
 - **Ports:** [`commits-ported.txt`](commits-ported.txt). **Full triage (245 v1-only SHAs):** [`v1-triage-complete.md`](v1-triage-complete.md) — **PORTED**, **PENDING**, **SUPERSEDED**, or **N/A** (merge commits). **All unit tests pass** (`ctest` Release, Windows).
-- **Latest pass:** Triage batch — **SUPERSEDED** fmt **11.1.x** / `to_string_view` / bundled pin (`faa0a7a9`, `85bdab0c`, `276ee5f5`, `7f8060d5`, `96a8f625`); **N/A** v1 `async_logger` / `thread_pool` flush (`fe79bfcc`, `6725584e`, `ec661f98`, `a19c76a4`, `62302019`, `16e0d2e7`, `63d18842`), fmt 10.2.1 bumps (`d8e0ad46`, `1e7d7e07`), revert `3c23c27d`. Prior: `c3aed4b6` wchar console. See [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md).
-- **Triage snapshot:** **41 PORTED**, **58 SUPERSEDED**, **129 N/A**, **17 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md).
-- **Remaining:** Topical ports from `v1-commit-inventory.txt` — **fmt / CMake 5A** (bundled fmt bump, warning flags); large batches still **PENDING**.
+- **Latest pass (triage-only, no code):** Pushed as **`aeb67cfe`** on `origin/integration/v2-sync-v1`. Reclassified **15** v1-only commits that do not apply to the current v2 integration branch as written:
+  - **N/A — v1 `async_logger` / `thread_pool`** (v2 uses `async_sink` + `mpmc_blocking_q`): `fe79bfcc`, `6725584e`, `ec661f98`, `a19c76a4`, `62302019` (thread-pool / async-logger behavior and tests); `16e0d2e7`, `63d18842` (flush promise / condition_variable / callback on the v1 `thread_pool`).
+  - **N/A — bundled fmt 10.2.1 churn:** `d8e0ad46`, `1e7d7e07` — superseded by the current fmt pin (**5A**).
+  - **N/A — revert pair:** `3c23c27d` (revert of external-fmt #3312; covered with `7f8060d5` triage).
+  - **SUPERSEDED — fmt 11.x / `to_string_view` / bundle:** `faa0a7a9`, `85bdab0c` (**`cmake/fmtlib.cmake`** already fmt **11.1.4**); `276ee5f5`, `7f8060d5`, `96a8f625` (v2 has no v1 `common.h` `to_string_view(fmt)` chain; logging uses **`log_with_format_`** / **`fmt::vformat_to`**, same story as **`1685e694`**).
+  - Docs: [`v1-triage-complete.md`](v1-triage-complete.md), [`commits-ported.txt`](commits-ported.txt) comment block, [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md) subsection **“Triage-only batch (v1 async / fmt delta vs v2)”**. Prior code work: `c3aed4b6` wchar console.
+- **Triage snapshot:** **42 PORTED**, **56 SUPERSEDED**, **147 N/A**, **0 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md) (**3A** triage complete for the v1-only SHA list).
+- **Latest (code + triage):** **`9fe79692`** ported — `SPDLOG_SANITIZE_THREAD`, mutual exclusion with `SPDLOG_SANITIZE_ADDRESS`, and thread/address sanitizers applied to the **`spdlog`** library target (CI already passes `-DSPDLOG_SANITIZE_THREAD` from `.github/workflows/linux.yml`). **MDC** v1 commits and **Feature 3379** marked **N/A** (no `mdc.h` on v2). **fmt 11.2+ / 12.x / C4834** chain marked **N/A** under **5A** (bundled fmt remains **11.1.4** until a coordinated bump).
 
 ## Relevant Files
 
@@ -71,7 +76,7 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
   - [ ] 4.5 Spot-check platform-specific areas called out in PRD (e.g. Windows/UWP, POSIX `TZ`, TCP) on representative configs if possible.
 
 - [ ] 5.0 Documentation, merge report, and release readiness (4B)
-  - [ ] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *(Partial: [`v1-triage-complete.md`](v1-triage-complete.md) lists all 245 SHAs; **41** ported, **58** superseded, **129** N/A, **17** **PENDING** — reclassify PENDING over time.)*
+  - [x] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *([`v1-triage-complete.md`](v1-triage-complete.md): **42** ported, **56** superseded, **147** N/A, **0** pending; last code port **`9fe79692`** TSAN CMake; MDC + fmt **12.x** chain **N/A**.)*
   - [x] 5.2 Write **merge report**: areas touched, conflict resolutions, rejected or deferred ports with rationale.
   - [ ] 5.3 Update **README** (build, fmt version, branch notes) and version header for v2.x pre-release.
   - [ ] 5.4 Add **migration / release notes** for downstream users (API preserved per **2A**, dependency changes per **5A**).
