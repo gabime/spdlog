@@ -71,6 +71,11 @@ option(SPDLOG_TIDY "run clang-tidy" OFF)
 set(SPDLOG_DEBUG_POSTFIX "-${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR}d" CACHE STRING
         "Filename postfix for libraries in debug builds (empty string allowed)")
 option(SPDLOG_MSVC_UTF8 "Enable/disable MSVC /utf-8 flag (recommended for fmt)" ON)
+if (WIN32)
+    option(SPDLOG_WCHAR_CONSOLE "Decode UTF-8 and write with WriteConsoleW (Unicode console output)" OFF)
+else ()
+    set(SPDLOG_WCHAR_CONSOLE OFF CACHE BOOL "non supported option" FORCE)
+endif ()
 if (SPDLOG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -263,13 +268,15 @@ endif ()
 # ---------------------------------------------------------------------------------------
 # Private defines according to the options
 # ---------------------------------------------------------------------------------------
+set(SPDLOG_UTF8_TO_WCHAR_CONSOLE ${SPDLOG_WCHAR_CONSOLE})
 foreach (SPDLOG_OPTION
         SPDLOG_CLOCK_COARSE
         SPDLOG_PREVENT_CHILD_FD
         SPDLOG_NO_THREAD_ID
         SPDLOG_DISABLE_GLOBAL_LOGGER
         SPDLOG_NO_TLS
-        SPDLOG_FWRITE_UNLOCKED)
+        SPDLOG_FWRITE_UNLOCKED
+        SPDLOG_UTF8_TO_WCHAR_CONSOLE)
     if (${SPDLOG_OPTION})
         target_compile_definitions(spdlog PRIVATE ${SPDLOG_OPTION})
     endif ()

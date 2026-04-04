@@ -86,6 +86,8 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `c1569a3d` | *(SUPERSEDED)* Catch2 **v3.5.0** — `tests/CMakeLists.txt` `FetchContent` `GIT_TAG`. | — |
 | `73e2e02b` | *(SUPERSEDED)* `#3038` / `#3044` UTF-16→UTF-8 size checks — `wstr_to_utf8buf` in `os_windows.cpp`. | — |
 | `ad0f31c0` | `test_sink` / callback tests: **`iterator_traits::difference_type`** cast for `end() - eol_len` (#3315). | `tests/test_sink.h`, `tests/test_custom_callbacks.cpp` |
+| `c3aed4b6` | Optional **UTF-8 → wide** console output: `SPDLOG_WCHAR_CONSOLE` / `SPDLOG_UTF8_TO_WCHAR_CONSOLE`; `print_range_` uses `utf8_to_wstrbuf` + `WriteConsoleW` (#3092). | `CMakeLists.txt`, `src/sinks/wincolor_sink.cpp` |
+| `b6da5944` | *(N/A)* `async_msg` move-assign flush callback — v2 has no v1 `async_msg` / `flush_callback` shape (#3232). | — |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |

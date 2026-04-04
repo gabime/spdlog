@@ -33,6 +33,7 @@ cdbd64e2 qt_sinks: qsizetype for fromUtf8 lengths; colors_.at size_t (#3487)
 24dde318 rotating_file_sink::rotate_now: lock mutex (#3281)
 65e388e8 basic_file_sink::truncate() + test (#3280)
 ad0f31c0 test_sink + callback_sink tests: iterator_traits cast for end()-eol (#3315)
+c3aed4b6 SPDLOG_WCHAR_CONSOLE / WriteConsoleW + utf8_to_wstrbuf path in wincolor_sink (#3092)
 # SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
 # SUPERSEDED: 6c5d6329 should_log comment — v2 logger.h already correct
 # SUPERSEDED: 2aa8b6c9 file_helper write fd_ — v2 file_helper.cpp already has guard
@@ -102,3 +103,4 @@ ad0f31c0 test_sink + callback_sink tests: iterator_traits cast for end()-eol (#3
 # SUPERSEDED: 1e6250e1 d7155530 fwrite_bytes + CMake SPDLOG_FWRITE_UNLOCKED
 # SUPERSEDED: c1569a3d Catch2 v3.5.0 — tests/CMakeLists.txt GIT_TAG
 # SUPERSEDED: 73e2e02b #3038 wstr_to_utf8buf — os_windows.cpp /4 and *4
+# N/A: b6da5944 async_msg flush_callback move-assign — no v1 async_msg on v2 (#3232)

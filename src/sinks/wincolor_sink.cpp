@@ -10,6 +10,7 @@
 #include "spdlog/sinks/wincolor_sink.h"
 
 #include "spdlog/common.h"
+#include "spdlog/details/os.h"
 
 namespace spdlog {
 namespace sinks {
@@ -108,8 +109,15 @@ std::uint16_t wincolor_sink<Mutex>::set_foreground_color_(std::uint16_t attribs)
 template <typename Mutex>
 void wincolor_sink<Mutex>::print_range_(const memory_buf_t &formatted, size_t start, size_t end) {
     if (end > start) {
+#if defined(SPDLOG_UTF8_TO_WCHAR_CONSOLE)
+        wmemory_buf_t wformatted;
+        details::os::utf8_to_wstrbuf(string_view_t(formatted.data() + start, end - start), wformatted);
+        auto size = static_cast<DWORD>(wformatted.size());
+        auto ignored = ::WriteConsoleW(static_cast<HANDLE>(out_handle_), wformatted.data(), size, nullptr, nullptr);
+#else
         auto size = static_cast<DWORD>(end - start);
         auto ignored = ::WriteConsoleA(static_cast<HANDLE>(out_handle_), formatted.data() + start, size, nullptr, nullptr);
+#endif
         (void)(ignored);
     }
 }

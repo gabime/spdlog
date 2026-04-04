@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 40 **PORTED**, 53 **SUPERSEDED**, 118 **N/A**, 34 **PENDING**.
+**Counts (this revision):** 41 **PORTED**, 53 **SUPERSEDED**, 119 **N/A**, 32 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -109,7 +109,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `3b4fd93b` | Updated comment about mdc | PENDING |
 | `2d4acf8c` | Added mdc example | PENDING |
 | `27cb4c76` | Added mdc example to readme | N/A (docs; v2 has no MDC yet) |
-| `c3aed4b6` | Add wide character formatting and output support to wincolor_sink. (#3092) | PENDING |
+| `c3aed4b6` | Add wide character formatting and output support to wincolor_sink. (#3092) | PORTED (`SPDLOG_WCHAR_CONSOLE` / `SPDLOG_UTF8_TO_WCHAR_CONSOLE`; `WriteConsoleW` + `utf8_to_wstrbuf` in `wincolor_sink.cpp`) |
 | `eeb22c13` | Allow customization of syslog_sink (#3124) | SUPERSEDED (`syslog_sink.h` — `virtual syslog_prio_from_level`, `levels_array` protected) |
 | `d276069a` | make example compatible with fmt 11 (#3130) | SUPERSEDED (`example/example.cpp` `fmt::formatter::format` already `const`) |
 | `885b5473` | Fix building with `FMT_ENFORCE_COMPILE_STRING` (#3137) | SUPERSEDED (`rotating_file_sink::calc_filename` builds path via `ostringstream`, not `fmt::format` literal — `rotating_file_sink.cpp`) |
@@ -125,7 +125,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `e593f669` | Fix warning - extra ';' for -Wextra-semi (#3198) | SUPERSEDED (v2 `bench` / `example` / `callback_sink` / `msvc_sink` already match; no stray `};` / `override{};`) |
 | `ee168957` | Improve Cross-Platform Build Instructions in Documentation (#3229) | N/A (v1 docs) |
 | `16e0d2e7` | Exchange promise for condition_variable when flushing (fixes #3221) (#3228) | PENDING |
-| `b6da5944` | Ensure flush callback gets called in move-assign operator (#3232) | PENDING |
+| `b6da5944` | Ensure flush callback gets called in move-assign operator (#3232) | N/A (v2 has no v1 `async_msg` / `flush_callback` in `thread_pool.hpp` — different async message path) |
 | `63d18842` | Gabime/async flush (#3235) | PENDING |
 | `85bdab0c` | Update bundled fmt to 11.0.2 (#3236) | PENDING |
 | `96c9a62b` | Fixed race condition in tests | SUPERSEDED (`tests/test_misc.cpp` “clone async” uses `test_sink_mt` / `async_sink`) |
