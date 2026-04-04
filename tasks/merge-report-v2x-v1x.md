@@ -191,6 +191,10 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 
 - **Remote:** `origin/integration/v2-sync-v1` (pushed; open PR against `v2.x` when ready.)
 
+## Migration and release notes (PRD **5.4**)
+
+Downstream-facing guidance (**dependencies**, **CMake**, **v1 vs v2 API differences**, upgrade checklist): **[`tasks/migration-notes-v2x-v1x-integration.md`](migration-notes-v2x-v1x-integration.md)**.
+
 ## Sign-off
 
 - [ ] Maintainer review of this report and updated strategy.

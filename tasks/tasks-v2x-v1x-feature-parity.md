@@ -14,6 +14,7 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
   - Docs: [`v1-triage-complete.md`](v1-triage-complete.md), [`commits-ported.txt`](commits-ported.txt) comment block, [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md) subsection **“Triage-only batch (v1 async / fmt delta vs v2)”**. Prior code work: `c3aed4b6` wchar console.
 - **Triage snapshot:** **42 PORTED**, **62 SUPERSEDED**, **141 N/A**, **0 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md) (**3A** complete).
 - **5A (fmt):** Bundled **fmt 12.1.0** via `cmake/fmtlib.cmake` (matches `origin/v1.x` `FMT_VERSION` **120100**); **`FMT_INSTALL ON`** for fmt 12 subproject + install export; MSVC **`/wd4834`** on target **`fmt`**; **`find_dependency(fmt 12)`** in `cmake/spdlogConfig.cmake.in`; README notes bundled vs external. Prior: **`9fe79692`** TSAN CMake; MDC / Feature 3379 **N/A**.
+- **5.4 (migration / release notes):** [`migration-notes-v2x-v1x-integration.md`](migration-notes-v2x-v1x-integration.md) — fmt **12.x**, CMake options, intentional v1 vs v2 API gaps (**MDC**, **async_logger**, **cfg/registry**), behavioral port summary, upgrade checklist.
 
 ## Relevant Files
 
@@ -27,6 +28,7 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 - `docs/` (if present on branch) — Additional documentation for v2.x vs v1.x.
 - **`cmake/fmtlib.cmake`** — FetchContent **fmt** version (**5A**; v2.x does not vendor `include/spdlog/fmt/bundled/` like v1.x).
 - [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md) — Merge report (extend as ports land).
+- [`migration-notes-v2x-v1x-integration.md`](migration-notes-v2x-v1x-integration.md) — Migration / release notes for downstream users (**5.4**).
 
 ### Notes
 
@@ -79,6 +81,6 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
   - [x] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *([`v1-triage-complete.md`](v1-triage-complete.md): **42** / **62** / **141** / **0**; **5A** fmt **12.1.0** triage updates for former fmt-bump rows.)*
   - [x] 5.2 Write **merge report**: areas touched, conflict resolutions, rejected or deferred ports with rationale.
   - [x] 5.3 Update **README** (build, fmt version, branch notes) and version header for v2.x pre-release. *(fmt **12.1.0** / external **12.x** note in Features.)*
-  - [ ] 5.4 Add **migration / release notes** for downstream users (API preserved per **2A**, dependency changes per **5A**).
+  - [x] 5.4 Add **migration / release notes** for downstream users (API preserved per **2A**, dependency changes per **5A**). *([`migration-notes-v2x-v1x-integration.md`](migration-notes-v2x-v1x-integration.md); linked from [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md).)*
   - [ ] 5.5 Open PR from integration branch to `v2.x` (or maintainer process); obtain **stakeholder sign-off** per PRD success metrics.
   - [ ] 5.6 Tag or schedule **v2.x pre-release** per **4B** milestone once CI and review are complete.
