@@ -75,6 +75,14 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `24dde318` | `rotating_file_sink::rotate_now` takes **`std::lock_guard<Mutex>`** before `rotate_()` (#3281). | `src/sinks/rotating_file_sink.cpp` |
 | `a2b42620` | *(SUPERSEDED)* `cmake_minimum_required` range for FetchContent — v2 requires **CMake 3.23**. | — |
 | `f355b3d5` | *(SUPERSEDED)* daily logger test uses `fmt::format` for custom calculator — `tests/test_daily_and_rotation_loggers.cpp` already matches. | — |
+| `65e388e8` | `basic_file_sink::truncate()` — lock + `file_helper_.reopen(true)` (#3280). | `include/spdlog/sinks/basic_file_sink.h`, `src/sinks/basic_file_sink.cpp`, `tests/test_file_logging.cpp` |
+| `b7e0e2c2` | *(SUPERSEDED)* `#3073` `source_loc::empty` — v2 uses `uint_least32_t` line and null checks (`source_loc.h`). | — |
+| `71925ca3` | *(SUPERSEDED)* drop `FMT_DEPRECATED_*` from bundled fmt shim — v2 has no v1 `spdlog/fmt/fmt.h` block. | — |
+| `fa6605dc` | *(SUPERSEDED)* `test_create_dir` comment typo — already fixed. | — |
+| `885b5473` | *(SUPERSEDED)* `FMT_ENFORCE_COMPILE_STRING` + rotating `calc_filename` — v2 builds filename via `ostringstream` (`rotating_file_sink.cpp`). | — |
+| `96c9a62b` | *(SUPERSEDED)* async clone test race — `test_misc.cpp` uses `test_sink_mt`. | — |
+| `1e6250e1` | *(SUPERSEDED)* `fwrite_bytes` / non-locking fwrite — `os_unix.cpp`, `os_windows.cpp`, `file_helper`, CMake. | — |
+| `d7155530` | *(SUPERSEDED)* `SPDLOG_FWRITE_UNLOCKED` from symbol check — same CMake path as above. | — |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |

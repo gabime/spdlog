@@ -20,6 +20,7 @@ class basic_file_sink final : public base_sink<Mutex> {
 public:
     explicit basic_file_sink(const filename_t &filename, bool truncate = false, const file_event_handlers &event_handlers = {});
     const filename_t &filename() const;
+    void truncate();
 
 protected:
     void sink_it_(const details::log_msg &msg) override;

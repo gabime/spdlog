@@ -31,6 +31,7 @@ cdbd64e2 qt_sinks: qsizetype for fromUtf8 lengths; colors_.at size_t (#3487)
 687226d9 udp_sink: const udp_sink_config& ctor (#3520); dist_sink already std::move(sinks)
 1245bf8e README.md user-defined type: fmt::format_to (#3259); example already used fmt::
 24dde318 rotating_file_sink::rotate_now: lock mutex (#3281)
+65e388e8 basic_file_sink::truncate() + test (#3280)
 # SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
 # SUPERSEDED: 6c5d6329 should_log comment — v2 logger.h already correct
 # SUPERSEDED: 2aa8b6c9 file_helper write fd_ — v2 file_helper.cpp already has guard
@@ -92,3 +93,9 @@ cdbd64e2 qt_sinks: qsizetype for fromUtf8 lengths; colors_.at size_t (#3487)
 # SUPERSEDED: 951c5b99 rotate_now — rotating_file_sink.cpp + test rotating_file_logger4
 # SUPERSEDED: a2b42620 cmake_minimum 3.10..3.21 — v2 requires 3.23 (#3029)
 # SUPERSEDED: f355b3d5 test_daily custom calculator — test_daily_and_rotation_loggers.cpp uses fmt::format
+# SUPERSEDED: b7e0e2c2 #3073 source_loc::empty — v2 source_loc.h (unsigned line + null checks)
+# SUPERSEDED: 71925ca3 FMT_DEPRECATED_* in fmt.h — v2 fmt via common.h / no v1 fmt.h shim
+# SUPERSEDED: fa6605dc test_create_dir comment — already fixed
+# SUPERSEDED: 885b5473 FMT_ENFORCE_COMPILE_STRING — rotating calc_filename uses ostringstream (#3137)
+# SUPERSEDED: 96c9a62b clone async race — test_misc uses test_sink_mt
+# SUPERSEDED: 1e6250e1 d7155530 fwrite_bytes + CMake SPDLOG_FWRITE_UNLOCKED

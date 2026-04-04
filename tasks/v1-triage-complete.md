@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 38 **PORTED**, 44 **SUPERSEDED**, 118 **N/A**, 45 **PENDING**.
+**Counts (this revision):** 39 **PORTED**, 51 **SUPERSEDED**, 118 **N/A**, 37 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -92,17 +92,17 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `1e7d7e07` | Updated bundled fmt to 10.2.1 | PENDING |
 | `e3f5a4fe` | Update cmake to define FMT_LIB_EXPORT when building shared lib | SUPERSEDED (v2 links `fmt::fmt` from FetchContent / external; fmt target owns `FMT_*` exports — not inlined bundled fmt in `spdlog`) |
 | `a0d2187d` | README.md has include missing (#3066) | N/A (docs-only) |
-| `b7e0e2c2` | Fix #3073 | PENDING |
+| `b7e0e2c2` | Fix #3073 | SUPERSEDED (v2 `source_loc::line` is unsigned; `empty()` also checks `filename`/`short_filename` — `include/spdlog/source_loc.h`) |
 | `dd6c9c6e` | Update comment | N/A (comment-only) |
 | `66ac83e7` | Update gitginore to ignore .vs and out/build | SUPERSEDED (`.gitignore` already has `/.vs`, `/out/build`) |
 | `fd61ea93` | Merge branch 'v1.x' of https://github.com/gabime/spdlog into v1.x | N/A (merge commit) |
-| `71925ca3` | Revmoed definition of deprecated fmt macros | PENDING |
+| `71925ca3` | Revmoed definition of deprecated fmt macros | SUPERSEDED (v2 has no v1 `spdlog/fmt/fmt.h` shim with `FMT_DEPRECATED_*`; includes `fmt/base.h` via `common.h`) |
 | `a34e08c7` | Added CMakeSettings.json to gitignore | SUPERSEDED (`.gitignore` already has `/CMakeSettings.json`) |
 | `3403f278` | Don't remove previous defaullt logger from registry in set_default_logger. Fix #3016 | N/A (v2 uses `set_global_logger` / single global logger, not v1 registry) |
 | `3b4c775b` | Update comment about set_default_logger | N/A (v1 registry API; v2 uses `set_global_logger`) |
 | `238c9ffa` | Bump spdlog to version 1.14.0 | N/A (v1.x release version bump) |
 | `94a8e87c` | Fix #3079 | SUPERSEDED (`create_dir` in `os_filesystem.cpp` uses `std::filesystem::create_directories`; Windows tests in `test_create_dir.cpp` already present) |
-| `fa6605dc` | Fix compile | PENDING |
+| `fa6605dc` | Fix compile | SUPERSEDED (`tests/test_create_dir.cpp` Windows comment already ends `C:\\some-folder` without stray `\`) |
 | `37b84769` | Revert pr #3023 (std::string_view overloads for logger accessor for c++17) | N/A (revert of `5532231b`; registry not on v2) |
 | `22b0f4fc` | Clang format | N/A (formatting only) |
 | `2122eb21` | Update spdlog version to 1.14.1 | N/A (v1.x release version bump) |
@@ -112,7 +112,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `c3aed4b6` | Add wide character formatting and output support to wincolor_sink. (#3092) | PENDING |
 | `eeb22c13` | Allow customization of syslog_sink (#3124) | SUPERSEDED (`syslog_sink.h` — `virtual syslog_prio_from_level`, `levels_array` protected) |
 | `d276069a` | make example compatible with fmt 11 (#3130) | SUPERSEDED (`example/example.cpp` `fmt::formatter::format` already `const`) |
-| `885b5473` | Fix building with `FMT_ENFORCE_COMPILE_STRING` (#3137) | PENDING |
+| `885b5473` | Fix building with `FMT_ENFORCE_COMPILE_STRING` (#3137) | SUPERSEDED (`rotating_file_sink::calc_filename` builds path via `ostringstream`, not `fmt::format` literal — `rotating_file_sink.cpp`) |
 | `5ebfc927` | fix: set `/Zc:__cplusplus` and `/MP` to MSVC only (#3139) | SUPERSEDED (`CMakeLists.txt` already uses `CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"` for `/Zc:__cplusplus` and `/MP`) |
 | `a3a0c9d6` | compilation error gcc 8.5 with [-Werror=suggest-override] (#3158) | SUPERSEDED (`base_sink.h` already `final override` on `log`/`flush`/`set_pattern`/`set_formatter`) |
 | `271f0f3b` | Add info about max_files in the docstrings of hourly/daily file sinks (#3170) | SUPERSEDED (doc text already in `daily_file_sink.h` / `hourly_file_sink.h`; removed duplicate `max_files` line in daily) |
@@ -128,7 +128,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `b6da5944` | Ensure flush callback gets called in move-assign operator (#3232) | PENDING |
 | `63d18842` | Gabime/async flush (#3235) | PENDING |
 | `85bdab0c` | Update bundled fmt to 11.0.2 (#3236) | PENDING |
-| `96c9a62b` | Fixed race condition in tests | PENDING |
+| `96c9a62b` | Fixed race condition in tests | SUPERSEDED (`tests/test_misc.cpp` “clone async” uses `test_sink_mt` / `async_sink`) |
 | `9fe79692` | Gabime/tsan (#3237) | PENDING |
 | `7a950e02` | add /utf-8 flag for msvc | PORTED (`CMakeLists.txt` — `SPDLOG_MSVC_UTF8` + MSVC-only genex; see `9edab1b5`) |
 | `d3730937` | Better support for FMT_UNICODE in cmake | N/A (pair with `a5cfbf36` revert; triage **FMT_UNICODE** under **5A**) |
@@ -170,14 +170,14 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `43dcb398` | Update CMakeLists.txt comment | N/A (comment-only) |
 | `15f53968` | Update null_sink to be final (#3267) | SUPERSEDED (`null_sink` already `final` in `null_sink.h`) |
 | `951c5b99` | Allow manual rotation of rotating_file_sink (#3269) | SUPERSEDED (`rotating_file_sink::rotate_now`, `tests/test_file_logging.cpp` `rotating_file_logger4`) |
-| `1e6250e1` | Gabime/fwrite unlocked (#3276) | PENDING |
-| `65e388e8` | Adding on demand truncation for basic file sinks (#3280) | PENDING |
+| `1e6250e1` | Gabime/fwrite unlocked (#3276) | SUPERSEDED (`details::os::fwrite_bytes`, `CMakeLists.txt` `HAVE_FWRITE_UNLOCKED`, `file_helper` / sinks) |
+| `65e388e8` | Adding on demand truncation for basic file sinks (#3280) | PORTED (`basic_file_sink::truncate`, `tests/test_file_logging.cpp` `basic_file_sink_truncate`) |
 | `24dde318` | Adding lock to rotate_now() (#3281) | PORTED (`std::lock_guard` in `rotating_file_sink::rotate_now`) |
 | `276ee5f5` | fix: update to_string_view function for fmt 11.1 (#3301) | PENDING |
 | `7f8060d5` | fix: Compatibility with external fmtlib 11.1.1 (#3312) | PENDING |
 | `96a8f625` | fix: remove unused to_string_view overload in fmt >= 11.1 (#3314) | PENDING |
 | `ad0f31c0` | Enabled bin_to_hex utest for stdformat, fixed std::formatter (#3315) | PENDING |
-| `d7155530` | Added SPDLOG_FWRITE_UNLOCKED option to CMakeLists.txt (#3318) | PENDING |
+| `d7155530` | Added SPDLOG_FWRITE_UNLOCKED option to CMakeLists.txt (#3318) | SUPERSEDED (same `CheckSymbolExists` / `SPDLOG_FWRITE_UNLOCKED` wiring as `1e6250e1` on v2) |
 | `96a7d2a1` | Format CMakeLists.txt | N/A (formatting only) |
 | `57505989` | SPDLOG_LEVEL_NAMES, comment use string_view_literals (#3291) | N/A (v2 has no `tweakme.h` / `SPDLOG_LEVEL_NAMES`; levels in `common.h`) |
 | `7cbf2a69` | Gabime/ansicolor sink improvements (#3323) | PORTED (`src/sinks/ansicolor_sink.cpp` — `set_color_mode` holds mutex, `set_color_mode_` does not; fixes double-lock vs v1 pattern; const helpers already present) |
