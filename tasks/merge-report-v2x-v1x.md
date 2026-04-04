@@ -52,6 +52,8 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `ae1de0dc` | *(N/A)* `load_env_levels("VAR")` — no `spdlog/cfg/` on v2. | — |
 | `cdbd64e2` | `qt_color_sink`: `QString::fromUtf8` length `qsizetype`; `colors_.at` index `static_cast<size_t>(msg.log_level)`. | `include/spdlog/sinks/qt_sinks.h` |
 | `9c582574` | *(SUPERSEDED)* Apple / POSIX.1-2024 use `tm.tm_gmtoff` — v2 `os_unix.cpp` already has the `#if` guard from #3366. | — |
+| `6004e3d1` | **`SPDLOG_NO_TZ_OFFSET`**: `%z` prints `+??:??`; `utc_minutes_offset` returns 0; CMake `PUBLIC` define. `test_timezone` already guarded. | `CMakeLists.txt`, `src/pattern_formatter.cpp`, `os_unix.cpp`, `os_windows.cpp`, `tests/test_pattern_formatter.cpp` |
+| `10320184` | *(SUPERSEDED)* `#3360` padding truncate / `%D` width — v2 `pattern_formatter.cpp` already matches. | — |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |

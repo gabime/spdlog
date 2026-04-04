@@ -66,6 +66,7 @@ option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file
 option(SPDLOG_NO_THREAD_ID "prevent spdlog from querying the thread id on each log call if thread id is not needed" OFF)
 option(SPDLOG_DISABLE_GLOBAL_LOGGER "Disable global logger creation" OFF)
 option(SPDLOG_NO_TLS "Disable thread local storage" OFF)
+option(SPDLOG_NO_TZ_OFFSET "Omit %z timezone offset (use on platforms without tm_gmtoff / full offset)" OFF)
 option(SPDLOG_TIDY "run clang-tidy" OFF)
 set(SPDLOG_DEBUG_POSTFIX "-${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR}d" CACHE STRING
         "Filename postfix for libraries in debug builds (empty string allowed)")
@@ -273,6 +274,9 @@ foreach (SPDLOG_OPTION
         target_compile_definitions(spdlog PRIVATE ${SPDLOG_OPTION})
     endif ()
 endforeach ()
+if (SPDLOG_NO_TZ_OFFSET)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_NO_TZ_OFFSET)
+endif ()
 # ---------------------------------------------------------------------------------------
 # Build binaries
 # ---------------------------------------------------------------------------------------

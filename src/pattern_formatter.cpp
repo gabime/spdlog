@@ -510,6 +510,10 @@ public:
         constexpr size_t field_size = 6;
         ScopedPadder p(field_size, padinfo_, dest);
 
+#ifdef SPDLOG_NO_TZ_OFFSET
+        const char *const placeholder = "+??:??";
+        dest.append(placeholder, placeholder + 6);
+#else
         if (time_type_ == pattern_time_type::utc) {
             const char *zeroes = "+00:00";
             dest.append(zeroes, zeroes + 6);
@@ -526,6 +530,7 @@ public:
         fmt_helper::pad2(total_minutes / 60, dest);  // hours
         dest.push_back(':');
         fmt_helper::pad2(total_minutes % 60, dest);  // minutes
+#endif
     }
 
 private:

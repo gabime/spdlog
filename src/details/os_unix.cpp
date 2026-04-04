@@ -129,6 +129,10 @@ size_t filesize(FILE *f) {
 
 // Return utc offset in minutes or throw spdlog_ex on failure
 int utc_minutes_offset(const std::tm &tm) {
+#if defined(SPDLOG_NO_TZ_OFFSET)
+    (void)tm;
+    return 0;
+#else
     #if defined(sun) || defined(__sun) || defined(_AIX) || \
        (defined(__NEWLIB__) && !defined(__TM_GMTOFF)) ||  \
        (!defined(__APPLE__) && !defined(_BSD_SOURCE) && !defined(_GNU_SOURCE) && \
@@ -165,6 +169,7 @@ int utc_minutes_offset(const std::tm &tm) {
     auto offset_seconds = tm.tm_gmtoff;
 #endif
     return static_cast<int>(offset_seconds / 60);
+#endif  // SPDLOG_NO_TZ_OFFSET
 }
 
 // Return current thread id as size_t

@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 30 **PORTED**, 29 **SUPERSEDED**, 116 **N/A**, 70 **PENDING**.
+**Counts (this revision):** 31 **PORTED**, 30 **SUPERSEDED**, 116 **N/A**, 68 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -186,7 +186,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `ac432c36` | Gabime/v1.15.1 (#3332) | N/A (v1.x release / tag commit) |
 | `f355b3d5` | Fix test_daily_logger | PENDING |
 | `3335c380` | Update README.md (#3338) | N/A (docs-only) |
-| `10320184` | Fixed issue #3360 (#3361) | PENDING |
+| `10320184` | Fixed issue #3360 (#3361) | SUPERSEDED (scoped_padder truncate clamp; `%D` field width — already in `pattern_formatter.cpp`) |
 | `faa0a7a9` | Bump fmt to version 11.1.4 | PENDING |
 | `9c582574` | Fix zformatter on Apple and POSIX.1-2024 conforming platform (#3366) | SUPERSEDED (`src/details/os_unix.cpp` `utc_minutes_offset` — `__APPLE__` / `_POSIX_VERSION` guard matches #3366) |
 | `48bcf39a` | Version 1.15.2 | N/A (v1.x release version bump) |
@@ -227,7 +227,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `88a0e07a` | Change access scope for ANSI target_file_ from private to protected (#3486) | PORTED (`include/spdlog/sinks/ansicolor_sink.h`) |
 | `cdbd64e2` | Fix sign conversion warnings in qt_sinks.h (#3487) | PORTED (`include/spdlog/sinks/qt_sinks.h` — `qsizetype` + `colors_.at(static_cast<size_t>(msg.log_level))`) |
 | `8806ca65` | Fix UWP detection. (#3489) | PORTED (`src/details/os_windows.cpp` `getenv` — `WINAPI_FAMILY` vs `WINAPI_FAMILY_DESKTOP_APP`) |
-| `6004e3d1` | Fix issue #3483 (#3491) | PENDING |
+| `6004e3d1` | Fix issue #3483 (#3491) | PORTED (`SPDLOG_NO_TZ_OFFSET` CMake option; `z_formatter`; `utc_minutes_offset` stubs; tests; v1 `test_stdout_api` extra case N/A) |
 | `b3688ba1` | Set IndentPPDirectives to "None" on clang-format | N/A (formatting / tooling only) |
 | `ea3e747e` | Bump fmt to 12.1.0 | PENDING |
 | `c5061bb9` | Update LICENSE file | N/A (license text may differ; reconcile at release if needed) |

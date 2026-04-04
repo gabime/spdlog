@@ -75,8 +75,13 @@ TEST_CASE("%z with UTC pattern time", "[pattern_formatter]") {
     const auto now = std::chrono::system_clock::now();
     const auto yesterday = now - 24h;
 
+#ifndef SPDLOG_NO_TZ_OFFSET
     REQUIRE(log_to_str_with_time(yesterday, "Some message", "%z", spdlog::pattern_time_type::utc, "\n") ==
             "+00:00\n");
+#else
+    REQUIRE(log_to_str_with_time(yesterday, "Some message", "%z", spdlog::pattern_time_type::utc, "\n") ==
+            "+??:??\n");
+#endif
 }
 
 // see test_timezone.cpp for actual UTC offset calculation tests

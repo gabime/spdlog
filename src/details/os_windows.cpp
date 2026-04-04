@@ -109,6 +109,10 @@ size_t filesize(FILE *f) {
 // Compare the timestamp as local (mktime) vs UTC (_mkgmtime) to get the offset.
 // Matches v1.x behavior: better historical DST handling than GetTimeZoneInformation alone.
 int utc_minutes_offset(const std::tm &tm) {
+#if defined(SPDLOG_NO_TZ_OFFSET)
+    (void)tm;
+    return 0;
+#else
     std::tm local_tm = tm;  // copy since mktime might adjust it (normalize dates, set tm_isdst)
     std::time_t local_time_t = std::mktime(&local_tm);
     if (local_time_t == static_cast<std::time_t>(-1)) {
@@ -122,6 +126,7 @@ int utc_minutes_offset(const std::tm &tm) {
 
     const auto offset_seconds = utc_time_t - local_time_t;
     return static_cast<int>(offset_seconds / 60);
+#endif
 }
 
 // Return current thread id as size_t
