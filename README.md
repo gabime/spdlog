@@ -41,7 +41,7 @@ see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v2.x/example/
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).
 * Headers only or compiled
-* Feature-rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
+* Feature-rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library (bundled **12.1.0** by default; use `SPDLOG_FMT_EXTERNAL=ON` for a system **fmt**, **12.x** recommended).
 * Asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/3.-Custom-formatting) formatting.
 * Multi/Single threaded loggers.

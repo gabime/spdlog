@@ -160,8 +160,8 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 |-------------|---------------|--------|
 | `fe79bfcc` `6725584e` `ec661f98` `a19c76a4` `62302019` | **N/A** | v1 `async_logger` / `thread_pool`; v2 uses **`async_sink`** + `mpmc_blocking_q` (`tests/test_async.cpp` differs). |
 | `16e0d2e7` `63d18842` | **N/A** | v1 flush **promise** / **condition_variable** thread-pool path; not present on v2. |
-| `d8e0ad46` `1e7d7e07` | **N/A** | Bundled fmt **10.2.1** bumps; current bundle is **11.1.4** (`cmake/fmtlib.cmake`); align with **5A**. |
-| `faa0a7a9` `85bdab0c` | **SUPERSEDED** | fmt **11.1.4** / prior **11.0.2** — satisfied by bundled pin. |
+| `d8e0ad46` `1e7d7e07` | **N/A** | Bundled fmt **10.2.1** bumps; superseded by current **12.1.0** pin (`cmake/fmtlib.cmake`). |
+| `faa0a7a9` `85bdab0c` | **SUPERSEDED** | fmt **11.1.4** / **11.0.2** — satisfied by **12.1.0** bundled pin (**5A**). |
 | `276ee5f5` `7f8060d5` `96a8f625` | **SUPERSEDED** | fmt **11.1** `to_string_view` / external fmt fixes — v2 `logger::log_with_format_` + no v1 `common.h` `to_string_view(fmt)` chain (`1685e694` triage). |
 | `3c23c27d` | **N/A** | Revert of `7f8060d5`; no separate port. |
 
@@ -172,11 +172,20 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `d03eb40c` … `c1fbafdc` | **N/A** | **MDC** stack (`mdc.h`, examples, TLS fix) — v2 tree has no MDC public API (**PRD 2A**). |
 | `7e022c43` | **N/A** | **Feature #3379** bundles MDC with v1-only layout; non-MDC behavior covered by other ports. |
 | `9fe79692` | **PORTED** | **TSAN:** `SPDLOG_SANITIZE_THREAD` CMake option, mutual exclusion with address sanitizer, `spdlog_enable_thread_sanitizer` / `spdlog_enable_addr_sanitizer` on **`spdlog`** target (tests already used helpers). |
-| `0d31acae` `4418909a` `ea3e747e` `878ad2e3` `2c1eafc8` `3f03542d` | **N/A** | **fmt 11.2+ / 12.x** and **MSVC C4834** follow-on — defer to **5A** (current bundled **11.1.4**). |
+| `0d31acae` `4418909a` `ea3e747e` `878ad2e3` `2c1eafc8` `3f03542d` | **SUPERSEDED** | **fmt 12.1.0** FetchContent + **`FMT_INSTALL ON`** (fmt 12 subproject default) + MSVC **`/wd4834`** on `fmt` — matches `origin/v1.x` bundled `FMT_VERSION` **120100** (**5A**). |
 
 **Full SHA list:** [`v1-triage-complete.md`](v1-triage-complete.md).
 
 **Validation:** `ctest` Release on Windows — all unit tests passed after these ports.
+
+### **5A** — Bundled fmt **12.1.0** (aligned with `origin/v1.x`)
+
+| Change | Notes |
+|--------|--------|
+| `cmake/fmtlib.cmake` | Fetch **12.1.0** (`URL` + `SHA256`); **`FMT_INSTALL ON`** (fmt 12 defaults install **OFF** as subproject — required for `install(EXPORT spdlogTargets)`); MSVC **`/wd4834`** on target **`fmt`** (C4834 in `locale_ref` vs stock **12.1.0** tarball). |
+| `cmake/spdlogConfig.cmake.in` | `find_dependency(fmt 12 CONFIG)` for **`SPDLOG_FMT_EXTERNAL`** consumers. |
+
+**Validation:** `cmake -DSPDLOG_BUILD_TESTS=ON -DSPDLOG_BUILD_WARNINGS=ON`, `ctest` Release — passed (Windows, MSVC).
 
 ## Integration branch
 

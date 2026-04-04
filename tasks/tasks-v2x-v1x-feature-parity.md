@@ -10,10 +10,10 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
   - **N/A — v1 `async_logger` / `thread_pool`** (v2 uses `async_sink` + `mpmc_blocking_q`): `fe79bfcc`, `6725584e`, `ec661f98`, `a19c76a4`, `62302019` (thread-pool / async-logger behavior and tests); `16e0d2e7`, `63d18842` (flush promise / condition_variable / callback on the v1 `thread_pool`).
   - **N/A — bundled fmt 10.2.1 churn:** `d8e0ad46`, `1e7d7e07` — superseded by the current fmt pin (**5A**).
   - **N/A — revert pair:** `3c23c27d` (revert of external-fmt #3312; covered with `7f8060d5` triage).
-  - **SUPERSEDED — fmt 11.x / `to_string_view` / bundle:** `faa0a7a9`, `85bdab0c` (**`cmake/fmtlib.cmake`** already fmt **11.1.4**); `276ee5f5`, `7f8060d5`, `96a8f625` (v2 has no v1 `common.h` `to_string_view(fmt)` chain; logging uses **`log_with_format_`** / **`fmt::vformat_to`**, same story as **`1685e694`**).
+  - **SUPERSEDED — fmt 11.x / `to_string_view` / bundle:** `faa0a7a9`, `85bdab0c` (superseded by **12.1.0** pin); `276ee5f5`, `7f8060d5`, `96a8f625` (v2 has no v1 `common.h` `to_string_view(fmt)` chain; logging uses **`log_with_format_`** / **`fmt::vformat_to`**, same story as **`1685e694`**).
   - Docs: [`v1-triage-complete.md`](v1-triage-complete.md), [`commits-ported.txt`](commits-ported.txt) comment block, [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md) subsection **“Triage-only batch (v1 async / fmt delta vs v2)”**. Prior code work: `c3aed4b6` wchar console.
-- **Triage snapshot:** **42 PORTED**, **56 SUPERSEDED**, **147 N/A**, **0 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md) (**3A** triage complete for the v1-only SHA list).
-- **Latest (code + triage):** **`9fe79692`** ported — `SPDLOG_SANITIZE_THREAD`, mutual exclusion with `SPDLOG_SANITIZE_ADDRESS`, and thread/address sanitizers applied to the **`spdlog`** library target (CI already passes `-DSPDLOG_SANITIZE_THREAD` from `.github/workflows/linux.yml`). **MDC** v1 commits and **Feature 3379** marked **N/A** (no `mdc.h` on v2). **fmt 11.2+ / 12.x / C4834** chain marked **N/A** under **5A** (bundled fmt remains **11.1.4** until a coordinated bump).
+- **Triage snapshot:** **42 PORTED**, **62 SUPERSEDED**, **141 N/A**, **0 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md) (**3A** complete).
+- **5A (fmt):** Bundled **fmt 12.1.0** via `cmake/fmtlib.cmake` (matches `origin/v1.x` `FMT_VERSION` **120100**); **`FMT_INSTALL ON`** for fmt 12 subproject + install export; MSVC **`/wd4834`** on target **`fmt`**; **`find_dependency(fmt 12)`** in `cmake/spdlogConfig.cmake.in`; README notes bundled vs external. Prior: **`9fe79692`** TSAN CMake; MDC / Feature 3379 **N/A**.
 
 ## Relevant Files
 
@@ -25,7 +25,7 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 - `.github/workflows/linux.yml`, `.github/workflows/macos.yml`, `.github/workflows/windows.yml` — CI matrix for v2.x branch after integration; update triggers/branches as needed.
 - `README.md` — User-facing build and version notes post-sync.
 - `docs/` (if present on branch) — Additional documentation for v2.x vs v1.x.
-- Bundled fmt under `include/spdlog/fmt/bundled/` and related (e.g. `src/bundled_fmtlib_format.cpp`) — Must match **v1.x** fmt baseline per **5A**.
+- **`cmake/fmtlib.cmake`** — FetchContent **fmt** version (**5A**; v2.x does not vendor `include/spdlog/fmt/bundled/` like v1.x).
 - [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md) — Merge report (extend as ports land).
 
 ### Notes
@@ -62,11 +62,11 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
   - [ ] 2.4 Build locally (Release and at least one Debug) and fix compile errors before pushing.
   - [x] 2.5 Follow-up: cherry-pick or small PRs for anything that could not be merged cleanly or was deferred (hybrid **1D**). *(Ongoing: `09a674b7`, `b656d1ce` — see [`commits-ported.txt`](commits-ported.txt).)*
 
-- [ ] 3.0 Align fmt, CMake, and compiler warnings (5A)
-  - [ ] 3.1 Compare bundled fmt / CMake fmt version pins between merged tree and current `v1.x`; align bundled copy and `CMakeLists.txt` with **v1.x** unless a reviewed exception is documented.
-  - [ ] 3.2 Reconcile `SPDLOG_FMT_EXTERNAL` / header-only options with documented v2.x behavior; update README if defaults change.
-  - [ ] 3.3 Match **v1.x** warning suppressions and compiler flags for shared code (MSVC, GCC, Clang); remove stale suppressions only if v1.x does and tests pass.
-  - [ ] 3.4 Verify `src/bundled_fmtlib_format.cpp` (if used) and bundled headers are consistent with chosen fmt version.
+- [x] 3.0 Align fmt, CMake, and compiler warnings (5A)
+  - [x] 3.1 Compare bundled fmt / CMake fmt version pins between merged tree and current `v1.x`; align bundled copy and `CMakeLists.txt` with **v1.x** unless a reviewed exception is documented. *(**12.1.0** FetchContent — same `FMT_VERSION` as `origin/v1.x`.)*
+  - [x] 3.2 Reconcile `SPDLOG_FMT_EXTERNAL` / header-only options with documented v2.x behavior; update README if defaults change. *(`find_dependency(fmt 12)` + README bullet.)*
+  - [x] 3.3 Match **v1.x** warning suppressions and compiler flags for shared code (MSVC, GCC, Clang); remove stale suppressions only if v1.x does and tests pass. *(MSVC `/wd4834` on **`fmt`** for fmt **12.1.0** `locale_ref` / stock tarball.)*
+  - [x] 3.4 Verify `src/bundled_fmtlib_format.cpp` (if used) and bundled headers are consistent with chosen fmt version. *(v2.x: FetchContent only — no in-tree bundled fmt sources.)*
 
 - [ ] 4.0 Tests and CI validation
   - [x] 4.1 Run full test suite locally (`ctest` or project equivalent); fix failures tied to the merge. *(Windows Release: all tests pass.)*
@@ -76,9 +76,9 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
   - [ ] 4.5 Spot-check platform-specific areas called out in PRD (e.g. Windows/UWP, POSIX `TZ`, TCP) on representative configs if possible.
 
 - [ ] 5.0 Documentation, merge report, and release readiness (4B)
-  - [x] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *([`v1-triage-complete.md`](v1-triage-complete.md): **42** ported, **56** superseded, **147** N/A, **0** pending; last code port **`9fe79692`** TSAN CMake; MDC + fmt **12.x** chain **N/A**.)*
+  - [x] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *([`v1-triage-complete.md`](v1-triage-complete.md): **42** / **62** / **141** / **0**; **5A** fmt **12.1.0** triage updates for former fmt-bump rows.)*
   - [x] 5.2 Write **merge report**: areas touched, conflict resolutions, rejected or deferred ports with rationale.
-  - [ ] 5.3 Update **README** (build, fmt version, branch notes) and version header for v2.x pre-release.
+  - [x] 5.3 Update **README** (build, fmt version, branch notes) and version header for v2.x pre-release. *(fmt **12.1.0** / external **12.x** note in Features.)*
   - [ ] 5.4 Add **migration / release notes** for downstream users (API preserved per **2A**, dependency changes per **5A**).
   - [ ] 5.5 Open PR from integration branch to `v2.x` (or maintainer process); obtain **stakeholder sign-off** per PRD success metrics.
   - [ ] 5.6 Tag or schedule **v2.x pre-release** per **4B** milestone once CI and review are complete.

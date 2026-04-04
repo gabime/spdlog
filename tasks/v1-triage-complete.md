@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 All v1-only SHAs in range now have a terminal status (**PORTED**, **SUPERSEDED**, or **N/A**). Further work (e.g. **5A** fmt bump, optional MDC on v2) is tracked outside this table.
 
-**Counts (this revision):** 42 **PORTED**, 56 **SUPERSEDED**, 147 **N/A**, 0 **PENDING**.
+**Counts (this revision):** 42 **PORTED**, 62 **SUPERSEDED**, 141 **N/A**, 0 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -127,7 +127,7 @@ All v1-only SHAs in range now have a terminal status (**PORTED**, **SUPERSEDED**
 | `16e0d2e7` | Exchange promise for condition_variable when flushing (fixes #3221) (#3228) | N/A (v2 has no v1 `thread_pool` / `async_msg` flush promise path) |
 | `b6da5944` | Ensure flush callback gets called in move-assign operator (#3232) | N/A (v2 has no v1 `async_msg` / `flush_callback` in `thread_pool.hpp` — different async message path) |
 | `63d18842` | Gabime/async flush (#3235) | N/A (follow-on to v1 thread-pool flush; not applicable on v2 `async_sink`) |
-| `85bdab0c` | Update bundled fmt to 11.0.2 (#3236) | SUPERSEDED (bundled fmt **11.1.4** in `cmake/fmtlib.cmake`) |
+| `85bdab0c` | Update bundled fmt to 11.0.2 (#3236) | SUPERSEDED (bundled fmt **12.1.0** in `cmake/fmtlib.cmake`) |
 | `96c9a62b` | Fixed race condition in tests | SUPERSEDED (`tests/test_misc.cpp` “clone async” uses `test_sink_mt` / `async_sink`) |
 | `9fe79692` | Gabime/tsan (#3237) | PORTED (`SPDLOG_SANITIZE_THREAD` option + mutual exclusion with ADDRESS; `spdlog_enable_*` on `spdlog` lib + tests — matches v1 #3237) |
 | `7a950e02` | add /utf-8 flag for msvc | PORTED (`CMakeLists.txt` — `SPDLOG_MSVC_UTF8` + MSVC-only genex; see `9edab1b5`) |
@@ -174,7 +174,7 @@ All v1-only SHAs in range now have a terminal status (**PORTED**, **SUPERSEDED**
 | `65e388e8` | Adding on demand truncation for basic file sinks (#3280) | PORTED (`basic_file_sink::truncate`, `tests/test_file_logging.cpp` `basic_file_sink_truncate`) |
 | `24dde318` | Adding lock to rotate_now() (#3281) | PORTED (`std::lock_guard` in `rotating_file_sink::rotate_now`) |
 | `276ee5f5` | fix: update to_string_view function for fmt 11.1 (#3301) | SUPERSEDED (v2 `common.h` has no `details::to_string_view(fmt)` helpers; `logger` uses `fmt::vformat_to` — c.f. `1685e694`) |
-| `7f8060d5` | fix: Compatibility with external fmtlib 11.1.1 (#3312) | SUPERSEDED (v2 + bundled fmt **11.1.4**; external fmt via `SPDLOG_FMT_EXTERNAL`) |
+| `7f8060d5` | fix: Compatibility with external fmtlib 11.1.1 (#3312) | SUPERSEDED (v2 + bundled fmt **12.1.0**; external fmt via `SPDLOG_FMT_EXTERNAL` / `find_dependency(fmt 12)`) |
 | `96a8f625` | fix: remove unused to_string_view overload in fmt >= 11.1 (#3314) | SUPERSEDED (same as `276ee5f5` — no v1-style overloads in v2 `common.h`) |
 | `ad0f31c0` | Enabled bin_to_hex utest for stdformat, fixed std::formatter (#3315) | PORTED (`test_sink.h` / `test_custom_callbacks.cpp` iterator `difference_type` cast; v2 `bin_to_hex` non-`const` `delimiter`; tests always include `test_bin_to_hex.cpp`) |
 | `d7155530` | Added SPDLOG_FWRITE_UNLOCKED option to CMakeLists.txt (#3318) | SUPERSEDED (same `CheckSymbolExists` / `SPDLOG_FWRITE_UNLOCKED` wiring as `1e6250e1` on v2) |
@@ -187,7 +187,7 @@ All v1-only SHAs in range now have a terminal status (**PORTED**, **SUPERSEDED**
 | `f355b3d5` | Fix test_daily_logger | SUPERSEDED (v2 `tests/test_daily_and_rotation_loggers.cpp` — `fmt_lib::format` in custom calculator; no `SPDLOG_BUF_TO_STRING`) |
 | `3335c380` | Update README.md (#3338) | N/A (docs-only) |
 | `10320184` | Fixed issue #3360 (#3361) | SUPERSEDED (scoped_padder truncate clamp; `%D` field width — already in `pattern_formatter.cpp`) |
-| `faa0a7a9` | Bump fmt to version 11.1.4 | SUPERSEDED (`cmake/fmtlib.cmake` — `11.1.4.tar.gz`) |
+| `faa0a7a9` | Bump fmt to version 11.1.4 | SUPERSEDED (`cmake/fmtlib.cmake` — **12.1.0** FetchContent; satisfies **11.1.4** intent) |
 | `9c582574` | Fix zformatter on Apple and POSIX.1-2024 conforming platform (#3366) | SUPERSEDED (`src/details/os_unix.cpp` `utc_minutes_offset` — `__APPLE__` / `_POSIX_VERSION` guard matches #3366) |
 | `48bcf39a` | Version 1.15.2 | N/A (v1.x release version bump) |
 | `1f4959c8` | Fix link to wiki. (#3377) | N/A (docs-only) |
@@ -198,7 +198,7 @@ All v1-only SHAs in range now have a terminal status (**PORTED**, **SUPERSEDED**
 | `548b2642` | Fix warning C4530 (#3393) | N/A (v2 `CMakeLists.txt` has no `SPDLOG_NO_EXCEPTIONS` / `/EHs-c-` / `_HAS_EXCEPTIONS=0` block) |
 | `7e022c43` | Feature 3379 (#3397) | N/A (v1 bundle: MDC + rotating-file / CMake / tests; v2 has no MDC — non-MDC slices already covered elsewhere) |
 | `943fcbd7` | Register replace logger (#3398) | N/A (v1 registry API) |
-| `0d31acae` | Fmt 11.2.0 (#3399) | N/A (bundled fmt bump — align with **5A**; current pin **11.1.4** in `cmake/fmtlib.cmake`) |
+| `0d31acae` | Fmt 11.2.0 (#3399) | SUPERSEDED (integration uses **fmt 12.1.0** via `cmake/fmtlib.cmake` — **5A**) |
 | `070e1c97` | Update comment | N/A (comment-only) |
 | `7ca6a4fb` | Update commemt | N/A (comment-only) |
 | `c73b8cc4` | Update comment | N/A (comment-only) |
@@ -219,7 +219,7 @@ All v1-only SHAs in range now have a terminal status (**PORTED**, **SUPERSEDED**
 | `9ecdf5c8` | Added timeout for TCP calls such as connect, send, recv (#3432) | PORTED |
 | `3edc8036` | Run tests in the order they are declared in the source file. (#3451) | N/A (Catch2 test registration order; optional) |
 | `f1d748e5` | Remove the fileapi.h include in os-inl.h (#3444) | PORTED (`src/details/os_windows.cpp` — drop redundant `#include <fileapi.h>`; `windows_include.h` / `windows.h` sufficient for `FlushFileBuffers`) |
-| `4418909a` | Bump fmt to 12.0.0 | N/A (fmt **12.x** — **5A**) |
+| `4418909a` | Bump fmt to 12.0.0 | SUPERSEDED (same — **12.1.0** bundled) |
 | `1bea38ed` | clang-format | N/A (formatting only) |
 | `486b5555` | Version 1.16.0 | N/A (v1.x release version bump) |
 | `dd3ca04a` | set CMAKE_BUILD_TYPE only in top-level project (#3480) | PORTED |
@@ -229,11 +229,11 @@ All v1-only SHAs in range now have a terminal status (**PORTED**, **SUPERSEDED**
 | `8806ca65` | Fix UWP detection. (#3489) | PORTED (`src/details/os_windows.cpp` `getenv` — `WINAPI_FAMILY` vs `WINAPI_FAMILY_DESKTOP_APP`) |
 | `6004e3d1` | Fix issue #3483 (#3491) | PORTED (`SPDLOG_NO_TZ_OFFSET` CMake option; `z_formatter`; `utc_minutes_offset` stubs; tests; v1 `test_stdout_api` extra case N/A) |
 | `b3688ba1` | Set IndentPPDirectives to "None" on clang-format | N/A (formatting / tooling only) |
-| `ea3e747e` | Bump fmt to 12.1.0 | N/A (same — **5A**) |
+| `ea3e747e` | Bump fmt to 12.1.0 | SUPERSEDED (same — pin matches `origin/v1.x` bundled `FMT_VERSION` **120100**) |
 | `c5061bb9` | Update LICENSE file | N/A (license text may differ; reconcile at release if needed) |
-| `878ad2e3` | Supress MSVC C4834 warning triggeed by fmt 12.1.0 | N/A (MSVC C4834 + fmt **12.1** — **5A** with fmt bump) |
-| `2c1eafc8` | Backport warning fix from fmt head | N/A (same) |
-| `3f03542d` | Remove warning 4834 suppression | N/A (same) |
+| `878ad2e3` | Supress MSVC C4834 warning triggeed by fmt 12.1.0 | SUPERSEDED (`cmake/fmtlib.cmake` — `/wd4834` on **`fmt`** target; v1 pragma/`bundled_fmtlib_format.cpp` N/A on v2 FetchContent layout) |
+| `2c1eafc8` | Backport warning fix from fmt head | SUPERSEDED (same — `/wd4834` until upstream 12.1.x includes `ignore_unused` fix in `base.h`) |
+| `3f03542d` | Remove warning 4834 suppression | SUPERSEDED (v1 removed pragma after patching bundled headers; v2 uses compiler flag on `fmt`) |
 | `d2100d5d` | Fix: include <fcntl.h> in tcp_client.h to avoid compilation failures on Unix (#3497) | PORTED |
 | `0209b12c` | tests: fix unit tests to not be affected by custom level names (#3492) | PORTED (`tests/includes.h` — `#undef` custom level name macros before spdlog includes) |
 | `32dd298d` | Docs: fix misleading comment in blocking_queue header (#3504) | PORTED (`include/spdlog/details/mpmc_blocking_q.h` file header; per-method comments already correct) |

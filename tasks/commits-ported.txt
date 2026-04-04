@@ -5,6 +5,7 @@
 b656d1ce Windows utc_minutes_offset(): DST accuracy + tests (pattern_formatter, test_timezone)
 0f7562a0 tests: timezone: explicit POSIX TZ DST rules (musl / POSIX 2024)
 d2100d5d Include fcntl.h in Unix tcp client header (v2: tcp_client_unix.h)
+5A: cmake/fmtlib.cmake fmt 12.1.0 + FMT_INSTALL + MSVC /wd4834 on fmt; spdlogConfig find_dependency(fmt 12) — 0d31acae 4418909a ea3e747e 878ad2e3 2c1eafc8 3f03542d
 9fe79692 TSAN: SPDLOG_SANITIZE_THREAD option, mutual exclusion, sanitizer on spdlog lib (#3237)
 3c61b051 [ci] actions/checkout@v6 (linux, macos, windows)
 9ecdf5c8 TCP connect/send/recv timeouts (tcp_client_*, tcp_sink)
@@ -113,4 +114,4 @@ c3aed4b6 SPDLOG_WCHAR_CONSOLE / WriteConsoleW + utf8_to_wstrbuf path in wincolor
 # N/A: 3c23c27d revert #3312 — pairs with 7f8060d5
 # N/A (MDC): d03eb40c f030afe6 1f930174 4517ce8b cba66029 1253a57d 8fed530b 3b4fd93b 2d4acf8c 362214a3 c1fbafdc — no mdc.h on v2
 # N/A: 7e022c43 Feature 3379 — v1 MDC + mixed tree; non-MDC slices elsewhere
-# N/A (5A fmt): 0d31acae 4418909a ea3e747e 878ad2e3 2c1eafc8 3f03542d — fmt 11.2+ / 12.x / C4834 chain
+# SUPERSEDED (5A fmt 12.1.0): 0d31acae 4418909a ea3e747e 878ad2e3 2c1eafc8 3f03542d — see cmake/fmtlib.cmake
