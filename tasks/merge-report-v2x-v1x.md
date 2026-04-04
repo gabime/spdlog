@@ -65,6 +65,9 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `309204d5` | `logger::should_flush` uses **`flush_level()`**; `daily_file_sink` locals **`new_filename`** (avoid shadowing `filename()`). | `include/spdlog/logger.h`, `include/spdlog/sinks/daily_file_sink.h` |
 | `f2a9dec0` | `spdlog::should_log(level log_level)` parameter rename (#3519); v1 cfg/async renames not ported (no `spdlog/cfg` on v2). | `include/spdlog/spdlog.h`, `src/spdlog.cpp` |
 | `472945ba` | Example `my_type`: `value_` / ctor param vs member shadow (#3521). | `example/example.cpp` |
+| `687226d9` | `udp_sink` ctor takes **`const udp_sink_config &`** (#3520). `dist_sink` already used **`std::move(sinks)`**. | `include/spdlog/sinks/udp_sink.h` |
+| `fc7e9c87` | *(SUPERSEDED)* `common-inl.h` add `<cctype>` — v2 has no `common-inl.h`; `level_from_str` lives in `src/common.cpp` with `<cctype>`. | — |
+| `1685e694` | *(SUPERSEDED)* Avoid deprecated `fmt::format_string` copy — v2 `logger::log_with_format_` holds `const format_string_t &` and calls `fmt::vformat_to` (no v1 `to_string_view(fmt)` indirection). | — |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |

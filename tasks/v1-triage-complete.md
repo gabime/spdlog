@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 35 **PORTED**, 36 **SUPERSEDED**, 118 **N/A**, 56 **PENDING**.
+**Counts (this revision):** 36 **PORTED**, 38 **SUPERSEDED**, 118 **N/A**, 53 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -247,13 +247,13 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `1774e700` | Add const qualifier to get_time_ and filter_ member functions (#3515) | PORTED (`dup_filter_sink::filter_` const + `const` duration; `get_time_` already `const` in v2) |
 | `309204d5` | Rename local variables to avoid shadowing member functions (#3516) | PORTED (`logger::should_flush` uses `flush_level()`; `daily_file_sink` `new_filename` locals) |
 | `f2a9dec0` | Fix function arguments names different warnings (#3519) | PORTED (`spdlog::should_log(level log_level)`; v1 cfg/async renames N/A on v2) |
-| `687226d9` | The upd_sink and dist_sink files have been modified to address Passed by value warnings. (#3520) | PENDING |
+| `687226d9` | The upd_sink and dist_sink files have been modified to address Passed by value warnings. (#3520) | PORTED (`udp_sink` takes `const udp_sink_config &`; `dist_sink` ctor already `std::move(sinks)`) |
 | `472945ba` | Fix shadow member warning in example file (#3521) | PORTED (`example/example.cpp` `my_type` `value_` / ctor param) |
 | `6c5d6329` | Fix should_log comment (#3534) | SUPERSEDED (v2 `logger.h` already has “return true if logging is enabled…”) |
 | `566b2d14` | Fix #3525: Make level name matching case-insensitive (#3535) | PORTED |
-| `fc7e9c87` | Update common-inl.h | PENDING |
+| `fc7e9c87` | Update common-inl.h | SUPERSEDED (v2 has no `common-inl.h`; `src/common.cpp` includes `<cctype>` for `level_from_str`) |
 | `c49c7cf9` | Allow empty DEBUG_POSTFIX property in CMakeLists (#3530) | PORTED (`DEBUG_POSTFIX "${SPDLOG_DEBUG_POSTFIX}"` — empty cache value allowed) |
-| `1685e694` | Fix deprecated copy constructor usage of fmt::format_string (#3541) | PENDING |
+| `1685e694` | Fix deprecated copy constructor usage of fmt::format_string (#3541) | SUPERSEDED (v2 `logger::log_with_format_` takes `const format_string_t &` and uses `fmt::vformat_to`; no `details::to_string_view(fmt)` path) |
 | `d5af52d9` | Fix format_string propagation (#3543) | SUPERSEDED (v2 `logger`/`spdlog` already forward `format_string_t` to `log_with_format_`) |
 | `0f7562a0` | tests: timezone: Provide DST rules when setting TZ on POSIX systems (#3542) | PORTED |
 | `1fbc60a5` | docs: fix SPDLOG_LEVEL env example (#3561) | N/A (docs-only) |

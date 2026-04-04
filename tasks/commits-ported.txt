@@ -28,6 +28,7 @@ a6215527 ringbuffer_sink: throw if n_items==0; test_ringbuffer_sink (#3436)
 cdbd64e2 qt_sinks: qsizetype for fromUtf8 lengths; colors_.at size_t (#3487)
 6004e3d1 SPDLOG_NO_TZ_OFFSET CMake + %z placeholder + utc_minutes_offset stubs (#3483)
 1774e700 309204d5 f2a9dec0 472945ba MSVC/clang hygiene: dup_filter filter_ const; should_flush/flush_level(); daily new_filename; should_log param; example my_type (#3515–#3519 #3521)
+687226d9 udp_sink: const udp_sink_config& ctor (#3520); dist_sink already std::move(sinks)
 # SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
 # SUPERSEDED: 6c5d6329 should_log comment — v2 logger.h already correct
 # SUPERSEDED: 2aa8b6c9 file_helper write fd_ — v2 file_helper.cpp already has guard
@@ -82,3 +83,5 @@ cdbd64e2 qt_sinks: qsizetype for fromUtf8 lengths; colors_.at size_t (#3487)
 # SUPERSEDED: 8cfd4a7e bench latency __linux__ macro
 # N/A: d299603e #3514 — registry + MDC hunk; v2 layout (dup_filter in 1774e700)
 # N/A: 57505989 tweakme SPDLOG_LEVEL_NAMES string_view_literals — no tweakme on v2 (#3291)
+# SUPERSEDED: fc7e9c87 common-inl.h <cctype> — no common-inl.h; common.cpp has cctype
+# SUPERSEDED: 1685e694 fmt::format_string copy — v2 log_with_format_ + vformat_to (#3541)
