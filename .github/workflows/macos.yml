@@ -10,7 +10,7 @@ jobs:
     runs-on: macOS-latest
     name: "macOS Clang (C++17, Release)"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Build
         run: |
           mkdir -p build && cd build

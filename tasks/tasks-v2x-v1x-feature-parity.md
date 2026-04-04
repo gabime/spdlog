@@ -5,7 +5,7 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 ## Progress (2026-04-04)
 
 - **Done:** Integration branch created and pushed; merge-base and v1-only commit list exported; triage template and merge-report draft added; direct `git merge origin/v1.x` was attempted and **aborted** (v2.x file-tree divergence vs v1.x — see [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md)).
-- **Ports:** [`commits-ported.txt`](commits-ported.txt) — includes **`09a674b7`**, **`b656d1ce`**, **`0f7562a0`** (POSIX TZ in tests), **`d2100d5d`** (`fcntl.h` on Unix TCP header). **All unit tests pass** (`ctest` Release, Windows).
+- **Ports:** [`commits-ported.txt`](commits-ported.txt) — adds **`3c61b051`** (CI checkout), **`9ecdf5c8`** (TCP timeouts). **All unit tests pass** (`ctest` Release, Windows).
 - **Remaining:** Topical ports from `v1-commit-inventory.txt` (fmt / CI / other fixes per **5A** and triage).
 
 ## Relevant Files
@@ -63,7 +63,7 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
 - [ ] 4.0 Tests and CI validation
   - [x] 4.1 Run full test suite locally (`ctest` or project equivalent); fix failures tied to the merge. *(Windows Release: all tests pass.)*
   - [x] 4.2 Port any missing **v1.x** tests that cover shared behavior not yet present on the integration branch. *(Partial: `test_timezone.cpp` + pattern tests from `b656d1ce`; more as ports land.)*
-  - [ ] 4.3 Update `.github/workflows/*.yml` so the integration branch (or `v2.x` once merged) runs the agreed matrix; fix workflow-only issues (paths, branches).
+  - [x] 4.3 Update `.github/workflows/*.yml` so the integration branch (or `v2.x` once merged) runs the agreed matrix; fix workflow-only issues (paths, branches). *(checkout@v6 on linux/macos/windows)*
   - [ ] 4.4 Confirm CI green on Linux, macOS, and Windows (or document skipped jobs with reason).
   - [ ] 4.5 Spot-check platform-specific areas called out in PRD (e.g. Windows/UWP, POSIX `TZ`, TCP) on representative configs if possible.
 

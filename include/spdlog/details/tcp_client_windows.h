@@ -58,8 +58,75 @@ public:
 
     SOCKET fd() const { return socket_; }
 
+    int connect_socket_with_timeout(SOCKET sockfd,
+                                    const struct sockaddr *addr,
+                                    int addrlen,
+                                    const timeval &tv) {
+        if (tv.tv_sec == 0 && tv.tv_usec == 0) {
+            int rv = ::connect(sockfd, addr, addrlen);
+            if (rv == SOCKET_ERROR && WSAGetLastError() == WSAEISCONN) {
+                return 0;
+            }
+            return rv;
+        }
+
+        u_long mode = 1UL;
+        if (::ioctlsocket(sockfd, FIONBIO, &mode) == SOCKET_ERROR) {
+            return SOCKET_ERROR;
+        }
+
+        int rv = ::connect(sockfd, addr, addrlen);
+        int last_error = WSAGetLastError();
+        if (rv == 0 || last_error == WSAEISCONN) {
+            mode = 0UL;
+            if (::ioctlsocket(sockfd, FIONBIO, &mode) == SOCKET_ERROR) {
+                return SOCKET_ERROR;
+            }
+            return 0;
+        }
+        if (last_error != WSAEWOULDBLOCK) {
+            mode = 0UL;
+            if (::ioctlsocket(sockfd, FIONBIO, &mode)) {
+                return SOCKET_ERROR;
+            }
+            return SOCKET_ERROR;
+        }
+
+        fd_set wfds;
+        FD_ZERO(&wfds);
+        FD_SET(sockfd, &wfds);
+
+        rv = ::select(0, nullptr, &wfds, nullptr, const_cast<timeval *>(&tv));
+
+        mode = 0UL;
+        if (::ioctlsocket(sockfd, FIONBIO, &mode) == SOCKET_ERROR) {
+            return SOCKET_ERROR;
+        }
+
+        if (rv == 0) {
+            WSASetLastError(WSAETIMEDOUT);
+            return SOCKET_ERROR;
+        }
+        if (rv == SOCKET_ERROR) {
+            return SOCKET_ERROR;
+        }
+
+        int so_error = 0;
+        int len = sizeof(so_error);
+        if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, reinterpret_cast<char *>(&so_error), &len) ==
+            SOCKET_ERROR) {
+            return SOCKET_ERROR;
+        }
+        if (so_error != 0 && so_error != WSAEISCONN) {
+            WSASetLastError(so_error);
+            return SOCKET_ERROR;
+        }
+
+        return 0;
+    }
+
     // try to connect or throw on failure
-    void connect(const std::string &host, int port) {
+    void connect(const std::string &host, int port, int timeout_ms = 0) {
         if (is_connected()) {
             close();
         }
@@ -71,36 +138,41 @@ public:
         hints.ai_flags = AI_NUMERICSERV;  // port passed as as numeric value
         hints.ai_protocol = 0;
 
+        timeval tv;
+        tv.tv_sec = timeout_ms / 1000;
+        tv.tv_usec = (timeout_ms % 1000) * 1000;
+
         auto port_str = std::to_string(port);
         struct addrinfo *addrinfo_result;
         auto rv = ::getaddrinfo(host.c_str(), port_str.c_str(), &hints, &addrinfo_result);
         int last_error = 0;
         if (rv != 0) {
             last_error = ::WSAGetLastError();
-            WSACleanup();
             throw_winsock_error_("getaddrinfo failed", last_error);
         }
-
-        // Try each address until we successfully connect(2).
 
         for (auto *rp = addrinfo_result; rp != nullptr; rp = rp->ai_next) {
             socket_ = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
             if (socket_ == INVALID_SOCKET) {
                 last_error = ::WSAGetLastError();
-                WSACleanup();
                 continue;
             }
-            if (::connect(socket_, rp->ai_addr, (int)rp->ai_addrlen) == 0) {
+            if (connect_socket_with_timeout(socket_, rp->ai_addr, (int)rp->ai_addrlen, tv) == 0) {
+                last_error = 0;
                 break;
-            } else {
-                last_error = ::WSAGetLastError();
-                close();
             }
+            last_error = WSAGetLastError();
+            ::closesocket(socket_);
+            socket_ = INVALID_SOCKET;
         }
         ::freeaddrinfo(addrinfo_result);
         if (socket_ == INVALID_SOCKET) {
-            WSACleanup();
             throw_winsock_error_("connect failed", last_error);
+        }
+        if (timeout_ms > 0) {
+            DWORD timeout_dword = static_cast<DWORD>(timeout_ms);
+            ::setsockopt(socket_, SOL_SOCKET, SO_RCVTIMEO, (const char *)&timeout_dword, sizeof(timeout_dword));
+            ::setsockopt(socket_, SOL_SOCKET, SO_SNDTIMEO, (const char *)&timeout_dword, sizeof(timeout_dword));
         }
 
         // set TCP_NODELAY

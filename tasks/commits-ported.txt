@@ -5,3 +5,5 @@
 b656d1ce Windows utc_minutes_offset(): DST accuracy + tests (pattern_formatter, test_timezone)
 0f7562a0 tests: timezone: explicit POSIX TZ DST rules (musl / POSIX 2024)
 d2100d5d Include fcntl.h in Unix tcp client header (v2: tcp_client_unix.h)
+3c61b051 [ci] actions/checkout@v6 (linux, macos, windows)
+9ecdf5c8 TCP connect/send/recv timeouts (tcp_client_*, tcp_sink)
