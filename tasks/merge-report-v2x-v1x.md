@@ -57,6 +57,14 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `5931a3d6` | *(SUPERSEDED)* Win32 header include order (`windows_include.h` before others) — v2 `src/details/os_windows.cpp`; no `os-inl.h`. | — |
 | `ba508057` | *(SUPERSEDED)* `binary_example` must not use `vector<char>(80)` with 80 pushes — v2 `example.cpp` builds buffer with `push_back` in a loop. | — |
 | `47b7e7c7` | *(SUPERSEDED)* codespell comment fixes (`qt_sinks.h`, `test_file_helper.cpp`) — already on branch; v2 `test_errors.cpp` differs from v1. | — |
+| `1ef8d3ce` | *(SUPERSEDED)* fmt third-party license URL in `LICENSE` — already points at raw `fmt` `LICENSE`. | — |
+| `8cfd4a7e` | *(SUPERSEDED)* `bench/latency.cpp` `__linux__` — already correct. | — |
+| `57505989` | *(N/A)* `tweakme.h` comment for `SPDLOG_LEVEL_NAMES` + `string_view_literals` — v2 has no tweakme; level strings live in `common.h`. | — |
+| `d299603e` | *(N/A)* #3514 registry + MDC `const` tweaks — no v1 `registry-inl` / MDC block in v2 `pattern_formatter`; see `1774e700` for `dup_filter_sink`. | — |
+| `1774e700` | `dup_filter_sink::filter_` **const** + `const` filter duration; `pattern_formatter::get_time_` was already **const** on v2. | `include/spdlog/sinks/dup_filter_sink.h` |
+| `309204d5` | `logger::should_flush` uses **`flush_level()`**; `daily_file_sink` locals **`new_filename`** (avoid shadowing `filename()`). | `include/spdlog/logger.h`, `include/spdlog/sinks/daily_file_sink.h` |
+| `f2a9dec0` | `spdlog::should_log(level log_level)` parameter rename (#3519); v1 cfg/async renames not ported (no `spdlog/cfg` on v2). | `include/spdlog/spdlog.h`, `src/spdlog.cpp` |
+| `472945ba` | Example `my_type`: `value_` / ctor param vs member shadow (#3521). | `example/example.cpp` |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |

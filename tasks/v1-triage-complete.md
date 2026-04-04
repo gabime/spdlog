@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 31 **PORTED**, 33 **SUPERSEDED**, 116 **N/A**, 65 **PENDING**.
+**Counts (this revision):** 35 **PORTED**, 36 **SUPERSEDED**, 118 **N/A**, 56 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -43,9 +43,9 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `8b331e2c` | Fix wrong thread_id (TID) in systemd_sink.h (#2919) | SUPERSEDED (`systemd_sink.h` — already logs `msg.thread_id`) |
 | `ddce4215` | fmt/*.h: include tweakme.h to set SPDLOG_FMT_EXTERNAL according to system (#2923) | N/A (v2 has no `tweakme.h`; fmt wiring is CMake-driven) |
 | `ac55e604` | Update README.md | N/A (docs-only) |
-| `ba508057` | Update example.cpp to fix the vector issue in bin_example (#2963) | PENDING |
+| `ba508057` | Update example.cpp to fix the vector issue in bin_example (#2963) | SUPERSEDED (`example/example.cpp` `binary_example` uses `push_back`; not `vector(80)`) |
 | `c1569a3d` | Bump to catch2 v3.5.0 | PENDING |
-| `1ef8d3ce` | Fix #2967 | PENDING |
+| `1ef8d3ce` | Fix #2967 | SUPERSEDED (`LICENSE` fmt URL already `raw.githubusercontent.com/.../LICENSE`) |
 | `7cb90d1a` | Fix MSVC compile flag for no exceptions (#2974) | N/A (v2 `CMakeLists.txt` has no `SPDLOG_NO_EXCEPTIONS` / `-fno-exceptions` wiring; add when porting that option) |
 | `2aa8b6c9` | Check fd_ is not nullptr in file_helper | SUPERSEDED (`src/details/file_helper.cpp` `write` already guards `fd_ == nullptr`) |
 | `7c02e204` | Bump version to 1.13.0 | N/A (v1.x release version bump; v2 has own versioning) |
@@ -68,7 +68,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `c838945e` | fix ci | N/A (same) |
 | `42cd77d7` | fix ci | N/A (same) |
 | `e15c5059` | fix ci | N/A (same) |
-| `8cfd4a7e` | Fixed bench dev_null | PENDING |
+| `8cfd4a7e` | Fixed bench dev_null | SUPERSEDED (`bench/latency.cpp` already `#ifdef __linux__`) |
 | `4052bc06` | Use find if registry is bigger than 20 in  registry::get(std::string_view logger_name) | N/A (v2.x no `registry::get` / `registry-inl.h`) |
 | `819eb27c` | Use find if registry is bigger than 10 in  registry::get(std::string_view logger_name) | N/A (same) |
 | `23587b0d` | Fixed regisry-inl.h | N/A (same) |
@@ -179,7 +179,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `ad0f31c0` | Enabled bin_to_hex utest for stdformat, fixed std::formatter (#3315) | PENDING |
 | `d7155530` | Added SPDLOG_FWRITE_UNLOCKED option to CMakeLists.txt (#3318) | PENDING |
 | `96a7d2a1` | Format CMakeLists.txt | N/A (formatting only) |
-| `57505989` | SPDLOG_LEVEL_NAMES, comment use string_view_literals (#3291) | PENDING |
+| `57505989` | SPDLOG_LEVEL_NAMES, comment use string_view_literals (#3291) | N/A (v2 has no `tweakme.h` / `SPDLOG_LEVEL_NAMES`; levels in `common.h`) |
 | `7cbf2a69` | Gabime/ansicolor sink improvements (#3323) | PORTED (`src/sinks/ansicolor_sink.cpp` — `set_color_mode` holds mutex, `set_color_mode_` does not; fixes double-lock vs v1 pattern; const helpers already present) |
 | `ae1de0dc` | Support custom environment variables for load_env_levels (#3327) | N/A (v2 has no `spdlog/cfg/` — `load_env_levels` not present) |
 | `3c23c27d` | Revert "fix: Compatibility with external fmtlib 11.1.1 (#3312)" (#3331) | PENDING |
@@ -243,12 +243,12 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `79524ddd` | spdlog version 1.17.0 | N/A (v1.x release version bump) |
 | `6b240a89` | Replace C-style cast with reinterpret_cast in udp_client (#3509) | PORTED (`udp_client_unix.h` `send` — `reinterpret_cast`, `sizeof(sockAddr_)`) |
 | `33375433` | fix: initialize null_atomic_int::value to zero (#3513) | PORTED (`null_mutex.h` — `null_atomic::value{}` value-initializes `T`) |
-| `d299603e` | Add missing const qualifiers to reference variables (#3514) | PENDING |
-| `1774e700` | Add const qualifier to get_time_ and filter_ member functions (#3515) | PENDING |
-| `309204d5` | Rename local variables to avoid shadowing member functions (#3516) | PENDING |
-| `f2a9dec0` | Fix function arguments names different warnings (#3519) | PENDING |
+| `d299603e` | Add missing const qualifiers to reference variables (#3514) | N/A (v1 `registry-inl` + MDC `pattern_formatter`; v2 has no registry/MDC there — dup_filter covered by `1774e700`) |
+| `1774e700` | Add const qualifier to get_time_ and filter_ member functions (#3515) | PORTED (`dup_filter_sink::filter_` const + `const` duration; `get_time_` already `const` in v2) |
+| `309204d5` | Rename local variables to avoid shadowing member functions (#3516) | PORTED (`logger::should_flush` uses `flush_level()`; `daily_file_sink` `new_filename` locals) |
+| `f2a9dec0` | Fix function arguments names different warnings (#3519) | PORTED (`spdlog::should_log(level log_level)`; v1 cfg/async renames N/A on v2) |
 | `687226d9` | The upd_sink and dist_sink files have been modified to address Passed by value warnings. (#3520) | PENDING |
-| `472945ba` | Fix shadow member warning in example file (#3521) | PENDING |
+| `472945ba` | Fix shadow member warning in example file (#3521) | PORTED (`example/example.cpp` `my_type` `value_` / ctor param) |
 | `6c5d6329` | Fix should_log comment (#3534) | SUPERSEDED (v2 `logger.h` already has “return true if logging is enabled…”) |
 | `566b2d14` | Fix #3525: Make level name matching case-insensitive (#3535) | PORTED |
 | `fc7e9c87` | Update common-inl.h | PENDING |

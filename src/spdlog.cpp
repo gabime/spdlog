@@ -33,7 +33,7 @@ void set_pattern(std::string pattern, pattern_time_type time_type) {
 
 level get_level() { return global_logger()->log_level(); }
 
-bool should_log(level level) { return global_logger()->should_log(level); }
+bool should_log(level log_level) { return global_logger()->should_log(log_level); }
 
 void set_level(level level) { global_logger()->set_level(level); }
 

@@ -203,15 +203,15 @@ void multi_sink_example() {
 
 // User defined types logging
 struct my_type {
-    int i = 0;
-    explicit my_type(int i)
-        : i(i) {}
+    int value_ = 0;
+    explicit my_type(int value)
+        : value_(value) {}
 };
 
 template <>
 struct fmt::formatter<my_type> : fmt::formatter<std::string> {
     auto format(my_type my, format_context &ctx) const -> decltype(ctx.out()) {
-        return fmt::format_to(ctx.out(), "[my_type i={}]", my.i);
+        return fmt::format_to(ctx.out(), "[my_type value={}]", my.value_);
     }
 };
 

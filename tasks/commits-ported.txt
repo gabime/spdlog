@@ -27,6 +27,7 @@ a6215527 ringbuffer_sink: throw if n_items==0; test_ringbuffer_sink (#3436)
 8806ca65 os_windows getenv: UWP via WINAPI_FAMILY vs WINAPI_FAMILY_DESKTOP_APP (#3489)
 cdbd64e2 qt_sinks: qsizetype for fromUtf8 lengths; colors_.at size_t (#3487)
 6004e3d1 SPDLOG_NO_TZ_OFFSET CMake + %z placeholder + utc_minutes_offset stubs (#3483)
+1774e700 309204d5 f2a9dec0 472945ba MSVC/clang hygiene: dup_filter filter_ const; should_flush/flush_level(); daily new_filename; should_log param; example my_type (#3515–#3519 #3521)
 # SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
 # SUPERSEDED: 6c5d6329 should_log comment — v2 logger.h already correct
 # SUPERSEDED: 2aa8b6c9 file_helper write fd_ — v2 file_helper.cpp already has guard
@@ -77,3 +78,7 @@ cdbd64e2 qt_sinks: qsizetype for fromUtf8 lengths; colors_.at size_t (#3487)
 # SUPERSEDED: 5931a3d6 Windows include order — v2 os_windows.cpp (no os-inl.h)
 # SUPERSEDED: ba508057 example binary_example vector — v2 uses push_back loop (#2963)
 # SUPERSEDED: 47b7e7c7 codespell typos — qt_sinks / test_file_helper already fixed (#3011)
+# SUPERSEDED: 1ef8d3ce LICENSE fmt third-party URL (#2967)
+# SUPERSEDED: 8cfd4a7e bench latency __linux__ macro
+# N/A: d299603e #3514 — registry + MDC hunk; v2 layout (dup_filter in 1774e700)
+# N/A: 57505989 tweakme SPDLOG_LEVEL_NAMES string_view_literals — no tweakme on v2 (#3291)

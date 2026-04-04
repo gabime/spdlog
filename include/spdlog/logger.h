@@ -123,7 +123,7 @@ public:
 
     // return true if the given message should be flushed
     [[nodiscard]] bool should_flush(const details::log_msg &msg) const noexcept {
-        return (msg.log_level >= flush_level_.load(std::memory_order_relaxed)) && (msg.log_level != level::off);
+        return (msg.log_level >= flush_level()) && (msg.log_level != level::off);
     }
 
     // set the level of logging
