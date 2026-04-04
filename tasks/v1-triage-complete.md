@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 29 **PORTED**, 28 **SUPERSEDED**, 116 **N/A**, 72 **PENDING**.
+**Counts (this revision):** 30 **PORTED**, 29 **SUPERSEDED**, 116 **N/A**, 70 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -188,7 +188,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `3335c380` | Update README.md (#3338) | N/A (docs-only) |
 | `10320184` | Fixed issue #3360 (#3361) | PENDING |
 | `faa0a7a9` | Bump fmt to version 11.1.4 | PENDING |
-| `9c582574` | Fix zformatter on Apple and POSIX.1-2024 conforming platform (#3366) | PENDING |
+| `9c582574` | Fix zformatter on Apple and POSIX.1-2024 conforming platform (#3366) | SUPERSEDED (`src/details/os_unix.cpp` `utc_minutes_offset` — `__APPLE__` / `_POSIX_VERSION` guard matches #3366) |
 | `48bcf39a` | Version 1.15.2 | N/A (v1.x release version bump) |
 | `1f4959c8` | Fix link to wiki. (#3377) | N/A (docs-only) |
 | `bd0609d7` | Update README.md | N/A (docs-only) |
@@ -225,7 +225,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `dd3ca04a` | set CMAKE_BUILD_TYPE only in top-level project (#3480) | PORTED |
 | `3f7e5028` | fix sign-compare warning (#3479) | PORTED (`os_windows.cpp` `utf8_to_wstrbuf` — `assert` vs `static_cast<int>(target.size())`) |
 | `88a0e07a` | Change access scope for ANSI target_file_ from private to protected (#3486) | PORTED (`include/spdlog/sinks/ansicolor_sink.h`) |
-| `cdbd64e2` | Fix sign conversion warnings in qt_sinks.h (#3487) | PENDING |
+| `cdbd64e2` | Fix sign conversion warnings in qt_sinks.h (#3487) | PORTED (`include/spdlog/sinks/qt_sinks.h` — `qsizetype` + `colors_.at(static_cast<size_t>(msg.log_level))`) |
 | `8806ca65` | Fix UWP detection. (#3489) | PORTED (`src/details/os_windows.cpp` `getenv` — `WINAPI_FAMILY` vs `WINAPI_FAMILY_DESKTOP_APP`) |
 | `6004e3d1` | Fix issue #3483 (#3491) | PENDING |
 | `b3688ba1` | Set IndentPPDirectives to "None" on clang-format | N/A (formatting / tooling only) |

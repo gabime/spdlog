@@ -25,6 +25,7 @@ ad725d34 os::getenv via std::getenv (MSVC 4996); 677a2d93 test_stopwatch 500ms w
 a6215527 ringbuffer_sink: throw if n_items==0; test_ringbuffer_sink (#3436)
 847db337 dup_filter_sink: skipped-msg notification level from last duplicate (#3390)
 8806ca65 os_windows getenv: UWP via WINAPI_FAMILY vs WINAPI_FAMILY_DESKTOP_APP (#3489)
+cdbd64e2 qt_sinks: qsizetype for fromUtf8 lengths; colors_.at size_t (#3487)
 # SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
 # SUPERSEDED: 6c5d6329 should_log comment — v2 logger.h already correct
 # SUPERSEDED: 2aa8b6c9 file_helper write fd_ — v2 file_helper.cpp already has guard
@@ -70,3 +71,4 @@ a6215527 ringbuffer_sink: throw if n_items==0; test_ringbuffer_sink (#3436)
 # N/A: 548b2642 MSVC C4530 / no-exceptions — no SPDLOG_NO_EXCEPTIONS in v2 CMake
 # SUPERSEDED: e3f5a4fe FMT_LIB_EXPORT on spdlog — v2 uses fmt::fmt target
 # SUPERSEDED: e655dbb6 fmt.h drop base.h — v2 uses common.h → fmt/base.h (no fmt.h)
+# SUPERSEDED: 9c582574 Apple/POSIX tm_gmtoff — os_unix.cpp utc_minutes_offset guard matches #3366

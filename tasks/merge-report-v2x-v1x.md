@@ -50,6 +50,8 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `e655dbb6` | *(SUPERSEDED)* `#3408` trim `fmt.h` includes — v2 has no `spdlog/fmt/fmt.h`; `common.h` includes `fmt/base.h`. | — |
 | `548b2642` | *(N/A)* MSVC C4530 / `_HAS_EXCEPTIONS` with no-exceptions — v2 has no `SPDLOG_NO_EXCEPTIONS` option in CMake. | — |
 | `ae1de0dc` | *(N/A)* `load_env_levels("VAR")` — no `spdlog/cfg/` on v2. | — |
+| `cdbd64e2` | `qt_color_sink`: `QString::fromUtf8` length `qsizetype`; `colors_.at` index `static_cast<size_t>(msg.log_level)`. | `include/spdlog/sinks/qt_sinks.h` |
+| `9c582574` | *(SUPERSEDED)* Apple / POSIX.1-2024 use `tm.tm_gmtoff` — v2 `os_unix.cpp` already has the `#if` guard from #3366. | — |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |
