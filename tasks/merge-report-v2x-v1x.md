@@ -154,6 +154,17 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `3edc8036` | *(N/A)* Catch2 test declaration order — optional. | — |
 | `c5061bb9` | *(N/A)* `LICENSE` text update — reconcile at release if needed. | — |
 
+### Triage-only batch (v1 async / fmt delta vs v2)
+
+| v1.x commit | Disposition | Notes |
+|-------------|---------------|--------|
+| `fe79bfcc` `6725584e` `ec661f98` `a19c76a4` `62302019` | **N/A** | v1 `async_logger` / `thread_pool`; v2 uses **`async_sink`** + `mpmc_blocking_q` (`tests/test_async.cpp` differs). |
+| `16e0d2e7` `63d18842` | **N/A** | v1 flush **promise** / **condition_variable** thread-pool path; not present on v2. |
+| `d8e0ad46` `1e7d7e07` | **N/A** | Bundled fmt **10.2.1** bumps; current bundle is **11.1.4** (`cmake/fmtlib.cmake`); align with **5A**. |
+| `faa0a7a9` `85bdab0c` | **SUPERSEDED** | fmt **11.1.4** / prior **11.0.2** — satisfied by bundled pin. |
+| `276ee5f5` `7f8060d5` `96a8f625` | **SUPERSEDED** | fmt **11.1** `to_string_view` / external fmt fixes — v2 `logger::log_with_format_` + no v1 `common.h` `to_string_view(fmt)` chain (`1685e694` triage). |
+| `3c23c27d` | **N/A** | Revert of `7f8060d5`; no separate port. |
+
 **Full SHA list:** [`v1-triage-complete.md`](v1-triage-complete.md).
 
 **Validation:** `ctest` Release on Windows — all unit tests passed after these ports.

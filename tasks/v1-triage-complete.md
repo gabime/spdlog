@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 41 **PORTED**, 53 **SUPERSEDED**, 119 **N/A**, 32 **PENDING**.
+**Counts (this revision):** 41 **PORTED**, 58 **SUPERSEDED**, 129 **N/A**, 17 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -52,7 +52,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `8979f7fb` | Also use _stat() on Windows to be more UTF8 friendly (#2978) | SUPERSEDED (`src/details/os_filesystem.cpp` — `path_exists` uses `std::filesystem::exists`) |
 | `696db97f` | docs: details about how compile time macros work (#2981) | N/A (v1 docs; v2 macro story differs) |
 | `47b7e7c7` | Fix typos found by codespell (#3011) | SUPERSEDED (`qt_sinks.h` / `test_file_helper.cpp` match; `test_errors.cpp` differs on v2) |
-| `fe79bfcc` | Expose the flusher thread object to user in order to allow setting of thread name and thread affinity when needed (#3009) | PENDING |
+| `fe79bfcc` | Expose the flusher thread object to user in order to allow setting of thread name and thread affinity when needed (#3009) | N/A (v2 uses `async_sink` + `mpmc_blocking_q`; no v1 `thread_pool` flusher thread handle) |
 | `134f9194` | Update registry.h code formatting | N/A (v2.x has no `registry.h` / multi-logger registry) |
 | `d387fdf9` | support MINGW (#3022) | SUPERSEDED (`CMakeLists.txt` — `CMAKE_CXX_EXTENSIONS` ON for `MINGW` with `CYGWIN`/`MSYS`) |
 | `9a445245` | Update ci.yml | N/A (v1 `ci.yml` / legacy CI; v2 uses `.github/workflows`) |
@@ -75,12 +75,12 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `d03eb40c` | Added Mapped Diagnostic Context (MDC) support (#2907) | PENDING |
 | `73e2e02b` | Fix #3038 (#3044) | SUPERSEDED (`src/details/os_windows.cpp` `wstr_to_utf8buf` — `/ 4` bounds, `(wstr_size + 1) * 4` vs capacity) |
 | `6766f873` | Remove the legacy AnalyzeTemporaryDtors option from .clang-tidy. (#3048) | SUPERSEDED (`.clang-tidy` on v2 does not set `AnalyzeTemporaryDtors`) |
-| `6725584e` | Make async_logger::flush() synchronous and wait for the flush to complete (#3049) | PENDING |
+| `6725584e` | Make async_logger::flush() synchronous and wait for the flush to complete (#3049) | N/A (v2 has no `async_logger` class; use `async_sink::flush` / `wait_all`) |
 | `c9ce17ab` | INSTALL.md has been updated to provide current status information. (#3052) | N/A (no `INSTALL.md` on v2 tree) |
-| `ec661f98` | Update test_async.cpp | PENDING |
-| `a19c76a4` | Fix flush test in test_async.cpp | PENDING |
-| `62302019` | Update test_async.cpp | PENDING |
-| `d8e0ad46` | Updated bundled fmt to 10.2.1 | PENDING |
+| `ec661f98` | Update test_async.cpp | N/A (v1 `async_logger` / thread-pool tests; v2 `tests/test_async.cpp` targets `async_sink`) |
+| `a19c76a4` | Fix flush test in test_async.cpp | N/A (same) |
+| `62302019` | Update test_async.cpp | N/A (same) |
+| `d8e0ad46` | Updated bundled fmt to 10.2.1 | N/A (superseded by current bundled fmt in `cmake/fmtlib.cmake`; track fmt under **5A**) |
 | `2969dde4` | Revert "Updated bundled fmt to 10.2.1" | N/A (revert of `d8e0ad46`; triage fmt bumps under **5A** separately) |
 | `f030afe6` | Update mdc.h | PENDING |
 | `1f930174` | Update mdc.h | PENDING |
@@ -89,7 +89,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `1253a57d` | Add mdc support for default format | PENDING |
 | `8fed530b` | Update mdc.h | PENDING |
 | `a2b42620` | Update CMakeLists.txt to fix #3029 | SUPERSEDED (v2 `cmake_minimum_required(VERSION 3.23)` — supersedes v1 `3.10...3.21`) |
-| `1e7d7e07` | Updated bundled fmt to 10.2.1 | PENDING |
+| `1e7d7e07` | Updated bundled fmt to 10.2.1 | N/A (duplicate fmt bump line; **5A**) |
 | `e3f5a4fe` | Update cmake to define FMT_LIB_EXPORT when building shared lib | SUPERSEDED (v2 links `fmt::fmt` from FetchContent / external; fmt target owns `FMT_*` exports — not inlined bundled fmt in `spdlog`) |
 | `a0d2187d` | README.md has include missing (#3066) | N/A (docs-only) |
 | `b7e0e2c2` | Fix #3073 | SUPERSEDED (v2 `source_loc::line` is unsigned; `empty()` also checks `filename`/`short_filename` — `include/spdlog/source_loc.h`) |
@@ -124,10 +124,10 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `2c76e610` | Fix #3194 - Use Sep instead of Sept for abbreviated  month | SUPERSEDED (`src/pattern_formatter.cpp` abbreviated months already use `"Sep"`) |
 | `e593f669` | Fix warning - extra ';' for -Wextra-semi (#3198) | SUPERSEDED (v2 `bench` / `example` / `callback_sink` / `msvc_sink` already match; no stray `};` / `override{};`) |
 | `ee168957` | Improve Cross-Platform Build Instructions in Documentation (#3229) | N/A (v1 docs) |
-| `16e0d2e7` | Exchange promise for condition_variable when flushing (fixes #3221) (#3228) | PENDING |
+| `16e0d2e7` | Exchange promise for condition_variable when flushing (fixes #3221) (#3228) | N/A (v2 has no v1 `thread_pool` / `async_msg` flush promise path) |
 | `b6da5944` | Ensure flush callback gets called in move-assign operator (#3232) | N/A (v2 has no v1 `async_msg` / `flush_callback` in `thread_pool.hpp` — different async message path) |
-| `63d18842` | Gabime/async flush (#3235) | PENDING |
-| `85bdab0c` | Update bundled fmt to 11.0.2 (#3236) | PENDING |
+| `63d18842` | Gabime/async flush (#3235) | N/A (follow-on to v1 thread-pool flush; not applicable on v2 `async_sink`) |
+| `85bdab0c` | Update bundled fmt to 11.0.2 (#3236) | SUPERSEDED (bundled fmt **11.1.4** in `cmake/fmtlib.cmake`) |
 | `96c9a62b` | Fixed race condition in tests | SUPERSEDED (`tests/test_misc.cpp` “clone async” uses `test_sink_mt` / `async_sink`) |
 | `9fe79692` | Gabime/tsan (#3237) | PENDING |
 | `7a950e02` | add /utf-8 flag for msvc | PORTED (`CMakeLists.txt` — `SPDLOG_MSVC_UTF8` + MSVC-only genex; see `9edab1b5`) |
@@ -173,21 +173,21 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `1e6250e1` | Gabime/fwrite unlocked (#3276) | SUPERSEDED (`details::os::fwrite_bytes`, `CMakeLists.txt` `HAVE_FWRITE_UNLOCKED`, `file_helper` / sinks) |
 | `65e388e8` | Adding on demand truncation for basic file sinks (#3280) | PORTED (`basic_file_sink::truncate`, `tests/test_file_logging.cpp` `basic_file_sink_truncate`) |
 | `24dde318` | Adding lock to rotate_now() (#3281) | PORTED (`std::lock_guard` in `rotating_file_sink::rotate_now`) |
-| `276ee5f5` | fix: update to_string_view function for fmt 11.1 (#3301) | PENDING |
-| `7f8060d5` | fix: Compatibility with external fmtlib 11.1.1 (#3312) | PENDING |
-| `96a8f625` | fix: remove unused to_string_view overload in fmt >= 11.1 (#3314) | PENDING |
+| `276ee5f5` | fix: update to_string_view function for fmt 11.1 (#3301) | SUPERSEDED (v2 `common.h` has no `details::to_string_view(fmt)` helpers; `logger` uses `fmt::vformat_to` — c.f. `1685e694`) |
+| `7f8060d5` | fix: Compatibility with external fmtlib 11.1.1 (#3312) | SUPERSEDED (v2 + bundled fmt **11.1.4**; external fmt via `SPDLOG_FMT_EXTERNAL`) |
+| `96a8f625` | fix: remove unused to_string_view overload in fmt >= 11.1 (#3314) | SUPERSEDED (same as `276ee5f5` — no v1-style overloads in v2 `common.h`) |
 | `ad0f31c0` | Enabled bin_to_hex utest for stdformat, fixed std::formatter (#3315) | PORTED (`test_sink.h` / `test_custom_callbacks.cpp` iterator `difference_type` cast; v2 `bin_to_hex` non-`const` `delimiter`; tests always include `test_bin_to_hex.cpp`) |
 | `d7155530` | Added SPDLOG_FWRITE_UNLOCKED option to CMakeLists.txt (#3318) | SUPERSEDED (same `CheckSymbolExists` / `SPDLOG_FWRITE_UNLOCKED` wiring as `1e6250e1` on v2) |
 | `96a7d2a1` | Format CMakeLists.txt | N/A (formatting only) |
 | `57505989` | SPDLOG_LEVEL_NAMES, comment use string_view_literals (#3291) | N/A (v2 has no `tweakme.h` / `SPDLOG_LEVEL_NAMES`; levels in `common.h`) |
 | `7cbf2a69` | Gabime/ansicolor sink improvements (#3323) | PORTED (`src/sinks/ansicolor_sink.cpp` — `set_color_mode` holds mutex, `set_color_mode_` does not; fixes double-lock vs v1 pattern; const helpers already present) |
 | `ae1de0dc` | Support custom environment variables for load_env_levels (#3327) | N/A (v2 has no `spdlog/cfg/` — `load_env_levels` not present) |
-| `3c23c27d` | Revert "fix: Compatibility with external fmtlib 11.1.1 (#3312)" (#3331) | PENDING |
+| `3c23c27d` | Revert "fix: Compatibility with external fmtlib 11.1.1 (#3312)" (#3331) | N/A (revert commit; pairs with `7f8060d5` / fmt 11.1.1 churn) |
 | `ac432c36` | Gabime/v1.15.1 (#3332) | N/A (v1.x release / tag commit) |
 | `f355b3d5` | Fix test_daily_logger | SUPERSEDED (v2 `tests/test_daily_and_rotation_loggers.cpp` — `fmt_lib::format` in custom calculator; no `SPDLOG_BUF_TO_STRING`) |
 | `3335c380` | Update README.md (#3338) | N/A (docs-only) |
 | `10320184` | Fixed issue #3360 (#3361) | SUPERSEDED (scoped_padder truncate clamp; `%D` field width — already in `pattern_formatter.cpp`) |
-| `faa0a7a9` | Bump fmt to version 11.1.4 | PENDING |
+| `faa0a7a9` | Bump fmt to version 11.1.4 | SUPERSEDED (`cmake/fmtlib.cmake` — `11.1.4.tar.gz`) |
 | `9c582574` | Fix zformatter on Apple and POSIX.1-2024 conforming platform (#3366) | SUPERSEDED (`src/details/os_unix.cpp` `utc_minutes_offset` — `__APPLE__` / `_POSIX_VERSION` guard matches #3366) |
 | `48bcf39a` | Version 1.15.2 | N/A (v1.x release version bump) |
 | `1f4959c8` | Fix link to wiki. (#3377) | N/A (docs-only) |

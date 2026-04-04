@@ -104,3 +104,9 @@ c3aed4b6 SPDLOG_WCHAR_CONSOLE / WriteConsoleW + utf8_to_wstrbuf path in wincolor
 # SUPERSEDED: c1569a3d Catch2 v3.5.0 — tests/CMakeLists.txt GIT_TAG
 # SUPERSEDED: 73e2e02b #3038 wstr_to_utf8buf — os_windows.cpp /4 and *4
 # N/A: b6da5944 async_msg flush_callback move-assign — no v1 async_msg on v2 (#3232)
+# Triage batch (no code): fe79bfcc 6725584e ec661f98 a19c76a4 62302019 — v1 async_logger/thread_pool; v2 async_sink
+# N/A: d8e0ad46 1e7d7e07 fmt 10.2.1 bumps — superseded by bundled fmt (5A)
+# N/A: 16e0d2e7 63d18842 — v1 thread_pool flush promise/callback path
+# SUPERSEDED: faa0a7a9 85bdab0c — fmt 11.1.4 / 11.0.2 vs cmake fmtlib.cmake
+# SUPERSEDED: 276ee5f5 7f8060d5 96a8f625 — fmt 11.1 to_string_view / external; v2 common.h + vformat_to
+# N/A: 3c23c27d revert #3312 — pairs with 7f8060d5
