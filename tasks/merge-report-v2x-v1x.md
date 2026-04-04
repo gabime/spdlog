@@ -39,6 +39,8 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 |-------------|---------|---------------|
 | `09a674b7` | `%z` with `pattern_time_type::utc` must print `+00:00` (not local offset). | `src/pattern_formatter.cpp` — `z_formatter` takes `pattern_time_type`; early return for UTC. |
 | `b656d1ce` | Windows `utc_minutes_offset()` via `mktime` / `_mkgmtime`; pattern tests + dedicated timezone tests. | `src/details/os_windows.cpp`; `tests/test_pattern_formatter.cpp`; `tests/test_timezone.cpp` (new); `tests/CMakeLists.txt`; `include/spdlog/details/os.h` (doc comment). |
+| `0f7562a0` | POSIX `TZ` strings with explicit DST rules in `test_timezone` (avoids musl / impl-defined behavior). | `tests/test_timezone.cpp` |
+| `d2100d5d` | `#include <fcntl.h>` for Unix TCP client (v1 had `tcp_client.h`; v2 uses `tcp_client_unix.h`). | `include/spdlog/details/tcp_client_unix.h` |
 
 **Validation:** `ctest` Release on Windows — all unit tests passed after these ports.
 
