@@ -25,6 +25,7 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 
 ### Notes
 
+- **Commits:** Prefer **small, topical commits** (code vs. doc-only when practical), **`ctest` Release** before push, then **`git push origin integration/v2-sync-v1`** so the branch and CI stay current.
 - Build and test with CMake: configure a build directory, then `cmake --build .` and `ctest` (or your project’s documented test target). Example: `cmake -B build -S . -DSPDLOG_BUILD_TESTS=ON` then `cmake --build build` and `ctest --test-dir build`.
 - Conflict resolution rule of thumb: **public headers** → preserve v2.x unless v1.x change is additive and compatible; **`.cpp` / tests / CI** → prefer carrying v1.x fixes forward; document intentional “v2 wins” cases in the merge report.
 - Keep a **triage spreadsheet or checklist** (commit SHA → ported | superseded | N/A + reason) until **3A** is 100% complete.
