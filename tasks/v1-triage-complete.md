@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 28 **PORTED**, 26 **SUPERSEDED**, 114 **N/A**, 77 **PENDING**.
+**Counts (this revision):** 29 **PORTED**, 28 **SUPERSEDED**, 116 **N/A**, 72 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -90,7 +90,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `8fed530b` | Update mdc.h | PENDING |
 | `a2b42620` | Update CMakeLists.txt to fix #3029 | PENDING |
 | `1e7d7e07` | Updated bundled fmt to 10.2.1 | PENDING |
-| `e3f5a4fe` | Update cmake to define FMT_LIB_EXPORT when building shared lib | PENDING |
+| `e3f5a4fe` | Update cmake to define FMT_LIB_EXPORT when building shared lib | SUPERSEDED (v2 links `fmt::fmt` from FetchContent / external; fmt target owns `FMT_*` exports — not inlined bundled fmt in `spdlog`) |
 | `a0d2187d` | README.md has include missing (#3066) | N/A (docs-only) |
 | `b7e0e2c2` | Fix #3073 | PENDING |
 | `dd6c9c6e` | Update comment | N/A (comment-only) |
@@ -181,7 +181,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `96a7d2a1` | Format CMakeLists.txt | N/A (formatting only) |
 | `57505989` | SPDLOG_LEVEL_NAMES, comment use string_view_literals (#3291) | PENDING |
 | `7cbf2a69` | Gabime/ansicolor sink improvements (#3323) | PORTED (`src/sinks/ansicolor_sink.cpp` — `set_color_mode` holds mutex, `set_color_mode_` does not; fixes double-lock vs v1 pattern; const helpers already present) |
-| `ae1de0dc` | Support custom environment variables for load_env_levels (#3327) | PENDING |
+| `ae1de0dc` | Support custom environment variables for load_env_levels (#3327) | N/A (v2 has no `spdlog/cfg/` — `load_env_levels` not present) |
 | `3c23c27d` | Revert "fix: Compatibility with external fmtlib 11.1.1 (#3312)" (#3331) | PENDING |
 | `ac432c36` | Gabime/v1.15.1 (#3332) | N/A (v1.x release / tag commit) |
 | `f355b3d5` | Fix test_daily_logger | PENDING |
@@ -195,7 +195,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `cec28bf8` | Fix links to local reference. (#3378) | N/A (docs-only) |
 | `bb8694b5` | Fix links for #3380 (#3381) | N/A (docs-only) |
 | `847db337` | dup_filter_sink: remove notification_level argument; use last message log level for notification instead (#3390) | PORTED (`dup_filter_sink.h` — `skipped_msg_log_level_` from `msg.log_level`; `tests/test_dup_filter.cpp`) |
-| `548b2642` | Fix warning C4530 (#3393) | PENDING |
+| `548b2642` | Fix warning C4530 (#3393) | N/A (v2 `CMakeLists.txt` has no `SPDLOG_NO_EXCEPTIONS` / `/EHs-c-` / `_HAS_EXCEPTIONS=0` block) |
 | `7e022c43` | Feature 3379 (#3397) | PENDING |
 | `943fcbd7` | Register replace logger (#3398) | N/A (v1 registry API) |
 | `0d31acae` | Fmt 11.2.0 (#3399) | PENDING |
@@ -207,7 +207,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `37ff4664` | Add coverity scan to CI and fix warnings (#3400) | N/A (optional third-party CI; not required for v2 parity) |
 | `5d89b5b9` | Update jetbrains logo (#3401) | N/A (docs asset; optional for v2) |
 | `b18a234e` | Fix coverity ci | N/A (Coverity CI follow-up) |
-| `e655dbb6` | Fix issue #3408 | PENDING |
+| `e655dbb6` | Fix issue #3408 | SUPERSEDED (v2 has no `include/spdlog/fmt/fmt.h`; includes `fmt/base.h` via `common.h`) |
 | `ad725d34` | Use std::getenv #3414 (#3415) | PORTED (`os_windows.cpp` / `os_unix.cpp` — `std::getenv`; MSVC 4996 suppressed; no v2 `cfg/` `load_levels`) |
 | `287333ee` | Remove unnecessary and inconsistent "final" from color sinks (#3430) | SUPERSEDED (v2 `ansicolor_sink`/`wincolor_sink` layout differs; no `final` on same methods as v1 patch) |
 | `a6215527` | Fix ringbuffer tests for newline (#3436) | PORTED (`ringbuffer_sink.h` reject `n_items==0`; `test_ringbuffer_sink.cpp` — v2 API uses `drain`, not v1 `last_formatted`) |
@@ -226,7 +226,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `3f7e5028` | fix sign-compare warning (#3479) | PORTED (`os_windows.cpp` `utf8_to_wstrbuf` — `assert` vs `static_cast<int>(target.size())`) |
 | `88a0e07a` | Change access scope for ANSI target_file_ from private to protected (#3486) | PORTED (`include/spdlog/sinks/ansicolor_sink.h`) |
 | `cdbd64e2` | Fix sign conversion warnings in qt_sinks.h (#3487) | PENDING |
-| `8806ca65` | Fix UWP detection. (#3489) | PENDING |
+| `8806ca65` | Fix UWP detection. (#3489) | PORTED (`src/details/os_windows.cpp` `getenv` — `WINAPI_FAMILY` vs `WINAPI_FAMILY_DESKTOP_APP`) |
 | `6004e3d1` | Fix issue #3483 (#3491) | PENDING |
 | `b3688ba1` | Set IndentPPDirectives to "None" on clang-format | N/A (formatting / tooling only) |
 | `ea3e747e` | Bump fmt to 12.1.0 | PENDING |

@@ -24,6 +24,7 @@ ad725d34 os::getenv via std::getenv (MSVC 4996); 677a2d93 test_stopwatch 500ms w
 3f7e5028 utf8_to_wstrbuf assert: result_size vs static_cast<int>(target.size()) (#3479)
 a6215527 ringbuffer_sink: throw if n_items==0; test_ringbuffer_sink (#3436)
 847db337 dup_filter_sink: skipped-msg notification level from last duplicate (#3390)
+8806ca65 os_windows getenv: UWP via WINAPI_FAMILY vs WINAPI_FAMILY_DESKTOP_APP (#3489)
 # SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
 # SUPERSEDED: 6c5d6329 should_log comment — v2 logger.h already correct
 # SUPERSEDED: 2aa8b6c9 file_helper write fd_ — v2 file_helper.cpp already has guard
@@ -65,3 +66,7 @@ a6215527 ringbuffer_sink: throw if n_items==0; test_ringbuffer_sink (#3436)
 # SUPERSEDED: 287333ee color sinks final — v2 ansicolor/wincolor headers differ from v1
 # N/A batch: README / wiki / docs-only SHAs; v1 ci.yml & win CI churn; CMake comment-only; LICENSE optional
 # N/A: 943fcbd7 registry; 27cb4c76 MDC readme; 3edc8036 catch test order; Coverity CI; 7cee026b v1 TSAN CI line
+# N/A: ae1de0dc cfg load_env_levels var name — no spdlog/cfg on v2
+# N/A: 548b2642 MSVC C4530 / no-exceptions — no SPDLOG_NO_EXCEPTIONS in v2 CMake
+# SUPERSEDED: e3f5a4fe FMT_LIB_EXPORT on spdlog — v2 uses fmt::fmt target
+# SUPERSEDED: e655dbb6 fmt.h drop base.h — v2 uses common.h → fmt/base.h (no fmt.h)

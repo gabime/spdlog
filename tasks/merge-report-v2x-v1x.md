@@ -45,6 +45,11 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `9ecdf5c8` | Optional connect timeout (non-blocking + `select`); `SO_RCVTIMEO` / `SO_SNDTIMEO` when `timeout_ms` is positive; `tcp_sink_config::timeout_ms` + ctor overload. | `tcp_client_windows.h`, `tcp_client_unix.h`, `tcp_sink.h` |
 | `45b67eee` | `dup_filter_sink` constructor taking `std::vector<std::shared_ptr<sink>>`. | `include/spdlog/sinks/dup_filter_sink.h` |
 | `847db337` | `dup_filter_sink`: drop ctor `notification_level`; “Skipped …” uses level of last duplicate (`msg.log_level`). | `include/spdlog/sinks/dup_filter_sink.h`, `tests/test_dup_filter.cpp` |
+| `8806ca65` | UWP / non-desktop: `getenv` unsupported — detect via `WINAPI_FAMILY` vs `WINAPI_FAMILY_DESKTOP_APP` (not `__cplusplus_winrt` alone). | `src/details/os_windows.cpp` |
+| `e3f5a4fe` | *(SUPERSEDED)* `FMT_LIB_EXPORT` on spdlog when shared — v2 links `fmt::fmt`; fmt CMake owns exports. | — |
+| `e655dbb6` | *(SUPERSEDED)* `#3408` trim `fmt.h` includes — v2 has no `spdlog/fmt/fmt.h`; `common.h` includes `fmt/base.h`. | — |
+| `548b2642` | *(N/A)* MSVC C4530 / `_HAS_EXCEPTIONS` with no-exceptions — v2 has no `SPDLOG_NO_EXCEPTIONS` option in CMake. | — |
+| `ae1de0dc` | *(N/A)* `load_env_levels("VAR")` — no `spdlog/cfg/` on v2. | — |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |

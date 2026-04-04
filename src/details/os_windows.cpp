@@ -222,8 +222,9 @@ void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
     #pragma warning(disable : 4996)
 #endif
 std::string getenv(const char *field) {
-#if defined(_MSC_VER) && defined(__cplusplus_winrt)
-    return std::string{};  // not supported under uwp
+#if defined(_MSC_VER) && defined(WINAPI_FAMILY) && defined(WINAPI_FAMILY_DESKTOP_APP) && \
+    (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
+    return std::string{};  // not supported on UWP / non-desktop WinRT targets (#3489)
 #else
     char *buf = std::getenv(field);
     return buf != nullptr ? std::string(buf) : std::string{};
