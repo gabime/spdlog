@@ -74,3 +74,6 @@ cdbd64e2 qt_sinks: qsizetype for fromUtf8 lengths; colors_.at size_t (#3487)
 # SUPERSEDED: e655dbb6 fmt.h drop base.h — v2 uses common.h → fmt/base.h (no fmt.h)
 # SUPERSEDED: 9c582574 Apple/POSIX tm_gmtoff — os_unix.cpp utc_minutes_offset guard matches #3366
 # SUPERSEDED: 10320184 pattern_formatter ScopedPadder / %D — already in pattern_formatter.cpp (#3360)
+# SUPERSEDED: 5931a3d6 Windows include order — v2 os_windows.cpp (no os-inl.h)
+# SUPERSEDED: ba508057 example binary_example vector — v2 uses push_back loop (#2963)
+# SUPERSEDED: 47b7e7c7 codespell typos — qt_sinks / test_file_helper already fixed (#3011)

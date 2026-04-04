@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 31 **PORTED**, 30 **SUPERSEDED**, 116 **N/A**, 68 **PENDING**.
+**Counts (this revision):** 31 **PORTED**, 33 **SUPERSEDED**, 116 **N/A**, 65 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -19,7 +19,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `f24f7fa2` | Added missing include mutex | SUPERSEDED (`src/sinks/base_sink.cpp` already `#include <mutex>`) |
 | `1a0bfc7a` | clang format | N/A (formatting only) |
 | `f4afd81c` | Update common.h | N/A (trivial v1 `common.h` edit; v2 header differs) |
-| `5931a3d6` | Fixed windows compile | PENDING |
+| `5931a3d6` | Fixed windows compile | SUPERSEDED (`src/details/os_windows.cpp` — `windows_include.h` first; v2 has no `os-inl.h`) |
 | `5e88d5fe` | Never sort includes in clang format | N/A (formatting / tooling only) |
 | `95c226e9` | format | N/A (formatting only) |
 | `7f535d18` | updated .clang-format | N/A (formatting only) |
@@ -51,7 +51,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `7c02e204` | Bump version to 1.13.0 | N/A (v1.x release version bump; v2 has own versioning) |
 | `8979f7fb` | Also use _stat() on Windows to be more UTF8 friendly (#2978) | SUPERSEDED (`src/details/os_filesystem.cpp` — `path_exists` uses `std::filesystem::exists`) |
 | `696db97f` | docs: details about how compile time macros work (#2981) | N/A (v1 docs; v2 macro story differs) |
-| `47b7e7c7` | Fix typos found by codespell (#3011) | PENDING |
+| `47b7e7c7` | Fix typos found by codespell (#3011) | SUPERSEDED (`qt_sinks.h` / `test_file_helper.cpp` match; `test_errors.cpp` differs on v2) |
 | `fe79bfcc` | Expose the flusher thread object to user in order to allow setting of thread name and thread affinity when needed (#3009) | PENDING |
 | `134f9194` | Update registry.h code formatting | N/A (v2.x has no `registry.h` / multi-logger registry) |
 | `d387fdf9` | support MINGW (#3022) | SUPERSEDED (`CMakeLists.txt` — `CMAKE_CXX_EXTENSIONS` ON for `MINGW` with `CYGWIN`/`MSYS`) |

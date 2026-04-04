@@ -6,8 +6,8 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 
 - **Done:** Integration branch created and pushed; merge-base and v1-only commit list exported; triage template and merge-report draft added; direct `git merge origin/v1.x` was attempted and **aborted** (v2.x file-tree divergence vs v1.x — see [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md)).
 - **Ports:** [`commits-ported.txt`](commits-ported.txt). **Full triage (245 v1-only SHAs):** [`v1-triage-complete.md`](v1-triage-complete.md) — **PORTED**, **PENDING**, **SUPERSEDED**, or **N/A** (merge commits). **All unit tests pass** (`ctest` Release, Windows).
-- **Latest pass:** `6004e3d1` **`SPDLOG_NO_TZ_OFFSET`** — `%z` placeholder `+??:??`; `utc_minutes_offset` stubs; `10320184` **SUPERSEDED** (padding / `%D` already fixed). See [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md).
-- **Triage snapshot:** **31 PORTED**, **30 SUPERSEDED**, **116 N/A**, **68 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md).
+- **Latest pass:** Triage **SUPERSEDED** `5931a3d6` (Win include order → `os_windows.cpp`), `ba508057` (example binary vector), `47b7e7c7` (codespell typos already on branch). Prior: `6004e3d1` **`SPDLOG_NO_TZ_OFFSET`**; `10320184` padding / `%D`. See [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md).
+- **Triage snapshot:** **31 PORTED**, **33 SUPERSEDED**, **116 N/A**, **65 PENDING** — [`v1-triage-complete.md`](v1-triage-complete.md).
 - **Remaining:** Topical ports from `v1-commit-inventory.txt` — **fmt / CMake 5A** (bundled fmt bump, warning flags); large batches still **PENDING**.
 
 ## Relevant Files

@@ -54,6 +54,9 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `9c582574` | *(SUPERSEDED)* Apple / POSIX.1-2024 use `tm.tm_gmtoff` — v2 `os_unix.cpp` already has the `#if` guard from #3366. | — |
 | `6004e3d1` | **`SPDLOG_NO_TZ_OFFSET`**: `%z` prints `+??:??`; `utc_minutes_offset` returns 0; CMake `PUBLIC` define. `test_timezone` already guarded. | `CMakeLists.txt`, `src/pattern_formatter.cpp`, `os_unix.cpp`, `os_windows.cpp`, `tests/test_pattern_formatter.cpp` |
 | `10320184` | *(SUPERSEDED)* `#3360` padding truncate / `%D` width — v2 `pattern_formatter.cpp` already matches. | — |
+| `5931a3d6` | *(SUPERSEDED)* Win32 header include order (`windows_include.h` before others) — v2 `src/details/os_windows.cpp`; no `os-inl.h`. | — |
+| `ba508057` | *(SUPERSEDED)* `binary_example` must not use `vector<char>(80)` with 80 pushes — v2 `example.cpp` builds buffer with `push_back` in a loop. | — |
+| `47b7e7c7` | *(SUPERSEDED)* codespell comment fixes (`qt_sinks.h`, `test_file_helper.cpp`) — already on branch; v2 `test_errors.cpp` differs from v1. | — |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |
