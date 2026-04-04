@@ -68,6 +68,10 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `687226d9` | `udp_sink` ctor takes **`const udp_sink_config &`** (#3520). `dist_sink` already used **`std::move(sinks)`**. | `include/spdlog/sinks/udp_sink.h` |
 | `fc7e9c87` | *(SUPERSEDED)* `common-inl.h` add `<cctype>` — v2 has no `common-inl.h`; `level_from_str` lives in `src/common.cpp` with `<cctype>`. | — |
 | `1685e694` | *(SUPERSEDED)* Avoid deprecated `fmt::format_string` copy — v2 `logger::log_with_format_` holds `const format_string_t &` and calls `fmt::vformat_to` (no v1 `to_string_view(fmt)` indirection). | — |
+| `1245bf8e` | User-defined type docs: **`fmt::format_to`** in `README.md` snippet (#3259). `example.cpp` already used `fmt::format_to`. | `README.md` |
+| `2670f47d` | *(SUPERSEDED)* `z_formatter` / `-W` ordering with `SPDLOG_NO_TZ_OFFSET` — `src/pattern_formatter.cpp` already matches the v1 layout. | — |
+| `d276069a` | *(SUPERSEDED)* `fmt::formatter::format` **const** for fmt 11 — `example/example.cpp` already `const`. | — |
+| `951c5b99` | *(SUPERSEDED)* `rotating_file_sink::rotate_now` + test — `src/sinks/rotating_file_sink.cpp`, `tests/test_file_logging.cpp` `rotating_file_logger4`. | — |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |

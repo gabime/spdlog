@@ -258,7 +258,7 @@ struct fmt::formatter<my_type> : fmt::formatter<std::string>
 {
     auto format(my_type my, format_context &ctx) const -> decltype(ctx.out())
     {
-        return format_to(ctx.out(), "[my_type i={}]", my.i);
+        return fmt::format_to(ctx.out(), "[my_type i={}]", my.i);
     }
 };
 

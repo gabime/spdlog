@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 36 **PORTED**, 38 **SUPERSEDED**, 118 **N/A**, 53 **PENDING**.
+**Counts (this revision):** 37 **PORTED**, 41 **SUPERSEDED**, 118 **N/A**, 49 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -160,7 +160,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `7cee026b` | Added tsan to ci (#3247) | N/A (v1 CI; TSAN wiring triaged separately if needed) |
 | `8e561337` | Version 1.15.0 | N/A (v1.x release version bump) |
 | `51a0deca` | docs: Removed duplicate line in daily_file_sink comment (#3249) | SUPERSEDED (duplicate `max_files` line already removed in `daily_file_sink.h` on integration branch) |
-| `1245bf8e` | add explicit mt:: and std:: to avoid ambiguous call when both std::format_to and mt::format_to are present (#3259) | PENDING |
+| `1245bf8e` | add explicit mt:: and std:: to avoid ambiguous call when both std::format_to and mt::format_to are present (#3259) | PORTED (`README.md` user-defined type snippet uses `fmt::format_to`; `example.cpp` already did) |
 | `9edab1b5` | pass /utf-8 only when compiler is MSVC (#3260) | PORTED (`$<CXX_COMPILER_ID:MSVC>` genex on `spdlog` when `SPDLOG_MSVC_UTF8`) |
 | `633003f4` | Update CMakeLists.txt comment | N/A (comment-only) |
 | `94526fa8` | Update CMakeLists.txt comment | N/A (comment-only) |
@@ -169,7 +169,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `0efef2af` | Update CMakeLists.txt comment | N/A (comment-only) |
 | `43dcb398` | Update CMakeLists.txt comment | N/A (comment-only) |
 | `15f53968` | Update null_sink to be final (#3267) | SUPERSEDED (`null_sink` already `final` in `null_sink.h`) |
-| `951c5b99` | Allow manual rotation of rotating_file_sink (#3269) | PENDING |
+| `951c5b99` | Allow manual rotation of rotating_file_sink (#3269) | SUPERSEDED (`rotating_file_sink::rotate_now`, `tests/test_file_logging.cpp` `rotating_file_logger4`) |
 | `1e6250e1` | Gabime/fwrite unlocked (#3276) | PENDING |
 | `65e388e8` | Adding on demand truncation for basic file sinks (#3280) | PENDING |
 | `24dde318` | Adding lock to rotate_now() (#3281) | PENDING |
@@ -238,7 +238,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `0209b12c` | tests: fix unit tests to not be affected by custom level names (#3492) | PORTED (`tests/includes.h` — `#undef` custom level name macros before spdlog includes) |
 | `32dd298d` | Docs: fix misleading comment in blocking_queue header (#3504) | PORTED (`include/spdlog/details/mpmc_blocking_q.h` file header; per-method comments already correct) |
 | `09a674b7` | Fix %z when pattern_type_type is utc - should be +00:00 | PORTED |
-| `2670f47d` | Fix warning | PENDING |
+| `2670f47d` | Fix warning | SUPERSEDED (`z_formatter` in `pattern_formatter.cpp`: `SPDLOG_NO_TZ_OFFSET` vs UTC `+00:00` structure already matches v1 fix) |
 | `b656d1ce` | Windows utc_minutes_offset(): Fix historical DST accuracy and improve offset calculation speed (~2.5x) (#3508) | PORTED |
 | `79524ddd` | spdlog version 1.17.0 | N/A (v1.x release version bump) |
 | `6b240a89` | Replace C-style cast with reinterpret_cast in udp_client (#3509) | PORTED (`udp_client_unix.h` `send` — `reinterpret_cast`, `sizeof(sockAddr_)`) |
