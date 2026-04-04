@@ -18,7 +18,7 @@ Derived from [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md). D
 
 ## Relevant Files
 
-- `CMakeLists.txt` — Top-level CMake options, bundled fmt sources, warnings, install rules; will need alignment with **5A** after merge.
+- `CMakeLists.txt` — Top-level CMake options, warnings, install rules (**5A** fmt pin lives in **`cmake/fmtlib.cmake`**).
 - `include/spdlog/version.h` (or equivalent version header in repo) — Version macros for v2.x pre-release; confirm path under `include/`.
 - `include/spdlog/**/*.h` — Public API; conflict resolution favors **2A** (v2.x surface) while landing v1.x behavior fixes in implementations.
 - `src/**/*.cpp` — Implementation files likely touched by merge conflicts and ports.

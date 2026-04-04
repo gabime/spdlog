@@ -167,6 +167,10 @@ The **v1.x** branch is the current main development line for spdlog and receives
 
 ---
 
+## Related artifacts (integration branch)
+
+For the **`integration/v2-sync-v1`** workstream: full triage [`tasks/v1-triage-complete.md`](v1-triage-complete.md), merge report [`tasks/merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md), and downstream **migration / release notes** [`tasks/migration-notes-v2x-v1x-integration.md`](migration-notes-v2x-v1x-integration.md).
+
 ## Document history
 
 | Version | Date       | Notes                    |
@@ -174,3 +178,4 @@ The **v1.x** branch is the current main development line for spdlog and receives
 | 1.0     | 2026-04-04 | Initial draft from brief |
 | 1.1     | 2026-04-04 | Recorded 2A, 3A; added guidance for 1, 4, 5 |
 | 1.2     | 2026-04-04 | Recorded 1D, 4B, 5A; closed open questions |
+| 1.3     | 2026-04-04 | Added “Related artifacts” (triage, merge report, migration notes) |

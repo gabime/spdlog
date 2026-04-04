@@ -26,8 +26,8 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 2. **Do not** rely on a single blind merge commit; use **topical ports**:
    - Group `v1-commit-inventory.txt` by area (fmt, CI, sinks, OS, tests).
    - For each v1 commit, either cherry-pick onto `integration/v2-sync-v1` and resolve in the **v2** file set, or **manually port** the diff onto the v2-equivalent file.
-3. **fmt / CMake (5A):** After substantive code ports, align **bundled fmt** and **CMake** warning policy with **current v1.x** explicitly (may be one coordinated PR).
-4. **Triage:** See **`tasks/v1-triage-complete.md`** — all 245 v1-only SHAs listed with **PORTED**, **PENDING**, or **N/A** (merge commits). Remaining **PENDING** rows must be resolved to **ported**, **superseded**, or **N/A** with rationale (PRD **3A**).
+3. **fmt / CMake (5A):** **Done** on this branch — bundled **fmt 12.1.0**, **`FMT_INSTALL`**, MSVC **`/wd4834`** on `fmt`, **`find_dependency(fmt 12)`** (see subsection **“5A — Bundled fmt 12.1.0”** below and [`tasks/migration-notes-v2x-v1x-integration.md`](migration-notes-v2x-v1x-integration.md)).
+4. **Triage:** See **`tasks/v1-triage-complete.md`** — all 245 v1-only SHAs classified (**PORTED** / **SUPERSEDED** / **N/A**); **0** **PENDING** (PRD **3A** complete).
 
 ## Conflict resolutions
 

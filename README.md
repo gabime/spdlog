@@ -57,6 +57,8 @@ see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v2.x/example/
 * Log filtering - log levels can be modified at runtime as well as compile time.
 * Support for loading log levels from argv or environment var.
 
+**v1.x → v2.x parity (branch `integration/v2-sync-v1`):** dependency and API expectations for that integration line are summarized in [`tasks/migration-notes-v2x-v1x-integration.md`](tasks/migration-notes-v2x-v1x-integration.md).
+
 ## Usage samples
 
 #### Basic usage
