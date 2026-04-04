@@ -71,7 +71,7 @@ Example: `- [ ] 1.1 Read file` → `- [x] 1.1 Read file` (after completing).
   - [ ] 4.5 Spot-check platform-specific areas called out in PRD (e.g. Windows/UWP, POSIX `TZ`, TCP) on representative configs if possible.
 
 - [ ] 5.0 Documentation, merge report, and release readiness (4B)
-  - [ ] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *(Partial: [`v1-triage-complete.md`](v1-triage-complete.md) lists all 245 SHAs; **31** ported, **30** superseded, **116** N/A, **68** **PENDING** — reclassify PENDING over time.)*
+  - [ ] 5.1 Complete **3A** triage: every v1.x commit in range has status **ported**, **superseded**, or **N/A** with reason (no silent gaps). *(Partial: [`v1-triage-complete.md`](v1-triage-complete.md) lists all 245 SHAs; **31** ported, **33** superseded, **116** N/A, **65** **PENDING** — reclassify PENDING over time.)*
   - [x] 5.2 Write **merge report**: areas touched, conflict resolutions, rejected or deferred ports with rationale.
   - [ ] 5.3 Update **README** (build, fmt version, branch notes) and version header for v2.x pre-release.
   - [ ] 5.4 Add **migration / release notes** for downstream users (API preserved per **2A**, dependency changes per **5A**).
