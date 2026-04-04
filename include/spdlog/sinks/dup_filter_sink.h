@@ -5,8 +5,10 @@
 
 #include <chrono>
 #include <cstdio>
+#include <memory>
 #include <mutex>
 #include <string>
+#include <vector>
 
 #include "../details/log_msg.h"
 #include "../details/null_mutex.h"
@@ -43,6 +45,13 @@ public:
     explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration, level notification_level = level::info)
         : max_skip_duration_{max_skip_duration},
           log_level_{notification_level} {}
+
+    template <class Rep, class Period>
+    explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration,
+                             std::vector<std::shared_ptr<sink>> sinks)
+        : dist_sink<Mutex>(std::move(sinks)),
+          max_skip_duration_{max_skip_duration},
+          log_level_{level::info} {}
 
 protected:
     std::chrono::microseconds max_skip_duration_;

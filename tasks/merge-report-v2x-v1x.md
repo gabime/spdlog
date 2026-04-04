@@ -27,7 +27,7 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
    - Group `v1-commit-inventory.txt` by area (fmt, CI, sinks, OS, tests).
    - For each v1 commit, either cherry-pick onto `integration/v2-sync-v1` and resolve in the **v2** file set, or **manually port** the diff onto the v2-equivalent file.
 3. **fmt / CMake (5A):** After substantive code ports, align **bundled fmt** and **CMake** warning policy with **current v1.x** explicitly (may be one coordinated PR).
-4. **Triage:** Fill `triage-template.md` until every inventory SHA is **ported**, **superseded**, or **N/A** (3A).
+4. **Triage:** See **`tasks/v1-triage-complete.md`** — all 245 v1-only SHAs listed with **PORTED**, **PENDING**, or **N/A** (merge commits). Remaining **PENDING** rows must be resolved to **ported**, **superseded**, or **N/A** with rationale (PRD **3A**).
 
 ## Conflict resolutions
 
@@ -43,6 +43,9 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `d2100d5d` | `#include <fcntl.h>` for Unix TCP client (v1 had `tcp_client.h`; v2 uses `tcp_client_unix.h`). | `include/spdlog/details/tcp_client_unix.h` |
 | `3c61b051` | GitHub Actions `actions/checkout@v6` (Node deprecation). | `.github/workflows/linux.yml`, `macos.yml`, `windows.yml` |
 | `9ecdf5c8` | Optional connect timeout (non-blocking + `select`); `SO_RCVTIMEO` / `SO_SNDTIMEO` when `timeout_ms` is positive; `tcp_sink_config::timeout_ms` + ctor overload. | `tcp_client_windows.h`, `tcp_client_unix.h`, `tcp_sink.h` |
+| `45b67eee` | `dup_filter_sink` constructor taking `std::vector<std::shared_ptr<sink>>`. | `include/spdlog/sinks/dup_filter_sink.h` |
+
+**Full SHA list:** [`v1-triage-complete.md`](v1-triage-complete.md).
 
 **Validation:** `ctest` Release on Windows — all unit tests passed after these ports.
 
