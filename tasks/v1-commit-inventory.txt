@@ -1,0 +1,245 @@
+3c61b051 [ci] Update actions/checkout to latest major relese (#3575)
+45b67eee Add constructor for dup_filter_sink with sinks parameter (#3549)
+1fbc60a5 docs: fix SPDLOG_LEVEL env example (#3561)
+0f7562a0 tests: timezone: Provide DST rules when setting TZ on POSIX systems (#3542)
+d5af52d9 Fix format_string propagation (#3543)
+1685e694 Fix deprecated copy constructor usage of fmt::format_string (#3541)
+c49c7cf9 Allow empty DEBUG_POSTFIX property in CMakeLists (#3530)
+fc7e9c87 Update common-inl.h
+566b2d14 Fix #3525: Make level name matching case-insensitive (#3535)
+6c5d6329 Fix should_log comment (#3534)
+472945ba Fix shadow member warning in example file (#3521)
+687226d9 The upd_sink and dist_sink files have been modified to address Passed by value warnings. (#3520)
+f2a9dec0 Fix function arguments names different warnings (#3519)
+309204d5 Rename local variables to avoid shadowing member functions (#3516)
+1774e700 Add const qualifier to get_time_ and filter_ member functions (#3515)
+d299603e Add missing const qualifiers to reference variables (#3514)
+33375433 fix: initialize null_atomic_int::value to zero (#3513)
+6b240a89 Replace C-style cast with reinterpret_cast in udp_client (#3509)
+79524ddd spdlog version 1.17.0
+b656d1ce Windows utc_minutes_offset(): Fix historical DST accuracy and improve offset calculation speed (~2.5x) (#3508)
+2670f47d Fix warning
+09a674b7 Fix %z when pattern_type_type is utc - should be +00:00
+32dd298d Docs: fix misleading comment in blocking_queue header (#3504)
+0209b12c tests: fix unit tests to not be affected by custom level names (#3492)
+d2100d5d Fix: include <fcntl.h> in tcp_client.h to avoid compilation failures on Unix (#3497)
+3f03542d Remove warning 4834 suppression
+2c1eafc8 Backport warning fix from fmt head
+878ad2e3 Supress MSVC C4834 warning triggeed by fmt 12.1.0
+c5061bb9 Update LICENSE file
+ea3e747e Bump fmt to 12.1.0
+b3688ba1 Set IndentPPDirectives to "None" on clang-format
+6004e3d1 Fix issue #3483 (#3491)
+8806ca65 Fix UWP detection. (#3489)
+cdbd64e2 Fix sign conversion warnings in qt_sinks.h (#3487)
+88a0e07a Change access scope for ANSI target_file_ from private to protected (#3486)
+3f7e5028 fix sign-compare warning (#3479)
+dd3ca04a set CMAKE_BUILD_TYPE only in top-level project (#3480)
+486b5555 Version 1.16.0
+1bea38ed clang-format
+4418909a Bump fmt to 12.0.0
+f1d748e5 Remove the fileapi.h include in os-inl.h (#3444)
+3edc8036 Run tests in the order they are declared in the source file. (#3451)
+9ecdf5c8 Added timeout for TCP calls such as connect, send, recv (#3432)
+737347d2 Update linux.yml
+4f2b3d52 Update README.md (#3437)
+4397dac5 chore(cmake): add option to override CMAKE_DEBUG_POSTFIX (#3433)
+6fd67ce1 Update windows.yml
+4619e18a Update windows.yml
+a6215527 Fix ringbuffer tests for newline (#3436)
+287333ee Remove unnecessary and inconsistent "final" from color sinks (#3430)
+ad725d34 Use std::getenv #3414 (#3415)
+e655dbb6 Fix issue #3408
+b18a234e Fix coverity ci
+5d89b5b9 Update jetbrains logo (#3401)
+37ff4664 Add coverity scan to CI and fix warnings (#3400)
+677a2d93 Update test_stopwatch.cpp
+6fa36017 Version 1.15.3
+c73b8cc4 Update comment
+7ca6a4fb Update commemt
+070e1c97 Update comment
+0d31acae Fmt 11.2.0 (#3399)
+943fcbd7 Register replace logger (#3398)
+7e022c43 Feature 3379 (#3397)
+548b2642 Fix warning C4530 (#3393)
+847db337 dup_filter_sink: remove notification_level argument; use last message log level for notification instead (#3390)
+bb8694b5 Fix links for #3380 (#3381)
+cec28bf8 Fix links to local reference. (#3378)
+bd0609d7 Update README.md
+1f4959c8 Fix link to wiki. (#3377)
+48bcf39a Version 1.15.2
+9c582574 Fix zformatter on Apple and POSIX.1-2024 conforming platform (#3366)
+faa0a7a9 Bump fmt to version 11.1.4
+10320184 Fixed issue #3360 (#3361)
+3335c380 Update README.md (#3338)
+f355b3d5 Fix test_daily_logger
+ac432c36 Gabime/v1.15.1 (#3332)
+3c23c27d Revert "fix: Compatibility with external fmtlib 11.1.1 (#3312)" (#3331)
+ae1de0dc Support custom environment variables for load_env_levels (#3327)
+7cbf2a69 Gabime/ansicolor sink improvements (#3323)
+57505989 SPDLOG_LEVEL_NAMES, comment use string_view_literals (#3291)
+96a7d2a1 Format CMakeLists.txt
+d7155530 Added SPDLOG_FWRITE_UNLOCKED option to CMakeLists.txt (#3318)
+ad0f31c0 Enabled bin_to_hex utest for stdformat, fixed std::formatter (#3315)
+96a8f625 fix: remove unused to_string_view overload in fmt >= 11.1 (#3314)
+7f8060d5 fix: Compatibility with external fmtlib 11.1.1 (#3312)
+276ee5f5 fix: update to_string_view function for fmt 11.1 (#3301)
+24dde318 Adding lock to rotate_now() (#3281)
+65e388e8 Adding on demand truncation for basic file sinks (#3280)
+1e6250e1 Gabime/fwrite unlocked (#3276)
+951c5b99 Allow manual rotation of rotating_file_sink (#3269)
+15f53968 Update null_sink to be final (#3267)
+43dcb398 Update CMakeLists.txt comment
+0efef2af Update CMakeLists.txt comment
+018d8aa2 Update CMakeLists.txt
+35b0417f Update CMakeLists.txt comment
+94526fa8 Update CMakeLists.txt comment
+633003f4 Update CMakeLists.txt comment
+9edab1b5 pass /utf-8 only when compiler is MSVC (#3260)
+1245bf8e add explicit mt:: and std:: to avoid ambiguous call when both std::format_to and mt::format_to are present (#3259)
+51a0deca docs: Removed duplicate line in daily_file_sink comment (#3249)
+8e561337 Version 1.15.0
+7cee026b Added tsan to ci (#3247)
+ebfa9069 CMake option to Enable/disable msvc /utf-8 flag (on by default)
+68f6ec7a Merge branch 'v1.x' of https://github.com/gabime/spdlog into v1.x
+d343d413 CMake option to Enable/disable msvc /utf-8 flag (on by default)
+fe4f9952 Fix utf8_to_wstrbuf tests (#3245)
+5673e9e5 utf8_to_wstrbuf now handles invalid utf8 sequences (#3244)
+63f08750 Removed if in ci
+5fd32e1a Update README.md
+35345182 Update README.md (#3240)
+3c2e002b ci-win-2019 (#3239)
+6192537d Fix win ci
+6c720155 Fix win ci
+d939255f Fix win ci
+ecc38811 Fix win ci
+bff1a603 Fix win ci
+6f2ead1a refactor win ci
+92f9aa32 refactor win ci
+64d9b4e2 refactor win ci
+3d3f71db Fix ci
+3fec1a81 Fix ci
+984a9598 Fix ci
+7ecfb3bc Fix ci
+614c3a68 Fix ci
+5dc356dc windows ci
+a7eb388f windows ci wip
+a5cfbf36 Revert "Better support for FMT_UNICODE in cmake"
+d3730937 Better support for FMT_UNICODE in cmake
+7a950e02 add /utf-8 flag for msvc
+9fe79692 Gabime/tsan (#3237)
+96c9a62b Fixed race condition in tests
+85bdab0c Update bundled fmt to 11.0.2 (#3236)
+63d18842 Gabime/async flush (#3235)
+b6da5944 Ensure flush callback gets called in move-assign operator (#3232)
+16e0d2e7 Exchange promise for condition_variable when flushing (fixes #3221) (#3228)
+ee168957 Improve Cross-Platform Build Instructions in Documentation (#3229)
+e593f669 Fix warning - extra ';' for -Wextra-semi (#3198)
+2c76e610 Fix #3194 - Use Sep instead of Sept for abbreviated  month
+bdd1dff3 Update CMakeLists.txt, Fix spelling errors (#3193)
+ffd5aa41 Update conan install command in README (#3172)
+c1fbafdc Update mdc.h (#3185)
+362214a3 fix/issue-3101: fix the issue where mdc ignores SPDLOG_NO_TLS (#3184)
+2169a6f6 use std::lock_guard instead of std::unique_lock (#3179)
+271f0f3b Add info about max_files in the docstrings of hourly/daily file sinks (#3170)
+a3a0c9d6 compilation error gcc 8.5 with [-Werror=suggest-override] (#3158)
+5ebfc927 fix: set `/Zc:__cplusplus` and `/MP` to MSVC only (#3139)
+885b5473 Fix building with `FMT_ENFORCE_COMPILE_STRING` (#3137)
+d276069a make example compatible with fmt 11 (#3130)
+eeb22c13 Allow customization of syslog_sink (#3124)
+c3aed4b6 Add wide character formatting and output support to wincolor_sink. (#3092)
+27cb4c76 Added mdc example to readme
+2d4acf8c Added mdc example
+3b4fd93b Updated comment about mdc
+2122eb21 Update spdlog version to 1.14.1
+22b0f4fc Clang format
+37b84769 Revert pr #3023 (std::string_view overloads for logger accessor for c++17)
+fa6605dc Fix compile
+94a8e87c Fix #3079
+238c9ffa Bump spdlog to version 1.14.0
+3b4c775b Update comment about set_default_logger
+3403f278 Don't remove previous defaullt logger from registry in set_default_logger. Fix #3016
+a34e08c7 Added CMakeSettings.json to gitignore
+71925ca3 Revmoed definition of deprecated fmt macros
+fd61ea93 Merge branch 'v1.x' of https://github.com/gabime/spdlog into v1.x
+66ac83e7 Update gitginore to ignore .vs and out/build
+dd6c9c6e Update comment
+b7e0e2c2 Fix #3073
+a0d2187d README.md has include missing (#3066)
+e3f5a4fe Update cmake to define FMT_LIB_EXPORT when building shared lib
+1e7d7e07 Updated bundled fmt to 10.2.1
+a2b42620 Update CMakeLists.txt to fix #3029
+8fed530b Update mdc.h
+1253a57d Add mdc support for default format
+cba66029 Update mdc
+4517ce8b Update mdc.h
+1f930174 Update mdc.h
+f030afe6 Update mdc.h
+2969dde4 Revert "Updated bundled fmt to 10.2.1"
+d8e0ad46 Updated bundled fmt to 10.2.1
+62302019 Update test_async.cpp
+a19c76a4 Fix flush test in test_async.cpp
+ec661f98 Update test_async.cpp
+c9ce17ab INSTALL.md has been updated to provide current status information. (#3052)
+6725584e Make async_logger::flush() synchronous and wait for the flush to complete (#3049)
+6766f873 Remove the legacy AnalyzeTemporaryDtors option from .clang-tidy. (#3048)
+73e2e02b Fix #3038 (#3044)
+d03eb40c Added Mapped Diagnostic Context (MDC) support (#2907)
+23587b0d Fixed regisry-inl.h
+819eb27c Use find if registry is bigger than 10 in  registry::get(std::string_view logger_name)
+4052bc06 Use find if registry is bigger than 20 in  registry::get(std::string_view logger_name)
+8cfd4a7e Fixed bench dev_null
+e15c5059 fix ci
+42cd77d7 fix ci
+c838945e fix ci
+0621a7ae fix ci
+e0410f43 Update ci.yml
+ae525b75 Add missing include (#3026)
+a45c9390 Update stopwatch.h (#3034)
+5532231b feature: adds string view overloads for logger accessor (#3023)
+60faedb0 Update ci.yml
+bc4b3295 Update ci.yml
+75bfbb7c Update ci.yml
+3f0e4007 Update ci.yml
+9a445245 Update ci.yml
+d387fdf9 support MINGW (#3022)
+134f9194 Update registry.h code formatting
+fe79bfcc Expose the flusher thread object to user in order to allow setting of thread name and thread affinity when needed (#3009)
+47b7e7c7 Fix typos found by codespell (#3011)
+696db97f docs: details about how compile time macros work (#2981)
+8979f7fb Also use _stat() on Windows to be more UTF8 friendly (#2978)
+7c02e204 Bump version to 1.13.0
+2aa8b6c9 Check fd_ is not nullptr in file_helper
+7cb90d1a Fix MSVC compile flag for no exceptions (#2974)
+1ef8d3ce Fix #2967
+c1569a3d Bump to catch2 v3.5.0
+ba508057 Update example.cpp to fix the vector issue in bin_example (#2963)
+ac55e604 Update README.md
+ddce4215 fmt/*.h: include tweakme.h to set SPDLOG_FMT_EXTERNAL according to system (#2923)
+8b331e2c Fix wrong thread_id (TID) in systemd_sink.h (#2919)
+2d5179ba sinks: Make syslog_sink.h's syslog_prio_from_level protected (#2918)
+ff205fd2 Updated logo
+595a5247 Updated spdlog logo
+c5452e05 Updated spdlog logo
+0c4fb032 Match SPDLOG_CONSTEXPR_FUNC to FMT_CONSTEXPR (#2901)
+508d20f0 Add .git-blame-ignore-revs to ignore clang-format related commits (#2899)
+479a5ac3 Fix OS availability check of pthread_threadid_np for iOS (#2897)
+91807c2e Update README.md
+d4a5fd56 Update README.md
+e5865186 Revert "Added a function to add callbacks that are called when a logger is registered (#2883)"
+b6eeb736 Added a function to add callbacks that are called when a logger is registered (#2883)
+0a53eafe update clang format again
+251c856a update clang format again
+4b2a8219 reformat code
+cafde8cc updated clang format
+9d522611 clang format
+230e15f4 updated format.sh
+7f535d18 updated .clang-format
+95c226e9 format
+5e88d5fe Never sort includes in clang format
+5931a3d6 Fixed windows compile
+f4afd81c Update common.h
+1a0bfc7a clang format
+f24f7fa2 Added missing include mutex
+65701f4d Updated format.sh script
+9e36a158 Updated clang format to google style
