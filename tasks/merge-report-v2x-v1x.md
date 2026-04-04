@@ -72,6 +72,9 @@ A direct `git merge origin/v1.x` into the integration branch was **attempted** a
 | `2670f47d` | *(SUPERSEDED)* `z_formatter` / `-W` ordering with `SPDLOG_NO_TZ_OFFSET` — `src/pattern_formatter.cpp` already matches the v1 layout. | — |
 | `d276069a` | *(SUPERSEDED)* `fmt::formatter::format` **const** for fmt 11 — `example/example.cpp` already `const`. | — |
 | `951c5b99` | *(SUPERSEDED)* `rotating_file_sink::rotate_now` + test — `src/sinks/rotating_file_sink.cpp`, `tests/test_file_logging.cpp` `rotating_file_logger4`. | — |
+| `24dde318` | `rotating_file_sink::rotate_now` takes **`std::lock_guard<Mutex>`** before `rotate_()` (#3281). | `src/sinks/rotating_file_sink.cpp` |
+| `a2b42620` | *(SUPERSEDED)* `cmake_minimum_required` range for FetchContent — v2 requires **CMake 3.23**. | — |
+| `f355b3d5` | *(SUPERSEDED)* daily logger test uses `fmt::format` for custom calculator — `tests/test_daily_and_rotation_loggers.cpp` already matches. | — |
 | `566b2d14` | Case-insensitive `level_from_str` (env / argv level names). | `src/common.cpp`; `tests/test_misc.cpp` |
 | `dd3ca04a` | Set default `CMAKE_BUILD_TYPE` only when spdlog is the top-level CMake project. | `CMakeLists.txt` |
 | `d5af52d9` | *(SUPERSEDED)* format_string propagation — v2.x already uses unified `format_string_t` forwarding to `log_with_format_`. | — |

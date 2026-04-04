@@ -10,7 +10,7 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 37 **PORTED**, 41 **SUPERSEDED**, 118 **N/A**, 49 **PENDING**.
+**Counts (this revision):** 38 **PORTED**, 44 **SUPERSEDED**, 118 **N/A**, 45 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -88,7 +88,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `cba66029` | Update mdc | PENDING |
 | `1253a57d` | Add mdc support for default format | PENDING |
 | `8fed530b` | Update mdc.h | PENDING |
-| `a2b42620` | Update CMakeLists.txt to fix #3029 | PENDING |
+| `a2b42620` | Update CMakeLists.txt to fix #3029 | SUPERSEDED (v2 `cmake_minimum_required(VERSION 3.23)` — supersedes v1 `3.10...3.21`) |
 | `1e7d7e07` | Updated bundled fmt to 10.2.1 | PENDING |
 | `e3f5a4fe` | Update cmake to define FMT_LIB_EXPORT when building shared lib | SUPERSEDED (v2 links `fmt::fmt` from FetchContent / external; fmt target owns `FMT_*` exports — not inlined bundled fmt in `spdlog`) |
 | `a0d2187d` | README.md has include missing (#3066) | N/A (docs-only) |
@@ -111,7 +111,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `27cb4c76` | Added mdc example to readme | N/A (docs; v2 has no MDC yet) |
 | `c3aed4b6` | Add wide character formatting and output support to wincolor_sink. (#3092) | PENDING |
 | `eeb22c13` | Allow customization of syslog_sink (#3124) | SUPERSEDED (`syslog_sink.h` — `virtual syslog_prio_from_level`, `levels_array` protected) |
-| `d276069a` | make example compatible with fmt 11 (#3130) | PENDING |
+| `d276069a` | make example compatible with fmt 11 (#3130) | SUPERSEDED (`example/example.cpp` `fmt::formatter::format` already `const`) |
 | `885b5473` | Fix building with `FMT_ENFORCE_COMPILE_STRING` (#3137) | PENDING |
 | `5ebfc927` | fix: set `/Zc:__cplusplus` and `/MP` to MSVC only (#3139) | SUPERSEDED (`CMakeLists.txt` already uses `CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"` for `/Zc:__cplusplus` and `/MP`) |
 | `a3a0c9d6` | compilation error gcc 8.5 with [-Werror=suggest-override] (#3158) | SUPERSEDED (`base_sink.h` already `final override` on `log`/`flush`/`set_pattern`/`set_formatter`) |
@@ -172,7 +172,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `951c5b99` | Allow manual rotation of rotating_file_sink (#3269) | SUPERSEDED (`rotating_file_sink::rotate_now`, `tests/test_file_logging.cpp` `rotating_file_logger4`) |
 | `1e6250e1` | Gabime/fwrite unlocked (#3276) | PENDING |
 | `65e388e8` | Adding on demand truncation for basic file sinks (#3280) | PENDING |
-| `24dde318` | Adding lock to rotate_now() (#3281) | PENDING |
+| `24dde318` | Adding lock to rotate_now() (#3281) | PORTED (`std::lock_guard` in `rotating_file_sink::rotate_now`) |
 | `276ee5f5` | fix: update to_string_view function for fmt 11.1 (#3301) | PENDING |
 | `7f8060d5` | fix: Compatibility with external fmtlib 11.1.1 (#3312) | PENDING |
 | `96a8f625` | fix: remove unused to_string_view overload in fmt >= 11.1 (#3314) | PENDING |
@@ -184,7 +184,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `ae1de0dc` | Support custom environment variables for load_env_levels (#3327) | N/A (v2 has no `spdlog/cfg/` — `load_env_levels` not present) |
 | `3c23c27d` | Revert "fix: Compatibility with external fmtlib 11.1.1 (#3312)" (#3331) | PENDING |
 | `ac432c36` | Gabime/v1.15.1 (#3332) | N/A (v1.x release / tag commit) |
-| `f355b3d5` | Fix test_daily_logger | PENDING |
+| `f355b3d5` | Fix test_daily_logger | SUPERSEDED (v2 `tests/test_daily_and_rotation_loggers.cpp` — `fmt_lib::format` in custom calculator; no `SPDLOG_BUF_TO_STRING`) |
 | `3335c380` | Update README.md (#3338) | N/A (docs-only) |
 | `10320184` | Fixed issue #3360 (#3361) | SUPERSEDED (scoped_padder truncate clamp; `%D` field width — already in `pattern_formatter.cpp`) |
 | `faa0a7a9` | Bump fmt to version 11.1.4 | PENDING |
