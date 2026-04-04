@@ -74,7 +74,7 @@ No separate guarantee of **ABI** stability across pre-release SHAs of this branc
 
 ## 6. References
 
-- Product requirements: [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md) (also links back to this file under **Related artifacts**).  
+- Product requirements: [`prd-v2x-v1x-feature-parity.md`](prd-v2x-v1x-feature-parity.md)  
 - Full v1-only commit triage: [`v1-triage-complete.md`](v1-triage-complete.md)  
 - Merge / port report: [`merge-report-v2x-v1x.md`](merge-report-v2x-v1x.md)  
 - Landed port SHAs (commentary): [`commits-ported.txt`](commits-ported.txt)
