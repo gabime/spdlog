@@ -6,10 +6,11 @@ Source: `git log --reverse origin/v2.x..origin/v1.x` (245 commits). Integration 
 - **PORTED** — Change applied on the integration branch (manual port or equivalent).
 - **PENDING** — Not yet ported; may require manual merge into v2 file layout, or batch fmt/CI work.
 - **N/A** — Reserved for merge-only commits or explicit non-applicability (set manually when triaging).
+- **SUPERSEDED** — v2.x already satisfies the intent (different implementation path).
 
 Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (many paths removed/split), so not every v1 commit cherry-picks cleanly.
 
-**Counts (this revision):** 7 **PORTED**, 2 **N/A** (merge commits), 236 **PENDING**.
+**Counts (this revision):** 9 **PORTED**, 1 **SUPERSEDED**, 2 **N/A** (merge commits), 233 **PENDING**.
 
 | SHA | Subject | Status |
 |-----|---------|--------|
@@ -221,7 +222,7 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `4418909a` | Bump fmt to 12.0.0 | PENDING |
 | `1bea38ed` | clang-format | PENDING |
 | `486b5555` | Version 1.16.0 | PENDING |
-| `dd3ca04a` | set CMAKE_BUILD_TYPE only in top-level project (#3480) | PENDING |
+| `dd3ca04a` | set CMAKE_BUILD_TYPE only in top-level project (#3480) | PORTED |
 | `3f7e5028` | fix sign-compare warning (#3479) | PENDING |
 | `88a0e07a` | Change access scope for ANSI target_file_ from private to protected (#3486) | PENDING |
 | `cdbd64e2` | Fix sign conversion warnings in qt_sinks.h (#3487) | PENDING |
@@ -249,11 +250,11 @@ Completing **PENDING** items is ongoing: v2.x uses a different tree than v1.x (m
 | `687226d9` | The upd_sink and dist_sink files have been modified to address Passed by value warnings. (#3520) | PENDING |
 | `472945ba` | Fix shadow member warning in example file (#3521) | PENDING |
 | `6c5d6329` | Fix should_log comment (#3534) | PENDING |
-| `566b2d14` | Fix #3525: Make level name matching case-insensitive (#3535) | PENDING |
+| `566b2d14` | Fix #3525: Make level name matching case-insensitive (#3535) | PORTED |
 | `fc7e9c87` | Update common-inl.h | PENDING |
 | `c49c7cf9` | Allow empty DEBUG_POSTFIX property in CMakeLists (#3530) | PENDING |
 | `1685e694` | Fix deprecated copy constructor usage of fmt::format_string (#3541) | PENDING |
-| `d5af52d9` | Fix format_string propagation (#3543) | PENDING |
+| `d5af52d9` | Fix format_string propagation (#3543) | SUPERSEDED (v2 `logger`/`spdlog` already forward `format_string_t` to `log_with_format_`) |
 | `0f7562a0` | tests: timezone: Provide DST rules when setting TZ on POSIX systems (#3542) | PORTED |
 | `1fbc60a5` | docs: fix SPDLOG_LEVEL env example (#3561) | PENDING |
 | `45b67eee` | Add constructor for dup_filter_sink with sinks parameter (#3549) | PORTED |

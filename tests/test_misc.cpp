@@ -72,6 +72,17 @@ TEST_CASE("to_level_enum", "[convert_to_level_enum]") {
     REQUIRE(spdlog::level_from_str("critical") == spdlog::level::critical);
     REQUIRE(spdlog::level_from_str("off") == spdlog::level::off);
     REQUIRE(spdlog::level_from_str("null") == spdlog::level::off);
+    REQUIRE(spdlog::level_from_str("TRACE") == spdlog::level::trace);
+    REQUIRE(spdlog::level_from_str("DEBUG") == spdlog::level::debug);
+    REQUIRE(spdlog::level_from_str("INFO") == spdlog::level::info);
+    REQUIRE(spdlog::level_from_str("WARNING") == spdlog::level::warn);
+    REQUIRE(spdlog::level_from_str("WARN") == spdlog::level::warn);
+    REQUIRE(spdlog::level_from_str("ERROR") == spdlog::level::err);
+    REQUIRE(spdlog::level_from_str("ERR") == spdlog::level::err);
+    REQUIRE(spdlog::level_from_str("CRITICAL") == spdlog::level::critical);
+    REQUIRE(spdlog::level_from_str("OFF") == spdlog::level::off);
+    REQUIRE(spdlog::level_from_str("TrAcE") == spdlog::level::trace);
+    REQUIRE(spdlog::level_from_str("DeBuG") == spdlog::level::debug);
 }
 
 TEST_CASE("copy_ctor", "[copy_ctor]") {

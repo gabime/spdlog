@@ -8,3 +8,6 @@ d2100d5d Include fcntl.h in Unix tcp client header (v2: tcp_client_unix.h)
 3c61b051 [ci] actions/checkout@v6 (linux, macos, windows)
 9ecdf5c8 TCP connect/send/recv timeouts (tcp_client_*, tcp_sink)
 45b67eee dup_filter_sink: constructor taking vector of sinks (#3549)
+566b2d14 Case-insensitive level_from_str (src/common.cpp; tests)
+dd3ca04a CMAKE_BUILD_TYPE default only for top-level project (CMakeLists.txt)
+# SUPERSEDED (no code change): d5af52d9 format_string propagation — v2 API already correct
