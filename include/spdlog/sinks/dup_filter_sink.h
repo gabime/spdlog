@@ -45,6 +45,14 @@ public:
     explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration)
         : max_skip_duration_{max_skip_duration} {}
 
+    // Optional: force the "Skipped N duplicate..." line to a fixed level.
+    template <class Rep, class Period>
+    explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration,
+                             level notification_level)
+        : max_skip_duration_{max_skip_duration},
+          use_fixed_notification_summary_level_{true},
+          fixed_notification_summary_level_{notification_level} {}
+
     template <class Rep, class Period>
     explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration,
                              std::vector<std::shared_ptr<sink>> sinks)
@@ -57,12 +65,16 @@ protected:
     std::string last_msg_payload_;
     size_t skip_counter_ = 0;
     level skipped_msg_log_level_{level::off};
+    bool use_fixed_notification_summary_level_{false};
+    level fixed_notification_summary_level_{level::info};
 
     void sink_it_(const details::log_msg &msg) override {
         bool filtered = filter_(msg);
         if (!filtered) {
             skip_counter_ += 1;
-            skipped_msg_log_level_ = msg.log_level;
+            if (!use_fixed_notification_summary_level_) {
+                skipped_msg_log_level_ = msg.log_level;
+            }
             return;
         }
 
@@ -71,7 +83,10 @@ protected:
             char buf[64];
             auto msg_size = ::snprintf(buf, sizeof(buf), "Skipped %u duplicate messages..", static_cast<unsigned>(skip_counter_));
             if (msg_size > 0 && static_cast<size_t>(msg_size) < sizeof(buf)) {
-                details::log_msg skipped_msg{msg.source, msg.logger_name, skipped_msg_log_level_,
+                const level summary_level = use_fixed_notification_summary_level_
+                                              ? fixed_notification_summary_level_
+                                              : skipped_msg_log_level_;
+                details::log_msg skipped_msg{msg.source, msg.logger_name, summary_level,
                                              string_view_t{buf, static_cast<size_t>(msg_size)}};
                 dist_sink<Mutex>::sink_it_(skipped_msg);
             }

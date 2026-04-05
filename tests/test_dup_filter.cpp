@@ -99,3 +99,22 @@ TEST_CASE("dup_filter_skipped_notification_uses_last_duplicate_level", "[dup_fil
     REQUIRE(test_sink->lines()[1] == "W");
     REQUIRE(test_sink->lines()[2] == "I");
 }
+
+TEST_CASE("dup_filter_skipped_notification_fixed_level", "[dup_filter_sink]") {
+    using spdlog::sinks::dup_filter_sink_st;
+    using spdlog::sinks::test_sink_mt;
+
+    dup_filter_sink_st dup_sink{std::chrono::seconds{5}, spdlog::level::info};
+    auto test_sink = std::make_shared<test_sink_mt>();
+    test_sink->set_pattern("%L");
+    dup_sink.add_sink(test_sink);
+
+    dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::warn, "same"});
+    dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::warn, "same"});
+    dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "diff"});
+
+    REQUIRE(test_sink->lines().size() == 3);
+    REQUIRE(test_sink->lines()[0] == "W");
+    REQUIRE(test_sink->lines()[1] == "I");
+    REQUIRE(test_sink->lines()[2] == "I");
+}

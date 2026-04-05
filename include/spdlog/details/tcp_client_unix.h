@@ -113,9 +113,10 @@ public:
         hints.ai_flags = AI_NUMERICSERV;  // port passed as as numeric value
         hints.ai_protocol = 0;
 
+        const int validated_timeout_ms = timeout_ms > 0 ? timeout_ms : 0;
         struct timeval tv;
-        tv.tv_sec = timeout_ms / 1000;
-        tv.tv_usec = (timeout_ms % 1000) * 1000;
+        tv.tv_sec = validated_timeout_ms / 1000;
+        tv.tv_usec = (validated_timeout_ms % 1000) * 1000;
 
         auto port_str = std::to_string(port);
         struct addrinfo *addrinfo_result;
@@ -153,7 +154,7 @@ public:
             throw_spdlog_ex("::connect failed", last_errno);
         }
 
-        if (timeout_ms > 0) {
+        if (validated_timeout_ms > 0) {
             ::setsockopt(socket_, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
             ::setsockopt(socket_, SOL_SOCKET, SO_SNDTIMEO, &tv, sizeof(tv));
         }

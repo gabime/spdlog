@@ -12,7 +12,12 @@ if(NOT fmt_POPULATED)
     set(FMT_OS OFF CACHE BOOL "Disable FMT_OS" FORCE)
     # fmt 12+ defaults FMT_INSTALL to OFF when built as a subproject; spdlog's
     # install(EXPORT) requires fmt to participate in an export set (CMake 3.23+).
-    set(FMT_INSTALL ON CACHE BOOL "Generate the install target." FORCE)
+    # Only enable fmt's install rules when spdlog installs
+    if(SPDLOG_INSTALL)
+        set(FMT_INSTALL ON CACHE BOOL "Generate the install target." FORCE)
+    else()
+        set(FMT_INSTALL OFF CACHE BOOL "Generate the install target." FORCE)
+    endif()
     FetchContent_MakeAvailable(fmt)
     set_target_properties(fmt PROPERTIES FOLDER "third-party")
     # fmt 12.1.0: MSVC C4834 on locale_ref ctor (discarded [[nodiscard]] from isalpha); fixed on fmt master after 12.1.0.

@@ -127,7 +127,7 @@ size_t filesize(FILE *f) {
     return 0;  // will not be reached.
 }
 
-// Return utc offset in minutes or throw spdlog_ex on failure
+// Return utc offset in minutes (0 on failure to compute offset)
 int utc_minutes_offset(const std::tm &tm) {
 #if defined(SPDLOG_NO_TZ_OFFSET)
     (void)tm;

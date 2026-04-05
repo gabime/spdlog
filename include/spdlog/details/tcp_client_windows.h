@@ -96,7 +96,8 @@ public:
         FD_ZERO(&wfds);
         FD_SET(sockfd, &wfds);
 
-        rv = ::select(0, nullptr, &wfds, nullptr, const_cast<timeval *>(&tv));
+        timeval tv_copy = tv;
+        rv = ::select(0, nullptr, &wfds, nullptr, &tv_copy);
 
         mode = 0UL;
         if (::ioctlsocket(sockfd, FIONBIO, &mode) == SOCKET_ERROR) {
@@ -138,9 +139,10 @@ public:
         hints.ai_flags = AI_NUMERICSERV;  // port passed as as numeric value
         hints.ai_protocol = 0;
 
+        const int validated_timeout_ms = timeout_ms > 0 ? timeout_ms : 0;
         timeval tv;
-        tv.tv_sec = timeout_ms / 1000;
-        tv.tv_usec = (timeout_ms % 1000) * 1000;
+        tv.tv_sec = validated_timeout_ms / 1000;
+        tv.tv_usec = (validated_timeout_ms % 1000) * 1000;
 
         auto port_str = std::to_string(port);
         struct addrinfo *addrinfo_result;
@@ -169,8 +171,8 @@ public:
         if (socket_ == INVALID_SOCKET) {
             throw_winsock_error_("connect failed", last_error);
         }
-        if (timeout_ms > 0) {
-            DWORD timeout_dword = static_cast<DWORD>(timeout_ms);
+        if (validated_timeout_ms > 0) {
+            DWORD timeout_dword = static_cast<DWORD>(validated_timeout_ms);
             ::setsockopt(socket_, SOL_SOCKET, SO_RCVTIMEO, (const char *)&timeout_dword, sizeof(timeout_dword));
             ::setsockopt(socket_, SOL_SOCKET, SO_SNDTIMEO, (const char *)&timeout_dword, sizeof(timeout_dword));
         }
