@@ -122,6 +122,8 @@ find_package(Threads REQUIRED)
 # ---------------------------------------------------------------------------------------
 set(SPDLOG_HEADERS
         "include/spdlog/common.h"
+        "include/spdlog/file_event_handlers.h"
+        "include/spdlog/filename_t.h"
         "include/spdlog/formatter.h"
         "include/spdlog/fwd.h"
         "include/spdlog/logger.h"
