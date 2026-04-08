@@ -6,10 +6,9 @@
 #endif
 
 // clang-format off
-#include "spdlog/details/windows_include.h" // must be included before fileapi.h etc.
+#include "spdlog/details/windows_include.h" // must be first; provides FlushFileBuffers via Windows headers
 // clang-format on
 
-#include <fileapi.h>  // for FlushFileBuffers
 #include <io.h>       // for _get_osfhandle, _isatty, _fileno
 #include <process.h>  // for _get_pid
 #include <sys/stat.h>
@@ -107,24 +106,27 @@ size_t filesize(FILE *f) {
     #pragma warning(pop)
 #endif
 
-// Return utc offset in minutes or throw spdlog_ex on failure
+// Compare the timestamp as local (mktime) vs UTC (_mkgmtime) to get the offset.
+// Matches v1.x behavior: better historical DST handling than GetTimeZoneInformation alone.
 int utc_minutes_offset(const std::tm &tm) {
-#if _WIN32_WINNT < _WIN32_WINNT_WS08
-    TIME_ZONE_INFORMATION tzinfo;
-    auto rv = ::GetTimeZoneInformation(&tzinfo);
+#if defined(SPDLOG_NO_TZ_OFFSET)
+    (void)tm;
+    return 0;
 #else
-    DYNAMIC_TIME_ZONE_INFORMATION tzinfo;
-    auto rv = ::GetDynamicTimeZoneInformation(&tzinfo);
-#endif
-    if (rv == TIME_ZONE_ID_INVALID) throw_spdlog_ex("Failed getting timezone info. ", errno);
-
-    int offset = -tzinfo.Bias;
-    if (tm.tm_isdst) {
-        offset -= tzinfo.DaylightBias;
-    } else {
-        offset -= tzinfo.StandardBias;
+    std::tm local_tm = tm;  // copy since mktime might adjust it (normalize dates, set tm_isdst)
+    std::time_t local_time_t = std::mktime(&local_tm);
+    if (local_time_t == static_cast<std::time_t>(-1)) {
+        return 0;  // fallback
     }
-    return offset;
+
+    std::time_t utc_time_t = _mkgmtime(&local_tm);
+    if (utc_time_t == static_cast<std::time_t>(-1)) {
+        return 0;  // fallback
+    }
+
+    const auto offset_seconds = utc_time_t - local_time_t;
+    return static_cast<int>(offset_seconds / 60);
+#endif
 }
 
 // Return current thread id as size_t
@@ -212,7 +214,7 @@ void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
         target.resize(result_size);
         result_size = ::MultiByteToWideChar(CP_UTF8, 0, str.data(), str_size, target.data(), result_size);
         if (result_size > 0) {
-            assert(result_size == target.size());
+            assert(result_size == static_cast<int>(target.size()));
             return;
         }
     }
@@ -220,21 +222,22 @@ void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
     throw_spdlog_ex(fmt_lib::format("MultiByteToWideChar failed. Last error: {}", ::GetLastError()));
 }
 
+#ifdef _MSC_VER
+    #pragma warning(push)
+    #pragma warning(disable : 4996)
+#endif
 std::string getenv(const char *field) {
-#if defined(_MSC_VER)
-    #if defined(__cplusplus_winrt)
-    return std::string{};  // not supported under uwp
-    #else
-    size_t len = 0;
-    char buf[128];
-    bool ok = ::getenv_s(&len, buf, sizeof(buf), field) == 0;
-    return ok ? buf : std::string{};
-    #endif
-#else  // revert to getenv
-    char *buf = ::getenv(field);
-    return buf != nullptr ? buf : std::string{};
+#if defined(_MSC_VER) && defined(WINAPI_FAMILY) && defined(WINAPI_FAMILY_DESKTOP_APP) && \
+    (WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP)
+    return std::string{};  // not supported on UWP / non-desktop WinRT targets (#3489)
+#else
+    char *buf = std::getenv(field);
+    return buf != nullptr ? std::string(buf) : std::string{};
 #endif
 }
+#ifdef _MSC_VER
+    #pragma warning(pop)
+#endif
 
 // Do fsync by FILE handlerpointer
 // Return true on success

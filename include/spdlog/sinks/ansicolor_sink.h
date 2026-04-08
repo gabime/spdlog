@@ -69,8 +69,10 @@ public:
     static constexpr std::string_view red_bold = "\033[31m\033[1m";
     static constexpr std::string_view bold_on_red = "\033[1m\033[41m";
 
-private:
+protected:
     FILE *target_file_;
+
+private:
     bool should_do_colors_;
     std::array<std::string, levels_count> colors_;
 

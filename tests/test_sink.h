@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <exception>
+#include <iterator>
 #include <mutex>
 #include <thread>
 
@@ -57,7 +58,8 @@ protected:
         // save the line without the eol
         auto eol_len = strlen(details::os::default_eol);
         if (lines_.size() < lines_to_save) {
-            lines_.emplace_back(formatted.begin(), formatted.end() - eol_len);
+            using diff_t = typename std::iterator_traits<decltype(formatted.end())>::difference_type;
+            lines_.emplace_back(formatted.begin(), formatted.end() - static_cast<diff_t>(eol_len));
         }
         msg_counter_++;
         std::this_thread::sleep_for(delay_);

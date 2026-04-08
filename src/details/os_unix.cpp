@@ -127,8 +127,12 @@ size_t filesize(FILE *f) {
     return 0;  // will not be reached.
 }
 
-// Return utc offset in minutes or throw spdlog_ex on failure
+// Return utc offset in minutes (0 on failure to compute offset)
 int utc_minutes_offset(const std::tm &tm) {
+#if defined(SPDLOG_NO_TZ_OFFSET)
+    (void)tm;
+    return 0;
+#else
     #if defined(sun) || defined(__sun) || defined(_AIX) || \
        (defined(__NEWLIB__) && !defined(__TM_GMTOFF)) ||  \
        (!defined(__APPLE__) && !defined(_BSD_SOURCE) && !defined(_GNU_SOURCE) && \
@@ -165,6 +169,7 @@ int utc_minutes_offset(const std::tm &tm) {
     auto offset_seconds = tm.tm_gmtoff;
 #endif
     return static_cast<int>(offset_seconds / 60);
+#endif  // SPDLOG_NO_TZ_OFFSET
 }
 
 // Return current thread id as size_t
@@ -269,8 +274,8 @@ bool is_color_terminal() noexcept {
 bool in_terminal(FILE *file) noexcept { return ::isatty(fileno(file)) != 0; }
 
 std::string getenv(const char *field) {
-    char *buf = ::getenv(field);
-    return buf != nullptr ? buf : std::string{};
+    char *buf = std::getenv(field);
+    return buf != nullptr ? std::string(buf) : std::string{};
 }
 
 // Do fsync by FILE pointer

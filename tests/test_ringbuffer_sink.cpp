@@ -57,15 +57,5 @@ TEST_CASE("test_empty", "[ringbuffer_sink]") {
 }
 
 TEST_CASE("test_empty_size", "[ringbuffer_sink]") {
-    const size_t sink_size = 0;
-    auto sink = std::make_shared<spdlog::sinks::ringbuffer_sink_mt>(sink_size);
-    spdlog::logger l("logger", sink);
-
-    for (size_t i = 0; i < sink_size + 1; ++i) {
-        l.info("{}", i);
-    }
-
-    sink->drain([&](std::string_view) {
-        REQUIRE_FALSE(true);  // should not be called since the sink size is 0
-    });
+    REQUIRE_THROWS_AS((void)spdlog::sinks::ringbuffer_sink_mt(0), spdlog::spdlog_ex);
 }

@@ -24,7 +24,11 @@ template <typename Mutex>
 class ringbuffer_sink final : public base_sink<Mutex> {
 public:
     explicit ringbuffer_sink(size_t n_items)
-        : q_{n_items} {}
+        : q_{n_items} {
+        if (n_items == 0) {
+            throw_spdlog_ex("ringbuffer_sink: n_items cannot be zero");
+        }
+    }
 
     void drain_raw(std::function<void(const details::async_log_msg &)> callback) {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);

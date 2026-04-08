@@ -22,6 +22,12 @@ const filename_t &basic_file_sink<Mutex>::filename() const {
 }
 
 template <typename Mutex>
+void basic_file_sink<Mutex>::truncate() {
+    std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+    file_helper_.reopen(true);
+}
+
+template <typename Mutex>
 void basic_file_sink<Mutex>::sink_it_(const details::log_msg &msg) {
     memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);

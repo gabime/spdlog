@@ -4,19 +4,41 @@
 #include "spdlog/common.h"
 
 #include <algorithm>
+#include <cctype>
 #include <iterator>
 
 namespace spdlog {
 
+namespace {
+bool iequals(const std::string &a, const std::string &b) {
+    return a.size() == b.size() &&
+           std::equal(a.begin(), a.end(), b.begin(), [](char ac, char bc) {
+               return std::tolower(static_cast<unsigned char>(ac)) ==
+                      std::tolower(static_cast<unsigned char>(bc));
+           });
+}
+}  // namespace
+
 spdlog::level level_from_str(const std::string &name) noexcept {
-    const auto it = std::find(std::begin(level_string_views), std::end(level_string_views), name);
-    if (it != std::end(level_string_views)) return static_cast<level>(std::distance(std::begin(level_string_views), it));
+    const auto it =
+        std::find_if(std::begin(level_string_views), std::end(level_string_views),
+                     [&name](const string_view_t &level_name) {
+                         return level_name.size() == name.size() &&
+                                std::equal(name.begin(), name.end(), level_name.begin(),
+                                           [](char a, char b) {
+                                               return std::tolower(static_cast<unsigned char>(a)) ==
+                                                      std::tolower(static_cast<unsigned char>(b));
+                                           });
+                     });
+    if (it != std::end(level_string_views)) {
+        return static_cast<level>(std::distance(std::begin(level_string_views), it));
+    }
 
     // check also for "warn" and "err" before giving up
-    if (name == "warn") {
+    if (iequals(name, "warn")) {
         return spdlog::level::warn;
     }
-    if (name == "err") {
+    if (iequals(name, "err")) {
         return level::err;
     }
     return level::off;

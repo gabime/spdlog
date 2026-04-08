@@ -13,7 +13,11 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Set default build to release
 # ---------------------------------------------------------------------------------------
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
+    # Set CMAKE_BUILD_TYPE only if this project is top-level (avoid overriding parent)
+    if ((DEFINED PROJECT_IS_TOP_LEVEL AND PROJECT_IS_TOP_LEVEL) OR
+        (NOT DEFINED PROJECT_IS_TOP_LEVEL AND CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR))
+        set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose Release or Debug" FORCE)
+    endif ()
 endif ()
 # ---------------------------------------------------------------------------------------
 # Compiler config
@@ -48,7 +52,11 @@ option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
 option(SPDLOG_BUILD_EXAMPLE "Build example" ${SPDLOG_MASTER_PROJECT})
 option(SPDLOG_BUILD_TESTS "Build tests" OFF)
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
-option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer in tests" OFF)
+option(SPDLOG_SANITIZE_ADDRESS "Enable address sanitizer for the spdlog library and anything that links it" OFF)
+option(SPDLOG_SANITIZE_THREAD "Enable thread sanitizer for the spdlog library and anything that links it" OFF)
+if (SPDLOG_SANITIZE_ADDRESS AND SPDLOG_SANITIZE_THREAD)
+    message(FATAL_ERROR "SPDLOG_SANITIZE_ADDRESS and SPDLOG_SANITIZE_THREAD are mutually exclusive")
+endif ()
 option(SPDLOG_BUILD_WARNINGS "Enable compiler warnings" OFF)
 option(SPDLOG_SYSTEM_INCLUDES "Include as system headers (skip for clang-tidy)." OFF)
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
@@ -62,7 +70,16 @@ option(SPDLOG_PREVENT_CHILD_FD "Prevent from child processes to inherit log file
 option(SPDLOG_NO_THREAD_ID "prevent spdlog from querying the thread id on each log call if thread id is not needed" OFF)
 option(SPDLOG_DISABLE_GLOBAL_LOGGER "Disable global logger creation" OFF)
 option(SPDLOG_NO_TLS "Disable thread local storage" OFF)
+option(SPDLOG_NO_TZ_OFFSET "Omit %z timezone offset (use on platforms without tm_gmtoff / full offset)" OFF)
 option(SPDLOG_TIDY "run clang-tidy" OFF)
+set(SPDLOG_DEBUG_POSTFIX "-${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR}d" CACHE STRING
+        "Filename postfix for libraries in debug builds (empty string allowed)")
+option(SPDLOG_MSVC_UTF8 "Enable/disable MSVC /utf-8 flag (recommended for fmt)" ON)
+if (WIN32)
+    option(SPDLOG_WCHAR_CONSOLE "Decode UTF-8 and write with WriteConsoleW (Unicode console output)" OFF)
+else ()
+    set(SPDLOG_WCHAR_CONSOLE OFF CACHE BOOL "non supported option" FORCE)
+endif ()
 if (SPDLOG_TIDY)
     set(CMAKE_CXX_CLANG_TIDY "clang-tidy")
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -91,7 +108,7 @@ message(STATUS "spdlog fmt external: " ${SPDLOG_FMT_EXTERNAL})
 # Find {fmt} library
 # ---------------------------------------------------------------------------------------
 if (SPDLOG_FMT_EXTERNAL)
-    find_package(fmt REQUIRED)
+    find_package(fmt REQUIRED CONFIG)
     message(STATUS "Using external fmt lib version: ${fmt_VERSION}")
 else ()
     include(cmake/fmtlib.cmake)
@@ -105,6 +122,8 @@ find_package(Threads REQUIRED)
 # ---------------------------------------------------------------------------------------
 set(SPDLOG_HEADERS
         "include/spdlog/common.h"
+        "include/spdlog/file_event_handlers.h"
+        "include/spdlog/filename_t.h"
         "include/spdlog/formatter.h"
         "include/spdlog/fwd.h"
         "include/spdlog/logger.h"
@@ -227,11 +246,22 @@ target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTER
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
 target_link_libraries(spdlog PUBLIC fmt::fmt)
+if (MSVC)
+    if (SPDLOG_MSVC_UTF8)
+        # Pass /utf-8 only for real MSVC (not clang-cl); see fmtlib and #3260.
+        target_compile_options(spdlog PUBLIC $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/utf-8>)
+    endif ()
+endif ()
 spdlog_enable_warnings(spdlog)
+if (SPDLOG_SANITIZE_ADDRESS)
+    spdlog_enable_addr_sanitizer(spdlog)
+elseif (SPDLOG_SANITIZE_THREAD)
+    spdlog_enable_thread_sanitizer(spdlog)
+endif ()
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION
         ${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR})
 set(SPDLOG_NAME spdlog-${SPDLOG_VERSION_MAJOR})
-set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX "-${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR}d")
+set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX "${SPDLOG_DEBUG_POSTFIX}")
 # ---------------------------------------------------------------------------------------
 # Set prefix and source group for visual studio
 # ---------------------------------------------------------------------------------------
@@ -249,17 +279,22 @@ endif ()
 # ---------------------------------------------------------------------------------------
 # Private defines according to the options
 # ---------------------------------------------------------------------------------------
+set(SPDLOG_UTF8_TO_WCHAR_CONSOLE ${SPDLOG_WCHAR_CONSOLE})
 foreach (SPDLOG_OPTION
         SPDLOG_CLOCK_COARSE
         SPDLOG_PREVENT_CHILD_FD
         SPDLOG_NO_THREAD_ID
         SPDLOG_DISABLE_GLOBAL_LOGGER
         SPDLOG_NO_TLS
-        SPDLOG_FWRITE_UNLOCKED)
+        SPDLOG_FWRITE_UNLOCKED
+        SPDLOG_UTF8_TO_WCHAR_CONSOLE)
     if (${SPDLOG_OPTION})
         target_compile_definitions(spdlog PRIVATE ${SPDLOG_OPTION})
     endif ()
 endforeach ()
+if (SPDLOG_NO_TZ_OFFSET)
+    target_compile_definitions(spdlog PUBLIC SPDLOG_NO_TZ_OFFSET)
+endif ()
 # ---------------------------------------------------------------------------------------
 # Build binaries
 # ---------------------------------------------------------------------------------------

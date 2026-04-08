@@ -36,7 +36,7 @@ template <typename Mutex>
 class udp_sink final : public base_sink<Mutex> {
 public:
     // host can be hostname or ip address
-    explicit udp_sink(udp_sink_config sink_config)
+    explicit udp_sink(const udp_sink_config &sink_config)
         : client_{sink_config.server_host, sink_config.server_port} {}
 
     ~udp_sink() override = default;

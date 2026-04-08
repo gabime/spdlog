@@ -65,6 +65,7 @@ filename_t rotating_file_sink<Mutex>::filename() {
 
 template <typename Mutex>
 void rotating_file_sink<Mutex>::rotate_now() {
+    std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
     rotate_();
 }
 
