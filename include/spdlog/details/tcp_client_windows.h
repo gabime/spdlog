@@ -153,6 +153,8 @@ public:
             throw_winsock_error_("getaddrinfo failed", last_error);
         }
 
+        // Try each address until we successfully connect(2).
+
         for (auto *rp = addrinfo_result; rp != nullptr; rp = rp->ai_next) {
             socket_ = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
             if (socket_ == INVALID_SOCKET) {

@@ -108,7 +108,7 @@ message(STATUS "spdlog fmt external: " ${SPDLOG_FMT_EXTERNAL})
 # Find {fmt} library
 # ---------------------------------------------------------------------------------------
 if (SPDLOG_FMT_EXTERNAL)
-    find_package(fmt 12 REQUIRED CONFIG)
+    find_package(fmt REQUIRED CONFIG)
     message(STATUS "Using external fmt lib version: ${fmt_VERSION}")
 else ()
     include(cmake/fmtlib.cmake)
