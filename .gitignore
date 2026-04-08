@@ -53,6 +53,9 @@ example/*
 !example/CMakeLists.txt
 !example/meson.build
 !example/multisink.cpp
+!example/business_logger_example.cpp
+!example/business_logger_rotation_test.cpp
+!example/business_logger_multi_test.cpp
 !example/jni
 
 # generated files

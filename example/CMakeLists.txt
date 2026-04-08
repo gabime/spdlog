@@ -15,6 +15,12 @@ add_executable(example example.cpp)
 target_link_libraries(example PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
 
 # ---------------------------------------------------------------------------------------
+# Business logger example
+# ---------------------------------------------------------------------------------------
+add_executable(business_logger_example business_logger_example.cpp)
+target_link_libraries(business_logger_example PRIVATE spdlog::spdlog $<$<BOOL:${MINGW}>:ws2_32>)
+
+# ---------------------------------------------------------------------------------------
 # Example of using header-only library
 # ---------------------------------------------------------------------------------------
 if(SPDLOG_BUILD_EXAMPLE_HO)
