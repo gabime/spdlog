@@ -107,14 +107,54 @@ private:
 }
 }
 
-#define LOG_SCREEN_RECORDING(lvl, ...) \
-    spdlog::business::BusinessLogger::log(spdlog::business::BusinessType::ScreenRecording, spdlog::level::lvl, __VA_ARGS__)
+#define LOG_SCREEN_RECORDING_TRACE(...) \
+    spdlog::business::BusinessLogger::trace(spdlog::business::BusinessType::ScreenRecording, __VA_ARGS__)
+#define LOG_SCREEN_RECORDING_DEBUG(...) \
+    spdlog::business::BusinessLogger::debug(spdlog::business::BusinessType::ScreenRecording, __VA_ARGS__)
+#define LOG_SCREEN_RECORDING_INFO(...) \
+    spdlog::business::BusinessLogger::info(spdlog::business::BusinessType::ScreenRecording, __VA_ARGS__)
+#define LOG_SCREEN_RECORDING_WARN(...) \
+    spdlog::business::BusinessLogger::warn(spdlog::business::BusinessType::ScreenRecording, __VA_ARGS__)
+#define LOG_SCREEN_RECORDING_ERROR(...) \
+    spdlog::business::BusinessLogger::error(spdlog::business::BusinessType::ScreenRecording, __VA_ARGS__)
+#define LOG_SCREEN_RECORDING_CRITICAL(...) \
+    spdlog::business::BusinessLogger::critical(spdlog::business::BusinessType::ScreenRecording, __VA_ARGS__)
 
-#define LOG_DESKTOP_OPENING(lvl, ...) \
-    spdlog::business::BusinessLogger::log(spdlog::business::BusinessType::DesktopOpening, spdlog::level::lvl, __VA_ARGS__)
+#define LOG_DESKTOP_OPENING_TRACE(...) \
+    spdlog::business::BusinessLogger::trace(spdlog::business::BusinessType::DesktopOpening, __VA_ARGS__)
+#define LOG_DESKTOP_OPENING_DEBUG(...) \
+    spdlog::business::BusinessLogger::debug(spdlog::business::BusinessType::DesktopOpening, __VA_ARGS__)
+#define LOG_DESKTOP_OPENING_INFO(...) \
+    spdlog::business::BusinessLogger::info(spdlog::business::BusinessType::DesktopOpening, __VA_ARGS__)
+#define LOG_DESKTOP_OPENING_WARN(...) \
+    spdlog::business::BusinessLogger::warn(spdlog::business::BusinessType::DesktopOpening, __VA_ARGS__)
+#define LOG_DESKTOP_OPENING_ERROR(...) \
+    spdlog::business::BusinessLogger::error(spdlog::business::BusinessType::DesktopOpening, __VA_ARGS__)
+#define LOG_DESKTOP_OPENING_CRITICAL(...) \
+    spdlog::business::BusinessLogger::critical(spdlog::business::BusinessType::DesktopOpening, __VA_ARGS__)
 
-#define LOG_KEYBOARD_RECORDING(lvl, ...) \
-    spdlog::business::BusinessLogger::log(spdlog::business::BusinessType::KeyboardRecording, spdlog::level::lvl, __VA_ARGS__)
+#define LOG_KEYBOARD_RECORDING_TRACE(...) \
+    spdlog::business::BusinessLogger::trace(spdlog::business::BusinessType::KeyboardRecording, __VA_ARGS__)
+#define LOG_KEYBOARD_RECORDING_DEBUG(...) \
+    spdlog::business::BusinessLogger::debug(spdlog::business::BusinessType::KeyboardRecording, __VA_ARGS__)
+#define LOG_KEYBOARD_RECORDING_INFO(...) \
+    spdlog::business::BusinessLogger::info(spdlog::business::BusinessType::KeyboardRecording, __VA_ARGS__)
+#define LOG_KEYBOARD_RECORDING_WARN(...) \
+    spdlog::business::BusinessLogger::warn(spdlog::business::BusinessType::KeyboardRecording, __VA_ARGS__)
+#define LOG_KEYBOARD_RECORDING_ERROR(...) \
+    spdlog::business::BusinessLogger::error(spdlog::business::BusinessType::KeyboardRecording, __VA_ARGS__)
+#define LOG_KEYBOARD_RECORDING_CRITICAL(...) \
+    spdlog::business::BusinessLogger::critical(spdlog::business::BusinessType::KeyboardRecording, __VA_ARGS__)
 
-#define LOG_AUDIO_RECORDING(lvl, ...) \
-    spdlog::business::BusinessLogger::log(spdlog::business::BusinessType::AudioRecording, spdlog::level::lvl, __VA_ARGS__)
+#define LOG_AUDIO_RECORDING_TRACE(...) \
+    spdlog::business::BusinessLogger::trace(spdlog::business::BusinessType::AudioRecording, __VA_ARGS__)
+#define LOG_AUDIO_RECORDING_DEBUG(...) \
+    spdlog::business::BusinessLogger::debug(spdlog::business::BusinessType::AudioRecording, __VA_ARGS__)
+#define LOG_AUDIO_RECORDING_INFO(...) \
+    spdlog::business::BusinessLogger::info(spdlog::business::BusinessType::AudioRecording, __VA_ARGS__)
+#define LOG_AUDIO_RECORDING_WARN(...) \
+    spdlog::business::BusinessLogger::warn(spdlog::business::BusinessType::AudioRecording, __VA_ARGS__)
+#define LOG_AUDIO_RECORDING_ERROR(...) \
+    spdlog::business::BusinessLogger::error(spdlog::business::BusinessType::AudioRecording, __VA_ARGS__)
+#define LOG_AUDIO_RECORDING_CRITICAL(...) \
+    spdlog::business::BusinessLogger::critical(spdlog::business::BusinessType::AudioRecording, __VA_ARGS__)
