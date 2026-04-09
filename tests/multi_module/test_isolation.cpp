@@ -13,9 +13,9 @@ const std::string TEST_LOG_DIR = "test_logs";
 TEST_CASE("Module logger isolation - separate log files", "[isolation]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
-    module_core::CoreLogger::instance().init(TEST_LOG_DIR);
-    module_network::NetworkLogger::instance().init(TEST_LOG_DIR);
-    module_data::DataLogger::instance().init(TEST_LOG_DIR);
+    module_core::CoreLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_network::NetworkLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_data::DataLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
     
     module_core::CoreLogger::instance().log_info("Core module message");
     module_network::NetworkLogger::instance().log_connection("127.0.0.1", 8080);
@@ -27,9 +27,9 @@ TEST_CASE("Module logger isolation - separate log files", "[isolation]") {
     
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     
-    std::string core_log = module_core::CoreLogger::instance().get_log_file();
-    std::string network_log = module_network::NetworkLogger::instance().get_log_file();
-    std::string data_log = module_data::DataLogger::instance().get_log_file();
+    std::string core_log = test_utils::filename_to_string(module_core::CoreLogger::instance().get_log_file());
+    std::string network_log = test_utils::filename_to_string(module_network::NetworkLogger::instance().get_log_file());
+    std::string data_log = test_utils::filename_to_string(module_data::DataLogger::instance().get_log_file());
     
     REQUIRE(test_utils::file_contains(core_log, "[Core]"));
     REQUIRE(test_utils::file_contains(core_log, "core_logger"));
@@ -54,9 +54,9 @@ TEST_CASE("Module logger isolation - separate log files", "[isolation]") {
 TEST_CASE("Module logger isolation - separate log levels", "[isolation]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
-    module_core::CoreLogger::instance().init(TEST_LOG_DIR);
-    module_network::NetworkLogger::instance().init(TEST_LOG_DIR);
-    module_data::DataLogger::instance().init(TEST_LOG_DIR);
+    module_core::CoreLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_network::NetworkLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_data::DataLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
     
     module_core::CoreLogger::instance().set_level(spdlog::level::info);
     module_network::NetworkLogger::instance().set_level(spdlog::level::warn);
@@ -77,9 +77,9 @@ TEST_CASE("Module logger isolation - separate log levels", "[isolation]") {
     
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     
-    std::string core_log = module_core::CoreLogger::instance().get_log_file();
-    std::string network_log = module_network::NetworkLogger::instance().get_log_file();
-    std::string data_log = module_data::DataLogger::instance().get_log_file();
+    std::string core_log = test_utils::filename_to_string(module_core::CoreLogger::instance().get_log_file());
+    std::string network_log = test_utils::filename_to_string(module_network::NetworkLogger::instance().get_log_file());
+    std::string data_log = test_utils::filename_to_string(module_data::DataLogger::instance().get_log_file());
     
     REQUIRE(test_utils::file_does_not_contain(core_log, "Core debug message"));
     REQUIRE(test_utils::file_contains(core_log, "Core info message"));
@@ -98,9 +98,9 @@ TEST_CASE("Module logger isolation - separate log levels", "[isolation]") {
 TEST_CASE("Module logger isolation - registry separation", "[isolation]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
-    module_core::CoreLogger::instance().init(TEST_LOG_DIR);
-    module_network::NetworkLogger::instance().init(TEST_LOG_DIR);
-    module_data::DataLogger::instance().init(TEST_LOG_DIR);
+    module_core::CoreLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_network::NetworkLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_data::DataLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
     
     auto core_logger = spdlog::get("core_logger");
     auto network_logger = spdlog::get("network_logger");
@@ -126,9 +126,9 @@ TEST_CASE("Module logger isolation - registry separation", "[isolation]") {
 TEST_CASE("Module logger isolation - concurrent logging", "[isolation]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
-    module_core::CoreLogger::instance().init(TEST_LOG_DIR);
-    module_network::NetworkLogger::instance().init(TEST_LOG_DIR);
-    module_data::DataLogger::instance().init(TEST_LOG_DIR);
+    module_core::CoreLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_network::NetworkLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_data::DataLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
     
     const size_t messages_per_module = 100;
     
@@ -162,9 +162,9 @@ TEST_CASE("Module logger isolation - concurrent logging", "[isolation]") {
     
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     
-    std::string core_log = module_core::CoreLogger::instance().get_log_file();
-    std::string network_log = module_network::NetworkLogger::instance().get_log_file();
-    std::string data_log = module_data::DataLogger::instance().get_log_file();
+    std::string core_log = test_utils::filename_to_string(module_core::CoreLogger::instance().get_log_file());
+    std::string network_log = test_utils::filename_to_string(module_network::NetworkLogger::instance().get_log_file());
+    std::string data_log = test_utils::filename_to_string(module_data::DataLogger::instance().get_log_file());
     
     size_t core_count = test_utils::count_occurrences(core_log, "[Core]");
     size_t network_count = test_utils::count_occurrences(network_log, "[Network]");

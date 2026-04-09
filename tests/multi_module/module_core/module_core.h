@@ -12,11 +12,11 @@ class CoreLogger {
 public:
     static CoreLogger& instance();
     
-    void init(const std::string& log_dir);
+    void init(const spdlog::filename_t& log_dir);
     void shutdown();
     
     std::shared_ptr<spdlog::logger> get_logger() const;
-    std::string get_log_file() const;
+    spdlog::filename_t get_log_file() const;
     
     void log_info(const std::string& message);
     void log_warn(const std::string& message);
@@ -35,7 +35,7 @@ private:
     CoreLogger& operator=(const CoreLogger&) = delete;
     
     std::shared_ptr<spdlog::logger> logger_;
-    std::string log_file_;
+    spdlog::filename_t log_file_;
     bool initialized_ = false;
 };
 

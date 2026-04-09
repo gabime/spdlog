@@ -15,11 +15,11 @@ class DataLogger {
 public:
     static DataLogger& instance();
     
-    void init(const std::string& log_dir, size_t queue_size = 8192, size_t thread_count = 1);
+    void init(const spdlog::filename_t& log_dir, size_t queue_size = 8192, size_t thread_count = 1);
     void shutdown();
     
     std::shared_ptr<spdlog::logger> get_logger() const;
-    std::string get_log_file() const;
+    spdlog::filename_t get_log_file() const;
     
     void log_processing_start(const std::string& dataset_name);
     void log_processing_end(const std::string& dataset_name, 
@@ -44,7 +44,7 @@ private:
     
     std::shared_ptr<spdlog::logger> logger_;
     std::shared_ptr<spdlog::details::thread_pool> thread_pool_;
-    std::string log_file_;
+    spdlog::filename_t log_file_;
     bool initialized_ = false;
 };
 

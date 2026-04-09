@@ -47,17 +47,17 @@ private:
 void prepare_logdir(const std::string& dir_name = "perf_logs");
 
 std::shared_ptr<spdlog::logger> create_sync_logger(const std::string& name, 
-                                                      const std::string& filename);
+                                                      const spdlog::filename_t& filename);
 
 std::shared_ptr<spdlog::logger> create_async_logger(const std::string& name,
-                                                       const std::string& filename,
+                                                       const spdlog::filename_t& filename,
                                                        size_t queue_size = 8192,
                                                        size_t thread_count = 1);
 
 std::shared_ptr<spdlog::logger> create_null_logger(const std::string& name);
 
 std::shared_ptr<spdlog::logger> create_rotating_logger(const std::string& name,
-                                                          const std::string& filename,
+                                                          const spdlog::filename_t& filename,
                                                           size_t max_size = 10 * 1024 * 1024,
                                                           size_t max_files = 5);
 

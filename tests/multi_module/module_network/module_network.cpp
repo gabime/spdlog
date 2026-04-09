@@ -1,5 +1,6 @@
 #include "module_network.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/details/os.h"
 #include <mutex>
 #include <random>
 
@@ -8,6 +9,28 @@ namespace module_network {
 namespace {
 const char* const LOGGER_NAME = "network_logger";
 const int MODULE_ID = 2;
+
+spdlog::filename_t path_join(const spdlog::filename_t& dir, const spdlog::filename_t& filename) {
+    if (dir.empty()) {
+        return filename;
+    }
+    
+    spdlog::filename_t result = dir;
+    
+    if (!result.empty()) {
+        auto last_char = result.back();
+        if (last_char != SPDLOG_FILENAME_T('/') && last_char != SPDLOG_FILENAME_T('\\')) {
+#ifdef _WIN32
+            result += SPDLOG_FILENAME_T('\\');
+#else
+            result += SPDLOG_FILENAME_T('/');
+#endif
+        }
+    }
+    
+    result += filename;
+    return result;
+}
 }
 
 NetworkLogger& NetworkLogger::instance() {
@@ -15,12 +38,12 @@ NetworkLogger& NetworkLogger::instance() {
     return instance;
 }
 
-void NetworkLogger::init(const std::string& log_dir) {
+void NetworkLogger::init(const spdlog::filename_t& log_dir) {
     if (initialized_) {
         return;
     }
     
-    log_file_ = log_dir + "/network.log";
+    log_file_ = path_join(log_dir, SPDLOG_FILENAME_T("network.log"));
     
     auto file_sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(log_file_, true);
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -49,7 +72,7 @@ std::shared_ptr<spdlog::logger> NetworkLogger::get_logger() const {
     return logger_;
 }
 
-std::string NetworkLogger::get_log_file() const {
+spdlog::filename_t NetworkLogger::get_log_file() const {
     return log_file_;
 }
 

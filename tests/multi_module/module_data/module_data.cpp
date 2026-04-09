@@ -1,5 +1,6 @@
 #include "module_data.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/details/os.h"
 #include <thread>
 #include <random>
 
@@ -8,6 +9,28 @@ namespace module_data {
 namespace {
 const char* const LOGGER_NAME = "data_logger";
 const int MODULE_ID = 3;
+
+spdlog::filename_t path_join(const spdlog::filename_t& dir, const spdlog::filename_t& filename) {
+    if (dir.empty()) {
+        return filename;
+    }
+    
+    spdlog::filename_t result = dir;
+    
+    if (!result.empty()) {
+        auto last_char = result.back();
+        if (last_char != SPDLOG_FILENAME_T('/') && last_char != SPDLOG_FILENAME_T('\\')) {
+#ifdef _WIN32
+            result += SPDLOG_FILENAME_T('\\');
+#else
+            result += SPDLOG_FILENAME_T('/');
+#endif
+        }
+    }
+    
+    result += filename;
+    return result;
+}
 }
 
 DataLogger& DataLogger::instance() {
@@ -15,12 +38,12 @@ DataLogger& DataLogger::instance() {
     return instance;
 }
 
-void DataLogger::init(const std::string& log_dir, size_t queue_size, size_t thread_count) {
+void DataLogger::init(const spdlog::filename_t& log_dir, size_t queue_size, size_t thread_count) {
     if (initialized_) {
         return;
     }
     
-    log_file_ = log_dir + "/data.log";
+    log_file_ = path_join(log_dir, SPDLOG_FILENAME_T("data.log"));
     
     thread_pool_ = std::make_shared<spdlog::details::thread_pool>(queue_size, thread_count);
     
@@ -60,7 +83,7 @@ std::shared_ptr<spdlog::logger> DataLogger::get_logger() const {
     return logger_;
 }
 
-std::string DataLogger::get_log_file() const {
+spdlog::filename_t DataLogger::get_log_file() const {
     return log_file_;
 }
 

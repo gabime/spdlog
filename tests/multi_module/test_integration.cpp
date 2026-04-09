@@ -14,9 +14,9 @@ const std::string TEST_LOG_DIR = "test_logs";
 TEST_CASE("Integration test - all modules working together", "[integration]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
-    module_core::CoreLogger::instance().init(TEST_LOG_DIR);
-    module_network::NetworkLogger::instance().init(TEST_LOG_DIR);
-    module_data::DataLogger::instance().init(TEST_LOG_DIR);
+    module_core::CoreLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_network::NetworkLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_data::DataLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
     
     module_core::CoreLogger::instance().log_info("Application starting");
     
@@ -44,9 +44,9 @@ TEST_CASE("Integration test - all modules working together", "[integration]") {
     
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     
-    std::string core_log = module_core::CoreLogger::instance().get_log_file();
-    std::string network_log = module_network::NetworkLogger::instance().get_log_file();
-    std::string data_log = module_data::DataLogger::instance().get_log_file();
+    std::string core_log = test_utils::filename_to_string(module_core::CoreLogger::instance().get_log_file());
+    std::string network_log = test_utils::filename_to_string(module_network::NetworkLogger::instance().get_log_file());
+    std::string data_log = test_utils::filename_to_string(module_data::DataLogger::instance().get_log_file());
     
     REQUIRE(test_utils::file_contains(core_log, "Application starting"));
     REQUIRE(test_utils::file_contains(core_log, "Connected to all services"));
@@ -71,11 +71,11 @@ TEST_CASE("Integration test - module independence", "[integration]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
     SECTION("Only core module") {
-        module_core::CoreLogger::instance().init(TEST_LOG_DIR);
+        module_core::CoreLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
         module_core::CoreLogger::instance().log_info("Core only test");
         module_core::CoreLogger::instance().flush();
         
-        std::string core_log = module_core::CoreLogger::instance().get_log_file();
+        std::string core_log = test_utils::filename_to_string(module_core::CoreLogger::instance().get_log_file());
         REQUIRE(test_utils::file_contains(core_log, "Core only test"));
         
         module_core::CoreLogger::instance().shutdown();
@@ -84,12 +84,12 @@ TEST_CASE("Integration test - module independence", "[integration]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
     SECTION("Only network module") {
-        module_network::NetworkLogger::instance().init(TEST_LOG_DIR);
+        module_network::NetworkLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
         module_network::NetworkSimulator net_sim;
         net_sim.connect("localhost", 8080);
         module_network::NetworkLogger::instance().flush();
         
-        std::string network_log = module_network::NetworkLogger::instance().get_log_file();
+        std::string network_log = test_utils::filename_to_string(module_network::NetworkLogger::instance().get_log_file());
         REQUIRE(test_utils::file_contains(network_log, "localhost"));
         
         module_network::NetworkLogger::instance().shutdown();
@@ -98,7 +98,7 @@ TEST_CASE("Integration test - module independence", "[integration]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
     SECTION("Only data module") {
-        module_data::DataLogger::instance().init(TEST_LOG_DIR);
+        module_data::DataLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
         module_data::DataProcessor data_processor;
         data_processor.load_dataset("small_data", 10);
         data_processor.process_all_records();
@@ -106,7 +106,7 @@ TEST_CASE("Integration test - module independence", "[integration]") {
         
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         
-        std::string data_log = module_data::DataLogger::instance().get_log_file();
+        std::string data_log = test_utils::filename_to_string(module_data::DataLogger::instance().get_log_file());
         REQUIRE(test_utils::file_contains(data_log, "small_data"));
         
         module_data::DataLogger::instance().shutdown();
@@ -116,9 +116,9 @@ TEST_CASE("Integration test - module independence", "[integration]") {
 TEST_CASE("Integration test - logger retrieval across modules", "[integration]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
-    module_core::CoreLogger::instance().init(TEST_LOG_DIR);
-    module_network::NetworkLogger::instance().init(TEST_LOG_DIR);
-    module_data::DataLogger::instance().init(TEST_LOG_DIR);
+    module_core::CoreLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_network::NetworkLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_data::DataLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
     
     auto core_from_module = module_core::CoreLogger::instance().get_logger();
     auto core_from_registry = spdlog::get("core_logger");
@@ -136,7 +136,11 @@ TEST_CASE("Integration test - logger retrieval across modules", "[integration]")
     REQUIRE(core_from_module != data_from_module);
     REQUIRE(network_from_module != data_from_module);
     
-    module_core::CoreLogger::instance().shutdown();
+    spdlog::drop("core_logger");
+    REQUIRE(spdlog::get("core_logger") == nullptr);
+    REQUIRE(spdlog::get("network_logger") != nullptr);
+    REQUIRE(spdlog::get("data_logger") != nullptr);
+    
     module_network::NetworkLogger::instance().shutdown();
     module_data::DataLogger::instance().shutdown();
 }
@@ -144,8 +148,8 @@ TEST_CASE("Integration test - logger retrieval across modules", "[integration]")
 TEST_CASE("Integration test - async and sync logging together", "[integration]") {
     test_utils::prepare_logdir(TEST_LOG_DIR);
     
-    module_core::CoreLogger::instance().init(TEST_LOG_DIR);
-    module_data::DataLogger::instance().init(TEST_LOG_DIR, 1024, 2);
+    module_core::CoreLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR));
+    module_data::DataLogger::instance().init(SPDLOG_FILENAME_T(TEST_LOG_DIR), 1024, 2);
     
     const size_t sync_messages = 100;
     const size_t async_messages = 500;
@@ -168,8 +172,8 @@ TEST_CASE("Integration test - async and sync logging together", "[integration]")
     
     std::this_thread::sleep_for(std::chrono::milliseconds(200));
     
-    std::string core_log = module_core::CoreLogger::instance().get_log_file();
-    std::string data_log = module_data::DataLogger::instance().get_log_file();
+    std::string core_log = test_utils::filename_to_string(module_core::CoreLogger::instance().get_log_file());
+    std::string data_log = test_utils::filename_to_string(module_data::DataLogger::instance().get_log_file());
     
     size_t sync_count = test_utils::count_occurrences(core_log, "[Core]");
     size_t async_count = test_utils::count_occurrences(data_log, "[Data]");
