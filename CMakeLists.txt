@@ -76,6 +76,7 @@ option(SPDLOG_BUILD_EXAMPLE_HO "Build header only example" OFF)
 # testing options
 option(SPDLOG_BUILD_TESTS "Build tests" OFF)
 option(SPDLOG_BUILD_TESTS_HO "Build tests using the header only version" OFF)
+option(SPDLOG_BUILD_MULTI_MODULE_TESTS "Build multi-module tests" OFF)
 
 # bench options
 option(SPDLOG_BUILD_BENCH "Build benchmarks (Requires https://github.com/google/benchmark.git to be installed)" OFF)
@@ -338,6 +339,12 @@ if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_TESTS_HO OR SPDLOG_BUILD_ALL)
     message(STATUS "Generating tests")
     enable_testing()
     add_subdirectory(tests)
+endif()
+
+if(SPDLOG_BUILD_MULTI_MODULE_TESTS OR SPDLOG_BUILD_ALL)
+    message(STATUS "Generating multi-module tests")
+    enable_testing()
+    add_subdirectory(tests/multi_module)
 endif()
 
 if(SPDLOG_BUILD_BENCH OR SPDLOG_BUILD_ALL)

@@ -1,0 +1,15 @@
+# This is a generated file and its contents are an internal implementation detail.
+# The download step will be re-executed if anything in this file changes.
+# No other meaning or use of this file is supported.
+
+method=git
+command=D:/Program Files/CMake/bin/cmake.exe;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;D:/workspace/兼职项目/4.Solo Coder/spdlog/build_multi_module/_deps/catch2-subbuild/catch2-populate-prefix/tmp/catch2-populate-gitclone.cmake
+source_dir=D:/workspace/兼职项目/4.Solo Coder/spdlog/build_multi_module/_deps/catch2-src
+work_dir=D:/workspace/兼职项目/4.Solo Coder/spdlog/build_multi_module/_deps
+repository=https://github.com/catchorg/Catch2.git
+remote=origin
+init_submodules=TRUE
+recurse_submodules=--recursive
+submodules=
+CMP0097=NEW
+      
