@@ -8,15 +8,17 @@ permissions:
 jobs:
   build:
     runs-on: macOS-latest
-    name: "macOS Clang (C++11, Release)"
+    name: "macOS Clang (C++${{ matrix.config.CXX_STANDARD }}, Release)"
     strategy:
       fail-fast: true
       matrix:
         config:
             - USE_STD_FORMAT: 'ON'
               BUILD_EXAMPLE: 'OFF'
+              CXX_STANDARD: '20'
             - USE_STD_FORMAT: 'OFF'
               BUILD_EXAMPLE: 'ON'
+              CXX_STANDARD: '11'
               
     steps:
       - uses: actions/checkout@v6
@@ -25,7 +27,7 @@ jobs:
           mkdir -p build && cd build
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_CXX_STANDARD=11 \
+            -DCMAKE_CXX_STANDARD=${{ matrix.config.CXX_STANDARD }} \
             -DSPDLOG_BUILD_EXAMPLE=${{ matrix.config.BUILD_EXAMPLE }} \
             -DSPDLOG_BUILD_EXAMPLE_HO=${{ matrix.config.BUILD_EXAMPLE }} \
             -DSPDLOG_BUILD_WARNINGS=ON \
