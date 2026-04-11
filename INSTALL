@@ -2,11 +2,6 @@ CMake:
   add_executable(example example.cpp)
   target_link_libraries(example spdlog::spdlog)
 
-Tested on:
-gcc 4.8.1 and above
-clang 3.5
-Visual Studio 2013
-
-
-
-
+Requirements:
+  C++17 or later
+  CMake 3.23 or later

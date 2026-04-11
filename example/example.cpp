@@ -238,7 +238,7 @@ void syslog_example() {
     #include "spdlog/sinks/android_sink.h"
 void android_example() {
     std::string tag = "spdlog-android";
-    auto android_logger = spdlog::android_logger_mt("android", tag);
+    auto android_logger = spdlog::create<android_sink_mt>("android", tag);
     android_logger->critical("Use \"adb shell logcat\" to view this message.");
 }
 #endif
