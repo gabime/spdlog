@@ -43,18 +43,25 @@ see example [CMakeLists.txt](https://github.com/gabime/spdlog/blob/v2.x/example/
 spdlog v2.x is a major rewrite with cleaner design and a simpler API. Key changes from v1.x:
 
 * **C++17 required** (v1.x supported C++11). Uses `std::filesystem`, `std::string_view`, etc.
-* **Compiled library only** - header-only mode has been removed.
+* **Compiled library only** - header-only mode has been removed. All `-inl.h` files are gone.
 * **CMake minimum version raised to 3.23**.
+* **`filename_t` is now `std::filesystem::path`** instead of `std::string`.
+* **Log level type changed** - `level::level_enum` is now `enum class level : uint8_t`.
 * **Simpler logger creation** - convenience functions like `spdlog::basic_logger_mt(...)` are replaced with a single template: `spdlog::create<SinkType>(logger_name, sink_args...)`.
-* **New async model** - the global thread pool and `spdlog::async_logger` are replaced by `async_sink`, a regular sink with its own worker thread and configurable overflow policy (`block`, `overrun_oldest`, `discard_new`).
-* **No global registry** - `spdlog::get("logger_name")` is removed. Use `spdlog::global_logger()` to access the default logger, or hold your own `shared_ptr<logger>`.
+* **New async model** - the global thread pool (`spdlog::init_thread_pool()`) and `spdlog::async_logger` are replaced by `async_sink`, a regular sink with its own worker thread and configurable overflow policy (`block`, `overrun_oldest`, `discard_new`).
+* **No global registry** - `spdlog::get()`, `spdlog::register_logger()`, `spdlog::drop()`, `spdlog::drop_all()`, `spdlog::apply_all()` are all removed. Use `spdlog::global_logger()` to access the default logger, or hold your own `shared_ptr<logger>`.
+* **Default logger renamed** - `spdlog::default_logger()` is now `spdlog::global_logger()`.
 * **`std::format` support removed** - `SPDLOG_USE_STD_FORMAT` is gone. Uses [fmt](https://github.com/fmtlib/fmt) exclusively.
+* **Bundled fmt headers moved** - `spdlog/fmt/bundled/` is gone. fmt is now fetched via CMake. Include `fmt/` headers directly.
 * **Backtrace feature removed** - `spdlog::enable_backtrace()` and `spdlog::dump_backtrace()` are gone.
 * **Configuration module removed** - `spdlog/cfg/env.h` and `spdlog/cfg/argv.h` (env/argv level loading) are gone.
 * **Wide-char support removed** - `SPDLOG_WCHAR_TO_UTF8_SUPPORT` and `SPDLOG_WCHAR_FILENAMES` are gone.
 * **`spdlog::flush_every()` removed**.
 * **`SPDLOG_EOL` define removed**.
+* **`tweakme.h` removed** - compile-time options are now in CMakeLists.txt.
 * **Logger destructor is no longer virtual**.
+* **`log_msg.level` field renamed to `log_msg.log_level`** (affects custom sinks).
+* **All log methods are now `noexcept`**.
 
 See [CHANGELOG.md](CHANGELOG.md) for migration examples.
 
