@@ -44,12 +44,19 @@ spdlog v2.x is a major rewrite with cleaner design and a simpler API. Key change
 
 * **C++17 required** (v1.x supported C++11). Uses `std::filesystem`, `std::string_view`, etc.
 * **Compiled library only** - header-only mode has been removed.
+* **CMake minimum version raised to 3.23**.
 * **Simpler logger creation** - convenience functions like `spdlog::basic_logger_mt(...)` are replaced with a single template: `spdlog::create<SinkType>(logger_name, sink_args...)`.
 * **New async model** - the global thread pool and `spdlog::async_logger` are replaced by `async_sink`, a regular sink with its own worker thread and configurable overflow policy (`block`, `overrun_oldest`, `discard_new`).
 * **No global registry** - `spdlog::get("logger_name")` is removed. Use `spdlog::global_logger()` to access the default logger, or hold your own `shared_ptr<logger>`.
-* **Removed features** - `std::format` support, backtrace, `cfg/` module (env/argv level loading), wide-char support.
+* **`std::format` support removed** - `SPDLOG_USE_STD_FORMAT` is gone. Uses [fmt](https://github.com/fmtlib/fmt) exclusively.
+* **Backtrace feature removed** - `spdlog::enable_backtrace()` and `spdlog::dump_backtrace()` are gone.
+* **Configuration module removed** - `spdlog/cfg/env.h` and `spdlog/cfg/argv.h` (env/argv level loading) are gone.
+* **Wide-char support removed** - `SPDLOG_WCHAR_TO_UTF8_SUPPORT` and `SPDLOG_WCHAR_FILENAMES` are gone.
+* **`spdlog::flush_every()` removed**.
+* **`SPDLOG_EOL` define removed**.
+* **Logger destructor is no longer virtual**.
 
-See [CHANGELOG.md](CHANGELOG.md) for the full list of breaking changes and migration examples.
+See [CHANGELOG.md](CHANGELOG.md) for migration examples.
 
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).
