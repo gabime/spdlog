@@ -52,9 +52,11 @@ public:
     bool is_connected() const { return socket_ != INVALID_SOCKET; }
 
     void close() {
+        if (socket_ != INVALID_SOCKET) {
             ::closesocket(socket_);
             socket_ = INVALID_SOCKET;
         }
+    }
 
     SOCKET fd() const { return socket_; }
 
