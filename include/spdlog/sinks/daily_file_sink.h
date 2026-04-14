@@ -4,7 +4,6 @@
 #pragma once
 
 #include <spdlog/common.h>
-#include <spdlog/details/circular_q.h>
 #include <spdlog/details/file_helper.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/details/os.h>
@@ -13,12 +12,21 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/sinks/base_sink.h>
 
+#if defined(_WIN32)
+#include <spdlog/details/windows_include.h>
+#else
+#include <dirent.h>
+#include <sys/stat.h>
+#endif
+
+#include <algorithm>
 #include <chrono>
 #include <cstdio>
 #include <iomanip>
 #include <mutex>
 #include <sstream>
 #include <string>
+#include <vector>
 
 namespace spdlog {
 namespace sinks {
@@ -62,8 +70,8 @@ struct daily_filename_format_calculator {
  * Rotating file sink based on date.
  * If truncate != false , the created file will be truncated.
  * If max_files > 0, retain only the last max_files and delete previous.
- * Note that old log files from previous executions will not be deleted by this class,
- * rotation and deletion is only applied while the program is running.
+ * Cleanup scans the target directory and removes old files matching this sink naming pattern.
+ * Rotation and deletion is applied while the program is running.
  */
 template <typename Mutex, typename FileNameCalc = daily_filename_calculator>
 class daily_file_sink final : public base_sink<Mutex> {
@@ -80,8 +88,7 @@ public:
           rotation_m_(rotation_minute),
           file_helper_{event_handlers},
           truncate_(truncate),
-          max_files_(max_files),
-          filenames_q_() {
+          max_files_(max_files) {
         if (rotation_hour < 0 || rotation_hour > 23 || rotation_minute < 0 ||
             rotation_minute > 59) {
             throw_spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
@@ -91,10 +98,6 @@ public:
         const auto new_filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
         file_helper_.open(new_filename, truncate_);
         rotation_tp_ = next_rotation_tp_();
-
-        if (max_files_ > 0) {
-            init_filenames_q_();
-        }
     }
 
     filename_t filename() {
@@ -124,23 +127,130 @@ protected:
     void flush_() override { file_helper_.flush(); }
 
 private:
-    void init_filenames_q_() {
-        using details::os::path_exists;
+    static bool starts_with_(const filename_t &value, const filename_t &prefix) {
+        return value.size() >= prefix.size() &&
+               std::equal(prefix.begin(), prefix.end(), value.begin());
+    }
 
-        filenames_q_ = details::circular_q<filename_t>(static_cast<size_t>(max_files_));
-        std::vector<filename_t> filenames;
-        auto now = log_clock::now();
-        while (filenames.size() < max_files_) {
-            const auto new_filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
-            if (!path_exists(new_filename)) {
-                break;
+    static bool date_like_suffix_(const filename_t &suffix) {
+        if (suffix.empty()) {
+            return false;
+        }
+
+        bool has_digit = false;
+        const auto c0 = static_cast<filename_t::value_type>('0');
+        const auto c9 = static_cast<filename_t::value_type>('9');
+        const auto dash = static_cast<filename_t::value_type>('-');
+        const auto underscore = static_cast<filename_t::value_type>('_');
+        for (auto ch : suffix) {
+            if (ch >= c0 && ch <= c9) {
+                has_digit = true;
+                continue;
             }
-            filenames.emplace_back(new_filename);
-            now -= std::chrono::hours(24);
+            if (ch == dash || ch == underscore) {
+                continue;
+            }
+            return false;
         }
-        for (auto iter = filenames.rbegin(); iter != filenames.rend(); ++iter) {
-            filenames_q_.push_back(std::move(*iter));
+
+        return has_digit;
+    }
+
+    static filename_t join_path_(const filename_t &dir, const filename_t &basename) {
+        if (dir.empty()) {
+            return basename;
         }
+
+        filename_t result = dir;
+        if (result.back() != details::os::folder_seps_filename[0]) {
+            result.push_back(details::os::folder_seps_filename[0]);
+        }
+        result += basename;
+        return result;
+    }
+
+    bool is_matching_daily_file_(const filename_t &filename) const {
+        filename_t base_name_no_ext;
+        filename_t base_ext;
+        std::tie(base_name_no_ext, base_ext) = details::file_helper::split_by_extension(base_filename_);
+
+        filename_t candidate_no_ext;
+        filename_t candidate_ext;
+        std::tie(candidate_no_ext, candidate_ext) = details::file_helper::split_by_extension(filename);
+
+        if (candidate_ext != base_ext || !starts_with_(candidate_no_ext, base_name_no_ext)) {
+            return false;
+        }
+
+        return date_like_suffix_(candidate_no_ext.substr(base_name_no_ext.size()));
+    }
+
+    std::vector<filename_t> scan_matching_filenames_() const {
+        std::vector<filename_t> matching_filenames;
+        const filename_t dir_path = details::os::dir_name(base_filename_);
+
+#if defined(_WIN32)
+        filename_t search_pattern = dir_path.empty() ? SPDLOG_FILENAME_T("*")
+                                                     : join_path_(dir_path, SPDLOG_FILENAME_T("*"));
+
+#if defined(SPDLOG_WCHAR_FILENAMES)
+        WIN32_FIND_DATAW find_data;
+        HANDLE find_handle = ::FindFirstFileW(search_pattern.c_str(), &find_data);
+#else
+        WIN32_FIND_DATAA find_data;
+        HANDLE find_handle = ::FindFirstFileA(search_pattern.c_str(), &find_data);
+#endif
+        if (find_handle == INVALID_HANDLE_VALUE) {
+            return matching_filenames;
+        }
+
+        do {
+            if ((find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
+                continue;
+            }
+
+            filename_t filename = find_data.cFileName;
+            const filename_t full_path = join_path_(dir_path, filename);
+            if (is_matching_daily_file_(full_path)) {
+                matching_filenames.push_back(std::move(full_path));
+            }
+        } while (
+#if defined(SPDLOG_WCHAR_FILENAMES)
+            ::FindNextFileW(find_handle, &find_data)
+#else
+            ::FindNextFileA(find_handle, &find_data)
+#endif
+        );
+        ::FindClose(find_handle);
+#else
+        const filename_t scan_path = dir_path.empty() ? SPDLOG_FILENAME_T(".") : dir_path;
+        DIR *dir = ::opendir(scan_path.c_str());
+        if (dir == nullptr) {
+            return matching_filenames;
+        }
+
+        struct dirent *entry = nullptr;
+        while ((entry = ::readdir(dir)) != nullptr) {
+            if (entry->d_name[0] == '.') {
+                continue;
+            }
+
+            const filename_t filename = entry->d_name;
+            const filename_t full_path = join_path_(dir_path, filename);
+
+            struct stat st;
+            if (::stat(full_path.c_str(), &st) != 0 || !S_ISREG(st.st_mode)) {
+                continue;
+            }
+
+            if (is_matching_daily_file_(full_path)) {
+                matching_filenames.push_back(full_path);
+            }
+        }
+        (void)::closedir(dir);
+#endif
+
+        return matching_filenames;
     }
 
     tm now_tm(log_clock::time_point tp) {
@@ -167,18 +277,33 @@ private:
         using details::os::filename_to_str;
         using details::os::remove_if_exists;
 
-        filename_t current_file = file_helper_.filename();
-        if (filenames_q_.full()) {
-            auto old_filename = std::move(filenames_q_.front());
-            filenames_q_.pop_front();
-            bool ok = remove_if_exists(old_filename) == 0;
+        auto matching_filenames = scan_matching_filenames_();
+        const filename_t current_file = file_helper_.filename();
+
+        matching_filenames.erase(
+            std::remove(matching_filenames.begin(), matching_filenames.end(), current_file),
+            matching_filenames.end());
+
+        const size_t files_to_keep_excluding_current =
+            max_files_ > 0 ? static_cast<size_t>(max_files_ - 1) : 0;
+
+        if (matching_filenames.size() <= files_to_keep_excluding_current) {
+            return;
+        }
+
+        std::sort(matching_filenames.begin(), matching_filenames.end());
+
+        const size_t files_to_delete =
+            matching_filenames.size() - files_to_keep_excluding_current;
+
+        for (size_t i = 0; i < files_to_delete; ++i) {
+            const filename_t &old_filename = matching_filenames[i];
+            const bool ok = remove_if_exists(old_filename) == 0;
             if (!ok) {
-                filenames_q_.push_back(std::move(current_file));
                 throw_spdlog_ex("Failed removing daily file " + filename_to_str(old_filename),
                                 errno);
             }
         }
-        filenames_q_.push_back(std::move(current_file));
     }
 
     filename_t base_filename_;
@@ -188,7 +313,6 @@ private:
     details::file_helper file_helper_;
     bool truncate_;
     uint16_t max_files_;
-    details::circular_q<filename_t> filenames_q_;
 };
 
 using daily_file_sink_mt = daily_file_sink<std::mutex>;

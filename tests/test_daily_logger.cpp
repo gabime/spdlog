@@ -4,6 +4,8 @@
  */
 #include "includes.h"
 
+#include <vector>
+
 #ifdef SPDLOG_USE_STD_FORMAT
 using filename_memory_buf_t = std::basic_string<spdlog::filename_t::value_type>;
 #else
@@ -131,6 +133,23 @@ static spdlog::details::log_msg create_msg(std::chrono::seconds offset) {
     return msg;
 }
 
+static void touch_file(const spdlog::filename_t &filename) {
+    using spdlog::details::os::create_dir;
+    using spdlog::details::os::dir_name;
+
+    // Create directory if needed
+    const auto dir_path = dir_name(filename);
+    if (!dir_path.empty()) {
+        create_dir(dir_path);
+    }
+
+    FILE *fd = nullptr;
+    if (spdlog::details::os::fopen_s(&fd, filename, SPDLOG_FILENAME_T("ab"))) {
+        throw std::runtime_error("Failed creating file " + spdlog::details::os::filename_to_str(filename));
+    }
+    std::fclose(fd);
+}
+
 static void test_rotate(int days_to_run, uint16_t max_days, uint16_t expected_n_files) {
     using spdlog::log_clock;
     using spdlog::details::log_msg;
@@ -166,4 +185,28 @@ TEST_CASE("daily_logger rotate", "[daily_file_sink]") {
     test_rotate(days_to_run, 10, 10);
     test_rotate(days_to_run, 11, 10);
     test_rotate(days_to_run, 20, 10);
+}
+TEST_CASE("daily_logger rotate with missing day", "[daily_file_sink]") {
+    using spdlog::log_clock;
+    using spdlog::sinks::daily_file_sink_st;
+    using spdlog::sinks::daily_filename_calculator;
+
+    prepare_logdir();
+
+    const spdlog::filename_t basename = SPDLOG_FILENAME_T("test_logs/daily_gap.txt");
+    const uint16_t max_files = 3;
+
+    const auto now = log_clock::now();
+    const std::vector<int> existing_days_ago = {0, 1, 2, 4, 5};
+    for (int days_ago : existing_days_ago) {
+        const auto day_tp = now - std::chrono::hours(24 * days_ago);
+        const auto filename = daily_filename_calculator::calc_filename(
+            basename, spdlog::details::os::localtime(log_clock::to_time_t(day_tp)));
+        touch_file(filename);
+    }
+
+    daily_file_sink_st sink{basename, 2, 30, true, max_files};
+    sink.log(create_msg(std::chrono::hours(24)));
+
+    REQUIRE(count_files("test_logs") == static_cast<size_t>(max_files));
 }
