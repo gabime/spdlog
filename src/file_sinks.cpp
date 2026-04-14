@@ -18,3 +18,7 @@ template class SPDLOG_API spdlog::sinks::basic_file_sink<spdlog::details::null_m
 #include <spdlog/sinks/rotating_file_sink-inl.h>
 template class SPDLOG_API spdlog::sinks::rotating_file_sink<std::mutex>;
 template class SPDLOG_API spdlog::sinks::rotating_file_sink<spdlog::details::null_mutex>;
+
+#include <spdlog/sinks/business_sink-inl.h>
+template class SPDLOG_API spdlog::sinks::business_sink<std::mutex>;
+template class SPDLOG_API spdlog::sinks::business_sink<spdlog::details::null_mutex>;
