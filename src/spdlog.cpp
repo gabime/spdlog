@@ -16,7 +16,7 @@ namespace spdlog {
 #ifndef SPDLOG_DISABLE_GLOBAL_LOGGER
 static std::shared_ptr<logger> s_logger = std::make_shared<logger>("", std::make_shared<sinks::stdout_color_sink_mt>());
 #else
-static std::short_ptr<logger> s_logger = nullptr;
+static std::shared_ptr<logger> s_logger = nullptr;
 #endif
 
 std::shared_ptr<logger> global_logger() { return s_logger; }
