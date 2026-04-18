@@ -81,6 +81,9 @@ public:
     // return the current async_sink configuration
     [[nodiscard]] const config &get_config() const;
 
+    // return the current async_sink configuration
+    [[nodiscard]] config &get_config();
+
     // create an async_sink with one backend sink constructed with the given args.
     // example:
     // auto async_file = async_sink::with<spdlog::sinks::basic_file_sink_st>("mylog.txt");

@@ -92,6 +92,8 @@ void async_sink::reset_discard_counter() const { q_->reset_discard_counter(); }
 
 const async_sink::config &async_sink::get_config() const { return config_; }
 
+async_sink::config &async_sink::get_config() { return config_; }
+
 // private methods
 void async_sink::enqueue_message_(details::async_log_msg &&msg) const {
     switch (config_.policy) {
