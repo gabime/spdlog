@@ -578,6 +578,40 @@ public:
     }
 };
 
+// Thread id and time with milliseconds: [TID-xxx HH:MM:SS.mmm]
+template <typename ScopedPadder>
+class tid_time_formatter final : public flag_formatter {
+public:
+    explicit tid_time_formatter(padding_info padinfo)
+        : flag_formatter(padinfo) {}
+
+    void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) override {
+        using std::chrono::milliseconds;
+        
+        const auto tid_digits = ScopedPadder::count_digits(msg.thread_id);
+        const size_t field_size = 7 + tid_digits + 1 + 12; // "[TID-" + tid + " " + "HH:MM:SS.mmm]"
+        
+        ScopedPadder p(field_size, padinfo_, dest);
+
+        dest.push_back('[');
+        fmt_helper::append_string_view("TID-", dest);
+        fmt_helper::append_int(msg.thread_id, dest);
+        dest.push_back(' ');
+
+        fmt_helper::pad2(tm_time.tm_hour, dest);
+        dest.push_back(':');
+        fmt_helper::pad2(tm_time.tm_min, dest);
+        dest.push_back(':');
+        fmt_helper::pad2(tm_time.tm_sec, dest);
+        dest.push_back('.');
+
+        auto millis = fmt_helper::time_fraction<milliseconds>(msg.time);
+        fmt_helper::pad3(static_cast<uint32_t>(millis.count()), dest);
+
+        dest.push_back(']');
+    }
+};
+
 // Current pid
 template <typename ScopedPadder>
 class pid_formatter final : public flag_formatter {
@@ -1051,6 +1085,11 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 
         case ('t'):  // thread id
             formatters_.push_back(details::make_unique<details::t_formatter<Padder>>(padding));
+            break;
+
+        case ('J'):  // thread id and time with milliseconds: [TID-xxx HH:MM:SS.mmm]
+            formatters_.push_back(details::make_unique<details::tid_time_formatter<Padder>>(padding));
+            need_localtime_ = true;
             break;
 
         case ('v'):  // the message text
