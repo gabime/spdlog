@@ -8,12 +8,67 @@
 #endif
 
 #include <spdlog/details/backtracer.h>
+#include <spdlog/details/log_msg_buffer.h>
 #include <spdlog/pattern_formatter.h>
 #include <spdlog/sinks/sink.h>
 
 #include <cstdio>
+#include <vector>
+#include <utility>
 
 namespace spdlog {
+namespace details {
+
+class transaction_context {
+public:
+    using buffer_type = std::vector<movable_log_msg_buffer>;
+    using entry_type = std::pair<const logger*, buffer_type>;
+
+    buffer_type* find(const logger* l) {
+        for (auto& entry : entries_) {
+            if (entry.first == l) {
+                return &entry.second;
+            }
+        }
+        return nullptr;
+    }
+
+    const buffer_type* find(const logger* l) const {
+        for (const auto& entry : entries_) {
+            if (entry.first == l) {
+                return &entry.second;
+            }
+        }
+        return nullptr;
+    }
+
+    buffer_type& get_or_create(const logger* l) {
+        auto* existing = find(l);
+        if (existing) {
+            return *existing;
+        }
+        entries_.emplace_back(l, buffer_type{});
+        return entries_.back().second;
+    }
+
+    void remove(const logger* l) {
+        for (auto it = entries_.begin(); it != entries_.end(); ++it) {
+            if (it->first == l) {
+                entries_.erase(it);
+                return;
+            }
+        }
+    }
+
+    bool empty() const { return entries_.empty(); }
+
+private:
+    std::vector<entry_type> entries_;
+};
+
+}  // namespace details
+
+thread_local details::transaction_context tls_transaction_context;
 
 // public methods
 SPDLOG_INLINE logger::logger(const logger &other)
@@ -120,10 +175,62 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name) {
     return cloned;
 }
 
+// transactional logging support
+SPDLOG_INLINE void logger::start_transaction() {
+    transaction_refcount_.fetch_add(1, std::memory_order_relaxed);
+    tls_transaction_context.get_or_create(this);
+}
+
+SPDLOG_INLINE void logger::commit_transaction() {
+    auto* buffer = tls_transaction_context.find(this);
+    if (buffer == nullptr) {
+        return;
+    }
+
+    for (const auto& msg : *buffer) {
+        sink_it_(msg);
+    }
+
+    buffer->clear();
+    tls_transaction_context.remove(this);
+    transaction_refcount_.fetch_sub(1, std::memory_order_relaxed);
+}
+
+SPDLOG_INLINE void logger::rollback_transaction() {
+    auto* buffer = tls_transaction_context.find(this);
+    if (buffer == nullptr) {
+        return;
+    }
+
+    buffer->clear();
+    tls_transaction_context.remove(this);
+    transaction_refcount_.fetch_sub(1, std::memory_order_relaxed);
+}
+
+SPDLOG_INLINE bool logger::in_transaction() const {
+    if (transaction_refcount_.load(std::memory_order_relaxed) == 0) {
+        return false;
+    }
+    return tls_transaction_context.find(this) != nullptr;
+}
+
 // protected methods
 SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg,
                                    bool log_enabled,
                                    bool traceback_enabled) {
+    if (transaction_refcount_.load(std::memory_order_relaxed) > 0) {
+        auto* buffer = tls_transaction_context.find(this);
+        if (buffer != nullptr) {
+            if (log_enabled) {
+                buffer->emplace_back(log_msg);
+            }
+            if (traceback_enabled) {
+                tracer_.push_back(log_msg);
+            }
+            return;
+        }
+    }
+
     if (log_enabled) {
         sink_it_(log_msg);
     }

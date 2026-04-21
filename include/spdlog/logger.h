@@ -26,6 +26,7 @@
 #endif
 
 #include <vector>
+#include <atomic>
 
 #ifndef SPDLOG_NO_EXCEPTIONS
 #define SPDLOG_LOGGER_CATCH(location)                                                 \
@@ -301,6 +302,12 @@ public:
     void flush_on(level::level_enum log_level);
     level::level_enum flush_level() const;
 
+    // transactional logging support
+    void start_transaction();
+    void commit_transaction();
+    void rollback_transaction();
+    bool in_transaction() const;
+
     // sinks
     const std::vector<sink_ptr> &sinks() const;
 
@@ -319,6 +326,7 @@ protected:
     spdlog::level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
     details::backtracer tracer_;
+    std::atomic<size_t> transaction_refcount_{0};
 
     // common implementation for after templated public api has been resolved
     template <typename... Args>
