@@ -132,6 +132,17 @@ private:
                std::equal(prefix.begin(), prefix.end(), value.begin());
     }
 
+    // Normalize path separators to '/' so comparisons are reliable regardless of
+    // whether the caller used '\' or '/' (both are valid on Windows).
+    static filename_t normalize_seps_(filename_t path) {
+#if defined(_WIN32)
+        std::replace(path.begin(), path.end(),
+                     static_cast<filename_t::value_type>('\\'),
+                     static_cast<filename_t::value_type>('/'));
+#endif
+        return path;
+    }
+
     static bool date_like_suffix_(const filename_t &suffix) {
         // Validate that suffix matches the daily_filename_calculator pattern: _YYYY-MM-DD
         // Expected format: _4digits-2digits-2digits (case insensitive for hexadecimal won't apply here)
@@ -198,8 +209,11 @@ private:
         }
 
         filename_t result = dir;
-        if (result.back() != details::os::folder_seps_filename[0]) {
-            result.push_back(details::os::folder_seps_filename[0]);
+        // Check against ALL valid separators (on Windows both '\' and '/' are valid).
+        // folder_seps_filename contains all valid separator characters for the platform.
+        const filename_t seps(details::os::folder_seps_filename);
+        if (seps.find(result.back()) == filename_t::npos) {
+            result.push_back(seps[0]);
         }
         result += basename;
         return result;
@@ -209,10 +223,12 @@ private:
         filename_t base_name_no_ext;
         filename_t base_ext;
         std::tie(base_name_no_ext, base_ext) = details::file_helper::split_by_extension(base_filename_);
+        base_name_no_ext = normalize_seps_(base_name_no_ext);
 
         filename_t candidate_no_ext;
         filename_t candidate_ext;
         std::tie(candidate_no_ext, candidate_ext) = details::file_helper::split_by_extension(filename);
+        candidate_no_ext = normalize_seps_(candidate_no_ext);
 
         if (candidate_ext != base_ext || !starts_with_(candidate_no_ext, base_name_no_ext)) {
             return false;
@@ -248,7 +264,7 @@ private:
             filename_t filename = find_data.cFileName;
             const filename_t full_path = join_path_(dir_path, filename);
             if (is_matching_daily_file_(full_path)) {
-                matching_filenames.push_back(std::move(full_path));
+                matching_filenames.push_back(normalize_seps_(full_path));
             }
         } while (
 #if defined(SPDLOG_WCHAR_FILENAMES)
@@ -281,7 +297,7 @@ private:
             }
 
             if (is_matching_daily_file_(full_path)) {
-                matching_filenames.push_back(full_path);
+                matching_filenames.push_back(normalize_seps_(full_path));
             }
         }
         (void)::closedir(dir);
@@ -315,7 +331,7 @@ private:
         using details::os::remove_if_exists;
 
         auto matching_filenames = scan_matching_filenames_();
-        const filename_t current_file = file_helper_.filename();
+        const filename_t current_file = normalize_seps_(file_helper_.filename());
 
         matching_filenames.erase(
             std::remove(matching_filenames.begin(), matching_filenames.end(), current_file),
