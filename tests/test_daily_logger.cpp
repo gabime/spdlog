@@ -210,3 +210,46 @@ TEST_CASE("daily_logger rotate with missing day", "[daily_file_sink]") {
 
     REQUIRE(count_files("test_logs") == static_cast<size_t>(max_files));
 }
+
+TEST_CASE("daily_logger rotate avoids false-positive cleanup", "[daily_file_sink]") {
+    using spdlog::log_clock;
+    using spdlog::sinks::daily_file_sink_st;
+    using spdlog::sinks::daily_filename_calculator;
+
+    prepare_logdir();
+
+    const spdlog::filename_t basename = SPDLOG_FILENAME_T("test_logs/daily_falsepos.txt");
+    const uint16_t max_files = 2;
+
+    const auto now = log_clock::now();
+
+    // Create legitimate daily log files
+    const std::vector<int> existing_days_ago = {0, 1};
+    for (int days_ago : existing_days_ago) {
+        const auto day_tp = now - std::chrono::hours(24 * days_ago);
+        const auto filename = daily_filename_calculator::calc_filename(
+            basename, spdlog::details::os::localtime(log_clock::to_time_t(day_tp)));
+        touch_file(filename);
+    }
+
+    // Create ambiguous files with same prefix/extension but non-date-like suffix
+    // These should NOT be deleted even if they match the prefix/extension pattern
+    const std::vector<spdlog::filename_t> ambiguous_files = {
+        SPDLOG_FILENAME_T("test_logs/daily_falsepos_123.txt"),      // digits only
+        SPDLOG_FILENAME_T("test_logs/daily_falsepos_v1_2.txt"),     // digits + underscore
+        SPDLOG_FILENAME_T("test_logs/daily_falsepos_latest.txt"),   // no digits
+    };
+    for (const auto &file : ambiguous_files) {
+        touch_file(file);
+    }
+
+    // Trigger cleanup by rotating to a new day
+    daily_file_sink_st sink{basename, 2, 30, true, max_files};
+    sink.log(create_msg(std::chrono::hours(48)));
+
+    // Verify that only legitimate daily log files remain (or fewer if some are deleted)
+    // but ambiguous files should still exist
+    for (const auto &file : ambiguous_files) {
+        REQUIRE(spdlog::details::os::path_exists(file) == true);
+    }
+}

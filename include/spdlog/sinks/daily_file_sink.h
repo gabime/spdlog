@@ -133,27 +133,63 @@ private:
     }
 
     static bool date_like_suffix_(const filename_t &suffix) {
-        if (suffix.empty()) {
+        // Validate that suffix matches the daily_filename_calculator pattern: _YYYY-MM-DD
+        // Expected format: _4digits-2digits-2digits (case insensitive for hexadecimal won't apply here)
+        // Examples valid: _2026-04-22
+        // Examples invalid: _123, _v1_2, _latest, _12-34-5, etc.
+        
+        if (suffix.size() < 11) {  // Minimum: _YYYY-MM-DD = 11 chars
             return false;
         }
 
-        bool has_digit = false;
         const auto c0 = static_cast<filename_t::value_type>('0');
         const auto c9 = static_cast<filename_t::value_type>('9');
         const auto dash = static_cast<filename_t::value_type>('-');
         const auto underscore = static_cast<filename_t::value_type>('_');
-        for (auto ch : suffix) {
-            if (ch >= c0 && ch <= c9) {
-                has_digit = true;
-                continue;
-            }
-            if (ch == dash || ch == underscore) {
-                continue;
-            }
+
+        // Must start with underscore or hyphen (depending on calculator variant)
+        size_t pos = 0;
+        if (suffix[0] != underscore && suffix[0] != dash) {
             return false;
         }
+        ++pos;
 
-        return has_digit;
+        // Expect exactly 4 digits (YYYY)
+        for (int i = 0; i < 4; ++i, ++pos) {
+            if (pos >= suffix.size() || suffix[pos] < c0 || suffix[pos] > c9) {
+                return false;
+            }
+        }
+
+        // Expect dash
+        if (pos >= suffix.size() || suffix[pos] != dash) {
+            return false;
+        }
+        ++pos;
+
+        // Expect exactly 2 digits (MM)
+        for (int i = 0; i < 2; ++i, ++pos) {
+            if (pos >= suffix.size() || suffix[pos] < c0 || suffix[pos] > c9) {
+                return false;
+            }
+        }
+
+        // Expect dash
+        if (pos >= suffix.size() || suffix[pos] != dash) {
+            return false;
+        }
+        ++pos;
+
+        // Expect exactly 2 digits (DD)
+        for (int i = 0; i < 2; ++i, ++pos) {
+            if (pos >= suffix.size() || suffix[pos] < c0 || suffix[pos] > c9) {
+                return false;
+            }
+        }
+
+        // All characters consumed should be the date pattern
+        // Allow trailing characters (for format calculators that append more)
+        return true;
     }
 
     static filename_t join_path_(const filename_t &dir, const filename_t &basename) {
