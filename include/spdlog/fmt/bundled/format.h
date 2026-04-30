@@ -3138,8 +3138,25 @@ constexpr auto fractional_part_rounding_thresholds(int index) -> uint32_t {
   // It is equal to ceil(2^31 + 2^32/10^(k + 1)).
   // These are stored in a string literal because we cannot have static arrays
   // in constexpr functions and non-static ones are poorly optimized.
-  return U"\x9999999a\x828f5c29\x80418938\x80068db9\x8000a7c6\x800010c7"
-         U"\x800001ae\x8000002b"[index];
+
+  // while in C++23 we can use static constexpr, and in c++17 we can use out of
+  // function definition of inline constexpr, in C++11 we have to rely on string
+  // literals in order to avoid duplicating constant definitions across
+  // translation units.  We take the following uint32 array definition:
+  // {0x9999999au, 0x828f5c29u, 0x80418938u, 0x80068db9,
+  //  0x8000a7c6u, 0x800010c7u, 0x800001aeu, 0x8000002b};
+  // and convert that into a series of char hexidecimal literals in a char16_t
+  // array:
+  // "\x9999\x999a \x828f\x5c29 \x8041\x8938 \x8006\x8db9
+  //  \x8000\xa7c6 \x8000\x10c7 \x8000\x01ae \x8000\x002b";
+  // Then we split this up into two separate arrays of char16_ts, so they can
+  // be properly recombined into uint32_t.
+
+  return static_cast<uint32_t>(
+             u"\x9999\x828f\x8041\x8006\x8000\x8000\x8000\x8000"[index])
+             << 16u |
+         static_cast<uint32_t>(
+             u"\x999a\x5c29\x8938\x8db9\xa7c6\x10c7\x01ae\x002b"[index]);
 }
 
 template <typename Float>
