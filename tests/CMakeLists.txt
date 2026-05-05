@@ -60,6 +60,9 @@ endif()
 
 if(systemd_FOUND)
     list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)
+    if(systemd_VERSION VERSION_GREATER_EQUAL "256")
+        list(APPEND SPDLOG_UTESTS_SOURCES test_systemd_namespace.cpp)
+    endif()
 endif()
 
 enable_testing()
