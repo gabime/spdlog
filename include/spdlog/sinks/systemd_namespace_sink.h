@@ -8,9 +8,6 @@
 #include <spdlog/sinks/base_sink.h>
 
 #include <array>
-#ifndef SD_JOURNAL_SUPPRESS_LOCATION
-#define SD_JOURNAL_SUPPRESS_LOCATION
-#endif
 #include <systemd/sd-journal.h>
 #include <systemd/sd-daemon.h>
 
@@ -29,14 +26,7 @@ public:
     explicit systemd_namespace_sink(std::string ident,
                                     std::string name_space,
                                     bool enable_formatting)
-        : enable_formatting_{enable_formatting},
-          level_prefixes_{{/* spdlog::level::trace      */ SD_DEBUG,
-                           /* spdlog::level::debug      */ SD_DEBUG,
-                           /* spdlog::level::info       */ SD_INFO,
-                           /* spdlog::level::warn       */ SD_WARNING,
-                           /* spdlog::level::err        */ SD_ERR,
-                           /* spdlog::level::critical   */ SD_CRIT,
-                           /* spdlog::level::off        */ SD_INFO}} {
+        : enable_formatting_{enable_formatting} {
         int stream_fd = -1;
         if (name_space.empty()) {
             stream_fd = ::sd_journal_stream_fd(ident.c_str(), LOG_INFO, 1);
@@ -75,7 +65,15 @@ protected:
     FILE *journal_ = nullptr;
     bool enable_formatting_ = false;
     using level_prefix_array = std::array<const char *, 7>;
-    level_prefix_array level_prefixes_;
+    static constexpr level_prefix_array level_prefixes_ = {
+        {/* spdlog::level::trace      */ SD_DEBUG,
+         /* spdlog::level::debug      */ SD_DEBUG,
+         /* spdlog::level::info       */ SD_INFO,
+         /* spdlog::level::warn       */ SD_WARNING,
+         /* spdlog::level::err        */ SD_ERR,
+         /* spdlog::level::critical   */ SD_CRIT,
+         /* spdlog::level::off        */ SD_INFO}};
+    static constexpr size_t level_prefix_length_ = 3;
 
     void sink_it_(const details::log_msg &msg) override {
         string_view_t payload;
@@ -87,44 +85,48 @@ protected:
             payload = msg.payload;
         }
 
+        auto write_or_throw = [this](const void *data, size_t n) {
+            if (!details::os::fwrite_bytes(data, n, journal_)) {
+                throw_spdlog_ex("Failed writing to systemd journal", errno);
+            }
+        };
+
         // Journal stream is line-oriented; if there's newlines in the payload, send each
         // newline-delimited piece separately as its own message.
         size_t pos = 0;
         while (pos < payload.size()) {
             size_t nl_pos = payload.find('\n', pos);
-            size_t end = (nl_pos == std::string_view::npos) ? payload.size() : nl_pos + 1;
-            std::string_view one_message = payload.substr(pos, end - pos);
-
-            // Limit single message size to max int, but take into account the 3 characters of
-            // kernel-style log level prefix
-            size_t length = one_message.size();
-            if ((length + 3) > static_cast<size_t>(std::numeric_limits<int>::max())) {
-                length = static_cast<size_t>(std::numeric_limits<int>::max()) - 3;
-            }
+            size_t end = (nl_pos == string_view_t::npos) ? payload.size() : nl_pos + 1;
+            string_view_t one_message = payload.substr(pos, end - pos);
 
             // Write log level prefix
-            details::os::fwrite_bytes(
-                level_prefixes_.at(static_cast<level_prefix_array::size_type>(msg.level)), 3,
-                journal_);
+            write_or_throw(
+                level_prefixes_.at(static_cast<level_prefix_array::size_type>(msg.level)),
+                level_prefix_length_);
             // Write the message
-            details::os::fwrite_bytes(one_message.data(), one_message.size(), journal_);
+            write_or_throw(one_message.data(), one_message.size());
             // Append newline if the message didn't have one
-            if (one_message.empty() || one_message.back() != '\n') {
-                details::os::fwrite_bytes("\n", 1, journal_);
+            if (nl_pos == string_view_t::npos) {
+                write_or_throw("\n", 1);
             }
 
             pos = end;
         }
     }
 
-    void flush_() override {}
+    void flush_() override {
+        if (journal_ != nullptr) {
+            if (::fflush(journal_) != 0) {
+                throw_spdlog_ex("Failed flush to systemd journal", errno);
+            }
+        }
+    }
 };
 
 using systemd_namespace_sink_mt = systemd_namespace_sink<std::mutex>;
 using systemd_namespace_sink_st = systemd_namespace_sink<details::null_mutex>;
 }  // namespace sinks
 
-// Create and register a syslog logger
 template <typename Factory = spdlog::synchronous_factory>
 inline std::shared_ptr<logger> systemd_namespace_logger_mt(const std::string &logger_name,
                                                            const std::string &ident,
