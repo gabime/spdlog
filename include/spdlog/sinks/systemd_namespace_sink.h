@@ -35,8 +35,9 @@ public:
                                                               LOG_INFO, 1);
         }
         if (stream_fd < 0) {
-            throw_spdlog_ex("Failed opening systemd journal stream to namespace '" + name_space +
-                            "': " + ::strerror(-stream_fd));
+            throw_spdlog_ex(
+                "Failed opening systemd journal stream to namespace '" + name_space + "'",
+                -stream_fd);
         }
         journal_ = ::fdopen(stream_fd, "w");
         if (journal_ == nullptr) {
@@ -48,7 +49,15 @@ public:
                 saved_errno);
         }
         // Use line buffering which matches with journald's line-oriented protocol
-        ::setvbuf(journal_, nullptr, _IOLBF, 0);
+        if (::setvbuf(journal_, nullptr, _IOLBF, 0) != 0) {
+            // Capture errno from the failed setvbuf() instead of close() (in case that fails too)
+            const int saved_errno = errno;
+            ::close(stream_fd);
+            throw_spdlog_ex(
+                "Failed setting line buffering mode for systemd journal stream to namespace '" +
+                    name_space + "'",
+                saved_errno);
+        }
     }
 
     ~systemd_namespace_sink() override {
@@ -85,12 +94,6 @@ protected:
             payload = msg.payload;
         }
 
-        auto write_or_throw = [this](const void *data, size_t n) {
-            if (!details::os::fwrite_bytes(data, n, journal_)) {
-                throw_spdlog_ex("Failed writing to systemd journal", errno);
-            }
-        };
-
         // Journal stream is line-oriented; if there's newlines in the payload, send each
         // newline-delimited piece separately as its own message.
         size_t pos = 0;
@@ -100,14 +103,14 @@ protected:
             string_view_t one_message = payload.substr(pos, end - pos);
 
             // Write log level prefix
-            write_or_throw(
+            write_or_throw_(
                 level_prefixes_.at(static_cast<level_prefix_array::size_type>(msg.level)),
                 level_prefix_length_);
             // Write the message
-            write_or_throw(one_message.data(), one_message.size());
+            write_or_throw_(one_message.data(), one_message.size());
             // Append newline if the message didn't have one
             if (nl_pos == string_view_t::npos) {
-                write_or_throw("\n", 1);
+                write_or_throw_("\n", 1);
             }
 
             pos = end;
@@ -118,6 +121,15 @@ protected:
         if (journal_ != nullptr) {
             if (::fflush(journal_) != 0) {
                 throw_spdlog_ex("Failed flush to systemd journal", errno);
+            }
+        }
+    }
+
+private:
+    void write_or_throw_(const void *data, size_t n) {
+        if (journal_ != nullptr) {
+            if (!details::os::fwrite_bytes(data, n, journal_)) {
+                throw_spdlog_ex("Failed writing to systemd journal", errno);
             }
         }
     }
