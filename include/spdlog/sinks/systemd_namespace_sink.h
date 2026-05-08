@@ -73,7 +73,7 @@ public:
 protected:
     FILE *journal_ = nullptr;
     bool enable_formatting_ = false;
-    using level_prefix_array = std::array<const char *, 7>;
+    using level_prefix_array = std::array<string_view_t, 7>;
     static constexpr level_prefix_array level_prefixes_ = {
         {/* spdlog::level::trace      */ SD_DEBUG,
          /* spdlog::level::debug      */ SD_DEBUG,
@@ -82,7 +82,6 @@ protected:
          /* spdlog::level::err        */ SD_ERR,
          /* spdlog::level::critical   */ SD_CRIT,
          /* spdlog::level::off        */ SD_INFO}};
-    static constexpr size_t level_prefix_length_ = 3;
 
     void sink_it_(const details::log_msg &msg) override {
         string_view_t payload;
@@ -104,8 +103,8 @@ protected:
 
             // Write log level prefix
             write_or_throw_(
-                level_prefixes_.at(static_cast<level_prefix_array::size_type>(msg.level)),
-                level_prefix_length_);
+                level_prefixes_.at(static_cast<level_prefix_array::size_type>(msg.level)).data(),
+                level_prefixes_.at(static_cast<level_prefix_array::size_type>(msg.level)).size());
             // Write the message
             write_or_throw_(one_message.data(), one_message.size());
             // Append newline if the message didn't have one
