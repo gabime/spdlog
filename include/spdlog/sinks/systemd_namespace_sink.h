@@ -102,9 +102,9 @@ protected:
             string_view_t one_message = payload.substr(pos, end - pos);
 
             // Write log level prefix
-            write_or_throw_(
-                level_prefixes_.at(static_cast<level_prefix_array::size_type>(msg.level)).data(),
-                level_prefixes_.at(static_cast<level_prefix_array::size_type>(msg.level)).size());
+            const auto &prefix =
+                level_prefixes_.at(static_cast<level_prefix_array::size_type>(msg.level));
+            write_or_throw_(prefix.data(), prefix.size());
             // Write the message
             write_or_throw_(one_message.data(), one_message.size());
             // Append newline if the message didn't have one
