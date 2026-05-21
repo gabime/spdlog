@@ -298,7 +298,7 @@ inline void critical(const T &msg) {
 
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
 #define SPDLOG_LOGGER_TRACE(logger, ...) \
-    SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__)
+    do { if constexpr (SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE) SPDLOG_LOGGER_CALL(logger, spdlog::level::trace, __VA_ARGS__); } while (0)
 #define SPDLOG_TRACE(...) SPDLOG_LOGGER_TRACE(spdlog::default_logger_raw(), __VA_ARGS__)
 #else
 #define SPDLOG_LOGGER_TRACE(logger, ...) (void)0
