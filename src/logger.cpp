@@ -6,7 +6,7 @@
 #include "spdlog/pattern_formatter.h"
 #include "spdlog/sinks/sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 // public methods
 logger::logger(const logger &other)
@@ -81,4 +81,4 @@ void logger::flush_() noexcept {
         }
     }
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

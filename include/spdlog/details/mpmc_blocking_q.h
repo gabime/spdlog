@@ -16,7 +16,7 @@
 
 #include "./circular_q.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 template <typename T>
@@ -169,4 +169,4 @@ private:
     std::atomic<size_t> discard_counter_{0};
 };
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

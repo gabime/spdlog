@@ -22,7 +22,7 @@
         #define SPDLOG_ANDROID_RETRIES 2
     #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /*
@@ -119,6 +119,6 @@ template <int BufferId = log_id::LOG_ID_MAIN>
 using android_sink_buf_st = android_sink<details::null_mutex, BufferId>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #endif  // __ANDROID__

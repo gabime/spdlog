@@ -5,7 +5,7 @@
 
 #include "spdlog/details/os.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 log_msg::log_msg(const log_clock::time_point log_time,
@@ -32,4 +32,4 @@ log_msg::log_msg(const string_view_t logger_name, const level lvl, const string_
     : log_msg(os::now(), source_loc{}, logger_name, lvl, msg) {}
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

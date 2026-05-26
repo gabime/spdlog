@@ -43,7 +43,7 @@
 #endif
 
 // clang-format on
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace os {
 
@@ -293,4 +293,4 @@ bool fwrite_bytes(const void *ptr, const size_t n_bytes, FILE *fp) {
 
 }  // namespace os
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -12,7 +12,7 @@
 
 // Rotating file sink based on size
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename Mutex>
 class rotating_file_sink final : public base_sink<Mutex> {
@@ -54,4 +54,4 @@ using rotating_file_sink_mt = rotating_file_sink<std::mutex>;
 using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

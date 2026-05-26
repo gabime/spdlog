@@ -15,12 +15,14 @@
 // The worker thread dequeues the messages and sends them to the dist_sink to perform the actual logging.
 // Once the sink is destroyed, the worker thread empties the queue and exits.
 
-namespace spdlog::details {  // forward declaration
+SPDLOG_NAMESPACE_BEGIN
+namespace details {  // forward declaration
 template <typename T>
 class mpmc_blocking_queue;
-}
+}  // namespace details
+SPDLOG_NAMESPACE_END
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 class SPDLOG_API async_sink final : public sink {
@@ -111,4 +113,4 @@ private:
 };
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

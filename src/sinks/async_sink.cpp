@@ -13,7 +13,7 @@
 #include "spdlog/pattern_formatter.h"
 #include "spdlog/spdlog.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 async_sink::async_sink(config async_config)
@@ -157,4 +157,4 @@ void async_sink::backend_flush_() {
     }
 }
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

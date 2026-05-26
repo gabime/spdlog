@@ -4,7 +4,9 @@
 #pragma once
 #include <cstdint>
 
-namespace spdlog {  // source location
+#include "./namespace.h"
+
+SPDLOG_NAMESPACE_BEGIN  // source location
 struct source_loc {
     constexpr source_loc() = default;
     constexpr source_loc(const char *filename_in, std::uint_least32_t line_in, const char *funcname_in)
@@ -36,4 +38,4 @@ struct source_loc {
         return file;
     }
 };
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

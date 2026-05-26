@@ -13,7 +13,7 @@
 #include "../details/log_msg.h"
 #include "./sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename Mutex>
 class SPDLOG_API base_sink : public sink {
@@ -45,4 +45,4 @@ protected:
 };
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -37,7 +37,7 @@
 // logger->info("Some buffer {:X}", spdlog::to_hex(std::begin(buf), std::end(buf)));
 // logger->info("Some buffer {:X}", spdlog::to_hex(std::begin(buf), std::end(buf), 16));
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 template <typename It>
@@ -86,10 +86,10 @@ inline details::dump_info<It> to_hex(const It range_begin, const It range_end, s
     return details::dump_info<It>(range_begin, range_end, size_per_line);
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 template <typename T>
-struct fmt::formatter<spdlog::details::dump_info<T>, char> {
+struct fmt::formatter<SPDLOG_NAMESPACE::details::dump_info<T>, char> {
     char delimiter = ' ';
     bool put_newlines = true;
     bool put_delimiters = true;
@@ -131,7 +131,7 @@ struct fmt::formatter<spdlog::details::dump_info<T>, char> {
 
     // format the given bytes range as hex
     template <typename FormatContext, typename Container>
-    auto format(const spdlog::details::dump_info<Container> &the_range, FormatContext &ctx) const -> decltype(ctx.out()) {
+    auto format(const SPDLOG_NAMESPACE::details::dump_info<Container> &the_range, FormatContext &ctx) const -> decltype(ctx.out()) {
         constexpr const char *hex_upper = "0123456789ABCDEF";
         constexpr const char *hex_lower = "0123456789abcdef";
         const char *hex_chars = use_uppercase ? hex_upper : hex_lower;
@@ -198,7 +198,7 @@ struct fmt::formatter<spdlog::details::dump_info<T>, char> {
         *inserter++ = '\n';
 
         if (put_positions) {
-            spdlog::fmt_lib::format_to(inserter, SPDLOG_FMT_STRING("{:04X}: "), pos);
+            SPDLOG_NAMESPACE::fmt_lib::format_to(inserter, SPDLOG_FMT_STRING("{:04X}: "), pos);
         }
     }
 };  // namespace fmt

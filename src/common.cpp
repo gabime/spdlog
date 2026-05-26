@@ -7,7 +7,7 @@
 #include <cctype>
 #include <iterator>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 namespace {
 bool iequals(const std::string &a, const std::string &b) {
@@ -59,4 +59,4 @@ void throw_spdlog_ex(const std::string &msg, int last_errno) { throw(spdlog_ex(m
 
 void throw_spdlog_ex(std::string msg) { throw(spdlog_ex(std::move(msg))); }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -3,8 +3,9 @@
 #include <functional>
 
 #include "./filename_t.h"
+#include "./namespace.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 struct file_event_handlers {
     file_event_handlers()
         : before_open(nullptr),
@@ -17,4 +18,4 @@ struct file_event_handlers {
     std::function<void(const filename_t &filename, std::FILE *file_stream)> before_close;
     std::function<void(const filename_t &filename)> after_close;
 };
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

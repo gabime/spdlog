@@ -3,7 +3,7 @@
 
 #include "spdlog/details/async_log_msg.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 async_log_msg::async_log_msg(const type type)
@@ -61,4 +61,4 @@ void async_log_msg::update_string_views() {
 }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

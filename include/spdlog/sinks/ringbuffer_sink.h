@@ -12,7 +12,7 @@
 #include "../details/null_mutex.h"
 #include "base_sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /*
  * Ring buffer sink. Holds fixed amount of log messages in memory. When the buffer is full, new
@@ -63,4 +63,4 @@ using ringbuffer_sink_mt = ringbuffer_sink<std::mutex>;
 using ringbuffer_sink_st = ringbuffer_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

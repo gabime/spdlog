@@ -17,7 +17,7 @@
 #include "../details/os.h"
 #include "./base_sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /*
@@ -188,4 +188,4 @@ using daily_file_format_sink_mt = daily_file_sink<std::mutex, daily_filename_for
 using daily_file_format_sink_st = daily_file_sink<details::null_mutex, daily_filename_format_calculator>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

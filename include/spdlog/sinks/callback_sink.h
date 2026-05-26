@@ -9,7 +9,7 @@
 #include "../details/null_mutex.h"
 #include "./base_sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 // callbacks type
 typedef std::function<void(const details::log_msg &msg)> custom_log_callback;
@@ -36,4 +36,4 @@ using callback_sink_mt = callback_sink<std::mutex>;
 using callback_sink_st = callback_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

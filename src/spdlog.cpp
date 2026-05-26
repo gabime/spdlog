@@ -11,7 +11,7 @@
 #include "spdlog/pattern_formatter.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 #ifndef SPDLOG_DISABLE_GLOBAL_LOGGER
 static std::shared_ptr<logger> s_logger = std::make_shared<logger>("", std::make_shared<sinks::stdout_color_sink_mt>());
@@ -43,4 +43,4 @@ void set_error_handler(void (*handler)(const std::string &msg)) { global_logger(
 
 void shutdown() { s_logger.reset(); }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

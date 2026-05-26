@@ -8,7 +8,7 @@
 #include "../common.h"
 #include "../file_event_handlers.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 // Helper class for file sinks.
@@ -41,4 +41,4 @@ private:
     file_event_handlers event_handlers_;
 };
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

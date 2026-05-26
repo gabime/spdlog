@@ -24,7 +24,7 @@
 #endif                  // _WIN32
 
 // clang-format on
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 template <typename Mutex>
@@ -83,11 +83,11 @@ stderr_sink<Mutex>::stderr_sink()
     : stdout_sink_base<Mutex>(stderr) {}
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 // template instantiations
 #include "spdlog/details/null_mutex.h"
-template class SPDLOG_API spdlog::sinks::stdout_sink<std::mutex>;
-template class SPDLOG_API spdlog::sinks::stdout_sink<spdlog::details::null_mutex>;
-template class SPDLOG_API spdlog::sinks::stderr_sink<std::mutex>;
-template class SPDLOG_API spdlog::sinks::stderr_sink<spdlog::details::null_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stdout_sink<std::mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stdout_sink<SPDLOG_NAMESPACE::details::null_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stderr_sink<std::mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stderr_sink<SPDLOG_NAMESPACE::details::null_mutex>;

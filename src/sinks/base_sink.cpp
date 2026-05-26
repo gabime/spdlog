@@ -9,7 +9,7 @@
 #include "spdlog/common.h"
 #include "spdlog/pattern_formatter.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 template <typename Mutex>
@@ -55,9 +55,9 @@ void base_sink<Mutex>::set_formatter_(std::unique_ptr<formatter> sink_formatter)
 }
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 // template instantiations
 #include "spdlog/details/null_mutex.h"
-template class SPDLOG_API spdlog::sinks::base_sink<std::mutex>;
-template class SPDLOG_API spdlog::sinks::base_sink<spdlog::details::null_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::base_sink<std::mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::base_sink<SPDLOG_NAMESPACE::details::null_mutex>;

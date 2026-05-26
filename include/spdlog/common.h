@@ -14,6 +14,7 @@
 #include <string>
 #include <string_view>
 
+#include "./namespace.h"
 #include "./source_loc.h"
 #include "fmt/base.h"
 #include "fmt/xchar.h"
@@ -41,7 +42,7 @@
     #define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 class formatter;
 
@@ -138,4 +139,4 @@ private:
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(std::string msg);
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -22,7 +22,7 @@
 //
 // qt_sink class
 //
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename Mutex>
 class qt_sink : public base_sink<Mutex> {
@@ -225,4 +225,4 @@ using qt_color_sink_mt = qt_color_sink<std::mutex>;
 using qt_color_sink_st = qt_color_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

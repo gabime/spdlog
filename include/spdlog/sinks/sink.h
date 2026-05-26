@@ -6,7 +6,7 @@
 #include "../details/log_msg.h"
 #include "../formatter.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 class SPDLOG_API sink {
 public:
@@ -26,4 +26,4 @@ protected:
 };
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

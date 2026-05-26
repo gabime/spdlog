@@ -14,7 +14,7 @@
     #include "../details/windows_include.h"
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 namespace sinks {
 
@@ -58,4 +58,4 @@ using stderr_sink_mt = stderr_sink<std::mutex>;
 using stderr_sink_st = stderr_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

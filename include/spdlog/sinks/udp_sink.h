@@ -20,7 +20,7 @@
 // Simple udp client sink
 // Sends formatted log via udp
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 struct udp_sink_config {
@@ -56,4 +56,4 @@ using udp_sink_mt = udp_sink<std::mutex>;
 using udp_sink_st = udp_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -5,7 +5,7 @@
 
 #include "./details/log_msg.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 class formatter {
 public:
@@ -13,4 +13,4 @@ public:
     virtual void format(const details::log_msg &msg, memory_buf_t &dest) = 0;
     virtual std::unique_ptr<formatter> clone() const = 0;
 };
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -15,7 +15,7 @@
 #include "./details/os.h"
 #include "./formatter.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 // padding information.
@@ -105,4 +105,4 @@ private:
 
     void compile_pattern_(const std::string &pattern);
 };
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
