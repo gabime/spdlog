@@ -120,7 +120,9 @@
     }
 #endif
 
-namespace spdlog {
+#include "./namespace.h"
+
+SPDLOG_NAMESPACE_BEGIN
 
 class formatter;
 
@@ -367,7 +369,7 @@ constexpr T conditional_static_cast(U value) {
 }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "common-inl.h"

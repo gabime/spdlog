@@ -25,7 +25,7 @@
 // If more complicated behaviour is needed (i.e get responses), you can inherit it and override the
 // sink_it_ method.
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 struct tcp_sink_config {
@@ -86,4 +86,4 @@ using tcp_sink_mt = tcp_sink<std::mutex>;
 using tcp_sink_st = tcp_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

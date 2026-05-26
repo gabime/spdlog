@@ -6,7 +6,7 @@
 #ifndef SPDLOG_HEADER_ONLY
 #include <spdlog/details/backtracer.h>
 #endif
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 SPDLOG_INLINE backtracer::backtracer(const backtracer &other) {
     std::lock_guard<std::mutex> lock(other.mutex_);
@@ -60,4 +60,4 @@ SPDLOG_INLINE void backtracer::foreach_pop(std::function<void(const details::log
     }
 }
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

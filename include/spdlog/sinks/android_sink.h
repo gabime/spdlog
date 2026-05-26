@@ -22,7 +22,7 @@
 #define SPDLOG_ANDROID_RETRIES 2
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /*
@@ -132,6 +132,6 @@ inline std::shared_ptr<logger> android_logger_st(const std::string &logger_name,
     return Factory::template create<sinks::android_sink_st>(logger_name, tag);
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #endif  // __ANDROID__

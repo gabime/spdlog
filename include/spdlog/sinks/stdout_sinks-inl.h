@@ -25,7 +25,7 @@
 #include <stdio.h>  // _fileno(..)
 #endif              // _WIN32
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 namespace sinks {
 
@@ -124,4 +124,4 @@ template <typename Factory>
 SPDLOG_INLINE std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name) {
     return Factory::template create<sinks::stderr_sink_st>(logger_name);
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

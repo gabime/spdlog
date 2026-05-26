@@ -18,7 +18,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 class logger;
 
 namespace details {
@@ -124,7 +124,7 @@ private:
 };
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "registry-inl.h"

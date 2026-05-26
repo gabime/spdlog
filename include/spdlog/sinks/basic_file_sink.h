@@ -11,7 +11,7 @@
 #include <mutex>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /*
  * Trivial file sink with single file as target
@@ -59,7 +59,7 @@ inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name,
                                                                event_handlers);
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "basic_file_sink-inl.h"

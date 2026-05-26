@@ -10,7 +10,7 @@
 #include <cassert>
 #include <spdlog/common.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items,
@@ -122,4 +122,4 @@ bool SPDLOG_INLINE thread_pool::process_next_msg_() {
 }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

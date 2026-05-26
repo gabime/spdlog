@@ -11,7 +11,7 @@
 #include <iterator>
 #include <cctype>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace level {
 
 #if __cplusplus >= 201703L
@@ -82,4 +82,4 @@ SPDLOG_INLINE void throw_spdlog_ex(const std::string &msg, int last_errno) {
 
 SPDLOG_INLINE void throw_spdlog_ex(std::string msg) { SPDLOG_THROW(spdlog_ex(std::move(msg))); }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -13,7 +13,7 @@
 // Store log messages in circular buffer.
 // Useful for storing debug data in case of error/warning happens.
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 class SPDLOG_API backtracer {
     mutable std::mutex mutex_;
@@ -38,7 +38,7 @@ public:
 };
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "backtracer-inl.h"

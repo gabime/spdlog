@@ -32,7 +32,7 @@
 #include <utility>
 #include <vector>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 ///////////////////////////////////////////////////////////////////////
@@ -1347,4 +1347,4 @@ SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &patter
         formatters_.push_back(std::move(user_chars));
     }
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

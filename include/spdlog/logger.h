@@ -45,7 +45,7 @@
 #define SPDLOG_LOGGER_CATCH(location)
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 class SPDLOG_API logger {
 public:
@@ -380,7 +380,7 @@ protected:
 
 void swap(logger &a, logger &b) noexcept;
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "logger-inl.h"

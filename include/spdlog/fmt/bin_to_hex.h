@@ -36,7 +36,7 @@
 // logger->info("Some buffer {:X}", spdlog::to_hex(std::begin(buf), std::end(buf)));
 // logger->info("Some buffer {:X}", spdlog::to_hex(std::begin(buf), std::end(buf), 16));
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 template <typename It>
@@ -90,7 +90,7 @@ inline details::dump_info<It> to_hex(const It range_begin,
     return details::dump_info<It>(range_begin, range_end, size_per_line);
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 namespace
 #ifdef SPDLOG_USE_STD_FORMAT

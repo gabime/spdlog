@@ -21,7 +21,7 @@
 // kafka header
 #include <librdkafka/rdkafkacpp.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 struct kafka_sink_config {
@@ -116,4 +116,4 @@ inline std::shared_ptr<logger> kafka_logger_async_st(
     return Factory::template create<sinks::kafka_sink_st>(logger_name, config);
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

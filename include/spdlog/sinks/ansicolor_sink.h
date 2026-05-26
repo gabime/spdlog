@@ -11,7 +11,7 @@
 #include <spdlog/sinks/sink.h>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /**
@@ -111,7 +111,7 @@ using ansicolor_stderr_sink_mt = ansicolor_stderr_sink<details::console_mutex>;
 using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::console_nullmutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "ansicolor_sink-inl.h"

@@ -20,7 +20,7 @@
 #include <sstream>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /*
@@ -251,4 +251,4 @@ inline std::shared_ptr<logger> daily_logger_format_st(
     return Factory::template create<sinks::daily_file_format_sink_st>(
         logger_name, filename, hour, minute, truncate, max_files, event_handlers);
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

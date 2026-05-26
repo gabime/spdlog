@@ -13,6 +13,8 @@
 #include <memory>
 #include <string>
 
+SPDLOG_NAMESPACE_BEGIN
+
 SPDLOG_INLINE async_logger::async_logger(std::string logger_name,
                                                  sinks_init_list sinks_list,
                                                  std::weak_ptr<details::thread_pool> tp,
@@ -82,3 +84,5 @@ SPDLOG_INLINE std::shared_ptr<logger> async_logger::clone(std::string new_name) 
     cloned->name_ = std::move(new_name);
     return cloned;
 }
+
+SPDLOG_NAMESPACE_END

@@ -18,7 +18,7 @@
 #include <mutex>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /*
@@ -190,4 +190,4 @@ inline std::shared_ptr<logger> hourly_logger_st(const std::string &logger_name,
     return Factory::template create<sinks::hourly_file_sink_st>(logger_name, filename, truncate,
                                                                 max_files, event_handlers);
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

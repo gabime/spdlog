@@ -10,7 +10,7 @@
 #include <mutex>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 // callbacks type
 typedef std::function<void(const details::log_msg &msg)> custom_log_callback;
@@ -53,4 +53,4 @@ inline std::shared_ptr<logger> callback_logger_st(const std::string &logger_name
     return Factory::template create<sinks::callback_sink_st>(logger_name, callback);
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

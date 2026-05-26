@@ -23,7 +23,7 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename Mutex>
 class mongo_sink : public base_sink<Mutex> {
@@ -105,4 +105,4 @@ inline std::shared_ptr<logger> mongo_logger_st(
                                                           uri);
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

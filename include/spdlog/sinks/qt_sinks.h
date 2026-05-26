@@ -24,7 +24,7 @@
 //
 // qt_sink class
 //
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename Mutex>
 class qt_sink : public base_sink<Mutex> {
@@ -305,4 +305,4 @@ inline std::shared_ptr<logger> qt_color_logger_st(const std::string &logger_name
                                                              false, is_utf8);
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

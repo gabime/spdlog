@@ -14,7 +14,7 @@
 #endif
 #include <systemd/sd-journal.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /**
@@ -118,4 +118,4 @@ inline std::shared_ptr<logger> systemd_logger_st(const std::string &logger_name,
                                                  bool enable_formatting = false) {
     return Factory::template create<sinks::systemd_sink_st>(logger_name, ident, enable_formatting);
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

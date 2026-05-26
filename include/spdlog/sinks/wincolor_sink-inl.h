@@ -13,7 +13,7 @@
 #include <spdlog/common.h>
 #include <spdlog/pattern_formatter.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename ConsoleMutex>
 SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color_mode mode)
@@ -169,4 +169,4 @@ template <typename ConsoleMutex>
 SPDLOG_INLINE wincolor_stderr_sink<ConsoleMutex>::wincolor_stderr_sink(color_mode mode)
     : wincolor_sink<ConsoleMutex>(::GetStdHandle(STD_ERROR_HANDLE), mode) {}
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

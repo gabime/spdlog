@@ -9,7 +9,7 @@
 
 #include <spdlog/details/os.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 SPDLOG_INLINE log_msg::log_msg(log_clock::time_point log_time,
@@ -41,4 +41,4 @@ SPDLOG_INLINE log_msg::log_msg(string_view_t a_logger_name,
     : log_msg(os::now(), source_loc{}, a_logger_name, lvl, msg) {}
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

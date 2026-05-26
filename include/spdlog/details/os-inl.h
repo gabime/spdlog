@@ -68,7 +68,7 @@
 #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace os {
 
@@ -567,4 +567,4 @@ SPDLOG_INLINE bool fwrite_bytes(const void *ptr, const size_t n_bytes, FILE *fp)
 
 }  // namespace os
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

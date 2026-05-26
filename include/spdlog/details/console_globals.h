@@ -6,7 +6,7 @@
 #include <mutex>
 #include <spdlog/details/null_mutex.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 struct console_mutex {
@@ -25,4 +25,4 @@ struct console_nullmutex {
     }
 };
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -14,7 +14,7 @@
 #endif
 
 // Some fmt helpers to efficiently format and pad ints and strings
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace fmt_helper {
 
@@ -138,4 +138,4 @@ inline ToDuration time_fraction(log_clock::time_point tp) {
 
 }  // namespace fmt_helper
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

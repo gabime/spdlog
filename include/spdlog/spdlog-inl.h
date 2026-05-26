@@ -10,7 +10,7 @@
 #include <spdlog/common.h>
 #include <spdlog/pattern_formatter.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 SPDLOG_INLINE void initialize_logger(std::shared_ptr<logger> logger) {
     details::registry::instance().initialize_logger(std::move(logger));
@@ -93,4 +93,4 @@ SPDLOG_INLINE void apply_logger_env_levels(std::shared_ptr<logger> logger) {
     details::registry::instance().apply_logger_env_levels(std::move(logger));
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

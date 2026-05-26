@@ -13,7 +13,7 @@
 #include <spdlog/details/log_msg.h>
 #include <spdlog/sinks/sink.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename Mutex>
 class SPDLOG_API base_sink : public sink {
@@ -44,7 +44,7 @@ protected:
     virtual void set_formatter_(std::unique_ptr<formatter> sink_formatter);
 };
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "base_sink-inl.h"

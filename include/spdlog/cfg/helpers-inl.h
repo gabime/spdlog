@@ -15,7 +15,7 @@
 #include <string>
 #include <utility>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace cfg {
 namespace helpers {
 
@@ -103,4 +103,4 @@ SPDLOG_INLINE void load_levels(const std::string &levels_spec) {
 
 }  // namespace helpers
 }  // namespace cfg
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

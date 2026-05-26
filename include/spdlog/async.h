@@ -22,7 +22,7 @@
 #include <memory>
 #include <mutex>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 namespace details {
 static const size_t default_async_q_size = 8192;
@@ -96,4 +96,4 @@ inline void init_thread_pool(size_t q_size, size_t thread_count) {
 inline std::shared_ptr<details::thread_pool> thread_pool() {
     return details::registry::instance().get_tp();
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

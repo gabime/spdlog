@@ -5,7 +5,7 @@
 
 #include "registry.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 // Default logger factory-  creates synchronous loggers
 class logger;
@@ -19,4 +19,4 @@ struct synchronous_factory {
         return new_logger;
     }
 };
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

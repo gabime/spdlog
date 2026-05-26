@@ -13,6 +13,8 @@
 #include <memory>
 #include <mutex>
 
+SPDLOG_NAMESPACE_BEGIN
+
 template <typename Mutex>
 SPDLOG_INLINE sinks::base_sink<Mutex>::base_sink()
     : formatter_{details::make_unique<pattern_formatter>()} {}
@@ -57,3 +59,5 @@ void SPDLOG_INLINE
 sinks::base_sink<Mutex>::set_formatter_(std::unique_ptr<formatter> sink_formatter) {
     formatter_ = std::move(sink_formatter);
 }
+
+SPDLOG_NAMESPACE_END

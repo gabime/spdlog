@@ -11,7 +11,7 @@
 
 #include <spdlog/details/synchronous_factory.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 #ifdef _WIN32
 using stdout_color_sink_mt = wincolor_stdout_sink_mt;
@@ -42,7 +42,7 @@ template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stderr_color_st(const std::string &logger_name,
                                         color_mode mode = color_mode::automatic);
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "stdout_color_sinks-inl.h"

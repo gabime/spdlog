@@ -21,7 +21,7 @@
 // spdlog::info("Hello, {}", "World!");  // => [2024-04-26 02:08:05.040] [info]
 // [mdc_key_1:mdc_value_1] Hello, World!
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 class SPDLOG_API mdc {
 public:
     using mdc_map_t = std::map<std::string, std::string>;
@@ -49,4 +49,4 @@ public:
     }
 };
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -7,7 +7,7 @@
 #include <spdlog/details/log_msg_buffer.h>
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 SPDLOG_INLINE log_msg_buffer::log_msg_buffer(const log_msg &orig_msg)
@@ -51,4 +51,4 @@ SPDLOG_INLINE void log_msg_buffer::update_string_views() {
 }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

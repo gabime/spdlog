@@ -11,7 +11,7 @@
 #include <string>
 #include <syslog.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /**
  * Sink that write to syslog using the `syscall()` library call.
@@ -101,4 +101,4 @@ inline std::shared_ptr<logger> syslog_logger_st(const std::string &logger_name,
     return Factory::template create<sinks::syslog_sink_st>(logger_name, syslog_ident, syslog_option,
                                                            syslog_facility, enable_formatting);
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

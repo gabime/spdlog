@@ -11,7 +11,7 @@
 #include <mutex>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 //
@@ -86,7 +86,7 @@ std::shared_ptr<logger> rotating_logger_st(const std::string &logger_name,
     return Factory::template create<sinks::rotating_file_sink_st>(
         logger_name, filename, max_file_size, max_files, rotate_on_open, event_handlers);
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "rotating_file_sink-inl.h"

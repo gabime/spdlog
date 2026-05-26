@@ -26,7 +26,7 @@
 // using std::chrono::milliseconds;
 // spdlog::info("Elapsed {}", duration_cast<milliseconds>(sw.elapsed())); => "Elapsed 5ms"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 class stopwatch {
     using clock = std::chrono::steady_clock;
     std::chrono::time_point<clock> start_tp_;
@@ -45,7 +45,7 @@ public:
 
     void reset() { start_tp_ = clock::now(); }
 };
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 // Support for fmt formatting  (e.g. "{:012.9}" or just "{}")
 namespace

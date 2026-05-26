@@ -13,7 +13,7 @@
 #include <thread>
 #include <vector>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 class async_logger;
 
 namespace details {
@@ -110,7 +110,7 @@ private:
 };
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "thread_pool-inl.h"

@@ -9,7 +9,7 @@
 
 #include <mutex>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 template <typename Mutex>
@@ -38,4 +38,4 @@ inline std::shared_ptr<logger> null_logger_st(const std::string &logger_name) {
     return null_logger;
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

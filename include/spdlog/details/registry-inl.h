@@ -27,7 +27,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 SPDLOG_INLINE registry::registry()
@@ -267,4 +267,4 @@ SPDLOG_INLINE void registry::register_or_replace_(std::shared_ptr<logger> new_lo
 }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

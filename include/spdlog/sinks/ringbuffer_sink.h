@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /*
  * Ring buffer sink
@@ -68,4 +68,4 @@ using ringbuffer_sink_st = ringbuffer_sink<details::null_mutex>;
 
 }  // namespace sinks
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

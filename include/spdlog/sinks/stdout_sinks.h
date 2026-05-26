@@ -12,7 +12,7 @@
 #include <spdlog/details/windows_include.h>
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 namespace sinks {
 
@@ -77,7 +77,7 @@ std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name);
 template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "stdout_sinks-inl.h"
