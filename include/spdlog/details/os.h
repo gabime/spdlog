@@ -13,7 +13,7 @@ SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace os {
 
-SPDLOG_API spdlog::log_clock::time_point now() noexcept;
+SPDLOG_API log_clock::time_point now() noexcept;
 
 SPDLOG_API std::tm localtime(const std::time_t &time_tt) noexcept;
 

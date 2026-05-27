@@ -159,7 +159,7 @@ struct eventlog {
             case level::info:
                 return EVENTLOG_INFORMATION_TYPE;
 
-            case spdlog::level::warn:
+            case level::warn:
                 return EVENTLOG_WARNING_TYPE;
 
             case level::err:

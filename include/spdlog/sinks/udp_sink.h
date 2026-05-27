@@ -42,9 +42,9 @@ public:
     ~udp_sink() override = default;
 
 protected:
-    void sink_it_(const spdlog::details::log_msg &msg) override {
-        spdlog::memory_buf_t formatted;
-        spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
+    void sink_it_(const details::log_msg &msg) override {
+        memory_buf_t formatted;
+        base_sink<Mutex>::formatter_->format(msg, formatted);
         client_.send(formatted.data(), formatted.size());
     }
 

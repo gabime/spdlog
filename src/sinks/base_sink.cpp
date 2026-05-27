@@ -14,10 +14,10 @@ namespace sinks {
 
 template <typename Mutex>
 base_sink<Mutex>::base_sink()
-    : formatter_{std::make_unique<spdlog::pattern_formatter>()} {}
+    : formatter_{std::make_unique<pattern_formatter>()} {}
 
 template <typename Mutex>
-base_sink<Mutex>::base_sink(std::unique_ptr<spdlog::formatter> formatter)
+base_sink<Mutex>::base_sink(std::unique_ptr<formatter> formatter)
     : formatter_{std::move(formatter)} {}
 
 template <typename Mutex>
@@ -39,7 +39,7 @@ void base_sink<Mutex>::set_pattern(const std::string &pattern) {
 }
 
 template <typename Mutex>
-void base_sink<Mutex>::set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) {
+void base_sink<Mutex>::set_formatter(std::unique_ptr<formatter> sink_formatter) {
     std::lock_guard<Mutex> lock(mutex_);
     set_formatter_(std::move(sink_formatter));
 }

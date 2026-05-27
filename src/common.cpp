@@ -19,7 +19,7 @@ bool iequals(const std::string &a, const std::string &b) {
 }
 }  // namespace
 
-spdlog::level level_from_str(const std::string &name) noexcept {
+level level_from_str(const std::string &name) noexcept {
     const auto it =
         std::find_if(std::begin(level_string_views), std::end(level_string_views),
                      [&name](const string_view_t &level_name) {
@@ -36,7 +36,7 @@ spdlog::level level_from_str(const std::string &name) noexcept {
 
     // check also for "warn" and "err" before giving up
     if (iequals(name, "warn")) {
-        return spdlog::level::warn;
+        return level::warn;
     }
     if (iequals(name, "err")) {
         return level::err;

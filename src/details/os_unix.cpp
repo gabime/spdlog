@@ -47,7 +47,7 @@ SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace os {
 
-spdlog::log_clock::time_point now() noexcept {
+log_clock::time_point now() noexcept {
 #if defined __linux__ && defined SPDLOG_CLOCK_COARSE
     timespec ts;
     ::clock_gettime(CLOCK_REALTIME_COARSE, &ts);

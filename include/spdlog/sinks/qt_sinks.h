@@ -84,7 +84,7 @@ public:
         colors_.at(level::info) = format;
         // warn
         format.setForeground(dark_colors ? Qt::darkYellow : Qt::yellow);
-        colors_.at(spdlog::level::warn) = format;
+        colors_.at(level::warn) = format;
         // err
         format.setForeground(Qt::red);
         colors_.at(level::err) = format;

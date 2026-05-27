@@ -87,19 +87,19 @@ private:
         return __android_log_buf_write(ID, prio, tag, text);
     }
 
-    static android_LogPriority convert_to_android_(spdlog::level level) {
+    static android_LogPriority convert_to_android_(level level) {
         switch (level) {
-            case spdlog::level::trace:
+            case level::trace:
                 return ANDROID_LOG_VERBOSE;
-            case spdlog::level::debug:
+            case level::debug:
                 return ANDROID_LOG_DEBUG;
-            case spdlog::level::info:
+            case level::info:
                 return ANDROID_LOG_INFO;
-            case spdlog::level::warn:
+            case level::warn:
                 return ANDROID_LOG_WARN;
-            case spdlog::level::err:
+            case level::err:
                 return ANDROID_LOG_ERROR;
-            case spdlog::level::critical:
+            case level::critical:
                 return ANDROID_LOG_FATAL;
             default:
                 return ANDROID_LOG_DEFAULT;
