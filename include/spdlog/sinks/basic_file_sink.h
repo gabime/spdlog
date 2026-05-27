@@ -41,7 +41,7 @@ using basic_file_sink_st = basic_file_sink<details::null_mutex>;
 //
 // factory functions
 //
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> basic_logger_mt(const std::string &logger_name,
                                                const filename_t &filename,
                                                bool truncate = false,
@@ -50,7 +50,7 @@ inline std::shared_ptr<logger> basic_logger_mt(const std::string &logger_name,
                                                                event_handlers);
 }
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name,
                                                const filename_t &filename,
                                                bool truncate = false,

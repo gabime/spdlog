@@ -34,7 +34,7 @@ public:
     void log(const details::log_msg &msg) override;
     void flush() override;
     void set_pattern(const std::string &pattern) override;
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
+    void set_formatter(std::unique_ptr<formatter> sink_formatter) override;
     void set_color_mode(color_mode mode);
 
 protected:
@@ -42,7 +42,7 @@ protected:
     void *out_handle_;
     mutex_t &mutex_;
     bool should_do_colors_;
-    std::unique_ptr<spdlog::formatter> formatter_;
+    std::unique_ptr<formatter> formatter_;
     std::array<std::uint16_t, level::n_levels> colors_;
 
     // set foreground color and return the orig console attributes (for resetting later)

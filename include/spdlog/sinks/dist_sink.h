@@ -62,10 +62,10 @@ protected:
     }
 
     void set_pattern_(const std::string &pattern) override {
-        set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern));
+        set_formatter_(details::make_unique<pattern_formatter>(pattern));
     }
 
-    void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter) override {
+    void set_formatter_(std::unique_ptr<formatter> sink_formatter) override {
         base_sink<Mutex>::formatter_ = std::move(sink_formatter);
         for (auto &sub_sink : sinks_) {
             sub_sink->set_formatter(base_sink<Mutex>::formatter_->clone());

@@ -65,7 +65,7 @@ using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
 //
 // factory functions
 //
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> rotating_logger_mt(const std::string &logger_name,
                                            const filename_t &filename,
                                            size_t max_file_size,
@@ -76,7 +76,7 @@ std::shared_ptr<logger> rotating_logger_mt(const std::string &logger_name,
         logger_name, filename, max_file_size, max_files, rotate_on_open, event_handlers);
 }
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> rotating_logger_st(const std::string &logger_name,
                                            const filename_t &filename,
                                            size_t max_file_size,

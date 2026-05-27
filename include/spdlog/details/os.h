@@ -10,7 +10,7 @@ namespace spdlog {
 namespace details {
 namespace os {
 
-SPDLOG_API spdlog::log_clock::time_point now() SPDLOG_NOEXCEPT;
+SPDLOG_API log_clock::time_point now() SPDLOG_NOEXCEPT;
 
 SPDLOG_API std::tm localtime(const std::time_t &time_tt) SPDLOG_NOEXCEPT;
 

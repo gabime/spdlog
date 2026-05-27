@@ -31,7 +31,7 @@ using default_factory = synchronous_factory;
 // Example:
 //   spdlog::create<daily_file_sink_st>("logger_name", "dailylog_filename", 11, 59);
 template <typename Sink, typename... SinkArgs>
-inline std::shared_ptr<spdlog::logger> create(std::string logger_name, SinkArgs &&...sink_args) {
+inline std::shared_ptr<logger> create(std::string logger_name, SinkArgs &&...sink_args) {
     return default_factory::create<Sink>(std::move(logger_name),
                                          std::forward<SinkArgs>(sink_args)...);
 }
@@ -52,7 +52,7 @@ SPDLOG_API void initialize_logger(std::shared_ptr<logger> logger);
 SPDLOG_API std::shared_ptr<logger> get(const std::string &name);
 
 // Set global formatter. Each sink in each logger will get a clone of this object
-SPDLOG_API void set_formatter(std::unique_ptr<spdlog::formatter> formatter);
+SPDLOG_API void set_formatter(std::unique_ptr<formatter> formatter);
 
 // Set global format string.
 // example: spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
@@ -130,11 +130,11 @@ SPDLOG_API void set_automatic_registration(bool automatic_registration);
 // set_default_logger() *should not* be used concurrently with the default API.
 // e.g., do not call set_default_logger() from one thread while calling spdlog::info() from another.
 
-SPDLOG_API std::shared_ptr<spdlog::logger> default_logger();
+SPDLOG_API std::shared_ptr<logger> default_logger();
 
-SPDLOG_API spdlog::logger *default_logger_raw();
+SPDLOG_API logger *default_logger_raw();
 
-SPDLOG_API void set_default_logger(std::shared_ptr<spdlog::logger> default_logger);
+SPDLOG_API void set_default_logger(std::shared_ptr<logger> default_logger);
 
 // Initialize logger level based on environment configs.
 //

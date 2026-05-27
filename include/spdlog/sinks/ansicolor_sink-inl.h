@@ -17,7 +17,7 @@ template <typename ConsoleMutex>
 SPDLOG_INLINE ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, color_mode mode)
     : target_file_(target_file),
       mutex_(ConsoleMutex::mutex()),
-      formatter_(details::make_unique<spdlog::pattern_formatter>())
+      formatter_(details::make_unique<pattern_formatter>())
 
 {
     set_color_mode_(mode);
@@ -71,12 +71,12 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::flush() {
 template <typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_pattern(const std::string &pattern) {
     std::lock_guard<mutex_t> lock(mutex_);
-    formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
+    formatter_ = std::unique_ptr<formatter>(new pattern_formatter(pattern));
 }
 
 template <typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_formatter(
-    std::unique_ptr<spdlog::formatter> sink_formatter) {
+    std::unique_ptr<formatter> sink_formatter) {
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::move(sink_formatter);
 }

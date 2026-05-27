@@ -53,7 +53,7 @@ protected:
     log_clock::time_point last_msg_time_;
     std::string last_msg_payload_;
     size_t skip_counter_ = 0;
-    level::level_enum skipped_msg_log_level_ = spdlog::level::level_enum::off;
+    level::level_enum skipped_msg_log_level_ = level::level_enum::off;
 
     void sink_it_(const details::log_msg &msg) override {
         bool filtered = filter_(msg);

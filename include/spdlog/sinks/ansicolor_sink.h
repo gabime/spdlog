@@ -41,7 +41,7 @@ public:
     void log(const details::log_msg &msg) override;
     void flush() override;
     void set_pattern(const std::string &pattern) override;
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
+    void set_formatter(std::unique_ptr<formatter> sink_formatter) override;
 
     // Formatting codes
     const string_view_t reset = "\033[m";
@@ -84,7 +84,7 @@ protected:
 private:
     mutex_t &mutex_;
     bool should_do_colors_;
-    std::unique_ptr<spdlog::formatter> formatter_;
+    std::unique_ptr<formatter> formatter_;
     std::array<std::string, level::n_levels> colors_;
     void set_color_mode_(color_mode mode);
     void print_ccode_(const string_view_t &color_code) const;

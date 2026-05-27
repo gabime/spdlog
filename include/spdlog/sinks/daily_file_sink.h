@@ -145,7 +145,7 @@ private:
 
     tm now_tm(log_clock::time_point tp) {
         time_t tnow = log_clock::to_time_t(tp);
-        return spdlog::details::os::localtime(tnow);
+        return details::os::localtime(tnow);
     }
 
     log_clock::time_point next_rotation_tp_() {
@@ -202,7 +202,7 @@ using daily_file_format_sink_st =
 //
 // factory functions
 //
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name,
                                                const filename_t &filename,
                                                int hour = 0,
@@ -214,7 +214,7 @@ inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name,
                                                                truncate, max_files, event_handlers);
 }
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_format_mt(
     const std::string &logger_name,
     const filename_t &filename,
@@ -227,7 +227,7 @@ inline std::shared_ptr<logger> daily_logger_format_mt(
         logger_name, filename, hour, minute, truncate, max_files, event_handlers);
 }
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name,
                                                const filename_t &filename,
                                                int hour = 0,
@@ -239,7 +239,7 @@ inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name,
                                                                truncate, max_files, event_handlers);
 }
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_format_st(
     const std::string &logger_name,
     const filename_t &filename,

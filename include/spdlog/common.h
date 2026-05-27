@@ -276,9 +276,9 @@ enum level_enum : int {
     { "T", "D", "I", "W", "E", "C", "O" }
 #endif
 
-SPDLOG_API const string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
+SPDLOG_API const string_view_t &to_string_view(level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_API const char *to_short_c_str(level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_API level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
 }  // namespace level
 

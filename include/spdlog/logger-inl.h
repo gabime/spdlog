@@ -39,7 +39,7 @@ SPDLOG_INLINE logger &logger::operator=(logger other) SPDLOG_NOEXCEPT {
     return *this;
 }
 
-SPDLOG_INLINE void logger::swap(spdlog::logger &other) SPDLOG_NOEXCEPT {
+SPDLOG_INLINE void logger::swap(logger &other) SPDLOG_NOEXCEPT {
     name_.swap(other.name_);
     sinks_.swap(other.sinks_);
 
@@ -121,7 +121,7 @@ SPDLOG_INLINE std::shared_ptr<logger> logger::clone(std::string logger_name) {
 }
 
 // protected methods
-SPDLOG_INLINE void logger::log_it_(const spdlog::details::log_msg &log_msg,
+SPDLOG_INLINE void logger::log_it_(const details::log_msg &log_msg,
                                    bool log_enabled,
                                    bool traceback_enabled) {
     if (log_enabled) {

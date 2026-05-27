@@ -72,7 +72,7 @@ namespace spdlog {
 namespace details {
 namespace os {
 
-SPDLOG_INLINE spdlog::log_clock::time_point now() SPDLOG_NOEXCEPT {
+SPDLOG_INLINE log_clock::time_point now() SPDLOG_NOEXCEPT {
 #if defined __linux__ && defined SPDLOG_CLOCK_COARSE
     timespec ts;
     ::clock_gettime(CLOCK_REALTIME_COARSE, &ts);
