@@ -41,7 +41,7 @@ SPDLOG_INLINE registry::registry()
 #endif
 
     const char *default_logger_name = "";
-    default_logger_ = std::make_shared<spdlog::logger>(default_logger_name, std::move(color_sink));
+    default_logger_ = std::make_shared<logger>(default_logger_name, std::move(color_sink));
     loggers_[default_logger_name] = default_logger_;
 
 #endif  // SPDLOG_DISABLE_DEFAULT_LOGGER

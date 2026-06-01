@@ -315,8 +315,8 @@ public:
 protected:
     std::string name_;
     std::vector<sink_ptr> sinks_;
-    spdlog::level_t level_{level::info};
-    spdlog::level_t flush_level_{level::off};
+    level_t level_{level::info};
+    level_t flush_level_{level::off};
     err_handler custom_err_handler_{nullptr};
     details::backtracer tracer_;
 
