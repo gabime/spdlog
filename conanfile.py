@@ -9,13 +9,13 @@ import os
 
 required_conan_version = ">=1.53.0"
 
-
-class SpdlogConan(ConanFile):
-    name = "spdlog"
+# Inherited from https://github.com/conan-io/conan-center-index/blob/master/recipes/spdlog/all/conanfile.py
+class TessonicsSpdlogConan(ConanFile):
+    name = "tessonics-spdlog"
+    version = "1.12.1"
     package_type = "library"
     description = "Fast C++ logging library"
-    url = "https://github.com/conan-io/conan-center-index"
-    homepage = "https://github.com/gabime/spdlog"
+    url = "https://github.com/tessonics/spdlog"
     topics = ("logger", "logging", "log-filtering", "file sink", "header-only")
     license = "MIT"
     settings = "os", "arch", "compiler", "build_type"
@@ -40,6 +40,29 @@ class SpdlogConan(ConanFile):
         "use_std_fmt": False,
     }
 
+    exports_sources = (
+        # Directories
+        ".github/*",
+        "bench/*",
+        "cmake/*",
+        "example/*",
+        "include/*",
+        "logos/*",
+        "scripts/*",
+        "src/*",
+        "tests/*",
+        # Files
+        ".clang-format",
+        ".clang-tidy",
+        ".gitattributes",
+        ".gitignore",
+        "CMakeLists.txt",
+        "INSTALL",
+        "LICENSE",
+        "README.md",
+    )
+    no_copy_source = True
+
     def config_options(self):
         if self.settings.os == "Windows":
             del self.options.fPIC
@@ -59,7 +82,7 @@ class SpdlogConan(ConanFile):
             self.options.rm_safe("shared")
 
     def layout(self):
-        cmake_layout(self, src_folder="src")
+        cmake_layout(self)
 
     def requirements(self):
         if not self.options.get_safe("use_std_fmt"):
