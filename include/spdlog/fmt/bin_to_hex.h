@@ -101,7 +101,7 @@ namespace
 {
 
 template <typename T>
-struct formatter<spdlog::details::dump_info<T>, char> {
+struct formatter<SPDLOG_NS__::details::dump_info<T>, char> {
     char delimiter = ' ';
     bool put_newlines = true;
     bool put_delimiters = true;
@@ -142,7 +142,7 @@ struct formatter<spdlog::details::dump_info<T>, char> {
 
     // format the given bytes range as hex
     template <typename FormatContext, typename Container>
-    auto format(const spdlog::details::dump_info<Container> &the_range,
+    auto format(const SPDLOG_NS__::details::dump_info<Container> &the_range,
                 FormatContext &ctx) const -> decltype(ctx.out()) {
         SPDLOG_CONSTEXPR const char *hex_upper = "0123456789ABCDEF";
         SPDLOG_CONSTEXPR const char *hex_lower = "0123456789abcdef";
@@ -217,7 +217,7 @@ struct formatter<spdlog::details::dump_info<T>, char> {
         *inserter++ = '\n';
 
         if (put_positions) {
-            spdlog::fmt_lib::format_to(inserter, SPDLOG_FMT_STRING("{:04X}: "), pos);
+            SPDLOG_NS__::fmt_lib::format_to(inserter, SPDLOG_FMT_STRING("{:04X}: "), pos);
         }
     }
 };

@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "spdlog/namespace.h"
+
 SPDLOG_NAMESPACE_BEGIN
 class logger;
 class formatter;
