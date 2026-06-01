@@ -234,7 +234,6 @@ target_link_libraries(spdlog PUBLIC fmt::fmt)
 spdlog_enable_warnings(spdlog)
 set_target_properties(spdlog PROPERTIES VERSION ${SPDLOG_VERSION} SOVERSION
         ${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR})
-set(SPDLOG_NAME spdlog-${SPDLOG_VERSION_MAJOR})
 set_target_properties(spdlog PROPERTIES DEBUG_POSTFIX "-${SPDLOG_VERSION_MAJOR}.${SPDLOG_VERSION_MINOR}d")
 # ---------------------------------------------------------------------------------------
 # Set prefix and source group for visual studio
@@ -292,18 +291,18 @@ if (SPDLOG_INSTALL)
     install(
             TARGETS spdlog
             EXPORT spdlogTargets
-            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}/${SPDLOG_NAME}"
-            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}/${SPDLOG_NAME}"
-            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}/${SPDLOG_NAME}"
+            LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+            RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
             FILE_SET pub_headers
-            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${SPDLOG_NAME}")
-    message(STATUS "Installing spdlog in ${CMAKE_INSTALL_LIBDIR}/${SPDLOG_NAME}")
+            DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+    message(STATUS "Installing spdlog in ${CMAKE_INSTALL_LIBDIR}")
     # Install CMake spdlogConfig.cmake, spdlogConfigVersion.cmake and spdlogTargets.cmake
     set(project_config_in "${CMAKE_CURRENT_LIST_DIR}/cmake/spdlogConfig.cmake.in")
     set(project_config_out "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfig.cmake")
     set(config_targets_file "spdlogConfigTargets.cmake")
     set(version_config_file "${CMAKE_CURRENT_BINARY_DIR}/spdlogConfigVersion.cmake")
-    set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${SPDLOG_NAME}")
+    set(export_dest_dir "${CMAKE_INSTALL_LIBDIR}/cmake")
     install(EXPORT spdlogTargets DESTINATION ${export_dest_dir} NAMESPACE spdlog:: FILE ${config_targets_file})
     include(CMakePackageConfigHelpers)
     configure_package_config_file("${project_config_in}" "${project_config_out}" INSTALL_DESTINATION ${export_dest_dir})
