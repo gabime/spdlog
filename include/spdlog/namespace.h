@@ -3,20 +3,20 @@
 
 #pragma once
 
-// SPDLOG_NS__ is the outermost namespace token used to qualify spdlog names
+// SPDLOG_NAMESPACE is the outermost namespace token used to qualify spdlog names
 // in contexts outside a SPDLOG_NAMESPACE_BEGIN block (e.g. logging macros).
 // Override it to rename the outer namespace.
-#ifndef SPDLOG_NS__
-    #define SPDLOG_NS__ spdlog
+#ifndef SPDLOG_NAMESPACE
+    #define SPDLOG_NAMESPACE spdlog
 #endif
 // SPDLOG_NAMESPACE_BEGIN / SPDLOG_NAMESPACE_END delimit every spdlog
-// declaration, defaulting to "namespace SPDLOG_NS__ { ... }".
+// declaration, defaulting to "namespace SPDLOG_NAMESPACE { ... }".
 // Override both to use a more complex namespace expression, e.g. to wrap
 // symbols in an inline sub-namespace (keeps "spdlog::" accessible):
 //   #define SPDLOG_NAMESPACE_BEGIN  namespace spdlog::inline my_copy {
 //   #define SPDLOG_NAMESPACE_END    }
 #ifndef SPDLOG_NAMESPACE_BEGIN
-    #define SPDLOG_NAMESPACE_BEGIN namespace SPDLOG_NS__ {
+    #define SPDLOG_NAMESPACE_BEGIN namespace SPDLOG_NAMESPACE {
 #endif
 #ifndef SPDLOG_NAMESPACE_END
     #define SPDLOG_NAMESPACE_END }

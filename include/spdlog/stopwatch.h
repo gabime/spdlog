@@ -58,9 +58,9 @@ namespace
 {
 
 template <>
-struct formatter<SPDLOG_NS__::stopwatch> : formatter<double> {
+struct formatter<SPDLOG_NAMESPACE::stopwatch> : formatter<double> {
     template <typename FormatContext>
-    auto format(const SPDLOG_NS__::stopwatch &sw, FormatContext &ctx) const -> decltype(ctx.out()) {
+    auto format(const SPDLOG_NAMESPACE::stopwatch &sw, FormatContext &ctx) const -> decltype(ctx.out()) {
         return formatter<double>::format(sw.elapsed().count(), ctx);
     }
 };
