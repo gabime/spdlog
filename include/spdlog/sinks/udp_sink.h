@@ -62,8 +62,8 @@ using udp_sink_st = udp_sink<details::null_mutex>;
 //
 template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> udp_logger_mt(const std::string &logger_name,
-                                             sinks::udp_sink_config skin_config) {
-    return Factory::template create<sinks::udp_sink_mt>(logger_name, skin_config);
+                                             sinks::udp_sink_config sink_config) {
+    return Factory::template create<sinks::udp_sink_mt>(logger_name, sink_config);
 }
 
 SPDLOG_NAMESPACE_END
