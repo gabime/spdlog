@@ -11,27 +11,27 @@
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/stdout_sinks-inl.h>
 
-template class SPDLOG_API spdlog::sinks::stdout_sink_base<spdlog::details::console_mutex>;
-template class SPDLOG_API spdlog::sinks::stdout_sink_base<spdlog::details::console_nullmutex>;
-template class SPDLOG_API spdlog::sinks::stdout_sink<spdlog::details::console_mutex>;
-template class SPDLOG_API spdlog::sinks::stdout_sink<spdlog::details::console_nullmutex>;
-template class SPDLOG_API spdlog::sinks::stderr_sink<spdlog::details::console_mutex>;
-template class SPDLOG_API spdlog::sinks::stderr_sink<spdlog::details::console_nullmutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stdout_sink_base<SPDLOG_NAMESPACE::details::console_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stdout_sink_base<SPDLOG_NAMESPACE::details::console_nullmutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stdout_sink<SPDLOG_NAMESPACE::details::console_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stdout_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stderr_sink<SPDLOG_NAMESPACE::details::console_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::stderr_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
 
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stdout_logger_mt<spdlog::synchronous_factory>(const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stdout_logger_st<spdlog::synchronous_factory>(const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stderr_logger_mt<spdlog::synchronous_factory>(const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger>
-spdlog::stderr_logger_st<spdlog::synchronous_factory>(const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<SPDLOG_NAMESPACE::logger>
+SPDLOG_NAMESPACE::stdout_logger_mt<SPDLOG_NAMESPACE::synchronous_factory>(const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<SPDLOG_NAMESPACE::logger>
+SPDLOG_NAMESPACE::stdout_logger_st<SPDLOG_NAMESPACE::synchronous_factory>(const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<SPDLOG_NAMESPACE::logger>
+SPDLOG_NAMESPACE::stderr_logger_mt<SPDLOG_NAMESPACE::synchronous_factory>(const std::string &logger_name);
+template SPDLOG_API std::shared_ptr<SPDLOG_NAMESPACE::logger>
+SPDLOG_NAMESPACE::stderr_logger_st<SPDLOG_NAMESPACE::synchronous_factory>(const std::string &logger_name);
 
-template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_mt<spdlog::async_factory>(
+template SPDLOG_API std::shared_ptr<SPDLOG_NAMESPACE::logger> SPDLOG_NAMESPACE::stdout_logger_mt<SPDLOG_NAMESPACE::async_factory>(
     const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stdout_logger_st<spdlog::async_factory>(
+template SPDLOG_API std::shared_ptr<SPDLOG_NAMESPACE::logger> SPDLOG_NAMESPACE::stdout_logger_st<SPDLOG_NAMESPACE::async_factory>(
     const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_mt<spdlog::async_factory>(
+template SPDLOG_API std::shared_ptr<SPDLOG_NAMESPACE::logger> SPDLOG_NAMESPACE::stderr_logger_mt<SPDLOG_NAMESPACE::async_factory>(
     const std::string &logger_name);
-template SPDLOG_API std::shared_ptr<spdlog::logger> spdlog::stderr_logger_st<spdlog::async_factory>(
+template SPDLOG_API std::shared_ptr<SPDLOG_NAMESPACE::logger> SPDLOG_NAMESPACE::stderr_logger_st<SPDLOG_NAMESPACE::async_factory>(
     const std::string &logger_name);
