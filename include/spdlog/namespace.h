@@ -13,8 +13,8 @@
 // declaration, defaulting to "namespace SPDLOG_NAMESPACE { ... }".
 // Override both to use a more complex namespace expression, e.g. to wrap
 // symbols in an inline sub-namespace (keeps "spdlog::" accessible):
-//   #define SPDLOG_NAMESPACE_BEGIN  namespace spdlog::inline my_copy {
-//   #define SPDLOG_NAMESPACE_END    }
+//   #define SPDLOG_NAMESPACE_BEGIN  namespace spdlog { inline namespace my_copy {
+//   #define SPDLOG_NAMESPACE_END    } }
 #ifndef SPDLOG_NAMESPACE_BEGIN
     #define SPDLOG_NAMESPACE_BEGIN namespace SPDLOG_NAMESPACE {
 #endif
