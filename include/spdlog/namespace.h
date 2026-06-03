@@ -12,9 +12,13 @@
 // SPDLOG_NAMESPACE_BEGIN / SPDLOG_NAMESPACE_END delimit every spdlog
 // declaration, defaulting to "namespace SPDLOG_NAMESPACE { ... }".
 // Override both to use a more complex namespace expression, e.g. to wrap
-// symbols in an inline sub-namespace (keeps "spdlog::" accessible):
+// symbols in an inline sub-namespace (keeps "spdlog::" accessible).
+// In C++11/17:
 //   #define SPDLOG_NAMESPACE_BEGIN  namespace spdlog { inline namespace my_copy {
 //   #define SPDLOG_NAMESPACE_END    } }
+// In C++20, the nested inline-namespace syntax may be used instead:
+//   #define SPDLOG_NAMESPACE_BEGIN  namespace spdlog::inline my_copy {
+//   #define SPDLOG_NAMESPACE_END    }
 #ifndef SPDLOG_NAMESPACE_BEGIN
     #define SPDLOG_NAMESPACE_BEGIN namespace SPDLOG_NAMESPACE {
 #endif
