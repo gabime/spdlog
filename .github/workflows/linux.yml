@@ -62,6 +62,53 @@ jobs:
           ctest -j 4 --output-on-failure
 
   # -----------------------------------------------------------------------
+  # Namespace customization regression tests
+  # -----------------------------------------------------------------------
+  build_namespace_override:
+    runs-on: ubuntu-latest
+    container: gcc:12
+    defaults:
+      run:
+        shell: bash
+    name: "Namespace override"
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup
+        run: |
+          apt-get update
+          apt-get install -y curl git pkg-config libsystemd-dev
+          CMAKE_VERSION="3.24.2"
+          curl -sSL https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.sh -o install-cmake.sh
+          chmod +x install-cmake.sh
+          ./install-cmake.sh --prefix=/usr/local --skip-license
+      - name: "Strict rename — library compile-only"
+        run: |
+          mkdir -p build/ns-rename && cd build/ns-rename
+          cmake ../.. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_STANDARD=17 \
+            -DSPDLOG_BUILD_SHARED=ON \
+            -DCMAKE_CXX_FLAGS="-DSPDLOG_NAMESPACE=spdlog_ns_ci_test"
+          make spdlog -j 4
+      - name: "Inline-namespace wrap — full build and tests"
+        run: |
+          mkdir -p build/ns-inline
+          cat > build/ns_inline_wrap.h <<'EOF'
+          #pragma once
+          #define SPDLOG_NAMESPACE_BEGIN namespace spdlog { inline namespace ns_ci_test {
+          #define SPDLOG_NAMESPACE_END } }
+          EOF
+          cd build/ns-inline
+          cmake ../.. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_CXX_STANDARD=17 \
+            -DSPDLOG_BUILD_EXAMPLE=ON \
+            -DSPDLOG_BUILD_TESTS=ON \
+            -DCMAKE_CXX_FLAGS="-include $GITHUB_WORKSPACE/build/ns_inline_wrap.h"
+          make -j 4
+          ctest -j 4 --output-on-failure
+
+  # -----------------------------------------------------------------------
   # OS X build matrix
   # -----------------------------------------------------------------------
   build_osx:
