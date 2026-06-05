@@ -44,7 +44,7 @@ public:
           db_name_(db_name),
           coll_name_(collection_name) {
         try {
-            client_ = spdlog::std::make_unique<mongocxx::client>(mongocxx::uri{uri});
+            client_ = std::make_unique<mongocxx::client>(mongocxx::uri{uri});
         } catch (const std::exception &e) {
             throw_spdlog_ex(fmt_lib::format("Error opening database: {}", e.what()));
         }
