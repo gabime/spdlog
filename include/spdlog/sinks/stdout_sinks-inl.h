@@ -43,7 +43,7 @@ SPDLOG_INLINE stdout_sink_base<ConsoleMutex>::stdout_sink_base(FILE *file)
     // and let the log method to do nothing if (handle_ == INVALID_HANDLE_VALUE).
     // throw only if non stdout/stderr target is requested (probably regular file and not console).
     if (handle_ == INVALID_HANDLE_VALUE && file != stdout && file != stderr) {
-        throw_spdlog_ex("spdlog::stdout_sink_base: _get_osfhandle() failed", errno);
+        throw_spdlog_ex("stdout_sink_base: _get_osfhandle() failed", errno);
     }
 #endif  // _WIN32
 }
