@@ -165,10 +165,8 @@ set(SPDLOG_HEADERS
         "include/spdlog/sinks/systemd_sink.h"
         "include/spdlog/sinks/tcp_sink.h"
         "include/spdlog/sinks/udp_sink.h"
-        "include/spdlog/sinks/async_sink.h")
-if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/spdlog/namespace.h")
-    list(APPEND SPDLOG_HEADERS "include/spdlog/namespace.h")
-endif()
+        "include/spdlog/sinks/async_sink.h"
+        "include/spdlog/namespace.h")
 set(SPDLOG_SRCS
         "src/common.cpp"
         "src/logger.cpp"
