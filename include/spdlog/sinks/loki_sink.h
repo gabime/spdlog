@@ -31,7 +31,6 @@
 #include <chrono>
 #include <mutex>
 #include <string>
-#include <string_view>
 #include <unordered_map>
 
 SPDLOG_NAMESPACE_BEGIN
@@ -77,7 +76,7 @@ protected:
     void sink_it_(const details::log_msg &msg) override {
         memory_buf_t formatted;
         base_sink<Mutex>::formatter_->format(msg, formatted);
-        auto body = build_json_(msg, std::string_view(formatted.data(), formatted.size()));
+        auto body = build_json_(msg, std::string(formatted.data(), formatted.size()));
         auto res = client_.Post("/loki/api/v1/push", body, "application/json");
         if (!res || res->status != 204)
             throw_spdlog_ex("loki_sink: " + (res ? res->reason : "connection failed"));
@@ -86,7 +85,7 @@ protected:
     void flush_() override {}
 
 private:
-    std::string build_json_(const details::log_msg &msg, std::string_view line) const {
+    std::string build_json_(const details::log_msg &msg, const std::string &line) const {
         auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
                       msg.time.time_since_epoch())
                       .count();
@@ -95,7 +94,7 @@ private:
         nlohmann::json labels = labels_json_;
         if (config_.add_level_label) {
             auto sv = level::to_string_view(msg.level);
-            labels["level"] = std::string_view(sv.data(), sv.size());
+            labels["level"] = std::string(sv.data(), sv.size());
         }
 
         return nlohmann::json{{"streams", {{
