@@ -34,7 +34,7 @@
 #include <string_view>
 #include <unordered_map>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 struct loki_sink_config {
@@ -138,4 +138,4 @@ inline std::shared_ptr<logger> loki_logger_async_st(const std::string &logger_na
     return Factory::template create<sinks::loki_sink_st>(logger_name, std::move(config));
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
