@@ -113,25 +113,25 @@ using loki_sink_st = loki_sink<details::null_mutex>;
 
 }  // namespace sinks
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> loki_logger_mt(const std::string &logger_name,
                                                sinks::loki_sink_config config) {
     return Factory::template create<sinks::loki_sink_mt>(logger_name, std::move(config));
 }
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> loki_logger_st(const std::string &logger_name,
                                                sinks::loki_sink_config config) {
     return Factory::template create<sinks::loki_sink_st>(logger_name, std::move(config));
 }
 
-template <typename Factory = spdlog::async_factory>
+template <typename Factory = async_factory>
 inline std::shared_ptr<logger> loki_logger_async_mt(const std::string &logger_name,
                                                      sinks::loki_sink_config config) {
     return Factory::template create<sinks::loki_sink_mt>(logger_name, std::move(config));
 }
 
-template <typename Factory = spdlog::async_factory>
+template <typename Factory = async_factory>
 inline std::shared_ptr<logger> loki_logger_async_st(const std::string &logger_name,
                                                      sinks::loki_sink_config config) {
     return Factory::template create<sinks::loki_sink_st>(logger_name, std::move(config));
