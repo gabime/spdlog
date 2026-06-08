@@ -8,6 +8,7 @@
 #include <spdlog/sinks/base_sink.h>
 
 #include <array>
+#include <unistd.h>
 #include <systemd/sd-journal.h>
 #include <systemd/sd-daemon.h>
 
