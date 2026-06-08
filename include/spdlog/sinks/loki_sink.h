@@ -93,7 +93,7 @@ private:
         if (ns < 0) ns = 0;
 
         nlohmann::json labels = labels_json_;
-        if (config_.add_level_label) {
+        if (config_.add_level_label && !labels.contains("level")) {
             auto sv = level::to_string_view(msg.level);
             labels["level"] = std::string(sv.data(), sv.size());
         }
