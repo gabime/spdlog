@@ -165,7 +165,8 @@ set(SPDLOG_HEADERS
         "include/spdlog/sinks/systemd_sink.h"
         "include/spdlog/sinks/tcp_sink.h"
         "include/spdlog/sinks/udp_sink.h"
-        "include/spdlog/sinks/async_sink.h")
+        "include/spdlog/sinks/async_sink.h"
+        "include/spdlog/attributes.h")
 set(SPDLOG_SRCS
         "src/common.cpp"
         "src/logger.cpp"

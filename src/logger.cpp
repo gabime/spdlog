@@ -81,4 +81,7 @@ void logger::flush_() noexcept {
         }
     }
 }
+
+log_attributes &logger::attrs() { return attributes; }
+
 }  // namespace spdlog

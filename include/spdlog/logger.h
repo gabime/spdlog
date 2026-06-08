@@ -19,6 +19,7 @@
 #include "details/err_helper.h"
 #include "details/log_msg.h"
 #include "sinks/sink.h"
+#include "attributes.h"
 
 namespace spdlog {
 
@@ -63,20 +64,20 @@ public:
     // log with no format string, just string message
     void log(const source_loc &loc, level lvl, string_view_t msg) noexcept {
         if (should_log(lvl)) {
-            sink_it_(details::log_msg(loc, name_, lvl, msg));
+            sink_it_(details::log_msg(loc, name_, lvl, msg, attributes));
         }
     }
 
     void log(level lvl, string_view_t msg) noexcept {
         if (should_log(lvl)) {
-            sink_it_(details::log_msg(source_loc{}, name_, lvl, msg));
+            sink_it_(details::log_msg(source_loc{}, name_, lvl, msg, attributes));
         }
     }
 
     // support for custom time
     void log(log_clock::time_point log_time, const source_loc &loc, level lvl, string_view_t msg) noexcept {
         if (should_log(lvl)) {
-            sink_it_(details::log_msg(log_time, loc, name_, lvl, msg));
+            sink_it_(details::log_msg(log_time, loc, name_, lvl, msg, attributes));
         }
     }
 
@@ -160,9 +161,12 @@ public:
     // create new logger with same sinks and configuration.
     std::shared_ptr<logger> clone(std::string logger_name);
 
+    log_attributes &attrs();
+
 private:
     std::string name_;
     std::vector<sink_ptr> sinks_;
+    log_attributes attributes;
     atomic_level_t level_{level::info};
     atomic_level_t flush_level_{level::off};
     details::err_helper err_helper_;
@@ -178,7 +182,7 @@ private:
         try {
             memory_buf_t buf;
             fmt::vformat_to(std::back_inserter(buf), format_string, fmt::make_format_args(args...));
-            sink_it_(details::log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size())));
+            sink_it_(details::log_msg(loc, name_, lvl, string_view_t(buf.data(), buf.size()), attributes));
         } catch (const std::exception &ex) {
             err_helper_.handle_ex(name_, loc, ex);
         } catch (...) {

@@ -51,6 +51,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_no_source_location.cpp
     test_log_level.cpp
     test_include_sinks.cpp
+    test_attributes.cpp
     test_bin_to_hex.cpp
     test_timezone.cpp
     test_errors.cpp)

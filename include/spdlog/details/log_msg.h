@@ -5,14 +5,23 @@
 
 #include <string>
 
+#include "../attributes.h"
 #include "../common.h"
 
 namespace spdlog {
 namespace details {
 struct SPDLOG_API log_msg {
     log_msg() = default;
+    log_msg(log_clock::time_point log_time,
+            const source_loc &loc,
+            string_view_t logger_name,
+            level lvl,
+            string_view_t msg,
+            log_attributes attributes);
     log_msg(log_clock::time_point log_time, const source_loc &loc, string_view_t logger_name, level lvl, string_view_t msg);
     log_msg(const source_loc &loc, string_view_t logger_name, level lvl, string_view_t msg);
+    log_msg(const source_loc &loc, string_view_t logger_name, level lvl, string_view_t msg, log_attributes attributes);
+    log_msg(string_view_t logger_name, level lvl, string_view_t msg, log_attributes attributes);
     log_msg(string_view_t logger_name, level lvl, string_view_t msg);
     log_msg(const log_msg &other) = default;
     log_msg &operator=(const log_msg &other) = default;
@@ -28,6 +37,7 @@ struct SPDLOG_API log_msg {
 
     source_loc source;
     string_view_t payload;
+    log_attributes attributes;
 };
 }  // namespace details
 }  // namespace spdlog

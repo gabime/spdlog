@@ -755,6 +755,41 @@ private:
     log_clock::time_point last_message_time_;
 };
 
+template <typename ScopedPadder>
+class attribute_formatter final : public flag_formatter {
+public:
+    explicit attribute_formatter(padding_info padinfo)
+        : flag_formatter(padinfo) {}
+
+    void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override {
+        if (msg.attributes.empty()) {
+            ScopedPadder p(0, padinfo_, dest);
+            return;
+        } else {
+            const auto &attributes = msg.attributes.get_map();
+            format_attributes(attributes, dest);
+        }
+    }
+
+    void format_attributes(const spdlog::log_attributes::attr_map_t &attributes, memory_buf_t &dest) {
+        for (auto it = attributes.begin(); it != attributes.end(); ++it) {
+            bool last_item = std::next(it) == attributes.end();
+            auto &attribute = *it;
+            const auto &key = attribute.first;
+            const auto &value = attribute.second;
+            size_t content_size = key.size() + value.size() + 1;  // 1 for ':'
+
+            if (!last_item) content_size++;  // 1 for ' '
+
+            ScopedPadder p(content_size, padinfo_, dest);
+            fmt_helper::append_string_view(key, dest);
+            fmt_helper::append_string_view(":", dest);
+            fmt_helper::append_string_view(value, dest);
+            if (!last_item) fmt_helper::append_string_view(" ", dest);
+        }
+    }
+};
+
 // Full info formatter
 // pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] [%s:%#] %v
 class default_format_formatter final : public flag_formatter {
@@ -837,12 +872,23 @@ public:
             dest.push_back(']');
             dest.push_back(' ');
         }
+
+        // add attributes if present
+        if (!msg.attributes.empty()) {
+            dest.push_back('[');
+            const auto &attributes = msg.attributes.get_map();
+            attribute_formatter_.format_attributes(attributes, dest);
+            dest.push_back(']');
+            dest.push_back(' ');
+        }
+
         fmt_helper::append_string_view(msg.payload, dest);
     }
 
 private:
     std::chrono::seconds cache_timestamp_{0};
     memory_buf_t cached_datetime_;
+    attribute_formatter<null_scoped_padder> attribute_formatter_{padding_info{}};
 };
 }  // namespace details
 
@@ -1119,6 +1165,10 @@ void pattern_formatter::handle_flag_(char flag, details::padding_info padding) {
 
         case ('O'):  // elapsed time since last log message in seconds
             formatters_.push_back(std::make_unique<details::elapsed_formatter<Padder, std::chrono::seconds>>(padding));
+            break;
+
+        case ('*'):
+            formatters_.push_back(std::make_unique<details::attribute_formatter<Padder>>(padding));
             break;
 
         default:  // Unknown flag appears as is

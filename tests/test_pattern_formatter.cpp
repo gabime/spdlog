@@ -503,3 +503,80 @@ TEST_CASE("override need_localtime", "[pattern_formatter]") {
         REQUIRE(to_string_view(formatted) == oss.str());
     }
 }
+
+TEST_CASE("attribute formatter test-1", "[pattern_formatter]") {
+    spdlog::log_attributes attributes;
+    attributes.put("attribute_key_1", "attribute_value_1");
+    attributes.put("attribute_key_2", "attribute_value_2");
+
+    auto formatter = std::make_shared<spdlog::pattern_formatter>();
+    formatter->set_pattern("[%n] [%l] [%*] %v");
+
+    memory_buf_t formatted;
+    spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info, "some message", attributes);
+    formatter->format(msg, formatted);
+
+    auto expected = spdlog::fmt_lib::format(
+        "[logger-name] [info] [attribute_key_1:attribute_value_1 attribute_key_2:attribute_value_2] some message{}",
+        spdlog::details::os::default_eol);
+    REQUIRE(to_string_view(formatted) == expected);
+}
+
+TEST_CASE("attribute formatter value update", "[pattern_formatter]") {
+    spdlog::log_attributes attributes;
+    attributes.put("attribute_key_1", "attribute_value_1");
+    attributes.put("attribute_key_2", "attribute_value_2");
+
+    auto formatter = std::make_shared<spdlog::pattern_formatter>();
+    formatter->set_pattern("[%n] [%l] [%*] %v");
+
+    memory_buf_t formatted_1;
+    spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info, "some message", attributes);
+    formatter->format(msg, formatted_1);
+
+    auto expected = spdlog::fmt_lib::format(
+        "[logger-name] [info] [attribute_key_1:attribute_value_1 attribute_key_2:attribute_value_2] some message{}",
+        spdlog::details::os::default_eol);
+
+    REQUIRE(to_string_view(formatted_1) == expected);
+
+    msg.attributes.put("attribute_key_1", "new_attribute_value_1");
+    memory_buf_t formatted_2;
+    formatter->format(msg, formatted_2);
+    expected = spdlog::fmt_lib::format(
+        "[logger-name] [info] [attribute_key_1:new_attribute_value_1 attribute_key_2:attribute_value_2] some message{}",
+        spdlog::details::os::default_eol);
+
+    REQUIRE(to_string_view(formatted_2) == expected);
+}
+
+TEST_CASE("attribute remove key", "[pattern_formatter]") {
+    spdlog::log_attributes attributes;
+    attributes.put("attribute_key_1", "attribute_value_1");
+    attributes.put("attribute_key_2", "attribute_value_2");
+    attributes.remove("attribute_key_1");
+
+    auto formatter = std::make_shared<spdlog::pattern_formatter>();
+    formatter->set_pattern("[%n] [%l] [%*] %v");
+
+    memory_buf_t formatted;
+    spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info, "some message", attributes);
+    formatter->format(msg, formatted);
+
+    auto expected = spdlog::fmt_lib::format("[logger-name] [info] [attribute_key_2:attribute_value_2] some message{}",
+                                            spdlog::details::os::default_eol);
+    REQUIRE(to_string_view(formatted) == expected);
+}
+
+TEST_CASE("attribute empty", "[pattern_formatter]") {
+    spdlog::log_attributes attributes;
+    auto formatter = std::make_shared<spdlog::pattern_formatter>();
+    formatter->set_pattern("[%n] [%l] [%*] %v");
+
+    memory_buf_t formatted;
+    spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info, "some message", attributes);
+    formatter->format(msg, formatted);
+
+    auto expected = spdlog::fmt_lib::format("[logger-name] [info] [] some message{}", spdlog::details::os::default_eol);
+    REQUIRE(to_string_view(formatted) == expected);
+}
