@@ -55,7 +55,6 @@ jobs:
             -DSPDLOG_BUILD_BENCH=OFF \
             -DSPDLOG_BUILD_TESTS=ON \
             -DSPDLOG_SANITIZE_ADDRESS=${{ matrix.config.asan || 'OFF' }} \
-            -DSPDLOG_SANITIZE_ADDRESS=${{ matrix.config.asan || 'OFF' }} \
             -DSPDLOG_SANITIZE_THREAD=${{ matrix.config.tsan || 'OFF' }}
           make -j 4
           ctest -j 4 --output-on-failure          
