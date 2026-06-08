@@ -61,6 +61,7 @@ public:
         // Users can call set_pattern() to include additional context (e.g. thread id).
         base_sink<Mutex>::set_formatter_(
             details::make_unique<pattern_formatter>("%v", pattern_time_type::local, ""));
+        client_.set_keep_alive(true);
         if (config_.timeout_seconds > 0) {
             client_.set_connection_timeout(config_.timeout_seconds);
             client_.set_read_timeout(config_.timeout_seconds);
