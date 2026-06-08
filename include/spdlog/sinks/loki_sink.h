@@ -79,8 +79,11 @@ protected:
         base_sink<Mutex>::formatter_->format(msg, formatted);
         auto body = build_json_(msg, std::string(formatted.data(), formatted.size()));
         auto res = client_.Post("/loki/api/v1/push", body, "application/json");
-        if (!res || res->status != 204)
-            throw_spdlog_ex("loki_sink: " + (res ? res->reason : "connection failed"));
+        if (!res)
+            throw_spdlog_ex("loki_sink: connection failed");
+        if (res->status != 204)
+            throw_spdlog_ex("loki_sink: HTTP " + std::to_string(res->status) + " " + res->reason +
+                            (res->body.empty() ? "" : ": " + res->body));
     }
 
     void flush_() override {}
