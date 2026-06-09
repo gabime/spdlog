@@ -88,6 +88,10 @@ protected:
 
     void flush_() override {}
 
+    void set_pattern_(const std::string &pattern) override {
+        this->set_formatter_(details::make_unique<pattern_formatter>(pattern, pattern_time_type::local, ""));
+    }
+
 private:
     std::string build_json_(const details::log_msg &msg, const std::string &line) const {
         auto ns = std::chrono::duration_cast<std::chrono::nanoseconds>(
