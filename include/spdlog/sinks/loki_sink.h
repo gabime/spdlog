@@ -8,8 +8,8 @@
 // cpp-httplib (https://github.com/yhirose/cpp-httplib).
 // Docs: https://grafana.com/docs/loki/latest/api/#push-log-entries-to-loki
 //
-// The default pattern is "%v" (message text only) because timestamp and level are
-// already stored as Loki structured fields. Override with set_pattern() to include
+// The default pattern is "%v" (message text only) because Loki stores the timestamp separately and
+// (by default) the log level is sent as a "level" stream label. Override with set_pattern() to include
 // additional context in the log line (e.g. "%t %v" to prepend the thread id).
 //
 // For production use, prefer loki_logger_async_mt: sink_it_() makes a blocking
