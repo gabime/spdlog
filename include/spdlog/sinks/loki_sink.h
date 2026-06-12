@@ -15,8 +15,9 @@
 // For production use, prefer loki_logger_async_mt: sink_it_() makes a blocking
 // HTTP call and should not run on the caller's thread.
 //
-// TODO: batching multiple log entries per HTTP request for high-throughput use cases.
-// TODO: TLS support and Authorization header for Grafana Cloud / auth-protected setups.
+// Limitations:
+// - Sends one log entry per HTTP request (no batching).
+// - No TLS/auth header support (e.g. Grafana Cloud / auth-protected setups).
 
 #include <spdlog/async.h>
 #include <spdlog/common.h>
