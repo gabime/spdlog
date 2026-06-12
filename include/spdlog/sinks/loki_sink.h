@@ -6,7 +6,7 @@
 // Grafana Loki sink - sends log messages to Loki via the HTTP push API.
 // Requires nlohmann/json (https://github.com/nlohmann/json) and
 // cpp-httplib (https://github.com/yhirose/cpp-httplib).
-// Docs: https://grafana.com/docs/loki/latest/api/#push-log-entries-to-loki
+// Docs: https://grafana.com/docs/loki/latest/reference/loki-http-api/#ingest-logs
 //
 // The default pattern is "%v" (message text only) because Loki stores the timestamp separately and
 // (by default) the log level is sent as a "level" stream label. Override with set_pattern() to include
