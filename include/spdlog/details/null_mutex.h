@@ -12,8 +12,18 @@
 SPDLOG_NAMESPACE_BEGIN
 namespace details {
 struct null_mutex {
+    null_mutex() noexcept {}
+    ~null_mutex() {}
+
+    null_mutex(const null_mutex&) = delete;
+    null_mutex(null_mutex&&) = delete;
+
+    null_mutex& operator=(const null_mutex&) = delete;
+    null_mutex& operator=(null_mutex&&) = delete;
+
     void lock() const {}
     void unlock() const {}
+    bool try_lock() const noexcept { return true; }
 };
 
 struct null_atomic_int {
