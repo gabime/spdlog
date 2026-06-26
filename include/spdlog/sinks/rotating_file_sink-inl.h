@@ -123,7 +123,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &m
         }
     }
     file_helper_.write(formatted);
-    current_size_ = new_size;
+    current_size_ = file_helper_.size();
 }
 
 template <typename Mutex>
