@@ -511,8 +511,10 @@ SPDLOG_INLINE bool create_dir(const filename_t &path) {
 #endif
 
         if (!subdir.empty() && !path_exists(subdir) && !mkdir_(subdir)) {
-            return false;  // return error if failed creating dir
-        }
+                if (errno != EEXIST) {
+                        return false;  // return error if failed creating dir
+                }
+    }
         search_offset = token_pos + 1;
     } while (search_offset < path.size());
 
