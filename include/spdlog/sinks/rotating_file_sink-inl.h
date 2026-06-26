@@ -117,6 +117,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &m
         file_helper_.flush();
         if (file_helper_.size() > 0) {
             rotate_();
+            current_size_ = file_helper_.size();
             new_size = formatted.size();
         }
     }
