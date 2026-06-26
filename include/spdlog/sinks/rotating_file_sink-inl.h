@@ -115,10 +115,11 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &m
     // we only check the real size when new_size > max_size_ because it is relatively expensive.
     if (new_size > max_size_) {
         file_helper_.flush();
-        if (file_helper_.size() > 0) {
+
+        auto size = file_helper_.size();
+        if (size > 0) {
             rotate_();
-            current_size_ = file_helper_.size();
-            new_size = formatted.size();
+            current_size_ = size;
         }
     }
     file_helper_.write(formatted);
