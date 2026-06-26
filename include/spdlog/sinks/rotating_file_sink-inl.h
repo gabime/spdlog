@@ -109,15 +109,15 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &m
     memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);
 
-    auto msg_size = formatted.size();
+    const auto msg_size = formatted.size();
 
-    // get ACTUAL current file size
+    // REAL size before writing
     auto size = file_helper_.size();
 
     if (size + msg_size > max_size_) {
         file_helper_.flush();
-        size = file_helper_.size();
 
+        size = file_helper_.size();
         if (size > 0) {
             rotate_();
             size = 0;
@@ -125,6 +125,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &m
     }
 
     file_helper_.write(formatted);
+
     current_size_ = file_helper_.size();
 }
 
