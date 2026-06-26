@@ -162,7 +162,10 @@ SPDLOG_INLINE int remove(const filename_t &filename) SPDLOG_NOEXCEPT {
 }
 
 SPDLOG_INLINE int remove_if_exists(const filename_t &filename) SPDLOG_NOEXCEPT {
-    return path_exists(filename) ? remove(filename) : 0;
+    if (remove(filename) == 0)
+        return 0;
+
+    return (errno == ENOENT) ? 0 : -1;
 }
 
 SPDLOG_INLINE int rename(const filename_t &filename1, const filename_t &filename2) SPDLOG_NOEXCEPT {
