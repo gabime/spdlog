@@ -132,9 +132,9 @@ private:
         auto now = log_clock::now();
         while (filenames.size() < max_files_) {
             const auto new_filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
-            if (!path_exists(new_filename)) {
-                break;
-            }
+            if (filenames.empty() && !path_exists(new_filename)) {
+    break;
+}
             filenames.emplace_back(new_filename);
             now -= std::chrono::hours(24);
         }
