@@ -90,7 +90,7 @@ public:
         socklen_t tolen = sizeof(struct sockaddr);
         if (::sendto(socket_, data, static_cast<int>(n_bytes), 0, (struct sockaddr *)&addr_,
                      tolen) == -1) {
-            throw_spdlog_ex("sendto(2) failed", errno);
+            throw_winsock_error_("sendto(2) failed", ::WSAGetLastError());
         }
     }
 };
