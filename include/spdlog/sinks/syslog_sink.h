@@ -11,7 +11,7 @@
 #include <mutex>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /**
  * Sink that write to syslog using the `syscall()` library call.
@@ -81,4 +81,4 @@ using syslog_sink_mt = syslog_sink<std::mutex>;
 using syslog_sink_st = syslog_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

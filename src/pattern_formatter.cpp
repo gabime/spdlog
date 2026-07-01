@@ -18,7 +18,7 @@
 #include "spdlog/details/os.h"
 #include "spdlog/formatter.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 ///////////////////////////////////////////////////////////////////////
@@ -1222,4 +1222,4 @@ void pattern_formatter::compile_pattern_(const std::string &pattern) {
         formatters_.push_back(std::move(user_chars));
     }
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

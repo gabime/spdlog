@@ -6,7 +6,7 @@
 #include "../details/log_msg.h"
 #include "../formatter.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 class SPDLOG_API sink {
 public:
@@ -14,7 +14,7 @@ public:
     virtual void log(const details::log_msg &msg) = 0;
     virtual void flush() = 0;
     virtual void set_pattern(const std::string &pattern) = 0;
-    virtual void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) = 0;
+    virtual void set_formatter(std::unique_ptr<formatter> sink_formatter) = 0;
 
     void set_level(level level) { level_.store(level, std::memory_order_relaxed); }
     level log_level() const { return level_.load(std::memory_order_relaxed); }
@@ -26,4 +26,4 @@ protected:
 };
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

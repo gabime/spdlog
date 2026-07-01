@@ -23,7 +23,7 @@
 #include <cstring>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 class udp_client_unix {
@@ -78,4 +78,4 @@ public:
     }
 };
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -33,10 +33,10 @@
 #include <direct.h>  // for _mkdir/_wmkdir
 
 // clang-format on
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace os {
-spdlog::log_clock::time_point now() noexcept { return log_clock::now(); }
+log_clock::time_point now() noexcept { return log_clock::now(); }
 
 std::tm localtime(const std::time_t &time_tt) noexcept {
     std::tm tm;
@@ -253,4 +253,4 @@ bool fwrite_bytes(const void *ptr, const size_t n_bytes, FILE *fp) {
 }
 }  // namespace os
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

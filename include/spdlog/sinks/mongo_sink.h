@@ -23,7 +23,7 @@
 #include "../details/null_mutex.h"
 #include "./base_sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename Mutex>
 class mongo_sink : public base_sink<Mutex> {
@@ -80,4 +80,4 @@ using mongo_sink_mt = mongo_sink<std::mutex>;
 using mongo_sink_st = mongo_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

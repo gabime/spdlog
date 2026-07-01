@@ -7,7 +7,7 @@
 
 #include "spdlog/common.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 template <typename Mutex>
@@ -40,9 +40,9 @@ void basic_file_sink<Mutex>::flush_() {
 }
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 // template instantiations
 #include "spdlog/details/null_mutex.h"
-template class SPDLOG_API spdlog::sinks::basic_file_sink<std::mutex>;
-template class SPDLOG_API spdlog::sinks::basic_file_sink<spdlog::details::null_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::basic_file_sink<std::mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::basic_file_sink<SPDLOG_NAMESPACE::details::null_mutex>;

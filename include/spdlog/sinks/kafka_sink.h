@@ -20,7 +20,7 @@
 // kafka header
 #include <librdkafka/rdkafkacpp.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 struct kafka_sink_config {
@@ -84,7 +84,7 @@ private:
 };
 
 using kafka_sink_mt = kafka_sink<std::mutex>;
-using kafka_sink_st = kafka_sink<spdlog::details::null_mutex>;
+using kafka_sink_st = kafka_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

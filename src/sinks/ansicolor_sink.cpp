@@ -8,7 +8,7 @@
 #include "spdlog/details/os.h"
 #include "spdlog/pattern_formatter.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 template <typename Mutex>
@@ -112,13 +112,13 @@ ansicolor_stderr_sink<Mutex>::ansicolor_stderr_sink(color_mode mode)
     : ansicolor_sink<Mutex>(stderr, mode) {}
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 // template instantiations
 #include "spdlog/details/null_mutex.h"
-template class SPDLOG_API spdlog::sinks::ansicolor_sink<std::mutex>;
-template class SPDLOG_API spdlog::sinks::ansicolor_sink<spdlog::details::null_mutex>;
-template class SPDLOG_API spdlog::sinks::ansicolor_stdout_sink<std::mutex>;
-template class SPDLOG_API spdlog::sinks::ansicolor_stdout_sink<spdlog::details::null_mutex>;
-template class SPDLOG_API spdlog::sinks::ansicolor_stderr_sink<std::mutex>;
-template class SPDLOG_API spdlog::sinks::ansicolor_stderr_sink<spdlog::details::null_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_sink<std::mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_sink<SPDLOG_NAMESPACE::details::null_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stdout_sink<std::mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stdout_sink<SPDLOG_NAMESPACE::details::null_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stderr_sink<std::mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stderr_sink<SPDLOG_NAMESPACE::details::null_mutex>;

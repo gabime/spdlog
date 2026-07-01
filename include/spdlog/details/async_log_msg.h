@@ -7,7 +7,7 @@
 
 #include "./log_msg.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 // Extend log_msg with internal buffer to store its payload.
@@ -32,4 +32,4 @@ private:
 };
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

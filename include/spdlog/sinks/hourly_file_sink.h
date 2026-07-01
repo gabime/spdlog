@@ -16,7 +16,7 @@
 #include "../details/os.h"
 #include "./base_sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /*
@@ -118,7 +118,7 @@ private:
 
     tm now_tm(log_clock::time_point tp) {
         time_t tnow = log_clock::to_time_t(tp);
-        return spdlog::details::os::localtime(tnow);
+        return details::os::localtime(tnow);
     }
 
     log_clock::time_point next_rotation_tp_() {
@@ -165,4 +165,4 @@ using hourly_file_sink_mt = hourly_file_sink<std::mutex>;
 using hourly_file_sink_st = hourly_file_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

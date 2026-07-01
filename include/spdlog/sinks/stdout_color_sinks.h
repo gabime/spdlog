@@ -9,7 +9,7 @@
     #include "./ansicolor_sink.h"
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 #ifdef _WIN32
 using stdout_color_sink_mt = wincolor_stdout_sink_mt;
@@ -24,4 +24,4 @@ using stderr_color_sink_st = ansicolor_stderr_sink_st;
 #endif
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

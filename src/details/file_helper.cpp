@@ -11,7 +11,7 @@
 #include "spdlog/common.h"
 #include "spdlog/details/os.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 file_helper::file_helper(file_event_handlers event_handlers)
@@ -111,4 +111,4 @@ size_t file_helper::size() const {
 const filename_t &file_helper::filename() const { return filename_; }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

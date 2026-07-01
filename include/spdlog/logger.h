@@ -20,7 +20,7 @@
 #include "details/log_msg.h"
 #include "sinks/sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 class SPDLOG_API logger {
 public:
@@ -207,4 +207,4 @@ private:
     void flush_() noexcept;
 };
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

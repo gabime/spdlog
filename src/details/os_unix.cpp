@@ -43,11 +43,11 @@
 #endif
 
 // clang-format on
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace os {
 
-spdlog::log_clock::time_point now() noexcept {
+log_clock::time_point now() noexcept {
 #if defined __linux__ && defined SPDLOG_CLOCK_COARSE
     timespec ts;
     ::clock_gettime(CLOCK_REALTIME_COARSE, &ts);
@@ -293,4 +293,4 @@ bool fwrite_bytes(const void *ptr, const size_t n_bytes, FILE *fp) {
 
 }  // namespace os
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

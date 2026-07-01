@@ -10,7 +10,7 @@
 #include "../details/null_mutex.h"
 #include "./base_sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /*
  * Trivial file sink with single file as target
@@ -34,4 +34,4 @@ using basic_file_sink_mt = basic_file_sink<std::mutex>;
 using basic_file_sink_st = basic_file_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

@@ -5,7 +5,7 @@
 
 #include "spdlog/details/os.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 err_helper::err_helper(const err_helper &other) {
@@ -65,4 +65,4 @@ void err_helper::set_err_handler(err_handler handler) {
 }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

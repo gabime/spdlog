@@ -13,7 +13,7 @@
 #endif
 #include <systemd/sd-journal.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /**
@@ -91,4 +91,4 @@ using systemd_sink_mt = systemd_sink<std::mutex>;
 using systemd_sink_st = systemd_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

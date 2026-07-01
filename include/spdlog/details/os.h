@@ -9,11 +9,11 @@
 #include "../common.h"
 #include "../filename_t.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace os {
 
-SPDLOG_API spdlog::log_clock::time_point now() noexcept;
+SPDLOG_API log_clock::time_point now() noexcept;
 
 SPDLOG_API std::tm localtime(const std::time_t &time_tt) noexcept;
 
@@ -125,4 +125,4 @@ SPDLOG_API std::string filename_to_str(const filename_t &filename);
 
 }  // namespace os
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

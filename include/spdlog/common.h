@@ -14,6 +14,7 @@
 #include <string>
 #include <string_view>
 
+#include "./namespace.h"
 #include "./source_loc.h"
 #include "fmt/base.h"
 #include "fmt/xchar.h"
@@ -41,7 +42,7 @@
     #define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 class formatter;
 
@@ -96,15 +97,15 @@ constexpr std::array<std::string_view, levels_count> level_string_views{"trace",
                                                                         "error", "critical", "off"};
 constexpr std::array<std::string_view, levels_count> short_level_names{"T", "D", "I", "W", "E", "C", "O"};
 
-[[nodiscard]] constexpr std::string_view to_string_view(spdlog::level lvl) noexcept {
+[[nodiscard]] constexpr std::string_view to_string_view(level lvl) noexcept {
     return level_string_views.at(level_to_number(lvl));
 }
 
-[[nodiscard]] constexpr std::string_view to_short_string_view(spdlog::level lvl) noexcept {
+[[nodiscard]] constexpr std::string_view to_short_string_view(level lvl) noexcept {
     return short_level_names.at(level_to_number(lvl));
 }
 
-[[nodiscard]] SPDLOG_API spdlog::level level_from_str(const std::string &name) noexcept;
+[[nodiscard]] SPDLOG_API level level_from_str(const std::string &name) noexcept;
 
 //
 // Color mode used by sinks with color support.
@@ -138,4 +139,4 @@ private:
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
 [[noreturn]] SPDLOG_API void throw_spdlog_ex(std::string msg);
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

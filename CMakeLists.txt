@@ -127,6 +127,7 @@ set(SPDLOG_HEADERS
         "include/spdlog/formatter.h"
         "include/spdlog/fwd.h"
         "include/spdlog/logger.h"
+        "include/spdlog/namespace.h"
         "include/spdlog/pattern_formatter.h"
         "include/spdlog/source_loc.h"
         "include/spdlog/spdlog.h"

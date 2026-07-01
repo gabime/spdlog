@@ -25,7 +25,7 @@
 #include "../common.h"
 #include "./os.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 class tcp_client_unix {
     int socket_ = -1;
@@ -198,4 +198,4 @@ public:
     }
 };
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

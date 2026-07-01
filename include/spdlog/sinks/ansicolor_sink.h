@@ -10,7 +10,7 @@
 #include "../details/null_mutex.h"
 #include "./base_sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /**
@@ -102,4 +102,4 @@ using ansicolor_stderr_sink_mt = ansicolor_stderr_sink<std::mutex>;
 using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

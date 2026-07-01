@@ -11,7 +11,7 @@
 #include "spdlog/common.h"
 
 // by default, prints the error to stderr, at max rate of 1/sec thread safe
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 class SPDLOG_API err_helper {
     err_handler custom_err_handler_;
@@ -28,4 +28,4 @@ public:
     void set_err_handler(err_handler handler);
 };
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

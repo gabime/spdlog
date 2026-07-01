@@ -13,7 +13,7 @@
 #include "../details/null_mutex.h"
 #include "./base_sink.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /*
  * Windows color console sink. Uses WriteConsoleA to write to the console with
@@ -70,4 +70,4 @@ using wincolor_stderr_sink_mt = wincolor_stderr_sink<std::mutex>;
 using wincolor_stderr_sink_st = wincolor_stderr_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

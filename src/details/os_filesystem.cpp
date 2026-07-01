@@ -7,7 +7,7 @@
 #include "spdlog/common.h"
 #include "spdlog/details/os.h"
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace os {
 
@@ -61,4 +61,4 @@ std::tuple<filename_t, filename_t> split_by_extension(const filename_t &fname) {
 }
 }  // namespace os
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

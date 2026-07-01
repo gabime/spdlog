@@ -23,7 +23,7 @@
 // If more complicated behaviour is needed (i.e get responses), you can inherit it and override the
 // sink_it_ method.
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 struct tcp_sink_config {
@@ -38,7 +38,7 @@ struct tcp_sink_config {
 };
 
 template <typename Mutex>
-class tcp_sink final : public spdlog::sinks::base_sink<Mutex> {
+class tcp_sink final : public base_sink<Mutex> {
 public:
     // connect to tcp host/port or throw if failed
     // host can be hostname or ip address
@@ -65,9 +65,9 @@ public:
     ~tcp_sink() override = default;
 
 protected:
-    void sink_it_(const spdlog::details::log_msg &msg) override {
-        spdlog::memory_buf_t formatted;
-        spdlog::sinks::base_sink<Mutex>::formatter_->format(msg, formatted);
+    void sink_it_(const details::log_msg &msg) override {
+        memory_buf_t formatted;
+        base_sink<Mutex>::formatter_->format(msg, formatted);
         if (!client_.is_connected()) {
             client_.connect(config_.server_host, config_.server_port, config_.timeout_ms);
         }
@@ -83,4 +83,4 @@ using tcp_sink_mt = tcp_sink<std::mutex>;
 using tcp_sink_st = tcp_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

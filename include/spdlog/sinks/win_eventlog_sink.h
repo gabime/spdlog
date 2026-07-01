@@ -44,7 +44,7 @@ Windows Registry Editor Version 5.00
 #include <vector>
 // clang-format on
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 namespace win_eventlog {
@@ -159,7 +159,7 @@ struct eventlog {
             case level::info:
                 return EVENTLOG_INFORMATION_TYPE;
 
-            case spdlog::level::warn:
+            case level::warn:
                 return EVENTLOG_WARNING_TYPE;
 
             case level::err:
@@ -243,4 +243,4 @@ using win_eventlog_sink_mt = win_eventlog::win_eventlog_sink<std::mutex>;
 using win_eventlog_sink_st = win_eventlog::win_eventlog_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
