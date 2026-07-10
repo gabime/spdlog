@@ -50,3 +50,29 @@ TEST_CASE("ringbuffer retrieval limit", "[ringbuffer]") {
     REQUIRE(formatted[0] == spdlog::fmt_lib::format("B{}", default_eol));
     REQUIRE(formatted[1] == spdlog::fmt_lib::format("C{}", default_eol));
 }
+
+// Regression test for #3195: source_loc filename/funcname must be buffered by
+// log_msg_buffer, otherwise they dangle once the caller's strings are gone.
+TEST_CASE("ringbuffer buffers source_loc strings", "[ringbuffer]") {
+    spdlog::sinks::ringbuffer_sink_st sink(2);
+    sink.set_pattern("%g:%# %! %v");
+
+    {
+        // filename/funcname from scoped strings that are destroyed before retrieval
+        std::string filename = std::string("dynamic_") + "source.cpp";
+        std::string funcname = std::string("dynamic_") + "function";
+        spdlog::source_loc loc{filename.c_str(), 123, funcname.c_str()};
+        sink.log(spdlog::details::log_msg{loc, "test", spdlog::level::info, "payload"});
+    }
+
+    // overwrite the freed stack memory
+    volatile char scratch[256];
+    for (size_t i = 0; i < sizeof(scratch); ++i) scratch[i] = static_cast<char>(i);
+
+    auto formatted = sink.last_formatted();
+    REQUIRE(formatted.size() == 1);
+    using spdlog::details::os::default_eol;
+    REQUIRE(formatted[0] ==
+            spdlog::fmt_lib::format("dynamic_source.cpp:123 dynamic_function payload{}",
+                                    default_eol));
+}
