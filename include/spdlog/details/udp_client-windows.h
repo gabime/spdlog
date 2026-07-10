@@ -32,7 +32,7 @@ class udp_client {
         WSADATA wsaData;
         auto rv = ::WSAStartup(MAKEWORD(2, 2), &wsaData);
         if (rv != 0) {
-            throw_winsock_error_("WSAStartup failed", ::WSAGetLastError());
+            throw_winsock_error_("WSAStartup failed", rv);
         }
     }
 
