@@ -397,7 +397,7 @@ if(SPDLOG_INSTALL)
 
     # Header-only pkg-config file: no libspdlog to link and no SPDLOG_COMPILED_LIB,
     # so header-only consumers get the correct flags.
-    set(pkg_config_header_only "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_header_only.pc")
+    set(pkg_config_header_only "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_header_only.pc")
     get_target_property(PKG_CONFIG_HO_DEFINES spdlog_header_only INTERFACE_COMPILE_DEFINITIONS)
     if(PKG_CONFIG_HO_DEFINES)
         string(REPLACE ";" " -D" PKG_CONFIG_HO_DEFINES "${PKG_CONFIG_HO_DEFINES}")
