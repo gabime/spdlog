@@ -24,10 +24,10 @@ SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /*
- * Generator of daily log file names in format basename.YYYY-MM-DD.ext
+ * Generator of daily log file names in format basename_YYYY-MM-DD.ext
  */
 struct daily_filename_calculator {
-    // Create filename for the form basename.YYYY-MM-DD
+    // Create filename of the form basename_YYYY-MM-DD.ext
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm) {
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
