@@ -111,7 +111,8 @@ inline void fwrite_all(const void* ptr, size_t count, FILE* stream) {
 
 template <typename Char>
 FMT_FUNC auto thousands_sep_impl(locale_ref loc) -> thousands_sep_result<Char> {
-  auto&& facet = use_facet<numpunct<Char>>(loc.get<locale>());
+  auto loc_copy = loc.get<locale>();
+  auto&& facet = use_facet<numpunct<Char>>(loc_copy);
   auto grouping = facet.grouping();
   auto thousands_sep = grouping.empty() ? Char() : facet.thousands_sep();
   return {std::move(grouping), thousands_sep};
