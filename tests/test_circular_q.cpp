@@ -48,3 +48,18 @@ TEST_CASE("test_empty", "[circular_q]") {
     q.push_back(1);
     REQUIRE(q.empty());
 }
+
+TEST_CASE("test_push_back_overwrite", "[circular_q]") {
+    const size_t q_size = 3;
+    q_type q(q_size);
+
+    for (size_t i = 0; i < q_size + 2; i++) {
+        q.push_back_overwrite([i](size_t &dest) { dest = i; });
+    }
+
+    REQUIRE(q.size() == q_size);
+    REQUIRE(q.overrun_counter() == 2);
+    REQUIRE(q.at(0) == 2);
+    REQUIRE(q.at(1) == 3);
+    REQUIRE(q.at(2) == 4);
+}
