@@ -65,21 +65,6 @@ TEST_CASE("simple_file_logger", "[truncate]") {
     REQUIRE(count_lines(SIMPLE_LOG) == 1);
 }
 
-TEST_CASE("simple_file_logger", "[size]") {
-    prepare_logdir();
-    spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
-
-    auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename);
-    auto logger = std::make_shared<spdlog::logger>("simple_file_logger", sink);
-    logger->set_pattern("%v");
-
-    REQUIRE(sink->size() == 0);
-    logger->info("Test message {}", 1);
-    logger->flush();
-    REQUIRE(sink->size() == get_filesize(SIMPLE_LOG));
-    REQUIRE(sink->size() > 0);
-}
-
 TEST_CASE("rotating_file_logger1", "[rotating_logger]") {
     prepare_logdir();
     size_t max_size = 1024 * 10;

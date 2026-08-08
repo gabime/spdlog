@@ -24,7 +24,6 @@ public:
                              const file_event_handlers &event_handlers = {});
     const filename_t &filename() const;
     void truncate();
-    size_t size();
 
 protected:
     void sink_it_(const details::log_msg &msg) override;
