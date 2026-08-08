@@ -36,6 +36,10 @@ SPDLOG_INLINE log_msg_buffer::log_msg_buffer(log_msg_buffer &&other) SPDLOG_NOEX
 }
 
 SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(const log_msg &other) {
+    if (static_cast<const log_msg *>(this) == &other) {
+        return *this;
+    }
+
     log_msg::operator=(other);
     buffer.clear();
 
