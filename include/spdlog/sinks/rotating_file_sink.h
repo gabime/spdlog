@@ -33,6 +33,7 @@ public:
     std::size_t get_max_size();
     void set_max_files(std::size_t max_files);
     std::size_t get_max_files();
+    std::size_t get_current_size();
 
 protected:
     void sink_it_(const details::log_msg &msg) override;
