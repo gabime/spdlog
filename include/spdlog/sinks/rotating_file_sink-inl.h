@@ -105,6 +105,12 @@ std::size_t rotating_file_sink<Mutex>::get_max_files() {
 }
 
 template <typename Mutex>
+std::size_t rotating_file_sink<Mutex>::get_current_size() {
+    std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+    return current_size_;
+}
+
+template <typename Mutex>
 SPDLOG_INLINE void rotating_file_sink<Mutex>::sink_it_(const details::log_msg &msg) {
     memory_buf_t formatted;
     base_sink<Mutex>::formatter_->format(msg, formatted);
@@ -163,6 +169,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_() {
         }
     }
     file_helper_.reopen(true);
+    current_size_ = 0;
 }
 
 // delete the target if exists, and rename the src file  to target

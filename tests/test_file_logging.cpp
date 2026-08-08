@@ -65,6 +65,21 @@ TEST_CASE("simple_file_logger", "[truncate]") {
     REQUIRE(count_lines(SIMPLE_LOG) == 1);
 }
 
+TEST_CASE("simple_file_logger", "[size]") {
+    prepare_logdir();
+    spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
+
+    auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(filename);
+    auto logger = std::make_shared<spdlog::logger>("simple_file_logger", sink);
+    logger->set_pattern("%v");
+
+    REQUIRE(sink->size() == 0);
+    logger->info("Test message {}", 1);
+    logger->flush();
+    REQUIRE(sink->size() == get_filesize(SIMPLE_LOG));
+    REQUIRE(sink->size() > 0);
+}
+
 TEST_CASE("rotating_file_logger1", "[rotating_logger]") {
     prepare_logdir();
     size_t max_size = 1024 * 10;
@@ -108,6 +123,24 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]") {
     logger->flush();
     REQUIRE(get_filesize(ROTATING_LOG) <= max_size);
     REQUIRE(get_filesize(ROTATING_LOG ".1") <= max_size);
+}
+
+// test that get_current_size() tracks the file size, including across rotations
+TEST_CASE("rotating_file_logger_get_current_size", "[rotating_logger]") {
+    prepare_logdir();
+    size_t max_size = 1024 * 10;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+    auto sink = std::make_shared<spdlog::sinks::rotating_file_sink_st>(basename, max_size, 2);
+    auto logger = std::make_shared<spdlog::logger>("rotating_sink_logger", sink);
+
+    REQUIRE(sink->get_current_size() == 0);
+    logger->info("Test message");
+    logger->flush();
+    REQUIRE(sink->get_current_size() == get_filesize(ROTATING_LOG));
+    REQUIRE(sink->get_current_size() > 0);
+
+    sink->rotate_now();
+    REQUIRE(sink->get_current_size() == 0);
 }
 
 // test that passing max_size=0 throws
