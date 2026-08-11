@@ -465,6 +465,21 @@ TEST_CASE("full filename formatter", "[pattern_formatter]") {
     REQUIRE(to_string_view(formatted) == test_path);
 }
 
+TEST_CASE("source location truncate from start", "[pattern_formatter]") {
+    spdlog::sinks::test_sink_st test_sink;
+    const char *pattern = "%20!@";
+    auto formatter = std::unique_ptr<spdlog::formatter>(new spdlog::pattern_formatter(pattern));
+    test_sink.set_formatter(std::move(formatter));
+
+    spdlog::details::log_msg msg{
+        spdlog::source_loc{"/very/long/path/to/myfile.cpp", 42, "func"},
+        "test_logger",
+        spdlog::level::info,
+        "message"};
+    test_sink.log(msg);
+    REQUIRE(test_sink.lines()[0] == "ath/to/myfile.cpp:42\n");
+}
+
 TEST_CASE("custom flags", "[pattern_formatter]") {
     auto formatter = std::make_shared<spdlog::pattern_formatter>();
     formatter->add_flag<custom_test_flag>('t', "custom1")
