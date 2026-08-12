@@ -477,7 +477,7 @@ TEST_CASE("source location truncate from start", "[pattern_formatter]") {
         spdlog::level::info,
         "message"};
     test_sink.log(msg);
-    REQUIRE(test_sink.lines()[0] == "ath/to/myfile.cpp:42\n");
+    REQUIRE(test_sink.lines()[0] == "ath/to/myfile.cpp:42");
 }
 
 TEST_CASE("custom flags", "[pattern_formatter]") {
