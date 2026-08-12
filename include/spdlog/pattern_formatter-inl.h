@@ -72,9 +72,12 @@ public:
             long excess = -remaining_pad_;
             if (padinfo_.truncate_from_start_) {
                 if (excess >= static_cast<long>(dest_.size())) {
-                    dest_.clear();
+                    dest_.resize(0);
                 } else {
-                    dest_.erase(dest_.begin(), dest_.begin() + static_cast<size_t>(excess));
+                    const auto erase_count = static_cast<size_t>(excess);
+                    const auto new_size = dest_.size() - erase_count;
+                    std::memmove(dest_.data(), dest_.data() + erase_count, new_size);
+                    dest_.resize(new_size);
                 }
             } else {
                 long new_size = static_cast<long>(dest_.size()) + remaining_pad_;
