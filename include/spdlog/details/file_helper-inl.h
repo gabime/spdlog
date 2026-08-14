@@ -14,6 +14,7 @@
 #include <cstdio>
 #include <string>
 #include <tuple>
+#include <vector>
 
 SPDLOG_NAMESPACE_BEGIN
 namespace details {
@@ -48,6 +49,7 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate) {
             std::fclose(tmp);
         }
         if (!os::fopen_s(&fd_, fname, mode)) {
+            apply_buffer_();
             if (event_handlers_.after_open) {
                 event_handlers_.after_open(filename_, fd_);
             }
@@ -59,6 +61,37 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate) {
 
     throw_spdlog_ex("Failed opening file " + os::filename_to_str(filename_) + " for writing",
                     errno);
+}
+
+SPDLOG_INLINE void file_helper::set_buffer(std::size_t size) {
+    if (size == 0) {
+        if (fd_ != nullptr) {
+            if (std::setvbuf(fd_, nullptr, _IOFBF, BUFSIZ) != 0) {
+                throw_spdlog_ex("Failed setvbuf on file " + os::filename_to_str(filename_), errno);
+            }
+        }
+        buffer_.clear();
+        return;
+    }
+
+    // Detach any previous user buffer before resizing (avoids dangling FILE* buffer ptr).
+    if (fd_ != nullptr && !buffer_.empty()) {
+        if (std::setvbuf(fd_, nullptr, _IOFBF, BUFSIZ) != 0) {
+            throw_spdlog_ex("Failed setvbuf on file " + os::filename_to_str(filename_), errno);
+        }
+    }
+
+    buffer_.resize(size);
+    apply_buffer_();
+}
+
+SPDLOG_INLINE void file_helper::apply_buffer_() {
+    if (fd_ == nullptr || buffer_.empty()) {
+        return;
+    }
+    if (std::setvbuf(fd_, buffer_.data(), _IOFBF, buffer_.size()) != 0) {
+        throw_spdlog_ex("Failed setvbuf on file " + os::filename_to_str(filename_), errno);
+    }
 }
 
 SPDLOG_INLINE void file_helper::reopen(bool truncate) {
