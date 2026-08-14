@@ -21,9 +21,11 @@ class basic_file_sink final : public base_sink<Mutex> {
 public:
     explicit basic_file_sink(const filename_t &filename,
                              bool truncate = false,
-                             const file_event_handlers &event_handlers = {});
+                             const file_event_handlers &event_handlers = {},
+                             std::size_t buffer_size = 0);
     const filename_t &filename() const;
     void truncate();
+    void set_buffer(std::size_t size);
 
 protected:
     void sink_it_(const details::log_msg &msg) override;
@@ -45,18 +47,20 @@ template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> basic_logger_mt(const std::string &logger_name,
                                                const filename_t &filename,
                                                bool truncate = false,
-                                               const file_event_handlers &event_handlers = {}) {
+                                               const file_event_handlers &event_handlers = {},
+                                               std::size_t buffer_size = 0) {
     return Factory::template create<sinks::basic_file_sink_mt>(logger_name, filename, truncate,
-                                                               event_handlers);
+                                                               event_handlers, buffer_size);
 }
 
 template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> basic_logger_st(const std::string &logger_name,
                                                const filename_t &filename,
                                                bool truncate = false,
-                                               const file_event_handlers &event_handlers = {}) {
+                                               const file_event_handlers &event_handlers = {},
+                                               std::size_t buffer_size = 0) {
     return Factory::template create<sinks::basic_file_sink_st>(logger_name, filename, truncate,
-                                                               event_handlers);
+                                                               event_handlers, buffer_size);
 }
 
 SPDLOG_NAMESPACE_END
