@@ -28,7 +28,8 @@ SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
     std::size_t max_size,
     std::size_t max_files,
     bool rotate_on_open,
-    const file_event_handlers &event_handlers)
+    const file_event_handlers &event_handlers,
+    std::size_t buffer_size)
     : base_filename_(std::move(base_filename)),
       max_size_(max_size),
       max_files_(max_files),
@@ -39,6 +40,9 @@ SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
 
     if (max_files > MaxFiles) {
         throw_spdlog_ex("rotating sink constructor: max_files arg cannot exceed MaxFiles");
+    }
+    if (buffer_size > 0) {
+        file_helper_.set_buffer(buffer_size);
     }
     file_helper_.open(calc_filename(base_filename_, 0));
     current_size_ = file_helper_.size();  // expensive. called only once
@@ -107,6 +111,12 @@ template <typename Mutex>
 std::size_t rotating_file_sink<Mutex>::get_current_size() {
     std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
     return current_size_;
+}
+
+template <typename Mutex>
+SPDLOG_INLINE void rotating_file_sink<Mutex>::set_buffer(std::size_t size) {
+    std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+    file_helper_.set_buffer(size);
 }
 
 template <typename Mutex>
