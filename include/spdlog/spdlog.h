@@ -80,6 +80,9 @@ SPDLOG_API bool should_log(level::level_enum log_level);
 // Set a global flush level
 SPDLOG_API void flush_on(level::level_enum log_level);
 
+// Flush all registered loggers
+SPDLOG_API void flush_all();
+
 // Start/Restart a periodic flusher thread
 // Warning: Use only if all your loggers are thread safe!
 template <typename Rep, typename Period>
