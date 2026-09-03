@@ -71,3 +71,14 @@ function(spdlog_enable_thread_sanitizer target_name)
     target_compile_options(${target_name} PRIVATE -fno-omit-frame-pointer)
     target_link_libraries(${target_name} PRIVATE -fsanitize=thread)
 endfunction()
+
+# Show a status message during the first CMake run only, as repeating it during
+# the automatic reconfigurations of a parent project including us is just noise.
+# The key identifies the message and has to be unique, the text is shown again
+# if it changes, e.g. when the build type is different from the previous run.
+function(spdlog_message_once key text)
+    if(NOT "${text}" STREQUAL "$CACHE{SPDLOG_MESSAGE_${key}}")
+        set(SPDLOG_MESSAGE_${key} "${text}" CACHE INTERNAL "")
+        message(STATUS "${text}")
+    endif()
+endfunction()
