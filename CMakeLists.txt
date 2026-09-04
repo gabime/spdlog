@@ -95,6 +95,7 @@ option(SPDLOG_BUILD_WARNINGS "Enable compiler warnings" OFF)
 # install options
 option(SPDLOG_SYSTEM_INCLUDES "Include as system headers (skip for clang-tidy)." OFF)
 option(SPDLOG_INSTALL "Generate the install target" ${SPDLOG_MASTER_PROJECT})
+option(SPDLOG_GENERATE_TWEAKME_H "Generate tweakme.h from the CMake configuration" OFF)
 option(SPDLOG_USE_STD_FORMAT "Use std::format instead of fmt library." OFF)
 option(SPDLOG_FMT_EXTERNAL "Use external fmt library instead of bundled" OFF)
 option(SPDLOG_FMT_EXTERNAL_HO "Use external fmt header-only library instead of bundled" OFF)
@@ -143,6 +144,19 @@ option(
     OFF)
 option(SPDLOG_DISABLE_DEFAULT_LOGGER "Disable default logger creation" OFF)
 option(SPDLOG_FWRITE_UNLOCKED "Use the unlocked variant of fwrite. Leave this on unless your libc doesn't have it" ON)
+
+set(SPDLOG_WCHAR_TO_UTF8_SUPPORT ${SPDLOG_WCHAR_SUPPORT})
+set(SPDLOG_UTF8_TO_WCHAR_CONSOLE ${SPDLOG_WCHAR_CONSOLE})
+
+if(SPDLOG_GENERATE_TWEAKME_H)
+    if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
+        set(SPDLOG_TWEAKME_FMT_EXTERNAL_DEFINITION "#define SPDLOG_FMT_EXTERNAL")
+    else()
+        set(SPDLOG_TWEAKME_FMT_EXTERNAL_DEFINITION "/* #undef SPDLOG_FMT_EXTERNAL */")
+    endif()
+    file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/include/spdlog")
+    configure_file(cmake/tweakme.h.in "${CMAKE_CURRENT_BINARY_DIR}/include/spdlog/tweakme.h" @ONLY)
+endif()
 
 # clang-tidy
 option(SPDLOG_TIDY "run clang-tidy" OFF)
@@ -194,6 +208,10 @@ if(SPDLOG_SYSTEM_INCLUDES)
 endif()
 
 target_compile_definitions(spdlog PUBLIC SPDLOG_COMPILED_LIB)
+if(SPDLOG_GENERATE_TWEAKME_H)
+    target_include_directories(
+        spdlog ${SPDLOG_INCLUDES_LEVEL} BEFORE PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
+endif()
 target_include_directories(spdlog ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                                                   "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 target_link_libraries(spdlog PUBLIC Threads::Threads)
@@ -221,6 +239,11 @@ endif()
 add_library(spdlog_header_only INTERFACE)
 add_library(spdlog::spdlog_header_only ALIAS spdlog_header_only)
 
+if(SPDLOG_GENERATE_TWEAKME_H)
+    target_include_directories(
+        spdlog_header_only ${SPDLOG_INCLUDES_LEVEL} BEFORE INTERFACE
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
+endif()
 target_include_directories(
     spdlog_header_only ${SPDLOG_INCLUDES_LEVEL} INTERFACE "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
                                                           "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
@@ -275,8 +298,6 @@ endif()
 # ---------------------------------------------------------------------------------------
 # Misc definitions according to tweak options
 # ---------------------------------------------------------------------------------------
-set(SPDLOG_WCHAR_TO_UTF8_SUPPORT ${SPDLOG_WCHAR_SUPPORT})
-set(SPDLOG_UTF8_TO_WCHAR_CONSOLE ${SPDLOG_WCHAR_CONSOLE})
 foreach(
     SPDLOG_OPTION
     SPDLOG_WCHAR_TO_UTF8_SUPPORT
@@ -363,7 +384,14 @@ if(SPDLOG_INSTALL)
     # ---------------------------------------------------------------------------------------
     # Include files
     # ---------------------------------------------------------------------------------------
-    install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
+    if(SPDLOG_GENERATE_TWEAKME_H)
+        install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE
+                PATTERN "tweakme.h" EXCLUDE)
+        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/spdlog/tweakme.h"
+                DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/spdlog")
+    else()
+        install(DIRECTORY include/ DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}" PATTERN "fmt/bundled" EXCLUDE)
+    endif()
     install(
         TARGETS spdlog spdlog_header_only
         EXPORT spdlog
