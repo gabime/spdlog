@@ -29,6 +29,10 @@ jobs:
     name: "${{ matrix.config.compiler}} ${{ matrix.config.version }} (C++${{ matrix.config.cppstd }} ${{ matrix.config.build_type }} ${{ matrix.config.asan == 'ON' && 'ASAN' || '' }}${{ matrix.config.tsan == 'ON' && 'TSAN' || '' }})"
     steps:
       - uses: actions/checkout@v4
+      - name: Fix Bullseye mirrors
+        if: matrix.config.compiler == 'gcc' && matrix.config.version <= 11
+        run: |
+          sed -i '/debian-security/d' /etc/apt/sources.list
       - name: Setup
         run: |
           apt-get update
