@@ -45,7 +45,7 @@ TEST_CASE("flush_on", "[flush_on]") {
                                     default_eol, default_eol, default_eol));
 }
 
-TEST_CASE("simple_file_logger", "[truncate]") {
+TEST_CASE("simple_file_logger_truncate", "[truncate]") {
     prepare_logdir();
     const spdlog::filename_t filename = SPDLOG_FILENAME_T(SIMPLE_LOG);
     const bool truncate = true;

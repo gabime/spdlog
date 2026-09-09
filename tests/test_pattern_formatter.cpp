@@ -83,7 +83,6 @@ TEST_CASE("date MM/DD/YY ", "[pattern_formatter]") {
 
 // see test_timezone.cpp for actual UTC offset calculation tests
 TEST_CASE("UTC offset", "[pattern_formatter]") {
-    using namespace std::chrono_literals;
     const auto now = std::chrono::system_clock::now();
     std::string result =
         log_to_str_with_time(now, "Some message", "%z", spdlog::pattern_time_type::local, "\n");

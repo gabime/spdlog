@@ -13,17 +13,29 @@ if(PkgConfig_FOUND)
     pkg_check_modules(systemd libsystemd)
 endif()
 
-find_package(Catch2 3 QUIET)
-if(Catch2_FOUND)
-    message(STATUS "Packaged version of Catch will be used.")
-else()
-    message(STATUS "Bundled version of Catch will be downloaded and used.")
+if(CMAKE_CXX_STANDARD EQUAL 11)
+    # Catch2 v3 requires C++14 or later; use v2 for C++11 builds
+    message(STATUS "C++11 detected: downloading Catch2 v2 (C++11 compatible).")
     include(FetchContent)
     FetchContent_Declare(
         Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG 53d0d913a422d356b23dd927547febdf69ee9081 # v3.5.0
+        GIT_TAG v2.13.10
     )
     FetchContent_MakeAvailable(Catch2)
+    set(SPDLOG_CATCH2_V2 ON)
+else()
+    find_package(Catch2 3 QUIET)
+    if(Catch2_FOUND)
+        message(STATUS "Packaged version of Catch will be used.")
+    else()
+        message(STATUS "Bundled version of Catch will be downloaded and used.")
+        include(FetchContent)
+        FetchContent_Declare(
+            Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+            GIT_TAG 53d0d913a422d356b23dd927547febdf69ee9081 # v3.5.0
+        )
+        FetchContent_MakeAvailable(Catch2)
+    endif()
 endif()
 
 set(SPDLOG_UTESTS_SOURCES
@@ -76,7 +88,17 @@ function(spdlog_prepare_test test_target spdlog_lib)
     if(systemd_FOUND)
         target_link_libraries(${test_target} PRIVATE ${systemd_LIBRARIES})
     endif()
-    target_link_libraries(${test_target} PRIVATE Catch2::Catch2WithMain)
+    if(SPDLOG_CATCH2_V2)
+        target_link_libraries(${test_target} PRIVATE Catch2::Catch2)
+        target_compile_definitions(${test_target} PRIVATE SPDLOG_USE_CATCH2_V2)
+        # Catch2 v2 uses __COUNTER__ internally; Clang 22+ flags this as a C2y
+        # extension under -pedantic -Werror when building in C++11 mode.
+        target_compile_options(${test_target} PRIVATE
+            $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
+            -Wno-c2y-extensions>)
+    else()
+        target_link_libraries(${test_target} PRIVATE Catch2::Catch2WithMain)
+    endif()
     if(SPDLOG_SANITIZE_ADDRESS)
         spdlog_enable_addr_sanitizer(${test_target})
     elseif(SPDLOG_SANITIZE_THREAD)
