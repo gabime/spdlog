@@ -30,9 +30,15 @@ else()
     else()
         message(STATUS "Bundled version of Catch will be downloaded and used.")
         include(FetchContent)
+        if(MSVC)
+            # Catch2 3.14+ has issues on VS16+; pin to pre-upgrade version
+            set(_catch2_tag 53d0d913a422d356b23dd927547febdf69ee9081) # v3.5.0
+        else()
+            set(_catch2_tag v3.15.3)
+        endif()
         FetchContent_Declare(
             Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-            GIT_TAG 53d0d913a422d356b23dd927547febdf69ee9081 # v3.5.0
+            GIT_TAG ${_catch2_tag}
         )
         FetchContent_MakeAvailable(Catch2)
     endif()
