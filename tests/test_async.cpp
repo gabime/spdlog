@@ -195,6 +195,7 @@ TEST_CASE("to_file multi-workers", "[async]") {
     require_message_count(TEST_FILENAME, messages);
 }
 
+#ifndef SPDLOG_NO_EXCEPTIONS
 TEST_CASE("bad_tp", "[async]") {
     auto test_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
     std::shared_ptr<spdlog::details::thread_pool> const empty_tp;
@@ -202,3 +203,4 @@ TEST_CASE("bad_tp", "[async]") {
     logger->info("Please throw an exception");
     REQUIRE(test_sink->msg_counter() == 0);
 }
+#endif  // SPDLOG_NO_EXCEPTIONS
