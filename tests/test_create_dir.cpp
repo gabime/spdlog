@@ -48,6 +48,17 @@ TEST_CASE("create_invalid_dir", "[create_dir]") {
 #endif
 }
 
+TEST_CASE("path_exists", "[create_dir]") {
+    REQUIRE(path_exists(SPDLOG_FILENAME_T("")) == false);
+    REQUIRE(path_exists(SPDLOG_FILENAME_T("non_existing_path_xyz")) == false);
+    prepare_logdir();
+    REQUIRE(create_dir(SPDLOG_FILENAME_T("test_logs/dir1/dir2")) == true);
+    REQUIRE(path_exists(SPDLOG_FILENAME_T("test_logs/dir1/dir2")) == true);
+    REQUIRE(create_dir(SPDLOG_FILENAME_T("test_logs/dir1/dir2")) == true);  // already existing nested
+    REQUIRE(create_dir(SPDLOG_FILENAME_T("test_logs/dir1/dir3///")) == true);  // trailing separator
+    REQUIRE(path_exists(SPDLOG_FILENAME_T("test_logs/dir1/dir3")) == true);
+}
+
 TEST_CASE("dir_name", "[create_dir]") {
     using spdlog::details::os::dir_name;
     REQUIRE(dir_name(SPDLOG_FILENAME_T("")).empty());

@@ -120,7 +120,9 @@
     }
 #endif
 
-namespace spdlog {
+#include "./namespace.h"
+
+SPDLOG_NAMESPACE_BEGIN
 
 class formatter;
 
@@ -253,13 +255,13 @@ enum level_enum : int {
     n_levels
 };
 
-#define SPDLOG_LEVEL_NAME_TRACE spdlog::string_view_t("trace", 5)
-#define SPDLOG_LEVEL_NAME_DEBUG spdlog::string_view_t("debug", 5)
-#define SPDLOG_LEVEL_NAME_INFO spdlog::string_view_t("info", 4)
-#define SPDLOG_LEVEL_NAME_WARNING spdlog::string_view_t("warning", 7)
-#define SPDLOG_LEVEL_NAME_ERROR spdlog::string_view_t("error", 5)
-#define SPDLOG_LEVEL_NAME_CRITICAL spdlog::string_view_t("critical", 8)
-#define SPDLOG_LEVEL_NAME_OFF spdlog::string_view_t("off", 3)
+#define SPDLOG_LEVEL_NAME_TRACE SPDLOG_NAMESPACE::string_view_t("trace", 5)
+#define SPDLOG_LEVEL_NAME_DEBUG SPDLOG_NAMESPACE::string_view_t("debug", 5)
+#define SPDLOG_LEVEL_NAME_INFO SPDLOG_NAMESPACE::string_view_t("info", 4)
+#define SPDLOG_LEVEL_NAME_WARNING SPDLOG_NAMESPACE::string_view_t("warning", 7)
+#define SPDLOG_LEVEL_NAME_ERROR SPDLOG_NAMESPACE::string_view_t("error", 5)
+#define SPDLOG_LEVEL_NAME_CRITICAL SPDLOG_NAMESPACE::string_view_t("critical", 8)
+#define SPDLOG_LEVEL_NAME_OFF SPDLOG_NAMESPACE::string_view_t("off", 3)
 
 #if !defined(SPDLOG_LEVEL_NAMES)
 #define SPDLOG_LEVEL_NAMES                                                                  \
@@ -276,9 +278,9 @@ enum level_enum : int {
     { "T", "D", "I", "W", "E", "C", "O" }
 #endif
 
-SPDLOG_API const string_view_t &to_string_view(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API const char *to_short_c_str(spdlog::level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API spdlog::level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
+SPDLOG_API const string_view_t &to_string_view(level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_API const char *to_short_c_str(level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_API level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
 }  // namespace level
 
@@ -340,38 +342,6 @@ struct file_event_handlers {
 
 namespace details {
 
-// to_string_view
-
-SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(const memory_buf_t &buf)
-    SPDLOG_NOEXCEPT {
-    return spdlog::string_view_t{buf.data(), buf.size()};
-}
-
-SPDLOG_CONSTEXPR_FUNC spdlog::string_view_t to_string_view(spdlog::string_view_t str)
-    SPDLOG_NOEXCEPT {
-    return str;
-}
-
-#if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(const wmemory_buf_t &buf)
-    SPDLOG_NOEXCEPT {
-    return spdlog::wstring_view_t{buf.data(), buf.size()};
-}
-
-SPDLOG_CONSTEXPR_FUNC spdlog::wstring_view_t to_string_view(spdlog::wstring_view_t str)
-    SPDLOG_NOEXCEPT {
-    return str;
-}
-#endif
-
-#if defined(SPDLOG_USE_STD_FORMAT) && __cpp_lib_format >= 202207L
-template <typename T, typename... Args>
-SPDLOG_CONSTEXPR_FUNC std::basic_string_view<T> to_string_view(
-    std::basic_format_string<T, Args...> fmt) SPDLOG_NOEXCEPT {
-    return fmt.get();
-}
-#endif
-
 // make_unique support for pre c++14
 #if __cplusplus >= 201402L  // C++14 and beyond
 using std::enable_if_t;
@@ -399,7 +369,7 @@ constexpr T conditional_static_cast(U value) {
 }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "common-inl.h"

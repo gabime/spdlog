@@ -76,9 +76,56 @@ public:
 
 using spdlog::details::os::utc_minutes_offset;
 
+/*
+ * POSIX 2024 defines three formats for the TZ environment variable,
+ *
+ * 1. Implementation defined format which always starts with a colon:
+ *    ":characters".
+ * 2. A specifier which fully describes the timezone rule in format
+ *    "stdoffset[dst[offset][,start[/time],end[/time]]]". Note the
+ *    offset and start/end part could be omitted, in which case one hour
+ *    is implied, or it's considered implementation-defined when changing
+ *    to and from Daylight Saving Time occurs.
+ * 3. Geographical or special timezone from an implementation-defined
+ *    timezone database.
+ *
+ * On POSIX-compilant systems, we prefer format 2, and explicitly specify the
+ * DST rules to avoid implementation-defined behavior.
+ *
+ * See also IEEE 1003.1-2024 8.3 Other Environment Variables.
+ */
+#ifndef _WIN32
+/*
+ * Standard time is UTC-5 ("EST"), DST time is UTC-4 ("EDT"). DST is active
+ * from 2:00 on the 2nd Sunday in March, to 2:00 on 1st Sunday in November.
+ */
+#define EST5EDT  "EST5EDT,M3.2.0,M11.1.0"
+/*
+ * Standard time is UTC+2 ("IST"), DST time is UTC+3 ("IDT"). DST is active
+ * from 2:00 on following day of the 4th Thursday in March, to 2:00 on the
+ * last Sunday in October.
+ */
+#define IST_MINUS2_IDT "IST-2IDT,M3.4.4/26,M10.5.0"
+#else
+/*
+ * However, Windows doesn't follow the POSIX rules and only accept a TZ
+ * environment variable in format
+ *
+ *   tzn [+|-]hh[:mm[:ss] ][dzn]
+ *
+ * thus we couldn't specify the DST rules. Luckily, Windows C runtime library
+ * assumes the United State's rules for implementing the calculation of DST,
+ * which is fine for our test cases.
+ *
+ * See also https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/tzset?view=msvc-170
+ */
+#define EST5EDT "EST5EDT"
+#define IST_MINUS2_IDT "IST-2IDT"
+#endif
+
 TEST_CASE("UTC Offset - Western Hemisphere (USA - Standard Time)", "[timezone][west]") {
     // EST5EDT: Eastern Standard Time (UTC-5)
-    ScopedTZ tz("EST5EDT");
+    ScopedTZ tz(EST5EDT);
 
     // Jan 15th (Winter)
     auto tm = make_tm(2023, 1, 15, 12, 0);
@@ -87,7 +134,7 @@ TEST_CASE("UTC Offset - Western Hemisphere (USA - Standard Time)", "[timezone][w
 
 TEST_CASE("UTC Offset - Eastern Hemisphere (Europe/Israel - Standard Time)", "[timezone][east]") {
     // IST-2IDT: Israel Standard Time (UTC+2)
-    ScopedTZ tz("IST-2IDT");
+    ScopedTZ tz(IST_MINUS2_IDT);
 
     // Jan 15th (Winter)
     auto tm = make_tm(2023, 1, 15, 12, 0);
@@ -115,14 +162,14 @@ TEST_CASE("UTC Offset - Non-Integer Hour Offsets (India)", "[timezone][partial]"
 }
 
 TEST_CASE("UTC Offset - Edge Case: Negative Offset Crossing Midnight", "[timezone][edge]") {
-    ScopedTZ tz("EST5EDT");
+    ScopedTZ tz(EST5EDT);
     // Late night Dec 31st, 2023
     auto tm = make_tm(2023, 12, 31, 23, 59);
     REQUIRE(utc_minutes_offset(tm) == -300);
 }
 
 TEST_CASE("UTC Offset - Edge Case: Leap Year", "[timezone][edge]") {
-    ScopedTZ tz("EST5EDT");
+    ScopedTZ tz(EST5EDT);
     // Feb 29, 2024 (Leap Day) - Winter
     auto tm = make_tm(2024, 2, 29, 12, 0);
     REQUIRE(utc_minutes_offset(tm) == -300);
@@ -137,7 +184,7 @@ TEST_CASE("UTC Offset - Edge Case: Invalid Date (Pre-Epoch)", "[timezone][edge]"
 #else
     // Unix mktime handles pre-1970 dates correctly.
     // We expect the actual historical offset (EST was UTC-5 in 1960).
-    ScopedTZ tz("EST5EDT");
+    ScopedTZ tz(EST5EDT);
     auto tm = make_tm(1960, 1, 1, 12, 0);
     REQUIRE(utc_minutes_offset(tm) == -300);
 #endif

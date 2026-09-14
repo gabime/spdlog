@@ -13,12 +13,12 @@
 #include <thread>
 #include <vector>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 class async_logger;
 
 namespace details {
 
-using async_logger_ptr = std::shared_ptr<spdlog::async_logger>;
+using async_logger_ptr = std::shared_ptr<async_logger>;
 
 enum class async_msg_type { log, flush, terminate };
 
@@ -110,7 +110,7 @@ private:
 };
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "thread_pool-inl.h"

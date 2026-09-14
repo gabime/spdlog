@@ -5,7 +5,7 @@
 
 #include <spdlog/details/log_msg.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 // Extend log_msg with internal buffer to store its payload.
@@ -13,6 +13,7 @@ namespace details {
 
 class SPDLOG_API log_msg_buffer : public log_msg {
     memory_buf_t buffer;
+    void append_source();
     void update_string_views();
 
 public:
@@ -25,7 +26,7 @@ public:
 };
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "log_msg_buffer-inl.h"

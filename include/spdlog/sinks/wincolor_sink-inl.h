@@ -13,13 +13,13 @@
 #include <spdlog/common.h>
 #include <spdlog/pattern_formatter.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename ConsoleMutex>
 SPDLOG_INLINE wincolor_sink<ConsoleMutex>::wincolor_sink(void *out_handle, color_mode mode)
     : out_handle_(out_handle),
       mutex_(ConsoleMutex::mutex()),
-      formatter_(details::make_unique<spdlog::pattern_formatter>()) {
+      formatter_(details::make_unique<pattern_formatter>()) {
     set_color_mode_impl(mode);
     // set level colors
     colors_[level::trace] = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;  // white
@@ -82,12 +82,12 @@ void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::flush() {
 template <typename ConsoleMutex>
 void SPDLOG_INLINE wincolor_sink<ConsoleMutex>::set_pattern(const std::string &pattern) {
     std::lock_guard<mutex_t> lock(mutex_);
-    formatter_ = std::unique_ptr<spdlog::formatter>(new pattern_formatter(pattern));
+    formatter_ = std::unique_ptr<formatter>(new pattern_formatter(pattern));
 }
 
 template <typename ConsoleMutex>
 void SPDLOG_INLINE
-wincolor_sink<ConsoleMutex>::set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) {
+wincolor_sink<ConsoleMutex>::set_formatter(std::unique_ptr<formatter> sink_formatter) {
     std::lock_guard<mutex_t> lock(mutex_);
     formatter_ = std::move(sink_formatter);
 }
@@ -169,4 +169,4 @@ template <typename ConsoleMutex>
 SPDLOG_INLINE wincolor_stderr_sink<ConsoleMutex>::wincolor_stderr_sink(color_mode mode)
     : wincolor_sink<ConsoleMutex>(::GetStdHandle(STD_ERROR_HANDLE), mode) {}
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

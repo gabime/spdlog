@@ -22,7 +22,7 @@ extern "C" __declspec(dllimport) void __stdcall OutputDebugStringA(const char *l
 #endif
 extern "C" __declspec(dllimport) int __stdcall IsDebuggerPresent();
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /*
  * MSVC sink (logging using OutputDebugStringA)
@@ -63,6 +63,6 @@ using windebug_sink_mt = msvc_sink_mt;
 using windebug_sink_st = msvc_sink_st;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #endif

@@ -11,7 +11,7 @@
 #include <string>
 #include <syslog.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /**
  * Sink that write to syslog using the `syscall()` library call.
@@ -82,7 +82,7 @@ using syslog_sink_st = syslog_sink<details::null_mutex>;
 }  // namespace sinks
 
 // Create and register a syslog logger
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> syslog_logger_mt(const std::string &logger_name,
                                                 const std::string &syslog_ident = "",
                                                 int syslog_option = 0,
@@ -92,7 +92,7 @@ inline std::shared_ptr<logger> syslog_logger_mt(const std::string &logger_name,
                                                            syslog_facility, enable_formatting);
 }
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> syslog_logger_st(const std::string &logger_name,
                                                 const std::string &syslog_ident = "",
                                                 int syslog_option = 0,
@@ -101,4 +101,4 @@ inline std::shared_ptr<logger> syslog_logger_st(const std::string &logger_name,
     return Factory::template create<sinks::syslog_sink_st>(logger_name, syslog_ident, syslog_option,
                                                            syslog_facility, enable_formatting);
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

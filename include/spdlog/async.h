@@ -22,7 +22,7 @@
 #include <memory>
 #include <mutex>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 namespace details {
 static const size_t default_async_q_size = 8192;
@@ -59,14 +59,14 @@ using async_factory = async_factory_impl<async_overflow_policy::block>;
 using async_factory_nonblock = async_factory_impl<async_overflow_policy::overrun_oldest>;
 
 template <typename Sink, typename... SinkArgs>
-inline std::shared_ptr<spdlog::logger> create_async(std::string logger_name,
+inline std::shared_ptr<logger> create_async(std::string logger_name,
                                                     SinkArgs &&...sink_args) {
     return async_factory::create<Sink>(std::move(logger_name),
                                        std::forward<SinkArgs>(sink_args)...);
 }
 
 template <typename Sink, typename... SinkArgs>
-inline std::shared_ptr<spdlog::logger> create_async_nb(std::string logger_name,
+inline std::shared_ptr<logger> create_async_nb(std::string logger_name,
                                                        SinkArgs &&...sink_args) {
     return async_factory_nonblock::create<Sink>(std::move(logger_name),
                                                 std::forward<SinkArgs>(sink_args)...);
@@ -93,7 +93,7 @@ inline void init_thread_pool(size_t q_size, size_t thread_count) {
 }
 
 // get the global thread pool.
-inline std::shared_ptr<spdlog::details::thread_pool> thread_pool() {
+inline std::shared_ptr<details::thread_pool> thread_pool() {
     return details::registry::instance().get_tp();
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

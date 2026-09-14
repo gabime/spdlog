@@ -10,7 +10,7 @@
 #include <spdlog/common.h>
 #include <spdlog/pattern_formatter.h>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 SPDLOG_INLINE void initialize_logger(std::shared_ptr<logger> logger) {
     details::registry::instance().initialize_logger(std::move(logger));
@@ -20,13 +20,13 @@ SPDLOG_INLINE std::shared_ptr<logger> get(const std::string &name) {
     return details::registry::instance().get(name);
 }
 
-SPDLOG_INLINE void set_formatter(std::unique_ptr<spdlog::formatter> formatter) {
+SPDLOG_INLINE void set_formatter(std::unique_ptr<formatter> formatter) {
     details::registry::instance().set_formatter(std::move(formatter));
 }
 
 SPDLOG_INLINE void set_pattern(std::string pattern, pattern_time_type time_type) {
     set_formatter(
-        std::unique_ptr<spdlog::formatter>(new pattern_formatter(std::move(pattern), time_type)));
+        std::unique_ptr<formatter>(new pattern_formatter(std::move(pattern), time_type)));
 }
 
 SPDLOG_INLINE void enable_backtrace(size_t n_messages) {
@@ -49,6 +49,10 @@ SPDLOG_INLINE void set_level(level::level_enum log_level) {
 
 SPDLOG_INLINE void flush_on(level::level_enum log_level) {
     details::registry::instance().flush_on(log_level);
+}
+
+SPDLOG_INLINE void flush_all() {
+    details::registry::instance().flush_all();
 }
 
 SPDLOG_INLINE void set_error_handler(void (*handler)(const std::string &msg)) {
@@ -77,15 +81,15 @@ SPDLOG_INLINE void set_automatic_registration(bool automatic_registration) {
     details::registry::instance().set_automatic_registration(automatic_registration);
 }
 
-SPDLOG_INLINE std::shared_ptr<spdlog::logger> default_logger() {
+SPDLOG_INLINE std::shared_ptr<logger> default_logger() {
     return details::registry::instance().default_logger();
 }
 
-SPDLOG_INLINE spdlog::logger *default_logger_raw() {
+SPDLOG_INLINE logger *default_logger_raw() {
     return details::registry::instance().get_default_raw();
 }
 
-SPDLOG_INLINE void set_default_logger(std::shared_ptr<spdlog::logger> default_logger) {
+SPDLOG_INLINE void set_default_logger(std::shared_ptr<logger> default_logger) {
     details::registry::instance().set_default_logger(std::move(default_logger));
 }
 
@@ -93,4 +97,4 @@ SPDLOG_INLINE void apply_logger_env_levels(std::shared_ptr<logger> logger) {
     details::registry::instance().apply_logger_env_levels(std::move(logger));
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

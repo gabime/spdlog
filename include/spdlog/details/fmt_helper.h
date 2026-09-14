@@ -14,11 +14,11 @@
 #endif
 
 // Some fmt helpers to efficiently format and pad ints and strings
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 namespace fmt_helper {
 
-inline void append_string_view(spdlog::string_view_t view, memory_buf_t &dest) {
+inline void append_string_view(string_view_t view, memory_buf_t &dest) {
     auto *buf_ptr = view.data();
     dest.append(buf_ptr, buf_ptr + view.size());
 }
@@ -138,4 +138,4 @@ inline ToDuration time_fraction(log_clock::time_point tp) {
 
 }  // namespace fmt_helper
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

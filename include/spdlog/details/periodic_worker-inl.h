@@ -7,7 +7,7 @@
 #include <spdlog/details/periodic_worker.h>
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 // stop the worker thread and join it
@@ -23,4 +23,4 @@ SPDLOG_INLINE periodic_worker::~periodic_worker() {
 }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

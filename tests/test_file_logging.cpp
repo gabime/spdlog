@@ -110,6 +110,63 @@ TEST_CASE("rotating_file_logger2", "[rotating_logger]") {
     REQUIRE(get_filesize(ROTATING_LOG ".1") <= max_size);
 }
 
+// test that get_current_size() tracks the file size, including across rotations
+TEST_CASE("rotating_file_logger_get_current_size", "[rotating_logger]") {
+    prepare_logdir();
+    size_t max_size = 1024 * 10;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+    auto sink = std::make_shared<spdlog::sinks::rotating_file_sink_st>(basename, max_size, 2);
+    auto logger = std::make_shared<spdlog::logger>("rotating_sink_logger", sink);
+
+    REQUIRE(sink->get_current_size() == 0);
+    logger->info("Test message");
+    logger->flush();
+    REQUIRE(sink->get_current_size() == get_filesize(ROTATING_LOG));
+    REQUIRE(sink->get_current_size() > 0);
+
+    sink->rotate_now();
+    REQUIRE(sink->get_current_size() == 0);
+}
+
+// test that a manual rotate_now() does not cause later writes to rotate the file
+// prematurely, well before max_size is actually reached.
+TEST_CASE("rotating_file_logger_no_premature_rotation_after_manual_rotate",
+          "[rotating_logger]") {
+    prepare_logdir();
+    using spdlog::details::os::default_eol;
+    const size_t eol_len = strlen(default_eol);
+    const size_t max_size = 100;
+    spdlog::filename_t basename = SPDLOG_FILENAME_T(ROTATING_LOG);
+    auto sink = std::make_shared<spdlog::sinks::rotating_file_sink_st>(basename, max_size, 2);
+    auto logger = std::make_shared<spdlog::logger>("rotating_sink_logger", sink);
+    logger->set_pattern("%v");
+
+    // fill the file close to (but under) max_size, then rotate it away manually.
+    const std::string msg1(89, 'a');
+    logger->info(msg1);
+    logger->flush();
+    REQUIRE(sink->get_current_size() == msg1.size() + eol_len);
+
+    sink->rotate_now();
+    REQUIRE(get_filesize(ROTATING_LOG ".1") == msg1.size() + eol_len);
+
+    // write two small messages whose combined real size stays well under max_size.
+    const std::string msg2(4, 'b');
+    logger->info(msg2);
+    logger->flush();
+
+    const std::string msg3(5, 'c');
+    logger->info(msg3);
+    logger->flush();
+
+    // combined real bytes written since rotate_now() (13ish bytes) never approached
+    // max_size (100), so no further rotation should have happened: ROTATING_LOG.2
+    // should not exist, and ROTATING_LOG.1 should still hold only msg1.
+    REQUIRE_THROWS(get_filesize(ROTATING_LOG ".2"));
+    REQUIRE(get_filesize(ROTATING_LOG ".1") == msg1.size() + eol_len);
+    REQUIRE(get_filesize(ROTATING_LOG) == msg2.size() + msg3.size() + 2 * eol_len);
+}
+
 // test that passing max_size=0 throws
 TEST_CASE("rotating_file_logger3", "[rotating_logger]") {
     prepare_logdir();

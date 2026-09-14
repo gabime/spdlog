@@ -32,7 +32,7 @@
 #include <utility>
 #include <vector>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 ///////////////////////////////////////////////////////////////////////
@@ -813,7 +813,7 @@ public:
         : flag_formatter(padinfo) {}
 
     void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override {
-        auto &mdc_map = mdc::get_context();
+        const auto &mdc_map = mdc::get_context();
         if (mdc_map.empty()) {
             ScopedPadder p(0, padinfo_, dest);
             return;
@@ -823,11 +823,10 @@ public:
     }
 
     void format_mdc(const mdc::mdc_map_t &mdc_map, memory_buf_t &dest) {
-        auto last_element = --mdc_map.end();
+        const auto last_element = std::prev(mdc_map.end());
         for (auto it = mdc_map.begin(); it != mdc_map.end(); ++it) {
-            auto &pair = *it;
-            const auto &key = pair.first;
-            const auto &value = pair.second;
+            const auto &key = it->first;
+            const auto &value = it->second;
             size_t content_size = key.size() + value.size() + 1;  // 1 for ':'
 
             if (it != last_element) {
@@ -1012,7 +1011,7 @@ SPDLOG_INLINE void pattern_formatter::set_pattern(std::string pattern) {
 
 SPDLOG_INLINE void pattern_formatter::need_localtime(bool need) { need_localtime_ = need; }
 
-SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg) {
+SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg) const {
     if (pattern_time_type_ == pattern_time_type::local) {
         return details::os::localtime(log_clock::to_time_t(msg.time));
     }
@@ -1348,4 +1347,4 @@ SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &patter
         formatters_.push_back(std::move(user_chars));
     }
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

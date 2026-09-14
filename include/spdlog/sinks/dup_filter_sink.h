@@ -34,7 +34,7 @@
 //       [2019-06-25 17:50:56.512] [logger] [info] Skipped 3 duplicate messages..
 //       [2019-06-25 17:50:56.512] [logger] [info] Different Hello
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename Mutex>
 class dup_filter_sink : public dist_sink<Mutex> {
@@ -43,12 +43,17 @@ public:
     explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration)
         : max_skip_duration_{max_skip_duration} {}
 
+    template <class Rep, class Period>
+    explicit dup_filter_sink(std::chrono::duration<Rep, Period> max_skip_duration, std::vector<std::shared_ptr<sink>> sinks)
+        : max_skip_duration_{max_skip_duration}
+        , dist_sink<Mutex>(std::move(sinks)) {}
+
 protected:
     std::chrono::microseconds max_skip_duration_;
     log_clock::time_point last_msg_time_;
     std::string last_msg_payload_;
     size_t skip_counter_ = 0;
-    level::level_enum skipped_msg_log_level_ = spdlog::level::level_enum::off;
+    level::level_enum skipped_msg_log_level_ = level::level_enum::off;
 
     void sink_it_(const details::log_msg &msg) override {
         bool filtered = filter_(msg);
@@ -78,8 +83,8 @@ protected:
     }
 
     // return whether the log msg should be displayed (true) or skipped (false)
-    bool filter_(const details::log_msg &msg) {
-        auto filter_duration = msg.time - last_msg_time_;
+    bool filter_(const details::log_msg &msg) const {
+        const auto filter_duration = msg.time - last_msg_time_;
         return (filter_duration > max_skip_duration_) || (msg.payload != last_msg_payload_);
     }
 };
@@ -88,4 +93,4 @@ using dup_filter_sink_mt = dup_filter_sink<std::mutex>;
 using dup_filter_sink_st = dup_filter_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

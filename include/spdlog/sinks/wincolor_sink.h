@@ -14,7 +14,7 @@
 #include <mutex>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 /*
  * Windows color console sink. Uses WriteConsoleA to write to the console with
@@ -34,7 +34,7 @@ public:
     void log(const details::log_msg &msg) override;
     void flush() override;
     void set_pattern(const std::string &pattern) override;
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
+    void set_formatter(std::unique_ptr<formatter> sink_formatter) override;
     void set_color_mode(color_mode mode);
 
 protected:
@@ -42,7 +42,7 @@ protected:
     void *out_handle_;
     mutex_t &mutex_;
     bool should_do_colors_;
-    std::unique_ptr<spdlog::formatter> formatter_;
+    std::unique_ptr<formatter> formatter_;
     std::array<std::uint16_t, level::n_levels> colors_;
 
     // set foreground color and return the orig console attributes (for resetting later)
@@ -75,7 +75,7 @@ using wincolor_stdout_sink_st = wincolor_stdout_sink<details::console_nullmutex>
 using wincolor_stderr_sink_mt = wincolor_stderr_sink<details::console_mutex>;
 using wincolor_stderr_sink_st = wincolor_stderr_sink<details::console_nullmutex>;
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "wincolor_sink-inl.h"

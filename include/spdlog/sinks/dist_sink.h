@@ -16,7 +16,7 @@
 // Distribution sink (mux). Stores a vector of sinks which get called when log
 // is called
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 template <typename Mutex>
@@ -24,7 +24,7 @@ class dist_sink : public base_sink<Mutex> {
 public:
     dist_sink() = default;
     explicit dist_sink(std::vector<std::shared_ptr<sink>> sinks)
-        : sinks_(sinks) {}
+        : sinks_(std::move(sinks)) {}
 
     dist_sink(const dist_sink &) = delete;
     dist_sink &operator=(const dist_sink &) = delete;
@@ -62,10 +62,10 @@ protected:
     }
 
     void set_pattern_(const std::string &pattern) override {
-        set_formatter_(details::make_unique<spdlog::pattern_formatter>(pattern));
+        set_formatter_(details::make_unique<pattern_formatter>(pattern));
     }
 
-    void set_formatter_(std::unique_ptr<spdlog::formatter> sink_formatter) override {
+    void set_formatter_(std::unique_ptr<formatter> sink_formatter) override {
         base_sink<Mutex>::formatter_ = std::move(sink_formatter);
         for (auto &sub_sink : sinks_) {
             sub_sink->set_formatter(base_sink<Mutex>::formatter_->clone());
@@ -78,4 +78,4 @@ using dist_sink_mt = dist_sink<std::mutex>;
 using dist_sink_st = dist_sink<details::null_mutex>;
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

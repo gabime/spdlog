@@ -18,7 +18,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 class logger;
 
 namespace details {
@@ -113,7 +113,7 @@ private:
     std::unordered_map<std::string, std::shared_ptr<logger>> loggers_;
     log_levels log_levels_;
     std::unique_ptr<formatter> formatter_;
-    spdlog::level::level_enum global_log_level_ = level::info;
+    level::level_enum global_log_level_ = level::info;
     level::level_enum flush_level_ = level::off;
     err_handler err_handler_;
     std::shared_ptr<thread_pool> tp_;
@@ -124,7 +124,7 @@ private:
 };
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "registry-inl.h"

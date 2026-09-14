@@ -60,6 +60,10 @@ endif()
 
 if(systemd_FOUND)
     list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)
+    # systemd v256 added support for namespace stream API
+    if(systemd_VERSION VERSION_GREATER_EQUAL "256")
+        list(APPEND SPDLOG_UTESTS_SOURCES test_systemd_namespace.cpp)
+    endif()
 endif()
 
 enable_testing()
@@ -89,4 +93,15 @@ endif()
 # The header-only library version tests
 if(SPDLOG_BUILD_TESTS_HO OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests-ho spdlog::spdlog_header_only)
+endif()
+
+if(SPDLOG_MASTER_PROJECT AND NOT CMAKE_CROSSCOMPILING)
+    add_test(
+        NAME spdlog-cmake-tweakme
+        COMMAND
+            ${CMAKE_COMMAND} -DSPDLOG_TEST_SOURCE_DIR=${CMAKE_CURRENT_LIST_DIR}/..
+            -DSPDLOG_TEST_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/cmake-tweakme
+            -DSPDLOG_TEST_GENERATOR=${CMAKE_GENERATOR} -DSPDLOG_TEST_GENERATOR_PLATFORM=${CMAKE_GENERATOR_PLATFORM}
+            -DSPDLOG_TEST_GENERATOR_TOOLSET=${CMAKE_GENERATOR_TOOLSET} -DSPDLOG_TEST_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+            -DSPDLOG_TEST_CONFIG=$<CONFIG> -P ${CMAKE_CURRENT_LIST_DIR}/cmake/tweakme_test.cmake)
 endif()

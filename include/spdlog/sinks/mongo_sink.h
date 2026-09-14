@@ -23,7 +23,7 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/uri.hpp>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 template <typename Mutex>
 class mongo_sink : public base_sink<Mutex> {
@@ -44,7 +44,7 @@ public:
           db_name_(db_name),
           coll_name_(collection_name) {
         try {
-            client_ = spdlog::details::make_unique<mongocxx::client>(mongocxx::uri{uri});
+            client_ = details::make_unique<mongocxx::client>(mongocxx::uri{uri});
         } catch (const std::exception &e) {
             throw_spdlog_ex(fmt_lib::format("Error opening database: {}", e.what()));
         }
@@ -81,11 +81,11 @@ private:
 #include "spdlog/details/null_mutex.h"
 #include <mutex>
 using mongo_sink_mt = mongo_sink<std::mutex>;
-using mongo_sink_st = mongo_sink<spdlog::details::null_mutex>;
+using mongo_sink_st = mongo_sink<details::null_mutex>;
 
 }  // namespace sinks
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> mongo_logger_mt(
     const std::string &logger_name,
     const std::string &db_name,
@@ -95,7 +95,7 @@ inline std::shared_ptr<logger> mongo_logger_mt(
                                                           uri);
 }
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> mongo_logger_st(
     const std::string &logger_name,
     const std::string &db_name,
@@ -105,4 +105,4 @@ inline std::shared_ptr<logger> mongo_logger_st(
                                                           uri);
 }
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

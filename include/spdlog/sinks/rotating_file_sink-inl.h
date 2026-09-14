@@ -19,7 +19,7 @@
 #include <string>
 #include <tuple>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 template <typename Mutex>
@@ -44,7 +44,6 @@ SPDLOG_INLINE rotating_file_sink<Mutex>::rotating_file_sink(
     current_size_ = file_helper_.size();  // expensive. called only once
     if (rotate_on_open && current_size_ > 0) {
         rotate_();
-        current_size_ = 0;
     }
 }
 
@@ -102,6 +101,12 @@ template <typename Mutex>
 std::size_t rotating_file_sink<Mutex>::get_max_files() {
     std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
     return max_files_;
+}
+
+template <typename Mutex>
+std::size_t rotating_file_sink<Mutex>::get_current_size() {
+    std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+    return current_size_;
 }
 
 template <typename Mutex>
@@ -163,6 +168,7 @@ SPDLOG_INLINE void rotating_file_sink<Mutex>::rotate_() {
         }
     }
     file_helper_.reopen(true);
+    current_size_ = 0;
 }
 
 // delete the target if exists, and rename the src file  to target
@@ -176,4 +182,4 @@ SPDLOG_INLINE bool rotating_file_sink<Mutex>::rename_file_(const filename_t &src
 }
 
 }  // namespace sinks
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

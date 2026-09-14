@@ -18,14 +18,14 @@
 #include <mutex>
 #include <string>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
 /*
- * Generator of Hourly log file names in format basename.YYYY-MM-DD-HH.ext
+ * Generator of Hourly log file names in format basename_YYYY-MM-DD_HH.ext
  */
 struct hourly_filename_calculator {
-    // Create filename for the form basename.YYYY-MM-DD-H
+    // Create filename of the form basename_YYYY-MM-DD_HH.ext
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm) {
         filename_t basename, ext;
         std::tie(basename, ext) = details::file_helper::split_by_extension(filename);
@@ -119,7 +119,7 @@ private:
 
     tm now_tm(log_clock::time_point tp) {
         time_t tnow = log_clock::to_time_t(tp);
-        return spdlog::details::os::localtime(tnow);
+        return details::os::localtime(tnow);
     }
 
     log_clock::time_point next_rotation_tp_() {
@@ -171,7 +171,7 @@ using hourly_file_sink_st = hourly_file_sink<details::null_mutex>;
 //
 // factory functions
 //
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> hourly_logger_mt(const std::string &logger_name,
                                                 const filename_t &filename,
                                                 bool truncate = false,
@@ -181,7 +181,7 @@ inline std::shared_ptr<logger> hourly_logger_mt(const std::string &logger_name,
                                                                 max_files, event_handlers);
 }
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> hourly_logger_st(const std::string &logger_name,
                                                 const filename_t &filename,
                                                 bool truncate = false,
@@ -190,4 +190,4 @@ inline std::shared_ptr<logger> hourly_logger_st(const std::string &logger_name,
     return Factory::template create<sinks::hourly_file_sink_st>(logger_name, filename, truncate,
                                                                 max_files, event_handlers);
 }
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END

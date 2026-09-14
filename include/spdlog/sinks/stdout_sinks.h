@@ -12,7 +12,7 @@
 #include <spdlog/details/windows_include.h>
 #endif
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 
 namespace sinks {
 
@@ -33,12 +33,12 @@ public:
     void flush() override;
     void set_pattern(const std::string &pattern) override;
 
-    void set_formatter(std::unique_ptr<spdlog::formatter> sink_formatter) override;
+    void set_formatter(std::unique_ptr<formatter> sink_formatter) override;
 
 protected:
     mutex_t &mutex_;
     FILE *file_;
-    std::unique_ptr<spdlog::formatter> formatter_;
+    std::unique_ptr<formatter> formatter_;
 #ifdef _WIN32
     HANDLE handle_;
 #endif  // WIN32
@@ -65,19 +65,19 @@ using stderr_sink_st = stderr_sink<details::console_nullmutex>;
 }  // namespace sinks
 
 // factory methods
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name);
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name);
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name);
 
-template <typename Factory = spdlog::synchronous_factory>
+template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
 
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
 
 #ifdef SPDLOG_HEADER_ONLY
 #include "stdout_sinks-inl.h"

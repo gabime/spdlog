@@ -1,0 +1,12 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+includedir=@PKG_CONFIG_INCLUDEDIR@
+libdir=@PKG_CONFIG_LIBDIR@
+
+Name: lib@PROJECT_NAME@_header_only
+Description: Fast C++ logging library. (header-only)
+URL: https://github.com/gabime/@PROJECT_NAME@
+Version: @SPDLOG_VERSION@
+CFlags: -I${includedir} @PKG_CONFIG_HO_DEFINES@
+Libs: -pthread
+Requires: @PKG_CONFIG_REQUIRES@

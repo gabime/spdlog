@@ -27,7 +27,7 @@
 #include <string>
 #include <unordered_map>
 
-namespace spdlog {
+SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
 SPDLOG_INLINE registry::registry()
@@ -41,7 +41,7 @@ SPDLOG_INLINE registry::registry()
 #endif
 
     const char *default_logger_name = "";
-    default_logger_ = std::make_shared<spdlog::logger>(default_logger_name, std::move(color_sink));
+    default_logger_ = std::make_shared<logger>(default_logger_name, std::move(color_sink));
     loggers_[default_logger_name] = default_logger_;
 
 #endif  // SPDLOG_DISABLE_DEFAULT_LOGGER
@@ -257,7 +257,7 @@ SPDLOG_INLINE void registry::throw_if_exists_(const std::string &logger_name) {
 }
 
 SPDLOG_INLINE void registry::register_logger_(std::shared_ptr<logger> new_logger) {
-    auto &logger_name = new_logger->name();
+    const auto &logger_name = new_logger->name();
     throw_if_exists_(logger_name);
     loggers_[logger_name] = std::move(new_logger);
 }
@@ -267,4 +267,4 @@ SPDLOG_INLINE void registry::register_or_replace_(std::shared_ptr<logger> new_lo
 }
 
 }  // namespace details
-}  // namespace spdlog
+SPDLOG_NAMESPACE_END
