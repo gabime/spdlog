@@ -21,6 +21,30 @@ $ cmake .. && cmake --build .
 ```
 see example [CMakeLists.txt](example/CMakeLists.txt) on how to use.
 
+#### C++20 module version (experimental)
+Requires CMake 3.28+, Ninja 1.11+ (or Visual Studio 17.4+), and gcc 14+ / clang 17+ / MSVC 19.34+.
+```console
+$ cmake -S . -B build -G Ninja -DSPDLOG_BUILD_MODULE=ON && cmake --build build
+```
+```c++
+#include <memory>            // include your standard headers *before* the import (required by MSVC)
+#include <spdlog/macros.h>   // only if you use the SPDLOG_INFO(..) macros - a module cannot export macros
+
+import spdlog;
+```
+```cmake
+find_package(spdlog CONFIG REQUIRED COMPONENTS module)
+target_link_libraries(my_app PRIVATE spdlog::spdlog_module)
+# needed if your project's cmake_minimum_required is below 3.28, or if it sets
+# CMAKE_CXX_SCAN_FOR_MODULES to 0 globally
+set_target_properties(my_app PROPERTIES CXX_SCAN_FOR_MODULES ON)
+```
+The module exports the core API and the sinks that have no external dependency. `qt_sinks`,
+`mongo_sink`, `kafka_sink`, `systemd_sink`, `syslog_sink`, `tcp_sink`, `udp_sink`, `android_sink`,
+`loki_sink` and the `spdlog::details::os` helpers stay header-only and can be `#include`d next to
+`import spdlog;`. See [module_example.cpp](example/module_example.cpp) and
+[INSTALL](INSTALL) for the details.
+
 ## Platforms
 * Linux, FreeBSD, OpenBSD, Solaris, AIX
 * Windows (msvc 2013+, cygwin)
@@ -45,7 +69,7 @@ see example [CMakeLists.txt](example/CMakeLists.txt) on how to use.
 
 ## Features
 * Very fast (see [benchmarks](#benchmarks) below).
-* Headers only or compiled
+* Header-only, compiled, or a C++20 named module
 * Feature-rich formatting, using the excellent [fmt](https://github.com/fmtlib/fmt) library.
 * Asynchronous mode (optional)
 * [Custom](https://github.com/gabime/spdlog/wiki/Custom-formatting) formatting.
