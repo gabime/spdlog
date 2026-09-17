@@ -28,7 +28,7 @@ Build spdlog with -DSPDLOG_BUILD_MODULE=ON, then:
 ```
 
 Requirements: CMake 3.28 or newer, the Ninja (1.11+) or Visual Studio 17.4+ generator, and
-gcc 14+, clang 17+ or MSVC 19.34+. Configuring with SPDLOG_BUILD_MODULE=ON on anything older
+gcc 15+, clang 17+ or MSVC 19.34+. Configuring with SPDLOG_BUILD_MODULE=ON on anything older
 fails with an explanation rather than a confusing build error.
 
 Things worth knowing:
