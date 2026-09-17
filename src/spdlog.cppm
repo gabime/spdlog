@@ -37,16 +37,10 @@
 //   * Standard library names are never re-exported. `import spdlog;` gives you
 //     spdlog's names only; `std::shared_ptr`, `std::string`, `std::ostream`,
 //     ... still come from the usual #includes.
-//   * fmt (or std::format) stays attached to the *global* module, not to spdlog
-//     (see the "Global module fragment" comment below): `fmt::formatter` /
-//     `std::formatter` are therefore not reachable through `import spdlog;` by
-//     qualified name. To specialize fmt::formatter<T> (or std::formatter<T>) for
-//     your own types, #include <spdlog/fmt/fmt.h> (or <format> under
-//     SPDLOG_USE_STD_FORMAT) directly - safe and ordinary, since that header's
-//     declarations stay attached to the global module either way, identical to
-//     the ones this module uses. spdlog::fmt_lib (exported) is a plain alias for
-//     the same, already-global fmt/std namespace, useful for calling fmt/format
-//     functions without a #include of your own.
+//   * fmt stays attached to the *global* module, not to spdlog (see the "Global
+//     module fragment" comment below). The fmt names needed to specialize
+//     fmt::formatter<T> are re-exported at the end of this file. Under
+//     SPDLOG_USE_STD_FORMAT nothing is re-exported; #include <format> yourself.
 //
 // NOTE for MSVC users: include your standard headers *before* `import spdlog;`.
 // Including one afterwards trips a cascade of C2572 "redefinition of default
@@ -273,3 +267,50 @@ export module spdlog;
 // applicable one needs to be compiled into the module.
 #include <spdlog/sinks/ansicolor_sink.h>
 #endif
+
+// ---------------------------------------------------------------------------
+// fmt names needed by consumers that specialize fmt::formatter<T>.
+//
+// fmt lives in the global module fragment above, so its entities stay attached
+// to the global module and are merely re-exported here - without this block
+// they would be reachable but not nameable through `import spdlog;`. fmt's own
+// namespace macros reopen the very namespace the headers use (fmt::v12::...).
+//
+// Nothing is re-exported under SPDLOG_USE_STD_FORMAT: names from namespace std
+// are never re-exported, consumers simply #include <format>.
+// ---------------------------------------------------------------------------
+#if !defined(SPDLOG_USE_STD_FORMAT)
+
+export FMT_BEGIN_NAMESPACE
+
+using ::fmt::basic_format_parse_context;
+using ::fmt::basic_memory_buffer;
+using ::fmt::basic_string_view;
+using ::fmt::format;
+using ::fmt::format_context;
+using ::fmt::format_error;
+using ::fmt::format_parse_context;
+using ::fmt::format_to;
+using ::fmt::formatter;
+using ::fmt::memory_buffer;
+using ::fmt::string_view;
+using ::fmt::to_string;
+using ::fmt::vformat;
+using ::fmt::vformat_to;
+
+#if FMT_VERSION >= 80000
+using ::fmt::appender;
+using ::fmt::format_string;
+using ::fmt::runtime;
+#endif
+
+#if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
+using ::fmt::wformat_context;
+using ::fmt::wformat_string;
+using ::fmt::wmemory_buffer;
+using ::fmt::wstring_view;
+#endif
+
+FMT_END_NAMESPACE
+
+#endif  // !SPDLOG_USE_STD_FORMAT

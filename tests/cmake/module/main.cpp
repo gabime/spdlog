@@ -26,9 +26,7 @@
 
 #include <spdlog/macros.h>
 #if defined(SPDLOG_USE_STD_FORMAT)
-#include <format>
-#else
-#include <spdlog/fmt/fmt.h>
+#include <format>  // std::formatter; names from namespace std are never re-exported
 #endif
 
 import spdlog;

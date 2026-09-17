@@ -26,15 +26,11 @@
 #include <spdlog/macros.h>  // SPDLOG_INFO(..) and friends; a module cannot export macros
 #include <spdlog/version.h>  // SPDLOG_VER_MAJOR and friends are macros too
 
-// fmt (or std::format) stays attached to the *global* module, not to spdlog (see
-// src/spdlog.cppm's header comment), so it is not reachable through `import spdlog;` by
-// qualified name. To specialize fmt::formatter<T> (or std::formatter<T>) below, pull in the
-// same headers spdlog itself uses directly - this is ordinary, non-modular use of a
-// third-party/standard library, unrelated to and unaffected by importing spdlog.
+// The fmt names needed to specialize fmt::formatter<T> below are re-exported by the
+// module. std::formatter is not (names from namespace std never are), so the
+// std::format build includes <format> itself.
 #if defined(SPDLOG_USE_STD_FORMAT)
-#include <format>
-#else
-#include <spdlog/fmt/fmt.h>
+#include <format>  // std::formatter; names from namespace std are never re-exported
 #endif
 
 // Do NOT also #include <spdlog/mdc.h> (or any other <spdlog/...> header) here: unlike the

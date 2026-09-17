@@ -32,19 +32,13 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 #include <spdlog/macros.h>
 
-// fmt (or std::format) stays attached to the *global* module, not to spdlog (see
-// src/spdlog.cppm's header comment), so fmt::formatter is not reachable through
-// `import spdlog;` by qualified name. #including it directly, like this, is fine and
-// necessary to specialize fmt::formatter<T> below - it is ordinary, non-modular use of a
-// third-party library, unrelated to and unaffected by importing spdlog. Do NOT, however,
-// also #include a header that declares spdlog's *own* entities (e.g. <spdlog/mdc.h>) here:
+// The fmt names needed to specialize fmt::formatter<T> are re-exported by the module.
+// Do NOT #include a header that declares spdlog's *own* entities (e.g. <spdlog/mdc.h>) here:
 // this native module attaches those to the named module `spdlog`, so #including one on top
 // of importing creates a second, distinct copy of the same names (ODR violation - observed
 // as a duplicate-symbol link error with Clang/lld). See INSTALL for the full explanation.
 #if defined(SPDLOG_USE_STD_FORMAT)
-#include <format>
-#else
-#include <spdlog/fmt/fmt.h>
+#include <format>  // std::formatter; names from namespace std are never re-exported
 #endif
 
 import spdlog;

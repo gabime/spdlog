@@ -62,13 +62,10 @@ Things worth knowing, all consequences of that design choice:
 * On MSVC, include your standard headers *before* `import spdlog;`. Including one
   afterwards produces a cascade of C2572 "redefinition of default argument" errors inside
   the MSVC standard library. Clang accepts either order.
-* fmt (or std::format) stays attached to the *global* module, not to spdlog, so
-  fmt::formatter / std::formatter are not reachable through `import spdlog;` by qualified
-  name. To specialize fmt::formatter<T> (or std::formatter<T>) for your own types,
-  #include <spdlog/fmt/fmt.h> (or <format> under SPDLOG_USE_STD_FORMAT) directly - safe and
-  ordinary, since that header stays attached to the global module either way, identical to
-  what this module itself uses. Do NOT, however, #include a header that declares spdlog's
-  *own* entities (e.g. <spdlog/logger.h>, <spdlog/mdc.h>) alongside the import - see above.
+* fmt stays attached to the global module, not to spdlog. The fmt names needed to
+  specialize fmt::formatter<T> are re-exported by the module; under SPDLOG_USE_STD_FORMAT,
+  #include <format> yourself to specialize std::formatter<T>. Do not #include a header that
+  declares spdlog's own entities (e.g. <spdlog/logger.h>) alongside the import - see above.
 * Only sinks with no external dependency are exported: qt_sinks, mongo_sink, kafka_sink,
   systemd_sink, syslog_sink, tcp_sink, udp_sink, android_sink and loki_sink stay
   header-only and can be #included next to `import spdlog;`.
