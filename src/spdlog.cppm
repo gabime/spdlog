@@ -119,7 +119,10 @@ module;
 #include <cassert>
 #include <cctype>
 #include <cerrno>
+#include <charconv>
 #include <chrono>
+#include <condition_variable>
+#include <cstddef>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -144,6 +147,10 @@ module;
 #include <unordered_map>
 #include <utility>
 #include <vector>
+
+// C headers some spdlog headers include by their .h name
+#include <stdio.h>
+#include <stdlib.h>
 
 #if defined(__has_include)
 #if __has_include(<version>)
@@ -201,6 +208,8 @@ export module spdlog;
 // <spdlog/...>). Defining it as `export` here turns every declaration marked
 // SPDLOG_EXPORT in the headers below into an exported entity of this module.
 #define SPDLOG_EXPORT export
+// lets the headers adapt the few spots that behave differently inside a module
+#define SPDLOG_MODULE_BUILD
 
 // ---------------------------------------------------------------------------
 // spdlog, compiled header-only style directly into this module's purview.

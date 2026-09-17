@@ -52,7 +52,15 @@
 #if !defined(SPDLOG_USE_STD_FORMAT) && \
     FMT_VERSION >= 80000  // backward compatibility with fmt versions older than 8
 #define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
+#ifdef SPDLOG_MODULE_BUILD
+// FMT_STRING's compile-string path calls fmt's parse_format_string through
+// argument-dependent lookup, which GCC cannot resolve when the template is
+// instantiated in a translation unit that imports the module. The module is
+// always C++20, where fmt checks format string literals at compile time anyway.
+#define SPDLOG_FMT_STRING(format_string) format_string
+#else
 #define SPDLOG_FMT_STRING(format_string) FMT_STRING(format_string)
+#endif
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #include <spdlog/fmt/xchar.h>
 #endif
