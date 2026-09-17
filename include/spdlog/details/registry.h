@@ -19,12 +19,12 @@
 #include <unordered_map>
 
 SPDLOG_NAMESPACE_BEGIN
-class logger;
+SPDLOG_EXPORT class logger;
 
 namespace details {
-class thread_pool;
+SPDLOG_EXPORT class thread_pool;
 
-class SPDLOG_API registry {
+SPDLOG_EXPORT class SPDLOG_API registry {
 public:
     using log_levels = std::unordered_map<std::string, level::level_enum>;
     registry(const registry &) = delete;

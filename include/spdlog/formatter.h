@@ -8,7 +8,7 @@
 
 SPDLOG_NAMESPACE_BEGIN
 
-class formatter {
+SPDLOG_EXPORT class formatter {
 public:
     virtual ~formatter() = default;
     virtual void format(const details::log_msg &msg, memory_buf_t &dest) = 0;

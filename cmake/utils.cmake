@@ -82,3 +82,58 @@ function(spdlog_message_once key text)
         message(STATUS "${text}")
     endif()
 endfunction()
+
+# Determine whether this CMake / generator / compiler combination can build a
+# C++20 module target. Sets <out_ok> to ON/OFF, and <out_reason> to an
+# explanation of why not when it is OFF.
+function(spdlog_check_module_support out_ok out_reason)
+    set(${out_ok} OFF PARENT_SCOPE)
+
+    if(CMAKE_VERSION VERSION_LESS "3.28")
+        set(${out_reason} "CMake >= 3.28 is required (found ${CMAKE_VERSION})" PARENT_SCOPE)
+        return()
+    endif()
+
+    if(CMAKE_GENERATOR MATCHES "^Ninja")
+        execute_process(
+            COMMAND "${CMAKE_MAKE_PROGRAM}" --version
+            OUTPUT_VARIABLE ninja_version
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+            RESULT_VARIABLE ninja_result)
+        if(ninja_result EQUAL 0 AND ninja_version VERSION_LESS "1.11")
+            set(${out_reason} "the Ninja generator needs ninja >= 1.11 for C++ modules (found ${ninja_version})"
+                PARENT_SCOPE)
+            return()
+        endif()
+    elseif(NOT CMAKE_GENERATOR MATCHES "^Visual Studio (1[7-9]|[2-9][0-9]) ")
+        set(${out_reason}
+            "generator \"${CMAKE_GENERATOR}\" does not support C++ modules; use Ninja, Ninja Multi-Config or Visual Studio 17 2022 and newer"
+            PARENT_SCOPE)
+        return()
+    endif()
+
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.34")
+            set(${out_reason} "MSVC >= 19.34 (Visual Studio 17.4) is required (found ${CMAKE_CXX_COMPILER_VERSION})"
+                PARENT_SCOPE)
+            return()
+        endif()
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "14")
+            set(${out_reason} "GCC >= 14 is required (found ${CMAKE_CXX_COMPILER_VERSION})" PARENT_SCOPE)
+            return()
+        endif()
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "17")
+            set(${out_reason} "Clang >= 17 is required (found ${CMAKE_CXX_COMPILER_VERSION})" PARENT_SCOPE)
+            return()
+        endif()
+    else()
+        set(${out_reason} "compiler \"${CMAKE_CXX_COMPILER_ID}\" is not known to support C++ modules" PARENT_SCOPE)
+        return()
+    endif()
+
+    set(${out_ok} ON PARENT_SCOPE)
+    set(${out_reason} "" PARENT_SCOPE)
+endfunction()

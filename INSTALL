@@ -17,6 +17,66 @@ CMake:
 
 Or copy files src/*.cpp to your build tree and pass the -DSPDLOG_COMPILED_LIB to the compiler.
 
+C++20 Module Version (experimental)
+==================================================================
+Build spdlog with -DSPDLOG_BUILD_MODULE=ON, then:
+```
+  find_package(spdlog CONFIG REQUIRED COMPONENTS module)
+  add_executable(example_module module_example.cpp)
+  target_link_libraries(example_module spdlog::spdlog_module)
+  set_target_properties(example_module PROPERTIES CXX_SCAN_FOR_MODULES ON)
+```
+
+Requirements: CMake 3.28 or newer, the Ninja (1.11+) or Visual Studio 17.4+ generator, and
+gcc 14+, clang 17+ or MSVC 19.34+. Configuring with SPDLOG_BUILD_MODULE=ON on anything older
+fails with an explanation rather than a confusing build error.
+
+This is a *native* module: spdlog's headers are annotated with SPDLOG_EXPORT (see
+include/spdlog/namespace.h) and compiled directly inside the module's purview
+(src/spdlog.cppm), so every exported declaration is attached to (owned by) the named
+module `spdlog`, exactly as if you had written the library as a module from the start.
+Things worth knowing, all consequences of that design choice:
+
+* Do NOT mix `import spdlog;` and `#include <spdlog/...>` in the same program, not even
+  across different translation units. Module-attached entities get module ownership -
+  different name mangling on MSVC, strong ownership on Clang - so the two styles produce
+  two distinct sets of entities (two different spdlog::logger types, two different
+  registries, ...) even though the names are identical. Linking both together is an ODR
+  violation and a source of very confusing link and runtime errors (e.g. spdlog::get() in
+  one TU will never find a logger registered from the other). Pick one style per program.
+  (A companion PR implements an alternative *wrapper*-style module, built specifically to
+  support mixing the two - see that PR if you need it.)
+* The module cannot link a separately-built spdlog::spdlog (static or shared) library, for
+  the same reason. It is built in header-only mode instead: every spdlog definition -
+  normally emitted once into libspdlog from src/*.cpp - is instead emitted once into the
+  module's own object code, and SPDLOG_COMPILED_LIB is never defined for this target.
+  There is therefore no such thing as a "header-only module" vs. "compiled module"
+  distinction; spdlog::spdlog_module is the only module target, and it is self-contained.
+* Binary module interfaces are not distributable. What gets installed is the module
+  source, <prefix>/share/spdlog/module/spdlog.cppm, and it is recompiled inside your
+  build. Your compiler therefore does not have to match the one that built libspdlog, but
+  your C++ standard and your SPDLOG_* configuration do - exactly as with the headers.
+* `import spdlog;` gives you spdlog's names only. Standard library names (std::shared_ptr,
+  std::string, ...) still come from the usual #includes, and a module cannot export
+  macros, so the SPDLOG_INFO(..) family lives in <spdlog/macros.h>.
+* On MSVC, include your standard headers *before* `import spdlog;`. Including one
+  afterwards produces a cascade of C2572 "redefinition of default argument" errors inside
+  the MSVC standard library. Clang accepts either order.
+* fmt (or std::format) stays attached to the *global* module, not to spdlog, so
+  fmt::formatter / std::formatter are not reachable through `import spdlog;` by qualified
+  name. To specialize fmt::formatter<T> (or std::formatter<T>) for your own types,
+  #include <spdlog/fmt/fmt.h> (or <format> under SPDLOG_USE_STD_FORMAT) directly - safe and
+  ordinary, since that header stays attached to the global module either way, identical to
+  what this module itself uses. Do NOT, however, #include a header that declares spdlog's
+  *own* entities (e.g. <spdlog/logger.h>, <spdlog/mdc.h>) alongside the import - see above.
+* Only sinks with no external dependency are exported: qt_sinks, mongo_sink, kafka_sink,
+  systemd_sink, syslog_sink, tcp_sink, udp_sink, android_sink and loki_sink stay
+  header-only and can be #included next to `import spdlog;`.
+* No pkg-config file is generated for the module; modules cannot be expressed in
+  pkg-config.
+* If you override SPDLOG_NAMESPACE or SPDLOG_NAMESPACE_BEGIN/END, pass the same flags to
+  the build that compiles spdlog.cppm.
+
 Important Information for Compilation:
 ==================================================================
 * If you encounter compilation errors with gcc 4.8.x, please note that gcc 4.8.x does not fully support C++11. In such cases, consider upgrading your compiler or using a different version that fully supports C++11 standards

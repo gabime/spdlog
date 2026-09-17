@@ -14,7 +14,7 @@
 #include <vector>
 
 SPDLOG_NAMESPACE_BEGIN
-class async_logger;
+SPDLOG_EXPORT class async_logger;
 
 namespace details {
 
@@ -67,7 +67,7 @@ struct async_msg : log_msg_buffer {
         : async_msg{nullptr, the_type} {}
 };
 
-class SPDLOG_API thread_pool {
+SPDLOG_EXPORT class SPDLOG_API thread_pool {
 public:
     using item_type = async_msg;
     using q_type = details::mpmc_blocking_queue<item_type>;

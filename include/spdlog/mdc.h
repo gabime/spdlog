@@ -22,7 +22,7 @@
 // [mdc_key_1:mdc_value_1] Hello, World!
 
 SPDLOG_NAMESPACE_BEGIN
-class SPDLOG_API mdc {
+SPDLOG_EXPORT class SPDLOG_API mdc {
 public:
     using mdc_map_t = std::map<std::string, std::string>;
 

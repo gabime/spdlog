@@ -25,3 +25,17 @@
 #ifndef SPDLOG_NAMESPACE_END
     #define SPDLOG_NAMESPACE_END }
 #endif
+
+// SPDLOG_EXPORT marks a declaration as part of the C++20 module interface. It
+// expands to nothing for ordinary header use (#include <spdlog/...>); when the
+// headers are compiled inside the purview of the spdlog module unit
+// (src/spdlog.cppm), that translation unit defines it as `export` before
+// including them, which turns every annotated declaration into an exported
+// module entity.
+//
+// Defined here rather than in common.h because namespace.h is the header that
+// every other spdlog header includes first (directly or transitively), so
+// SPDLOG_EXPORT is guaranteed to be visible wherever it is used.
+#ifndef SPDLOG_EXPORT
+    #define SPDLOG_EXPORT
+#endif

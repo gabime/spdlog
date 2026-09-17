@@ -9,7 +9,7 @@
 SPDLOG_NAMESPACE_BEGIN
 
 namespace sinks {
-class SPDLOG_API sink {
+SPDLOG_EXPORT class SPDLOG_API sink {
 public:
     virtual ~sink() = default;
     virtual void log(const details::log_msg &msg) = 0;

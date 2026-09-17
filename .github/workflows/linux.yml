@@ -62,6 +62,87 @@ jobs:
           ctest -j 4 --output-on-failure
 
   # -----------------------------------------------------------------------
+  # C++20 named module (opt-in, needs CMake >= 3.28 and a module-capable compiler,
+  # so it cannot share the matrix above which pins CMake 3.24.2)
+  # -----------------------------------------------------------------------
+  build_module:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { name: "gcc 14", cc: gcc-14, cxx: g++-14, apt: "g++-14" }
+          - { name: "clang 18 libc++", cc: clang-18, cxx: clang++-18,
+              apt: "clang-18 libc++-18-dev libc++abi-18-dev", cxxflags: "-stdlib=libc++" }
+          - { name: "gcc 14 std::format", cc: gcc-14, cxx: g++-14, apt: "g++-14", std_format: "ON" }
+          - { name: "gcc 14 external fmt", cc: gcc-14, cxx: g++-14, apt: "g++-14 libfmt-dev", fmt_external: "ON" }
+    name: "C++20 module (${{ matrix.config.name }})"
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build ${{ matrix.config.apt }}
+      - name: Setup CMake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "3.31.6"
+      - name: Build and test
+        env:
+          CC: ${{ matrix.config.cc }}
+          CXX: ${{ matrix.config.cxx }}
+          CXXFLAGS: ${{ matrix.config.cxxflags }}
+        run: |
+          cmake -S . -B build -G Ninja             -DCMAKE_BUILD_TYPE=Release             -DSPDLOG_BUILD_MODULE=ON             -DSPDLOG_BUILD_EXAMPLE=ON             -DSPDLOG_BUILD_TESTS=ON             -DSPDLOG_BUILD_WARNINGS=ON             -DSPDLOG_USE_STD_FORMAT=${{ matrix.config.std_format || 'OFF' }}             -DSPDLOG_FMT_EXTERNAL=${{ matrix.config.fmt_external || 'OFF' }}
+          cmake --build build -j 4
+          ctest --test-dir build -j 1 --output-on-failure
+
+  # -----------------------------------------------------------------------
+  # The module under a custom namespace - the most likely place for the
+  # namespace override feature to regress
+  # -----------------------------------------------------------------------
+  build_module_namespace_override:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: bash
+    name: "C++20 module (namespace override)"
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build g++-14
+      - name: Setup CMake
+        uses: lukka/get-cmake@latest
+        with:
+          cmakeVersion: "3.31.6"
+      - name: "Strict rename"
+        env:
+          CC: gcc-14
+          CXX: g++-14
+        run: |
+          cmake -S . -B build/ns-rename -G Ninja             -DCMAKE_BUILD_TYPE=Release             -DSPDLOG_BUILD_MODULE=ON             -DCMAKE_CXX_FLAGS="-DSPDLOG_NAMESPACE=spdlog_ns_ci_test"
+          cmake --build build/ns-rename -j 4
+      - name: "Inline-namespace wrap"
+        env:
+          CC: gcc-14
+          CXX: g++-14
+        run: |
+          mkdir -p build
+          cat > build/ns_inline_wrap.h <<'EOF'
+          #pragma once
+          #define SPDLOG_NAMESPACE_BEGIN namespace spdlog { inline namespace ns_ci_test {
+          #define SPDLOG_NAMESPACE_END } }
+          EOF
+          cmake -S . -B build/ns-inline -G Ninja             -DCMAKE_BUILD_TYPE=Release             -DSPDLOG_BUILD_MODULE=ON             -DSPDLOG_BUILD_EXAMPLE=ON             -DSPDLOG_BUILD_TESTS=ON             -DCMAKE_CXX_FLAGS="-include $GITHUB_WORKSPACE/build/ns_inline_wrap.h"
+          cmake --build build/ns-inline -j 4
+          ctest --test-dir build/ns-inline -j 1 --output-on-failure
+
+  # -----------------------------------------------------------------------
   # Namespace customization regression tests
   # -----------------------------------------------------------------------
   build_namespace_override:

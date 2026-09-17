@@ -8,7 +8,7 @@
 
 SPDLOG_NAMESPACE_BEGIN
 namespace details {
-struct SPDLOG_API log_msg {
+SPDLOG_EXPORT struct SPDLOG_API log_msg {
     log_msg() = default;
     log_msg(log_clock::time_point log_time,
             source_loc loc,
