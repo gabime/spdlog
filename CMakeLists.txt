@@ -307,6 +307,9 @@ if(SPDLOG_BUILD_MODULE)
     # there), so the warning is expected noise here, not a real problem. Disabled only for
     # this target so SPDLOG_BUILD_WARNINGS=ON (/WX) still applies to everything else.
     target_compile_options(spdlog_module PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/wd5244>)
+    # C5304 fires inside MSVC's own <ctime> when it is compiled as part of a module
+    # interface unit (VS 17.14); it is not about anything spdlog exports.
+    target_compile_options(spdlog_module PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/wd5304>)
     # Clang's equivalent of C5244.
     target_compile_options(spdlog_module
                            PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang>:-Wno-include-angled-in-module-purview>)
