@@ -2284,7 +2284,11 @@ FMT_CONSTEXPR auto write(OutputIt out, const Char* s, const format_specs& specs,
                          locale_ref) -> OutputIt {
   if (specs.type() == presentation_type::pointer)
     return write_ptr<Char>(out, bit_cast<uintptr_t>(s), &specs);
-  if (!s) report_error("string pointer is null");
+  if (!s) {
+    const Char null_string[] = {Char('('), Char('n'), Char('u'), Char('l'),
+                                Char('l'), Char(')')};
+    return write<Char>(out, basic_string_view<Char>(null_string, 6), specs, {});
+  }
   return write<Char>(out, basic_string_view<Char>(s), specs, {});
 }
 
@@ -3620,8 +3624,9 @@ FMT_CONSTEXPR auto write(OutputIt out, Char value) -> OutputIt {
 template <typename Char, typename OutputIt>
 FMT_CONSTEXPR20 auto write(OutputIt out, const Char* value) -> OutputIt {
   if (value) return write(out, basic_string_view<Char>(value));
-  report_error("string pointer is null");
-  return out;
+  const Char null_string[] = {Char('('), Char('n'), Char('u'), Char('l'),
+                              Char('l'), Char(')')};
+  return write(out, basic_string_view<Char>(null_string, 6));
 }
 
 template <typename Char, typename OutputIt, typename T,

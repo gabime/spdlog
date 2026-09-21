@@ -35,6 +35,19 @@ TEST_CASE("basic_logging ", "[basic_logging]") {
     // REQUIRE(log_info(some_logged_class("some_val")) == "some_val");
 }
 
+#ifndef SPDLOG_USE_STD_FORMAT
+TEST_CASE("null c-string arguments", "[basic_logging]") {
+    std::ostringstream oss;
+    auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+    spdlog::logger oss_logger("oss", oss_sink);
+    oss_logger.set_pattern("%v");
+    const char* value = nullptr;
+    oss_logger.info("value: {}", value);
+    REQUIRE(spdlog::fmt_lib::format("{}", value) == "(null)");
+    REQUIRE(oss.str() == "value: (null)" + std::string(spdlog::details::os::default_eol));
+}
+#endif
+
 TEST_CASE("log_levels", "[log_levels]") {
     REQUIRE(log_info("Hello", spdlog::level::err).empty());
     REQUIRE(log_info("Hello", spdlog::level::critical).empty());
