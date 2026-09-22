@@ -114,8 +114,10 @@ function(spdlog_check_module_support out_ok out_reason)
     endif()
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.34")
-            set(${out_reason} "MSVC >= 19.34 (Visual Studio 17.4) is required (found ${CMAKE_CXX_COMPILER_VERSION})"
+        # MSVC 19.44 (Visual Studio 2022 17.14) still miscompiles the module: formatter
+        # specializations are not found from importers, and object files exceed 4 GB (C1605)
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "19.50")
+            set(${out_reason} "MSVC >= 19.50 (Visual Studio 2026) is required (found ${CMAKE_CXX_COMPILER_VERSION})"
                 PARENT_SCOPE)
             return()
         endif()

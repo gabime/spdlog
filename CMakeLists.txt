@@ -358,10 +358,6 @@ if(SPDLOG_BUILD_MODULE)
     # details::make_unique a different template in importing translation units.
     target_compile_options(spdlog_module PUBLIC $<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>)
 
-    # C5304 fires inside MSVC's own <ctime> when it is compiled as part of a module
-    # interface unit (VS 17.14); it is not about anything spdlog exports.
-    target_compile_options(spdlog_module PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/wd5304>)
-
     spdlog_enable_warnings(spdlog_module)
 endif()
 
