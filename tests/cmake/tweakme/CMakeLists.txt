@@ -18,6 +18,9 @@ if(SPDLOG_TEST_INSTALLED)
     add_executable(raw-header-only main.cpp)
     target_include_directories(raw-header-only PRIVATE "${SPDLOG_TEST_PREFIX}/include")
     target_link_libraries(raw-header-only PRIVATE Threads::Threads)
+    # This consumer bypasses the spdlog targets, so it does not inherit their /utf-8,
+    # which the bundled fmt requires with MSVC.
+    target_compile_options(raw-header-only PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
 else()
     set(SPDLOG_GENERATE_TWEAKME_H ON CACHE BOOL "" FORCE)
     set(SPDLOG_NO_THREAD_ID ON CACHE BOOL "" FORCE)
