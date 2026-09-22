@@ -18,6 +18,9 @@ SPDLOG_INLINE thread_pool::thread_pool(size_t q_max_items,
                                        std::function<void()> on_thread_start,
                                        std::function<void()> on_thread_stop)
     : q_(q_max_items) {
+    if (q_max_items == 0) {
+        throw_spdlog_ex("thread_pool(): invalid q_max_items param (must be greater than 0)");
+    }
     if (threads_n == 0 || threads_n > 1000) {
         throw_spdlog_ex(
             "thread_pool(): invalid threads_n param (valid "
