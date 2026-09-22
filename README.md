@@ -22,7 +22,7 @@ $ cmake .. && cmake --build .
 see example [CMakeLists.txt](example/CMakeLists.txt) on how to use.
 
 #### C++20 module version (experimental)
-Requires CMake 3.28+, Ninja 1.11+ (or Visual Studio 17.4+), and gcc 15+ / clang 17+ / MSVC 19.34+.
+Requires CMake 3.28+, Ninja 1.11+ (or the Visual Studio 2026 generator), and gcc 15+ / clang 17+ / MSVC 19.50+ (Visual Studio 2026).
 ```console
 $ cmake -S . -B build -G Ninja -DSPDLOG_BUILD_MODULE=ON && cmake --build build
 ```

@@ -219,7 +219,21 @@ export module spdlog;
 // own `#ifdef SPDLOG_HEADER_ONLY / #include "xxx-inl.h"` footer fires as usual,
 // so non-inline definitions end up compiled into this module unit instead of
 // into libspdlog.
+//
+// Compilers warn about #include in a module purview (MSVC C5244, Clang
+// -Winclude-angled-in-module-purview) because it is usually a mistake; here it
+// is the design. The warnings are silenced with pragmas rather than compiler
+// flags so that the silencing also applies when CMake compiles this file into a
+// BMI with a consumer's flags, and does not leak into consumers' own modules.
 // ---------------------------------------------------------------------------
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma warning(push)
+#pragma warning(disable : 5244)
+#elif defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Winclude-angled-in-module-purview"
+#endif
+
 #include <spdlog/common.h>
 #include <spdlog/fwd.h>
 #include <spdlog/formatter.h>
@@ -275,6 +289,12 @@ export module spdlog;
 // aliases one of ansicolor_sink/wincolor_sink depending on _WIN32, so only the
 // applicable one needs to be compiled into the module.
 #include <spdlog/sinks/ansicolor_sink.h>
+#endif
+
+#if defined(_MSC_VER) && !defined(__clang__)
+#pragma warning(pop)
+#elif defined(__clang__)
+#pragma clang diagnostic pop
 #endif
 
 // ---------------------------------------------------------------------------
