@@ -5,6 +5,10 @@
 
 #define TEST_FILENAME "test_logs/async_test.log"
 
+TEST_CASE("async zero queue size", "[async]") {
+    REQUIRE_THROWS_AS(spdlog::details::thread_pool(0, 1), spdlog::spdlog_ex);
+}
+
 TEST_CASE("basic async test ", "[async]") {
     auto test_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
     size_t overrun_counter = 0;
