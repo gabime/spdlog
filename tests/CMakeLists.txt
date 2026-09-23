@@ -47,6 +47,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_custom_callbacks.cpp
     test_cfg.cpp
     test_time_point.cpp
+    test_tcp_client.cpp
     test_stopwatch.cpp
     test_circular_q.cpp
     test_bin_to_hex.cpp
