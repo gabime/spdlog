@@ -29,7 +29,7 @@ SPDLOG_API std::tm gmtime() SPDLOG_NOEXCEPT;
 #endif
 #endif
 
-SPDLOG_CONSTEXPR static const char *default_eol = SPDLOG_EOL;
+SPDLOG_CONSTEXPR SPDLOG_INLINE_VAR const char *default_eol = SPDLOG_EOL;
 
 // folder separator
 #if !defined(SPDLOG_FOLDER_SEPS)
@@ -40,8 +40,8 @@ SPDLOG_CONSTEXPR static const char *default_eol = SPDLOG_EOL;
 #endif
 #endif
 
-SPDLOG_CONSTEXPR static const char folder_seps[] = SPDLOG_FOLDER_SEPS;
-SPDLOG_CONSTEXPR static const filename_t::value_type folder_seps_filename[] =
+SPDLOG_CONSTEXPR SPDLOG_INLINE_VAR const char folder_seps[] = SPDLOG_FOLDER_SEPS;
+SPDLOG_CONSTEXPR SPDLOG_INLINE_VAR const filename_t::value_type folder_seps_filename[] =
     SPDLOG_FILENAME_T(SPDLOG_FOLDER_SEPS);
 
 // fopen_s on non windows for writing
