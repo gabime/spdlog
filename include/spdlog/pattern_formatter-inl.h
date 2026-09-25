@@ -69,11 +69,23 @@ public:
         if (remaining_pad_ >= 0) {
             pad_it(remaining_pad_);
         } else if (padinfo_.truncate_) {
-            long new_size = static_cast<long>(dest_.size()) + remaining_pad_;
-            if (new_size < 0) {
-                new_size = 0;
+            long excess = -remaining_pad_;
+            if (padinfo_.truncate_from_start_) {
+                if (excess >= static_cast<long>(dest_.size())) {
+                    dest_.resize(0);
+                } else {
+                    const auto erase_count = static_cast<size_t>(excess);
+                    const auto new_size = dest_.size() - erase_count;
+                    std::memmove(dest_.data(), dest_.data() + erase_count, new_size);
+                    dest_.resize(new_size);
+                }
+            } else {
+                long new_size = static_cast<long>(dest_.size()) + remaining_pad_;
+                if (new_size < 0) {
+                    new_size = 0;
+                }
+                dest_.resize(static_cast<size_t>(new_size));
             }
-            dest_.resize(static_cast<size_t>(new_size));
         }
     }
 
@@ -1183,6 +1195,9 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
             break;
 
         case ('@'):  // source location (filename:filenumber)
+            if (padding.truncate_) {
+                padding.truncate_from_start_ = true;
+            }
             formatters_.push_back(
                 details::make_unique<details::source_location_formatter<Padder>>(padding));
             break;
