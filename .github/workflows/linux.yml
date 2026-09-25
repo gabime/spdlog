@@ -33,7 +33,7 @@ jobs:
         if: matrix.config.compiler == 'gcc' && matrix.config.version <= 11
         run: |
           sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list
-          sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list
+          sed -i '/debian-security/d' /etc/apt/sources.list
           sed -i '/-updates/d' /etc/apt/sources.list
           echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
       - name: Setup
