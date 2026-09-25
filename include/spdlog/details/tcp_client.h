@@ -15,6 +15,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <poll.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -43,9 +44,14 @@ public:
     int connect_socket_with_timeout(int sockfd,
                                     const struct sockaddr *addr,
                                     socklen_t addrlen,
-                                    const timeval &tv) {
+                                    int timeout_ms) {
+        if (timeout_ms < 0) {
+            errno = EINVAL;
+            return -1;
+        }
+
         // Blocking connect if timeout is zero
-        if (tv.tv_sec == 0 && tv.tv_usec == 0) {
+        if (timeout_ms == 0) {
             int rv = ::connect(sockfd, addr, addrlen);
             if (rv < 0 && errno == EISCONN) {
                 // already connected, treat as success
@@ -74,13 +80,9 @@ public:
             return -1;
         }
 
-        // wait for writability
-        fd_set wfds;
-        FD_ZERO(&wfds);
-        FD_SET(sockfd, &wfds);
-
-        struct timeval tv_copy = tv;
-        rv = ::select(sockfd + 1, nullptr, &wfds, nullptr, &tv_copy);
+        // poll supports descriptors above FD_SETSIZE, unlike FD_SET/select.
+        struct pollfd pfd{sockfd, POLLOUT, 0};
+        rv = ::poll(&pfd, 1, timeout_ms);
         if (rv <= 0) {
             // timeout or error
             ::fcntl(sockfd, F_SETFL, orig_flags);
@@ -139,7 +141,7 @@ public:
                 continue;
             }
             ::fcntl(socket_, F_SETFD, FD_CLOEXEC);
-            if (connect_socket_with_timeout(socket_, rp->ai_addr, rp->ai_addrlen, tv) == 0) {
+            if (connect_socket_with_timeout(socket_, rp->ai_addr, rp->ai_addrlen, timeout_ms) == 0) {
                 last_errno = 0;
                 break;
             }
