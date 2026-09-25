@@ -26,7 +26,7 @@ namespace sinks {
 /*
  * Generator of daily log file names in format basename_YYYY-MM-DD.ext
  */
-struct daily_filename_calculator {
+SPDLOG_EXPORT struct daily_filename_calculator {
     // Create filename of the form basename_YYYY-MM-DD.ext
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm) {
         filename_t basename, ext;
@@ -46,7 +46,7 @@ struct daily_filename_calculator {
  * hour,  minute)"
  *
  */
-struct daily_filename_format_calculator {
+SPDLOG_EXPORT struct daily_filename_format_calculator {
     static filename_t calc_filename(const filename_t &file_path, const tm &now_tm) {
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
         std::wstringstream stream;
@@ -65,7 +65,7 @@ struct daily_filename_format_calculator {
  * Note that old log files from previous executions will not be deleted by this class,
  * rotation and deletion is only applied while the program is running.
  */
-template <typename Mutex, typename FileNameCalc = daily_filename_calculator>
+SPDLOG_EXPORT template <typename Mutex, typename FileNameCalc = daily_filename_calculator>
 class daily_file_sink final : public base_sink<Mutex> {
 public:
     // create daily file sink which rotates on given time
@@ -191,10 +191,11 @@ private:
     details::circular_q<filename_t> filenames_q_;
 };
 
-using daily_file_sink_mt = daily_file_sink<std::mutex>;
-using daily_file_sink_st = daily_file_sink<details::null_mutex>;
-using daily_file_format_sink_mt = daily_file_sink<std::mutex, daily_filename_format_calculator>;
-using daily_file_format_sink_st =
+SPDLOG_EXPORT using daily_file_sink_mt = daily_file_sink<std::mutex>;
+SPDLOG_EXPORT using daily_file_sink_st = daily_file_sink<details::null_mutex>;
+SPDLOG_EXPORT using daily_file_format_sink_mt =
+    daily_file_sink<std::mutex, daily_filename_format_calculator>;
+SPDLOG_EXPORT using daily_file_format_sink_st =
     daily_file_sink<details::null_mutex, daily_filename_format_calculator>;
 
 }  // namespace sinks
@@ -202,7 +203,7 @@ using daily_file_format_sink_st =
 //
 // factory functions
 //
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name,
                                                const filename_t &filename,
                                                int hour = 0,
@@ -214,7 +215,7 @@ inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name,
                                                                truncate, max_files, event_handlers);
 }
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_format_mt(
     const std::string &logger_name,
     const filename_t &filename,
@@ -227,7 +228,7 @@ inline std::shared_ptr<logger> daily_logger_format_mt(
         logger_name, filename, hour, minute, truncate, max_files, event_handlers);
 }
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name,
                                                const filename_t &filename,
                                                int hour = 0,
@@ -239,7 +240,7 @@ inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name,
                                                                truncate, max_files, event_handlers);
 }
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> daily_logger_format_st(
     const std::string &logger_name,
     const filename_t &filename,

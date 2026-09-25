@@ -183,7 +183,7 @@ struct eventlog {
 /*
  * Windows Event Log sink
  */
-template <typename Mutex>
+SPDLOG_EXPORT template <typename Mutex>
 class win_eventlog_sink : public base_sink<Mutex> {
 private:
     HANDLE hEventLog_{NULL};
@@ -253,8 +253,8 @@ public:
 
 }  // namespace win_eventlog
 
-using win_eventlog_sink_mt = win_eventlog::win_eventlog_sink<std::mutex>;
-using win_eventlog_sink_st = win_eventlog::win_eventlog_sink<details::null_mutex>;
+SPDLOG_EXPORT using win_eventlog_sink_mt = win_eventlog::win_eventlog_sink<std::mutex>;
+SPDLOG_EXPORT using win_eventlog_sink_st = win_eventlog::win_eventlog_sink<details::null_mutex>;
 
 }  // namespace sinks
 SPDLOG_NAMESPACE_END

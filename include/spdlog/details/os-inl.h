@@ -468,7 +468,13 @@ SPDLOG_INLINE void utf8_to_wstrbuf(string_view_t str, wmemory_buf_t &target) {
         // defined(_WIN32)
 
 // return true on success
-static SPDLOG_INLINE bool mkdir_(const filename_t &path) {
+//
+// Not `static`: SPDLOG_INLINE (a plain `inline` in header-only builds, including the
+// module) already gives this the one-definition-per-program guarantee `static` was
+// providing; `static` on top of that would make it TU-local, which is an ill-formed
+// exposure once this file is compiled inside the C++20 module's purview - os::create_dir
+// below, which calls it, is reachable there even though it is not itself exported.
+SPDLOG_INLINE bool mkdir_(const filename_t &path) {
 #ifdef _WIN32
 #ifdef SPDLOG_WCHAR_FILENAMES
     return ::_wmkdir(path.c_str()) == 0;

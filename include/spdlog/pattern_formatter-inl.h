@@ -144,12 +144,19 @@ public:
 // Date time pattern appenders
 ///////////////////////////////////////////////////////////////////////
 
-static const char *ampm(const tm &t) { return t.tm_hour >= 12 ? "PM" : "AM"; }
+// Note: these helpers used to be namespace-scope `static` (internal linkage), relying on this
+// file being textually included once per translation unit to avoid ODR issues without needing
+// `inline`. When this file is compiled inside the purview of the C++20 module (src/spdlog.cppm),
+// referencing a TU-local (internal-linkage) entity from the body of the class templates below -
+// which are used from pattern_formatter's exported, inline (header-only) member functions - is an
+// ill-formed "exposure" of a TU-local entity. `inline` gives them external linkage while staying
+// safe to define in every translation unit that includes this header.
+inline const char *ampm(const tm &t) { return t.tm_hour >= 12 ? "PM" : "AM"; }
 
-static int to12h(const tm &t) { return t.tm_hour > 12 ? t.tm_hour - 12 : t.tm_hour; }
+inline int to12h(const tm &t) { return t.tm_hour > 12 ? t.tm_hour - 12 : t.tm_hour; }
 
 // Abbreviated weekday name
-static std::array<const char *, 7> days{{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}};
+SPDLOG_INLINE_VAR std::array<const char *, 7> days{{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}};
 
 template <typename ScopedPadder>
 class a_formatter final : public flag_formatter {
@@ -165,7 +172,7 @@ public:
 };
 
 // Full weekday name
-static std::array<const char *, 7> full_days{
+SPDLOG_INLINE_VAR std::array<const char *, 7> full_days{
     {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}};
 
 template <typename ScopedPadder>
@@ -182,7 +189,7 @@ public:
 };
 
 // Abbreviated month
-static const std::array<const char *, 12> months{
+SPDLOG_INLINE_VAR const std::array<const char *, 12> months{
     {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}};
 
 template <typename ScopedPadder>
@@ -199,9 +206,9 @@ public:
 };
 
 // Full month name
-static const std::array<const char *, 12> full_months{{"January", "February", "March", "April",
-                                                       "May", "June", "July", "August", "September",
-                                                       "October", "November", "December"}};
+SPDLOG_INLINE_VAR const std::array<const char *, 12> full_months{
+    {"January", "February", "March", "April", "May", "June", "July", "August", "September",
+     "October", "November", "December"}};
 
 template <typename ScopedPadder>
 class B_formatter final : public flag_formatter {

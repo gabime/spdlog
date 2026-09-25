@@ -52,7 +52,15 @@
 #if !defined(SPDLOG_USE_STD_FORMAT) && \
     FMT_VERSION >= 80000  // backward compatibility with fmt versions older than 8
 #define SPDLOG_FMT_RUNTIME(format_string) fmt::runtime(format_string)
+#ifdef SPDLOG_MODULE_BUILD
+// FMT_STRING's compile-string path calls fmt's parse_format_string through
+// argument-dependent lookup, which GCC cannot resolve when the template is
+// instantiated in a translation unit that imports the module. The module is
+// always C++20, where fmt checks format string literals at compile time anyway.
+#define SPDLOG_FMT_STRING(format_string) format_string
+#else
 #define SPDLOG_FMT_STRING(format_string) FMT_STRING(format_string)
+#endif
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 #include <spdlog/fmt/xchar.h>
 #endif
@@ -85,6 +93,20 @@
 #endif
 #endif
 
+// Namespace-scope constants need external linkage so that templates defined in
+// these headers can still reference them when instantiated in a translation unit
+// that consumes spdlog through `import spdlog;`. A namespace-scope static or
+// constexpr variable has internal linkage, which cannot cross the module
+// boundary (referencing it from an exported inline function/template body is an
+// ill-formed exposure of a TU-local entity). Falls back to static before
+// C++17, where inline variables do not exist - and where there is no module to
+// worry about either.
+#if defined(__cpp_inline_variables) && __cpp_inline_variables >= 201606L
+#define SPDLOG_INLINE_VAR inline
+#else
+#define SPDLOG_INLINE_VAR static
+#endif
+
 #if defined(__GNUC__) || defined(__clang__)
 #define SPDLOG_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER)
@@ -100,9 +122,7 @@
 #endif
 #endif
 
-#ifndef SPDLOG_FUNCTION
-#define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
-#endif
+#include <spdlog/macros.h>
 
 #ifdef SPDLOG_NO_EXCEPTIONS
 #define SPDLOG_TRY
@@ -124,48 +144,48 @@
 
 SPDLOG_NAMESPACE_BEGIN
 
-class formatter;
+SPDLOG_EXPORT class formatter;
 
 namespace sinks {
-class sink;
+SPDLOG_EXPORT class sink;
 }
 
 #if defined(_WIN32) && defined(SPDLOG_WCHAR_FILENAMES)
-using filename_t = std::wstring;
+SPDLOG_EXPORT using filename_t = std::wstring;
 // allow macro expansion to occur in SPDLOG_FILENAME_T
 #define SPDLOG_FILENAME_T_INNER(s) L##s
 #define SPDLOG_FILENAME_T(s) SPDLOG_FILENAME_T_INNER(s)
 #else
-using filename_t = std::string;
+SPDLOG_EXPORT using filename_t = std::string;
 #define SPDLOG_FILENAME_T(s) s
 #endif
 
-using log_clock = std::chrono::system_clock;
-using sink_ptr = std::shared_ptr<sinks::sink>;
-using sinks_init_list = std::initializer_list<sink_ptr>;
-using err_handler = std::function<void(const std::string &err_msg)>;
+SPDLOG_EXPORT using log_clock = std::chrono::system_clock;
+SPDLOG_EXPORT using sink_ptr = std::shared_ptr<sinks::sink>;
+SPDLOG_EXPORT using sinks_init_list = std::initializer_list<sink_ptr>;
+SPDLOG_EXPORT using err_handler = std::function<void(const std::string &err_msg)>;
 #ifdef SPDLOG_USE_STD_FORMAT
-namespace fmt_lib = std;
+SPDLOG_EXPORT namespace fmt_lib = std;
 
-using string_view_t = std::string_view;
-using memory_buf_t = std::string;
+SPDLOG_EXPORT using string_view_t = std::string_view;
+SPDLOG_EXPORT using memory_buf_t = std::string;
 
-template <typename... Args>
+SPDLOG_EXPORT template <typename... Args>
 #if __cpp_lib_format >= 202207L
 using format_string_t = std::format_string<Args...>;
 #else
 using format_string_t = std::string_view;
 #endif
 
-template <class T, class Char = char>
+SPDLOG_EXPORT template <class T, class Char = char>
 struct is_convertible_to_basic_format_string
     : std::integral_constant<bool, std::is_convertible<T, std::basic_string_view<Char>>::value> {};
 
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-using wstring_view_t = std::wstring_view;
-using wmemory_buf_t = std::wstring;
+SPDLOG_EXPORT using wstring_view_t = std::wstring_view;
+SPDLOG_EXPORT using wmemory_buf_t = std::wstring;
 
-template <typename... Args>
+SPDLOG_EXPORT template <typename... Args>
 #if __cpp_lib_format >= 202207L
 using wformat_string_t = std::wformat_string<Args...>;
 #else
@@ -174,18 +194,18 @@ using wformat_string_t = std::wstring_view;
 #endif
 #define SPDLOG_BUF_TO_STRING(x) x
 #else  // use fmt lib instead of std::format
-namespace fmt_lib = fmt;
+SPDLOG_EXPORT namespace fmt_lib = fmt;
 
-using string_view_t = fmt::basic_string_view<char>;
-using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
+SPDLOG_EXPORT using string_view_t = fmt::basic_string_view<char>;
+SPDLOG_EXPORT using memory_buf_t = fmt::basic_memory_buffer<char, 250>;
 
-template <typename... Args>
+SPDLOG_EXPORT template <typename... Args>
 using format_string_t = fmt::format_string<Args...>;
 
-template <class T>
+SPDLOG_EXPORT template <class T>
 using remove_cvref_t = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
 
-template <typename Char>
+SPDLOG_EXPORT template <typename Char>
 #if FMT_VERSION >= 90101
 using fmt_runtime_string = fmt::runtime_format_string<Char>;
 #else
@@ -195,7 +215,7 @@ using fmt_runtime_string = fmt::basic_runtime<Char>;
 // clang doesn't like SFINAE disabled constructor in std::is_convertible<> so have to repeat the
 // condition from basic_format_string here, in addition, fmt::basic_runtime<Char> is only
 // convertible to basic_format_string<Char> but not basic_string_view<Char>
-template <class T, class Char = char>
+SPDLOG_EXPORT template <class T, class Char = char>
 struct is_convertible_to_basic_format_string
     : std::integral_constant<bool,
                              std::is_convertible<T, fmt::basic_string_view<Char>>::value ||
@@ -203,10 +223,10 @@ struct is_convertible_to_basic_format_string
 };
 
 #if defined(SPDLOG_WCHAR_FILENAMES) || defined(SPDLOG_WCHAR_TO_UTF8_SUPPORT)
-using wstring_view_t = fmt::basic_string_view<wchar_t>;
-using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
+SPDLOG_EXPORT using wstring_view_t = fmt::basic_string_view<wchar_t>;
+SPDLOG_EXPORT using wmemory_buf_t = fmt::basic_memory_buffer<wchar_t, 250>;
 
-template <typename... Args>
+SPDLOG_EXPORT template <typename... Args>
 using wformat_string_t = fmt::wformat_string<Args...>;
 #endif
 #define SPDLOG_BUF_TO_STRING(x) fmt::to_string(x)
@@ -218,33 +238,21 @@ using wformat_string_t = fmt::wformat_string<Args...>;
 #endif  // _WIN32
 #endif  // SPDLOG_WCHAR_TO_UTF8_SUPPORT
 
-template <class T>
+SPDLOG_EXPORT template <class T>
 struct is_convertible_to_any_format_string
     : std::integral_constant<bool,
                              is_convertible_to_basic_format_string<T, char>::value ||
                                  is_convertible_to_basic_format_string<T, wchar_t>::value> {};
 
 #if defined(SPDLOG_NO_ATOMIC_LEVELS)
-using level_t = details::null_atomic_int;
+SPDLOG_EXPORT using level_t = details::null_atomic_int;
 #else
-using level_t = std::atomic<int>;
-#endif
-
-#define SPDLOG_LEVEL_TRACE 0
-#define SPDLOG_LEVEL_DEBUG 1
-#define SPDLOG_LEVEL_INFO 2
-#define SPDLOG_LEVEL_WARN 3
-#define SPDLOG_LEVEL_ERROR 4
-#define SPDLOG_LEVEL_CRITICAL 5
-#define SPDLOG_LEVEL_OFF 6
-
-#if !defined(SPDLOG_ACTIVE_LEVEL)
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
+SPDLOG_EXPORT using level_t = std::atomic<int>;
 #endif
 
 // Log level enum
 namespace level {
-enum level_enum : int {
+SPDLOG_EXPORT enum level_enum : int {
     trace = SPDLOG_LEVEL_TRACE,
     debug = SPDLOG_LEVEL_DEBUG,
     info = SPDLOG_LEVEL_INFO,
@@ -278,22 +286,22 @@ enum level_enum : int {
     { "T", "D", "I", "W", "E", "C", "O" }
 #endif
 
-SPDLOG_API const string_view_t &to_string_view(level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API const char *to_short_c_str(level::level_enum l) SPDLOG_NOEXCEPT;
-SPDLOG_API level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
+SPDLOG_EXPORT SPDLOG_API const string_view_t &to_string_view(level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_EXPORT SPDLOG_API const char *to_short_c_str(level::level_enum l) SPDLOG_NOEXCEPT;
+SPDLOG_EXPORT SPDLOG_API level::level_enum from_str(const std::string &name) SPDLOG_NOEXCEPT;
 
 }  // namespace level
 
 //
 // Color mode used by sinks with color support.
 //
-enum class color_mode { always, automatic, never };
+SPDLOG_EXPORT enum class color_mode { always, automatic, never };
 
 //
 // Pattern time - specific time getting to use for pattern_formatter.
 // local time by default
 //
-enum class pattern_time_type {
+SPDLOG_EXPORT enum class pattern_time_type {
     local,  // log localtime
     utc     // log utc
 };
@@ -301,7 +309,7 @@ enum class pattern_time_type {
 //
 // Log exception
 //
-class SPDLOG_API spdlog_ex : public std::exception {
+SPDLOG_EXPORT class SPDLOG_API spdlog_ex : public std::exception {
 public:
     explicit spdlog_ex(std::string msg);
     spdlog_ex(const std::string &msg, int last_errno);
@@ -311,10 +319,10 @@ private:
     std::string msg_;
 };
 
-[[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
-[[noreturn]] SPDLOG_API void throw_spdlog_ex(std::string msg);
+SPDLOG_EXPORT [[noreturn]] SPDLOG_API void throw_spdlog_ex(const std::string &msg, int last_errno);
+SPDLOG_EXPORT [[noreturn]] SPDLOG_API void throw_spdlog_ex(std::string msg);
 
-struct source_loc {
+SPDLOG_EXPORT struct source_loc {
     SPDLOG_CONSTEXPR source_loc() = default;
     SPDLOG_CONSTEXPR source_loc(const char *filename_in, int line_in, const char *funcname_in)
         : filename{filename_in},
@@ -327,7 +335,7 @@ struct source_loc {
     const char *funcname{nullptr};
 };
 
-struct file_event_handlers {
+SPDLOG_EXPORT struct file_event_handlers {
     file_event_handlers()
         : before_open(nullptr),
           after_open(nullptr),
@@ -344,13 +352,13 @@ namespace details {
 
 // make_unique support for pre c++14
 #if __cplusplus >= 201402L  // C++14 and beyond
-using std::enable_if_t;
-using std::make_unique;
+SPDLOG_EXPORT using std::enable_if_t;
+SPDLOG_EXPORT using std::make_unique;
 #else
-template <bool B, class T = void>
+SPDLOG_EXPORT template <bool B, class T = void>
 using enable_if_t = typename std::enable_if<B, T>::type;
 
-template <typename T, typename... Args>
+SPDLOG_EXPORT template <typename T, typename... Args>
 std::unique_ptr<T> make_unique(Args &&...args) {
     static_assert(!std::is_array<T>::value, "arrays not supported");
     return std::unique_ptr<T>(new T(std::forward<Args>(args)...));

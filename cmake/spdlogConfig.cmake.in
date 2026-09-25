@@ -17,4 +17,16 @@ endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/${config_targets_file}")
 
+# The C++20 module target lives in a separate targets file: CMake writes a hard
+# "CMake >= 3.28 required" guard into any targets file holding a CXX_MODULES file set,
+# so older consumers must never include it. They simply get the classic targets.
+set(module_config_targets_file "@module_config_targets_file@")
+set(spdlog_module_FOUND FALSE)
+if(module_config_targets_file AND NOT CMAKE_VERSION VERSION_LESS "3.28")
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${module_config_targets_file}")
+        include("${CMAKE_CURRENT_LIST_DIR}/${module_config_targets_file}")
+        set(spdlog_module_FOUND TRUE)
+    endif()
+endif()
+
 check_required_components(spdlog)

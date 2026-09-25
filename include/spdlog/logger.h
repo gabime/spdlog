@@ -47,7 +47,7 @@
 
 SPDLOG_NAMESPACE_BEGIN
 
-class SPDLOG_API logger {
+SPDLOG_EXPORT class SPDLOG_API logger {
 public:
     // Empty logger
     explicit logger(std::string name)
@@ -378,7 +378,7 @@ protected:
     void err_handler_(const std::string &msg) const;
 };
 
-void swap(logger &a, logger &b) noexcept;
+SPDLOG_EXPORT void swap(logger &a, logger &b) noexcept;
 
 SPDLOG_NAMESPACE_END
 

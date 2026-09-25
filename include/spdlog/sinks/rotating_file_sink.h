@@ -17,7 +17,7 @@ namespace sinks {
 //
 // Rotating file sink based on size
 //
-template <typename Mutex>
+SPDLOG_EXPORT template <typename Mutex>
 class rotating_file_sink final : public base_sink<Mutex> {
 public:
     static constexpr size_t MaxFiles = 200000;
@@ -58,15 +58,15 @@ private:
     details::file_helper file_helper_;
 };
 
-using rotating_file_sink_mt = rotating_file_sink<std::mutex>;
-using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
+SPDLOG_EXPORT using rotating_file_sink_mt = rotating_file_sink<std::mutex>;
+SPDLOG_EXPORT using rotating_file_sink_st = rotating_file_sink<details::null_mutex>;
 
 }  // namespace sinks
 
 //
 // factory functions
 //
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> rotating_logger_mt(const std::string &logger_name,
                                            const filename_t &filename,
                                            size_t max_file_size,
@@ -77,7 +77,7 @@ std::shared_ptr<logger> rotating_logger_mt(const std::string &logger_name,
         logger_name, filename, max_file_size, max_files, rotate_on_open, event_handlers);
 }
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> rotating_logger_st(const std::string &logger_name,
                                            const filename_t &filename,
                                            size_t max_file_size,

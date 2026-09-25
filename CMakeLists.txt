@@ -62,6 +62,9 @@ option(SPDLOG_BUILD_ALL "Build all artifacts" OFF)
 # build shared option
 option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
 
+# build the C++20 named module (opt-in; needs CMake >= 3.28 and a module-capable toolchain)
+option(SPDLOG_BUILD_MODULE "Build the C++20 named module target spdlog::spdlog_module" OFF)
+
 # precompiled headers option
 option(SPDLOG_ENABLE_PCH "Build static or shared library using precompiled header to speed up compilation time" OFF)
 
@@ -250,6 +253,57 @@ target_include_directories(
 target_link_libraries(spdlog_header_only INTERFACE Threads::Threads)
 
 # ---------------------------------------------------------------------------------------
+# C++20 named module (opt-in)
+#
+# Unlike spdlog/spdlog_header_only above, this target is never given SPDLOG_COMPILED_LIB:
+# the module is always built in header-only mode, with every spdlog definition compiled
+# directly into this target's own object code (via src/spdlog.cppm), because a module
+# interface unit's declarations get module ownership (different name mangling on MSVC,
+# strong ownership on Clang) and so cannot be satisfied by linking the separately-compiled
+# spdlog::spdlog library. It otherwise needs the same include paths, Threads dependency,
+# and tweak-option/fmt/exception defines as the targets above, applied directly below
+# (rather than inherited by linking spdlog::spdlog) since it participates in the same
+# foreach/if blocks as spdlog_header_only from here on.
+# ---------------------------------------------------------------------------------------
+if(SPDLOG_BUILD_MODULE)
+    spdlog_check_module_support(SPDLOG_MODULE_SUPPORTED SPDLOG_MODULE_UNSUPPORTED_REASON)
+    if(NOT SPDLOG_MODULE_SUPPORTED)
+        message(FATAL_ERROR "SPDLOG_BUILD_MODULE=ON: ${SPDLOG_MODULE_UNSUPPORTED_REASON}")
+    endif()
+    spdlog_message_once(MODULE "Build spdlog C++20 module: spdlog::spdlog_module")
+
+    # STATIC on purpose: a module interface unit still produces an object file that
+    # importers have to link, and a DLL exporting nothing would be a trap under
+    # BUILD_SHARED_LIBS=ON.
+    add_library(spdlog_module STATIC)
+    add_library(spdlog::spdlog_module ALIAS spdlog_module)
+
+    target_sources(
+        spdlog_module
+        PUBLIC FILE_SET CXX_MODULES BASE_DIRS "${CMAKE_CURRENT_LIST_DIR}/src" FILES
+               "${CMAKE_CURRENT_LIST_DIR}/src/spdlog.cppm")
+
+    target_compile_features(spdlog_module PUBLIC cxx_std_20)
+    if(CMAKE_CXX_STANDARD AND CMAKE_CXX_STANDARD LESS 20)
+        set_target_properties(spdlog_module PROPERTIES CXX_STANDARD 20)
+    endif()
+    set_target_properties(
+        spdlog_module PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON
+                                 DEBUG_POSTFIX "${SPDLOG_DEBUG_POSTFIX}")
+
+    if(SPDLOG_GENERATE_TWEAKME_H)
+        target_include_directories(
+            spdlog_module ${SPDLOG_INCLUDES_LEVEL} BEFORE PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
+    endif()
+    target_include_directories(
+        spdlog_module ${SPDLOG_INCLUDES_LEVEL} PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+                                                       "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+    target_link_libraries(spdlog_module PUBLIC Threads::Threads)
+
+    spdlog_enable_warnings(spdlog_module)
+endif()
+
+# ---------------------------------------------------------------------------------------
 # Use fmt package if using external fmt
 # ---------------------------------------------------------------------------------------
 if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
@@ -258,14 +312,23 @@ if(SPDLOG_FMT_EXTERNAL OR SPDLOG_FMT_EXTERNAL_HO)
     endif()
     target_compile_definitions(spdlog PUBLIC SPDLOG_FMT_EXTERNAL)
     target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FMT_EXTERNAL)
+    if(TARGET spdlog_module)
+        target_compile_definitions(spdlog_module PUBLIC SPDLOG_FMT_EXTERNAL)
+    endif()
 
     # use external fmt-header-only
     if(SPDLOG_FMT_EXTERNAL_HO)
         target_link_libraries(spdlog PUBLIC fmt::fmt-header-only)
         target_link_libraries(spdlog_header_only INTERFACE fmt::fmt-header-only)
+        if(TARGET spdlog_module)
+            target_link_libraries(spdlog_module PUBLIC fmt::fmt-header-only)
+        endif()
     else() # use external compile fmt
         target_link_libraries(spdlog PUBLIC fmt::fmt)
         target_link_libraries(spdlog_header_only INTERFACE fmt::fmt)
+        if(TARGET spdlog_module)
+            target_link_libraries(spdlog_module PUBLIC fmt::fmt)
+        endif()
     endif()
 
     set(PKG_CONFIG_REQUIRES fmt) # add dependency to pkg-config
@@ -284,6 +347,9 @@ if(SPDLOG_FWRITE_UNLOCKED)
     if(HAVE_FWRITE_UNLOCKED)
         target_compile_definitions(spdlog PRIVATE SPDLOG_FWRITE_UNLOCKED)
         target_compile_definitions(spdlog_header_only INTERFACE SPDLOG_FWRITE_UNLOCKED)
+        if(TARGET spdlog_module)
+            target_compile_definitions(spdlog_module PUBLIC SPDLOG_FWRITE_UNLOCKED)
+        endif()
     endif()
 endif()
 
@@ -293,6 +359,9 @@ endif()
 if(ANDROID)
     target_link_libraries(spdlog PUBLIC log)
     target_link_libraries(spdlog_header_only INTERFACE log)
+    if(TARGET spdlog_module)
+        target_link_libraries(spdlog_module PUBLIC log)
+    endif()
 endif()
 
 # ---------------------------------------------------------------------------------------
@@ -315,12 +384,21 @@ foreach(
     if(${SPDLOG_OPTION})
         target_compile_definitions(spdlog PUBLIC ${SPDLOG_OPTION})
         target_compile_definitions(spdlog_header_only INTERFACE ${SPDLOG_OPTION})
+        if(TARGET spdlog_module)
+            target_compile_definitions(spdlog_module PUBLIC ${SPDLOG_OPTION})
+        endif()
     endif()
 endforeach()
 
 if(MSVC)
     target_compile_options(spdlog PRIVATE "/Zc:__cplusplus")
     target_compile_options(spdlog_header_only INTERFACE "/Zc:__cplusplus")
+    if(TARGET spdlog_module)
+        # Must be PUBLIC here: without it MSVC reports __cplusplus as 199711L even under
+        # /std:c++20, which flips the __cplusplus >= 201402L branch in common.h and makes
+        # details::make_unique a different template in importing translation units.
+        target_compile_options(spdlog_module PUBLIC "/Zc:__cplusplus")
+    endif()
     if(SPDLOG_MSVC_UTF8)
         # fmtlib requires the /utf-8 flag when building with msvc. see https://github.com/fmtlib/fmt/pull/4159 on the
         # purpose of the additional
@@ -328,6 +406,9 @@ if(MSVC)
         target_compile_options(spdlog PUBLIC $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/utf-8>)
         target_compile_options(spdlog_header_only
                                INTERFACE $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/utf-8>)
+        if(TARGET spdlog_module)
+            target_compile_options(spdlog_module PUBLIC $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/utf-8>)
+        endif()
     endif()
 endif()
 
@@ -337,12 +418,22 @@ endif()
 if(SPDLOG_NO_EXCEPTIONS)
     if(NOT SPDLOG_FMT_EXTERNAL AND NOT SPDLOG_FMT_EXTERNAL_HO)
         target_compile_definitions(spdlog PUBLIC FMT_USE_EXCEPTIONS=0)
+        if(TARGET spdlog_module)
+            target_compile_definitions(spdlog_module PUBLIC FMT_USE_EXCEPTIONS=0)
+        endif()
     endif()
     if(NOT MSVC)
         target_compile_options(spdlog PRIVATE -fno-exceptions)
+        if(TARGET spdlog_module)
+            target_compile_options(spdlog_module PRIVATE -fno-exceptions)
+        endif()
     else()
         target_compile_options(spdlog PRIVATE /EHs-c-)
         target_compile_definitions(spdlog PRIVATE _HAS_EXCEPTIONS=0)
+        if(TARGET spdlog_module)
+            target_compile_options(spdlog_module PRIVATE /EHs-c-)
+            target_compile_definitions(spdlog_module PRIVATE _HAS_EXCEPTIONS=0)
+        endif()
     endif()
 endif()
 # ---------------------------------------------------------------------------------------
@@ -354,6 +445,9 @@ if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO OR SPDLOG_BUILD_ALL)
     spdlog_enable_warnings(example)
     if(SPDLOG_BUILD_EXAMPLE_HO)
         spdlog_enable_warnings(example_header_only)
+    endif()
+    if(SPDLOG_BUILD_MODULE AND TARGET example_module)
+        spdlog_enable_warnings(example_module)
     endif()
 endif()
 
@@ -435,6 +529,30 @@ if(SPDLOG_INSTALL)
     endif()
     configure_file("cmake/${PROJECT_NAME}_header_only.pc.in" "${pkg_config_header_only}" @ONLY)
     install(FILES "${pkg_config_header_only}" DESTINATION "${pkgconfig_install_dir}")
+
+    # ---------------------------------------------------------------------------------------
+    # The module target gets its own export set and its own targets file. CMake writes a hard
+    # "CMake >= 3.28 required" guard into any targets file that contains a CXX_MODULES file
+    # set, so putting spdlog_module into the export set above would break every consumer still
+    # on CMake 3.10-3.27. spdlogConfig.cmake includes the extra file only when it can.
+    # ---------------------------------------------------------------------------------------
+    if(SPDLOG_BUILD_MODULE)
+        set(module_config_targets_file "spdlogModuleTargets.cmake")
+        install(
+            TARGETS spdlog_module
+            EXPORT spdlog_module
+            FILE_SET CXX_MODULES DESTINATION "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/module"
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+        install(EXPORT spdlog_module DESTINATION ${export_dest_dir} NAMESPACE spdlog::
+                FILE ${module_config_targets_file} CXX_MODULES_DIRECTORY "cxx-modules")
+        export(EXPORT spdlog_module NAMESPACE spdlog::
+               FILE "${CMAKE_CURRENT_BINARY_DIR}/${module_config_targets_file}"
+               CXX_MODULES_DIRECTORY "cxx-modules")
+    else()
+        set(module_config_targets_file "")
+    endif()
 
     # ---------------------------------------------------------------------------------------
     # Install CMake config files
