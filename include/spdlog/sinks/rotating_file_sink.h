@@ -25,7 +25,8 @@ public:
                        std::size_t max_size,
                        std::size_t max_files,
                        bool rotate_on_open = false,
-                       const file_event_handlers &event_handlers = {});
+                       const file_event_handlers &event_handlers = {},
+                       std::size_t buffer_size = 0);
     static filename_t calc_filename(const filename_t &filename, std::size_t index);
     filename_t filename();
     void rotate_now();
@@ -34,6 +35,7 @@ public:
     void set_max_files(std::size_t max_files);
     std::size_t get_max_files();
     std::size_t get_current_size();
+    void set_buffer(std::size_t size);
 
 protected:
     void sink_it_(const details::log_msg &msg) override;
@@ -72,9 +74,11 @@ std::shared_ptr<logger> rotating_logger_mt(const std::string &logger_name,
                                            size_t max_file_size,
                                            size_t max_files,
                                            bool rotate_on_open = false,
-                                           const file_event_handlers &event_handlers = {}) {
+                                           const file_event_handlers &event_handlers = {},
+                                           std::size_t buffer_size = 0) {
     return Factory::template create<sinks::rotating_file_sink_mt>(
-        logger_name, filename, max_file_size, max_files, rotate_on_open, event_handlers);
+        logger_name, filename, max_file_size, max_files, rotate_on_open, event_handlers,
+        buffer_size);
 }
 
 template <typename Factory = synchronous_factory>
@@ -83,9 +87,11 @@ std::shared_ptr<logger> rotating_logger_st(const std::string &logger_name,
                                            size_t max_file_size,
                                            size_t max_files,
                                            bool rotate_on_open = false,
-                                           const file_event_handlers &event_handlers = {}) {
+                                           const file_event_handlers &event_handlers = {},
+                                           std::size_t buffer_size = 0) {
     return Factory::template create<sinks::rotating_file_sink_st>(
-        logger_name, filename, max_file_size, max_files, rotate_on_open, event_handlers);
+        logger_name, filename, max_file_size, max_files, rotate_on_open, event_handlers,
+        buffer_size);
 }
 SPDLOG_NAMESPACE_END
 
