@@ -35,7 +35,7 @@ struct udp_sink_config {
 template <typename Mutex>
 class udp_sink : public sinks::base_sink<Mutex> {
 public:
-    // host can be hostname or ip address
+    // host must be an ip address (in a string)
     explicit udp_sink(const udp_sink_config& sink_config)
         : client_{sink_config.server_host, sink_config.server_port} {}
 
