@@ -35,6 +35,29 @@ SPDLOG_INLINE log_msg_buffer::log_msg_buffer(log_msg_buffer &&other) SPDLOG_NOEX
     update_string_views();
 }
 
+SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(const log_msg &other) {
+    if (static_cast<const log_msg *>(this) == &other) {
+        return *this;
+    }
+
+    log_msg::operator=(other);
+    buffer.clear();
+
+    size_t needed = logger_name.size() + payload.size();
+    if (source.filename != nullptr) {
+        needed += std::strlen(source.filename) + 1;
+    }
+    if (source.funcname != nullptr) {
+        needed += std::strlen(source.funcname) + 1;
+    }
+    buffer.reserve(needed);
+    buffer.append(logger_name.begin(), logger_name.end());
+    buffer.append(payload.begin(), payload.end());
+    append_source();
+    update_string_views();
+    return *this;
+}
+
 SPDLOG_INLINE log_msg_buffer &log_msg_buffer::operator=(const log_msg_buffer &other) {
     log_msg::operator=(other);
     buffer.clear();
