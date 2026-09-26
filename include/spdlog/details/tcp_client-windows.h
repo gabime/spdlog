@@ -28,7 +28,7 @@ class tcp_client {
         WSADATA wsaData;
         auto rv = WSAStartup(MAKEWORD(2, 2), &wsaData);
         if (rv != 0) {
-            throw_winsock_error_("WSAStartup failed", ::WSAGetLastError());
+            throw_winsock_error_("WSAStartup failed", rv);
         }
     }
 
@@ -155,7 +155,7 @@ public:
         auto rv = ::getaddrinfo(host.c_str(), port_str.c_str(), &hints, &addrinfo_result);
         int last_error = 0;
         if (rv != 0) {
-            last_error = ::WSAGetLastError();
+            last_error = rv;
             throw_winsock_error_("getaddrinfo failed", last_error);
         }
 
