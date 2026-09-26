@@ -2,6 +2,10 @@
 
 #pragma once
 
+#ifndef SPDLOG_USE_STD_FORMAT
+#error "systemd_namespace_sink requires SPDLOG_USE_STD_FORMAT"
+#endif
+
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/details/os.h>
 #include <spdlog/details/synchronous_factory.h>
