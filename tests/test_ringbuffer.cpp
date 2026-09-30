@@ -1,9 +1,11 @@
 #include "includes.h"
 #include "spdlog/sinks/ringbuffer_sink.h"
 
+#ifndef SPDLOG_NO_EXCEPTIONS
 TEST_CASE("ringbuffer invalid size", "[ringbuffer]") {
     REQUIRE_THROWS_AS(spdlog::sinks::ringbuffer_sink_mt(0), spdlog::spdlog_ex);
 }
+#endif  // SPDLOG_NO_EXCEPTIONS
 
 TEST_CASE("ringbuffer stores formatted messages", "[ringbuffer]") {
     spdlog::sinks::ringbuffer_sink_st sink(3);

@@ -157,6 +157,7 @@ TEST_CASE("file_event_handlers", "[file_helper]") {
     REQUIRE(file_contents(TEST_FILENAME) == "after_open\nbefore_close\n");
 }
 
+#ifndef SPDLOG_NO_EXCEPTIONS
 TEST_CASE("file_helper_open", "[file_helper]") {
     prepare_logdir();
     spdlog::filename_t target_filename = SPDLOG_FILENAME_T(TEST_FILENAME);
@@ -167,3 +168,4 @@ TEST_CASE("file_helper_open", "[file_helper]") {
     target_filename += SPDLOG_FILENAME_T("/invalid");
     REQUIRE_THROWS_AS(helper.open(target_filename), spdlog::spdlog_ex);
 }
+#endif  // SPDLOG_NO_EXCEPTIONS
