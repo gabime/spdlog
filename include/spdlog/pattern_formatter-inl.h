@@ -526,6 +526,8 @@ public:
         const size_t field_size = 6;
         ScopedPadder p(field_size, padinfo_, dest);
 #ifdef SPDLOG_NO_TZ_OFFSET
+        (void)msg;
+        (void)tm_time;
         const char *str = "+??:??";
         dest.append(str, str + 6);
 #else
