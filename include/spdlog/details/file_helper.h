@@ -5,6 +5,7 @@
 
 #include <spdlog/common.h>
 #include <tuple>
+#include <vector>
 
 SPDLOG_NAMESPACE_BEGIN
 namespace details {
@@ -31,6 +32,9 @@ public:
     size_t size() const;
     const filename_t &filename() const;
 
+    void set_buffer_size(size_t buffer_size);
+    size_t buffer_size() const;
+
     //
     // return file path and its extension:
     //
@@ -52,6 +56,8 @@ private:
     std::FILE *fd_{nullptr};
     filename_t filename_;
     file_event_handlers event_handlers_;
+    size_t custom_buffer_size_{0};
+    std::vector<char> custom_buf_;
 };
 }  // namespace details
 SPDLOG_NAMESPACE_END
