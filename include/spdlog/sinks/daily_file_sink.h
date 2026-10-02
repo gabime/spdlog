@@ -74,7 +74,8 @@ public:
                     int rotation_minute,
                     bool truncate = false,
                     uint16_t max_files = 0,
-                    const file_event_handlers &event_handlers = {})
+                    const file_event_handlers &event_handlers = {},
+                    size_t buffer_size = 0)
         : base_filename_(std::move(base_filename)),
           rotation_h_(rotation_hour),
           rotation_m_(rotation_minute),
@@ -87,6 +88,7 @@ public:
             throw_spdlog_ex("daily_file_sink: Invalid rotation time in ctor");
         }
 
+        file_helper_.set_buffer_size(buffer_size);
         auto now = log_clock::now();
         const auto new_filename = FileNameCalc::calc_filename(base_filename_, now_tm(now));
         file_helper_.open(new_filename, truncate_);
@@ -100,6 +102,16 @@ public:
     filename_t filename() {
         std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
         return file_helper_.filename();
+    }
+
+    void set_buffer_size(size_t buffer_size) {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        file_helper_.set_buffer_size(buffer_size);
+    }
+
+    size_t buffer_size() {
+        std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+        return file_helper_.buffer_size();
     }
 
 protected:
@@ -209,9 +221,11 @@ inline std::shared_ptr<logger> daily_logger_mt(const std::string &logger_name,
                                                int minute = 0,
                                                bool truncate = false,
                                                uint16_t max_files = 0,
-                                               const file_event_handlers &event_handlers = {}) {
+                                               const file_event_handlers &event_handlers = {},
+                                               size_t buffer_size = 0) {
     return Factory::template create<sinks::daily_file_sink_mt>(logger_name, filename, hour, minute,
-                                                               truncate, max_files, event_handlers);
+                                                               truncate, max_files, event_handlers,
+                                                               buffer_size);
 }
 
 template <typename Factory = synchronous_factory>
@@ -222,9 +236,10 @@ inline std::shared_ptr<logger> daily_logger_format_mt(
     int minute = 0,
     bool truncate = false,
     uint16_t max_files = 0,
-    const file_event_handlers &event_handlers = {}) {
+    const file_event_handlers &event_handlers = {},
+    size_t buffer_size = 0) {
     return Factory::template create<sinks::daily_file_format_sink_mt>(
-        logger_name, filename, hour, minute, truncate, max_files, event_handlers);
+        logger_name, filename, hour, minute, truncate, max_files, event_handlers, buffer_size);
 }
 
 template <typename Factory = synchronous_factory>
@@ -234,9 +249,11 @@ inline std::shared_ptr<logger> daily_logger_st(const std::string &logger_name,
                                                int minute = 0,
                                                bool truncate = false,
                                                uint16_t max_files = 0,
-                                               const file_event_handlers &event_handlers = {}) {
+                                               const file_event_handlers &event_handlers = {},
+                                               size_t buffer_size = 0) {
     return Factory::template create<sinks::daily_file_sink_st>(logger_name, filename, hour, minute,
-                                                               truncate, max_files, event_handlers);
+                                                               truncate, max_files, event_handlers,
+                                                               buffer_size);
 }
 
 template <typename Factory = synchronous_factory>
@@ -247,8 +264,9 @@ inline std::shared_ptr<logger> daily_logger_format_st(
     int minute = 0,
     bool truncate = false,
     uint16_t max_files = 0,
-    const file_event_handlers &event_handlers = {}) {
+    const file_event_handlers &event_handlers = {},
+    size_t buffer_size = 0) {
     return Factory::template create<sinks::daily_file_format_sink_st>(
-        logger_name, filename, hour, minute, truncate, max_files, event_handlers);
+        logger_name, filename, hour, minute, truncate, max_files, event_handlers, buffer_size);
 }
 SPDLOG_NAMESPACE_END

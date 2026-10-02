@@ -48,6 +48,12 @@ SPDLOG_INLINE void file_helper::open(const filename_t &fname, bool truncate) {
             std::fclose(tmp);
         }
         if (!os::fopen_s(&fd_, fname, mode)) {
+            if (custom_buffer_size_ > 0) {
+                custom_buf_.resize(custom_buffer_size_);
+                if (std::setvbuf(fd_, custom_buf_.data(), _IOFBF, custom_buffer_size_) != 0) {
+                    throw_spdlog_ex("Failed to setvbuf on file " + os::filename_to_str(filename_), errno);
+                }
+            }
             if (event_handlers_.after_open) {
                 event_handlers_.after_open(filename_, fd_);
             }
@@ -88,11 +94,33 @@ SPDLOG_INLINE void file_helper::close() {
 
         std::fclose(fd_);
         fd_ = nullptr;
+        custom_buf_.clear();
+        custom_buf_.shrink_to_fit();
 
         if (event_handlers_.after_close) {
             event_handlers_.after_close(filename_);
         }
     }
+}
+
+SPDLOG_INLINE void file_helper::set_buffer_size(size_t buffer_size) {
+    custom_buffer_size_ = buffer_size;
+    if (fd_ != nullptr) {
+        if (custom_buffer_size_ > 0) {
+            custom_buf_.resize(custom_buffer_size_);
+            if (std::setvbuf(fd_, custom_buf_.data(), _IOFBF, custom_buffer_size_) != 0) {
+                throw_spdlog_ex("Failed to setvbuf on file " + os::filename_to_str(filename_), errno);
+            }
+        } else {
+            custom_buf_.clear();
+            custom_buf_.shrink_to_fit();
+            std::setvbuf(fd_, nullptr, _IOFBF, BUFSIZ);
+        }
+    }
+}
+
+SPDLOG_INLINE size_t file_helper::buffer_size() const {
+    return custom_buffer_size_;
 }
 
 SPDLOG_INLINE void file_helper::write(const memory_buf_t &buf) {
