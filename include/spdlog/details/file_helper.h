@@ -5,6 +5,7 @@
 
 #include <spdlog/common.h>
 #include <tuple>
+#include <vector>
 
 SPDLOG_NAMESPACE_BEGIN
 namespace details {
@@ -31,6 +32,11 @@ public:
     size_t size() const;
     const filename_t &filename() const;
 
+    // Set custom FILE stream buffer size via setvbuf(_IOFBF).
+    // size == 0 clears the custom buffer and restores default buffering if the file is open.
+    // Re-applied automatically on open/reopen when size > 0.
+    void set_buffer(std::size_t size);
+
     //
     // return file path and its extension:
     //
@@ -47,11 +53,14 @@ public:
     static std::tuple<filename_t, filename_t> split_by_extension(const filename_t &fname);
 
 private:
+    void apply_buffer_();
+
     const int open_tries_ = 5;
     const unsigned int open_interval_ = 10;
     std::FILE *fd_{nullptr};
     filename_t filename_;
     file_event_handlers event_handlers_;
+    std::vector<char> buffer_;
 };
 }  // namespace details
 SPDLOG_NAMESPACE_END

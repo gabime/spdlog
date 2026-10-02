@@ -16,8 +16,12 @@ namespace sinks {
 template <typename Mutex>
 SPDLOG_INLINE basic_file_sink<Mutex>::basic_file_sink(const filename_t &filename,
                                                       bool truncate,
-                                                      const file_event_handlers &event_handlers)
+                                                      const file_event_handlers &event_handlers,
+                                                      std::size_t buffer_size)
     : file_helper_{event_handlers} {
+    if (buffer_size > 0) {
+        file_helper_.set_buffer(buffer_size);
+    }
     file_helper_.open(filename, truncate);
 }
 
@@ -30,6 +34,12 @@ template <typename Mutex>
 SPDLOG_INLINE void basic_file_sink<Mutex>::truncate() {
     std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
     file_helper_.reopen(true);
+}
+
+template <typename Mutex>
+SPDLOG_INLINE void basic_file_sink<Mutex>::set_buffer(std::size_t size) {
+    std::lock_guard<Mutex> lock(base_sink<Mutex>::mutex_);
+    file_helper_.set_buffer(size);
 }
 
 template <typename Mutex>
