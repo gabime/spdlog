@@ -303,6 +303,6 @@ TEST_CASE("custom_buffer_size_daily", "[daily_logger]") {
     logger->info("Daily buffered message");
     logger->flush();
 
-    auto actual_filename = sink->filename();
+    auto actual_filename = spdlog::details::os::filename_to_str(sink->filename());
     REQUIRE(get_filesize(actual_filename) > 0);
 }
