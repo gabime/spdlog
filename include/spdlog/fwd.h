@@ -6,15 +6,15 @@
 #include "spdlog/namespace.h"
 
 SPDLOG_NAMESPACE_BEGIN
-class logger;
-class formatter;
+SPDLOG_EXPORT class logger;
+SPDLOG_EXPORT class formatter;
 
 namespace sinks {
-class sink;
+SPDLOG_EXPORT class sink;
 }
 
 namespace level {
-enum level_enum : int;
+SPDLOG_EXPORT enum level_enum : int;
 }
 
 SPDLOG_NAMESPACE_END

@@ -15,7 +15,7 @@
 
 SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
-template <typename Mutex>
+SPDLOG_EXPORT template <typename Mutex>
 class SPDLOG_API base_sink : public sink {
 public:
     base_sink();

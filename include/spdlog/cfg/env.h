@@ -25,7 +25,7 @@
 
 SPDLOG_NAMESPACE_BEGIN
 namespace cfg {
-inline void load_env_levels(const char* var = "SPDLOG_LEVEL") {
+SPDLOG_EXPORT inline void load_env_levels(const char* var = "SPDLOG_LEVEL") {
     const auto levels_spec = details::os::getenv(var);
     if (!levels_spec.empty()) {
         helpers::load_levels(levels_spec);

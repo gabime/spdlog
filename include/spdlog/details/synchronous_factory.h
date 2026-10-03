@@ -8,9 +8,9 @@
 SPDLOG_NAMESPACE_BEGIN
 
 // Default logger factory-  creates synchronous loggers
-class logger;
+SPDLOG_EXPORT class logger;
 
-struct synchronous_factory {
+SPDLOG_EXPORT struct synchronous_factory {
     template <typename Sink, typename... SinkArgs>
     static std::shared_ptr<logger> create(std::string logger_name, SinkArgs &&...args) {
         auto sink = std::make_shared<Sink>(std::forward<SinkArgs>(args)...);

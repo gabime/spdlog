@@ -12,26 +12,26 @@
 SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
-template <typename Mutex>
+SPDLOG_EXPORT template <typename Mutex>
 class null_sink final : public base_sink<Mutex> {
 protected:
     void sink_it_(const details::log_msg &) override {}
     void flush_() override {}
 };
 
-using null_sink_mt = null_sink<details::null_mutex>;
-using null_sink_st = null_sink<details::null_mutex>;
+SPDLOG_EXPORT using null_sink_mt = null_sink<details::null_mutex>;
+SPDLOG_EXPORT using null_sink_st = null_sink<details::null_mutex>;
 
 }  // namespace sinks
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> null_logger_mt(const std::string &logger_name) {
     auto null_logger = Factory::template create<sinks::null_sink_mt>(logger_name);
     null_logger->set_level(level::off);
     return null_logger;
 }
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> null_logger_st(const std::string &logger_name) {
     auto null_logger = Factory::template create<sinks::null_sink_st>(logger_name);
     null_logger->set_level(level::off);

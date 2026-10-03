@@ -96,6 +96,34 @@ if(SPDLOG_BUILD_TESTS_HO OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests-ho spdlog::spdlog_header_only)
 endif()
 
+# The C++20 module tests. A separate executable: the shared test sources reach spdlog
+# through tests/includes.h, which is #include based.
+if(SPDLOG_BUILD_MODULE AND TARGET spdlog::spdlog_module)
+    add_executable(spdlog-module-utests module/test_module.cpp)
+    spdlog_enable_warnings(spdlog-module-utests)
+    target_link_libraries(spdlog-module-utests PRIVATE spdlog::spdlog_module Catch2::Catch2WithMain)
+    # This directory declares cmake_minimum_required(VERSION 3.11), so CMP0155 is OLD and
+    # a source that only imports is not scanned unless we ask for it.
+    set_target_properties(spdlog-module-utests PROPERTIES CXX_SCAN_FOR_MODULES ON)
+    add_test(NAME spdlog-module-utests COMMAND spdlog-module-utests --order decl)
+    set_tests_properties(spdlog-module-utests PROPERTIES RUN_SERIAL ON)
+endif()
+
+# Install/consume cycle for the C++20 module. Ninja only: the Visual Studio generators
+# cannot export or install BMI/module information, nor compile BMIs from imported targets.
+if(SPDLOG_BUILD_MODULE
+   AND SPDLOG_MASTER_PROJECT
+   AND NOT CMAKE_CROSSCOMPILING
+   AND CMAKE_GENERATOR MATCHES "^Ninja")
+    add_test(
+        NAME spdlog-cmake-module
+        COMMAND
+            ${CMAKE_COMMAND} -DSPDLOG_TEST_SOURCE_DIR=${CMAKE_CURRENT_LIST_DIR}/..
+            -DSPDLOG_TEST_BINARY_DIR=${CMAKE_CURRENT_BINARY_DIR}/cmake-module
+            -DSPDLOG_TEST_GENERATOR=${CMAKE_GENERATOR} -DSPDLOG_TEST_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+            -DSPDLOG_TEST_CONFIG=$<CONFIG> -P ${CMAKE_CURRENT_LIST_DIR}/cmake/module_test.cmake)
+endif()
+
 if(SPDLOG_MASTER_PROJECT AND NOT CMAKE_CROSSCOMPILING)
     add_test(
         NAME spdlog-cmake-tweakme

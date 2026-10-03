@@ -38,6 +38,11 @@ jobs:
           echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
       - name: Setup
         run: |
+          # bullseye (gcc:9, gcc:11) is out of security support: its security index still
+          # lists packages that are gone from the pool, so apt-get install fails with 404
+          if grep -q 'VERSION_CODENAME=bullseye' /etc/os-release; then
+            sed -i '/bullseye-security/d' /etc/apt/sources.list
+          fi
           apt-get update
           apt-get install -y curl git pkg-config libsystemd-dev
           CMAKE_VERSION="3.24.2"
@@ -67,6 +72,116 @@ jobs:
             -DSPDLOG_SANITIZE_THREAD=${{ matrix.config.tsan || 'OFF' }}
           make -j 4
           ctest -j 4 --output-on-failure
+
+  # -----------------------------------------------------------------------
+  # C++20 named module (opt-in, needs CMake >= 3.28 and a module-capable compiler,
+  # so it cannot share the matrix above which pins CMake 3.24.2).
+  # GCC 14 crashes (internal compiler error) on importers of the module, so GCC
+  # runs in the gcc:15 container.
+  # -----------------------------------------------------------------------
+  build_module:
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.config.container }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { name: "gcc 15", container: "gcc:15", cc: gcc, cxx: g++ }
+          - { name: "gcc 15 std::format", container: "gcc:15", cc: gcc, cxx: g++, std_format: "ON" }
+          - { name: "gcc 15 external fmt", container: "gcc:15", cc: gcc, cxx: g++, fmt_external: "ON" }
+          - { name: "clang 18 libc++", container: "", cc: clang-18, cxx: clang++-18,
+              apt: "clang-18 libc++-18-dev libc++abi-18-dev", cxxflags: "-stdlib=libc++" }
+    name: "C++20 module (${{ matrix.config.name }})"
+    env:
+      CC: ${{ matrix.config.cc }}
+      CXX: ${{ matrix.config.cxx }}
+      CXXFLAGS: ${{ matrix.config.cxxflags }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup
+        run: |
+          SUDO=$(command -v sudo || true)
+          $SUDO apt-get update
+          $SUDO apt-get install -y curl git ninja-build python3 ${{ matrix.config.apt }}
+          CMAKE_VERSION="3.31.6"
+          curl -sSL https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz \
+            | $SUDO tar -xz -C /opt
+          echo "/opt/cmake-${CMAKE_VERSION}-linux-x86_64/bin" >> $GITHUB_PATH
+      - name: Build fmt
+        if: matrix.config.fmt_external == 'ON'
+        run: |
+          # the distribution's libfmt-dev is too old for spdlog v1.x
+          git clone --depth 1 --branch 12.1.0 https://github.com/fmtlib/fmt.git "$RUNNER_TEMP/fmt"
+          cmake -S "$RUNNER_TEMP/fmt" -B "$RUNNER_TEMP/fmt/build" -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DFMT_TEST=OFF \
+            -DFMT_DOC=OFF \
+            -DCMAKE_INSTALL_PREFIX="$RUNNER_TEMP/fmt-install"
+          cmake --build "$RUNNER_TEMP/fmt/build" --target install
+      - name: Build and test
+        run: |
+          cmake -S . -B build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_PREFIX_PATH="$RUNNER_TEMP/fmt-install" \
+            -DSPDLOG_BUILD_MODULE=ON \
+            -DSPDLOG_BUILD_EXAMPLE=ON \
+            -DSPDLOG_BUILD_TESTS=ON \
+            -DSPDLOG_BUILD_WARNINGS=ON \
+            -DSPDLOG_USE_STD_FORMAT=${{ matrix.config.std_format || 'OFF' }} \
+            -DSPDLOG_FMT_EXTERNAL=${{ matrix.config.fmt_external || 'OFF' }}
+          cmake --build build -j 4
+          ctest --test-dir build -j 1 --output-on-failure
+
+  # -----------------------------------------------------------------------
+  # The module under a custom namespace - the most likely place for the
+  # namespace override feature to regress
+  # -----------------------------------------------------------------------
+  build_module_namespace_override:
+    runs-on: ubuntu-24.04
+    container: gcc:15
+    defaults:
+      run:
+        shell: bash
+    name: "C++20 module (namespace override)"
+    steps:
+      - uses: actions/checkout@v6
+      - name: Setup
+        run: |
+          apt-get update
+          apt-get install -y curl git ninja-build python3
+          CMAKE_VERSION="3.31.6"
+          curl -sSL https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz \
+            | tar -xz -C /opt
+          echo "/opt/cmake-${CMAKE_VERSION}-linux-x86_64/bin" >> $GITHUB_PATH
+      - name: "Strict rename - library and module only"
+        run: |
+          # example.cpp and the tests spell out spdlog::, so only the library
+          # targets are built, like in the build_namespace_override job
+          cmake -S . -B build/ns-rename -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DSPDLOG_BUILD_MODULE=ON \
+            -DSPDLOG_BUILD_EXAMPLE=OFF \
+            -DCMAKE_CXX_FLAGS="-DSPDLOG_NAMESPACE=spdlog_ns_ci_test"
+          cmake --build build/ns-rename -j 4 --target spdlog spdlog_module
+      - name: "Inline-namespace wrap"
+        run: |
+          mkdir -p build
+          cat > build/ns_inline_wrap.h <<'EOT'
+          #pragma once
+          #define SPDLOG_NAMESPACE_BEGIN namespace spdlog { inline namespace ns_ci_test {
+          #define SPDLOG_NAMESPACE_END } }
+          EOT
+          cmake -S . -B build/ns-inline -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DSPDLOG_BUILD_MODULE=ON \
+            -DSPDLOG_BUILD_EXAMPLE=ON \
+            -DSPDLOG_BUILD_TESTS=ON \
+            -DCMAKE_CXX_FLAGS="-include $GITHUB_WORKSPACE/build/ns_inline_wrap.h"
+          cmake --build build/ns-inline -j 4
+          ctest --test-dir build/ns-inline -j 1 --output-on-failure
 
   # -----------------------------------------------------------------------
   # Namespace customization regression tests

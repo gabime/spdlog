@@ -17,7 +17,7 @@ namespace sinks {
 /*
  * Ring buffer sink
  */
-template <typename Mutex>
+SPDLOG_EXPORT template <typename Mutex>
 class ringbuffer_sink final : public base_sink<Mutex> {
 public:
     explicit ringbuffer_sink(size_t n_items)
@@ -63,8 +63,8 @@ private:
     details::circular_q<details::log_msg_buffer> q_;
 };
 
-using ringbuffer_sink_mt = ringbuffer_sink<std::mutex>;
-using ringbuffer_sink_st = ringbuffer_sink<details::null_mutex>;
+SPDLOG_EXPORT using ringbuffer_sink_mt = ringbuffer_sink<std::mutex>;
+SPDLOG_EXPORT using ringbuffer_sink_st = ringbuffer_sink<details::null_mutex>;
 
 }  // namespace sinks
 

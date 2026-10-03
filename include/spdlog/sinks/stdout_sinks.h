@@ -16,7 +16,7 @@ SPDLOG_NAMESPACE_BEGIN
 
 namespace sinks {
 
-template <typename ConsoleMutex>
+SPDLOG_EXPORT template <typename ConsoleMutex>
 class stdout_sink_base : public sink {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
@@ -44,37 +44,37 @@ protected:
 #endif  // WIN32
 };
 
-template <typename ConsoleMutex>
+SPDLOG_EXPORT template <typename ConsoleMutex>
 class stdout_sink : public stdout_sink_base<ConsoleMutex> {
 public:
     stdout_sink();
 };
 
-template <typename ConsoleMutex>
+SPDLOG_EXPORT template <typename ConsoleMutex>
 class stderr_sink : public stdout_sink_base<ConsoleMutex> {
 public:
     stderr_sink();
 };
 
-using stdout_sink_mt = stdout_sink<details::console_mutex>;
-using stdout_sink_st = stdout_sink<details::console_nullmutex>;
+SPDLOG_EXPORT using stdout_sink_mt = stdout_sink<details::console_mutex>;
+SPDLOG_EXPORT using stdout_sink_st = stdout_sink<details::console_nullmutex>;
 
-using stderr_sink_mt = stderr_sink<details::console_mutex>;
-using stderr_sink_st = stderr_sink<details::console_nullmutex>;
+SPDLOG_EXPORT using stderr_sink_mt = stderr_sink<details::console_mutex>;
+SPDLOG_EXPORT using stderr_sink_st = stderr_sink<details::console_nullmutex>;
 
 }  // namespace sinks
 
 // factory methods
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stdout_logger_mt(const std::string &logger_name);
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stdout_logger_st(const std::string &logger_name);
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stderr_logger_mt(const std::string &logger_name);
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 std::shared_ptr<logger> stderr_logger_st(const std::string &logger_name);
 
 SPDLOG_NAMESPACE_END

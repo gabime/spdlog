@@ -19,7 +19,7 @@
 SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
-template <typename Mutex>
+SPDLOG_EXPORT template <typename Mutex>
 class dist_sink : public base_sink<Mutex> {
 public:
     dist_sink() = default;
@@ -74,8 +74,8 @@ protected:
     std::vector<std::shared_ptr<sink>> sinks_;
 };
 
-using dist_sink_mt = dist_sink<std::mutex>;
-using dist_sink_st = dist_sink<details::null_mutex>;
+SPDLOG_EXPORT using dist_sink_mt = dist_sink<std::mutex>;
+SPDLOG_EXPORT using dist_sink_st = dist_sink<details::null_mutex>;
 
 }  // namespace sinks
 SPDLOG_NAMESPACE_END

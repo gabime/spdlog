@@ -39,7 +39,7 @@
 SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
-template <typename It>
+SPDLOG_EXPORT template <typename It>
 class dump_info {
 public:
     dump_info(It range_begin, It range_end, size_t size_per_line)
@@ -59,7 +59,7 @@ private:
 }  // namespace details
 
 // create a dump_info that wraps the given container
-template <typename Container>
+SPDLOG_EXPORT template <typename Container>
 inline details::dump_info<typename Container::const_iterator> to_hex(const Container &container,
                                                                      size_t size_per_line = 32) {
     static_assert(sizeof(typename Container::value_type) == 1,
@@ -70,7 +70,7 @@ inline details::dump_info<typename Container::const_iterator> to_hex(const Conta
 
 #if __cpp_lib_span >= 202002L
 
-template <typename Value, size_t Extent>
+SPDLOG_EXPORT template <typename Value, size_t Extent>
 inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(
     const std::span<Value, Extent> &container, size_t size_per_line = 32) {
     using Container = std::span<Value, Extent>;
@@ -83,7 +83,7 @@ inline details::dump_info<typename std::span<Value, Extent>::iterator> to_hex(
 #endif
 
 // create dump_info from ranges
-template <typename It>
+SPDLOG_EXPORT template <typename It>
 inline details::dump_info<It> to_hex(const It range_begin,
                                      const It range_end,
                                      size_t size_per_line = 32) {

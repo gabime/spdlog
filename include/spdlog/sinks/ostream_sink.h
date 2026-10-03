@@ -11,7 +11,7 @@
 
 SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
-template <typename Mutex>
+SPDLOG_EXPORT template <typename Mutex>
 class ostream_sink final : public base_sink<Mutex> {
 public:
     explicit ostream_sink(std::ostream &os, bool force_flush = false)
@@ -36,8 +36,8 @@ protected:
     bool force_flush_;
 };
 
-using ostream_sink_mt = ostream_sink<std::mutex>;
-using ostream_sink_st = ostream_sink<details::null_mutex>;
+SPDLOG_EXPORT using ostream_sink_mt = ostream_sink<std::mutex>;
+SPDLOG_EXPORT using ostream_sink_st = ostream_sink<details::null_mutex>;
 
 }  // namespace sinks
 SPDLOG_NAMESPACE_END

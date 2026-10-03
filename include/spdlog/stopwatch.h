@@ -28,7 +28,7 @@
 // spdlog::info("Elapsed {}", duration_cast<milliseconds>(sw.elapsed())); => "Elapsed 5ms"
 
 SPDLOG_NAMESPACE_BEGIN
-class stopwatch {
+SPDLOG_EXPORT class stopwatch {
     using clock = std::chrono::steady_clock;
     std::chrono::time_point<clock> start_tp_;
 

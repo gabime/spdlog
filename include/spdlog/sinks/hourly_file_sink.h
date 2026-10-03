@@ -24,7 +24,7 @@ namespace sinks {
 /*
  * Generator of Hourly log file names in format basename_YYYY-MM-DD_HH.ext
  */
-struct hourly_filename_calculator {
+SPDLOG_EXPORT struct hourly_filename_calculator {
     // Create filename of the form basename_YYYY-MM-DD_HH.ext
     static filename_t calc_filename(const filename_t &filename, const tm &now_tm) {
         filename_t basename, ext;
@@ -42,7 +42,7 @@ struct hourly_filename_calculator {
  * Note that old log files from previous executions will not be deleted by this class,
  * rotation and deletion is only applied while the program is running.
  */
-template <typename Mutex, typename FileNameCalc = hourly_filename_calculator>
+SPDLOG_EXPORT template <typename Mutex, typename FileNameCalc = hourly_filename_calculator>
 class hourly_file_sink final : public base_sink<Mutex> {
 public:
     // create hourly file sink which rotates on given time
@@ -163,15 +163,15 @@ private:
     bool remove_init_file_;
 };
 
-using hourly_file_sink_mt = hourly_file_sink<std::mutex>;
-using hourly_file_sink_st = hourly_file_sink<details::null_mutex>;
+SPDLOG_EXPORT using hourly_file_sink_mt = hourly_file_sink<std::mutex>;
+SPDLOG_EXPORT using hourly_file_sink_st = hourly_file_sink<details::null_mutex>;
 
 }  // namespace sinks
 
 //
 // factory functions
 //
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> hourly_logger_mt(const std::string &logger_name,
                                                 const filename_t &filename,
                                                 bool truncate = false,
@@ -181,7 +181,7 @@ inline std::shared_ptr<logger> hourly_logger_mt(const std::string &logger_name,
                                                                 max_files, event_handlers);
 }
 
-template <typename Factory = synchronous_factory>
+SPDLOG_EXPORT template <typename Factory = synchronous_factory>
 inline std::shared_ptr<logger> hourly_logger_st(const std::string &logger_name,
                                                 const filename_t &filename,
                                                 bool truncate = false,

@@ -14,12 +14,17 @@
 SPDLOG_NAMESPACE_BEGIN
 namespace level {
 
+// SPDLOG_INLINE_VAR (rather than `static`): to_string_view/to_short_c_str/from_str below are
+// exported as part of the C++20 module interface, so these namespace-scope arrays they reference
+// need external linkage - a TU-local (`static`) entity cannot be referenced from an exported
+// function's body without becoming an ill-formed "exposure" once this file is compiled inside the
+// module's purview.
 #if __cplusplus >= 201703L
 constexpr
 #endif
-    static string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
+    SPDLOG_INLINE_VAR string_view_t level_string_views[] SPDLOG_LEVEL_NAMES;
 
-static const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
+SPDLOG_INLINE_VAR const char *short_level_names[] SPDLOG_SHORT_LEVEL_NAMES;
 
 SPDLOG_INLINE const string_view_t &to_string_view(level::level_enum l) SPDLOG_NOEXCEPT {
     return level_string_views[l];

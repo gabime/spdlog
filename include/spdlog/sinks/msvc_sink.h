@@ -27,7 +27,7 @@ namespace sinks {
 /*
  * MSVC sink (logging using OutputDebugStringA)
  */
-template <typename Mutex>
+SPDLOG_EXPORT template <typename Mutex>
 class msvc_sink : public base_sink<Mutex> {
 public:
     msvc_sink() = default;
@@ -56,11 +56,11 @@ protected:
     bool check_debugger_present_ = true;
 };
 
-using msvc_sink_mt = msvc_sink<std::mutex>;
-using msvc_sink_st = msvc_sink<details::null_mutex>;
+SPDLOG_EXPORT using msvc_sink_mt = msvc_sink<std::mutex>;
+SPDLOG_EXPORT using msvc_sink_st = msvc_sink<details::null_mutex>;
 
-using windebug_sink_mt = msvc_sink_mt;
-using windebug_sink_st = msvc_sink_st;
+SPDLOG_EXPORT using windebug_sink_mt = msvc_sink_mt;
+SPDLOG_EXPORT using windebug_sink_st = msvc_sink_st;
 
 }  // namespace sinks
 SPDLOG_NAMESPACE_END

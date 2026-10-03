@@ -36,7 +36,7 @@
 
 SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
-template <typename Mutex>
+SPDLOG_EXPORT template <typename Mutex>
 class dup_filter_sink : public dist_sink<Mutex> {
 public:
     template <class Rep, class Period>
@@ -89,8 +89,8 @@ protected:
     }
 };
 
-using dup_filter_sink_mt = dup_filter_sink<std::mutex>;
-using dup_filter_sink_st = dup_filter_sink<details::null_mutex>;
+SPDLOG_EXPORT using dup_filter_sink_mt = dup_filter_sink<std::mutex>;
+SPDLOG_EXPORT using dup_filter_sink_st = dup_filter_sink<details::null_mutex>;
 
 }  // namespace sinks
 SPDLOG_NAMESPACE_END

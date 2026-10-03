@@ -11,12 +11,12 @@
 
 SPDLOG_NAMESPACE_BEGIN
 namespace details {
-struct null_mutex {
+SPDLOG_EXPORT struct null_mutex {
     void lock() const {}
     void unlock() const {}
 };
 
-struct null_atomic_int {
+SPDLOG_EXPORT struct null_atomic_int {
     int value{0};
     null_atomic_int() = default;
 

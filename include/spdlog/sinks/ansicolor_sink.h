@@ -21,7 +21,7 @@ namespace sinks {
  * If no color terminal detected, omit the escape codes.
  */
 
-template <typename ConsoleMutex>
+SPDLOG_EXPORT template <typename ConsoleMutex>
 class ansicolor_sink : public sink {
 public:
     using mutex_t = typename ConsoleMutex::mutex_t;
@@ -92,23 +92,23 @@ private:
     static std::string to_string_(const string_view_t &sv);
 };
 
-template <typename ConsoleMutex>
+SPDLOG_EXPORT template <typename ConsoleMutex>
 class ansicolor_stdout_sink : public ansicolor_sink<ConsoleMutex> {
 public:
     explicit ansicolor_stdout_sink(color_mode mode = color_mode::automatic);
 };
 
-template <typename ConsoleMutex>
+SPDLOG_EXPORT template <typename ConsoleMutex>
 class ansicolor_stderr_sink : public ansicolor_sink<ConsoleMutex> {
 public:
     explicit ansicolor_stderr_sink(color_mode mode = color_mode::automatic);
 };
 
-using ansicolor_stdout_sink_mt = ansicolor_stdout_sink<details::console_mutex>;
-using ansicolor_stdout_sink_st = ansicolor_stdout_sink<details::console_nullmutex>;
+SPDLOG_EXPORT using ansicolor_stdout_sink_mt = ansicolor_stdout_sink<details::console_mutex>;
+SPDLOG_EXPORT using ansicolor_stdout_sink_st = ansicolor_stdout_sink<details::console_nullmutex>;
 
-using ansicolor_stderr_sink_mt = ansicolor_stderr_sink<details::console_mutex>;
-using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::console_nullmutex>;
+SPDLOG_EXPORT using ansicolor_stderr_sink_mt = ansicolor_stderr_sink<details::console_mutex>;
+SPDLOG_EXPORT using ansicolor_stderr_sink_st = ansicolor_stderr_sink<details::console_nullmutex>;
 
 }  // namespace sinks
 SPDLOG_NAMESPACE_END
