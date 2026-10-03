@@ -121,7 +121,7 @@ wincolor_sink<ConsoleMutex>::set_foreground_color_(std::uint16_t attribs) {
     }
 
     // change only the foreground bits (lowest 4 bits)
-    auto new_attribs = static_cast<WORD>(attribs) | (orig_buffer_info.wAttributes & 0xfff0);
+    auto new_attribs = static_cast<WORD>(attribs) | (orig_buffer_info.wAttributes & 0xff00);
     auto ignored =
         ::SetConsoleTextAttribute(static_cast<HANDLE>(out_handle_), static_cast<WORD>(new_attribs));
     (void)(ignored);
