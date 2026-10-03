@@ -45,6 +45,7 @@ build/*
 # example  files
 example/*
 !example/example.cpp
+!example/module_example.cpp
 !example/bench.cpp
 !example/utils.h
 !example/Makefile*

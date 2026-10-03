@@ -85,6 +85,18 @@
 #endif
 #endif
 
+// Namespace-scope constants need external linkage so that templates defined in
+// these headers can still reference them when instantiated in a translation unit
+// that consumes spdlog through `import spdlog;`. A namespace-scope static or
+// constexpr variable has internal linkage, which cannot cross the module
+// boundary. Falls back to static before C++17, where inline variables do not
+// exist - and where there is no module to worry about either.
+#if defined(__cpp_inline_variables) && __cpp_inline_variables >= 201606L
+#define SPDLOG_INLINE_VAR inline
+#else
+#define SPDLOG_INLINE_VAR static
+#endif
+
 #if defined(__GNUC__) || defined(__clang__)
 #define SPDLOG_DEPRECATED __attribute__((deprecated))
 #elif defined(_MSC_VER)
@@ -100,9 +112,7 @@
 #endif
 #endif
 
-#ifndef SPDLOG_FUNCTION
-#define SPDLOG_FUNCTION static_cast<const char *>(__FUNCTION__)
-#endif
+#include <spdlog/macros.h>
 
 #ifdef SPDLOG_NO_EXCEPTIONS
 #define SPDLOG_TRY
@@ -228,18 +238,6 @@ struct is_convertible_to_any_format_string
 using level_t = details::null_atomic_int;
 #else
 using level_t = std::atomic<int>;
-#endif
-
-#define SPDLOG_LEVEL_TRACE 0
-#define SPDLOG_LEVEL_DEBUG 1
-#define SPDLOG_LEVEL_INFO 2
-#define SPDLOG_LEVEL_WARN 3
-#define SPDLOG_LEVEL_ERROR 4
-#define SPDLOG_LEVEL_CRITICAL 5
-#define SPDLOG_LEVEL_OFF 6
-
-#if !defined(SPDLOG_ACTIVE_LEVEL)
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_INFO
 #endif
 
 // Log level enum

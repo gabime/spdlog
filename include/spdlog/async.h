@@ -25,7 +25,7 @@
 SPDLOG_NAMESPACE_BEGIN
 
 namespace details {
-static const size_t default_async_q_size = 8192;
+SPDLOG_INLINE_VAR const size_t default_async_q_size = 8192;
 }
 
 // async logger factory - creates async loggers backed with thread pool.

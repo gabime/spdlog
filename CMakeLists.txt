@@ -62,6 +62,9 @@ option(SPDLOG_BUILD_ALL "Build all artifacts" OFF)
 # build shared option
 option(SPDLOG_BUILD_SHARED "Build shared library" OFF)
 
+# build the C++20 named module (opt-in; needs CMake >= 3.28 and a module-capable toolchain)
+option(SPDLOG_BUILD_MODULE "Build the C++20 named module target spdlog::spdlog_module" OFF)
+
 # precompiled headers option
 option(SPDLOG_ENABLE_PCH "Build static or shared library using precompiled header to speed up compilation time" OFF)
 
@@ -318,6 +321,46 @@ foreach(
     endif()
 endforeach()
 
+# ---------------------------------------------------------------------------------------
+# C++20 named module (opt-in)
+# ---------------------------------------------------------------------------------------
+if(SPDLOG_BUILD_MODULE)
+    spdlog_check_module_support(SPDLOG_MODULE_SUPPORTED SPDLOG_MODULE_UNSUPPORTED_REASON)
+    if(NOT SPDLOG_MODULE_SUPPORTED)
+        message(FATAL_ERROR "SPDLOG_BUILD_MODULE=ON: ${SPDLOG_MODULE_UNSUPPORTED_REASON}")
+    endif()
+    spdlog_message_once(MODULE "Build spdlog C++20 module: spdlog::spdlog_module")
+
+    # STATIC on purpose: a module interface unit still produces an object file that
+    # importers have to link, and a DLL exporting nothing would be a trap under
+    # BUILD_SHARED_LIBS=ON.
+    add_library(spdlog_module STATIC)
+    add_library(spdlog::spdlog_module ALIAS spdlog_module)
+
+    target_sources(
+        spdlog_module
+        PUBLIC FILE_SET CXX_MODULES BASE_DIRS "${CMAKE_CURRENT_LIST_DIR}/src" FILES
+               "${CMAKE_CURRENT_LIST_DIR}/src/spdlog.cppm")
+
+    # PUBLIC, so the module unit and everything that imports it inherit
+    # SPDLOG_COMPILED_LIB, the tweak defines, the include dirs, Threads and fmt.
+    target_link_libraries(spdlog_module PUBLIC spdlog::spdlog)
+    target_compile_features(spdlog_module PUBLIC cxx_std_20)
+    if(CMAKE_CXX_STANDARD AND CMAKE_CXX_STANDARD LESS 20)
+        set_target_properties(spdlog_module PROPERTIES CXX_STANDARD 20)
+    endif()
+    set_target_properties(
+        spdlog_module PROPERTIES CXX_STANDARD_REQUIRED ON CXX_EXTENSIONS OFF POSITION_INDEPENDENT_CODE ON
+                                 DEBUG_POSTFIX "${SPDLOG_DEBUG_POSTFIX}")
+
+    # Must be PUBLIC here: without it MSVC reports __cplusplus as 199711L even under
+    # /std:c++20, which flips the __cplusplus >= 201402L branch in common.h and makes
+    # details::make_unique a different template in importing translation units.
+    target_compile_options(spdlog_module PUBLIC $<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>)
+
+    spdlog_enable_warnings(spdlog_module)
+endif()
+
 if(MSVC)
     target_compile_options(spdlog PRIVATE "/Zc:__cplusplus")
     target_compile_options(spdlog_header_only INTERFACE "/Zc:__cplusplus")
@@ -354,6 +397,9 @@ if(SPDLOG_BUILD_EXAMPLE OR SPDLOG_BUILD_EXAMPLE_HO OR SPDLOG_BUILD_ALL)
     spdlog_enable_warnings(example)
     if(SPDLOG_BUILD_EXAMPLE_HO)
         spdlog_enable_warnings(example_header_only)
+    endif()
+    if(SPDLOG_BUILD_MODULE AND TARGET example_module)
+        spdlog_enable_warnings(example_module)
     endif()
 endif()
 
@@ -442,6 +488,30 @@ if(SPDLOG_INSTALL)
     export(TARGETS spdlog spdlog_header_only NAMESPACE spdlog::
            FILE "${CMAKE_CURRENT_BINARY_DIR}/${config_targets_file}")
     install(EXPORT spdlog DESTINATION ${export_dest_dir} NAMESPACE spdlog:: FILE ${config_targets_file})
+
+    # ---------------------------------------------------------------------------------------
+    # The module target gets its own export set and its own targets file. CMake writes a hard
+    # "CMake >= 3.28 required" guard into any targets file that contains a CXX_MODULES file
+    # set, so putting spdlog_module into the export set above would break every consumer still
+    # on CMake 3.10-3.27. spdlogConfig.cmake includes the extra file only when it can.
+    # ---------------------------------------------------------------------------------------
+    if(SPDLOG_BUILD_MODULE)
+        set(module_config_targets_file "spdlogModuleTargets.cmake")
+        install(
+            TARGETS spdlog_module
+            EXPORT spdlog_module
+            FILE_SET CXX_MODULES DESTINATION "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}/module"
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+        install(EXPORT spdlog_module DESTINATION ${export_dest_dir} NAMESPACE spdlog::
+                FILE ${module_config_targets_file} CXX_MODULES_DIRECTORY "cxx-modules")
+        export(EXPORT spdlog_module NAMESPACE spdlog::
+               FILE "${CMAKE_CURRENT_BINARY_DIR}/${module_config_targets_file}"
+               CXX_MODULES_DIRECTORY "cxx-modules")
+    else()
+        set(module_config_targets_file "")
+    endif()
 
     include(CMakePackageConfigHelpers)
     configure_package_config_file("${project_config_in}" "${project_config_out}" INSTALL_DESTINATION ${export_dest_dir})
