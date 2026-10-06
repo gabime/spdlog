@@ -154,13 +154,13 @@ struct formatter<SPDLOG_NAMESPACE::details::dump_info<T>, char> {
         auto inserter = ctx.out();
 #endif
 
-        int size_per_line = static_cast<int>(the_range.size_per_line());
+        const size_t size_per_line = the_range.size_per_line();
         auto start_of_line = the_range.get_begin();
         for (auto i = the_range.get_begin(); i != the_range.get_end(); i++) {
             auto ch = static_cast<unsigned char>(*i);
 
-            if (put_newlines &&
-                (i == the_range.get_begin() || i - start_of_line >= size_per_line)) {
+            if (put_newlines && (i == the_range.get_begin() ||
+                                 static_cast<size_t>(i - start_of_line) >= size_per_line)) {
                 if (show_ascii && i != the_range.get_begin()) {
                     *inserter++ = delimiter;
                     *inserter++ = delimiter;
@@ -188,8 +188,10 @@ struct formatter<SPDLOG_NAMESPACE::details::dump_info<T>, char> {
         }
         if (show_ascii)  // add ascii to last line
         {
-            if (the_range.get_end() - the_range.get_begin() > size_per_line) {
-                auto blank_num = size_per_line - (the_range.get_end() - start_of_line);
+            if (static_cast<size_t>(the_range.get_end() - the_range.get_begin()) > size_per_line &&
+                static_cast<size_t>(the_range.get_end() - start_of_line) < size_per_line) {
+                auto blank_num =
+                    size_per_line - static_cast<size_t>(the_range.get_end() - start_of_line);
                 while (blank_num-- > 0) {
                     *inserter++ = delimiter;
                     *inserter++ = delimiter;

@@ -1,6 +1,45 @@
 #include "includes.h"
 #include "test_sink.h"
 #include "spdlog/fmt/bin_to_hex.h"
+#include <limits>
+
+TEST_CASE("to_hex_large_line_width", "[to_hex]") {
+    const std::vector<unsigned char> bytes{'A', 'B', 0, 255};
+    const size_t width = GENERATE(size_t(32), size_t((std::numeric_limits<int>::max)()) + 1,
+                                  (std::numeric_limits<size_t>::max)());
+    const bool use_range = GENERATE(false, true);
+    const bool show_ascii = GENERATE(false, true);
+    std::ostringstream oss;
+    auto sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+    sink->set_pattern("%v");
+    spdlog::logger logger("hex", sink);
+    if (use_range) {
+        if (show_ascii) {
+            logger.info("{:a}", spdlog::to_hex(bytes.begin(), bytes.end(), width));
+        } else {
+            logger.info("{}", spdlog::to_hex(bytes.begin(), bytes.end(), width));
+        }
+    } else {
+        if (show_ascii) {
+            logger.info("{:a}", spdlog::to_hex(bytes, width));
+        } else {
+            logger.info("{}", spdlog::to_hex(bytes, width));
+        }
+    }
+    const std::string eol = spdlog::details::os::default_eol;
+    REQUIRE(oss.str() == eol + "0000: 41 42 00 ff" + (show_ascii ? "  AB.." : "") + eol);
+}
+
+TEST_CASE("to_hex_zero_line_width", "[to_hex]") {
+    const std::vector<unsigned char> bytes{'A', 'B'};
+    std::ostringstream oss;
+    auto sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+    sink->set_pattern("%v");
+    spdlog::logger logger("hex", sink);
+    logger.info("{:a}", spdlog::to_hex(bytes, 0));
+    const std::string eol = spdlog::details::os::default_eol;
+    REQUIRE(oss.str() == eol + "0000: 41  A" + eol + "0001: 42  B" + eol);
+}
 
 TEST_CASE("to_hex", "[to_hex]") {
     std::ostringstream oss;
