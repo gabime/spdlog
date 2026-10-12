@@ -146,7 +146,7 @@ public:
 
 static const char *ampm(const tm &t) { return t.tm_hour >= 12 ? "PM" : "AM"; }
 
-static int to12h(const tm &t) { return t.tm_hour > 12 ? t.tm_hour - 12 : t.tm_hour; }
+static int to12h(const tm &t) { return t.tm_hour % 12 == 0 ? 12 : t.tm_hour % 12; }
 
 // Abbreviated weekday name
 static std::array<const char *, 7> days{{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}};
@@ -993,7 +993,7 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
     if (need_localtime_) {
         const auto secs =
             std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
-        if (secs != last_log_secs_) {
+        if (secs != last_log_secs_ || cached_tm_.tm_mday == 0) {
             cached_tm_ = get_time_(msg);
             last_log_secs_ = secs;
         }

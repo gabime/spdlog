@@ -3,6 +3,7 @@
  * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
  */
 #include "includes.h"
+#include "spdlog/sinks/hourly_file_sink.h"
 
 #ifdef SPDLOG_USE_STD_FORMAT
 using filename_memory_buf_t = std::basic_string<spdlog::filename_t::value_type>;
@@ -166,4 +167,49 @@ TEST_CASE("daily_logger rotate", "[daily_file_sink]") {
     test_rotate(days_to_run, 10, 10);
     test_rotate(days_to_run, 11, 10);
     test_rotate(days_to_run, 20, 10);
+}
+
+TEST_CASE("hourly rotation follows message timestamps", "[hourly_file_sink]") {
+    prepare_logdir();
+
+    bool truncate = false;
+    uint16_t max_files = 0;
+    SECTION("append") {}
+    SECTION("truncate") { truncate = true; }
+    SECTION("retain only the current file") { max_files = 1; }
+
+    size_t opens = 0;
+    spdlog::file_event_handlers handlers;
+    handlers.after_open = [&](const spdlog::filename_t &, std::FILE *) { ++opens; };
+    spdlog::sinks::hourly_file_sink_st sink{
+        SPDLOG_FILENAME_T("test_logs/hourly.txt"), truncate, max_files, handlers};
+    sink.log(create_msg(std::chrono::seconds(0)));
+
+    // Use a future local noon so the messages stay in the same hour, without sleeping.
+    auto future = spdlog::log_clock::now() + std::chrono::hours(48);
+    auto date = spdlog::details::os::localtime(spdlog::log_clock::to_time_t(future));
+    date.tm_hour = 12;
+    date.tm_min = 0;
+    date.tm_sec = 0;
+    date.tm_isdst = -1;
+    spdlog::details::log_msg msg{"test", spdlog::level::info, "Hello Message"};
+    msg.time = spdlog::log_clock::from_time_t(std::mktime(&date));
+    sink.log(msg);
+    auto first_filename = sink.filename();
+    msg.time += std::chrono::seconds(1);
+    sink.log(msg);
+    sink.flush();
+
+    REQUIRE(spdlog::details::os::path_exists(first_filename));
+    require_message_count(spdlog::details::os::filename_to_str(first_filename), 2);
+    REQUIRE(opens == 2);
+
+    // The next hour must still rotate, and retention must remove only the old file.
+    msg.time += std::chrono::hours(1);
+    sink.log(msg);
+    sink.flush();
+    REQUIRE(sink.filename() != first_filename);
+    require_message_count(spdlog::details::os::filename_to_str(sink.filename()), 1);
+    REQUIRE(opens == 3);
+    REQUIRE(spdlog::details::os::path_exists(first_filename) == (max_files == 0));
 }
