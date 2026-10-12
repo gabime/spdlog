@@ -42,6 +42,47 @@ static std::string log_to_str_with_time(spdlog::log_clock::time_point log_time,
     return oss.str();
 }
 
+TEST_CASE("first timestamp at epoch", "[pattern_formatter][epoch]") {
+    const auto epoch = spdlog::log_clock::from_time_t(0);
+    REQUIRE(log_to_str_with_time(epoch, "message", "%Y-%m-%d %H:%M:%S %v",
+                                 spdlog::pattern_time_type::utc,
+                                 "") == "1970-01-01 00:00:00 message");
+}
+
+TEST_CASE("full formatter first timestamp at epoch", "[pattern_formatter][epoch]") {
+    const auto epoch = spdlog::log_clock::from_time_t(0);
+    REQUIRE(log_to_str_with_time(epoch + std::chrono::milliseconds(123), "message", "%+",
+                                 spdlog::pattern_time_type::utc, "") ==
+            "[1970-01-01 00:00:00.123] [pattern_tester] [info] message");
+}
+
+TEST_CASE("timestamp cache across epoch", "[pattern_formatter][epoch]") {
+    std::ostringstream oss;
+    auto sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+    spdlog::logger logger("epoch", sink);
+    logger.set_formatter(std::unique_ptr<spdlog::formatter>(new spdlog::pattern_formatter(
+        "%Y-%m-%d %H:%M:%S.%e %v", spdlog::pattern_time_type::utc, "\n")));
+    const auto epoch = spdlog::log_clock::from_time_t(0);
+    logger.log(epoch, {}, spdlog::level::info, "first");
+    logger.log(epoch + std::chrono::milliseconds(123), {}, spdlog::level::info, "same second");
+    logger.log(epoch + std::chrono::seconds(1), {}, spdlog::level::info, "next second");
+    logger.log(epoch, {}, spdlog::level::info, "back to epoch");
+    REQUIRE(oss.str() ==
+            "1970-01-01 00:00:00.000 first\n"
+            "1970-01-01 00:00:00.123 same second\n"
+            "1970-01-01 00:00:01.000 next second\n"
+            "1970-01-01 00:00:00.000 back to epoch\n");
+}
+
+TEST_CASE("nonzero initial timestamp", "[pattern_formatter][epoch_control]") {
+    const auto time = spdlog::log_clock::from_time_t(1);
+    REQUIRE(log_to_str_with_time(time, "message", "%Y-%m-%d %H:%M:%S %v",
+                                 spdlog::pattern_time_type::utc,
+                                 "") == "1970-01-01 00:00:01 message");
+    REQUIRE(log_to_str_with_time(spdlog::log_clock::from_time_t(0), "message", "%v",
+                                 spdlog::pattern_time_type::utc, "") == "message");
+}
+
 TEST_CASE("custom eol", "[pattern_formatter]") {
     std::string msg = "Hello custom eol test";
     std::string eol = ";)";
