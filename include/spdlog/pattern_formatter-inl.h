@@ -146,7 +146,7 @@ public:
 
 static const char *ampm(const tm &t) { return t.tm_hour >= 12 ? "PM" : "AM"; }
 
-static int to12h(const tm &t) { return t.tm_hour > 12 ? t.tm_hour - 12 : t.tm_hour; }
+static int to12h(const tm &t) { return t.tm_hour % 12 == 0 ? 12 : t.tm_hour % 12; }
 
 // Abbreviated weekday name
 static std::array<const char *, 7> days{{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}};

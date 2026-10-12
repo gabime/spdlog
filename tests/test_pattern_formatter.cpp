@@ -122,6 +122,22 @@ TEST_CASE("date MM/DD/YY ", "[pattern_formatter]") {
             oss.str());
 }
 
+TEST_CASE("12 hour clock", "[pattern_formatter]") {
+    using std::chrono::hours;
+    using std::chrono::minutes;
+    const auto midnight = spdlog::log_clock::time_point{};  // 1970-01-01 00:00 UTC
+    const auto utc = spdlog::pattern_time_type::utc;
+
+    REQUIRE(log_to_str_with_time(midnight + minutes(30), "", "%I %r", utc, "\n") ==
+            "12 12:30:00 AM\n");
+    REQUIRE(log_to_str_with_time(midnight + hours(1), "", "%I %r", utc, "\n") ==
+            "01 01:00:00 AM\n");
+    REQUIRE(log_to_str_with_time(midnight + hours(12) + minutes(30), "", "%I %r", utc, "\n") ==
+            "12 12:30:00 PM\n");
+    REQUIRE(log_to_str_with_time(midnight + hours(23), "", "%I %r", utc, "\n") ==
+            "11 11:00:00 PM\n");
+}
+
 // see test_timezone.cpp for actual UTC offset calculation tests
 TEST_CASE("UTC offset", "[pattern_formatter]") {
     using namespace std::chrono_literals;
