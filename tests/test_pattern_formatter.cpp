@@ -327,6 +327,32 @@ TEST_CASE("paddinng_truncate", "[pattern_formatter]") {
     REQUIRE(log_to_str("123456", "%0!v", spdlog::pattern_time_type::local, "\n") == "\n");
 }
 
+TEST_CASE("padding_date_time", "[pattern_formatter]") {
+    const auto utc = spdlog::pattern_time_type::utc;
+    // Sun Aug 3 15:35:46 2014 UTC (single digit day of month)
+    auto tp = std::chrono::system_clock::from_time_t(1407080146);
+    REQUIRE(log_to_str_with_time(tp, "", "[%c]", utc, "") == "[Sun Aug 3 15:35:46 2014]");
+    REQUIRE(log_to_str_with_time(tp, "", "[%25c]", utc, "") == "[  Sun Aug 3 15:35:46 2014]");
+    REQUIRE(log_to_str_with_time(tp, "", "[%-25c]", utc, "") == "[Sun Aug 3 15:35:46 2014  ]");
+    REQUIRE(log_to_str_with_time(tp, "", "[%23!c]", utc, "") == "[Sun Aug 3 15:35:46 2014]");
+    REQUIRE(log_to_str_with_time(tp, "", "[%10!c]", utc, "") == "[Sun Aug 3 ]");
+
+    // Sun Aug 17 15:35:46 2014 UTC (two digit day of month)
+    tp = std::chrono::system_clock::from_time_t(1408289746);
+    REQUIRE(log_to_str_with_time(tp, "", "[%25c]", utc, "") == "[ Sun Aug 17 15:35:46 2014]");
+    REQUIRE(log_to_str_with_time(tp, "", "[%24!c]", utc, "") == "[Sun Aug 17 15:35:46 2014]");
+}
+
+TEST_CASE("padding_epoch_seconds", "[pattern_formatter]") {
+    const auto utc = spdlog::pattern_time_type::utc;
+    auto tp = std::chrono::system_clock::from_time_t(12345);
+    REQUIRE(log_to_str_with_time(tp, "", "[%E]", utc, "") == "[12345]");
+    REQUIRE(log_to_str_with_time(tp, "", "[%8E]", utc, "") == "[   12345]");
+    REQUIRE(log_to_str_with_time(tp, "", "[%-8E]", utc, "") == "[12345   ]");
+    REQUIRE(log_to_str_with_time(tp, "", "[%5!E]", utc, "") == "[12345]");
+    REQUIRE(log_to_str_with_time(tp, "", "[%3!E]", utc, "") == "[123]");
+}
+
 TEST_CASE("padding_truncate_funcname", "[pattern_formatter]") {
     spdlog::sinks::test_sink_st test_sink;
 

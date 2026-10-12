@@ -224,7 +224,8 @@ public:
         : flag_formatter(padinfo) {}
 
     void format(const details::log_msg &, const std::tm &tm_time, memory_buf_t &dest) override {
-        const size_t field_size = 24;
+        const size_t field_size = 18 + ScopedPadder::count_digits(tm_time.tm_mday) +
+                                  ScopedPadder::count_digits(tm_time.tm_year + 1900);
         ScopedPadder p(field_size, padinfo_, dest);
 
         fmt_helper::append_string_view(days[static_cast<size_t>(tm_time.tm_wday)], dest);
@@ -430,10 +431,10 @@ public:
         : flag_formatter(padinfo) {}
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override {
-        const size_t field_size = 10;
-        ScopedPadder p(field_size, padinfo_, dest);
         auto duration = msg.time.time_since_epoch();
         auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
+        const auto field_size = ScopedPadder::count_digits(seconds);
+        ScopedPadder p(field_size, padinfo_, dest);
         fmt_helper::append_int(seconds, dest);
     }
 };
