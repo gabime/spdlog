@@ -169,3 +169,42 @@ TEST_CASE("file_helper_open", "[file_helper]") {
     REQUIRE_THROWS_AS(helper.open(target_filename), spdlog::spdlog_ex);
 }
 #endif  // SPDLOG_NO_EXCEPTIONS
+
+TEST_CASE("file_helper_buffer_resize_events", "[file_helper]") {
+    prepare_logdir();
+    int opens = 0;
+    int closes = 0;
+    spdlog::file_event_handlers handlers;
+    handlers.after_open = [&](spdlog::filename_t, std::FILE *stream) {
+        ++opens;
+        std::fputs("opened\n", stream);
+    };
+    handlers.before_close = [&](spdlog::filename_t, std::FILE *stream) {
+        ++closes;
+        std::fputs("closed\n", stream);
+    };
+    file_helper helper{handlers};
+    helper.set_buffer_size(64 * 1024);
+    REQUIRE(helper.buffer_size() == 64 * 1024);
+    REQUIRE(opens == 0);
+    helper.open(SPDLOG_FILENAME_T(TEST_FILENAME), true);
+    spdlog::memory_buf_t formatted;
+    spdlog::fmt_lib::format_to(std::back_inserter(formatted), "{}", "pending\n");
+    helper.write(formatted);
+
+    helper.set_buffer_size(128 * 1024);
+    REQUIRE(opens == 2);
+    REQUIRE(closes == 1);
+    helper.set_buffer_size(128 * 1024);
+    REQUIRE(opens == 2);
+    REQUIRE(closes == 1);
+    helper.flush();
+    REQUIRE(file_contents(TEST_FILENAME) == "opened\npending\nclosed\nopened\n");
+
+    helper.close();
+    REQUIRE(closes == 2);
+    helper.set_buffer_size(0);
+    REQUIRE(helper.buffer_size() == 0);
+    REQUIRE(opens == 2);
+    REQUIRE(file_contents(TEST_FILENAME) == "opened\npending\nclosed\nopened\nclosed\n");
+}
