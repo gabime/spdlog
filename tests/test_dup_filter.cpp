@@ -2,6 +2,21 @@
 #include "spdlog/sinks/dup_filter_sink.h"
 #include "test_sink.h"
 
+TEST_CASE("dup_filter_construct_with_sinks", "[dup_filter_sink]") {
+    auto first_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
+    auto second_sink = std::make_shared<spdlog::sinks::test_sink_mt>();
+    spdlog::sinks::dup_filter_sink_st dup_sink{std::chrono::seconds{5}, {first_sink, second_sink}};
+
+    REQUIRE(dup_sink.sinks().size() == 2);
+    dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "message"});
+    dup_sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "message"});
+    REQUIRE(first_sink->msg_counter() == 1);
+    REQUIRE(second_sink->msg_counter() == 1);
+    dup_sink.flush();
+    REQUIRE(first_sink->flush_counter() == 1);
+    REQUIRE(second_sink->flush_counter() == 1);
+}
+
 TEST_CASE("dup_filter_test1", "[dup_filter_sink]") {
     using spdlog::sinks::dup_filter_sink_st;
     using spdlog::sinks::test_sink_mt;
