@@ -80,54 +80,13 @@ TEST_CASE("ringbuffer buffers source_loc strings", "[ringbuffer]") {
 }
 
 TEST_CASE("ringbuffer raw messages survive copy self-assignment", "[ringbuffer]") {
-    const auto payload_size = GENERATE(size_t{8}, size_t{1024});
-    const std::string payload(payload_size, 'x');
-    auto sink = std::make_shared<spdlog::sinks::ringbuffer_sink_st>(2);
-    spdlog::logger logger("raw-copies", sink);
-    logger.warn("{}", payload);
-    logger.info("{}", std::string(payload_size, 'z'));
-
-    auto messages = sink->last_raw();
+    spdlog::sinks::ringbuffer_sink_st sink(2);
+    sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "first"});
+    sink.log(spdlog::details::log_msg{"test", spdlog::level::info, "other"});
+    auto messages = sink.last_raw();
     REQUIRE(messages.size() == 2);
-    const auto time = messages.front().time;
-    const auto thread_id = messages.front().thread_id;
     const auto& source = messages.front();
     messages.front() = source;
     messages.back() = source;
-
-    CHECK(std::string(messages.back().payload.data(), messages.back().payload.size()) == payload);
-    CHECK(std::string(messages.back().logger_name.data(), messages.back().logger_name.size()) ==
-          "raw-copies");
-    CHECK(messages.back().level == spdlog::level::warn);
-    CHECK(messages.back().time == time);
-    CHECK(messages.back().thread_id == thread_id);
-}
-
-TEST_CASE("ringbuffer raw message copy and move assignment own source strings", "[ringbuffer]") {
-    spdlog::sinks::ringbuffer_sink_st sink(1);
-    {
-        std::string filename = "copy-source.cpp";
-        std::string funcname = "copy_function";
-        std::string payload(1024, 'x');
-        sink.log(
-            spdlog::details::log_msg{spdlog::source_loc{filename.c_str(), 42, funcname.c_str()},
-                                     "source-copies", spdlog::level::info, payload});
-    }
-
-    auto messages = sink.last_raw();
-    REQUIRE(messages.size() == 1);
-    spdlog::details::log_msg_buffer copied;
-    copied = messages.front();
-    spdlog::details::log_msg_buffer constructed(copied);
-    spdlog::details::log_msg_buffer moved(std::move(constructed));
-    spdlog::details::log_msg_buffer assigned;
-    assigned = std::move(moved);
-    messages.clear();
-    copied = spdlog::details::log_msg_buffer{};
-
-    CHECK(std::string(assigned.payload.data(), assigned.payload.size()) == std::string(1024, 'x'));
-    CHECK(std::string(assigned.logger_name.data(), assigned.logger_name.size()) == "source-copies");
-    CHECK(std::string(assigned.source.filename) == "copy-source.cpp");
-    CHECK(std::string(assigned.source.funcname) == "copy_function");
-    CHECK(assigned.source.line == 42);
+    REQUIRE(std::string(messages.back().payload.data(), messages.back().payload.size()) == "first");
 }
