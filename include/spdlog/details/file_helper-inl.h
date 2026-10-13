@@ -104,18 +104,16 @@ SPDLOG_INLINE void file_helper::close() {
 }
 
 SPDLOG_INLINE void file_helper::set_buffer_size(size_t buffer_size) {
+    // Reopen to configure setvbuf before I/O while preserving pending output.
+    if (custom_buffer_size_ == buffer_size) {
+        return;
+    }
+    if (fd_ != nullptr) {
+        flush();
+    }
     custom_buffer_size_ = buffer_size;
     if (fd_ != nullptr) {
-        if (custom_buffer_size_ > 0) {
-            custom_buf_.resize(custom_buffer_size_);
-            if (std::setvbuf(fd_, custom_buf_.data(), _IOFBF, custom_buffer_size_) != 0) {
-                throw_spdlog_ex("Failed to setvbuf on file " + os::filename_to_str(filename_), errno);
-            }
-        } else {
-            custom_buf_.clear();
-            custom_buf_.shrink_to_fit();
-            std::setvbuf(fd_, nullptr, _IOFBF, BUFSIZ);
-        }
+        reopen(false);
     }
 }
 
