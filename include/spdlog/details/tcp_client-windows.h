@@ -97,12 +97,13 @@ public:
             return SOCKET_ERROR;
         }
 
-        // Wait until socket is writable or timeout expires
+        // Wait until the connection succeeds, fails, or times out.
         fd_set wfds;
         FD_ZERO(&wfds);
         FD_SET(sockfd, &wfds);
+        fd_set efds = wfds;
 
-        rv = ::select(0, nullptr, &wfds, nullptr, const_cast<timeval *>(&tv));
+        rv = ::select(0, nullptr, &wfds, &efds, const_cast<timeval *>(&tv));
 
         // Restore blocking mode regardless of select result
         mode = 0UL;
