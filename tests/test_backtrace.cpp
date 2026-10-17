@@ -28,6 +28,29 @@ TEST_CASE("bactrace1", "[bactrace]") {
     REQUIRE(test_sink->lines()[7] == "****************** Backtrace End ********************");
 }
 
+TEST_CASE("backtrace reuses overwritten message storage", "[backtrace]") {
+    using spdlog::sinks::test_sink_st;
+    auto test_sink = std::make_shared<test_sink_st>();
+
+    spdlog::logger logger("test-backtrace", test_sink);
+    logger.set_pattern("%g:%# %! %v");
+    logger.enable_backtrace(2);
+
+    for (int i = 0; i < 4; ++i) {
+        std::string filename = "source-file-" + std::to_string(i) + ".cpp";
+        std::string funcname = "source_function_" + std::to_string(i);
+        std::string payload = i < 2 ? std::string(128, static_cast<char>('a' + i))
+                                    : "message " + std::to_string(i);
+        logger.log(spdlog::source_loc{filename.c_str(), i + 10, funcname.c_str()},
+                   spdlog::level::debug, payload);
+    }
+
+    logger.dump_backtrace();
+    REQUIRE(test_sink->lines().size() == 4);
+    REQUIRE(test_sink->lines()[1] == "source-file-2.cpp:12 source_function_2 message 2");
+    REQUIRE(test_sink->lines()[2] == "source-file-3.cpp:13 source_function_3 message 3");
+}
+
 TEST_CASE("bactrace-empty", "[bactrace]") {
     using spdlog::sinks::test_sink_st;
     auto test_sink = std::make_shared<test_sink_st>();

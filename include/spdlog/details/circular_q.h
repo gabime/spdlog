@@ -46,13 +46,15 @@ public:
     void push_back(T &&item) {
         if (max_items_ > 0) {
             v_[tail_] = std::move(item);
-            tail_ = (tail_ + 1) % max_items_;
+            advance_tail_();
+        }
+    }
 
-            if (tail_ == head_)  // overrun last item if full
-            {
-                head_ = (head_ + 1) % max_items_;
-                ++overrun_counter_;
-            }
+    template <typename F>
+    void push_back_overwrite(F &&write_item) {
+        if (max_items_ > 0) {
+            write_item(v_[tail_]);
+            advance_tail_();
         }
     }
 
@@ -97,6 +99,16 @@ public:
     void reset_overrun_counter() { overrun_counter_ = 0; }
 
 private:
+    void advance_tail_() {
+        tail_ = (tail_ + 1) % max_items_;
+
+        if (tail_ == head_)  // overrun last item if full
+        {
+            head_ = (head_ + 1) % max_items_;
+            ++overrun_counter_;
+        }
+    }
+
     // copy from other&& and reset it to disabled state
     void copy_moveable(circular_q &&other) SPDLOG_NOEXCEPT {
         max_items_ = other.max_items_;

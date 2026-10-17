@@ -42,7 +42,7 @@ SPDLOG_INLINE bool backtracer::enabled() const { return enabled_.load(std::memor
 
 SPDLOG_INLINE void backtracer::push_back(const log_msg &msg) {
     std::lock_guard<std::mutex> lock{mutex_};
-    messages_.push_back(log_msg_buffer{msg});
+    messages_.push_back_overwrite([&msg](log_msg_buffer &dest) { dest = msg; });
 }
 
 SPDLOG_INLINE bool backtracer::empty() const {
