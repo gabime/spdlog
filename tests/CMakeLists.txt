@@ -62,7 +62,8 @@ endif()
 if(systemd_FOUND)
     list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)
     # systemd v256 added support for namespace stream API
-    if(systemd_VERSION VERSION_GREATER_EQUAL "256")
+    # The namespace sink uses std::string_view APIs
+    if(systemd_VERSION VERSION_GREATER_EQUAL "256" AND SPDLOG_USE_STD_FORMAT)
         list(APPEND SPDLOG_UTESTS_SOURCES test_systemd_namespace.cpp)
     endif()
 endif()
