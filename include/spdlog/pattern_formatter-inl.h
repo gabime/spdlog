@@ -79,8 +79,10 @@ public:
 
 private:
     void pad_it(long count) {
-        fmt_helper::append_string_view(string_view_t(spaces_.data(), static_cast<size_t>(count)),
-                                       dest_);
+        // never read past spaces_ (handle_padspec_ caps the width at its size)
+        const size_t n =
+            count > 0 ? std::min<size_t>(static_cast<size_t>(count), spaces_.size()) : 0;
+        fmt_helper::append_string_view(string_view_t(spaces_.data(), n), dest_);
     }
 
     const padding_info &padinfo_;
@@ -1300,8 +1302,11 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(
 
     auto width = static_cast<size_t>(*it) - '0';
     for (++it; it != end && std::isdigit(static_cast<unsigned char>(*it)); ++it) {
-        auto digit = static_cast<size_t>(*it) - '0';
-        width = width * 10 + digit;
+        // stop accumulating once above max_width, so long digit runs can't wrap around
+        if (width <= max_width) {
+            auto digit = static_cast<size_t>(*it) - '0';
+            width = width * 10 + digit;
+        }
     }
 
     // search for the optional truncate marker '!'
