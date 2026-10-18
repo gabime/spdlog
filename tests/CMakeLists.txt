@@ -89,6 +89,9 @@ endfunction()
 # The compiled library tests
 if(SPDLOG_BUILD_TESTS OR SPDLOG_BUILD_ALL)
     spdlog_prepare_test(spdlog-utests spdlog::spdlog)
+    add_library(spdlog_bundled_fmt_cpp20 OBJECT test_bundled_fmt_cpp20.cpp)
+    target_link_libraries(spdlog_bundled_fmt_cpp20 PRIVATE spdlog::spdlog)
+    set_target_properties(spdlog_bundled_fmt_cpp20 PROPERTIES CXX_STANDARD 20 CXX_STANDARD_REQUIRED ON)
 endif()
 
 # The header-only library version tests
