@@ -299,6 +299,11 @@ TEST_CASE("left_padded_huge", "[pattern_formatter]") {
 
     REQUIRE(log_to_str("Some message", "[%-300!n] %v", spdlog::pattern_time_type::local, "\n") ==
             "[pattern_tester                                                  ] Some message\n");
+
+    // width digits that would overflow size_t are still capped
+    REQUIRE(log_to_str("Some message", "[%-18446744073709551617n] %v",
+                       spdlog::pattern_time_type::local, "\n") ==
+            "[pattern_tester                                                  ] Some message\n");
 }
 
 TEST_CASE("left_padded_max", "[pattern_formatter]") {
