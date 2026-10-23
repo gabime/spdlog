@@ -6,6 +6,7 @@
 
 #define SIMPLE_LOG "test_logs/simple_log"
 #define ROTATING_LOG "test_logs/rotating_log"
+#define ROTATING_DATETIME_LOG "test_logs/rotating_datetime_log"
 
 TEST_CASE("simple_file_logger", "[simple_logger]") {
     prepare_logdir();
@@ -359,4 +360,256 @@ TEST_CASE("custom_buffer_size_rotating_tracks_reopen_callbacks", "[rotating_logg
             spdlog::fmt_lib::format("header\nbefore resize{}footer\nheader\nafter resize{}",
                                    spdlog::details::os::default_eol,
                                    spdlog::details::os::default_eol));
+}
+
+//
+// rotating_datetime_file_sink
+//
+
+namespace {
+
+// Deterministic archive names, so that file existence can be asserted without
+// scanning the log directory for timestamped names.
+struct sequential_archive_name_calc {
+    static int &counter() {
+        static int value = 0;
+        return value;
+    }
+    static spdlog::filename_t calc_filename(const spdlog::filename_t &base, const tm &) {
+        return spdlog::fmt_lib::format(SPDLOG_FILENAME_T("{}-{}"), base, ++counter());
+    }
+};
+
+// Always asks for the same archive name, exercising the collision handling.
+struct fixed_archive_name_calc {
+    static spdlog::filename_t calc_filename(const spdlog::filename_t &base, const tm &) {
+        return base + SPDLOG_FILENAME_T("-fixed");
+    }
+};
+
+// The same calculator type must be usable by the daily sink and by the rotating
+// datetime sink (that is the "for all sinks" part of the issue).
+struct shared_archive_name_calc {
+    static spdlog::filename_t calc_filename(const spdlog::filename_t &base, const tm &now_tm) {
+        return spdlog::fmt_lib::format(SPDLOG_FILENAME_T("{}-{:04d}{:02d}{:02d}"), base,
+                                       now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday);
+    }
+};
+
+using rotating_datetime_sink_seq_t =
+    spdlog::sinks::rotating_datetime_file_sink<spdlog::details::null_mutex,
+                                               sequential_archive_name_calc>;
+using rotating_datetime_sink_fixed_t =
+    spdlog::sinks::rotating_datetime_file_sink<spdlog::details::null_mutex,
+                                               fixed_archive_name_calc>;
+
+}  // namespace
+
+TEST_CASE("rotating_datetime_archive_name_format", "[rotating_datetime_logger]") {
+    tm t{};
+    t.tm_year = 126;  // 2026
+    t.tm_mon = 9;     // october
+    t.tm_mday = 23;
+    t.tm_hour = 10;
+    t.tm_min = 56;
+    t.tm_sec = 25;
+
+    REQUIRE(spdlog::sinks::datetime_archive_calculator::calc_filename(
+                SPDLOG_FILENAME_T("logs/app.log"), t) ==
+            SPDLOG_FILENAME_T("logs/app-2026-10-23_10-56-25.log"));
+    REQUIRE(spdlog::sinks::datetime_archive_calculator::calc_filename(SPDLOG_FILENAME_T("logs/app"),
+                                                                     t) ==
+            SPDLOG_FILENAME_T("logs/app-2026-10-23_10-56-25"));
+}
+
+TEST_CASE("rotating_datetime_file_logger_rotates_on_size", "[rotating_datetime_logger]") {
+    prepare_logdir();
+    const std::size_t max_size = 1000;
+    auto sink = std::make_shared<spdlog::sinks::rotating_datetime_file_sink_st>(
+        SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG), max_size, 0);
+    spdlog::logger logger("rotating_datetime_sink_logger", sink);
+    logger.set_pattern("%v");
+
+    const std::string message(180, 'x');
+    for (int i = 0; i < 20; ++i) {
+        logger.info(message);
+    }
+    logger.flush();
+
+    // at least one archive was produced, and the active file stayed near max_size
+    REQUIRE(count_files("test_logs") > 1);
+    REQUIRE(get_filesize(ROTATING_DATETIME_LOG) <= max_size + message.size() + 2);
+}
+
+// A size based sink must resume the file it was writing before the restart,
+// otherwise max_size never applies to short lived or restarted processes.
+TEST_CASE("rotating_datetime_file_logger_appends_across_restart",
+          "[rotating_datetime_logger]") {
+    prepare_logdir();
+    const std::size_t max_size = 10 * 1024 * 1024;
+    {
+        auto sink = std::make_shared<spdlog::sinks::rotating_datetime_file_sink_st>(
+            SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG), max_size, 5);
+        spdlog::logger logger("rotating_datetime_first_run", sink);
+        logger.set_pattern("%v");
+        logger.info("first run");
+        logger.flush();
+    }
+    {
+        auto sink = std::make_shared<spdlog::sinks::rotating_datetime_file_sink_st>(
+            SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG), max_size, 5);
+        spdlog::logger logger("rotating_datetime_second_run", sink);
+        logger.set_pattern("%v");
+        logger.info("second run");
+        logger.flush();
+        REQUIRE(sink->get_current_size() == get_filesize(ROTATING_DATETIME_LOG));
+    }
+
+    REQUIRE(count_lines(ROTATING_DATETIME_LOG) == 2);
+    REQUIRE(count_files("test_logs") == 1);
+}
+
+TEST_CASE("rotating_datetime_file_logger_prunes_old_archives", "[rotating_datetime_logger]") {
+    prepare_logdir();
+    sequential_archive_name_calc::counter() = 0;
+    auto sink = std::make_shared<rotating_datetime_sink_seq_t>(
+        SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG), 1024, 3);
+    spdlog::logger logger("rotating_datetime_sink_logger", sink);
+    logger.set_pattern("%v");
+
+    for (int i = 0; i < 6; ++i) {
+        logger.info("Test message {}", i);
+        sink->rotate_now();
+    }
+    logger.flush();
+
+    REQUIRE(count_files("test_logs") == 4);  // active file + 3 archives
+    REQUIRE(spdlog::details::os::path_exists(ROTATING_DATETIME_LOG "-4"));
+    REQUIRE(spdlog::details::os::path_exists(ROTATING_DATETIME_LOG "-5"));
+    REQUIRE(spdlog::details::os::path_exists(ROTATING_DATETIME_LOG "-6"));
+    REQUIRE_FALSE(spdlog::details::os::path_exists(ROTATING_DATETIME_LOG "-1"));
+}
+
+// Two rotations within the same second ask for the same name: the second one must
+// not overwrite the first archive (os::rename overwrites on POSIX).
+TEST_CASE("rotating_datetime_same_second_rotations_are_distinct",
+          "[rotating_datetime_logger]") {
+    prepare_logdir();
+    auto sink = std::make_shared<rotating_datetime_sink_fixed_t>(
+        SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG), 1024, 0);
+    spdlog::logger logger("rotating_datetime_sink_logger", sink);
+    logger.set_pattern("%v");
+
+    logger.info("first");
+    sink->rotate_now();
+    logger.info("second");
+    sink->rotate_now();
+    logger.info("third");
+    sink->rotate_now();
+    logger.flush();
+
+    REQUIRE(count_files("test_logs") == 4);
+    REQUIRE(spdlog::details::os::path_exists(ROTATING_DATETIME_LOG "-fixed"));
+    REQUIRE(spdlog::details::os::path_exists(ROTATING_DATETIME_LOG "-fixed-001"));
+    REQUIRE(spdlog::details::os::path_exists(ROTATING_DATETIME_LOG "-fixed-002"));
+
+    // nothing was lost to an overwritten archive
+    REQUIRE(count_lines(ROTATING_DATETIME_LOG) + count_lines(ROTATING_DATETIME_LOG "-fixed") +
+                count_lines(ROTATING_DATETIME_LOG "-fixed-001") +
+                count_lines(ROTATING_DATETIME_LOG "-fixed-002") ==
+            3);
+}
+
+TEST_CASE("rotating_datetime_file_logger_max_files_zero_keeps_all",
+          "[rotating_datetime_logger]") {
+    prepare_logdir();
+    sequential_archive_name_calc::counter() = 0;
+    auto sink = std::make_shared<rotating_datetime_sink_seq_t>(
+        SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG), 1024, 0);
+    spdlog::logger logger("rotating_datetime_sink_logger", sink);
+    logger.set_pattern("%v");
+
+    for (int i = 0; i < 5; ++i) {
+        logger.info("Test message {}", i);
+        sink->rotate_now();
+    }
+    logger.flush();
+
+    REQUIRE(count_files("test_logs") == 6);  // active file + 5 archives
+}
+
+TEST_CASE("rotating_datetime_file_logger_rotate_on_open", "[rotating_datetime_logger]") {
+    prepare_logdir();
+    {
+        auto sink = std::make_shared<spdlog::sinks::basic_file_sink_st>(
+            SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG));
+        spdlog::logger logger("basic_before_rotate_on_open", sink);
+        logger.set_pattern("%v");
+        logger.info("left by the previous run");
+        logger.flush();
+    }
+    REQUIRE(get_filesize(ROTATING_DATETIME_LOG) > 0);
+
+    auto sink = std::make_shared<spdlog::sinks::rotating_datetime_file_sink_st>(
+        SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG), 1024 * 1024, 5, /*rotate_on_open=*/true);
+
+    REQUIRE(get_filesize(ROTATING_DATETIME_LOG) == 0);
+    REQUIRE(count_files("test_logs") == 2);
+}
+
+TEST_CASE("rotating_datetime_set_max_files_prunes_immediately",
+          "[rotating_datetime_logger]") {
+    prepare_logdir();
+    sequential_archive_name_calc::counter() = 0;
+    auto sink = std::make_shared<rotating_datetime_sink_seq_t>(
+        SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG), 1024, 0);
+    spdlog::logger logger("rotating_datetime_sink_logger", sink);
+    logger.set_pattern("%v");
+
+    for (int i = 0; i < 5; ++i) {
+        logger.info("Test message {}", i);
+        sink->rotate_now();
+    }
+    logger.flush();
+    REQUIRE(count_files("test_logs") == 6);
+
+    sink->set_max_files(2);
+    REQUIRE(sink->get_max_files() == 2);
+    REQUIRE(count_files("test_logs") == 3);  // active file + 2 newest archives
+    REQUIRE(spdlog::details::os::path_exists(ROTATING_DATETIME_LOG "-5"));
+    REQUIRE_FALSE(spdlog::details::os::path_exists(ROTATING_DATETIME_LOG "-1"));
+}
+
+#ifndef SPDLOG_NO_EXCEPTIONS
+TEST_CASE("rotating_datetime_file_logger_max_size_zero_throws",
+          "[rotating_datetime_logger]") {
+    prepare_logdir();
+    REQUIRE_THROWS_AS(
+        std::make_shared<spdlog::sinks::rotating_datetime_file_sink_st>(
+            SPDLOG_FILENAME_T(ROTATING_DATETIME_LOG), 0, 1),
+        spdlog::spdlog_ex);
+}
+#endif  // SPDLOG_NO_EXCEPTIONS
+
+TEST_CASE("rotating_datetime_calculator_reused_by_daily_sink", "[rotating_datetime_logger]") {
+    prepare_logdir();
+    auto daily_sink =
+        std::make_shared<spdlog::sinks::daily_file_sink<spdlog::details::null_mutex,
+                                                        shared_archive_name_calc>>(
+            SPDLOG_FILENAME_T("test_logs/shared_daily.log"), 0, 0);
+    auto rotating_sink =
+        std::make_shared<spdlog::sinks::rotating_datetime_file_sink<spdlog::details::null_mutex,
+                                                                    shared_archive_name_calc>>(
+            SPDLOG_FILENAME_T("test_logs/shared_rotating.log"), 1024);
+
+    spdlog::logger daily_logger("shared_calc_daily", daily_sink);
+    spdlog::logger rotating_logger("shared_calc_rotating", rotating_sink);
+    daily_logger.set_pattern("%v");
+    rotating_logger.set_pattern("%v");
+    daily_logger.info("daily");
+    rotating_logger.info("rotating");
+    daily_logger.flush();
+    rotating_logger.flush();
+
+    REQUIRE(count_files("test_logs") == 2);
 }

@@ -52,6 +52,7 @@ see example [CMakeLists.txt](example/CMakeLists.txt) on how to use.
 * Multi/Single threaded loggers.
 * Various log targets:
   * Rotating log files.
+  * Rotating log files with the date encoded in the name of every archive.
   * Daily log files.
   * Console logging (colors supported).
   * syslog.
@@ -149,6 +150,55 @@ void daily_example()
 }
 
 ```
+
+---
+#### Rotating files with the date in the name
+
+`rotating_datetime_file_sink` rotates on size like `rotating_file_sink`, but instead of
+`.1`, `.2` suffixes every rotated file is renamed to a name produced by the
+`FileNameCalc` template argument, while the active file keeps its own name:
+
+```
+logs/app.log  =>  logs/app-2026-10-23_10-56-25.log   (archived on rotation)
+logs/app.log                                          (reopened empty, keeps growing)
+```
+
+Keeping the active file name stable matters: a restarted process reopens `logs/app.log`
+in append mode, so `max_size` keeps being enforced across restarts instead of starting
+a new file on every run.
+
+```c++
+#include "spdlog/sinks/rotating_datetime_file_sink.h"
+void rotating_datetime_example()
+{
+    // 5 MB per file, keep the 10 most recent archives
+    auto logger = spdlog::rotating_datetime_logger_mt(
+        "some_logger_name", "logs/app.log", 1048576 * 5, 10);
+}
+```
+
+A custom naming scheme is a calculator with the same signature as the daily/hourly
+sinks, so a single calculator can be shared by several sinks:
+
+```c++
+struct date_only_archive_names {
+    static spdlog::filename_t calc_filename(const spdlog::filename_t &base, const tm &now_tm) {
+        // the built-in datetime_archive_calculator inserts the timestamp before the
+        // extension; a custom one decides the whole name
+        return spdlog::fmt_lib::format(SPDLOG_FILENAME_T("{}-{:04d}-{:02d}-{:02d}"), base,
+                                       now_tm.tm_year + 1900, now_tm.tm_mon + 1, now_tm.tm_mday);
+    }
+};
+using sink_t = spdlog::sinks::rotating_datetime_file_sink<std::mutex, date_only_archive_names>;
+```
+
+Notes:
+* Log collectors should glob the archives (`app-*`); the active file name never changes.
+* `max_files` only applies to files archived by the current process, the same policy as
+  the daily/hourly sinks. Use `rotate_on_open` to archive whatever a previous run left in
+  the active file.
+* Rotating more than once within the same second produces `app-...-001`, `app-...-002`
+  instead of overwriting the previous archive.
 
 ---
 #### Backtrace support
