@@ -63,4 +63,57 @@ TEST_CASE("tcp_client timeout supports high file descriptors", "[tcp_sink]") {
     REQUIRE(client.connect_socket_with_timeout(
                 high_fd.fd, reinterpret_cast<sockaddr *>(&addr), addr_len, 1000) == 0);
 }
+#else
+#include <spdlog/details/tcp_client-windows.h>
+
+struct socket_guard {
+    explicit socket_guard(SOCKET value)
+        : fd(value) {}
+    ~socket_guard() {
+        if (fd != INVALID_SOCKET) ::closesocket(fd);
+    }
+    SOCKET fd;
+};
+
+TEST_CASE("tcp_client timeout reports refused Windows connections", "[tcp_sink]") {
+    spdlog::details::tcp_client client;
+    socket_guard bound(::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
+    REQUIRE(bound.fd != INVALID_SOCKET);
+
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    REQUIRE(::bind(bound.fd, reinterpret_cast<sockaddr *>(&addr), sizeof(addr)) == 0);
+    int addr_len = sizeof(addr);
+    REQUIRE(::getsockname(bound.fd, reinterpret_cast<sockaddr *>(&addr), &addr_len) == 0);
+
+    socket_guard outbound(::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
+    REQUIRE(outbound.fd != INVALID_SOCKET);
+    timeval timeout{3, 0};
+    auto result = client.connect_socket_with_timeout(
+        outbound.fd, reinterpret_cast<sockaddr *>(&addr), addr_len, timeout);
+    auto error = ::WSAGetLastError();
+    REQUIRE(result == SOCKET_ERROR);
+    REQUIRE(error == WSAECONNREFUSED);
+}
+
+TEST_CASE("tcp_client timeout connects to Windows listeners", "[tcp_sink]") {
+    spdlog::details::tcp_client client;
+    socket_guard listener(::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
+    REQUIRE(listener.fd != INVALID_SOCKET);
+
+    sockaddr_in addr{};
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+    REQUIRE(::bind(listener.fd, reinterpret_cast<sockaddr *>(&addr), sizeof(addr)) == 0);
+    REQUIRE(::listen(listener.fd, 1) == 0);
+    int addr_len = sizeof(addr);
+    REQUIRE(::getsockname(listener.fd, reinterpret_cast<sockaddr *>(&addr), &addr_len) == 0);
+
+    socket_guard outbound(::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP));
+    REQUIRE(outbound.fd != INVALID_SOCKET);
+    timeval timeout{3, 0};
+    REQUIRE(client.connect_socket_with_timeout(outbound.fd, reinterpret_cast<sockaddr *>(&addr),
+                                               addr_len, timeout) == 0);
+}
 #endif

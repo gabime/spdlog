@@ -925,13 +925,16 @@ public:
         }
 
 #ifndef SPDLOG_NO_TLS
-        // add mdc if present
-        auto &mdc_map = mdc::get_context();
-        if (!mdc_map.empty()) {
-            dest.push_back('[');
-            mdc_formatter_.format_mdc(mdc_map, dest);
-            dest.push_back(']');
-            dest.push_back(' ');
+        // add mdc if present, but avoid constructing the thread local context when mdc was never
+        // used on this thread
+        if (mdc::has_context()) {
+            auto &mdc_map = mdc::get_context();
+            if (!mdc_map.empty()) {
+                dest.push_back('[');
+                mdc_formatter_.format_mdc(mdc_map, dest);
+                dest.push_back(']');
+                dest.push_back(' ');
+            }
         }
 #endif
         // fmt_helper::append_string_view(msg.msg(), dest);
