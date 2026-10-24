@@ -83,6 +83,44 @@ TEST_CASE("nonzero initial timestamp", "[pattern_formatter][epoch_control]") {
                                  spdlog::pattern_time_type::utc, "") == "message");
 }
 
+TEST_CASE("subsecond fractions before epoch", "[pattern_formatter][negative_epoch]") {
+    const auto epoch = spdlog::log_clock::from_time_t(0);
+    REQUIRE(log_to_str_with_time(epoch - std::chrono::milliseconds(1), "message", "%E %e %f %F",
+                                 spdlog::pattern_time_type::utc, "") == "-1 999 999000 999000000");
+    const auto microsecond =
+        std::chrono::duration_cast<spdlog::log_clock::duration>(std::chrono::microseconds(1));
+    REQUIRE(log_to_str_with_time(epoch - microsecond, "message", "%E %e %f %F",
+                                 spdlog::pattern_time_type::utc, "") == "-1 999 999999 999999000");
+    REQUIRE(log_to_str_with_time(epoch - std::chrono::seconds(1), "message", "%E %e %f %F",
+                                 spdlog::pattern_time_type::utc, "") == "-1 000 000000 000000000");
+}
+
+#ifndef _WIN32  // Windows CRT does not support negative time_t calendar conversion.
+TEST_CASE("calendar timestamps before epoch", "[pattern_formatter][negative_epoch]") {
+    const auto time = spdlog::log_clock::from_time_t(0) - std::chrono::milliseconds(1);
+    REQUIRE(log_to_str_with_time(time, "message", "%Y-%m-%d %H:%M:%S.%e",
+                                 spdlog::pattern_time_type::utc, "") == "1969-12-31 23:59:59.999");
+    REQUIRE(log_to_str_with_time(time, "message", "%+", spdlog::pattern_time_type::utc, "") ==
+            "[1969-12-31 23:59:59.999] [pattern_tester] [info] message");
+}
+
+TEST_CASE("timestamp cache crosses epoch within a second", "[pattern_formatter][negative_epoch]") {
+    for (const auto* pattern : {"%Y-%m-%d %H:%M:%S.%e", "%+"}) {
+        spdlog::pattern_formatter formatter(pattern, spdlog::pattern_time_type::utc, "");
+        const auto epoch = spdlog::log_clock::from_time_t(0);
+        for (const auto offset : {-1, 1, -1}) {
+            spdlog::memory_buf_t buffer;
+            spdlog::details::log_msg msg(epoch + std::chrono::milliseconds(offset), {}, "",
+                                         spdlog::level::info, "");
+            formatter.format(msg, buffer);
+            const auto text = std::string(buffer.data(), buffer.size());
+            REQUIRE(text.find(offset < 0 ? "1969-12-31 23:59:59.999" : "1970-01-01 00:00:00.001") !=
+                    std::string::npos);
+        }
+    }
+}
+#endif
+
 TEST_CASE("custom eol", "[pattern_formatter]") {
     std::string msg = "Hello custom eol test";
     std::string eol = ";)";
