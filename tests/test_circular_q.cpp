@@ -48,3 +48,32 @@ TEST_CASE("test_empty", "[circular_q]") {
     q.push_back(1);
     REQUIRE(q.empty());
 }
+
+TEST_CASE("test_self_assignment", "[circular_q]") {
+    q_type q(4);
+    q.push_back(10);
+    q.push_back(20);
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wself-assign-overloaded"
+#pragma clang diagnostic ignored "-Wself-move"
+#elif defined(__GNUC__) && __GNUC__ >= 13
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wself-move"
+#endif
+
+    q = q;
+    REQUIRE(q.size() == 2);
+    REQUIRE(q.front() == 10);
+
+    q = std::move(q);
+    REQUIRE(q.size() == 2);
+    REQUIRE(q.front() == 10);
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__) && __GNUC__ >= 13
+#pragma GCC diagnostic pop
+#endif
+}
