@@ -320,7 +320,11 @@ endforeach()
 
 if(MSVC)
     target_compile_options(spdlog PRIVATE "/Zc:__cplusplus")
-    target_compile_options(spdlog_header_only INTERFACE "/Zc:__cplusplus")
+    #target_compile_options(spdlog_header_only INTERFACE "/Zc:__cplusplus")
+    target_compile_options(spdlog_header_only INTERFACE
+      $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<CXX_COMPILER_ID:MSVC>>:/Zc:__cplusplus>
+      $<$<AND:$<COMPILE_LANGUAGE:CUDA>,$<CXX_COMPILER_ID:MSVC>>:-Xcompiler=/Zc:__cplusplus>
+    )
     if(SPDLOG_MSVC_UTF8)
         # fmtlib requires the /utf-8 flag when building with msvc. see https://github.com/fmtlib/fmt/pull/4159 on the
         # purpose of the additional
