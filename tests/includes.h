@@ -43,3 +43,4 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/sinks/msvc_sink.h"
 #include "spdlog/pattern_formatter.h"
+#include "spdlog/conditional_log.h"
