@@ -789,4 +789,28 @@ TEST_CASE("mdc context is created lazily", "[pattern_formatter]") {
         REQUIRE(rendered);
     }
 }
+
+TEST_CASE("mdc padding", "[pattern_formatter]") {
+    spdlog::mdc::put("k1", "v1");
+    spdlog::mdc::put("k2", "v2");
+
+    auto format_mdc = [](const std::string &pattern) {
+        spdlog::pattern_formatter formatter(pattern, spdlog::pattern_time_type::local, "");
+        memory_buf_t formatted;
+        spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info,
+                                     "some message");
+        formatter.format(msg, formatted);
+        return std::string(formatted.data(), formatted.size());
+    };
+
+    // the padding applies to the whole "k1:v1 k2:v2" field (11 chars), not to each pair
+    REQUIRE(format_mdc("[%15&]") == "[    k1:v1 k2:v2]");
+    REQUIRE(format_mdc("[%-15&]") == "[k1:v1 k2:v2    ]");
+    REQUIRE(format_mdc("[%=15&]") == "[  k1:v1 k2:v2  ]");
+    REQUIRE(format_mdc("[%11&]") == "[k1:v1 k2:v2]");
+    REQUIRE(format_mdc("[%8!&]") == "[k1:v1 k2]");
+    REQUIRE(format_mdc("[%-8!&]") == "[k1:v1 k2]");
+
+    SECTION("Tear down") { spdlog::mdc::clear(); }
+}
 #endif
