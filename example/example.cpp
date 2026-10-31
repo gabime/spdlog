@@ -6,6 +6,7 @@
 
 #include <cstdio>
 #include <chrono>
+#include <iostream>
 
 void load_levels_example();
 void stdout_logger_example();

@@ -371,6 +371,21 @@ constexpr T conditional_static_cast(U value) {
 }  // namespace details
 SPDLOG_NAMESPACE_END
 
+//Defining the macros for SPDLOG special issue definition
+
+// logs message only if a spec bool condition is met
+#define SPDLOG_LOGGER_CONDITIONAL(logger, condition, level, ...) \
+    do {                                                                 \
+        if(condition)                                                  \
+        {                                                              \
+            SPDLOG_LOGGER_CALL(logger, level, __VA_ARGS__);                           \
+        }\
+    } while(0)
+#define SPDLOG_LOGGER_EVERY_N //logs a message once every N calls
+#define SPDLOG_LOGGER_THROTTLE // logs a message at most once per spec time interval in secs
+
+
+
 #ifdef SPDLOG_HEADER_ONLY
 #include "common-inl.h"
 #endif

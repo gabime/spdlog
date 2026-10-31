@@ -27,6 +27,7 @@ else()
 endif()
 
 set(SPDLOG_UTESTS_SOURCES
+    test_issuespectests.cpp
     test_file_helper.cpp
     test_file_logging.cpp
     test_daily_logger.cpp
