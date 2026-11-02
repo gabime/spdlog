@@ -1,6 +1,6 @@
 // Formatting library for C++ - std::ostream support
 //
-// Copyright (c) 2012 - present, Victor Zverovich
+// Copyright (c) 2012 - present, Victor Zverovich and {fmt} contributors
 // All rights reserved.
 //
 // For the license information refer to format.h.
@@ -38,7 +38,7 @@ namespace detail {
 namespace {
 struct file_access_tag {};
 }  // namespace
-template <typename Tag, typename BufType, FILE* BufType::*FileMemberPtr>
+template <typename Tag, typename BufType, FILE* BufType::* FileMemberPtr>
 class file_access {
   friend auto get_file(BufType& obj) -> FILE* { return obj.*FileMemberPtr; }
 };
@@ -150,7 +150,7 @@ inline void vprint(std::ostream& os, string_view fmt, format_args args) {
 FMT_EXPORT template <typename... T>
 void print(std::ostream& os, format_string<T...> fmt, T&&... args) {
   fmt::vargs<T...> vargs = {{args...}};
-  if (detail::const_check(detail::use_utf8)) return vprint(os, fmt.str, vargs);
+  if FMT_CONSTEXPR20 (detail::use_utf8) return vprint(os, fmt.str, vargs);
   auto buffer = memory_buffer();
   detail::vformat_to(buffer, fmt.str, vargs);
   detail::write_buffer(os, buffer);

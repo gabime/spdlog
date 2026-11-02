@@ -1,6 +1,6 @@
 // Formatting library for C++ - dynamic argument lists
 //
-// Copyright (c) 2012 - present, Victor Zverovich
+// Copyright (c) 2012 - present, Victor Zverovich and {fmt} contributors
 // All rights reserved.
 //
 // For the license information refer to format.h.
@@ -113,8 +113,7 @@ FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
     data_.emplace_back(arg);
   }
 
-  template <typename T>
-  void emplace_arg(const detail::named_arg<char_type, T>& arg) {
+  template <typename T> void emplace_arg(const named_arg<T, char_type>& arg) {
     if (named_info_.empty())
       data_.insert(data_.begin(), basic_format_arg<Context>(nullptr, 0));
     data_.emplace_back(detail::unwrap(arg.value));
@@ -152,7 +151,7 @@ FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
    *     std::string result = fmt::vformat("{} and {} and {}", store);
    */
   template <typename T> void push_back(const T& arg) {
-    if (detail::const_check(need_copy<T>::value))
+    if FMT_CONSTEXPR20 (need_copy<T>::value)
       emplace_arg(dynamic_args_.push<stored_t<T>>(arg));
     else
       emplace_arg(detail::unwrap(arg));
@@ -183,11 +182,10 @@ FMT_EXPORT template <typename Context> class dynamic_format_arg_store {
    * formatting function. `std::reference_wrapper` is supported to avoid
    * copying of the argument. The name is always copied into the store.
    */
-  template <typename T>
-  void push_back(const detail::named_arg<char_type, T>& arg) {
+  template <typename T> void push_back(const named_arg<T, char_type>& arg) {
     const char_type* arg_name =
         dynamic_args_.push<std::basic_string<char_type>>(arg.name).c_str();
-    if (detail::const_check(need_copy<T>::value)) {
+    if FMT_CONSTEXPR20 (need_copy<T>::value) {
       emplace_arg(
           fmt::arg(arg_name, dynamic_args_.push<stored_t<T>>(arg.value)));
     } else {

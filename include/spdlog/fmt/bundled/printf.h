@@ -1,6 +1,6 @@
 // Formatting library for C++ - legacy printf implementation
 //
-// Copyright (c) 2012 - 2016, Victor Zverovich
+// Copyright (c) 2012 - present, Victor Zverovich and {fmt} contributors
 // All rights reserved.
 //
 // For the license information refer to format.h.
@@ -136,7 +136,7 @@ template <typename T, typename Context> class arg_converter {
   void operator()(U value) {
     bool is_signed = type_ == 'd' || type_ == 'i';
     using target_type = conditional_t<std::is_same<T, void>::value, U, T>;
-    if (const_check(sizeof(target_type) <= sizeof(int))) {
+    if FMT_CONSTEXPR20 (sizeof(target_type) <= sizeof(int)) {
       // Extra casts are used to silence warnings.
       using unsigned_type = typename make_unsigned_or_bool<target_type>::type;
       if (is_signed)
@@ -330,6 +330,7 @@ template <typename Char, typename GetArg>
 auto parse_header(const Char*& it, const Char* end, format_specs& specs,
                   GetArg get_arg) -> int {
   int arg_index = -1;
+  if (it == end) return arg_index;
   Char c = *it;
   if (c >= '0' && c <= '9') {
     // Parse an argument index (if followed by '$') or a width possibly
@@ -357,8 +358,21 @@ auto parse_header(const Char*& it, const Char* end, format_specs& specs,
       if (specs.width == -1) report_error("number is too big");
     } else if (*it == '*') {
       ++it;
-      specs.width = static_cast<int>(
-          get_arg(-1).visit(detail::printf_width_handler(specs)));
+      // Check for positional width argument like *1$
+      if (it != end && *it >= '0' && *it <= '9') {
+        int width_index = parse_nonnegative_int(it, end, -1);
+        if (it != end && *it == '$') {
+          ++it;
+          specs.width = static_cast<int>(
+              get_arg(width_index).visit(detail::printf_width_handler(specs)));
+        } else {
+          // Invalid format, rewind and treat as non-positional
+          report_error("invalid format specifier");
+        }
+      } else {
+        specs.width = static_cast<int>(
+            get_arg(-1).visit(detail::printf_width_handler(specs)));
+      }
     }
   }
   return arg_index;
@@ -424,6 +438,8 @@ void vprintf(buffer<Char>& buf, basic_string_view<Char> format,
     }
     write(out, basic_string_view<Char>(start, to_unsigned(it - 1 - start)));
 
+    if (it == end) report_error("invalid format string");
+
     auto specs = format_specs();
     specs.set_align(align::right);
 
@@ -439,15 +455,28 @@ void vprintf(buffer<Char>& buf, basic_string_view<Char> format,
         specs.precision = parse_nonnegative_int(it, end, 0);
       } else if (c == '*') {
         ++it;
-        specs.precision =
-            static_cast<int>(get_arg(-1).visit(printf_precision_handler()));
+        // Check for positional precision argument like .*1$
+        if (it != end && *it >= '0' && *it <= '9') {
+          int precision_index = parse_nonnegative_int(it, end, -1);
+          if (it != end && *it == '$') {
+            ++it;
+            specs.precision = static_cast<int>(
+                get_arg(precision_index).visit(printf_precision_handler()));
+          } else {
+            // Invalid format, rewind and treat as non-positional
+            report_error("invalid format specifier");
+          }
+        } else {
+          specs.precision =
+              static_cast<int>(get_arg(-1).visit(printf_precision_handler()));
+        }
       } else {
         specs.precision = 0;
       }
     }
 
     auto arg = get_arg(arg_index);
-    // For d, i, o, u, x, and X conversion specifiers, if a precision is
+    // For d, i, o, u, x and X conversion specifiers, if a precision is
     // specified, the '0' flag is ignored
     if (specs.precision >= 0 && is_integral_type(arg.type())) {
       // Ignore '0' for non-numeric types or if '-' present.
@@ -560,7 +589,7 @@ inline auto vsprintf(basic_string_view<Char> fmt,
 
 /**
  * Formats `args` according to specifications in `fmt` and returns the result
- * as as string.
+ * as string.
  *
  * **Example**:
  *
