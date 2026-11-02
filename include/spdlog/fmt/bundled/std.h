@@ -1,6 +1,6 @@
 // Formatting library for C++ - formatters for standard library types
 //
-// Copyright (c) 2012 - present, Victor Zverovich
+// Copyright (c) 2012 - present, Victor Zverovich and {fmt} contributors
 // All rights reserved.
 //
 // For the license information refer to format.h.
@@ -15,7 +15,8 @@
 #  include <atomic>
 #  include <bitset>
 #  include <complex>
-#  include <exception>
+#  include <cstddef>     // std::byte
+#  include <exception>   // std::exception
 #  include <functional>  // std::reference_wrapper
 #  include <memory>
 #  include <thread>
@@ -79,15 +80,34 @@
 FMT_BEGIN_NAMESPACE
 namespace detail {
 
+#ifdef FMT_USE_BITINT
+// Use the provided definition.
+#elif FMT_CLANG_VERSION >= 1500 && !defined(__CUDACC__)
+#  define FMT_USE_BITINT 1
+#else
+#  define FMT_USE_BITINT 0
+#endif
+
+#if FMT_USE_BITINT
+FMT_PRAGMA_CLANG(diagnostic ignored "-Wbit-int-extension")
+template <int N> using bitint = _BitInt(N);
+template <int N> using ubitint = unsigned _BitInt(N);
+#else
+template <int N> struct bitint {};
+template <int N> struct ubitint {};
+#endif  // FMT_USE_BITINT
+
 #if FMT_CPP_LIB_FILESYSTEM
 
 template <typename Char, typename PathChar>
 auto get_path_string(const std::filesystem::path& p,
                      const std::basic_string<PathChar>& native) {
-  if constexpr (std::is_same_v<Char, char> && std::is_same_v<PathChar, wchar_t>)
-    return to_utf8<wchar_t>(native, to_utf8_error_policy::replace);
-  else
+  if constexpr (std::is_same_v<Char, char> &&
+                std::is_same_v<PathChar, wchar_t>) {
+    return to_utf8<wchar_t>(native, to_utf8_error_policy::wtf);
+  } else {
     return p.string<Char>();
+  }
 }
 
 template <typename Char, typename PathChar>
@@ -113,8 +133,8 @@ void write_escaped_path(basic_memory_buffer<Char>& quoted,
 #if defined(__cpp_lib_expected) || FMT_CPP_LIB_VARIANT
 
 template <typename Char, typename OutputIt, typename T, typename FormatContext>
-auto write_escaped_alternative(OutputIt out, const T& v, FormatContext& ctx)
-    -> OutputIt {
+FMT_CONSTEXPR auto write_escaped_alternative(OutputIt out, const T& v,
+                                             FormatContext& ctx) -> OutputIt {
   if constexpr (has_to_string_view<T>::value)
     return write_escaped_string<Char>(out, detail::to_string_view(v));
   if constexpr (std::is_same_v<T, Char>) return write_escaped_char(out, v);
@@ -434,6 +454,26 @@ struct formatter<std::expected<T, E>, Char,
     return out;
   }
 };
+
+template <typename E, typename Char>
+struct formatter<std::unexpected<E>, Char,
+                 std::enable_if_t<is_formattable<E, Char>::value>> {
+  FMT_CONSTEXPR auto parse(parse_context<Char>& ctx) -> const Char* {
+    return ctx.begin();
+  }
+
+  template <typename FormatContext>
+  auto format(const std::unexpected<E>& value, FormatContext& ctx) const
+      -> decltype(ctx.out()) {
+    auto out = ctx.out();
+
+    out = detail::write<Char>(out, "unexpected(");
+    out = detail::write_escaped_alternative<Char>(out, value.error(), ctx);
+
+    *out++ = ')';
+    return out;
+  }
+};
 #endif  // __cpp_lib_expected
 
 #ifdef __cpp_lib_source_location
@@ -468,7 +508,7 @@ template <typename Char> struct formatter<std::monostate, Char> {
   }
 
   template <typename FormatContext>
-  auto format(const std::monostate&, FormatContext& ctx) const
+  FMT_CONSTEXPR auto format(const std::monostate&, FormatContext& ctx) const
       -> decltype(ctx.out()) {
     return detail::write<Char>(ctx.out(), "monostate");
   }
@@ -484,7 +524,7 @@ struct formatter<Variant, Char,
   }
 
   template <typename FormatContext>
-  auto format(const Variant& value, FormatContext& ctx) const
+  FMT_CONSTEXPR20 auto format(const Variant& value, FormatContext& ctx) const
       -> decltype(ctx.out()) {
     auto out = ctx.out();
 
@@ -609,6 +649,30 @@ struct formatter<
   }
 };
 
+template <int N, typename Char>
+struct formatter<detail::bitint<N>, Char> : formatter<long long, Char> {
+  static_assert(N <= 64, "unsupported _BitInt");
+  static auto format_as(detail::bitint<N> x) -> long long {
+    return static_cast<long long>(x);
+  }
+  template <typename Context>
+  auto format(detail::bitint<N> x, Context& ctx) const -> decltype(ctx.out()) {
+    return formatter<long long, Char>::format(format_as(x), ctx);
+  }
+};
+
+template <int N, typename Char>
+struct formatter<detail::ubitint<N>, Char> : formatter<ullong, Char> {
+  static_assert(N <= 64, "unsupported _BitInt");
+  static auto format_as(detail::ubitint<N> x) -> ullong {
+    return static_cast<ullong>(x);
+  }
+  template <typename Context>
+  auto format(detail::ubitint<N> x, Context& ctx) const -> decltype(ctx.out()) {
+    return formatter<ullong, Char>::format(format_as(x), ctx);
+  }
+};
+
 // We can't use std::vector<bool, Allocator>::reference and
 // std::bitset<N>::reference because the compiler can't deduce Allocator and N
 // in partial specialization.
@@ -622,6 +686,20 @@ struct formatter<BitRef, Char,
     return formatter<bool, Char>::format(v, ctx);
   }
 };
+
+#ifdef __cpp_lib_byte
+template <typename Char>
+struct formatter<std::byte, Char> : formatter<unsigned, Char> {
+  FMT_CONSTEXPR static auto format_as(std::byte b) -> unsigned char {
+    return static_cast<unsigned char>(b);
+  }
+  template <typename Context>
+  FMT_CONSTEXPR auto format(std::byte b, Context& ctx) const
+      -> decltype(ctx.out()) {
+    return formatter<unsigned, Char>::format(format_as(b), ctx);
+  }
+};
+#endif
 
 template <typename T, typename Char>
 struct formatter<std::atomic<T>, Char,
@@ -644,6 +722,11 @@ struct formatter<std::atomic_flag, Char> : formatter<bool, Char> {
   }
 };
 #endif  // __cpp_lib_atomic_flag_test
+
+template <typename T> struct is_tuple_like;
+
+template <typename T>
+struct is_tuple_like<std::complex<T>> : std::false_type {};
 
 template <typename T, typename Char> struct formatter<std::complex<T>, Char> {
  private:
