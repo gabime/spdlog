@@ -40,3 +40,4 @@ TEST_CASE("stopwatch2", "[stopwatch]") {
     REQUIRE(val >= (diff_duration).count() - 0.001);
     REQUIRE(val <= (diff_duration + tolerance_duration).count());
 }
+

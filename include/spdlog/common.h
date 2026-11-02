@@ -371,6 +371,44 @@ constexpr T conditional_static_cast(U value) {
 }  // namespace details
 SPDLOG_NAMESPACE_END
 
+//Defining the macros for SPDLOG special issue definition
+
+// logs message only if a spec bool condition is met
+#define SPDLOG_LOGGER_CONDITIONAL(logger, condition, level, ...) \
+    do {                                                                 \
+        if(condition)                                                  \
+        {                                                              \
+            SPDLOG_LOGGER_CALL(logger, level, __VA_ARGS__);                           \
+        }\
+    } while(0)
+//logs a message once every N calls
+#define SPDLOG_LOGGER_EVERY_N(logger, level, N, ...) \
+    do{\
+        static std::atomic<uint64_t> spdlog_every_n_counter_{0}; \
+        const auto spdlog_every_n_interval_ = static_cast<uint64_t>(N);\
+        if(spdlog_every_n_interval_ == 0 || spdlog_every_n_counter_.fetch_add(1, std::memory_order_relaxed) % spdlog_every_n_interval_ == 0){\
+            SPDLOG_LOGGER_CALL(logger, level, __VA_ARGS__);\
+        }\
+    } while(0)
+
+// logs a message at most once per spec time interval in secs
+#define SPDLOG_LOGGER_THROTTLE(logger, level, interval_sec, ...) \
+    do{\
+        static std::atomic<int64_t> spdlog_throttle_last_{std::numeric_limits<int64_t>::min()}; \
+        const int64_t spdlog_throttle_now_ = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count(); \
+        const int64_t spdlog_throttle_gap_ = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(interval_sec)).count(); \
+        int64_t spdlog_throttle_seen_ = spdlog_throttle_last_.load(std::memory_order_relaxed);\
+        if((spdlog_throttle_seen_ == std::numeric_limits<int64_t>::min() ||\
+            spdlog_throttle_now_ - spdlog_throttle_seen_ >= spdlog_throttle_gap_) && \
+            spdlog_throttle_last_.compare_exchange_strong(spdlog_throttle_seen_, spdlog_throttle_now_, std::memory_order_relaxed))\
+        {\
+            SPDLOG_LOGGER_CALL(logger, level, __VA_ARGS__);\
+        }\
+    }while(0)
+
+
+
+
 #ifdef SPDLOG_HEADER_ONLY
 #include "common-inl.h"
 #endif
