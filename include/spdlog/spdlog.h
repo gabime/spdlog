@@ -299,6 +299,15 @@ SPDLOG_NAMESPACE_END
     (logger)->log(SPDLOG_NAMESPACE::source_loc{}, level, __VA_ARGS__)
 #endif
 
+// Log only when condition is true. The variadic arguments are not evaluated
+// when the condition is false.
+#define SPDLOG_LOGGER_CONDITIONAL(logger, condition, lvl, ...) \
+    do { \
+      if (condition) { \
+        SPDLOG_LOGGER_CALL(logger, SPDLOG_NAMESPACE::level::lvl, __VA_ARGS__); \
+      } \
+    } while (0)
+
 #if SPDLOG_ACTIVE_LEVEL <= SPDLOG_LEVEL_TRACE
 #define SPDLOG_LOGGER_TRACE(logger, ...) \
     SPDLOG_LOGGER_CALL(logger, SPDLOG_NAMESPACE::level::trace, __VA_ARGS__)
