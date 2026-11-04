@@ -140,6 +140,15 @@ TEST_CASE("create_abs_path2", "[create_dir]") {
     REQUIRE(create_dir(abs_path) == true);
 }
 
+TEST_CASE("create_verbatim_path", "[create_dir]") {
+    prepare_logdir();
+    auto abs_path = get_full_path(SPDLOG_FILENAME_T("test_logs\\logdir3\\subdir"));
+    REQUIRE(!abs_path.empty());
+    abs_path = SPDLOG_FILENAME_T("\\\\?\\") + abs_path;
+    REQUIRE(create_dir(abs_path) == true);
+    REQUIRE(path_exists(abs_path) == true);
+}
+
 TEST_CASE("non_existing_drive", "[create_dir]") {
     prepare_logdir();
     spdlog::filename_t path;
