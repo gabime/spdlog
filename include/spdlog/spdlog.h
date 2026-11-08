@@ -301,7 +301,7 @@ SPDLOG_NAMESPACE_END
 
 // Log only when condition is true. The variadic arguments are not evaluated
 // when the condition is false.
-#define SPDLOG_LOGGER_CONDITIONAL(logger, condition, lvl, ...) \
+#define SPDLOG_LOGGER_IF(logger, condition, lvl, ...) \
     do { \
       if (condition) { \
         SPDLOG_LOGGER_CALL(logger, SPDLOG_NAMESPACE::level::lvl, __VA_ARGS__); \

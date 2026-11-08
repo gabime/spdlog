@@ -52,13 +52,13 @@ TEST_CASE("pass logger pointer", "[macros]") {
     SPDLOG_LOGGER_DEBUG(&ref, "Test message 2");
 }
 
-TEST_CASE("conditional logger macro avoids evaluating arguments", "[macros]") {
+TEST_CASE("logger if macro avoids evaluating arguments", "[macros]") {
     auto logger = spdlog::create<spdlog::sinks::null_sink_mt>("conditional");
     int evaluations = 0;
 
-    SPDLOG_LOGGER_CONDITIONAL(logger, false, info, "{}", ++evaluations);
+    SPDLOG_LOGGER_IF(logger, false, info, "{}", ++evaluations);
     REQUIRE(evaluations == 0);
 
-    SPDLOG_LOGGER_CONDITIONAL(logger, true, info, "{}", ++evaluations);
+    SPDLOG_LOGGER_IF(logger, true, info, "{}", ++evaluations);
     REQUIRE(evaluations == 1);
 }
