@@ -2,6 +2,8 @@
 #include "test_sink.h"
 #include "spdlog/fmt/bin_to_hex.h"
 
+#include <limits>
+
 TEST_CASE("to_hex", "[to_hex]") {
     std::ostringstream oss;
     auto oss_sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
@@ -39,6 +41,13 @@ TEST_CASE("to_hex_no_delimiter", "[to_hex]") {
     auto output = oss.str();
     REQUIRE(
         ends_with(output, "0000: 090A0B0CFFFF" + std::string(spdlog::details::os::default_eol)));
+}
+
+TEST_CASE("to_hex_large_size_per_line", "[to_hex]") {
+    const std::vector<unsigned char> v{0x41, 0x42};
+    const auto line_size = static_cast<size_t>((std::numeric_limits<int>::max)()) + 1;
+    REQUIRE(spdlog::fmt_lib::format("{:a}", spdlog::to_hex(v, line_size)) ==
+            std::string(spdlog::details::os::default_eol) + "0000: 41 42  AB");
 }
 
 TEST_CASE("to_hex_show_ascii", "[to_hex]") {
