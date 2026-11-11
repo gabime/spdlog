@@ -189,9 +189,8 @@ struct formatter<SPDLOG_NAMESPACE::details::dump_info<T>, char> {
         if (show_ascii)  // add ascii to last line
         {
             if (static_cast<size_t>(the_range.get_end() - the_range.get_begin()) > size_per_line) {
-                auto blank_num =
-                    size_per_line - static_cast<size_t>(the_range.get_end() - start_of_line);
-                while (blank_num-- > 0) {
+                for (auto i = static_cast<size_t>(the_range.get_end() - start_of_line);
+                     i < size_per_line; ++i) {
                     *inserter++ = delimiter;
                     *inserter++ = delimiter;
                     if (put_delimiters) {
