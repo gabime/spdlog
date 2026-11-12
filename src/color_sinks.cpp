@@ -12,6 +12,14 @@
 //
 // color sinks
 //
+#include "spdlog/sinks/ansicolor_sink-inl.h"
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_sink<SPDLOG_NAMESPACE::details::console_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stdout_sink<SPDLOG_NAMESPACE::details::console_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stdout_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stderr_sink<SPDLOG_NAMESPACE::details::console_mutex>;
+template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stderr_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
+
 #ifdef _WIN32
 #include <spdlog/sinks/wincolor_sink-inl.h>
 template class SPDLOG_API SPDLOG_NAMESPACE::sinks::wincolor_sink<SPDLOG_NAMESPACE::details::console_mutex>;
@@ -20,14 +28,6 @@ template class SPDLOG_API SPDLOG_NAMESPACE::sinks::wincolor_stdout_sink<SPDLOG_N
 template class SPDLOG_API SPDLOG_NAMESPACE::sinks::wincolor_stdout_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
 template class SPDLOG_API SPDLOG_NAMESPACE::sinks::wincolor_stderr_sink<SPDLOG_NAMESPACE::details::console_mutex>;
 template class SPDLOG_API SPDLOG_NAMESPACE::sinks::wincolor_stderr_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
-#else
-#include "spdlog/sinks/ansicolor_sink-inl.h"
-template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_sink<SPDLOG_NAMESPACE::details::console_mutex>;
-template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
-template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stdout_sink<SPDLOG_NAMESPACE::details::console_mutex>;
-template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stdout_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
-template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stderr_sink<SPDLOG_NAMESPACE::details::console_mutex>;
-template class SPDLOG_API SPDLOG_NAMESPACE::sinks::ansicolor_stderr_sink<SPDLOG_NAMESPACE::details::console_nullmutex>;
 #endif
 
 // factory methods for color loggers
