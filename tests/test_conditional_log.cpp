@@ -6,6 +6,8 @@
 #include "includes.h"
 #include "utils.h"
 
+#include <limits>
+
 #if SPDLOG_ACTIVE_LEVEL != SPDLOG_LEVEL_DEBUG
 #error "Invalid SPDLOG_ACTIVE_LEVEL in test. Should be SPDLOG_LEVEL_DEBUG"
 #endif
@@ -113,4 +115,40 @@ TEST_CASE("throttle log", "[conditional]") {
     REQUIRE(count_lines(THROTTLE_FILENAME) == 9);
 
     spdlog::drop("throttle_logger");
+}
+
+TEST_CASE("throttle log non-finite and out-of-range intervals", "[conditional]") {
+    prepare_logdir();
+    spdlog::filename_t filename = SPDLOG_FILENAME_T("test_logs/throttle_edge_log");
+
+    auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>(
+        "throttle_edge_logger", filename);
+
+    logger->set_pattern("%v");
+    logger->set_level(spdlog::level::trace);
+
+    // Documented policy: non-finite intervals (NaN, +/-inf) and intervals
+    // whose nanosecond conversion overflows long long (beyond roughly 292
+    // years) are treated like a zero interval: every call fires, with no
+    // undefined behavior from the floating-point to integer cast.
+    for (int i = 0; i < 5; ++i) {
+        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info,
+                               std::numeric_limits<double>::infinity(), "inf {}", i);
+    }
+    for (int i = 0; i < 5; ++i) {
+        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info,
+                               -std::numeric_limits<double>::infinity(), "-inf {}", i);
+    }
+    for (int i = 0; i < 5; ++i) {
+        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info,
+                               std::numeric_limits<double>::quiet_NaN(), "nan {}", i);
+    }
+    for (int i = 0; i < 5; ++i) {
+        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, 1e10, "huge {}", i); // ~317 years
+    }
+
+    logger->flush();
+    REQUIRE(count_lines("test_logs/throttle_edge_log") == 20);
+
+    spdlog::drop("throttle_edge_logger");
 }

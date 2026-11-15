@@ -54,6 +54,7 @@ set(SPDLOG_UTESTS_SOURCES
     test_ringbuffer.cpp
     test_timezone.cpp
     test_conditional_log.cpp
+    test_conditional_log_off.cpp
 )
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
