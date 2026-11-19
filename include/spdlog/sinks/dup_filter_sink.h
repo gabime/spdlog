@@ -66,7 +66,7 @@ protected:
 
         // log the "skipped.." message
         if (skip_counter_ > 0) {
-            char buf[64];
+            std::array<char, 64> buf;
             auto msg_size = ::snprintf(buf, sizeof(buf), "Skipped %u duplicate messages..",
                                        static_cast<unsigned>(skip_counter_));
             if (msg_size > 0 && static_cast<size_t>(msg_size) < sizeof(buf)) {
