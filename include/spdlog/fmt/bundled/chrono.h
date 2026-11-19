@@ -1286,7 +1286,7 @@ class tm_writer {
       format_localized('X', ns == numeric_system::standard ? '\0' : 'E');
   }
   void on_us_date() {
-    char buf[8];
+    std::array<char, 8> buf;
     write_digit2_separated(buf, to_unsigned(tm_mon() + 1),
                            to_unsigned(tm_mday()),
                            to_unsigned(split_year_lower(tm_year())), '/');
@@ -1294,7 +1294,7 @@ class tm_writer {
   }
   void on_iso_date() {
     auto year = tm_year();
-    char buf[10];
+    std::array<char, 10> buf;
     size_t offset = 0;
     if (year >= 0 && year < 10000) {
       write2digits(buf, static_cast<size_t>(year / 100));
@@ -1436,7 +1436,7 @@ class tm_writer {
 
   void on_12_hour_time() {
     if (is_classic_) {
-      char buf[8];
+      std::array<char, 8> buf;
       write_digit2_separated(buf, to_unsigned(tm_hour12()),
                              to_unsigned(tm_min()), to_unsigned(tm_sec()), ':');
       out_ = copy<Char>(std::begin(buf), std::end(buf), out_);
