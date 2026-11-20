@@ -56,6 +56,8 @@ set(SPDLOG_UTESTS_SOURCES
     test_bin_to_hex.cpp
     test_ringbuffer.cpp
     test_timezone.cpp
+    test_conditional_log.cpp
+    test_conditional_log_off.cpp
 )
 
 if(NOT SPDLOG_NO_EXCEPTIONS)
@@ -66,7 +68,7 @@ if(systemd_FOUND)
     list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)
     # systemd v256 added support for namespace stream API
     if(systemd_VERSION VERSION_GREATER_EQUAL "256")
-        list(APPEND SPDLOG_UTESTS_SOURCES test_systemd_namespace.cpp)
+    list(APPEND SPDLOG_UTESTS_SOURCES test_systemd_namespace.cpp)
     endif()
 endif()
 
