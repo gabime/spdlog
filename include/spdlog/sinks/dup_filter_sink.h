@@ -11,6 +11,7 @@
 #include <cstdio>
 #include <mutex>
 #include <string>
+#include <array>
 
 // Duplicate message removal sink.
 // Skip the message if previous one is identical and less than "max_skip_duration" have passed
