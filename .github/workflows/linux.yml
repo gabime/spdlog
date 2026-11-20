@@ -10,9 +10,7 @@ jobs:
   # Linux build matrix
   # -----------------------------------------------------------------------
   build:
-    # clang 15's ThreadSanitizer cannot start on the Ubuntu 26 runner because
-    # of its higher ASLR entropy. Keep the TSAN job on Ubuntu 24.04.
-    runs-on: ${{ matrix.config.tsan == 'ON' && 'ubuntu-24.04' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
