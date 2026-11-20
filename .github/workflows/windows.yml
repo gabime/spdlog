@@ -39,17 +39,36 @@ jobs:
             BUILD_EXAMPLE: 'ON'
             USE_STD_FORMAT: 'OFF'
             CXX_STANDARD: 17
+          - GENERATOR: "Visual Studio 17 2022"
+            TOOLSET: v142 # MSVC 2019
+            BUILD_TYPE: Release
+            BUILD_SHARED: 'ON'
+            FATAL_ERRORS: 'ON'
+            WCHAR: 'OFF'
+            WCHAR_FILES: 'OFF'
+            BUILD_EXAMPLE: 'OFF'
+            USE_STD_FORMAT: 'OFF'
+            CXX_STANDARD: 17
+          - GENERATOR: "Visual Studio 17 2022"
+            BUILD_TYPE: Debug
+            BUILD_SHARED: 'OFF'
+            FATAL_ERRORS: 'ON'
+            WCHAR: 'ON'
+            WCHAR_FILES: 'OFF'
+            BUILD_EXAMPLE: 'ON'
+            USE_STD_FORMAT: 'OFF'
+            CXX_STANDARD: 11
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: CMake ${{ matrix.config.GENERATOR }} CXX=${{matrix.config.CXX_STANDARD}} WCHAR=${{matrix.config.WCHAR_FILES}} STD_FORMAT=${{matrix.config.USE_STD_FORMAT}}
+      - name: CMake ${{ matrix.config.GENERATOR }} TOOLSET=${{ matrix.config.TOOLSET || 'v143' }} CXX=${{matrix.config.CXX_STANDARD}} WCHAR=${{matrix.config.WCHAR_FILES}} STD_FORMAT=${{matrix.config.USE_STD_FORMAT}}
         shell: pwsh
         run: |
           mkdir build
           cd build
-          cmake -G "${{ matrix.config.GENERATOR }}"  -A x64 `
+          cmake -G "${{ matrix.config.GENERATOR }}"  -A x64 -T ${{ matrix.config.TOOLSET || 'v143' }} `
             -D CMAKE_BUILD_TYPE=${{ matrix.config.BUILD_TYPE }} `
             -D BUILD_SHARED_LIBS=${{ matrix.config.BUILD_SHARED }} `
             -D SPDLOG_WCHAR_SUPPORT=${{ matrix.config.WCHAR }} `
@@ -73,7 +92,7 @@ jobs:
         env:
           PATH: ${{ env.PATH }};${{ github.workspace }}\build\_deps\catch2-build\src\${{ matrix.config.BUILD_TYPE }};${{ github.workspace }}\build\${{ matrix.config.BUILD_TYPE }}
         run: |
-          build\tests\${{ matrix.config.BUILD_TYPE }}\spdlog-utests.exe
+          build\tests\${{ matrix.config.BUILD_TYPE }}\spdlog-utests.exe --order decl
 
 
   
