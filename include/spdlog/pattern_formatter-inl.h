@@ -431,8 +431,7 @@ public:
         : flag_formatter(padinfo) {}
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override {
-        auto duration = msg.time.time_since_epoch();
-        auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count();
+        auto seconds = fmt_helper::floor_seconds(msg.time).count();
         const auto field_size = ScopedPadder::count_digits(seconds);
         ScopedPadder p(field_size, padinfo_, dest);
         fmt_helper::append_int(seconds, dest);
@@ -856,13 +855,10 @@ public:
         : flag_formatter(padinfo) {}
 
     void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) override {
-        using std::chrono::duration_cast;
         using std::chrono::milliseconds;
-        using std::chrono::seconds;
 
         // cache the date/time part for the next second.
-        auto duration = msg.time.time_since_epoch();
-        auto secs = duration_cast<seconds>(duration);
+        auto secs = fmt_helper::floor_seconds(msg.time);
 
         if (cache_timestamp_ != secs || cached_datetime_.size() == 0) {
             cached_datetime_.clear();
@@ -994,8 +990,7 @@ SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const {
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest) {
     if (need_localtime_) {
-        const auto secs =
-            std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
+        const auto secs = details::fmt_helper::floor_seconds(msg.time);
         if (secs != last_log_secs_ || cached_tm_.tm_mday == 0) {
             cached_tm_ = get_time_(msg);
             last_log_secs_ = secs;
@@ -1018,10 +1013,11 @@ SPDLOG_INLINE void pattern_formatter::set_pattern(std::string pattern) {
 SPDLOG_INLINE void pattern_formatter::need_localtime(bool need) { need_localtime_ = need; }
 
 SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg) const {
+    const auto time = static_cast<std::time_t>(details::fmt_helper::floor_seconds(msg.time).count());
     if (pattern_time_type_ == pattern_time_type::local) {
-        return details::os::localtime(log_clock::to_time_t(msg.time));
+        return details::os::localtime(time);
     }
-    return details::os::gmtime(log_clock::to_time_t(msg.time));
+    return details::os::gmtime(time);
 }
 
 template <typename Padder>
