@@ -1,6 +1,6 @@
 // Formatting library for C++ - optional OS-specific functionality
 //
-// Copyright (c) 2012 - present, Victor Zverovich
+// Copyright (c) 2012 - present, Victor Zverovich and {fmt} contributors
 // All rights reserved.
 //
 // For the license information refer to format.h.
@@ -160,14 +160,6 @@ inline auto system_category() noexcept -> const std::error_category& {
   return std::system_category();
 }
 #endif  // _WIN32
-
-// std::system is not available on some platforms such as iOS (#2248).
-#ifdef __OSX__
-template <typename S, typename... Args, typename Char = char_t<S>>
-void say(const S& fmt, Args&&... args) {
-  std::system(format("say \"{}\"", format(fmt, args...)).c_str());
-}
-#endif
 
 // A buffered file.
 class buffered_file {
