@@ -37,9 +37,10 @@ public:
 
     // Position the cursor at "now" so we only see entries written after this point.
     void seek_to_now() {
-        uint64_t now_usec = std::chrono::duration_cast<std::chrono::microseconds>(
-                                std::chrono::system_clock::now().time_since_epoch())
-                                .count();
+        uint64_t now_usec =
+            static_cast<uint64_t>(std::chrono::duration_cast<std::chrono::microseconds>(
+                                      std::chrono::system_clock::now().time_since_epoch())
+                                      .count());
         int r = sd_journal_seek_realtime_usec(j_, now_usec);
         if (r < 0) {
             throw std::runtime_error(std::string("seek_realtime_usec failed: ") + strerror(-r));
@@ -114,7 +115,7 @@ private:
         const char* p = static_cast<const char*>(data);
         const char* eq = static_cast<const char*>(std::memchr(p, '=', len));
         if (!eq) return std::string(p, len);
-        return std::string(eq + 1, len - (eq + 1 - p));
+        return std::string(eq + 1, len - static_cast<size_t>(eq + 1 - p));
     }
 
     sd_journal* j_ = nullptr;
