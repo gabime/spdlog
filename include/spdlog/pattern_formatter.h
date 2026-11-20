@@ -30,10 +30,21 @@ struct padding_info {
           truncate_(truncate),
           enabled_(true) {}
 
+    padding_info(size_t width,
+                 padding_info::pad_side side,
+                 bool truncate,
+                 bool truncate_from_start)
+        : width_(width),
+          side_(side),
+          truncate_(truncate),
+          truncate_from_start_(truncate_from_start),
+          enabled_(true) {}
+
     bool enabled() const { return enabled_; }
     size_t width_ = 0;
     pad_side side_ = pad_side::left;
     bool truncate_ = false;
+    bool truncate_from_start_ = false;
     bool enabled_ = false;
 };
 
