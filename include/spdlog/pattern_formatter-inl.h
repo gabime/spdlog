@@ -820,9 +820,18 @@ public:
         if (mdc_map.empty()) {
             ScopedPadder p(0, padinfo_, dest);
             return;
-        } else {
-            format_mdc(mdc_map, dest);
         }
+
+        // pad (or truncate) the whole "key:value key:value" field, not each pair
+        size_t content_size = 0;
+        if (padinfo_.enabled()) {
+            for (const auto &kv : mdc_map) {
+                content_size += kv.first.size() + kv.second.size() + 1;  // 1 for ':'
+            }
+            content_size += mdc_map.size() - 1;  // 1 for each ' ' separator
+        }
+        ScopedPadder p(content_size, padinfo_, dest);
+        format_mdc(mdc_map, dest);
     }
 
     void format_mdc(const mdc::mdc_map_t &mdc_map, memory_buf_t &dest) {
@@ -830,13 +839,6 @@ public:
         for (auto it = mdc_map.begin(); it != mdc_map.end(); ++it) {
             const auto &key = it->first;
             const auto &value = it->second;
-            size_t content_size = key.size() + value.size() + 1;  // 1 for ':'
-
-            if (it != last_element) {
-                content_size++;  // 1 for ' '
-            }
-
-            ScopedPadder p(content_size, padinfo_, dest);
             fmt_helper::append_string_view(key, dest);
             fmt_helper::append_string_view(":", dest);
             fmt_helper::append_string_view(value, dest);
