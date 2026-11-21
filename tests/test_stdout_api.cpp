@@ -3,6 +3,7 @@
  * https://raw.githubusercontent.com/gabime/spdlog/master/LICENSE
  */
 #include "includes.h"
+#include "spdlog/sinks/ansicolor_sink.h"
 #include "spdlog/sinks/stdout_sinks.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
 
@@ -37,6 +38,11 @@ TEST_CASE("stderr_mt", "[stderr]") {
     l->error("Test stderr_mt");
     l->critical("Test stderr_mt");
     spdlog::drop_all();
+}
+
+TEST_CASE("ansicolor sink is available from the compiled library", "[stdout]") {
+    auto sink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>(spdlog::color_mode::never);
+    REQUIRE(sink != nullptr);
 }
 
 // color loggers
