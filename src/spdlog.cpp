@@ -18,6 +18,10 @@
 #include <spdlog/sinks/sink-inl.h>
 #include <spdlog/spdlog-inl.h>
 
+#ifndef SPDLOG_NO_TLS
+#include <spdlog/mdc-inl.h>
+#endif
+
 #include <mutex>
 
 // template instantiate logger constructor with sinks init list
