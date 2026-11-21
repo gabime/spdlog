@@ -83,6 +83,33 @@ TEST_CASE("nonzero initial timestamp", "[pattern_formatter][epoch_control]") {
                                  spdlog::pattern_time_type::utc, "") == "message");
 }
 
+TEST_CASE("elapsed values wider than 32 bits", "[pattern_formatter]") {
+    struct test_case {
+        const char* pattern;
+        std::chrono::seconds gap;
+        const char* expected;
+    };
+    const test_case cases[] = {
+        {"%u", std::chrono::seconds(10), "10000000000"},
+        {"%12u", std::chrono::seconds(10), " 10000000000"},
+        {"%i", std::chrono::seconds(5000), "5000000000"},
+        {"%o", std::chrono::seconds(5000000), "5000000000"},
+        {"%O", std::chrono::seconds(5000000000LL), "5000000000"},
+    };
+    for (const auto& test : cases) {
+        spdlog::pattern_formatter formatter(test.pattern, spdlog::pattern_time_type::utc, "");
+        spdlog::details::log_msg msg(spdlog::log_clock::from_time_t(0), {}, "logger",
+                                     spdlog::level::info, "message");
+        memory_buf_t formatted;
+        formatter.format(msg, formatted);
+        formatted.clear();
+        msg.time += test.gap;
+        formatter.format(msg, formatted);
+        INFO(test.pattern);
+        REQUIRE(std::string(formatted.data(), formatted.size()) == test.expected);
+    }
+}
+
 TEST_CASE("custom eol", "[pattern_formatter]") {
     std::string msg = "Hello custom eol test";
     std::string eol = ";)";
