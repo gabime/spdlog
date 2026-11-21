@@ -138,6 +138,33 @@ TEST_CASE("12 hour clock", "[pattern_formatter]") {
             "11 11:00:00 PM\n");
 }
 
+// Each date/time flag on its own, so a flag that fails to request localtime is caught.
+// %+ is covered by "full formatter first timestamp at epoch".
+TEST_CASE("date time flags standalone", "[pattern_formatter]") {
+    const auto tp = spdlog::log_clock::from_time_t(1709823849);  // Thu Mar 7 15:04:09 2024 UTC
+    const auto utc = spdlog::pattern_time_type::utc;
+
+    REQUIRE(log_to_str_with_time(tp, "", "%a", utc, "") == "Thu");
+    REQUIRE(log_to_str_with_time(tp, "", "%A", utc, "") == "Thursday");
+    REQUIRE(log_to_str_with_time(tp, "", "%b", utc, "") == "Mar");
+    REQUIRE(log_to_str_with_time(tp, "", "%h", utc, "") == "Mar");
+    REQUIRE(log_to_str_with_time(tp, "", "%B", utc, "") == "March");
+    REQUIRE(log_to_str_with_time(tp, "", "%c", utc, "") == "Thu Mar 7 15:04:09 2024");
+    REQUIRE(log_to_str_with_time(tp, "", "%C", utc, "") == "24");
+    REQUIRE(log_to_str_with_time(tp, "", "%Y", utc, "") == "2024");
+    REQUIRE(log_to_str_with_time(tp, "", "%x", utc, "") == "03/07/24");
+    REQUIRE(log_to_str_with_time(tp, "", "%m", utc, "") == "03");
+    REQUIRE(log_to_str_with_time(tp, "", "%d", utc, "") == "07");
+    REQUIRE(log_to_str_with_time(tp, "", "%H", utc, "") == "15");
+    REQUIRE(log_to_str_with_time(tp, "", "%I", utc, "") == "03");
+    REQUIRE(log_to_str_with_time(tp, "", "%M", utc, "") == "04");
+    REQUIRE(log_to_str_with_time(tp, "", "%S", utc, "") == "09");
+    REQUIRE(log_to_str_with_time(tp, "", "%p", utc, "") == "PM");
+    REQUIRE(log_to_str_with_time(tp, "", "%r", utc, "") == "03:04:09 PM");
+    REQUIRE(log_to_str_with_time(tp, "", "%R", utc, "") == "15:04");
+    REQUIRE(log_to_str_with_time(tp, "", "%X", utc, "") == "15:04:09");
+}
+
 // see test_timezone.cpp for actual UTC offset calculation tests
 TEST_CASE("UTC offset", "[pattern_formatter]") {
     using namespace std::chrono_literals;
