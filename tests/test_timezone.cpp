@@ -141,6 +141,18 @@ TEST_CASE("UTC Offset - Eastern Hemisphere (Europe/Israel - Standard Time)", "[t
     REQUIRE(utc_minutes_offset(tm) == 120);
 }
 
+TEST_CASE("UTC offset formatter initializes its cache before ten seconds", "[timezone][pattern_formatter]") {
+    ScopedTZ tz("IST-2");
+    const auto seconds = GENERATE(0, 5, 1672531200);
+    spdlog::details::log_msg msg(
+        spdlog::log_clock::time_point{} + std::chrono::seconds(seconds), {}, "",
+        spdlog::level::info, "");
+    spdlog::pattern_formatter formatter("%z", spdlog::pattern_time_type::local, "");
+    spdlog::memory_buf_t dest;
+    formatter.format(msg, dest);
+    REQUIRE(std::string(dest.data(), dest.size()) == "+02:00");
+}
+
 TEST_CASE("UTC Offset - Zero Offset (UTC/GMT)", "[timezone][utc]") {
     ScopedTZ tz("GMT0");
 
