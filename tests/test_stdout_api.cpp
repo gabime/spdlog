@@ -40,9 +40,10 @@ TEST_CASE("stderr_mt", "[stderr]") {
     spdlog::drop_all();
 }
 
-TEST_CASE("ansicolor sink is available from the compiled library", "[stdout]") {
-    auto sink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>(spdlog::color_mode::never);
-    REQUIRE(sink != nullptr);
+TEST_CASE("ansicolor_stdout_sink_mt can be constructed", "[stdout]") {
+    auto sink =
+        std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>(spdlog::color_mode::never);
+    REQUIRE_FALSE(sink->should_color());
 }
 
 // color loggers

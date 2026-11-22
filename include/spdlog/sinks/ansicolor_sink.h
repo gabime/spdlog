@@ -11,6 +11,10 @@
 #include <spdlog/sinks/sink.h>
 #include <string>
 
+#ifdef _WIN32
+#include <spdlog/details/windows_include.h>
+#endif
+
 SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
@@ -86,6 +90,9 @@ private:
     bool should_do_colors_;
     std::unique_ptr<formatter> formatter_;
     std::array<std::string, level::n_levels> colors_;
+#ifdef _WIN32
+    HANDLE handle_;
+#endif
     void set_color_mode_(color_mode mode);
     void print_ccode_(const string_view_t &color_code) const;
     void print_range_(const memory_buf_t &formatted, size_t start, size_t end) const;

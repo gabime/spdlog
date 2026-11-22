@@ -10,6 +10,18 @@
 #include <spdlog/details/os.h>
 #include <spdlog/pattern_formatter.h>
 
+#ifdef _WIN32
+// Using fwrite with a text-mode stream adds an extra \r before \n.
+#include <spdlog/details/windows_include.h>
+
+#ifndef _USING_V110_SDK71_  // fileapi.h doesn't exist in winxp
+#include <fileapi.h>        // WriteFile (..)
+#endif
+
+#include <io.h>     // _get_osfhandle(..)
+#include <stdio.h>  // _fileno(..)
+#endif              // _WIN32
+
 SPDLOG_NAMESPACE_BEGIN
 namespace sinks {
 
@@ -28,6 +40,13 @@ SPDLOG_INLINE ansicolor_sink<ConsoleMutex>::ansicolor_sink(FILE *target_file, co
     colors_.at(level::err) = to_string_(red_bold);
     colors_.at(level::critical) = to_string_(bold_on_red);
     colors_.at(level::off) = to_string_(reset);
+
+#ifdef _WIN32
+    handle_ = reinterpret_cast<HANDLE>(::_get_osfhandle(::_fileno(target_file_)));
+    if (handle_ == INVALID_HANDLE_VALUE && target_file_ != stdout && target_file_ != stderr) {
+        throw_spdlog_ex("ansicolor_sink: _get_osfhandle() failed", errno);
+    }
+#endif
 }
 
 template <typename ConsoleMutex>
@@ -39,6 +58,11 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color(level::level_enum col
 
 template <typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::log(const details::log_msg &msg) {
+#ifdef _WIN32
+    if (handle_ == INVALID_HANDLE_VALUE) {
+        return;
+    }
+#endif
     // Wrap the originally formatted message in color codes.
     // If color is not supported in the terminal, log as is instead.
     std::lock_guard<mutex_t> lock(mutex_);
@@ -113,14 +137,34 @@ SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::set_color_mode_(color_mode mode
 template <typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_ccode_(
     const string_view_t &color_code) const {
+#ifdef _WIN32
+    auto size = static_cast<DWORD>(color_code.size());
+    DWORD bytes_written = 0;
+    bool ok = ::WriteFile(handle_, color_code.data(), size, &bytes_written, nullptr) != 0;
+    if (!ok) {
+        throw_spdlog_ex("ansicolor_sink: WriteFile() failed. GetLastError(): " +
+                        std::to_string(::GetLastError()));
+    }
+#else
     details::os::fwrite_bytes(color_code.data(), color_code.size(), target_file_);
+#endif
 }
 
 template <typename ConsoleMutex>
 SPDLOG_INLINE void ansicolor_sink<ConsoleMutex>::print_range_(const memory_buf_t &formatted,
                                                               size_t start,
                                                               size_t end) const {
+#ifdef _WIN32
+    auto size = static_cast<DWORD>(end - start);
+    DWORD bytes_written = 0;
+    bool ok = ::WriteFile(handle_, formatted.data() + start, size, &bytes_written, nullptr) != 0;
+    if (!ok) {
+        throw_spdlog_ex("ansicolor_sink: WriteFile() failed. GetLastError(): " +
+                        std::to_string(::GetLastError()));
+    }
+#else
     details::os::fwrite_bytes(formatted.data() + start, end - start, target_file_);
+#endif
 }
 
 template <typename ConsoleMutex>
