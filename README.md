@@ -4,7 +4,7 @@
 [![ci](https://github.com/gabime/spdlog/actions/workflows/linux.yml/badge.svg)](https://github.com/gabime/spdlog/actions/workflows/linux.yml)&nbsp;
 [![ci](https://github.com/gabime/spdlog/actions/workflows/windows.yml/badge.svg)](https://github.com/gabime/spdlog/actions/workflows/windows.yml)&nbsp;
 [![ci](https://github.com/gabime/spdlog/actions/workflows/macos.yml/badge.svg)](https://github.com/gabime/spdlog/actions/workflows/macos.yml)&nbsp;
-[![Build status](https://ci.appveyor.com/api/projects/status/d2jnxclg20vd0o50?svg=true&branch=v1.x)](https://ci.appveyor.com/project/gabime/spdlog) [![Release](https://img.shields.io/github/release/gabime/spdlog.svg)](https://github.com/gabime/spdlog/releases/latest)
+[![Release](https://img.shields.io/github/release/gabime/spdlog.svg)](https://github.com/gabime/spdlog/releases/latest)
 
 Fast C++ logging library
 
@@ -23,7 +23,7 @@ see example [CMakeLists.txt](example/CMakeLists.txt) on how to use.
 
 ## Platforms
 * Linux, FreeBSD, OpenBSD, Solaris, AIX
-* Windows (msvc 2013+, cygwin)
+* Windows (msvc 2019+, cygwin)
 * macOS (clang 3.5+)
 * Android
 
