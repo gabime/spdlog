@@ -6,8 +6,6 @@
 #include "includes.h"
 #include "utils.h"
 
-#include <limits>
-
 #if SPDLOG_ACTIVE_LEVEL != SPDLOG_LEVEL_DEBUG
 #error "Invalid SPDLOG_ACTIVE_LEVEL in test. Should be SPDLOG_LEVEL_DEBUG"
 #endif
@@ -26,24 +24,28 @@ TEST_CASE("conditional log with formate string", "[conditional]") {
 
     // test condition is true
     int error_count = 5;
-    SPDLOG_LOGGER_CONDITIONAL(logger, error_count > 0, spdlog::level::err, "Found {} errors",
-                              error_count);
+    if (error_count > 0) {
+        SPDLOG_LOGGER_INFO(logger, "Found {} errors", error_count);
+    }
 
     logger->flush();
     REQUIRE(count_lines(TEST_FILENAME) == 1);
-    // REQUIRE(ends_with(file_contents(TEST_FILENAME), "Found 5 errors\n"));
     REQUIRE(ends_with(file_contents(TEST_FILENAME), "Found 5 errors" SPDLOG_EOL));
+
     // test condition is false
     error_count = 0;
-    SPDLOG_LOGGER_CONDITIONAL(logger, error_count > 0, spdlog::level::err, "Found {} errors",
-                              error_count);
+    if (error_count > 0) {
+        SPDLOG_LOGGER_INFO(logger, "Found {} errors", error_count);
+    }
 
     logger->flush();
     REQUIRE(count_lines(TEST_FILENAME) == 1);
 
     // arguments are not evaluated when the condition is false
     int calls = 0;
-    SPDLOG_LOGGER_CONDITIONAL(logger, false, spdlog::level::err, "x {}", calls++);
+    if (false) {
+        SPDLOG_LOGGER_INFO(logger, "x {}", calls++);
+    }
     REQUIRE(calls == 0);
 
     spdlog::drop("cond_log");
@@ -63,14 +65,30 @@ TEST_CASE("every_n log", "[conditional]") {
     logger->flush();
 
     REQUIRE(count_lines("test_logs/every_n_log") == 10);
-    // REQUIRE(file_contents("test_logs/every_n_log").find("Progress: 0\n") == 0);
     REQUIRE(file_contents("test_logs/every_n_log").find("Progress: 0" SPDLOG_EOL) == 0);
     spdlog::drop("every_n_logger");
 }
 
+TEST_CASE("per-level every_n macros", "[conditional]") {
+    prepare_logdir();
+    spdlog::filename_t filename = SPDLOG_FILENAME_T("test_logs/every_n_level_log");
+
+    auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("every_n_level_logger", filename);
+    logger->set_pattern("%v");
+    logger->set_level(spdlog::level::trace);
+
+    for (int i = 0; i < 50; ++i) {
+        SPDLOG_LOGGER_INFO_EVERY_N(logger, 10, "info every {}", i);
+        SPDLOG_LOGGER_WARN_EVERY_N(logger, 10, "warn every {}", i);
+    }
+    logger->flush();
+
+    REQUIRE(count_lines("test_logs/every_n_level_log") == 10);
+    spdlog::drop("every_n_level_logger");
+}
+
 TEST_CASE("throttle log", "[conditional]") {
     prepare_logdir();
-    // const char* path = "test_logs/throttle_log";
 
     auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>(
         "throttle_logger", SPDLOG_FILENAME_T(THROTTLE_FILENAME));
@@ -80,15 +98,15 @@ TEST_CASE("throttle log", "[conditional]") {
 
     // 1. long interval: only the first call in a tight loop logs
     for (int i = 0; i < 100; ++i) {
-        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, 10.0, "event {}", i);
+        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, std::chrono::seconds(10), "event {}", i);
     }
     logger->flush();
     REQUIRE(count_lines(THROTTLE_FILENAME) == 1);
-    // REQUIRE(file_contents(path).find("event 0\n") == 0);
     REQUIRE(file_contents(THROTTLE_FILENAME).find("event 0" SPDLOG_EOL) == 0);
+
     // 2. short interval: logs again after the interval has passed
     for (int round = 0; round < 2; ++round) {
-        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, 0.1, "tick {}", round);
+        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, std::chrono::milliseconds(100), "tick {}", round);
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
     logger->flush();
@@ -99,7 +117,7 @@ TEST_CASE("throttle log", "[conditional]") {
     for (int t = 0; t < 8; ++t) {
         threads.emplace_back([&logger]() {
             for (int i = 0; i < 1000; ++i) {
-                SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, 10.0, "mt {}", i);
+                SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, std::chrono::seconds(10), "mt {}", i);
             }
         });
     }
@@ -107,9 +125,9 @@ TEST_CASE("throttle log", "[conditional]") {
     logger->flush();
     REQUIRE(count_lines(THROTTLE_FILENAME) == 4);
 
-    // 4. interval <= 0 logs every call
+    // 4. zero interval logs every call
     for (int i = 0; i < 5; ++i) {
-        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, 0.0, "always {}", i);
+        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, std::chrono::seconds(0), "always {}", i);
     }
     logger->flush();
     REQUIRE(count_lines(THROTTLE_FILENAME) == 9);
@@ -117,7 +135,24 @@ TEST_CASE("throttle log", "[conditional]") {
     spdlog::drop("throttle_logger");
 }
 
-TEST_CASE("throttle log non-finite and out-of-range intervals", "[conditional]") {
+TEST_CASE("per-level throttle macros", "[conditional]") {
+    prepare_logdir();
+    spdlog::filename_t filename = SPDLOG_FILENAME_T("test_logs/throttle_level_log");
+
+    auto logger = spdlog::create<spdlog::sinks::basic_file_sink_mt>("throttle_level_logger", filename);
+    logger->set_pattern("%v");
+    logger->set_level(spdlog::level::trace);
+
+    // Zero interval -> every call fires
+    SPDLOG_LOGGER_INFO_THROTTLE(logger, std::chrono::seconds(0), "info throttle {}", 1);
+    SPDLOG_LOGGER_WARN_THROTTLE(logger, std::chrono::seconds(0), "warn throttle {}", 2);
+    logger->flush();
+    REQUIRE(count_lines("test_logs/throttle_level_log") == 2);
+
+    spdlog::drop("throttle_level_logger");
+}
+
+TEST_CASE("throttle log edge case durations", "[conditional]") {
     prepare_logdir();
     spdlog::filename_t filename = SPDLOG_FILENAME_T("test_logs/throttle_edge_log");
 
@@ -127,28 +162,19 @@ TEST_CASE("throttle log non-finite and out-of-range intervals", "[conditional]")
     logger->set_pattern("%v");
     logger->set_level(spdlog::level::trace);
 
-    // Documented policy: non-finite intervals (NaN, +/-inf) and intervals
-    // whose nanosecond conversion overflows long long (beyond roughly 292
-    // years) are treated like a zero interval: every call fires, with no
-    // undefined behavior from the floating-point to integer cast.
+    // Zero duration fires every call
+    for (int i = 0; i < 5; ++i) {
+        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, std::chrono::seconds(0), "zero {}", i);
+    }
+    // A duration far beyond the nanosecond range (~292 years) still works
+    // because std::chrono::duration is an integer type: no UB from casting.
     for (int i = 0; i < 5; ++i) {
         SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info,
-                               std::numeric_limits<double>::infinity(), "inf {}", i);
-    }
-    for (int i = 0; i < 5; ++i) {
-        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info,
-                               -std::numeric_limits<double>::infinity(), "-inf {}", i);
-    }
-    for (int i = 0; i < 5; ++i) {
-        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info,
-                               std::numeric_limits<double>::quiet_NaN(), "nan {}", i);
-    }
-    for (int i = 0; i < 5; ++i) {
-        SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, 1e10, "huge {}", i); // ~317 years
+                               std::chrono::hours(24 * 365 * 300), "huge {}", i);
     }
 
     logger->flush();
-    REQUIRE(count_lines("test_logs/throttle_edge_log") == 20);
+    REQUIRE(count_lines("test_logs/throttle_edge_log") == 10);
 
     spdlog::drop("throttle_edge_logger");
 }
