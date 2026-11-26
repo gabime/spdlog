@@ -21,9 +21,12 @@ else()
     include(FetchContent)
     FetchContent_Declare(
         Catch2 GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG 53d0d913a422d356b23dd927547febdf69ee9081 # v3.5.0
+        GIT_TAG 08092139210881f01a34e60c5f2fd6afa0ea4024 # v3.16.1
     )
     FetchContent_MakeAvailable(Catch2)
+    # Treat Catch2 headers as system headers so our strict warnings don't apply to them
+    get_target_property(catch2_include_dirs Catch2 INTERFACE_INCLUDE_DIRECTORIES)
+    set_target_properties(Catch2 PROPERTIES INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${catch2_include_dirs}")
 endif()
 
 set(SPDLOG_UTESTS_SOURCES
