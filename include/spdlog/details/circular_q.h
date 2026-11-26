@@ -38,7 +38,9 @@ public:
     circular_q(circular_q &&other) SPDLOG_NOEXCEPT { copy_moveable(std::move(other)); }
 
     circular_q &operator=(circular_q &&other) SPDLOG_NOEXCEPT {
-        copy_moveable(std::move(other));
+        if (this != &other) {
+            copy_moveable(std::move(other));
+        }
         return *this;
     }
 

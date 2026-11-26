@@ -203,7 +203,7 @@ protected:
         cursor.movePosition(QTextCursor::End);
         cursor.setCharFormat(params.default_color);
 
-        // if color range not specified or not not valid, just append the text with default color
+        // if color range not specified or not valid, just append the text with default color
         if (params.color_range_end <= params.color_range_start) {
             cursor.insertText(params.payload);
             return;

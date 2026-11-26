@@ -97,12 +97,13 @@ public:
             return SOCKET_ERROR;
         }
 
-        // Wait until socket is writable or timeout expires
+        // Wait until the connection succeeds, fails, or times out.
         fd_set wfds;
         FD_ZERO(&wfds);
         FD_SET(sockfd, &wfds);
+        fd_set efds = wfds;
 
-        rv = ::select(0, nullptr, &wfds, nullptr, const_cast<timeval *>(&tv));
+        rv = ::select(0, nullptr, &wfds, &efds, const_cast<timeval *>(&tv));
 
         // Restore blocking mode regardless of select result
         mode = 0UL;
@@ -143,7 +144,7 @@ public:
 
         hints.ai_family = AF_UNSPEC;      // To work with IPv4, IPv6, and so on
         hints.ai_socktype = SOCK_STREAM;  // TCP
-        hints.ai_flags = AI_NUMERICSERV;  // port passed as as numeric value
+        hints.ai_flags = AI_NUMERICSERV;  // port passed as numeric value
         hints.ai_protocol = 0;
 
         timeval tv;

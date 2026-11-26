@@ -233,3 +233,35 @@ TEST_CASE("os::fwrite_bytes", "[os]") {
     REQUIRE(closer.fp != nullptr);
     REQUIRE_FALSE(fwrite_bytes("Hello", 5, closer.fp));
 }
+
+TEST_CASE("log_msg_buffer self-assignment", "[log_msg_buffer]") {
+    spdlog::details::log_msg msg(spdlog::source_loc{}, "my_logger", spdlog::level::info,
+                                 "test message");
+    spdlog::details::log_msg_buffer buf(msg);
+
+    REQUIRE(buf.logger_name == "my_logger");
+    REQUIRE(buf.payload == "test message");
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wself-assign-overloaded"
+#pragma clang diagnostic ignored "-Wself-move"
+#elif defined(__GNUC__) && __GNUC__ >= 13
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wself-move"
+#endif
+
+    buf = buf;
+    REQUIRE(buf.logger_name == "my_logger");
+    REQUIRE(buf.payload == "test message");
+
+    buf = std::move(buf);
+    REQUIRE(buf.logger_name == "my_logger");
+    REQUIRE(buf.payload == "test message");
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__) && __GNUC__ >= 13
+#pragma GCC diagnostic pop
+#endif
+}

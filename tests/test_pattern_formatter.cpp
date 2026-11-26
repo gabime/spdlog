@@ -629,6 +629,42 @@ TEST_CASE("override need_localtime", "[pattern_formatter]") {
 }
 
 #ifndef SPDLOG_NO_TLS
+TEST_CASE("mdc context shared with formatters", "[pattern_formatter]") {
+    // Use a fresh thread so earlier tests cannot have initialized its MDC.
+    bool initially_empty = false;
+    bool formatting_keeps_empty = false;
+    bool context_created = false;
+    std::string explicit_output;
+    std::string full_output;
+    std::thread worker([&]() {
+        initially_empty = !spdlog::mdc::has_context();
+        spdlog::pattern_formatter formatter("%+");
+        spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info,
+                                     "some message");
+        memory_buf_t formatted;
+        formatter.format(msg, formatted);
+        formatting_keeps_empty = !spdlog::mdc::has_context();
+
+        spdlog::mdc::put("mdc_key", "mdc_value");
+        context_created = spdlog::mdc::has_context();
+        formatted.clear();
+        formatter.format(msg, formatted);
+        full_output.assign(formatted.data(), formatted.size());
+
+        formatter.set_pattern("%&");
+        formatted.clear();
+        formatter.format(msg, formatted);
+        explicit_output.assign(formatted.data(), formatted.size());
+    });
+    worker.join();
+
+    REQUIRE(initially_empty);
+    REQUIRE(formatting_keeps_empty);
+    REQUIRE(context_created);
+    REQUIRE(full_output.find("mdc_key:mdc_value") != std::string::npos);
+    REQUIRE(explicit_output == std::string("mdc_key:mdc_value") + spdlog::details::os::default_eol);
+}
+
 TEST_CASE("mdc formatter test-1", "[pattern_formatter]") {
     spdlog::mdc::put("mdc_key_1", "mdc_value_1");
     spdlog::mdc::put("mdc_key_2", "mdc_value_2");
@@ -755,5 +791,43 @@ TEST_CASE("mdc empty", "[pattern_formatter]") {
     REQUIRE(to_string_view(formatted) == expected);
 
     SECTION("Tear down") { spdlog::mdc::clear(); }
+}
+
+TEST_CASE("mdc context is created lazily", "[pattern_formatter]") {
+    auto formatter = std::make_shared<spdlog::pattern_formatter>();
+    spdlog::details::log_msg msg(spdlog::source_loc{}, "logger-name", spdlog::level::info,
+                                 "some message");
+
+    SECTION("full formatter does not create the context when mdc is unused") {
+        bool context_created = true;
+        std::thread worker([formatter, msg, &context_created]() {
+            memory_buf_t formatted;
+            formatter->format(msg, formatted);
+            context_created = spdlog::mdc::has_context();
+        });
+        worker.join();
+
+        REQUIRE_FALSE(context_created);
+    }
+
+    SECTION("full formatter renders mdc values set on the same thread") {
+        bool context_created = false;
+        bool rendered = false;
+        std::thread worker([formatter, msg, &context_created, &rendered]() {
+            spdlog::mdc::put("mdc_key", "mdc_value");
+            spdlog::mdc::get_context()["direct_key"] = "direct_value";
+            context_created = spdlog::mdc::has_context();
+
+            memory_buf_t formatted;
+            formatter->format(msg, formatted);
+            std::string output(to_string_view(formatted).data(), to_string_view(formatted).size());
+            rendered =
+                output.find("[direct_key:direct_value mdc_key:mdc_value]") != std::string::npos;
+        });
+        worker.join();
+
+        REQUIRE(context_created);
+        REQUIRE(rendered);
+    }
 }
 #endif

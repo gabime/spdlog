@@ -43,10 +43,19 @@ public:
 
     static void clear() { get_context().clear(); }
 
-    static mdc_map_t &get_context() {
-        static thread_local mdc_map_t context;
-        return context;
-    }
+    static mdc_map_t &get_context();
+
+    // Returns whether the calling thread's mdc context has been created. Unlike get_context(),
+    // it does not create the context, so it can be used on the hot path to skip mdc formatting
+    // for threads that never used mdc.
+    static bool has_context() noexcept { return context_created(); }
+
+private:
+    static bool &context_created() noexcept;
 };
 
 SPDLOG_NAMESPACE_END
+
+#ifdef SPDLOG_HEADER_ONLY
+#include "mdc-inl.h"
+#endif
