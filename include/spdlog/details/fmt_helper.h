@@ -81,11 +81,21 @@ inline unsigned int count_digits(T n) {
 #endif
 }
 
+inline const char *digits2_table() SPDLOG_NOEXCEPT {
+    static constexpr char table[201] =
+        "0001020304050607080910111213141516171819"
+        "2021222324252627282930313233343536373839"
+        "4041424344454647484950515253545556575859"
+        "6061626364656667686970717273747576777879"
+        "8081828384858687888990919293949596979899";
+    return table;
+}
+
 inline void pad2(int n, memory_buf_t &dest) {
     if (n >= 0 && n < 100)  // 0-99
     {
-        dest.push_back(static_cast<char>('0' + n / 10));
-        dest.push_back(static_cast<char>('0' + n % 10));
+        const char *d = digits2_table() + static_cast<size_t>(n) * 2;
+        dest.append(d, d + 2);
     } else  // unlikely, but just in case, let fmt deal with it
     {
         fmt_lib::format_to(std::back_inserter(dest), SPDLOG_FMT_STRING("{:02}"), n);
@@ -105,10 +115,12 @@ template <typename T>
 inline void pad3(T n, memory_buf_t &dest) {
     static_assert(std::is_unsigned<T>::value, "pad3 must get unsigned T");
     if (n < 1000) {
-        dest.push_back(static_cast<char>(n / 100 + '0'));
-        n = n % 100;
-        dest.push_back(static_cast<char>((n / 10) + '0'));
-        dest.push_back(static_cast<char>((n % 10) + '0'));
+        const auto v = static_cast<uint32_t>(n);
+        const auto q = v / 100;
+        const auto r = v - q * 100;
+        const char *d = digits2_table() + r * 2;
+        char buf[3] = {static_cast<char>('0' + q), d[0], d[1]};
+        dest.append(buf, buf + 3);
     } else {
         append_int(n, dest);
     }
@@ -116,12 +128,48 @@ inline void pad3(T n, memory_buf_t &dest) {
 
 template <typename T>
 inline void pad6(T n, memory_buf_t &dest) {
-    pad_uint(n, 6, dest);
+    static_assert(std::is_unsigned<T>::value, "pad6 must get unsigned T");
+    if (n < 1000000) {
+        const char *table = digits2_table();
+        auto v = static_cast<uint32_t>(n);
+        const auto hi = v / 10000;
+        v -= hi * 10000;
+        const auto mid = v / 100;
+        const auto lo = v - mid * 100;
+        const char *d0 = table + hi * 2;
+        const char *d1 = table + mid * 2;
+        const char *d2 = table + lo * 2;
+        char buf[6] = {d0[0], d0[1], d1[0], d1[1], d2[0], d2[1]};
+        dest.append(buf, buf + 6);
+    } else {
+        append_int(n, dest);
+    }
 }
 
 template <typename T>
 inline void pad9(T n, memory_buf_t &dest) {
-    pad_uint(n, 9, dest);
+    static_assert(std::is_unsigned<T>::value, "pad9 must get unsigned T");
+    if (n < 1000000000) {
+        const char *table = digits2_table();
+        auto v = static_cast<uint32_t>(n);
+        const auto d0 = v / 100000000;
+        v -= d0 * 100000000;
+        const auto p1 = v / 1000000;
+        v -= p1 * 1000000;
+        const auto p2 = v / 10000;
+        v -= p2 * 10000;
+        const auto p3 = v / 100;
+        const auto p4 = v - p3 * 100;
+        const char *t1 = table + p1 * 2;
+        const char *t2 = table + p2 * 2;
+        const char *t3 = table + p3 * 2;
+        const char *t4 = table + p4 * 2;
+        char buf[9] = {static_cast<char>('0' + d0), t1[0], t1[1], t2[0], t2[1], t3[0], t3[1],
+                       t4[0], t4[1]};
+        dest.append(buf, buf + 9);
+    } else {
+        append_int(n, dest);
+    }
 }
 
 // return fraction of a second of the given time_point.

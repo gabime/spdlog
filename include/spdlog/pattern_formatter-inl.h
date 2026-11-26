@@ -950,6 +950,63 @@ private:
 #endif
 };
 
+// Coalesced per-second cache for contiguous runs of std::tm-based flags and static literals.
+class cached_datetime_formatter final : public flag_formatter {
+public:
+    explicit cached_datetime_formatter(std::vector<std::unique_ptr<flag_formatter>> children)
+        : children_(std::move(children)) {}
+
+    void format(const details::log_msg &msg, const std::tm &tm_time, memory_buf_t &dest) override {
+        const auto secs =
+            std::chrono::duration_cast<std::chrono::seconds>(msg.time.time_since_epoch());
+        if (!has_cached_ || cache_timestamp_ != secs) {
+            cached_.clear();
+            for (auto &f : children_) {
+                f->format(msg, tm_time, cached_);
+            }
+            cache_timestamp_ = secs;
+            has_cached_ = true;
+        }
+        dest.append(cached_.data(), cached_.data() + cached_.size());
+    }
+
+private:
+    std::vector<std::unique_ptr<flag_formatter>> children_;
+    std::chrono::seconds cache_timestamp_{0};
+    bool has_cached_{false};
+    memory_buf_t cached_;
+};
+
+inline bool is_per_second_time_flag(char flag) SPDLOG_NOEXCEPT {
+    switch (flag) {
+        case 'a':
+        case 'A':
+        case 'b':
+        case 'h':
+        case 'B':
+        case 'c':
+        case 'C':
+        case 'Y':
+        case 'D':
+        case 'x':
+        case 'm':
+        case 'd':
+        case 'H':
+        case 'I':
+        case 'M':
+        case 'S':
+        case 'E':
+        case 'p':
+        case 'r':
+        case 'R':
+        case 'T':
+        case 'X':
+            return true;
+        default:
+            return false;
+    }
+}
+
 }  // namespace details
 
 SPDLOG_INLINE pattern_formatter::pattern_formatter(std::string pattern,
@@ -1319,23 +1376,42 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(
 }
 
 SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &pattern) {
+    enum class formatter_kind : uint8_t { dynamic, literal, per_second };
+
     auto end = pattern.end();
     std::unique_ptr<details::aggregate_formatter> user_chars;
+    std::vector<formatter_kind> kinds;
     formatters_.clear();
     for (auto it = pattern.begin(); it != end; ++it) {
         if (*it == '%') {
             if (user_chars)  // append user chars found so far
             {
                 formatters_.push_back(std::move(user_chars));
+                kinds.push_back(formatter_kind::literal);
             }
 
             auto padding = handle_padspec_(++it, end);
 
             if (it != end) {
+                const char flag = *it;
+                const size_t before = formatters_.size();
                 if (padding.enabled()) {
-                    handle_flag_<details::scoped_padder>(*it, padding);
+                    handle_flag_<details::scoped_padder>(flag, padding);
                 } else {
-                    handle_flag_<details::null_scoped_padder>(*it, padding);
+                    handle_flag_<details::null_scoped_padder>(flag, padding);
+                }
+                const size_t added = formatters_.size() - before;
+                const bool is_custom = custom_handlers_.find(flag) != custom_handlers_.end();
+                formatter_kind kind = formatter_kind::dynamic;
+                if (!is_custom && !padding.truncate_ && added == 1) {
+                    if (details::is_per_second_time_flag(flag)) {
+                        kind = formatter_kind::per_second;
+                    } else if (flag == '%') {
+                        kind = formatter_kind::literal;
+                    }
+                }
+                for (size_t i = 0; i < added; ++i) {
+                    kinds.push_back(kind);
                 }
             } else {
                 break;
@@ -1351,6 +1427,43 @@ SPDLOG_INLINE void pattern_formatter::compile_pattern_(const std::string &patter
     if (user_chars)  // append raw chars found so far
     {
         formatters_.push_back(std::move(user_chars));
+        kinds.push_back(formatter_kind::literal);
     }
+
+    // Coalesce contiguous runs of per-second time flags and adjacent literals
+    // into a single cached_datetime_formatter so repeated logs within the same
+    // second replay the formatted timestamp prefix in one buffer append.
+    std::vector<std::unique_ptr<details::flag_formatter>> coalesced;
+    coalesced.reserve(formatters_.size());
+    size_t i = 0;
+    while (i < formatters_.size()) {
+        if (kinds[i] == formatter_kind::dynamic) {
+            coalesced.push_back(std::move(formatters_[i]));
+            ++i;
+            continue;
+        }
+        size_t j = i;
+        bool has_time_flag = false;
+        while (j < formatters_.size() && kinds[j] != formatter_kind::dynamic) {
+            if (kinds[j] == formatter_kind::per_second) {
+                has_time_flag = true;
+            }
+            ++j;
+        }
+        if (has_time_flag) {
+            std::vector<std::unique_ptr<details::flag_formatter>> run;
+            run.reserve(j - i);
+            for (size_t k = i; k < j; ++k) {
+                run.push_back(std::move(formatters_[k]));
+            }
+            coalesced.push_back(details::make_unique<details::cached_datetime_formatter>(std::move(run)));
+        } else {
+            for (size_t k = i; k < j; ++k) {
+                coalesced.push_back(std::move(formatters_[k]));
+            }
+        }
+        i = j;
+    }
+    formatters_ = std::move(coalesced);
 }
 SPDLOG_NAMESPACE_END
