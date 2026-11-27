@@ -556,12 +556,14 @@ private:
     pattern_time_type time_type_;
     log_clock::time_point last_update_{std::chrono::seconds(0)};
     int offset_minutes_{0};
+    bool offset_cached_{false};
 
     int get_cached_offset(const log_msg &msg, const std::tm &tm_time) {
-        // refresh every 10 seconds
-        if (msg.time - last_update_ >= std::chrono::seconds(10)) {
+        // Initialize on first use, then refresh every 10 seconds.
+        if (!offset_cached_ || msg.time - last_update_ >= std::chrono::seconds(10)) {
             offset_minutes_ = os::utc_minutes_offset(tm_time);
             last_update_ = msg.time;
+            offset_cached_ = true;
         }
         return offset_minutes_;
     }
