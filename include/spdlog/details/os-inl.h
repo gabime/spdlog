@@ -492,6 +492,7 @@ SPDLOG_INLINE bool create_dir(const filename_t &path) {
     }
 
     size_t search_offset = 0;
+    bool ok = false;
     do {
         auto token_pos = path.find_first_of(folder_seps_filename, search_offset);
         // treat the entire path as a folder if no folder separator not found
@@ -510,15 +511,16 @@ SPDLOG_INLINE bool create_dir(const filename_t &path) {
         }
 #endif
 
-        if (!subdir.empty() && !path_exists(subdir) && !mkdir_(subdir)) {
-                if (errno != EEXIST) {
-                        return false;  // return error if failed creating dir
-                }
-    }
+        // A failure is only an error for the last directory: on Windows the
+        // root of a UNC or \\?\ path ("\\server\share", "\\?\C:") can be
+        // neither found nor created, but the directories below it can.
+        if (!subdir.empty()) {
+            ok = path_exists(subdir) || mkdir_(subdir) || errno == EEXIST;
+        }
         search_offset = token_pos + 1;
     } while (search_offset < path.size());
 
-    return true;
+    return ok;
 }
 
 // Return directory name from given path or empty string
