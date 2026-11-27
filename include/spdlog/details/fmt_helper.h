@@ -124,6 +124,12 @@ inline void pad9(T n, memory_buf_t &dest) {
     pad_uint(n, 9, dest);
 }
 
+inline std::chrono::seconds floor_seconds(log_clock::time_point tp) {
+    auto duration = tp.time_since_epoch();
+    auto secs = std::chrono::duration_cast<std::chrono::seconds>(duration);
+    return duration < secs ? secs - std::chrono::seconds(1) : secs;
+}
+
 // return fraction of a second of the given time_point.
 // e.g.
 // fraction<std::milliseconds>(tp) -> will return the millis part of the second
@@ -133,7 +139,11 @@ inline ToDuration time_fraction(log_clock::time_point tp) {
     using std::chrono::seconds;
     auto duration = tp.time_since_epoch();
     auto secs = duration_cast<seconds>(duration);
-    return duration_cast<ToDuration>(duration) - duration_cast<ToDuration>(secs);
+    auto fraction = duration - duration_cast<log_clock::duration>(secs);
+    if (fraction < log_clock::duration::zero()) {
+        fraction += std::chrono::seconds(1);
+    }
+    return duration_cast<ToDuration>(fraction);
 }
 
 }  // namespace fmt_helper
