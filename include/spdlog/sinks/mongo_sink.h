@@ -7,7 +7,7 @@
 // Custom sink for mongodb
 // Building and using requires mongocxx library.
 // For building mongocxx library check the url below
-// http://mongocxx.org/mongocxx-v3/installation/
+// https://www.mongodb.com/docs/languages/cpp/cpp-driver/current/get-started/
 //
 
 #include "spdlog/common.h"
