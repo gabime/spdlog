@@ -144,7 +144,7 @@ public:
 
         hints.ai_family = AF_UNSPEC;      // To work with IPv4, IPv6, and so on
         hints.ai_socktype = SOCK_STREAM;  // TCP
-        hints.ai_flags = AI_NUMERICSERV;  // port passed as as numeric value
+        hints.ai_flags = AI_NUMERICSERV;  // port passed as numeric value
         hints.ai_protocol = 0;
 
         timeval tv;
