@@ -239,7 +239,7 @@ SPDLOG_INLINE void registry::set_levels(log_levels levels, level::level_enum *gl
 }
 
 SPDLOG_INLINE registry &registry::instance() {
-    static registry s_instance;
+    static registry& s_instance = *new registry;
     return s_instance;
 }
 
