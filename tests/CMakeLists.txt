@@ -68,7 +68,7 @@ if(systemd_FOUND)
     list(APPEND SPDLOG_UTESTS_SOURCES test_systemd.cpp)
     # systemd v256 added support for namespace stream API
     if(systemd_VERSION VERSION_GREATER_EQUAL "256")
-    list(APPEND SPDLOG_UTESTS_SOURCES test_systemd_namespace.cpp)
+        list(APPEND SPDLOG_UTESTS_SOURCES test_systemd_namespace.cpp)
     endif()
 endif()
 

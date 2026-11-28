@@ -29,8 +29,8 @@ TEST_CASE("conditional macros do not evaluate arguments when the active level is
 
     // Base macros with explicit level
     SPDLOG_LOGGER_EVERY_N(logger, spdlog::level::info, 1, "every {}", ++evaluations);
-    SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, std::chrono::seconds(0),
-                           "throttle {}", ++evaluations);
+    SPDLOG_LOGGER_THROTTLE(logger, spdlog::level::info, std::chrono::seconds(0), "throttle {}",
+                           ++evaluations);
 
     // Per-level macros
     SPDLOG_LOGGER_INFO_EVERY_N(logger, 1, "info_every {}", ++evaluations);

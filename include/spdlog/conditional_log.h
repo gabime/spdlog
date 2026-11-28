@@ -1,49 +1,46 @@
 #pragma once
 
-#include "spdlog.h"
+#include <spdlog/spdlog.h>
 #include <atomic>
 #include <chrono>
-#include <cmath>
 
 SPDLOG_NAMESPACE_BEGIN
 namespace details {
 
-// Fires on every N-th call (first call included). N <= 1 fires every call.
+// Fires on every n-th call (first call included). n <= 1 fires every call.
 struct every_n_state {
-    std::atomic<unsigned long> count{0};
-    bool should_log(unsigned long n) noexcept {
-        return n == 0 || count++ % n == 0;
+    std::atomic<unsigned long long> count{0};
+    bool should_log(long long n) noexcept {
+        if (n <= 1) {
+            return true;
+        }
+        const auto c = count.fetch_add(1, std::memory_order_relaxed);
+        return c % static_cast<unsigned long long>(n) == 0;
     }
 };
 
 // Fires at most once per interval (first call always fires).
-// Non-positive intervals fire every call.
+// Non-positive intervals fire every call. Intervals beyond the clock's range fire once.
 struct throttle_state {
     using clock = std::chrono::steady_clock;
-    std::atomic<clock::time_point> next{clock::time_point{}};
+    std::atomic<clock::time_point> next{(clock::time_point::min)()};
 
-    template <typename Rep, typename Period>
-    bool should_log(const std::chrono::duration<Rep, Period>& interval) noexcept {
-        using namespace std::chrono;
-        auto now = clock::now();
-        auto expected = next.load();
-
-        // Non-positive intervals fire every call.
+    bool should_log(std::chrono::milliseconds interval) noexcept {
         if (interval.count() <= 0) {
-            return now >= expected && next.compare_exchange_strong(expected, now);
+            return true;
         }
-
-        // Guard against overflow: convert to double seconds and check range
-        // before casting to nanoseconds, which is UB for out-of-range values
-        // (e.g. infinity, NaN, or intervals beyond ~292 years).
-        double interval_sec = duration<double>(interval).count();
-        double max_sec = duration<double>(clock::duration::max()).count();
-        if (!std::isfinite(interval_sec) || interval_sec > max_sec) {
-            return now >= expected && next.compare_exchange_strong(expected, now);
+        const auto now = clock::now();
+        auto expected = next.load(std::memory_order_relaxed);
+        if (now < expected) {
+            return false;
         }
-
-        auto interval_ns = duration_cast<clock::duration>(interval);
-        return now >= expected && next.compare_exchange_strong(expected, now + interval_ns);
+        // Saturate at time_point::max() instead of overflowing now + interval.
+        const auto headroom =
+            std::chrono::duration_cast<std::chrono::milliseconds>((clock::time_point::max)() - now);
+        const auto next_tp = interval < headroom
+                                 ? now + std::chrono::duration_cast<clock::duration>(interval)
+                                 : (clock::time_point::max)();
+        return next.compare_exchange_strong(expected, next_tp, std::memory_order_relaxed);
     }
 };
 
@@ -56,17 +53,16 @@ SPDLOG_NAMESPACE_END
 // Each macro checks SPDLOG_ACTIVE_LEVEL (compile-time) and
 // logger->should_log(level) (runtime) before touching the helper state, so a
 // message filtered by either level never consumes a counter/clock slot.
-// The interval is a std::chrono::duration; non-positive, non-finite, or
-// out-of-range intervals (beyond the nanosecond range, ~292 years) are
-// treated like a zero interval: the call fires on every invocation, with no
-// undefined behavior from the conversion.
+// The throttle interval is std::chrono::milliseconds; coarser durations
+// (seconds, minutes, ...) convert implicitly. Non-positive intervals fire on
+// every call; intervals beyond the clock's range fire only once.
 //
 
 #define SPDLOG_LOGGER_EVERY_N(logger, level, n, ...)                         \
     do {                                                                     \
         if (SPDLOG_ACTIVE_LEVEL <= (level) && (logger)->should_log(level)) { \
             static SPDLOG_NAMESPACE::details::every_n_state spdlog_every_n_; \
-            if (spdlog_every_n_.should_log(static_cast<unsigned long>(n))) { \
+            if (spdlog_every_n_.should_log(static_cast<long long>(n))) {     \
                 SPDLOG_LOGGER_CALL(logger, level, __VA_ARGS__);              \
             }                                                                \
         }                                                                    \
